@@ -1,5 +1,6 @@
 use thiserror::Error as ThisError;
 
+pub mod hashing;
 pub mod http;
 
 pub type Result<T> = std::result::Result<T, InfrastructureError>;
