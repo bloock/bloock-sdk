@@ -1,5 +1,6 @@
 use thiserror::Error as ThisError;
 
+pub mod blockchain;
 pub mod hashing;
 pub mod http;
 
@@ -13,4 +14,6 @@ pub enum InfrastructureError {
     SerializeError(String),
     #[error("Reqwest error - {0}")]
     ReqwestError(#[from] reqwest::Error),
+    #[error("Web3 error - {0}")]
+    Web3Error(String),
 }
