@@ -1,2 +1,2 @@
 mod anchor;
-mod network;
+pub mod network;

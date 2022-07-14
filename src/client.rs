@@ -1,5 +1,6 @@
 use crate::anchor;
 use crate::config;
+use crate::config::config_data::ConfigData;
 use crate::infrastructure::http::{HttpClient, HttpClientImpl};
 use crate::proof;
 use crate::record;
@@ -45,7 +46,7 @@ pub fn configure(api_key: String) -> impl BloockClient {
 
     return BloockClientImpl {
         anchor_service: anchor::configure(Arc::clone(&http_client)),
-        config_service: config::configure(Arc::clone(&http_client)),
+        config_service: config::configure(Arc::clone(&http_client), ConfigData::new()),
         record_service: record::configure(Arc::clone(&http_client)),
         proof_service: proof::configure(Arc::clone(&http_client)),
         http_client: Arc::clone(&http_client),
