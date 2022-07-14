@@ -10,7 +10,7 @@ pub enum Network {
 enum CoreNetwork {
     BloockChain,
     Rinkeby,
-    Mainnet
+    Mainnet,
 }
 
 impl CoreNetwork {
@@ -18,7 +18,16 @@ impl CoreNetwork {
         match self {
             CoreNetwork::BloockChain => "bloock_chain",
             CoreNetwork::Rinkeby => "ethereum_rinkeby",
-            CoreNetwork::Mainnet => "ethereum_mainnet"
+            CoreNetwork::Mainnet => "ethereum_mainnet",
+        }
+    }
+
+    fn from_str(s: &str) -> Option<CoreNetwork> {
+        match s {
+            "bloock_chain" => Some(CoreNetwork::BloockChain),
+            "ethereum_rinkeby" => Some(CoreNetwork::Rinkeby),
+            "ethereum_mainnet" => Some(CoreNetwork::Mainnet),
+            _ => None,
         }
     }
 }
@@ -30,10 +39,10 @@ fn select_network(networks: &Vec<network::Network>) -> Network {
         }
     }
 
-    let name = &networks[0].name;
-    match name {
-        name if name == CoreNetwork::BloockChain.as_str() => Network::BloockChain,
-        name if name == CoreNetwork::Rinkeby.as_str() => Network::EthereumRinkeby,
-          _ => Network::EthereumMainnet   
+    let network = CoreNetwork::from_str(&networks[0].name).unwrap_or(CoreNetwork::Mainnet);
+    match network {
+        CoreNetwork::BloockChain => Network::BloockChain,
+        CoreNetwork::Rinkeby => Network::EthereumRinkeby,
+        CoreNetwork::Mainnet => Network::EthereumMainnet,
     }
 }
