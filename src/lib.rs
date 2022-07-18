@@ -1,5 +1,5 @@
 mod anchor;
-mod client;
+pub mod client;
 mod config;
 mod infrastructure;
 mod proof;

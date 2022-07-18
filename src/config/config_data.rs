@@ -82,7 +82,7 @@ impl ConfigData {
         self.networks_config.insert(network, config);
     }
 
-    pub fn set_api_host(&mut self, host: &str) {
-        self.config.host = String::from(host);
+    pub fn set_api_host(&mut self, host: String) {
+        self.config.host = host;
     }
 }

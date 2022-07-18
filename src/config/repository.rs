@@ -17,7 +17,7 @@ pub trait ConfigRepository {
     fn get_config(&self) -> &Configuration;
     fn get_network_config(&self, network: Network) -> &NetworkConfiguration;
     fn set_network_config(&mut self, network: Network, config: NetworkConfiguration);
-    fn set_api_host(&mut self, host: &str);
+    fn set_api_host(&mut self, host: String);
 }
 
 pub struct ConfigRepositoryImpl<H: HttpClient> {
@@ -41,7 +41,7 @@ where
         self.config_data.set_network_config(network, config)
     }
 
-    fn set_api_host(&mut self, host: &str) {
+    fn set_api_host(&mut self, host: String) {
         self.config_data.set_api_host(host);
     }
 }
@@ -63,7 +63,7 @@ mod tests {
         };
 
         let host = "https://modified.bloock.com";
-        config_repo.set_api_host(host);
+        config_repo.set_api_host(String::from(host));
         assert_eq!(config_repo.get_config().host, host)
     }
 }

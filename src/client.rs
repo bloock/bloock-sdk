@@ -1,6 +1,8 @@
 use crate::anchor;
 use crate::config;
 use crate::config::config_data::ConfigData;
+use crate::config::entity::config::NetworkConfiguration;
+use crate::config::entity::network::Network;
 use crate::infrastructure::http::{HttpClient, HttpClientImpl};
 use crate::proof;
 use crate::record;
@@ -12,6 +14,8 @@ use mockall::automock;
 #[cfg_attr(test, automock)]
 pub trait BloockClient {
     fn get_key(&self) -> String;
+    fn set_api_host(&mut self, host: String);
+    fn set_network_config(&mut self, network: Network, config: NetworkConfiguration);
 }
 
 pub struct BloockClientImpl<
@@ -38,6 +42,14 @@ where
 {
     fn get_key(&self) -> String {
         return self.http_client.get_api_key();
+    }
+
+    fn set_api_host(&mut self, host: String) {
+        self.config_service.set_api_host(host);
+    }
+
+    fn set_network_config(&mut self, network: Network, config: NetworkConfiguration) {
+        self.config_service.set_network_config(network, config);
     }
 }
 

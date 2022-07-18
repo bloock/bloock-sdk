@@ -12,7 +12,7 @@ use super::entity::{
 pub trait ConfigService {
     fn get_config(&self) -> &Configuration;
     fn get_api_base_url(&self) -> &String;
-    fn set_api_host(&mut self, host: &str);
+    fn set_api_host(&mut self, host: String);
     fn get_network_config(&self, network: Network) -> &NetworkConfiguration;
     fn set_network_config(&mut self, network: Network, config: NetworkConfiguration);
 }
@@ -33,7 +33,7 @@ where
         &self.config_repository.get_config().host
     }
 
-    fn set_api_host(&mut self, host: &str) {
+    fn set_api_host(&mut self, host: String) {
         self.config_repository.set_api_host(host);
     }
 
@@ -89,7 +89,7 @@ mod tests {
             config_repository: configure_repository_test(),
         };
 
-        let host = "https://api.bloock.com";
+        let host = String::from("https://api.bloock.com");
         config_service
             .config_repository
             .expect_set_api_host()
