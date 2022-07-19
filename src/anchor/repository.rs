@@ -8,7 +8,7 @@ use super::entity::anchor::Anchor;
 
 #[cfg_attr(test, automock)]
 pub trait AnchorRepository {
-    fn get_anchor(&self, anchor_id: i32) -> Anchor;
+    fn get_anchor(&self, anchor_id: i32) -> Option<Anchor>;
 }
 
 pub struct AnchorRepositoryImpl<H: HttpClient, C: ConfigService> {
@@ -21,14 +21,17 @@ where
     H: HttpClient,
     C: ConfigService,
 {
-    fn get_anchor(&self, anchor_id: i32) -> Anchor {
+    fn get_anchor(&self, anchor_id: i32) -> Option<Anchor> {
         let url = format!(
             "{}/core/anchor/{}",
             self.config_service.get_api_base_url(),
             anchor_id
         );
-        // TODO
-        Anchor { id: 1, block_roots: vec![String::new()], networks: vec![], root: String::new(), status: String::new() }
-        // let response = self.http.get::<_, _>(url, None);
+
+        let response = self.http.get::<String, Anchor>(url, None);
+        match response {
+            Ok(anchor) => Some(anchor),
+            Err(err) => None
+        }
     }
 }
