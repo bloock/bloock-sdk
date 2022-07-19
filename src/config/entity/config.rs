@@ -1,27 +1,28 @@
+#[derive(Debug, PartialEq, Eq)]
 pub struct Configuration {
-    pub HOST: String,
-    pub WAIT_MESSAGE_INTERVAL_FACTOR: i32,
-    pub WAIT_MESSAGE_INTERVAL_DEFAULT: i32,
-    pub KEY_TYPE_ALGORITHM: String,
-    pub ELLIPTIC_CURVE_KEY: String,
-    pub SIGNATURE_ALGORITHM: String,
+    pub host: String,
+    pub wait_message_interval_factor: i32,
+    pub wait_message_interval_default: i32,
+    pub key_type_algorithm: String,
+    pub elliptic_curve_key: String,
+    pub signature_algorithm: String,
 }
 
 impl Default for Configuration {
     fn default() -> Self {
-        Configuration {
-            HOST: String::from(""),
-            WAIT_MESSAGE_INTERVAL_FACTOR: 2,
-            WAIT_MESSAGE_INTERVAL_DEFAULT: 1000,
-            KEY_TYPE_ALGORITHM: String::from("EC"),
-            ELLIPTIC_CURVE_KEY: String::from("secp256k1"),
-            SIGNATURE_ALGORITHM: String::from("ES256K"),
+        Self {
+            host: String::from(""),
+            wait_message_interval_factor: 2,
+            wait_message_interval_default: 1000,
+            key_type_algorithm: String::from("EC"),
+            elliptic_curve_key: String::from("secp256k1"),
+            signature_algorithm: String::from("ES256K"),
         }
     }
 }
 
 pub struct NetworkConfiguration {
-    pub CONTRACT_ADDRESS: String,
-    pub CONTRACT_ABI: String,
-    pub HTTP_PROVIDER: String,
+    pub contract_address: String,
+    pub contract_abi: String,
+    pub http_provider: String,
 }
