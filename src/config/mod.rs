@@ -1,21 +1,25 @@
 use crate::infrastructure::http::HttpClient;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use self::config_data::ConfigData;
 
+pub mod config_data;
 pub mod entity;
 pub mod repository;
 pub mod service;
-pub mod config_data;
 
-pub fn configure<H: HttpClient + 'static>(http: Arc<H>, config_data: ConfigData) -> impl service::ConfigService {
+pub fn configure<H: HttpClient + 'static>(
+    http: Arc<H>,
+    config_data: Arc<Mutex<ConfigData>>,
+) -> impl service::ConfigService {
     return service::ConfigServiceImpl {
-        config_repository: configure_repository(Arc::clone(&http), config_data),
+        config_repository: configure_repository(Arc::clone(&http), Arc::clone(&config_data)),
     };
 }
 
 pub fn configure_repository<H: HttpClient + 'static>(
-    http: Arc<H>, config_data: ConfigData,
+    http: Arc<H>,
+    config_data: Arc<Mutex<ConfigData>>,
 ) -> impl repository::ConfigRepository
 where {
     repository::ConfigRepositoryImpl {

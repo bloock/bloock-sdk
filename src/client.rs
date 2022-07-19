@@ -7,6 +7,7 @@ use crate::infrastructure::http::{HttpClient, HttpClientImpl};
 use crate::proof;
 use crate::record;
 use std::sync::Arc;
+use std::sync::Mutex;
 
 #[cfg(test)]
 use mockall::automock;
@@ -55,10 +56,11 @@ where
 
 pub fn configure(api_key: String) -> impl BloockClient {
     let http_client = Arc::new(HttpClientImpl::new(api_key));
+    let config_data = Arc::new(Mutex::new(ConfigData::new()));
 
     return BloockClientImpl {
-        anchor_service: anchor::configure(Arc::clone(&http_client)),
-        config_service: config::configure(Arc::clone(&http_client), ConfigData::new()),
+        anchor_service: anchor::configure(Arc::clone(&http_client), config::configure(Arc::clone(&http_client), Arc::clone(&config_data))),
+        config_service: config::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         record_service: record::configure(Arc::clone(&http_client)),
         proof_service: proof::configure(Arc::clone(&http_client)),
         http_client: Arc::clone(&http_client),

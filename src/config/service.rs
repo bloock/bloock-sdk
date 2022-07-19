@@ -10,10 +10,10 @@ use super::entity::{
 
 #[cfg_attr(test, automock)]
 pub trait ConfigService {
-    fn get_config(&self) -> &Configuration;
-    fn get_api_base_url(&self) -> &String;
+    fn get_config(&self) -> Configuration;
+    fn get_api_base_url(&self) -> String;
     fn set_api_host(&mut self, host: String);
-    fn get_network_config(&self, network: Network) -> &NetworkConfiguration;
+    fn get_network_config(&self, network: Network) -> NetworkConfiguration;
     fn set_network_config(&mut self, network: Network, config: NetworkConfiguration);
 }
 
@@ -25,19 +25,19 @@ impl<A> ConfigService for ConfigServiceImpl<A>
 where
     A: ConfigRepository,
 {
-    fn get_config(&self) -> &Configuration {
+    fn get_config(&self) -> Configuration {
         self.config_repository.get_config()
     }
 
-    fn get_api_base_url(&self) -> &String {
-        &self.config_repository.get_config().host
+    fn get_api_base_url(&self) -> String {
+        self.config_repository.get_config().host.clone()
     }
 
     fn set_api_host(&mut self, host: String) {
         self.config_repository.set_api_host(host);
     }
 
-    fn get_network_config(&self, network: Network) -> &NetworkConfiguration {
+    fn get_network_config(&self, network: Network) -> NetworkConfiguration {
         self.config_repository.get_network_config(network)
     }
 
@@ -63,7 +63,7 @@ mod tests {
             .times(1)
             .return_const(Configuration::default());
 
-        assert_eq!(*config_service.get_config(), Configuration::default());
+        assert_eq!(config_service.get_config(), Configuration::default());
     }
 
     #[test]

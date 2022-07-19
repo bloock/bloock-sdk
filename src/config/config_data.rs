@@ -67,14 +67,14 @@ impl ConfigData {
         }
     }
 
-    pub fn get_config(&self) -> &Configuration {
-        &self.config
+    pub fn get_config(&self) -> Configuration {
+        self.config.clone()
     }
 
-    pub fn get_network_config(&self, network: Network) -> &NetworkConfiguration {
+    pub fn get_network_config(&self, network: Network) -> NetworkConfiguration {
         match self.networks_config.get(&network) {
-            Some(config) => config,
-            None => self.networks_config.get(&Network::EthereumMainnet).unwrap(),
+            Some(config) => config.clone(),
+            None => self.networks_config.get(&Network::EthereumMainnet).unwrap().clone(),
         }
     }
 

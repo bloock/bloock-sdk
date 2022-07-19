@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Configuration {
     pub host: String,
     pub wait_message_interval_factor: i32,
@@ -21,6 +21,7 @@ impl Default for Configuration {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkConfiguration {
     pub contract_address: String,
     pub contract_abi: String,
