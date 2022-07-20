@@ -24,7 +24,7 @@ pub fn configure_repository<H: HttpClient + 'static>(
 where {
     repository::ConfigRepositoryImpl {
         http: Arc::clone(&http),
-        config_data,
+        config_data: Arc::clone(&config_data),
     }
 }
 
