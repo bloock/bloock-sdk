@@ -59,7 +59,7 @@ pub fn configure(api_key: String) -> impl BloockClient {
     let config_data = Arc::new(Mutex::new(ConfigData::new()));
 
     return BloockClientImpl {
-        anchor_service: anchor::configure(Arc::clone(&http_client), config::configure(Arc::clone(&http_client), Arc::clone(&config_data))),
+        anchor_service: anchor::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         config_service: config::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         record_service: record::configure(Arc::clone(&http_client)),
         proof_service: proof::configure(Arc::clone(&http_client)),
