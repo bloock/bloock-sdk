@@ -74,8 +74,9 @@ mod tests {
             config_service: config_service_mock,
         };
 
-        if let Ok(anchor) = anchor_repo.get_anchor(anchor_id) {
-            assert_eq!(anchor, expected);
-        }
+        match anchor_repo.get_anchor(anchor_id) {
+            Ok(anchor) => assert_eq!(anchor, expected),
+            Err(e) => panic!("{}", e),
+        };
     }
 }

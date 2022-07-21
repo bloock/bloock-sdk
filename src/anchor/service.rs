@@ -83,3 +83,94 @@ where
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::{
+        anchor::{self, entity::anchor::Anchor},
+        config::{self, entity::config::Configuration},
+        infrastructure::InfrastructureError,
+    };
+
+    use super::{AnchorService, AnchorServiceImpl};
+
+    #[test]
+    fn test_get_anchor() {
+        let anchor_id = 1;
+        let anchor = Anchor {
+            id: anchor_id,
+            block_roots: vec![String::from("block_root")],
+            networks: vec![],
+            root: String::from("root"),
+            status: String::from("Success"),
+        };
+
+        let expected_anchor = anchor.clone();
+
+        let config_service_mock = config::configure_service_test();
+        let mut anchor_repo_mock = anchor::configure_repository_test();
+
+        anchor_repo_mock
+            .expect_get_anchor()
+            .return_once(|_| Ok(anchor));
+
+        let anchor_service = AnchorServiceImpl {
+            anchor_repository: anchor_repo_mock,
+            config_service: config_service_mock,
+        };
+
+        match anchor_service.get_anchor(anchor_id) {
+            Ok(anchor) => assert_eq!(anchor, expected_anchor),
+            Err(e) => panic!("{}", e),
+        };
+    }
+
+    #[test]
+    fn test_wait_anchor_first_try() {
+        let anchor_id = 1;
+        let anchor = Anchor {
+            id: anchor_id,
+            block_roots: vec![String::from("block_root")],
+            networks: vec![],
+            root: String::from("root"),
+            status: String::from("Success"),
+        };
+
+        let expected_anchor = anchor.clone();
+
+        let mut counter = 0;
+        let max_count = 0;
+
+        let get_anchor_side_effect = move |_| {
+            if counter < max_count {
+                counter += 1;
+                return Err(InfrastructureError::HttpClientApiError(String::from(
+                    "Anchor not ready yet",
+                )));
+            }
+            Ok(anchor.clone())
+        };
+
+        let mut config = Configuration::default();
+        config.wait_message_interval_default = 1;
+        config.wait_message_interval_factor = 0;
+
+        let mut config_service_mock = config::configure_service_test();
+        config_service_mock.expect_get_config().return_const(config);
+
+        let mut anchor_repo_mock = anchor::configure_repository_test();
+        anchor_repo_mock
+            .expect_get_anchor()
+            .returning(get_anchor_side_effect);
+
+        let anchor_service = AnchorServiceImpl {
+            anchor_repository: anchor_repo_mock,
+            config_service: config_service_mock,
+        };
+
+        match anchor_service.wait_anchor(anchor_id, 5000) {
+            Ok(anchor) => assert_eq!(anchor, expected_anchor),
+            Err(e) => panic!("{}", e),
+        }
+    }
+}
