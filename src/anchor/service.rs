@@ -34,9 +34,9 @@ where
     }
 
     fn wait_anchor(&self, anchor_id: i32, timeout: u64) -> Result<Anchor, AnchorError> {
-        let attempts = 0;
+        let mut attempts = 0;
         let start = SystemTime::now();
-        let next_try = start
+        let mut next_try = start
             + Duration::from_millis(
                 self.config_service
                     .get_config()
@@ -51,7 +51,7 @@ where
                     return Ok(anchor);
                 }
             }
-            let current_time = SystemTime::now();
+            let mut current_time = SystemTime::now();
             if current_time > timeout_time {
                 return Err(AnchorError::AnchorTimeout());
             }

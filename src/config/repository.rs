@@ -48,7 +48,6 @@ where
 
 #[cfg(test)]
 mod tests {
-
     use std::sync::{Arc, Mutex};
 
     use super::{ConfigRepository, ConfigRepositoryImpl};

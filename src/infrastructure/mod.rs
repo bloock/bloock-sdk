@@ -17,3 +17,8 @@ pub enum InfrastructureError {
     #[error("Web3 error - {0}")]
     Web3Error(String),
 }
+
+#[cfg(test)]
+pub fn configure_http_client_test() -> http::MockHttpClient {
+    http::MockHttpClient::default()
+}
