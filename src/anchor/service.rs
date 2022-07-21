@@ -87,7 +87,7 @@ where
 #[cfg(test)]
 mod test {
     use crate::{
-        anchor::{self, entity::anchor::Anchor},
+        anchor::{self, entity::anchor::Anchor, AnchorError},
         config::{self, entity::config::Configuration},
         infrastructure::InfrastructureError,
     };
@@ -127,6 +127,58 @@ mod test {
 
     #[test]
     fn test_wait_anchor_first_try() {
+        test_wait_anchor(0);
+    }
+
+    #[test]
+    fn test_wait_anchor_after_3_retries() {
+        test_wait_anchor(3);
+    }
+
+    #[test]
+    fn test_wait_anchor_timeout() {
+        let mut config = Configuration::default();
+        config.wait_message_interval_default = 10;
+        config.wait_message_interval_factor = 0;
+
+        let anchor_id = 1;
+        let anchor = Anchor {
+            id: anchor_id,
+            block_roots: vec![String::from("block_root")],
+            networks: vec![],
+            root: String::from("root"),
+            status: String::from("Success"),
+        };
+
+        let mut retry_counter = 0;
+        let max_retries = 3;
+
+        let mut anchor_repo_mock = anchor::configure_repository_test();
+        anchor_repo_mock.expect_get_anchor().returning(move |_| {
+            if retry_counter < max_retries {
+                retry_counter += 1;
+                return Err(InfrastructureError::HttpClientApiError(String::from(
+                    "Anchor not ready yet",
+                )));
+            }
+            Ok(anchor.clone())
+        });
+
+        let mut config_service_mock = config::configure_service_test();
+        config_service_mock.expect_get_config().return_const(config);
+
+        let anchor_service = AnchorServiceImpl {
+            anchor_repository: anchor_repo_mock,
+            config_service: config_service_mock,
+        };
+
+        match anchor_service.wait_anchor(anchor_id, 1) {
+            Ok(_) => panic!("Wait anchor should've timed out"),
+            Err(e) => assert_eq!(e, AnchorError::AnchorTimeout()),
+        }
+    }
+
+    fn test_wait_anchor(max_retries: usize) {
         let anchor_id = 1;
         let anchor = Anchor {
             id: anchor_id,
@@ -138,18 +190,7 @@ mod test {
 
         let expected_anchor = anchor.clone();
 
-        let mut counter = 0;
-        let max_count = 0;
-
-        let get_anchor_side_effect = move |_| {
-            if counter < max_count {
-                counter += 1;
-                return Err(InfrastructureError::HttpClientApiError(String::from(
-                    "Anchor not ready yet",
-                )));
-            }
-            Ok(anchor.clone())
-        };
+        let mut retry_counter = 0;
 
         let mut config = Configuration::default();
         config.wait_message_interval_default = 1;
@@ -159,9 +200,15 @@ mod test {
         config_service_mock.expect_get_config().return_const(config);
 
         let mut anchor_repo_mock = anchor::configure_repository_test();
-        anchor_repo_mock
-            .expect_get_anchor()
-            .returning(get_anchor_side_effect);
+        anchor_repo_mock.expect_get_anchor().times(max_retries + 1).returning(move |_| {
+            if retry_counter < max_retries {
+                retry_counter += 1;
+                return Err(InfrastructureError::HttpClientApiError(String::from(
+                    "Anchor not ready yet",
+                )));
+            }
+            Ok(anchor.clone())
+        });
 
         let anchor_service = AnchorServiceImpl {
             anchor_repository: anchor_repo_mock,

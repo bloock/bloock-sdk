@@ -9,7 +9,7 @@ pub mod entity;
 pub mod repository;
 pub mod service;
 
-#[derive(ThisError, Debug)]
+#[derive(ThisError, Debug, PartialEq, Eq)]
 pub enum AnchorError {
     #[error("Wait Anchor timed out")]
     AnchorTimeout(),
