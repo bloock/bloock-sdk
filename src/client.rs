@@ -1,4 +1,5 @@
 use crate::anchor;
+use crate::anchor::entity::anchor::Anchor;
 use crate::config;
 use crate::config::config_data::ConfigData;
 use crate::config::entity::config::NetworkConfiguration;
@@ -17,6 +18,9 @@ pub trait BloockClient {
     fn get_key(&self) -> String;
     fn set_api_host(&mut self, host: String);
     fn set_network_config(&mut self, network: Network, config: NetworkConfiguration);
+
+    fn get_anchor(&self, anchor: i32) -> Result<Anchor, crate::infrastructure::InfrastructureError>;
+    fn wait_anchor(&self, anchor: i32, timeout: u64) -> Result<Anchor, anchor::AnchorError>;
 }
 
 pub struct BloockClientImpl<
@@ -51,6 +55,14 @@ where
 
     fn set_network_config(&mut self, network: Network, config: NetworkConfiguration) {
         self.config_service.set_network_config(network, config);
+    }
+
+    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, crate::infrastructure::InfrastructureError> {
+        self.anchor_service.get_anchor(anchor_id)
+    }
+
+    fn wait_anchor(&self, anchor_id: i32, timeout: u64) -> Result<Anchor, anchor::AnchorError> {
+        self.anchor_service.wait_anchor(anchor_id, timeout)
     }
 }
 
