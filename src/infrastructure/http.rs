@@ -39,7 +39,7 @@ pub struct HttpClientImpl {
 
 impl HttpClient for HttpClientImpl {
     fn new(api_key: String) -> Self {
-        Self { api_key: api_key }
+        Self { api_key }
     }
     fn get_api_key(&self) -> String {
         return self.api_key.clone();
