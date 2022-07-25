@@ -1,8 +1,5 @@
-use crate::{
-    config::service::ConfigService,
-    infrastructure::{http::HttpClient, InfrastructureError},
-};
-use std::sync::Arc;
+use crate::{config::service::ConfigService, infrastructure::http::HttpClient};
+use std::{sync::Arc, error};
 
 #[cfg(test)]
 use mockall::automock;
@@ -11,7 +8,7 @@ use super::entity::anchor::Anchor;
 
 #[cfg_attr(test, automock)]
 pub trait AnchorRepository {
-    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, InfrastructureError>;
+    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, Box<dyn error::Error>>;
 }
 
 pub struct AnchorRepositoryImpl<H: HttpClient, C: ConfigService> {
@@ -24,14 +21,17 @@ where
     H: HttpClient,
     C: ConfigService,
 {
-    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, InfrastructureError> {
-        let url = format!(
-            "{}/core/anchor/{}",
-            self.config_service.get_api_base_url(),
-            anchor_id
-        );
-
-        self.http.get::<String, Anchor>(url, None)
+    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, Box<dyn error::Error>> {
+        match self.config_service.get_api_base_url() {
+            Ok(base_url) => {
+                let url = format!("{}/core/anchor/{}", base_url, anchor_id);
+                match self.http.get::<String, Anchor>(url, None) {
+                    Ok(res) => Ok(res),
+                    Err(e) => Err(e).map_err(|e| e.into()),
+                }
+            }
+            Err(e) => Err(e).map_err(|e| e.into()),
+        }
     }
 }
 
@@ -52,7 +52,7 @@ mod tests {
 
         config_service_mock
             .expect_get_api_base_url()
-            .return_const(String::from("some URL"));
+            .return_const(Ok(String::from("some URL")));
 
         let anchor_id = 1;
         let anchor = Anchor {

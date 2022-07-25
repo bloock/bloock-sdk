@@ -1,5 +1,6 @@
 use crate::infrastructure::http::HttpClient;
 use std::sync::{Arc, Mutex};
+use thiserror::Error as ThisError;
 
 use self::config_data::ConfigData;
 
@@ -7,6 +8,12 @@ pub mod config_data;
 pub mod entity;
 pub mod repository;
 pub mod service;
+
+#[derive(ThisError, Debug, PartialEq, Eq, Clone)]
+pub enum ConfigError {
+    #[error("Could not acces underlying config data")]
+    ConfigDataError(),
+}
 
 pub fn configure<H: HttpClient + 'static>(
     http: Arc<H>,

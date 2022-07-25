@@ -10,14 +10,19 @@ use super::{
         config::{Configuration, NetworkConfiguration},
         network::Network,
     },
+    ConfigError,
 };
 
 #[cfg_attr(test, automock)]
 pub trait ConfigRepository {
-    fn get_config(&self) -> Configuration;
-    fn get_network_config(&self, network: Network) -> NetworkConfiguration;
-    fn set_network_config(&mut self, network: Network, config: NetworkConfiguration);
-    fn set_api_host(&mut self, host: String);
+    fn get_config(&self) -> Result<Configuration, ConfigError>;
+    fn get_network_config(&self, network: Network) -> Result<NetworkConfiguration, ConfigError>;
+    fn set_network_config(
+        &mut self,
+        network: Network,
+        config: NetworkConfiguration,
+    ) -> Result<(), ConfigError>;
+    fn set_api_host(&mut self, host: String) -> Result<(), ConfigError>;
 }
 
 pub struct ConfigRepositoryImpl<H: HttpClient> {
@@ -29,20 +34,42 @@ impl<H> ConfigRepository for ConfigRepositoryImpl<H>
 where
     H: HttpClient,
 {
-    fn get_config(&self) -> Configuration {
-        self.config_data.lock().unwrap().get_config()
+    fn get_config(&self) -> Result<Configuration, ConfigError> {
+        match self.config_data.lock() {
+            Ok(config_data) => Ok(config_data.get_config()),
+            Err(_) => Err(ConfigError::ConfigDataError()),
+        }
     }
 
-    fn get_network_config(&self, network: Network) -> NetworkConfiguration {
-        self.config_data.lock().unwrap().get_network_config(network)
+    fn get_network_config(&self, network: Network) -> Result<NetworkConfiguration, ConfigError> {
+        match self.config_data.lock() {
+            Ok(config_data) => Ok(config_data.get_network_config(network)),
+            Err(_) => Err(ConfigError::ConfigDataError()),
+        }
     }
 
-    fn set_network_config(&mut self, network: Network, config: NetworkConfiguration) {
-        self.config_data.lock().unwrap().set_network_config(network, config)
+    fn set_network_config(
+        &mut self,
+        network: Network,
+        config: NetworkConfiguration,
+    ) -> Result<(), ConfigError> {
+        match self.config_data.lock() {
+            Ok(mut config_data) => {
+                config_data.set_network_config(network, config);
+                Ok(())
+            }
+            Err(_) => Err(ConfigError::ConfigDataError()),
+        }
     }
 
-    fn set_api_host(&mut self, host: String) {
-        self.config_data.lock().unwrap().set_api_host(host);
+    fn set_api_host(&mut self, host: String) -> Result<(), ConfigError> {
+        match self.config_data.lock() {
+            Ok(mut config_data) => {
+                config_data.set_api_host(host);
+                Ok(())
+            }
+            Err(_) => Err(ConfigError::ConfigDataError()),
+        }
     }
 }
 
@@ -62,7 +89,7 @@ mod tests {
         };
 
         let host = "https://modified.bloock.com";
-        config_repo.set_api_host(String::from(host));
-        assert_eq!(config_repo.get_config().host, host)
+        assert!(config_repo.set_api_host(String::from(host)).is_ok());
+        assert_eq!(config_repo.get_config().unwrap().host, host)
     }
 }

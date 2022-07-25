@@ -1,12 +1,9 @@
 use std::{
-    thread,
+    error, thread,
     time::{Duration, SystemTime},
 };
 
-use crate::{
-    anchor::repository::AnchorRepository, config::service::ConfigService,
-    infrastructure::InfrastructureError,
-};
+use crate::{anchor::repository::AnchorRepository, config::service::ConfigService};
 
 #[cfg(test)]
 use mockall::automock;
@@ -15,8 +12,8 @@ use super::{entity::anchor::Anchor, AnchorError};
 
 #[cfg_attr(test, automock)]
 pub trait AnchorService {
-    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, InfrastructureError>;
-    fn wait_anchor(&self, anchor_id: i32, timeout: u64) -> Result<Anchor, AnchorError>;
+    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, Box<dyn error::Error>>;
+    fn wait_anchor(&self, anchor_id: i32, timeout: u64) -> Result<Anchor, Box<dyn error::Error>>;
 }
 
 pub struct AnchorServiceImpl<A: AnchorRepository, C: ConfigService> {
@@ -29,19 +26,20 @@ where
     A: AnchorRepository,
     C: ConfigService,
 {
-    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, InfrastructureError> {
+    fn get_anchor(&self, anchor_id: i32) -> Result<Anchor, Box<dyn error::Error>> {
         self.anchor_repository.get_anchor(anchor_id)
     }
 
-    fn wait_anchor(&self, anchor_id: i32, timeout: u64) -> Result<Anchor, AnchorError> {
+    fn wait_anchor(&self, anchor_id: i32, timeout: u64) -> Result<Anchor, Box<dyn error::Error>> {
+        let config = match self.config_service.get_config() {
+            Ok(config) => config,
+            Err(e) => return Err(e).map_err(|e| e.into()),
+        };
+
         let mut attempts = 0;
         let start = SystemTime::now();
-        let mut next_try = start
-            + Duration::from_millis(
-                self.config_service
-                    .get_config()
-                    .wait_message_interval_default as u64,
-            );
+        let mut next_try =
+            start + Duration::from_millis(config.wait_message_interval_default as u64);
 
         let timeout_time = start + Duration::from_millis(timeout);
 
@@ -53,7 +51,7 @@ where
             }
             let mut current_time = SystemTime::now();
             if current_time > timeout_time {
-                return Err(AnchorError::AnchorTimeout());
+                return Err(AnchorError::AnchorTimeout()).map_err(|e| e.into());
             }
 
             thread::sleep(Duration::from_millis(1000));
@@ -65,19 +63,12 @@ where
             }
 
             if current_time >= timeout_time {
-                return Err(AnchorError::AnchorTimeout());
+                return Err(AnchorError::AnchorTimeout()).map_err(|e| e.into());
             }
 
             next_try += Duration::from_millis(
-                (attempts
-                    * self
-                        .config_service
-                        .get_config()
-                        .wait_message_interval_factor
-                    + self
-                        .config_service
-                        .get_config()
-                        .wait_message_interval_default) as u64,
+                (attempts * config.wait_message_interval_factor
+                    + config.wait_message_interval_default) as u64,
             );
             attempts += 1;
         }
@@ -159,13 +150,14 @@ mod test {
                 retry_counter += 1;
                 return Err(InfrastructureError::HttpClientApiError(String::from(
                     "Anchor not ready yet",
-                )));
+                )))
+                .map_err(|e| e.into());
             }
             Ok(anchor.clone())
         });
 
         let mut config_service_mock = config::configure_service_test();
-        config_service_mock.expect_get_config().return_const(config);
+        config_service_mock.expect_get_config().return_const(Ok(config));
 
         let anchor_service = AnchorServiceImpl {
             anchor_repository: anchor_repo_mock,
@@ -174,7 +166,7 @@ mod test {
 
         match anchor_service.wait_anchor(anchor_id, 1) {
             Ok(_) => panic!("Wait anchor should've timed out"),
-            Err(e) => assert_eq!(e, AnchorError::AnchorTimeout()),
+            Err(e) => assert_eq!(e.to_string(), AnchorError::AnchorTimeout().to_string()),
         }
     }
 
@@ -197,18 +189,21 @@ mod test {
         config.wait_message_interval_factor = 0;
 
         let mut config_service_mock = config::configure_service_test();
-        config_service_mock.expect_get_config().return_const(config);
+        config_service_mock.expect_get_config().return_const(Ok(config));
 
         let mut anchor_repo_mock = anchor::configure_repository_test();
-        anchor_repo_mock.expect_get_anchor().times(max_retries + 1).returning(move |_| {
-            if retry_counter < max_retries {
-                retry_counter += 1;
-                return Err(InfrastructureError::HttpClientApiError(String::from(
-                    "Anchor not ready yet",
-                )));
-            }
-            Ok(anchor.clone())
-        });
+        anchor_repo_mock
+            .expect_get_anchor()
+            .times(max_retries + 1)
+            .returning(move |_| {
+                if retry_counter < max_retries {
+                    retry_counter += 1;
+                    return Err(InfrastructureError::HttpClientApiError(String::from(
+                        "Anchor not ready yet",
+                    ))).map_err(|e| e.into());
+                }
+                Ok(anchor.clone())
+            });
 
         let anchor_service = AnchorServiceImpl {
             anchor_repository: anchor_repo_mock,

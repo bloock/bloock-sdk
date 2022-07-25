@@ -3,18 +3,21 @@ use crate::config::repository::ConfigRepository;
 #[cfg(test)]
 use mockall::automock;
 
-use super::entity::{
-    config::{Configuration, NetworkConfiguration},
-    network::Network,
+use super::{
+    entity::{
+        config::{Configuration, NetworkConfiguration},
+        network::Network,
+    },
+    ConfigError,
 };
 
 #[cfg_attr(test, automock)]
 pub trait ConfigService {
-    fn get_config(&self) -> Configuration;
-    fn get_api_base_url(&self) -> String;
-    fn set_api_host(&mut self, host: String);
-    fn get_network_config(&self, network: Network) -> NetworkConfiguration;
-    fn set_network_config(&mut self, network: Network, config: NetworkConfiguration);
+    fn get_config(&self) -> Result<Configuration, ConfigError>;
+    fn get_api_base_url(&self) -> Result<String, ConfigError>;
+    fn set_api_host(&mut self, host: String) -> Result<(), ConfigError> ;
+    fn get_network_config(&self, network: Network) -> Result<NetworkConfiguration, ConfigError>;
+    fn set_network_config(&mut self, network: Network, config: NetworkConfiguration) -> Result<(), ConfigError>;
 }
 
 pub struct ConfigServiceImpl<A: ConfigRepository> {
@@ -25,23 +28,26 @@ impl<A> ConfigService for ConfigServiceImpl<A>
 where
     A: ConfigRepository,
 {
-    fn get_config(&self) -> Configuration {
+    fn get_config(&self) -> Result<Configuration, ConfigError> {
         self.config_repository.get_config()
     }
 
-    fn get_api_base_url(&self) -> String {
-        self.config_repository.get_config().host.clone()
+    fn get_api_base_url(&self) -> Result<String, ConfigError> {
+        match self.config_repository.get_config() {
+            Ok(config) => Ok(config.host.clone()),
+            Err(e) => Err(e),
+        }
     }
 
-    fn set_api_host(&mut self, host: String) {
-        self.config_repository.set_api_host(host);
+    fn set_api_host(&mut self, host: String) -> Result<(), ConfigError> {
+        self.config_repository.set_api_host(host)
     }
 
-    fn get_network_config(&self, network: Network) -> NetworkConfiguration {
+    fn get_network_config(&self, network: Network) -> Result<NetworkConfiguration, ConfigError> {
         self.config_repository.get_network_config(network)
     }
 
-    fn set_network_config(&mut self, network: Network, config: NetworkConfiguration) {
+    fn set_network_config(&mut self, network: Network, config: NetworkConfiguration) -> Result<(), ConfigError> {
         self.config_repository.set_network_config(network, config)
     }
 }
@@ -61,9 +67,9 @@ mod tests {
             .config_repository
             .expect_get_config()
             .times(1)
-            .return_const(Configuration::default());
+            .return_const(Ok(Configuration::default()));
 
-        assert_eq!(config_service.get_config(), Configuration::default());
+        assert_eq!(config_service.get_config().unwrap(), Configuration::default());
     }
 
     #[test]
@@ -78,9 +84,9 @@ mod tests {
             .config_repository
             .expect_get_config()
             .times(1)
-            .return_const(config);
+            .return_const(Ok(config));
 
-        assert_eq!(config_service.get_api_base_url(), "test")
+        assert_eq!(config_service.get_api_base_url().unwrap(), "test")
     }
 
     #[test]
@@ -94,8 +100,8 @@ mod tests {
             .config_repository
             .expect_set_api_host()
             .times(1)
-            .return_const(());
+            .return_const(Ok(()));
 
-        config_service.set_api_host(host);
+        assert!(config_service.set_api_host(host).is_ok());
     }
 }
