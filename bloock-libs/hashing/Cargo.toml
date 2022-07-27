@@ -1,0 +1,21 @@
+[package]
+name = "bloock-hashing"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+bench = false
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+hex = "0.4.3"
+thiserror = "1.0.31"
+
+[dependencies.tiny-keccak]
+version = "2.0.2"
+features = ["keccak"]
+
+[dev-dependencies]
+mockall = "0.9.1"
+
+[features]
