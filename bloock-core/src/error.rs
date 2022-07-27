@@ -1,5 +1,6 @@
 use crate::anchor::AnchorError;
 use crate::config::ConfigError;
+use crate::record::RecordError;
 use bloock_http::HttpError;
 use std::fmt;
 
@@ -14,6 +15,8 @@ pub enum ErrorKind {
     Config(#[from] ConfigError),
     #[error("Anchor error: {0}")]
     Anchor(#[from] AnchorError),
+    #[error("Record error: {0}")]
+    Record(#[from] RecordError),
     #[error("Infrastructure error: {0}")]
     Infrastructure(#[from] InfrastructureError),
     #[error("Operational error: {0}")]
@@ -61,6 +64,8 @@ pub enum OperationalError {
     Serialization(String),
     #[error("We hit an unexpected error.")]
     Unknown,
+    #[error("Decoding error: {0}")]
+    Decoding(String),
 }
 
 impl From<OperationalError> for BloockError {

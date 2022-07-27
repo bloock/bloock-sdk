@@ -1,11 +1,11 @@
 use crate::anchor;
 use crate::anchor::entity::anchor::Anchor;
 use crate::anchor::service::AnchorService;
+use crate::config;
 use crate::config::config_data::ConfigData;
 use crate::config::entity::config::NetworkConfiguration;
 use crate::config::entity::network::Network;
 use crate::config::service::ConfigService;
-use crate::config::{self, ConfigError};
 use crate::error::BloockResult;
 use crate::proof;
 use crate::proof::service::ProofService;
@@ -39,7 +39,7 @@ impl BloockClient {
     }
 
     pub async fn send_records(&self, records: Vec<Record>) -> BloockResult<Vec<RecordReceipt>> {
-        Ok(records.iter().map(|_| RecordReceipt::default()).collect())
+        self.record_service.send_records(records).await
     }
 
     pub async fn get_anchor(&self, anchor_id: i64) -> BloockResult<Anchor> {
@@ -58,7 +58,7 @@ pub fn configure(api_key: String) -> BloockClient {
     return BloockClient {
         anchor_service: anchor::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         config_service: config::configure(Arc::clone(&config_data)),
-        record_service: record::configure(Arc::clone(&http_client)),
+        record_service: record::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         proof_service: proof::configure(Arc::clone(&http_client)),
         http_client: Arc::clone(&http_client),
     };

@@ -5,7 +5,7 @@ use crate::error::InfrastructureError;
 use bloock_http::Client;
 use std::sync::Arc;
 use std::{
-    error, thread,
+    thread,
     time::{Duration, SystemTime},
 };
 
