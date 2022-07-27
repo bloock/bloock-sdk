@@ -1,0 +1,30 @@
+[package]
+name = "bloock-http"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+bench = false
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde = { version = "1.0.123", features = ["std", "derive"] }
+serde_json = "1.0.82"
+thiserror = "1.0.31"
+tokio = { version = "1.19.2", optional = true, features = ["macros"] }
+async-trait = "0.1.56"
+mockall = { version = "0.11.2", optional = true }
+
+[dependencies.reqwest]
+version = "0.11.11"
+default-features = false
+features = ["json"]
+ 
+[dev-dependencies]
+mockall = "0.11.2"
+wasm-bindgen-test = "0.3.31"
+
+[features]
+default = ["reqwest/rustls-tls", "tokio"]
+wasm = []
+testing = ["mockall"]

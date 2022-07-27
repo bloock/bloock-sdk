@@ -1,0 +1,5 @@
+**/bloock_wasm_api.*
+**/bloock_wasm_api_bg.*
+node_modules
+docs
+dist

@@ -1,0 +1,23 @@
+[package]
+name = "bloock-web3"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+bench = false
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+thiserror = "1.0.31"
+hex = "0.4.3"
+getrandom = { version="0.2.7", features=["js"] }
+web3 = { version = "0.18.0", default-features = false, optional = true }
+tokio = { version = "1.19.2", optional = true, features = ["macros"] }
+
+[dev-dependencies]
+mockall = "0.11.1"
+wasm-bindgen-test = "0.3.31"
+
+[features]
+default = ["web3", "web3/http-rustls-tls", "tokio"]
+wasm = ["web3", "web3/http", "web3/wasm"]

@@ -1,0 +1,23 @@
+[package]
+name = "bloock-wasm-api"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+bench = false
+
+[dependencies]
+console_error_panic_hook = "0.1.6"
+js-sys = "0.3.53"
+bloock-core = { path = "../bloock-core", default-features = false, version = "=0.1.0", features = ["wasm"] }
+serde = { version = "1.0.119", features = ["rc"] }
+serde-wasm-bindgen = "0.4.3"
+wasm-bindgen = "0.2.81"
+wasm-bindgen-futures = "0.4.32"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.26"
+
+[features]
+default = []

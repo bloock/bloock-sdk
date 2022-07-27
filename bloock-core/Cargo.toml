@@ -1,0 +1,30 @@
+[package]
+name = "bloock-core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+bench = false
+
+[dependencies]
+serde = { version = "1.0.139", features = ["std", "derive"] }
+thiserror = "1.0.31"
+serde_json = "1.0.82"
+strum_macros = "0.24.2"
+cfg-if = "1.0.0"
+bloock-hashing = { path = "../bloock-libs/hashing", version = "=0.1.0" }
+bloock-http = { path = "../bloock-libs/http", default-features = false, version = "=0.1.0" }
+bloock-web3 = { path = "../bloock-libs/web3", default-features = false, version = "=0.1.0" }
+
+[dev-dependencies]
+mockall = "0.11.1"
+tokio = "1.20.1"
+
+[dev-dependencies.bloock-http]
+path = "../bloock-libs/http"
+version = "=0.1.0"
+features = ["testing"]
+
+[features]
+default = ["bloock-http/default", "bloock-web3/default"]
+wasm = ["bloock-http/wasm", "bloock-web3/wasm"]
