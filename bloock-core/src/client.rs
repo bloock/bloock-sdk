@@ -42,6 +42,10 @@ impl BloockClient {
         self.record_service.send_records(records).await
     }
 
+    pub async fn get_records(&self, records: Vec<Record>) -> BloockResult<Vec<RecordReceipt>> {
+        self.record_service.get_records(records).await
+    }
+
     pub async fn get_anchor(&self, anchor_id: i64) -> BloockResult<Anchor> {
         self.anchor_service.get_anchor(anchor_id).await
     }

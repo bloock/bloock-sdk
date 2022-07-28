@@ -129,7 +129,6 @@ mod test {
             status: String::from("Success"),
         };
 
-        let mut retry_counter = 0;
         let max_retries = 3;
 
         let http = Arc::new(MockClient::default());
@@ -152,8 +151,6 @@ mod test {
         };
 
         let expected_anchor = anchor.clone();
-
-        let mut retry_counter = 0;
 
         let mut config = Configuration::default();
         config.wait_message_interval_default = 1;
