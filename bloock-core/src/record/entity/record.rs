@@ -33,11 +33,7 @@ impl Record {
         }
     }
 
-    pub fn from_typed_array(_src: &[u8]) -> Self {
-        todo!()
-    }
-
-    pub fn from_uint8_array(src: &[u8]) -> Self {
+    pub fn from_typed_array(src: &[u8]) -> Self {
         Self {
             hash: Self::HASHING_ALGORITHM.generate_hash(src),
         }
@@ -94,7 +90,7 @@ mod tests {
             17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
         ];
         assert_eq!(
-            Record::from_uint8_array(array).get_hash(),
+            Record::from_typed_array(array).get_hash(),
             "e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994a5".to_string()
         );
     }
