@@ -43,6 +43,14 @@ impl Record {
         }
     }
 
+    pub fn from_pdf(_src: &[u8]) -> Self {
+        todo!()
+    }
+
+    pub fn from_json(_src: &str) -> Self {
+        todo!()
+    }
+
     pub fn get_hash(&self) -> String {
         self.hash.clone()
     }
@@ -56,5 +64,52 @@ impl Record {
             Ok(bytes) => Ok(bytes),
             Err(e) => Err(OperationalError::Decoding(e.to_string()).into()),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::record::entity::record::Record;
+
+    #[test]
+    fn test_from_hash() {
+        let hash = "test_hash";
+        assert_eq!(Record::from_hash(hash).get_hash(), hash)
+    }
+
+    #[test]
+    fn test_from_string() {
+        let str = "testing keccak";
+        assert_eq!(
+            Record::from_string(str).get_hash(),
+            "7e5e383e8e70e55cdccfccf40dfc5d4bed935613dffc806b16b4675b555be139".to_string()
+        )
+    }
+
+    #[test]
+    fn test_from_uint8() {
+        let array = &[
+            16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+            16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+            17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+        ];
+        assert_eq!(
+            Record::from_uint8_array(array).get_hash(),
+            "e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994a5".to_string()
+        );
+    }
+
+    #[test]
+    fn test_is_valid_ok() {
+        let record =
+            Record::from_hash("1010101010101010101010101010101010101010101010101010101010101010");
+        assert!(record.is_valid());
+    }
+
+    #[test]
+    fn test_is_valid_wrong_char() {
+        let record =
+            Record::from_hash("G010101010101010101010101010101010101010101010101010101010101010");
+        assert!(record.is_valid() == false);
     }
 }

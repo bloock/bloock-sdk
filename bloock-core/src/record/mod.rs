@@ -3,7 +3,7 @@ use bloock_http::HttpClient;
 use bloock_http::MockClient;
 use serde::Serialize;
 use std::sync::{Arc, Mutex};
-use thiserror::Error as ThisError;
+use thiserror::Error;
 
 use crate::{
     config::{self, config_data::ConfigData},
@@ -13,7 +13,7 @@ use crate::{
 pub mod entity;
 pub mod service;
 
-#[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
+#[derive(Error, Debug, PartialEq, Eq, Clone, Serialize)]
 pub enum RecordError {
     #[error("Invalid record")]
     InvalidRecord(),
