@@ -36,12 +36,9 @@ pub fn configure(
 }
 
 #[cfg(test)]
-pub fn configure_test(
-    http: Arc<MockClient>,
-    config_data: Arc<Mutex<ConfigData>>,
-) -> service::RecordService<MockClient> {
+pub fn configure_test(http: Arc<MockClient>) -> service::RecordService<MockClient> {
     return service::RecordService {
         http: Arc::clone(&http),
-        config_service: config::configure(Arc::clone(&config_data)),
+        config_service: config::configure_test(),
     };
 }
