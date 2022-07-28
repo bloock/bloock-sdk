@@ -67,48 +67,6 @@ impl<H: Client> RecordService<H> {
             })
             .collect())
     }
-
-    pub async fn get_records(&self, records: Vec<Record>) -> BloockResult<Vec<RecordReceipt>> {
-        if records.is_empty() {
-            return Ok(vec![]);
-        }
-
-        if records.iter().any(|record| !record.is_valid()) {
-            return Err(RecordError::InvalidRecord().into());
-        }
-
-        let url = match self.config_service.get_api_base_url() {
-            Ok(base_url) => format!("{}/core/messages/fetch", base_url),
-            Err(e) => return Err(e).map_err(|e| e.into()),
-        };
-
-        let body = RecordRetrieveRequest {
-            messages: records.iter().map(|record| record.get_hash()).collect(),
-        };
-
-        let response = match self
-            .http
-            .post::<String, RecordRetrieveRequest, RecordRetrieveResponse>(url, body, None)
-            .await
-        {
-            Ok(res) => res,
-            Err(e) => {
-                return Err(
-                    InfrastructureError::Http(HttpError::RequestError(e.to_string())).into(),
-                )
-            }
-        };
-
-        Ok(records
-            .iter()
-            .map(|record| RecordReceipt {
-                anchor: response.anchor.clone(),
-                client: response.client.clone(),
-                record: record.get_hash(),
-                status: response.status.clone(),
-            })
-            .collect())
-    }
 }
 
 #[cfg(test)]
@@ -186,38 +144,5 @@ mod tests {
 
         assert!(result.is_err());
         assert_eq!(result, Err(RecordError::InvalidRecord().into()));
-    }
-
-    #[tokio::test]
-    async fn test_get_records_ok() {
-        let response = RecordRetrieveResponse {
-            anchor: 80,
-            client: "ce10c769-022b-405e-8e7c-3b52eeb2a4ea".to_string(),
-            message: "02aae7e86eb50f61a62083a320475d9d60cbd52749dbf08fa942b1b97f50aee5a"
-                .to_string(),
-            status: "Pending".to_string(),
-        };
-
-        let expected = response.clone();
-
-        let mut http = MockClient::default();
-        http.expect_post::<String, RecordRetrieveRequest, RecordRetrieveResponse>()
-            .return_once(|_, _, _| Ok(response));
-
-        let record_service = configure_test(Arc::new(http));
-        let result = record_service
-            .get_records(Vec::from([Record::from_hash(
-                "02aae7e86eb50f61a62083a320475d9d60cbd52749dbf08fa942b1b97f50aee5",
-            )]))
-            .await
-            .unwrap();
-
-        assert_eq!(result[0].anchor, expected.anchor);
-        assert_eq!(result[0].client, expected.client);
-        assert_eq!(
-            result[0].record,
-            "02aae7e86eb50f61a62083a320475d9d60cbd52749dbf08fa942b1b97f50aee5"
-        );
-        assert_eq!(result[0].status, expected.status);
     }
 }
