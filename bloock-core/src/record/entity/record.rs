@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use bloock_hashing::hashing::{Hashing, Keccak256};
 use serde::{Deserialize, Serialize};
 
@@ -60,6 +62,26 @@ impl Record {
             Ok(bytes) => Ok(bytes),
             Err(e) => Err(OperationalError::Decoding(e.to_string()).into()),
         }
+    }
+}
+
+impl PartialEq for Record {
+    fn eq(&self, other: &Self) -> bool {
+        self.hash == other.hash
+    }
+}
+
+impl Eq for Record {}
+
+impl PartialOrd for Record {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.hash.partial_cmp(&other.hash)
+    }
+}
+
+impl Ord for Record {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.hash.cmp(&other.hash)
     }
 }
 
