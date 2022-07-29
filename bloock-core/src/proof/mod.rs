@@ -16,6 +16,8 @@ pub enum ProofError {
     InvalidNumberOfRecords(),
     #[error("Invalid signature")]
     InvalidSignature(),
+    #[error("Blockchain Error")]
+    BlockchainError(),
 }
 
 impl From<ProofError> for BloockError {

@@ -69,6 +69,8 @@ pub enum OperationalError {
     Unknown,
     #[error("Decoding error: {0}")]
     Decoding(String),
+    #[error("Invalid Hash")]
+    InvalidHash(),
 }
 
 impl From<OperationalError> for BloockError {
