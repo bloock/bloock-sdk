@@ -12,6 +12,7 @@ thiserror = "1.0.31"
 serde_json = "1.0.82"
 strum_macros = "0.24.2"
 cfg-if = "1.0.0"
+hex = "0.4.3"
 bloock-hashing = { path = "../bloock-libs/hashing", version = "=0.1.0" }
 bloock-http = { path = "../bloock-libs/http", default-features = false, version = "=0.1.0" }
 bloock-web3 = { path = "../bloock-libs/web3", default-features = false, version = "=0.1.0" }

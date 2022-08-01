@@ -1,14 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct RecordReceipt {
-    pub hash: String,
-}
-
-impl Default for RecordReceipt {
-    fn default() -> Self {
-        RecordReceipt {
-            hash: String::from("1234"),
-        }
-    }
+    pub anchor: i32,
+    pub client: String,
+    pub record: String,
+    pub status: String,
 }
