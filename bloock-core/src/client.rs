@@ -59,7 +59,7 @@ pub fn configure(api_key: String) -> BloockClient {
         anchor_service: anchor::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         config_service: config::configure(Arc::clone(&config_data)),
         record_service: record::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
-        proof_service: proof::configure(Arc::clone(&http_client)),
+        proof_service: proof::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         http_client: Arc::clone(&http_client),
     };
 }

@@ -1,4 +1,5 @@
 use bitvec::prelude::BitVec;
+use bloock_hashing::hashing::Keccak256;
 use bloock_http::{Client, HttpError};
 use bloock_web3::blockchain::Blockchain;
 use hex::FromHexError;
@@ -17,6 +18,8 @@ use super::{
     entity::{dto::proof_retrieve_request::ProofRetrieveRequest, proof::Proof},
     ProofError,
 };
+
+pub type H256 = [u8; 32];
 
 pub struct ProofService<H: Client> {
     pub http: Arc<H>,
@@ -89,42 +92,30 @@ impl<H: Client> ProofService<H> {
     }
 
     fn verify_proof(&self, proof: Proof) -> BloockResult<Record> {
-        let leaves = match proof
-            .leaves
-            .iter()
-            .map(|leaf| Ok(Record::from_hash(leaf).get_uint8_array_hash()?))
-            .collect::<BloockResult<Vec<Vec<u8>>>>()
-        {
+        let leaves = match self.get_leaves(&proof) {
             Ok(leaves) => leaves,
-            Err(e) => return Err(OperationalError::InvalidHash().into()),
+            Err(e) => return Err(e),
         };
 
-        let hashes = match proof
-            .nodes
-            .iter()
-            .map(|node| hex::decode(node))
-            .collect::<Result<Vec<Vec<u8>>, FromHexError>>()
-        {
+        let hashes = match self.get_hashes(&proof) {
             Ok(hashes) => hashes,
-            Err(e) => return Err(OperationalError::InvalidHash().into()),
+            Err(e) => return Err(e),
         };
 
         let depth = Vec::<u16>::new();
 
         let bitmap = match hex::decode(proof.bitmap) {
-            Ok(bitmap) => BitVec::<u8>::from_vec(bitmap).as_bitslice(),
-            Err(_) => return Err(OperationalError::InvalidHash().into()),
+            Ok(bitmap) => BitVec::<u8>::from_vec(bitmap),
+            Err(_) => return Err(OperationalError::InvalidBitmap().into()),
         };
 
         let mut it_leaves: usize = 0;
         let mut it_hashes: usize = 0;
-        let mut stack: Vec<(Vec<u8>, isize)> = Vec::new();
+        let mut stack: Vec<(H256, isize)> = Vec::new();
 
         while it_hashes < hashes.len() || it_leaves < leaves.len() {
             let mut act_depth = match depth.get(it_hashes + it_leaves) {
                 Some(x) => *x,
-                // TODO Define a specific error
-                // TODO Define a specific error
                 // TODO Define a specific error
                 None => return Err(ProofError::InvalidSignature().into()),
             };
@@ -135,8 +126,6 @@ impl<H: Client> ProofService<H> {
                         match leaves.get(it_leaves - 1) {
                             Some(l) => *l,
                             // TODO Define a specific error
-                            // TODO Define a specific error
-                            // TODO Define a specific error
                             None => return Err(ProofError::InvalidSignature().into()),
                         }
                     }
@@ -145,34 +134,48 @@ impl<H: Client> ProofService<H> {
                         match hashes.get(it_hashes - 1) {
                             Some(l) => *l,
                             // TODO Define a specific error
-                            // TODO Define a specific error
-                            // TODO Define a specific error
                             None => return Err(ProofError::InvalidSignature().into()),
                         }
                     }
                 },
                 // TODO Define a specific error
-                // TODO Define a specific error
-                // TODO Define a specific error
                 None => return Err(ProofError::InvalidSignature().into()),
             };
-            // while !stack.is_empty() && stack[stack.len() - 1].1 == act_depth as isize {
-            //     let last_hash = stack.pop().unwrap();
-            //     act_hash = match H::merge(&last_hash.0, &act_hash) {
-            //         Ok(h) => h,
-            //         Err(_) => return false,
-            //     };
-            //     act_depth -= 1;
-            // }
+            while !stack.is_empty() && stack[stack.len() - 1].1 == act_depth as isize {
+                let last_hash = stack.pop().unwrap();
+                act_hash = match Keccak256::merge(&last_hash.0, &act_hash) {
+                    Ok(h) => h,
+                    Err(_) => return Err(OperationalError::MergeError().into()),
+                };
+                act_depth -= 1;
+            }
             stack.push((act_hash, act_depth as isize));
         }
-        // (root
-        //     == match &stack.get(0) {
-        //         Some(r) => &r.0,
-        //         None => return false,
-        //     })
-        //     && (root == &self.root)
-        todo!()
+        match &stack.get(0) {
+            Some(r) => Ok(Record::from_hash(&hex::encode(&r.0))),
+            None => Err(ProofError::InvalidSignature().into()),
+        }
+    }
+
+    fn get_leaves(&self, proof: &Proof) -> BloockResult<Vec<H256>> {
+        proof
+            .leaves
+            .iter()
+            .map(|leaf| Ok(Record::from_hash(leaf).get_uint8_array_hash()?))
+            .collect::<BloockResult<Vec<H256>>>()
+    }
+
+    fn get_hashes(&self, proof: &Proof) -> BloockResult<Vec<H256>> {
+        proof
+            .nodes
+            .iter()
+            .map(|node| match hex::decode(node) {
+                Ok(node) => node
+                    .try_into()
+                    .map_err(|_| OperationalError::InvalidHash().into()),
+                Err(_) => Err(OperationalError::InvalidHash().into()),
+            })
+            .collect::<BloockResult<Vec<H256>>>()
     }
 
     async fn validate_root(&self, root: Record, network: Network) -> BloockResult<u128> {
@@ -187,7 +190,7 @@ impl<H: Client> ProofService<H> {
             .await
         {
             Ok(state) => Ok(state),
-            Err(e) => Err(ProofError::BlockchainError().into()),
+            Err(_) => Err(ProofError::BlockchainError().into()),
         }
     }
 

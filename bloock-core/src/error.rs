@@ -71,6 +71,10 @@ pub enum OperationalError {
     Decoding(String),
     #[error("Invalid Hash")]
     InvalidHash(),
+    #[error("Invalid bitmap")]
+    InvalidBitmap(),
+    #[error("Could not merge hashes")]
+    MergeError(),
 }
 
 impl From<OperationalError> for BloockError {

@@ -3,7 +3,7 @@ use std::cmp::Ordering;
 use bloock_hashing::hashing::{Hashing, Keccak256};
 use serde::{Deserialize, Serialize};
 
-use crate::error::{BloockResult, OperationalError};
+use crate::{error::{BloockResult, OperationalError}, proof::service::H256};
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Record {
@@ -57,9 +57,11 @@ impl Record {
         self.hash.len() == 64 && hex::decode(&self.hash).is_ok()
     }
 
-    pub fn get_uint8_array_hash(&self) -> BloockResult<Vec<u8>> {
+    pub fn get_uint8_array_hash(&self) -> BloockResult<H256> {
         match hex::decode(&self.hash) {
-            Ok(bytes) => Ok(bytes),
+            Ok(bytes) => bytes
+                .try_into()
+                .map_err(|_| OperationalError::InvalidHash().into()),
             Err(e) => Err(OperationalError::Decoding(e.to_string()).into()),
         }
     }
