@@ -2,13 +2,10 @@ use std::convert::{TryFrom, TryInto};
 use tiny_keccak::Hasher;
 pub use tiny_keccak::Keccak;
 
-use crate::hashing::Keccak256;
+use crate::hashing::{Keccak256, H256};
 
 impl Keccak256 {
-    pub fn merge(
-        left: &[u8; 32],
-        right: &[u8; 32],
-    ) -> Result<[u8; 32], <[u8; 32] as TryFrom<Vec<u8>>>::Error> {
+    pub fn merge(left: &H256, right: &H256) -> Result<H256, <H256 as TryFrom<Vec<u8>>>::Error> {
         let mut hasher = Keccak::v256();
         hasher.update(left);
         hasher.update(right);

@@ -1,5 +1,5 @@
 use bitvec::prelude::BitVec;
-use bloock_hashing::hashing::Keccak256;
+use bloock_hashing::hashing::{Keccak256, H256};
 use bloock_http::{Client, HttpError};
 use bloock_web3::blockchain::Blockchain;
 use hex::FromHexError;
@@ -18,8 +18,6 @@ use super::{
     entity::{dto::proof_retrieve_request::ProofRetrieveRequest, proof::Proof},
     ProofError,
 };
-
-pub type H256 = [u8; 32];
 
 pub struct ProofService<H: Client> {
     pub http: Arc<H>,

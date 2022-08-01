@@ -1,9 +1,9 @@
 use std::cmp::Ordering;
 
-use bloock_hashing::hashing::{Hashing, Keccak256};
+use bloock_hashing::hashing::{Hashing, Keccak256, H256};
 use serde::{Deserialize, Serialize};
 
-use crate::{error::{BloockResult, OperationalError}, proof::service::H256};
+use crate::error::{BloockResult, OperationalError};
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Record {
