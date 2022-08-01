@@ -18,10 +18,12 @@ pub mod service;
 pub enum ProofError {
     #[error("Invalid number of records")]
     InvalidNumberOfRecords(),
-    #[error("Invalid signature")]
-    InvalidSignature(),
     #[error("Blockchain Error")]
     BlockchainError(),
+    #[error("Invalid depth")]
+    InvalidDepth(),
+    #[error("Invalid bitmap")]
+    InvalidBitmap(),
 }
 
 impl From<ProofError> for BloockError {
