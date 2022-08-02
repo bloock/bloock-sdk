@@ -195,11 +195,11 @@ impl<H: Client> ProofService<H> {
 
         match self
             .blockchain_client
-            .validate_state(config.http_provider, "".to_string(), root.get_hash())
+            .validate_state(config.http_provider, config.contract_address, root.get_hash())
             .await
         {
             Ok(state) => Ok(state),
-            Err(_) => Err(ProofError::BlockchainError().into()),
+            Err(e) => Err(ProofError::BlockchainError(e.to_string()).into()),
         }
     }
 }

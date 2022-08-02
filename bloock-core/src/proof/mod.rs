@@ -18,8 +18,8 @@ pub mod service;
 pub enum ProofError {
     #[error("Invalid number of records")]
     InvalidNumberOfRecords(),
-    #[error("Blockchain Error")]
-    BlockchainError(),
+    #[error("Blockchain Error - {0}")]
+    BlockchainError(String),
     #[error("Invalid depth")]
     InvalidDepth(),
     #[error("Invalid bitmap")]
