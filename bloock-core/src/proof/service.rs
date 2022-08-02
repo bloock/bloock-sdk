@@ -19,6 +19,7 @@ use crate::{
     },
     error::{BloockResult, InfrastructureError, OperationalError},
     record::{entity::record::Record, RecordError},
+    shared::util,
 };
 
 use super::{
@@ -111,15 +112,8 @@ impl<H: Client> ProofService<H> {
             return Err(ProofError::InvalidDepth().into());
         }
 
-        let depth: Vec<u16> = match hex::decode(proof.depth) {
-            Ok(bytes) => {
-                // TODO Move to util for re-useability?
-                let mut result = vec![0; bytes.len() / 2];
-                for i in (1..result.len()) {
-                    result[i] = bytes[i * 2 + 1] as u16 + ((bytes[i * 2] as u16) << 8);
-                }
-                result
-            }
+        let depth: Vec<u16> = match util::hex_to_u16(proof.depth) {
+            Ok(bytes) => bytes,
             Err(_) => return Err(ProofError::InvalidDepth().into()),
         };
 
@@ -132,7 +126,6 @@ impl<H: Client> ProofService<H> {
         let mut it_hashes: usize = 0;
         let mut stack: Vec<(H256, isize)> = Vec::new();
 
-        println!("depth: {:?}, bitmap: {:?}", depth, bitmap);
         while it_hashes < nodes.len() || it_leaves < leaves.len() {
             let mut act_depth = match depth.get(it_hashes + it_leaves) {
                 Some(x) => *x,
@@ -141,20 +134,12 @@ impl<H: Client> ProofService<H> {
             let mut act_hash = match bitmap.get(it_leaves + it_hashes) {
                 Some(b) => match *b {
                     true => {
-                        println!("Bit True => leaves: {}, hashes: {}", it_leaves, it_hashes);
                         it_hashes += 1;
-                        match nodes.get(it_hashes - 1) {
-                            Some(l) => *l,
-                            None => return Err(OperationalError::InvalidHash().into()),
-                        }
+                        nodes[it_hashes - 1]
                     }
                     false => {
-                        println!("Bit False => leaves: {}, hashes: {}", it_leaves, it_hashes);
                         it_leaves += 1;
-                        match leaves.get(it_leaves - 1) {
-                            Some(l) => *l,
-                            None => return Err(OperationalError::InvalidHash().into()),
-                        }
+                        leaves[it_leaves - 1]
                     }
                 },
                 None => return Err(ProofError::InvalidBitmap().into()),
