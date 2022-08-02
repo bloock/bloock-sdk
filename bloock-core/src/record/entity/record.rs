@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{BloockResult, OperationalError};
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Record {
     pub hash: String,
 }

@@ -1,10 +1,3 @@
-// TODO Re-enable warnings
-// TODO Re-enable warnings
-// TODO Re-enable warnings
-// TODO Re-enable warnings
-// TODO Re-enable warnings
-#![allow(unused)]
-
 use bitvec::{order::Msb0, prelude::BitVec};
 use bloock_hashing::hashing::{Keccak256, H256};
 use bloock_http::{Client, HttpError};
@@ -218,10 +211,10 @@ mod tests {
     use bloock_http::MockClient;
 
     use crate::{
-        anchor::entity::anchor::Anchor,
         proof::{
             configure_test,
             entity::{
+                anchor::ProofAnchor,
                 dto::{
                     proof_retrieve_request::ProofRetrieveRequest,
                     proof_retrieve_response::ProofRetrieveResponse,
@@ -231,8 +224,6 @@ mod tests {
         },
         record::entity::record::Record,
     };
-
-    use super::ProofService;
 
     #[tokio::test]
     async fn test_get_proof_success() {
@@ -249,9 +240,9 @@ mod tests {
             nodes: nodes.clone(),
             depth: "000400060006000500030002000400060007000800090009".to_string(),
             bitmap: "bfdf7000".to_string(),
-            anchor: Anchor {
-                id: 1,
-                block_roots: vec![],
+            root: "".to_string(),
+            anchor: ProofAnchor {
+                anchor_id: 1,
                 networks: vec![],
                 root: "".to_string(),
                 status: "pending".to_string(),
@@ -302,15 +293,14 @@ mod tests {
         let depth = "0004000400030004000400030001".to_string();
         let bitmap = "7600".to_string();
         let root = "a1fd8b878cee593a7debf12b5bcbf081a972bbec40e103c6d82197db2751ced7".to_string();
-        let anchor = Anchor {
-            id: 1,
-            block_roots: vec![],
+        let anchor = ProofAnchor {
+            anchor_id: 1,
             networks: vec![],
             root: "".to_string(),
             status: "pending".to_string(),
         };
 
-        let mut http = MockClient::default();
+        let http = MockClient::default();
         let service = configure_test(Arc::new(http));
         let result = service
             .verify_proof(Proof {
@@ -345,15 +335,14 @@ mod tests {
         let depth = "000500050004000400040004000400030001".to_string();
         let bitmap = "6d80".to_string();
         let root = "7e1f3c7e6d3515389b6117cc8c1ef5512d51c59743dc097c70de405a91861d2b".to_string();
-        let anchor = Anchor {
-            id: 1,
-            block_roots: vec![],
+        let anchor = ProofAnchor {
+            anchor_id: 1,
             networks: vec![],
             root: "".to_string(),
             status: "pending".to_string(),
         };
 
-        let mut http = MockClient::default();
+        let http = MockClient::default();
         let service = configure_test(Arc::new(http));
         let result = service
             .verify_proof(Proof {
@@ -370,19 +359,20 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_proof_keccak_3() {
-        let leaves = vec!["0000000000000000000000000000000000000000000000000000000000000000".to_string()];
-        let nodes = vec!["f49d70da1c2c8989766908e06b8d2277a6954ec8533696b9a404b631b0b7735a".to_string()];
+        let leaves =
+            vec!["0000000000000000000000000000000000000000000000000000000000000000".to_string()];
+        let nodes =
+            vec!["f49d70da1c2c8989766908e06b8d2277a6954ec8533696b9a404b631b0b7735a".to_string()];
         let depth = "00010001".to_string();
         let bitmap = "4000".to_string();
         let root = "5c67902dc31624d9278c286ef4ce469451d8f1d04c1edb29a5941ca0e03ddc8d".to_string();
-        let anchor = Anchor {
-            id: 1,
-            block_roots: vec![],
+        let anchor = ProofAnchor {
+            anchor_id: 1,
             networks: vec![],
             root: "".to_string(),
             status: "pending".to_string(),
         };
-        let mut http = MockClient::default();
+        let http = MockClient::default();
         let service = configure_test(Arc::new(http));
         let result = service
             .verify_proof(Proof {

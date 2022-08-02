@@ -1,4 +1,4 @@
-use crate::anchor::entity::anchor::Anchor;
+use crate::proof::entity::anchor::ProofAnchor;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct ProofRetrieveResponse {
@@ -6,5 +6,6 @@ pub struct ProofRetrieveResponse {
     pub nodes: Vec<String>,
     pub depth: String,
     pub bitmap: String,
-    pub anchor: Anchor,
+    pub anchor: ProofAnchor,
+    pub root: String,
 }

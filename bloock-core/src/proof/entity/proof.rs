@@ -1,4 +1,4 @@
-use crate::anchor::entity::anchor::Anchor;
+use super::anchor::ProofAnchor;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct Proof {
@@ -6,7 +6,7 @@ pub struct Proof {
     pub nodes: Vec<String>,
     pub depth: String,
     pub bitmap: String,
-    pub anchor: Anchor,
+    pub anchor: ProofAnchor,
 }
 
 impl Proof {
@@ -52,7 +52,7 @@ impl Proof {
 
 #[cfg(test)]
 mod tests {
-    use crate::anchor::entity::anchor::{Anchor, AnchorNetwork};
+    use crate::{anchor::entity::anchor::AnchorNetwork, proof::entity::anchor::ProofAnchor};
 
     use super::Proof;
 
@@ -64,9 +64,8 @@ mod tests {
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
         };
-        let anchor = Anchor {
-            id: 35554,
-            block_roots: vec!["".to_string()],
+        let anchor = ProofAnchor {
+            anchor_id: 35554,
             networks: vec![network],
             root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
             status: "Success".to_string(),
@@ -97,9 +96,8 @@ mod tests {
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
         };
-        let anchor = Anchor {
-            id: 35554,
-            block_roots: vec!["".to_string()],
+        let anchor = ProofAnchor {
+            anchor_id: 35554,
             networks: vec![network],
             root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
             status: "Success".to_string(),
@@ -126,9 +124,8 @@ mod tests {
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
         };
-        let anchor = Anchor {
-            id: 35554,
-            block_roots: vec!["".to_string()],
+        let anchor = ProofAnchor {
+            anchor_id: 35554,
             networks: vec![network],
             root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
             status: "Success".to_string(),
@@ -159,9 +156,8 @@ mod tests {
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
         };
-        let anchor = Anchor {
-            id: 35554,
-            block_roots: vec!["".to_string()],
+        let anchor = ProofAnchor {
+            anchor_id: 35554,
             networks: vec![network],
             root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
             status: "Success".to_string(),
@@ -192,9 +188,8 @@ mod tests {
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
         };
-        let anchor = Anchor {
-            id: 35554,
-            block_roots: vec!["".to_string()],
+        let anchor = ProofAnchor {
+            anchor_id: 35554,
             networks: vec![network],
             root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
             status: "Success".to_string(),
@@ -225,9 +220,8 @@ mod tests {
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
         };
-        let anchor = Anchor {
-            id: 35554,
-            block_roots: vec!["".to_string()],
+        let anchor = ProofAnchor {
+            anchor_id: 35554,
             networks: vec![network],
             root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
             status: "Success".to_string(),
@@ -258,9 +252,8 @@ mod tests {
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
         };
-        let anchor = Anchor {
-            id: 35554,
-            block_roots: vec!["".to_string()],
+        let anchor = ProofAnchor {
+            anchor_id: 35554,
             networks: vec![network],
             root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
             status: "Success".to_string(),
