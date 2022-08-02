@@ -40,7 +40,7 @@ pub struct ProofService<H: Client> {
 }
 
 impl<H: Client> ProofService<H> {
-    async fn get_proof(&self, mut records: Vec<Record>) -> BloockResult<Proof> {
+    pub async fn get_proof(&self, mut records: Vec<Record>) -> BloockResult<Proof> {
         if records.len() == 0 {
             return Err(ProofError::InvalidNumberOfRecords().into());
         }
@@ -82,7 +82,7 @@ impl<H: Client> ProofService<H> {
         })
     }
 
-    async fn verify_records(
+    pub async fn verify_records(
         &self,
         records: Vec<Record>,
         network: Option<Network>,
@@ -109,7 +109,7 @@ impl<H: Client> ProofService<H> {
         self.validate_root(root, network).await
     }
 
-    fn verify_proof(&self, proof: Proof) -> BloockResult<Record> {
+    pub fn verify_proof(&self, proof: Proof) -> BloockResult<Record> {
         let leaves = match self.get_leaves(&proof) {
             Ok(leaves) => leaves,
             Err(e) => return Err(e),
@@ -194,7 +194,7 @@ impl<H: Client> ProofService<H> {
             .collect::<BloockResult<Vec<H256>>>()
     }
 
-    async fn validate_root(&self, root: Record, network: Network) -> BloockResult<u128> {
+    pub async fn validate_root(&self, root: Record, network: Network) -> BloockResult<u128> {
         let config = match self.config_service.get_network_config(network) {
             Ok(config) => config,
             Err(e) => return Err(e),
