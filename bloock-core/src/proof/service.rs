@@ -23,7 +23,13 @@ use crate::{
 };
 
 use super::{
-    entity::{dto::proof_retrieve_request::ProofRetrieveRequest, proof::Proof},
+    entity::{
+        dto::{
+            proof_retrieve_request::ProofRetrieveRequest,
+            proof_retrieve_response::ProofRetrieveResponse,
+        },
+        proof::Proof,
+    },
     ProofError,
 };
 
@@ -54,9 +60,9 @@ impl<H: Client> ProofService<H> {
             messages: records.iter().map(|record| record.get_hash()).collect(),
         };
 
-        let proof = match self
+        let response = match self
             .http
-            .post::<String, ProofRetrieveRequest, Proof>(url, body, None)
+            .post::<String, ProofRetrieveRequest, ProofRetrieveResponse>(url, body, None)
             .await
         {
             Ok(res) => res,
@@ -67,7 +73,13 @@ impl<H: Client> ProofService<H> {
             }
         };
 
-        return Ok(proof);
+        Ok(Proof {
+            anchor: response.anchor,
+            leaves: response.leaves,
+            nodes: response.nodes,
+            depth: response.depth,
+            bitmap: response.bitmap,
+        })
     }
 
     async fn verify_records(
@@ -207,10 +219,70 @@ mod tests {
 
     use crate::{
         anchor::entity::anchor::Anchor,
-        proof::{configure_test, entity::proof::Proof},
+        proof::{
+            configure_test,
+            entity::{
+                dto::{
+                    proof_retrieve_request::ProofRetrieveRequest,
+                    proof_retrieve_response::ProofRetrieveResponse,
+                },
+                proof::Proof,
+            },
+        },
+        record::entity::record::Record,
     };
 
     use super::ProofService;
+
+    #[tokio::test]
+    async fn test_get_proof_success() {
+        let nodes = vec![
+            "bb6986853646d083929d1d92638f3d4741a3b7149bd2b63c6bfedd32e3c684d3".to_string(),
+            "0616067c793ac533815ae2d48d785d339e0330ce5bb5345b5e6217dd9d1dbeab".to_string(),
+            "68b8f6b25cc700e64ed3e3d33f2f246e24801f93d29786589fbbab3b11f5bcee".to_string(),
+        ];
+
+        let response = ProofRetrieveResponse {
+            leaves: vec![
+                "02aae7e86eb50f61a62083a320475d9d60cbd52749dbf08fa942b1b97f50aee5".to_string(),
+            ],
+            nodes: nodes.clone(),
+            depth: "000400060006000500030002000400060007000800090009".to_string(),
+            bitmap: "bfdf7000".to_string(),
+            anchor: Anchor {
+                id: 1,
+                block_roots: vec![],
+                networks: vec![],
+                root: "".to_string(),
+                status: "pending".to_string(),
+            },
+        };
+        let mut http = MockClient::default();
+        http.expect_post::<String, ProofRetrieveRequest, ProofRetrieveResponse>()
+            .return_once(|_, _, _| Ok(response));
+
+        let service = configure_test(Arc::new(http));
+        let final_response = service
+            .get_proof(vec![Record::from_hash(
+                "02aae7e86eb50f61a62083a320475d9d60cbd52749dbf08fa942b1b97f50aee5",
+            )])
+            .await
+            .unwrap();
+
+        assert_eq!(final_response.nodes, nodes);
+        assert_eq!(final_response.bitmap, "bfdf7000".to_string());
+        assert_eq!(
+            final_response.depth,
+            "000400060006000500030002000400060007000800090009".to_string()
+        );
+        assert_eq!(
+            final_response.leaves,
+            vec!["02aae7e86eb50f61a62083a320475d9d60cbd52749dbf08fa942b1b97f50aee5".to_string()]
+        );
+    }
+
+    #[tokio::test]
+    async fn test_verify_records_success() {}
 
     #[tokio::test]
     async fn test_verify_proof_keccak_1() {
@@ -232,7 +304,7 @@ mod tests {
         let root = "a1fd8b878cee593a7debf12b5bcbf081a972bbec40e103c6d82197db2751ced7".to_string();
         let anchor = Anchor {
             id: 1,
-            block_roots: vec!["".to_string()],
+            block_roots: vec![],
             networks: vec![],
             root: "".to_string(),
             status: "pending".to_string(),
