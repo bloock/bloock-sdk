@@ -1,5 +1,6 @@
 use crate::anchor::AnchorError;
 use crate::config::ConfigError;
+use crate::proof::ProofError;
 use crate::record::RecordError;
 use bloock_http::HttpError;
 use std::fmt;
@@ -17,6 +18,8 @@ pub enum ErrorKind {
     Anchor(#[from] AnchorError),
     #[error("Record error: {0}")]
     Record(#[from] RecordError),
+    #[error("Proof error: {0}")]
+    Proof(#[from] ProofError),
     #[error("Infrastructure error: {0}")]
     Infrastructure(#[from] InfrastructureError),
     #[error("Operational error: {0}")]
@@ -66,6 +69,10 @@ pub enum OperationalError {
     Unknown,
     #[error("Decoding error: {0}")]
     Decoding(String),
+    #[error("Invalid Hash")]
+    InvalidHash(),
+    #[error("Could not merge hashes")]
+    MergeError(),
 }
 
 impl From<OperationalError> for BloockError {

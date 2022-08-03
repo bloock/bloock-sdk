@@ -8,6 +8,7 @@ use crate::config::entity::network::Network;
 use crate::config::service::ConfigService;
 use crate::error::BloockResult;
 use crate::proof;
+use crate::proof::entity::proof::Proof;
 use crate::proof::service::ProofService;
 use crate::record;
 use crate::record::entity::record::Record;
@@ -49,6 +50,22 @@ impl BloockClient {
     pub async fn wait_anchor(&self, anchor_id: i64, timeout: i64) -> BloockResult<Anchor> {
         self.anchor_service.wait_anchor(anchor_id, timeout).await
     }
+
+    pub async fn get_proof(&self, records: Vec<Record>) -> BloockResult<Proof> {
+        self.proof_service.get_proof(records).await
+    }
+
+    pub async fn validate_root(&self, root: Record, network: Network) -> BloockResult<u128> {
+        self.proof_service.validate_root(root, network).await
+    }
+
+    pub fn verify_proof(&self, proof: Proof) -> BloockResult<Record> {
+        self.proof_service.verify_proof(proof)
+    }
+
+    pub async fn verify_records(&self, records: Vec<Record>, network: Option<Network>) -> BloockResult<u128> {
+        self.proof_service.verify_records(records, network).await
+    }
 }
 
 pub fn configure(api_key: String) -> BloockClient {
@@ -59,7 +76,7 @@ pub fn configure(api_key: String) -> BloockClient {
         anchor_service: anchor::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         config_service: config::configure(Arc::clone(&config_data)),
         record_service: record::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
-        proof_service: proof::configure(Arc::clone(&http_client)),
+        proof_service: proof::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         http_client: Arc::clone(&http_client),
     };
 }

@@ -7,8 +7,6 @@ use crate::{
     error::{BloockResult, InfrastructureError},
 };
 
-use super::entity::dto::record_retrieve_request::RecordRetrieveRequest;
-use super::entity::dto::record_retrieve_response::RecordRetrieveResponse;
 use super::{
     entity::{
         dto::{
@@ -79,9 +77,8 @@ mod tests {
         configure_test,
         entity::{
             dto::{
-                record_retrieve_response::RecordRetrieveResponse,
                 record_write_request::RecordWriteRequest,
-                record_write_response::RecordWriteResponse, record_retrieve_request::RecordRetrieveRequest,
+                record_write_response::RecordWriteResponse,
             },
             record::Record,
         },

@@ -1,6 +1,8 @@
 use tiny_keccak::Hasher;
 use tiny_keccak::Keccak;
 
+pub type H256 = [u8; 32];
+
 pub trait Hashing {
     fn generate_hash(&self, data: &[u8]) -> String;
 }

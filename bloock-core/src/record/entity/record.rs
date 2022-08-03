@@ -1,9 +1,11 @@
-use bloock_hashing::hashing::{Hashing, Keccak256};
+use std::cmp::Ordering;
+
+use bloock_hashing::hashing::{Hashing, Keccak256, H256};
 use serde::{Deserialize, Serialize};
 
 use crate::error::{BloockResult, OperationalError};
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Record {
     pub hash: String,
 }
@@ -55,11 +57,33 @@ impl Record {
         self.hash.len() == 64 && hex::decode(&self.hash).is_ok()
     }
 
-    pub fn get_uint8_array_hash(&self) -> BloockResult<Vec<u8>> {
+    pub fn get_uint8_array_hash(&self) -> BloockResult<H256> {
         match hex::decode(&self.hash) {
-            Ok(bytes) => Ok(bytes),
+            Ok(bytes) => bytes
+                .try_into()
+                .map_err(|_| OperationalError::InvalidHash().into()),
             Err(e) => Err(OperationalError::Decoding(e.to_string()).into()),
         }
+    }
+}
+
+impl PartialEq for Record {
+    fn eq(&self, other: &Self) -> bool {
+        self.hash == other.hash
+    }
+}
+
+impl Eq for Record {}
+
+impl PartialOrd for Record {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.hash.partial_cmp(&other.hash)
+    }
+}
+
+impl Ord for Record {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.hash.cmp(&other.hash)
     }
 }
 

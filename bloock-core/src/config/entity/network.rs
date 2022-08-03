@@ -28,7 +28,7 @@ impl Into<String> for Network {
     }
 }
 
-fn select_network(networks: &Vec<AnchorNetwork>) -> Network {
+pub fn select_network(networks: &Vec<AnchorNetwork>) -> Network {
     for n in networks {
         let network: String = Network::EthereumMainnet.into();
         if n.name == network {
