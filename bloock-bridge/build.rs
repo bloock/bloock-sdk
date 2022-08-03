@@ -9,7 +9,7 @@ fn main() -> Result<()> {
         .service_generator(Box::new(BloockBridgeServiceGenerator {
             service_methods: HashMap::new(),
         }))
-        .compile_protos(&["protos/bloock.proto"], &["protos/"])?;
+        .compile_protos(&["proto/bloock.proto"], &["proto/"])?;
     Ok(())
 }
 

@@ -7,6 +7,9 @@ build:
 go-dev: build
 	make -C go dev
 
+java-dev: build
+	make -C java dev
+
 .PHONY: init
 init:
 	@if [ $$(uname) == "Darwin" ] ; then cargo install cargo-lipo ; fi

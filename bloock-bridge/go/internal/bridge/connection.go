@@ -3,6 +3,7 @@ package bridge
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/bloock/go-bridge/internal/ffi"
 	grpc "google.golang.org/grpc"
@@ -31,6 +32,8 @@ func (BloockConnection) Invoke(ctx context.Context, method string, args interfac
 	if err != nil {
 		return err
 	}
+
+	log.Println([]byte(result))
 
 	out, ok := reply.(proto.Message)
 	if !ok {

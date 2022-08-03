@@ -14,17 +14,17 @@ else
 endif
 endif
 
-protos:
-	protoc -I ../protos --go_out=./internal/bridge/protos \
+proto:
+	protoc -I ../proto --go_out=./internal/bridge/proto \
 	--go_opt=paths=source_relative \
-	--go-grpc_out=./internal/bridge/protos \
+	--go-grpc_out=./internal/bridge/proto \
 	--go-grpc_opt=paths=source_relative \
-	../protos/bloock.proto
+	../proto/bloock.proto
 
-dev: copy_lib protos
+dev: copy_lib proto
 	go run cmd/main.go
 
-test: copy_lib protos
+test: copy_lib proto
 	go test -v ./... -count=1
 
 fmt:

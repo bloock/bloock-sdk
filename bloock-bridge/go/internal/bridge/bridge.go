@@ -1,20 +1,18 @@
 package bridge
 
-import (
-	"github.com/bloock/go-bridge/internal/bridge/protos"
-)
+import "github.com/bloock/go-bridge/internal/bridge/proto"
 
 type BloockBridge struct {
-	greeting protos.GreeterClient
+	greeting proto.GreeterClient
 }
 
 func NewBloockBridge() BloockBridge {
 	conn := NewBloockConnection()
 	return BloockBridge{
-		greeting: protos.NewGreeterClient(conn),
+		greeting: proto.NewGreeterClient(conn),
 	}
 }
 
-func (b *BloockBridge) Greeting() protos.GreeterClient {
+func (b *BloockBridge) Greeting() proto.GreeterClient {
 	return b.greeting
 }

@@ -3,12 +3,26 @@
  */
 package bloock.sdk.java;
 
+import bloock.sdk.java.bridge.Bridge;
+import bloock.sdk.java.bridge.proto.Bloock;
+
+import java.util.logging.Logger;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+    private static final Logger logger = Logger.getLogger(App.class.getName());
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        logger.info("Starting request say hello");
+        Bridge client = new Bridge();
+        Bloock.HelloRequest request = Bloock.HelloRequest.newBuilder().setName("Marc").build();
+        Bloock.HelloResponse response = client.getGreeting().sayHello(request);
+        logger.info("Got response from say hello");
+        logger.info(response.toString());
+
+        logger.info("Starting request say hello with error");
+        request = Bloock.HelloRequest.newBuilder().setName("Marc").build();
+        response = client.getGreeting().sayHelloWithError(request);
+        logger.info("Got response from say hello with error");
+        logger.info(response.toString());
     }
 }
