@@ -1,21 +1,26 @@
+mod config;
 mod greetings;
 
 use crate::error::BridgeError;
 use crate::items::BloockServer;
+use crate::items::ConfigHandler;
 use crate::items::GreeterHandler;
-use crate::items::HelloRequest;
-use greetings::GreetingsServer;
-use prost::Message;
 use std::io::Cursor;
+
+use bloock_core::client::BloockClient;
+use config::ConfigServer;
+use greetings::GreetingsServer;
 
 pub struct Server {
     greeter: GreetingsServer,
+    config: ConfigServer,
 }
 
 impl Server {
-    pub fn new() -> Self {
+    pub fn new(client: BloockClient) -> Self {
         Self {
             greeter: GreetingsServer {},
+            config: ConfigServer { client },
         }
     }
 
@@ -32,6 +37,7 @@ impl Server {
             BloockServer::GreeterSayHelloWithError => Ok(self
                 .greeter
                 .say_hello_with_error(self.serialize_request(payload)?)),
+            BloockServer::ConfigSetApiHost => Ok(self.config.set_api_host(self.serialize_request(payload)?)),
             _ => Ok(self.greeter.say_hello(self.serialize_request(payload)?)),
         }
     }

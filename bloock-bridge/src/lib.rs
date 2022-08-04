@@ -37,8 +37,9 @@ pub mod ffi {
             response: &mut DiplomatWriteable,
         ) -> Result<(), BridgeError> {
             let payload = payload.as_bytes();
-
-            let result = server::Server::new().dispatch(request_type, payload)?;
+            // TODO Client should be persisted?
+            let core_client = bloock_core::client::configure("".to_string());
+            let result = server::Server::new(core_client).dispatch(request_type, payload)?;
 
             let mut result_vec = Vec::new();
             result_vec.reserve(result.encoded_len());
