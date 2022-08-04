@@ -8,20 +8,33 @@ install: .make.deps.installed
 	@touch $@
 
 proto:
-	echo "Unimplemented"
+	yarn run grpc_tools_node_protoc \
+		--js_out=import_style=commonjs,binary:./src/bridge/proto \
+		--grpc_out=./src/bridge/proto \
+		--plugin=protoc-gen-grpc=./node_modules/.bin/grpc_tools_node_protoc_plugin \
+		-I ../proto \
+		../proto/*.proto
+	yarn run grpc_tools_node_protoc \
+		--plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
+		--ts_out=./src/bridge/proto \
+		-I ../proto \
+		../proto/*.proto
 
-dev: install proto
-	npm start
+build: install proto
+	yarn build
 
-test: install proto
-	npm test
+dev: build
+	yarn start
+
+test: build
+	yarn run test
 
 fmt:
-	echo "Unimplemented"
+	yarn run fmt
 
 lint:
-	echo "Unimplemented"
+	yarn run lint
 
 clean:
-	echo "Unimplemented"
+	yarn run clea
 
