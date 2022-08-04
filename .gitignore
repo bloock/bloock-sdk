@@ -7,3 +7,5 @@ tmp/
 
 target
 bloock-bridge/go/vendor
+
+bloock-bridge/js/node_modules
