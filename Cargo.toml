@@ -2,11 +2,10 @@
 
 members = [
     "bloock-core",
-    "bloock-c-api",
-    "bloock-wasm-api",
+    "bloock-bridge",
     "bloock-libs/hashing",
     "bloock-libs/http",
-    "bloock-libs/web3",
+    "bloock-libs/web3"
 ]
 
 exclude = []
