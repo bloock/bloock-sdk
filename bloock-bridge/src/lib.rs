@@ -41,12 +41,7 @@ pub mod ffi {
             let core_client = bloock_core::client::configure("".to_string());
             let result = server::Server::new(core_client).dispatch(request_type, payload)?;
 
-            let mut result_vec = Vec::new();
-            result_vec.reserve(result.encoded_len());
-            result
-                .encode(&mut result_vec)
-                .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
-
+            let result_vec = result.get_bytes()?;
             let result_str = String::from_utf8(result_vec)
                 .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
             write!(response, "{}", result_str);

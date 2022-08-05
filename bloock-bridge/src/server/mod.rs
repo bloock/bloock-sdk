@@ -1,10 +1,15 @@
 mod config;
 mod greetings;
+mod response_types;
 
 use crate::error::BridgeError;
 use crate::items::BloockServer;
 use crate::items::ConfigHandler;
+use crate::items::ConfigResponse;
 use crate::items::GreeterHandler;
+use crate::items::HelloResponse;
+use crate::server::response_types::ResponseType;
+use prost::Message;
 use std::io::Cursor;
 
 use bloock_core::client::BloockClient;
@@ -28,17 +33,22 @@ impl Server {
         &self,
         request_type: &str,
         payload: &[u8],
-    ) -> Result<impl prost::Message, BridgeError> {
+    ) -> Result<ResponseType, BridgeError> {
         let request: BloockServer = BloockServer::from_str(request_type);
         match request {
-            BloockServer::GreeterSayHello => {
-                Ok(self.greeter.say_hello(self.serialize_request(payload)?))
-            }
-            BloockServer::GreeterSayHelloWithError => Ok(self
-                .greeter
-                .say_hello_with_error(self.serialize_request(payload)?)),
-            BloockServer::ConfigSetApiHost => Ok(self.config.set_api_host(self.serialize_request(payload)?)),
-            _ => Ok(self.greeter.say_hello(self.serialize_request(payload)?)),
+            BloockServer::GreeterSayHello => Ok(ResponseType::Hello(
+                self.greeter.say_hello(self.serialize_request(payload)?),
+            )),
+            BloockServer::GreeterSayHelloWithError => Ok(ResponseType::Hello(
+                self.greeter
+                    .say_hello_with_error(self.serialize_request(payload)?),
+            )),
+            BloockServer::ConfigSetApiHost => Ok(ResponseType::Config(
+                self.config.set_api_host(self.serialize_request(payload)?),
+            )),
+            _ => Ok(ResponseType::Hello(
+                self.greeter.say_hello(self.serialize_request(payload)?),
+            )),
         }
     }
 
