@@ -21,7 +21,7 @@ impl ConfigHandler for ConfigServer {
         &self,
         input: crate::items::SetNetworkConfigRequest,
     ) -> crate::items::ConfigResponse {
-        let config = match input.config {
+        let config = match input.config.clone() {
             Some(config) => map_network_config(config),
             None => {
                 return error_response(BridgeError::InvalidArgument.to_string());
