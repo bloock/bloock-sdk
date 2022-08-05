@@ -2,24 +2,22 @@ syntax = "proto3";
 
 package bloock;
 
-import "bloock.proto";
+option go_package = "github.com/bloock/go-bridge/internal/bridge/proto";
+option java_package = "bloock.sdk.java.bridge.proto";
 
-service Config {
-    rpc SetApiHost (SetApiHostRequest) returns (ConfigResponse);
-    rpc SetNetworkConfig (SetNetworkConfigRequest) returns (ConfigResponse);
+message ConfigData {
+    Configuration config = 1;
+    map<string, NetworkConfig> networks_config = 2;
 }
 
-message ConfigResponse {
-    optional Error error = 1;
-}
-
-message SetApiHostRequest {
+message Configuration {
     string host = 1;
-}
-
-message SetNetworkConfigRequest {
-    Network network = 1;
-    NetworkConfig config = 2;
+    string api_key = 2;
+    int32 wait_message_interval_factor = 3;
+    int32 wait_message_interval_default = 4;
+    string key_type_algorithm = 5;
+    string elliptic_curve_key = 6;
+    string signature_algorithm = 7;
 }
 
 enum Network {

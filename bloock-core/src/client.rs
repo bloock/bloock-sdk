@@ -63,14 +63,18 @@ impl BloockClient {
         self.proof_service.verify_proof(proof)
     }
 
-    pub async fn verify_records(&self, records: Vec<Record>, network: Option<Network>) -> BloockResult<u128> {
+    pub async fn verify_records(
+        &self,
+        records: Vec<Record>,
+        network: Option<Network>,
+    ) -> BloockResult<u128> {
         self.proof_service.verify_records(records, network).await
     }
 }
 
-pub fn configure(api_key: String) -> BloockClient {
-    let http_client = Arc::new(HttpClient::new(api_key));
-    let config_data = Arc::new(Mutex::new(ConfigData::new()));
+pub fn configure(config_data: ConfigData) -> BloockClient {
+    let http_client = Arc::new(HttpClient::new(config_data.get_config().api_key));
+    let config_data = Arc::new(Mutex::new(config_data));
 
     return BloockClient {
         anchor_service: anchor::configure(Arc::clone(&http_client), Arc::clone(&config_data)),

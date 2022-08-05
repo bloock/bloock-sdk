@@ -5,6 +5,8 @@ package bloock;
 option go_package = "github.com/bloock/go-bridge/internal/bridge/proto";
 option java_package = "bloock.sdk.java.bridge.proto";
 
+import "config.proto";
+
 // The greeting service definition.
 service Greeter {
     // Sends a greeting
@@ -14,7 +16,8 @@ service Greeter {
 }
 
 message HelloRequest {
-    string name = 1;
+    ConfigData config = 1;
+    string name = 2;
 }
 
 message HelloResponse {

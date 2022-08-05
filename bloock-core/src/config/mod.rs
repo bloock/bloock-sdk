@@ -29,7 +29,7 @@ pub fn configure(config_data: Arc<Mutex<ConfigData>>) -> service::ConfigService 
 
 #[cfg(test)]
 pub fn configure_test() -> service::ConfigService {
-    let config_data = Arc::new(Mutex::new(ConfigData::new()));
+    let config_data = Arc::new(Mutex::new(ConfigData::new("".to_string())));
 
     return service::ConfigService {
         config_data: Arc::clone(&config_data),

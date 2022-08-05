@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Configuration {
     pub host: String,
+    pub api_key: String,
     pub wait_message_interval_factor: i32,
     pub wait_message_interval_default: i32,
     pub key_type_algorithm: String,
@@ -14,6 +15,7 @@ impl Default for Configuration {
     fn default() -> Self {
         Self {
             host: String::from(""),
+            api_key: String::from(""),
             wait_message_interval_factor: 2,
             wait_message_interval_default: 1000,
             key_type_algorithm: String::from("EC"),

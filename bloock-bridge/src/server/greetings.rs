@@ -6,6 +6,7 @@ use crate::items::HelloResponse;
 pub struct GreetingsServer {}
 impl GreeterHandler for GreetingsServer {
     fn say_hello(&self, req: HelloRequest) -> HelloResponse {
+        println!("{:?}", req.config);
         let mut response = HelloResponse::default();
         response.message = format!("Hello from Rust, {}!", req.name);
         response

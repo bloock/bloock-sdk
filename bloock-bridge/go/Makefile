@@ -19,7 +19,7 @@ proto:
 	--go_opt=paths=source_relative \
 	--go-grpc_out=./internal/bridge/proto \
 	--go-grpc_opt=paths=source_relative \
-	../proto/bloock.proto
+	../proto/*.proto
 
 dev: copy_lib proto
 	go run cmd/main.go
