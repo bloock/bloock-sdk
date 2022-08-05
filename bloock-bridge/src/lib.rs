@@ -3,6 +3,7 @@ pub mod items {
 }
 mod error;
 mod server;
+mod entity_mappings;
 
 #[diplomat::bridge]
 pub mod ffi {
