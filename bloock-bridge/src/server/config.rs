@@ -1,8 +1,7 @@
 use bloock_core::client::BloockClient;
-use bloock_core::config::entity::network::Network as CoreNetwork;
 use bloock_core::config::entity::config::NetworkConfiguration;
 
-use crate::items::{ConfigHandler, ConfigResponse, Error, Network};
+use crate::{items::{ConfigHandler, ConfigResponse, Error}, core_entity_mappings};
 
 pub struct ConfigServer {
     pub client: BloockClient,
@@ -31,11 +30,7 @@ impl ConfigHandler for ConfigServer {
             http_provider: input.config.as_ref().unwrap().http_provider.clone(),
         };
 
-        let network = match input.network() {
-            Network::BloockChain => CoreNetwork::BloockChain,
-            Network::EthereumMainnet => CoreNetwork::EthereumMainnet,
-            Network::EthereumRinkeby => CoreNetwork::EthereumRinkeby,
-        };
+        let network = core_entity_mappings::map_network(input.network());
 
         match self.client.set_network_configuration(network, config) {
             Ok(()) => ConfigResponse { error: None },
