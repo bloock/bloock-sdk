@@ -11,6 +11,13 @@ pub fn map_network(network: Network) -> CoreNetwork {
     }
 }
 
+pub fn map_network_from_i32(network: i32) -> Option<CoreNetwork> {
+    match Network::from_i32(network) {
+        Some(network) => Some(map_network(network)),
+        None => None,
+    }
+}
+
 pub fn map_network_config(network: NetworkConfig) -> CoreNetworkConfig {
     CoreNetworkConfig {
         contract_address: network.contract_address,

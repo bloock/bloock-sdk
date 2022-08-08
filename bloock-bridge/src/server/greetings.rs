@@ -3,7 +3,16 @@ use crate::items::GreeterHandler;
 use crate::items::HelloRequest;
 use crate::items::HelloResponse;
 
+use super::response_types::ResponseType;
+
+impl From<HelloResponse> for ResponseType {
+    fn from(res: HelloResponse) -> Self {
+        ResponseType::Hello(res)
+    }
+}
+
 pub struct GreetingsServer {}
+
 impl GreeterHandler for GreetingsServer {
     fn say_hello(&self, req: HelloRequest) -> HelloResponse {
         println!("{:?}", req.config);

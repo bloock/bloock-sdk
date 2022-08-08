@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/go-bridge/internal/bridge/proto";
+option java_package = "bloock.sdk.java.bridge.proto";
+
+import "bloock.proto";
+import "config.proto";
+
+service AnchorService {
+    rpc GetAnchor(GetAnchorRequest) returns (GetAnchorResponse);
+    rpc WaitAnchor(WaitAnchorRequest) returns (WaitAnchorResponse);
+}
+
+message Anchor {
+    int64 id = 1;
+    repeated string block_roots = 2;
+    repeated AnchorNetwork networks = 3;
+    string root = 4;
+    string status = 5;
+}
+
+message AnchorNetwork {
+    string name = 1;
+    string state = 2;
+    string tx_hash = 3;
+}
+
+message GetAnchorRequest {
+    ConfigData config_data = 1;
+    int64 anchor_id = 2;
+}
+
+message GetAnchorResponse {
+    optional Anchor anchor = 1;
+    optional Error error = 2;
+}
+
+message WaitAnchorRequest {
+    ConfigData config_data = 1;
+    int64 anchor_id = 2;
+    int64 timeout = 3;
+}
+
+message WaitAnchorResponse {
+    optional Anchor anchor = 1;
+    optional Error error = 2;
+}
