@@ -16,23 +16,16 @@ pub struct AnchorService<H: Client> {
 
 impl<H: Client> AnchorService<H> {
     pub async fn get_anchor(&self, anchor_id: i64) -> BloockResult<Anchor> {
-        match self.config_service.get_api_base_url() {
-            Ok(base_url) => {
-                let url = format!("{}/core/anchor/{}", base_url, anchor_id);
-                match self.http.get::<String, Anchor>(url, None).await {
-                    Ok(res) => Ok(res),
-                    Err(e) => Err(e).map_err(|e| InfrastructureError::Http(e).into()),
-                }
-            }
-            Err(e) => Err(e).map_err(|e| e.into()),
+        let base_url = self.config_service.get_api_base_url();
+        let url = format!("{}/core/anchor/{}", base_url, anchor_id);
+        match self.http.get::<String, Anchor>(url, None).await {
+            Ok(res) => Ok(res),
+            Err(e) => Err(e).map_err(|e| InfrastructureError::Http(e).into()),
         }
     }
 
     pub async fn wait_anchor(&self, anchor_id: i64, timeout: i64) -> BloockResult<Anchor> {
-        let config = match self.config_service.get_config() {
-            Ok(config) => config,
-            Err(e) => return Err(e).map_err(|e| e.into()),
-        };
+        let config = self.config_service.get_config();
 
         let mut attempts = 0;
         let start = SystemTime::now();
@@ -75,12 +68,15 @@ impl<H: Client> AnchorService<H> {
 
 #[cfg(test)]
 mod test {
+    use std::sync::Arc;
+
+    use bloock_http::{HttpError, MockClient};
+
     use crate::{
         anchor::{self, entity::anchor::Anchor, AnchorError},
         config::entity::config::Configuration,
+        error::ErrorKind,
     };
-    use bloock_http::MockClient;
-    use std::sync::Arc;
 
     #[tokio::test]
     async fn test_get_anchor() {
@@ -95,10 +91,13 @@ mod test {
 
         let expected_anchor = anchor.clone();
 
-        let http = Arc::new(MockClient::default());
-        let anchor_service = anchor::configure_test(http);
+        let mut http = MockClient::default();
+        http.expect_get::<String, Anchor>()
+            .return_once(|_, _| Ok(anchor));
 
-        match anchor_service.get_anchor(anchor_id.into()).await {
+        let anchor_service = anchor::configure_test(Arc::new(http));
+
+        match anchor_service.get_anchor(anchor_id).await {
             Ok(anchor) => assert_eq!(anchor, expected_anchor),
             Err(e) => panic!("{}", e),
         };
@@ -106,12 +105,12 @@ mod test {
 
     #[tokio::test]
     async fn test_wait_anchor_first_try() {
-        test_wait_anchor(0);
+        test_wait_anchor(0).await;
     }
 
     #[tokio::test]
     async fn test_wait_anchor_after_3_retries() {
-        test_wait_anchor(3);
+        test_wait_anchor(3).await;
     }
 
     #[tokio::test]
@@ -129,14 +128,28 @@ mod test {
             status: String::from("Success"),
         };
 
+        let mut retry_counter = 0;
         let max_retries = 3;
 
-        let http = Arc::new(MockClient::default());
-        let anchor_service = anchor::configure_test(http);
+        let mut http = MockClient::default();
+        http.expect_get::<String, Anchor>().returning(move |_, _| {
+            if retry_counter < max_retries {
+                retry_counter += 1;
+                return Err(HttpError::RequestError(String::from(
+                    "Anchor not ready yet",
+                )));
+            }
+            Ok(anchor.clone())
+        });
 
-        match anchor_service.wait_anchor(anchor_id.into(), 1).await {
+        let anchor_service = anchor::configure_test(Arc::new(http));
+
+        match anchor_service.wait_anchor(anchor_id, 1).await {
             Ok(_) => panic!("Wait anchor should've timed out"),
-            Err(e) => assert_eq!(e.to_string(), AnchorError::AnchorTimeout().to_string()),
+            Err(e) => assert_eq!(
+                e.to_string(),
+                ErrorKind::Anchor(AnchorError::AnchorTimeout()).to_string()
+            ),
         }
     }
 
@@ -152,14 +165,28 @@ mod test {
 
         let expected_anchor = anchor.clone();
 
+        let mut retry_counter = 0;
+
         let mut config = Configuration::default();
         config.wait_message_interval_default = 1;
         config.wait_message_interval_factor = 0;
 
-        let http = Arc::new(MockClient::default());
-        let anchor_service = anchor::configure_test(http);
+        let mut http = MockClient::default();
+        http.expect_get::<String, Anchor>()
+            .times(max_retries + 1)
+            .returning(move |_, _| {
+                if retry_counter < max_retries {
+                    retry_counter += 1;
+                    return Err(HttpError::RequestError(String::from(
+                        "Anchor not ready yet",
+                    )));
+                }
+                Ok(anchor.clone())
+            });
 
-        match anchor_service.wait_anchor(anchor_id.into(), 5000).await {
+        let anchor_service = anchor::configure_test(Arc::new(http));
+
+        match anchor_service.wait_anchor(anchor_id, 50000).await {
             Ok(anchor) => assert_eq!(anchor, expected_anchor),
             Err(e) => panic!("{}", e),
         }

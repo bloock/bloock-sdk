@@ -2,7 +2,7 @@ use self::config_data::ConfigData;
 use crate::error::BloockError;
 use crate::error::ErrorKind;
 use serde::Serialize;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use thiserror::Error as ThisError;
 
 pub mod config_data;
@@ -21,7 +21,7 @@ impl From<ConfigError> for BloockError {
     }
 }
 
-pub fn configure(config_data: Arc<Mutex<ConfigData>>) -> service::ConfigService {
+pub fn configure(config_data: Arc<ConfigData>) -> service::ConfigService {
     return service::ConfigService {
         config_data: Arc::clone(&config_data),
     };
@@ -29,7 +29,7 @@ pub fn configure(config_data: Arc<Mutex<ConfigData>>) -> service::ConfigService 
 
 #[cfg(test)]
 pub fn configure_test() -> service::ConfigService {
-    let config_data = Arc::new(Mutex::new(ConfigData::new("".to_string())));
+    let config_data = Arc::new(ConfigData::new("".to_string()));
 
     return service::ConfigService {
         config_data: Arc::clone(&config_data),

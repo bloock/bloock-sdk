@@ -78,12 +78,4 @@ impl ConfigData {
             None => self.networks_config.get(&Network::EthereumMainnet).unwrap().clone(),
         }
     }
-
-    pub fn set_network_config(&mut self, network: Network, config: NetworkConfiguration) {
-        self.networks_config.insert(network, config);
-    }
-
-    pub fn set_api_host(&mut self, host: String) {
-        self.config.host = host;
-    }
 }
