@@ -27,7 +27,7 @@ impl Server {
         }
     }
 
-    pub fn dispatch(
+    pub async fn dispatch(
         &self,
         request_type: &str,
         payload: &[u8],
@@ -37,22 +37,27 @@ impl Server {
             BloockServer::GreeterSayHello => Ok(self
                 .greeter
                 .say_hello(self.serialize_request(payload)?)
+                .await
                 .into()),
             BloockServer::GreeterSayHelloWithError => Ok(self
                 .greeter
                 .say_hello_with_error(self.serialize_request(payload)?)
+                .await
                 .into()),
             BloockServer::AnchorServiceGetAnchor => Ok(self
                 .anchor
                 .get_anchor(self.serialize_request(payload)?)
+                .await
                 .into()),
             BloockServer::AnchorServiceWaitAnchor => Ok(self
                 .anchor
                 .wait_anchor(self.serialize_request(payload)?)
+                .await
                 .into()),
             _ => Ok(self
                 .greeter
                 .say_hello(self.serialize_request(payload)?)
+                .await
                 .into()),
         }
     }

@@ -29,13 +29,14 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
             service.name.clone(),
             service.methods.iter().map(|m| m.name.clone()).collect(),
         );
+        buf.push_str(&format!("\n#[async_trait(?Send)]"));
         buf.push_str(&format!("\npub trait {}Handler {{", service.name));
 
         // Make match arms for each type
         for method in service.methods.iter() {
             buf.push_str(&format!(
                 "\n   \
-                fn {}(&self, input: {}) -> {};",
+                async fn {}(&self, input: {}) -> {};",
                 method.name, method.input_type, method.output_type
             ));
         }
@@ -45,6 +46,8 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
 
     fn finalize_package(&mut self, _package: &str, buf: &mut String) {
         let enum_name = format!("{}Server", _package.to_case(Case::UpperCamel));
+        buf.push_str("\n\n");
+        buf.push_str("use async_trait::async_trait;");
         buf.push_str("\n\n");
         buf.push_str("#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]\n");
         buf.push_str("#[repr(i32)]\n");

@@ -1,11 +1,11 @@
+use async_trait::async_trait;
 use bloock_core::client;
 
 use crate::{
     entity_mappings::{anchor::map_anchor_core, config::map_config},
-    error::BridgeError,
     items::{
         AnchorServiceHandler, Error, GetAnchorResponse, WaitAnchorRequest, WaitAnchorResponse,
-    },
+    }, error::BridgeError,
 };
 
 use super::response_types::ResponseType;
@@ -24,25 +24,47 @@ impl From<WaitAnchorResponse> for ResponseType {
 
 pub struct AnchorServer {}
 
+#[async_trait(?Send)]
 impl AnchorServiceHandler for AnchorServer {
-    fn get_anchor(
-        &self,
-        req: crate::items::GetAnchorRequest,
-    ) -> Result<GetAnchorResponse, BridgeError> {
+    async fn get_anchor(&self, req: crate::items::GetAnchorRequest) -> GetAnchorResponse {
         let config_data = match req.config_data {
             Some(config) => config,
-            None => return Err(BridgeError::InvalidArgument),
+            None => {
+                return GetAnchorResponse {
+                    anchor: None,
+                    error: Some(Error {
+                        kind: BridgeError::InvalidArgument.to_string(),
+                        message: "Missing config data".to_string(),
+                    }),
+                }
+            }
         };
         let client = client::configure(map_config(config_data));
-        let anchor = client.get_anchor(req.anchor_id);
-        Ok(GetAnchorResponse {
-            anchor: Some(map_anchor_core(anchor)),
+        let anchor = client.get_anchor(req.anchor_id).await;
+        GetAnchorResponse {
+            anchor: Some(map_anchor_core(anchor.unwrap())),
             error: None,
-        })
+        }
     }
 
-    fn wait_anchor(&self, req: WaitAnchorRequest) -> WaitAnchorResponse {
-        todo!()
+    async fn wait_anchor(&self, req: WaitAnchorRequest) -> WaitAnchorResponse {
+        let config_data = match req.config_data {
+            Some(config) => config,
+            None => {
+                return WaitAnchorResponse {
+                    anchor: None,
+                    error: Some(Error {
+                        kind: BridgeError::InvalidArgument.to_string(),
+                        message: "Missing config data".to_string(),
+                    }),
+                }
+            }
+        };
+        let client = client::configure(map_config(config_data));
+        let anchor = client.get_anchor(req.anchor_id).await;
+        WaitAnchorResponse {
+            anchor: Some(map_anchor_core(anchor.unwrap())),
+            error: None,
+        }
     }
 }
-

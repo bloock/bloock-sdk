@@ -1,3 +1,5 @@
+use async_trait::async_trait;
+
 use crate::items::Error;
 use crate::items::GreeterHandler;
 use crate::items::HelloRequest;
@@ -13,14 +15,15 @@ impl From<HelloResponse> for ResponseType {
 
 pub struct GreetingsServer {}
 
+#[async_trait(?Send)]
 impl GreeterHandler for GreetingsServer {
-    fn say_hello(&self, req: HelloRequest) -> HelloResponse {
+    async fn say_hello(&self, req: HelloRequest) -> HelloResponse {
         println!("{:?}", req.config);
         let mut response = HelloResponse::default();
         response.message = format!("Hello from Rust, {}!", req.name);
         response
     }
-    fn say_hello_with_error(&self, req: HelloRequest) -> HelloResponse {
+    async fn say_hello_with_error(&self, req: HelloRequest) -> HelloResponse {
         let mut response = HelloResponse::default();
 
         response.error = Some(Error {
