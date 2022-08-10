@@ -161,6 +161,7 @@ name = "bloock_bridge"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "base64",
  "bloock-core",
  "convert_case 0.5.0",
  "diplomat",

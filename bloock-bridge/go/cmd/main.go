@@ -25,8 +25,8 @@ func main() {
 		NetworksConfig: map[int32]*proto.NetworkConfig{
 			int32(proto.Network_ETHEREUM_MAINNET): {
 				ContractAddress: "0x522b2040CdfD247ED60921623044dF1c929524B7",
-				ContractAbi: "",
-				HttpProvider: "",
+				ContractAbi:     "",
+				HttpProvider:    "",
 			},
 		},
 	}
@@ -44,5 +44,5 @@ func main() {
 		AnchorId:   500,
 	})
 
-    fmt.Println(response2);
+	fmt.Println(response2)
 }

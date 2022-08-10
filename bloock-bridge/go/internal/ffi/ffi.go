@@ -10,18 +10,23 @@ package ffi
 // #cgo windows,amd64 LDFLAGS: ${SRCDIR}/native/windows/lib.a -lm -lws2_32 -luserenv -lbcrypt
 import "C"
 import (
+	"encoding/base64"
 	"fmt"
+	"log"
 )
 
-func Request(requestType string, payload []byte) (string, error) {
-	payloadStr := string(payload)
+func Request(requestType string, payload []byte) ([]byte, error) {
+	payloadStr := base64.StdEncoding.EncodeToString(payload)
+
+	log.Println(payloadStr)
 
 	w := C.malloc(1024)
 	defer C.free(w)
 	writer := C.diplomat_simple_writeable((*C.char)(w), 1024)
-	r := C.BloockBridge_request(C.CString(requestType), C.ulong(len(requestType)), C.CString(payloadStr), C.ulong(len(payload)), &writer)
+	r := C.BloockBridge_request(C.CString(requestType), C.ulong(len(requestType)), C.CString(payloadStr), C.ulong(len(payloadStr)), &writer)
 	if !bool(r.is_ok) {
-		return "", fmt.Errorf("an error occurred while running request")
+		return []byte{}, fmt.Errorf("an error occurred while running request")
 	}
-	return C.GoString((*C.char)(w)), nil
+	encodedResponse := C.GoString((*C.char)(w))
+	return base64.StdEncoding.DecodeString(encodedResponse)
 }
