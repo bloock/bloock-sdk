@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/bloock/go-bridge/internal/bridge"
@@ -13,24 +14,24 @@ func main() {
 
 	configData := &proto.ConfigData{
 		Config: &proto.Configuration{
-			Host:                       "api.bloock.dev",
+			Host:                       "https://api.bloock.dev",
 			ApiKey:                     "test_key",
-			WaitMessageIntervalFactor:  0,
+			WaitMessageIntervalFactor:  2,
 			WaitMessageIntervalDefault: 0,
-			KeyTypeAlgorithm:           "asdf",
-			EllipticCurveKey:           "asdf",
-			SignatureAlgorithm:         "asdf",
+			KeyTypeAlgorithm:           "EC",
+			EllipticCurveKey:           "secp256k1",
+			SignatureAlgorithm:         "'ES256K'",
 		},
-		NetworksConfig: map[string]*proto.NetworkConfig{
-			proto.Network_name[int32(proto.Network_ETHEREUM_MAINNET)]: {
-				ContractAddress: "some address",
-				ContractAbi:     "some abi",
-				HttpProvider:    "some provider",
+		NetworksConfig: map[int32]*proto.NetworkConfig{
+			int32(proto.Network_ETHEREUM_MAINNET): {
+				ContractAddress: "0x522b2040CdfD247ED60921623044dF1c929524B7",
+				ContractAbi: "",
+				HttpProvider: "",
 			},
 		},
 	}
 
-	response, err := client.Greeting().SayHello(context.Background(), &proto.HelloRequest{
+	response, err := client.Greeting().SayHelloWithError(context.Background(), &proto.HelloRequest{
 		Config: configData,
 		Name:   "Marc",
 	})
@@ -38,11 +39,10 @@ func main() {
 	log.Println(response)
 	log.Println(err)
 
-	response, err = client.Greeting().SayHelloWithError(context.Background(), &proto.HelloRequest{
-		Config: configData,
-		Name:   "Marc",
+	response2, err := client.Anchor().GetAnchor(context.Background(), &proto.GetAnchorRequest{
+		ConfigData: configData,
+		AnchorId:   500,
 	})
 
-	log.Println(response)
-	log.Println(err)
+    fmt.Println(response2);
 }
