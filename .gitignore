@@ -10,3 +10,4 @@ bloock-bridge/go/vendor
 
 bloock-bridge/js/node_modules
 bloock-bridge/js/dist
+bloock-bridge/js/build

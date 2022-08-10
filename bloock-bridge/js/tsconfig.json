@@ -1,17 +1,20 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
-    "allowJs": true,
-    "esModuleInterop": true,
-    "module": "es2020",
-    "target": "es2020",
     "moduleResolution": "node",
-    "lib": ["DOM", "ES2018"],
-    "noEmit": true,
-    "outDir": "dist",
-    "rootDir": ".",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es2018",
+    "outDir": "build",
+    "declaration": true,
+    "strict": true,
+    "module": "esnext",
+    "noEmitOnError": true,
+    "lib": ["es2017"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "allowJs": true
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src"]
 }

@@ -7,18 +7,23 @@ install: .make.deps.installed
 	yarn install --network-timeout 100000
 	@touch $@
 
+copy-lib:
+	cp tmp/BloockBridge.d.ts src/ffi/native
+	cp tmp/BloockBridge.js src/ffi/native
+	cp tmp/diplomat-runtime.d.ts src/ffi/native
+	cp tmp/diplomat-runtime.js src/ffi/native
+	cp tmp/index.d.ts src/ffi/native
+	cp tmp/index.js src/ffi/native
+
+	grep -v "diplomat-wasm.mjs" src/ffi/native/BloockBridge.js > tmpfile && mv tmpfile src/ffi/native/BloockBridge.js
+	sed -i '' 's/'diplomat-wasm.mjs'/'diplomat-wasm.js'/g' src/ffi/native/BloockBridge.js
+	sed -i '' 's/static request(arg_request_type, arg_payload)/static request(wasm, arg_request_type, arg_payload)/g' src/ffi/native/BloockBridge.js
+	sed -i '' 's/static request(request_type: string, payload: string)/static request(wasm: any, request_type: string, payload: string)/g' src/ffi/native/BloockBridge.d.ts
+	
+	cp ../../target/wasm32-unknown-unknown/release/bloock_bridge.wasm src/ffi/native
+
 proto:
-	yarn run grpc_tools_node_protoc \
-		--js_out=import_style=commonjs,binary:./src/bridge/proto \
-		--grpc_out=./src/bridge/proto \
-		--plugin=protoc-gen-grpc=./node_modules/.bin/grpc_tools_node_protoc_plugin \
-		-I ../proto \
-		../proto/*.proto
-	yarn run grpc_tools_node_protoc \
-		--plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
-		--ts_out=./src/bridge/proto \
-		-I ../proto \
-		../proto/*.proto
+	node bin/proto.js
 
 build: install proto
 	yarn build
@@ -36,5 +41,5 @@ lint:
 	yarn run lint
 
 clean:
-	yarn run clea
+	yarn run clean
 

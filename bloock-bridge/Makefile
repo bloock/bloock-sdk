@@ -1,8 +1,20 @@
 SHELL := /bin/bash
 
+gen: 
+	mkdir -p js/tmp
+	diplomat-tool js js/tmp --docs js/docs/
+	make -C js copy-lib
+	rm -r js/tmp
+	diplomat-tool c c/
+	diplomat-tool cpp cpp/ --docs cpp/docs/
+
 build:
 	cargo build --release
-	bash gen_all.sh
+	make gen
+
+build-wasm:
+	wasm-pack -q build -- --no-default-features --features wasm
+	make gen
 
 go-dev: build
 	make -C go dev
@@ -10,7 +22,7 @@ go-dev: build
 java-dev: build
 	make -C java dev
 
-js-dev: build
+js-dev: build-wasm
 	make -C js dev
 
 .PHONY: init
