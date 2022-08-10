@@ -3,9 +3,10 @@ use bloock_core::client;
 
 use crate::{
     entity_mappings::{anchor::map_anchor_core, config::map_config},
+    error::BridgeError,
     items::{
         AnchorServiceHandler, Error, GetAnchorResponse, WaitAnchorRequest, WaitAnchorResponse,
-    }, error::BridgeError,
+    },
 };
 
 use super::response_types::ResponseType;
@@ -40,9 +41,20 @@ impl AnchorServiceHandler for AnchorServer {
             }
         };
         let client = client::configure(map_config(config_data));
-        let anchor = client.get_anchor(req.anchor_id).await;
+        let anchor = match client.get_anchor(req.anchor_id).await {
+            Ok(config) => config,
+            Err(e) => {
+                return GetAnchorResponse {
+                    anchor: None,
+                    error: Some(Error {
+                        kind: BridgeError::InvalidArgument.to_string(), // TODO Define error kind
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
         GetAnchorResponse {
-            anchor: Some(map_anchor_core(anchor.unwrap())),
+            anchor: Some(map_anchor_core(anchor)),
             error: None,
         }
     }
@@ -61,9 +73,20 @@ impl AnchorServiceHandler for AnchorServer {
             }
         };
         let client = client::configure(map_config(config_data));
-        let anchor = client.get_anchor(req.anchor_id).await;
+        let anchor = match client.wait_anchor(req.anchor_id, req.timeout).await {
+            Ok(anchor) => anchor,
+            Err(e) => {
+                return WaitAnchorResponse {
+                    anchor: None,
+                    error: Some(Error {
+                        kind: BridgeError::InvalidArgument.to_string(), // TODO Define error kind
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
         WaitAnchorResponse {
-            anchor: Some(map_anchor_core(anchor.unwrap())),
+            anchor: Some(map_anchor_core(anchor)),
             error: None,
         }
     }

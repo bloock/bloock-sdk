@@ -23,7 +23,6 @@ pub mod ffi {
             payload: &str,
             response: &mut DiplomatWriteable,
         ) -> DiplomatResult<(), ()> {
-            // TODO Find a non-blocking way
             match tokio::runtime::Runtime::new()
                 .unwrap()
                 .block_on(BloockBridge::do_request(request_type, payload, response))
