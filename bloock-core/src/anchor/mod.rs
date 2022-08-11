@@ -5,7 +5,7 @@ use bloock_http::HttpClient;
 #[cfg(test)]
 use bloock_http::MockClient;
 use serde::Serialize;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use thiserror::Error as ThisError;
 
 pub mod entity;
@@ -25,7 +25,7 @@ impl From<AnchorError> for BloockError {
 
 pub fn configure(
     http: Arc<HttpClient>,
-    config_data: Arc<Mutex<ConfigData>>,
+    config_data: Arc<ConfigData>,
 ) -> service::AnchorService<HttpClient> {
     return service::AnchorService {
         http: Arc::clone(&http),

@@ -4,7 +4,7 @@ UNAME_M := $(shell uname -m)
 copy_lib:
 	cp ../c/*.h internal/ffi/native/
 ifeq ($(UNAME_S),Linux)
-	cp ../c/lib.a internal/ffi/native/linux/
+	cp ../../target/release/libbloock_bridge.a internal/ffi/native/linux/
 endif
 ifeq ($(UNAME_S),Darwin)
 ifeq ($(UNAME_M),x86_64)
@@ -19,7 +19,7 @@ proto:
 	--go_opt=paths=source_relative \
 	--go-grpc_out=./internal/bridge/proto \
 	--go-grpc_opt=paths=source_relative \
-	../proto/bloock.proto
+	../proto/*.proto
 
 dev: copy_lib proto
 	go run cmd/main.go

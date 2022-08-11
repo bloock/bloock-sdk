@@ -4,7 +4,7 @@ package ffi
 // #include <stdint.h>
 // #include <stdlib.h>
 // #include "native/BloockBridge.h"
-// #cgo linux,amd64 LDFLAGS: ${SRCDIR}/native/linux/lib.a -ldl -lm
+// #cgo linux,amd64 LDFLAGS: ${SRCDIR}/native/linux/libbloock_bridge.a -ldl -lm
 // #cgo darwin,amd64 LDFLAGS: ${SRCDIR}/native/macos/amd64/libbloock_bridge.a -ldl -lm -framework Security
 // #cgo darwin,arm64 LDFLAGS: ${SRCDIR}/native/macos/arm64/lib.a -ldl -lm -framework Security
 // #cgo windows,amd64 LDFLAGS: ${SRCDIR}/native/windows/lib.a -lm -lws2_32 -luserenv -lbcrypt

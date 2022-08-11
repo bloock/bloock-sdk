@@ -3,6 +3,7 @@ pub mod items {
 }
 mod error;
 mod server;
+mod entity_mappings;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -10,7 +11,7 @@ pub mod ffi {
     use crate::server;
     use diplomat_runtime::DiplomatResult;
     use diplomat_runtime::DiplomatWriteable;
-    use prost::Message;
+    
     use std::fmt::Write;
 
     pub struct BloockBridge {
@@ -37,15 +38,9 @@ pub mod ffi {
             response: &mut DiplomatWriteable,
         ) -> Result<(), BridgeError> {
             let payload = payload.as_bytes();
-
             let result = server::Server::new().dispatch(request_type, payload)?;
 
-            let mut result_vec = Vec::new();
-            result_vec.reserve(result.encoded_len());
-            result
-                .encode(&mut result_vec)
-                .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
-
+            let result_vec = result.get_bytes()?;
             let result_str = String::from_utf8(result_vec)
                 .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
             write!(response, "{}", result_str);

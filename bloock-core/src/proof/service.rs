@@ -44,10 +44,7 @@ impl<H: Client> ProofService<H> {
 
         records.sort();
 
-        let url = match self.config_service.get_api_base_url() {
-            Ok(base_url) => format!("{}/core/proof", base_url),
-            Err(e) => return Err(e).map_err(|e| e.into()),
-        };
+        let url = format!("{}/core/proof", self.config_service.get_api_base_url());
 
         let body = ProofRetrieveRequest {
             messages: records.iter().map(|record| record.get_hash()).collect(),
@@ -188,14 +185,15 @@ impl<H: Client> ProofService<H> {
     }
 
     pub async fn validate_root(&self, root: Record, network: Network) -> BloockResult<u128> {
-        let config = match self.config_service.get_network_config(network) {
-            Ok(config) => config,
-            Err(e) => return Err(e),
-        };
+        let config = self.config_service.get_network_config(network);
 
         match self
             .blockchain_client
-            .validate_state(config.http_provider, config.contract_address, root.get_hash())
+            .validate_state(
+                config.http_provider,
+                config.contract_address,
+                root.get_hash(),
+            )
             .await
         {
             Ok(state) => Ok(state),

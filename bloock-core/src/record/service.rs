@@ -33,10 +33,7 @@ impl<H: Client> RecordService<H> {
             return Err(RecordError::InvalidRecord().into());
         }
 
-        let url = match self.config_service.get_api_base_url() {
-            Ok(base_url) => format!("{}/core/messages", base_url),
-            Err(e) => return Err(e).map_err(|e| e.into()),
-        };
+        let url = format!("{}/core/messages", self.config_service.get_api_base_url());
 
         let body = RecordWriteRequest {
             messages: records.iter().map(|record| record.get_hash()).collect(),

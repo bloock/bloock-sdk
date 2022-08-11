@@ -10,10 +10,11 @@ pub struct ConfigData {
 }
 
 impl ConfigData {
-    pub fn new() -> Self {
+    pub fn new(api_key: String) -> Self {
         Self {
             config: Configuration {
                 host: String::from("https://api.bloock.com"),
+                api_key,
                 wait_message_interval_factor: 2,
                 wait_message_interval_default: 5000,
                 key_type_algorithm: String::from("EC"),
@@ -76,13 +77,5 @@ impl ConfigData {
             Some(config) => config.clone(),
             None => self.networks_config.get(&Network::EthereumMainnet).unwrap().clone(),
         }
-    }
-
-    pub fn set_network_config(&mut self, network: Network, config: NetworkConfiguration) {
-        self.networks_config.insert(network, config);
-    }
-
-    pub fn set_api_host(&mut self, host: String) {
-        self.config.host = host;
     }
 }
