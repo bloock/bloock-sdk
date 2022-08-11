@@ -8,4 +8,6 @@ pub enum BridgeError {
     ResponseSerialization(String),
     #[error("Invalid argument")]
     InvalidArgument,
+    #[error("Infrastructure error")]
+    InfrastructureError,
 }

@@ -8,22 +8,26 @@ use bloock_core::config::{
     },
 };
 
-use crate::items::ConfigData;
+use crate::{error::BridgeError, items::ConfigData};
 
 use super::network::{map_network_config, map_network_from_i32};
 
-pub fn map_config(config_data: ConfigData) -> CoreConfigData {
-    let config = config_data.config.unwrap();
+pub fn map_config(config_data: ConfigData) -> Result<CoreConfigData, BridgeError> {
+    let config = match config_data.config {
+        Some(config) => config,
+        None => return Err(BridgeError::InvalidArgument),
+    };
 
     let mut networks_config: HashMap<Network, NetworkConfiguration> = HashMap::new();
     for (network, config) in &config_data.networks_config {
-        networks_config.insert(
-            map_network_from_i32(*network).unwrap(), // TODO Handle unwrap
-            map_network_config(config.clone()),
-        );
+        let network = match map_network_from_i32(*network) {
+            Some(network) => network,
+            None => return Err(BridgeError::InvalidArgument),
+        };
+        networks_config.insert(network, map_network_config(config.clone()));
     }
 
-    CoreConfigData {
+    Ok(CoreConfigData {
         config: Configuration {
             host: config.host,
             api_key: config.api_key,
@@ -34,5 +38,5 @@ pub fn map_config(config_data: ConfigData) -> CoreConfigData {
             signature_algorithm: config.signature_algorithm,
         },
         networks_config,
-    }
+    })
 }
