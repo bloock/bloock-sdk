@@ -13,7 +13,7 @@ func NewBloockBridge() BloockBridge {
 	return BloockBridge{
 		greeting: proto.NewGreeterClient(conn),
 		anchor:   proto.NewAnchorServiceClient(conn),
-        record: proto.NewRecordServiceClient(conn),
+		record:   proto.NewRecordServiceClient(conn),
 	}
 }
 

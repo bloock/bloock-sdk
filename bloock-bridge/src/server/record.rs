@@ -7,8 +7,8 @@ use crate::{
         config::map_config,
         record::{map_record, map_record_receipt},
     },
-    error::BridgeError,
-    items::{Error, RecordServiceHandler, SendRecordsResponse},
+    error::config_data_error,
+    items::{RecordServiceHandler, SendRecordsResponse},
 };
 
 impl From<SendRecordsResponse> for ResponseType {
@@ -22,26 +22,12 @@ pub struct RecordServer {}
 #[async_trait(?Send)]
 impl RecordServiceHandler for RecordServer {
     async fn send_records(&self, req: crate::items::SendRecordsRequest) -> SendRecordsResponse {
-        let config_data = match req.config_data {
-            Some(config) => match map_config(config) {
-                Ok(config) => config,
-                Err(_) => {
-                    return SendRecordsResponse {
-                        records: vec![],
-                        error: Some(Error {
-                            kind: BridgeError::InvalidArgument.to_string(),
-                            message: "Invalid config data".to_string(),
-                        }),
-                    }
-                }
-            },
-            None => {
+        let config_data = match map_config(req.config_data) {
+            Ok(config) => config,
+            Err(_) => {
                 return SendRecordsResponse {
                     records: vec![],
-                    error: Some(Error {
-                        kind: BridgeError::InvalidArgument.to_string(),
-                        message: "Invalid config data".to_string(),
-                    }),
+                    error: Some(config_data_error()),
                 }
             }
         };

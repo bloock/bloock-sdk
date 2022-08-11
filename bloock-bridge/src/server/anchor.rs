@@ -3,7 +3,7 @@ use bloock_core::client;
 
 use crate::{
     entity_mappings::{anchor::map_anchor_core, config::map_config},
-    error::BridgeError,
+    error::{BridgeError, config_data_error},
     items::{
         AnchorServiceHandler, Error, GetAnchorResponse, WaitAnchorRequest, WaitAnchorResponse,
     },
@@ -28,20 +28,12 @@ pub struct AnchorServer {}
 #[async_trait(?Send)]
 impl AnchorServiceHandler for AnchorServer {
     async fn get_anchor(&self, req: crate::items::GetAnchorRequest) -> GetAnchorResponse {
-        let config_data = match req.config_data {
-            Some(config) => match map_config(config) {
-                Ok(config) => config,
-                Err(_) => {
-                    return GetAnchorResponse {
-                        anchor: None,
-                        error: Some(invalid_config_data_error()),
-                    }
-                }
-            },
-            None => {
+        let config_data = match map_config(req.config_data) {
+            Ok(config) => config,
+            Err(_) => {
                 return GetAnchorResponse {
                     anchor: None,
-                    error: Some(invalid_config_data_error()),
+                    error: Some(config_data_error()),
                 }
             }
         };
@@ -53,7 +45,7 @@ impl AnchorServiceHandler for AnchorServer {
                 return GetAnchorResponse {
                     anchor: None,
                     error: Some(Error {
-                        kind: BridgeError::InfrastructureError.to_string(),
+                        kind: BridgeError::AnchorError.to_string(),
                         message: e.to_string(),
                     }),
                 };
@@ -66,23 +58,16 @@ impl AnchorServiceHandler for AnchorServer {
     }
 
     async fn wait_anchor(&self, req: WaitAnchorRequest) -> WaitAnchorResponse {
-        let config_data = match req.config_data {
-            Some(config) => match map_config(config) {
-                Ok(config) => config,
-                Err(_) => {
-                    return WaitAnchorResponse {
-                        anchor: None,
-                        error: Some(invalid_config_data_error()),
-                    }
-                }
-            },
-            None => {
+        let config_data = match map_config(req.config_data) {
+            Ok(config) => config,
+            Err(_) => {
                 return WaitAnchorResponse {
                     anchor: None,
-                    error: Some(invalid_config_data_error()),
+                    error: Some(config_data_error()),
                 }
             }
         };
+
         let client = client::configure(config_data);
         let anchor = match client.wait_anchor(req.anchor_id, req.timeout).await {
             Ok(anchor) => anchor,
@@ -90,7 +75,7 @@ impl AnchorServiceHandler for AnchorServer {
                 return WaitAnchorResponse {
                     anchor: None,
                     error: Some(Error {
-                        kind: BridgeError::InfrastructureError.to_string(),
+                        kind: BridgeError::AnchorError.to_string(),
                         message: e.to_string(),
                     }),
                 };
@@ -100,12 +85,5 @@ impl AnchorServiceHandler for AnchorServer {
             anchor: Some(map_anchor_core(anchor)),
             error: None,
         }
-    }
-}
-
-fn invalid_config_data_error() -> Error {
-    Error {
-        kind: BridgeError::InvalidArgument.to_string(),
-        message: "Invalid config data".to_string(),
     }
 }
