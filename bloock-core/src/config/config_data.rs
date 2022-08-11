@@ -5,8 +5,8 @@ use crate::config::entity::config::{Configuration, NetworkConfiguration};
 use crate::config::entity::network::Network;
 
 pub struct ConfigData {
-    config: Configuration,
-    networks_config: HashMap<Network, NetworkConfiguration>,
+    pub config: Configuration,
+    pub networks_config: HashMap<Network, NetworkConfiguration>,
 }
 
 impl ConfigData {

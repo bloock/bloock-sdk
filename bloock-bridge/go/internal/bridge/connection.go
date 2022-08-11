@@ -33,13 +33,13 @@ func (BloockConnection) Invoke(ctx context.Context, method string, args interfac
 		return err
 	}
 
-	log.Println([]byte(result))
+	log.Println(result)
 
 	out, ok := reply.(proto.Message)
 	if !ok {
 		return fmt.Errorf("reply was not an instance of proto.Message")
 	}
-	err = proto.Unmarshal([]byte(result), out)
+	err = proto.Unmarshal(result, out)
 	if err != nil {
 		return err
 	}

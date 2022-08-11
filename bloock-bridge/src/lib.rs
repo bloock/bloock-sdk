@@ -1,17 +1,17 @@
 pub mod items {
     include!(concat!(env!("OUT_DIR"), "/bloock.rs"));
 }
+mod entity_mappings;
 mod error;
 mod server;
-mod entity_mappings;
 
 #[diplomat::bridge]
 pub mod ffi {
     use crate::error::BridgeError;
     use crate::server;
+    use base64;
     use diplomat_runtime::DiplomatResult;
     use diplomat_runtime::DiplomatWriteable;
-    
     use std::fmt::Write;
 
     pub struct BloockBridge {
@@ -23,7 +23,15 @@ pub mod ffi {
             payload: &str,
             response: &mut DiplomatWriteable,
         ) -> DiplomatResult<(), ()> {
-            match BloockBridge::do_request(request_type, payload, response) {
+            let runtime = match tokio::runtime::Runtime::new() {
+                Ok(r) => r,
+                Err(e) => {
+                    println!("{}", e);
+                    return Err(()).into();
+                }
+            };
+
+            match runtime.block_on(BloockBridge::do_request(request_type, payload, response)) {
                 Ok(r) => Ok(r).into(),
                 Err(e) => {
                     println!("{}", e);
@@ -32,18 +40,21 @@ pub mod ffi {
             }
         }
 
-        fn do_request(
+        async fn do_request(
             request_type: &str,
             payload: &str,
             response: &mut DiplomatWriteable,
         ) -> Result<(), BridgeError> {
-            let payload = payload.as_bytes();
-            let result = server::Server::new().dispatch(request_type, payload)?;
+            let payload = base64::decode(payload)
+                .map_err(|e| BridgeError::RequestDeserialization(e.to_string()))?;
+            let result = server::Server::new()
+                .dispatch(request_type, &payload)
+                .await?;
 
             let result_vec = result.get_bytes()?;
-            let result_str = String::from_utf8(result_vec)
+            let result_str = base64::encode(result_vec);
+            write!(response, "{}", result_str)
                 .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
-            write!(response, "{}", result_str);
             response.flush();
             Ok(()).into()
         }

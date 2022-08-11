@@ -7,7 +7,7 @@ option java_package = "bloock.sdk.java.bridge.proto";
 
 message ConfigData {
     Configuration config = 1;
-    map<string, NetworkConfig> networks_config = 2;
+    map<int32, NetworkConfig> networks_config = 2;
 }
 
 message Configuration {
