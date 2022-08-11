@@ -9,7 +9,9 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
+namespace capi {
 #include "BloockBridge.h"
+}
 
 
 /**
