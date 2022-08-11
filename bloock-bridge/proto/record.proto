@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/go-bridge/internal/bridge/proto";
+option java_package = "bloock.sdk.java.bridge.proto";
+
+import "bloock.proto";
+import "config.proto";
+
+service RecordService {
+    rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
+}
+
+message Record {
+    string hash = 1;
+}
+
+message RecordReceipt {
+    int32 anchor = 1;
+    string client = 2;
+    string record = 3;
+    string status = 4;
+}
+
+message SendRecordsRequest {
+    ConfigData config_data = 1;
+    repeated Record records = 2;
+}
+
+message SendRecordsResponse {
+    repeated RecordReceipt records = 1;
+    optional Error error = 2;
+}

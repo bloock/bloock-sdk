@@ -1,5 +1,6 @@
 mod anchor;
 mod greetings;
+mod record;
 mod response_types;
 
 use crate::error::BridgeError;
@@ -7,16 +8,19 @@ use crate::items::AnchorServiceHandler;
 use crate::items::BloockServer;
 use crate::items::GreeterHandler;
 use crate::items::HelloResponse;
+use crate::items::RecordServiceHandler;
 use crate::server::response_types::ResponseType;
 use std::io::Cursor;
 
 use greetings::GreetingsServer;
 
 use self::anchor::AnchorServer;
+use self::record::RecordServer;
 
 pub struct Server {
     greeter: GreetingsServer,
     anchor: AnchorServer,
+    record: RecordServer,
 }
 
 impl Server {
@@ -24,6 +28,7 @@ impl Server {
         Self {
             greeter: GreetingsServer {},
             anchor: AnchorServer {},
+            record: RecordServer {},
         }
     }
 
@@ -52,6 +57,11 @@ impl Server {
             BloockServer::AnchorServiceWaitAnchor => Ok(self
                 .anchor
                 .wait_anchor(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceSendRecords => Ok(self
+                .record
+                .send_records(self.serialize_request(payload)?)
                 .await
                 .into()),
             _ => Ok(self
