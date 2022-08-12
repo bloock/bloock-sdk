@@ -11,6 +11,8 @@ pub enum BridgeError {
     InvalidArgument,
     #[error("Anchor error")]
     AnchorError,
+    #[error("Record error")]
+    RecordError
 }
 
 pub fn config_data_error() -> ProtoError {

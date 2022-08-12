@@ -7,8 +7,8 @@ use crate::{
         config::map_config,
         record::{map_record, map_record_receipt},
     },
-    error::config_data_error,
-    items::{RecordServiceHandler, SendRecordsResponse},
+    error::{config_data_error, BridgeError},
+    items::{RecordServiceHandler, SendRecordsResponse, Error},
 };
 
 impl From<SendRecordsResponse> for ResponseType {
@@ -33,7 +33,7 @@ impl RecordServiceHandler for RecordServer {
         };
 
         let client = client::configure(config_data);
-        let receipts = client
+        let receipts = match client
             .send_records(
                 req.records
                     .iter()
@@ -41,7 +41,18 @@ impl RecordServiceHandler for RecordServer {
                     .collect(),
             )
             .await
-            .unwrap();
+        {
+            Ok(receipts) => receipts,
+            Err(e) => {
+                return SendRecordsResponse {
+                    records: vec![],
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                };
+            }
+        };
 
         SendRecordsResponse {
             records: receipts
