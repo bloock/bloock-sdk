@@ -4,8 +4,7 @@ use bloock_core::client;
 use super::response_types::ResponseType;
 use crate::{
     entity_mappings::config::map_config,
-    error::config_data_error,
-    items::{RecordServiceHandler, SendRecordsResponse},
+    items::{Error, RecordServiceHandler, SendRecordsResponse}, error::{config_data_error, BridgeError},
 };
 
 impl From<SendRecordsResponse> for ResponseType {
@@ -30,7 +29,7 @@ impl RecordServiceHandler for RecordServer {
         };
 
         let client = client::configure(config_data);
-        let receipts = client
+        let receipts = match client
             .send_records(
                 req.records
                     .iter()
@@ -38,7 +37,18 @@ impl RecordServiceHandler for RecordServer {
                     .collect(),
             )
             .await
-            .unwrap();
+        {
+            Ok(receipts) => receipts,
+            Err(e) => {
+                return SendRecordsResponse {
+                    records: vec![],
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                };
+            }
+        };
 
         SendRecordsResponse {
             records: receipts

@@ -11,6 +11,8 @@ pub enum BridgeError {
     InvalidArgument,
     #[error("Anchor error")]
     AnchorError,
+    #[error("Record error")]
+    RecordError,
     #[error("Proof error")]
     ProofError,
     #[error("Anchor missing from request")]
