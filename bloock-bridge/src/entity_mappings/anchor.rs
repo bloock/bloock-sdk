@@ -4,27 +4,28 @@ use bloock_core::anchor::entity::anchor::{
 
 use crate::items::{Anchor, AnchorNetwork};
 
-pub fn map_anchor_core(anchor: AnchorCore) -> Anchor {
-    Anchor {
-        id: anchor.id,
-        block_roots: anchor.block_roots,
-        networks: map_anchor_networks(anchor.networks),
-        root: anchor.root,
-        status: anchor.status,
+impl Into<Anchor> for AnchorCore {
+    fn into(self) -> Anchor {
+        Anchor {
+            id: self.id,
+            block_roots: self.block_roots,
+            networks: self
+                .networks
+                .iter()
+                .map(|network| network.clone().into())
+                .collect(),
+            root: self.root,
+            status: self.status,
+        }
     }
 }
 
-fn map_anchor_networks(anchor_networks: Vec<AnchorNetworkCore>) -> Vec<AnchorNetwork> {
-    anchor_networks
-        .iter()
-        .map(|network| map_anchor_network(network))
-        .collect()
-}
-
-fn map_anchor_network(network: &AnchorNetworkCore) -> AnchorNetwork {
-    AnchorNetwork {
-        name: network.name.clone(),
-        state: network.state.clone(),
-        tx_hash: network.tx_hash.clone(),
+impl Into<AnchorNetwork> for AnchorNetworkCore {
+    fn into(self) -> AnchorNetwork {
+        AnchorNetwork {
+            name: self.name.clone(),
+            state: self.state.clone(),
+            tx_hash: self.tx_hash.clone(),
+        }
     }
 }

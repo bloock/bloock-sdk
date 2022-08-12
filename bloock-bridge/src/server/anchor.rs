@@ -2,8 +2,8 @@ use async_trait::async_trait;
 use bloock_core::client;
 
 use crate::{
-    entity_mappings::{anchor::map_anchor_core, config::map_config},
-    error::{BridgeError, config_data_error},
+    entity_mappings::config::map_config,
+    error::{config_data_error, BridgeError},
     items::{
         AnchorServiceHandler, Error, GetAnchorResponse, WaitAnchorRequest, WaitAnchorResponse,
     },
@@ -52,7 +52,7 @@ impl AnchorServiceHandler for AnchorServer {
             }
         };
         GetAnchorResponse {
-            anchor: Some(map_anchor_core(anchor)),
+            anchor: Some(anchor.into()),
             error: None,
         }
     }
@@ -82,7 +82,7 @@ impl AnchorServiceHandler for AnchorServer {
             }
         };
         WaitAnchorResponse {
-            anchor: Some(map_anchor_core(anchor)),
+            anchor: Some(anchor.into()),
             error: None,
         }
     }

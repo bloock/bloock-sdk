@@ -3,10 +3,7 @@ use bloock_core::client;
 
 use super::response_types::ResponseType;
 use crate::{
-    entity_mappings::{
-        config::map_config,
-        record::{map_record, map_record_receipt},
-    },
+    entity_mappings::config::map_config,
     error::config_data_error,
     items::{RecordServiceHandler, SendRecordsResponse},
 };
@@ -37,7 +34,7 @@ impl RecordServiceHandler for RecordServer {
             .send_records(
                 req.records
                     .iter()
-                    .map(|record| map_record(record.clone()))
+                    .map(|record| record.clone().into())
                     .collect(),
             )
             .await
@@ -46,7 +43,7 @@ impl RecordServiceHandler for RecordServer {
         SendRecordsResponse {
             records: receipts
                 .iter()
-                .map(|receipt| map_record_receipt(receipt.clone()))
+                .map(|receipt| receipt.clone().into())
                 .collect(),
             error: None,
         }

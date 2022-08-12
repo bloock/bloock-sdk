@@ -1,4 +1,5 @@
 use crate::items::GetAnchorResponse;
+use crate::items::GetProofResponse;
 use crate::items::SendRecordsResponse;
 use crate::items::WaitAnchorResponse;
 use crate::server::BridgeError;
@@ -10,6 +11,7 @@ pub enum ResponseType {
     GetAnchor(GetAnchorResponse),
     WaitAnchor(WaitAnchorResponse),
     SendRecords(SendRecordsResponse),
+    GetProof(GetProofResponse),
 }
 
 impl ResponseType {
@@ -22,6 +24,7 @@ impl ResponseType {
             ResponseType::GetAnchor(r) => r.encode(&mut result_vec),
             ResponseType::WaitAnchor(r) => r.encode(&mut result_vec),
             ResponseType::SendRecords(r) => r.encode(&mut result_vec),
+            ResponseType::GetProof(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -34,6 +37,7 @@ impl ResponseType {
             ResponseType::GetAnchor(r) => r.encoded_len(),
             ResponseType::WaitAnchor(r) => r.encoded_len(),
             ResponseType::SendRecords(r) => r.encoded_len(),
+            ResponseType::GetProof(r) => r.encoded_len(),
         }
     }
 }

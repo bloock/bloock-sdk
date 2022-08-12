@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/go-bridge/internal/bridge/proto";
+option java_package = "bloock.sdk.java.bridge.proto";
+
+import "bloock.proto";
+import "config.proto";
+import "record.proto";
+import "anchor.proto";
+
+service ProofService {
+    rpc GetProof(GetProofRequest) returns (GetProofResponse);
+    rpc ValidateRoot(ValidateRootRequest) returns (ValidateRootResponse);
+    rpc ValidateProof(ValidateProofRequest) returns (ValidateProofResponse);
+    rpc VerifyRecords(VerifyRecordsRequest) returns (VerifyRecordsResponse);
+}
+
+message Proof {
+    repeated string leaves = 1;
+    repeated string nodes = 2;
+    string depth = 3;
+    string bitmap = 4;
+    ProofAnchor anchor = 5;
+}
+
+message ProofAnchor {
+    int64 anchor_id = 1;
+    repeated AnchorNetwork networks = 2;
+    string root = 3;
+    string status = 4;
+}
+
+message GetProofRequest {
+    ConfigData config_data = 1;
+    repeated Record records = 2;
+}
+
+message GetProofResponse {
+    Proof proof = 1;
+    optional Error error = 2;
+}
+
+message ValidateRootRequest {
+    ConfigData config_data = 1;
+    Record root = 2;
+    Network network = 3;
+}
+
+message ValidateRootResponse {
+    uint64 state = 1; // TODO Should be u128
+    optional Error error = 2;
+}
+
+message ValidateProofRequest {
+    ConfigData config_data = 1;
+    Proof proof = 2;
+}
+
+message ValidateProofResponse {
+    Record record = 1;
+    optional Error error = 2;
+}
+
+message VerifyRecordsRequest {
+    ConfigData config_data = 1;
+    repeated Record records = 2;
+    optional Network network = 3;
+}
+
+message VerifyRecordsResponse {
+    uint64 state = 1; // TODO Should be u128
+    optional Error error = 2;
+}

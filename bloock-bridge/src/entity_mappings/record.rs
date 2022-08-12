@@ -3,15 +3,19 @@ use bloock_core::record::entity::{
     record::Record as RecordCore, record_receipt::RecordReceipt as RecordReceiptCore,
 };
 
-pub fn map_record(record: Record) -> RecordCore {
-    RecordCore { hash: record.hash }
+impl Into<RecordCore> for Record {
+    fn into(self) -> RecordCore {
+        RecordCore { hash: self.hash }
+    }
 }
 
-pub fn map_record_receipt(receipt: RecordReceiptCore) -> RecordReceipt {
-    RecordReceipt {
-        anchor: receipt.anchor,
-        client: receipt.client,
-        record: receipt.record,
-        status: receipt.status,
+impl Into<RecordReceipt> for RecordReceiptCore {
+    fn into(self) -> RecordReceipt {
+        RecordReceipt {
+            anchor: self.anchor,
+            client: self.client,
+            record: self.record,
+            status: self.status,
+        }
     }
 }

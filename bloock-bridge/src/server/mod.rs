@@ -1,5 +1,6 @@
 mod anchor;
 mod greetings;
+mod proof;
 mod record;
 mod response_types;
 
@@ -8,6 +9,7 @@ use crate::items::AnchorServiceHandler;
 use crate::items::BloockServer;
 use crate::items::GreeterHandler;
 use crate::items::HelloResponse;
+use crate::items::ProofServiceHandler;
 use crate::items::RecordServiceHandler;
 use crate::server::response_types::ResponseType;
 use std::io::Cursor;
@@ -15,12 +17,14 @@ use std::io::Cursor;
 use greetings::GreetingsServer;
 
 use self::anchor::AnchorServer;
+use self::proof::ProofServer;
 use self::record::RecordServer;
 
 pub struct Server {
     greeter: GreetingsServer,
     anchor: AnchorServer,
     record: RecordServer,
+    proof: ProofServer,
 }
 
 impl Server {
@@ -29,6 +33,7 @@ impl Server {
             greeter: GreetingsServer {},
             anchor: AnchorServer {},
             record: RecordServer {},
+            proof: ProofServer {},
         }
     }
 
@@ -62,6 +67,11 @@ impl Server {
             BloockServer::RecordServiceSendRecords => Ok(self
                 .record
                 .send_records(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::ProofServiceGetProof => Ok(self
+                .proof
+                .get_proof(self.serialize_request(payload)?)
                 .await
                 .into()),
             _ => Ok(self
