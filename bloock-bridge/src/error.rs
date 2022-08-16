@@ -13,6 +13,8 @@ pub enum BridgeError {
     AnchorError,
     #[error("Proof error")]
     ProofError,
+    #[error("Anchor missing from request")]
+    MissingAnchor,
 }
 
 pub fn config_data_error() -> ProtoError {

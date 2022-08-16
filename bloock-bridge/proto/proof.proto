@@ -13,7 +13,7 @@ import "anchor.proto";
 service ProofService {
     rpc GetProof(GetProofRequest) returns (GetProofResponse);
     rpc ValidateRoot(ValidateRootRequest) returns (ValidateRootResponse);
-    rpc ValidateProof(ValidateProofRequest) returns (ValidateProofResponse);
+    rpc VerifyProof(VerifyProofRequest) returns (VerifyProofResponse);
     rpc VerifyRecords(VerifyRecordsRequest) returns (VerifyRecordsResponse);
 }
 
@@ -53,13 +53,13 @@ message ValidateRootResponse {
     optional Error error = 2;
 }
 
-message ValidateProofRequest {
+message VerifyProofRequest {
     ConfigData config_data = 1;
     Proof proof = 2;
 }
 
-message ValidateProofResponse {
-    Record record = 1;
+message VerifyProofResponse {
+    optional Record record = 1;
     optional Error error = 2;
 }
 

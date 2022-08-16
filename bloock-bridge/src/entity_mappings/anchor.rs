@@ -29,3 +29,13 @@ impl Into<AnchorNetwork> for AnchorNetworkCore {
         }
     }
 }
+
+impl Into<AnchorNetworkCore> for AnchorNetwork {
+    fn into(self) -> AnchorNetworkCore {
+        AnchorNetworkCore {
+            name: self.name.clone(),
+            state: self.state.clone(),
+            tx_hash: self.tx_hash.clone(),
+        }
+    }
+}

@@ -74,6 +74,21 @@ impl Server {
                 .get_proof(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::ProofServiceValidateRoot => Ok(self
+                .proof
+                .validate_root(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::ProofServiceVerifyProof => Ok(self
+                .proof
+                .verify_proof(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::ProofServiceVerifyRecords => Ok(self
+                .proof
+                .verify_records(self.serialize_request(payload)?)
+                .await
+                .into()),
             _ => Ok(self
                 .greeter
                 .say_hello(self.serialize_request(payload)?)

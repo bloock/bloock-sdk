@@ -9,6 +9,12 @@ impl Into<RecordCore> for Record {
     }
 }
 
+impl Into<Record> for RecordCore {
+    fn into(self) -> Record {
+        Record { hash: self.hash }
+    }
+}
+
 impl Into<RecordReceipt> for RecordReceiptCore {
     fn into(self) -> RecordReceipt {
         RecordReceipt {

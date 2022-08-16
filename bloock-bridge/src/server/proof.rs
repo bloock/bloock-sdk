@@ -5,8 +5,8 @@ use crate::{
     entity_mappings::config::map_config,
     error::{config_data_error, BridgeError},
     items::{
-        Error, GetProofRequest, GetProofResponse, ProofServiceHandler, ValidateProofRequest,
-        ValidateProofResponse, ValidateRootRequest, ValidateRootResponse, VerifyRecordsRequest,
+        Error, GetProofRequest, GetProofResponse, ProofServiceHandler, ValidateRootRequest,
+        ValidateRootResponse, VerifyProofRequest, VerifyProofResponse, VerifyRecordsRequest,
         VerifyRecordsResponse,
     },
 };
@@ -16,6 +16,24 @@ use super::response_types::ResponseType;
 impl From<GetProofResponse> for ResponseType {
     fn from(res: GetProofResponse) -> Self {
         ResponseType::GetProof(res)
+    }
+}
+
+impl From<ValidateRootResponse> for ResponseType {
+    fn from(res: ValidateRootResponse) -> Self {
+        ResponseType::ValidateRoot(res)
+    }
+}
+
+impl From<VerifyProofResponse> for ResponseType {
+    fn from(res: VerifyProofResponse) -> Self {
+        ResponseType::VerifyProof(res)
+    }
+}
+
+impl From<VerifyRecordsResponse> for ResponseType {
+    fn from(res: VerifyRecordsResponse) -> Self {
+        ResponseType::VerifyRecords(res)
     }
 }
 
@@ -34,25 +52,17 @@ impl ProofServiceHandler for ProofServer {
             }
         };
 
+        let client = client::configure(config_data);
+
         let records = req
             .records
             .iter()
             .map(|record| record.clone().into())
             .collect();
 
-        let client = client::configure(config_data);
-
         let proof = match client.get_proof(records).await {
             Ok(proof) => proof,
-            Err(e) => {
-                return GetProofResponse {
-                    proof: None,
-                    error: Some(Error {
-                        kind: BridgeError::ProofError.to_string(),
-                        message: e.to_string(),
-                    }),
-                };
-            }
+            Err(e) => return GetProofResponse::new_error(e.to_string()),
         };
 
         GetProofResponse {
@@ -60,13 +70,141 @@ impl ProofServiceHandler for ProofServer {
             error: None,
         }
     }
-    async fn validate_root(&self, input: ValidateRootRequest) -> ValidateRootResponse {
-        todo!()
+
+    async fn validate_root(&self, req: ValidateRootRequest) -> ValidateRootResponse {
+        let config_data = match map_config(req.config_data.clone()) {
+            Ok(config) => config,
+            Err(_) => {
+                return ValidateRootResponse {
+                    state: 0,
+                    error: Some(config_data_error()),
+                }
+            }
+        };
+
+        let client = client::configure(config_data);
+
+        let root = match req.root.clone() {
+            Some(root) => root.into(),
+            None => return ValidateRootResponse::new_error("Missing root in request".to_string()),
+        };
+
+        let state = match client.validate_root(root, req.network().into()).await {
+            Ok(proof) => proof,
+            Err(e) => return ValidateRootResponse::new_error(e.to_string()),
+        };
+
+        ValidateRootResponse {
+            state: state as u64,
+            error: None,
+        }
     }
-    async fn validate_proof(&self, input: ValidateProofRequest) -> ValidateProofResponse {
-        todo!()
+
+    async fn verify_proof(&self, req: VerifyProofRequest) -> VerifyProofResponse {
+        let config_data = match map_config(req.config_data.clone()) {
+            Ok(config) => config,
+            Err(_) => {
+                return VerifyProofResponse {
+                    record: None,
+                    error: Some(config_data_error()),
+                }
+            }
+        };
+
+        let client = client::configure(config_data);
+
+        let proof = match req.proof {
+            Some(proof) => match proof.into() {
+                Ok(proof) => proof,
+                Err(e) => return VerifyProofResponse::new_error(e.to_string()),
+            },
+            None => return VerifyProofResponse::new_error("Missing proof in request".to_string()),
+        };
+
+        let record = match client.verify_proof(proof) {
+            Ok(proof) => proof,
+            Err(e) => return VerifyProofResponse::new_error(e.to_string()),
+        };
+
+        VerifyProofResponse {
+            record: Some(record.into()),
+            error: None,
+        }
     }
-    async fn verify_records(&self, input: VerifyRecordsRequest) -> VerifyRecordsResponse {
-        todo!()
+
+    async fn verify_records(&self, req: VerifyRecordsRequest) -> VerifyRecordsResponse {
+        let config_data = match map_config(req.config_data.clone()) {
+            Ok(config) => config,
+            Err(_) => {
+                return VerifyRecordsResponse {
+                    state: 0,
+                    error: Some(config_data_error()),
+                }
+            }
+        };
+
+        let client = client::configure(config_data);
+
+        let records = req
+            .records
+            .iter()
+            .map(|record| record.clone().into())
+            .collect();
+
+        let state = match client
+            .verify_records(records, Some(req.network().into()))
+            .await
+        {
+            Ok(state) => state,
+            Err(e) => return VerifyRecordsResponse::new_error(e.to_string()),
+        };
+
+        VerifyRecordsResponse {
+            state: state as u64,
+            error: None,
+        }
+    }
+}
+
+impl GetProofResponse {
+    fn new_error(err: String) -> GetProofResponse {
+        GetProofResponse {
+            proof: None,
+            error: Some(proof_error(err)),
+        }
+    }
+}
+
+impl ValidateRootResponse {
+    fn new_error(err: String) -> ValidateRootResponse {
+        ValidateRootResponse {
+            state: 0,
+            error: Some(proof_error(err)),
+        }
+    }
+}
+
+impl VerifyProofResponse {
+    fn new_error(err: String) -> VerifyProofResponse {
+        VerifyProofResponse {
+            record: None,
+            error: Some(proof_error(err)),
+        }
+    }
+}
+
+impl VerifyRecordsResponse {
+    fn new_error(err: String) -> VerifyRecordsResponse {
+        VerifyRecordsResponse {
+            state: 0,
+            error: Some(proof_error(err)),
+        }
+    }
+}
+
+fn proof_error(err: String) -> Error {
+    Error {
+        kind: BridgeError::ProofError.to_string(),
+        message: err,
     }
 }
