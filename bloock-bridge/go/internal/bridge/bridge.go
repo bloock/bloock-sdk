@@ -6,6 +6,7 @@ type BloockBridge struct {
 	greeting proto.GreeterClient
 	anchor   proto.AnchorServiceClient
 	record   proto.RecordServiceClient
+	proof    proto.ProofServiceClient
 }
 
 func NewBloockBridge() BloockBridge {
@@ -14,6 +15,7 @@ func NewBloockBridge() BloockBridge {
 		greeting: proto.NewGreeterClient(conn),
 		anchor:   proto.NewAnchorServiceClient(conn),
 		record:   proto.NewRecordServiceClient(conn),
+		proof:    proto.NewProofServiceClient(conn),
 	}
 }
 
@@ -27,4 +29,8 @@ func (b *BloockBridge) Anchor() proto.AnchorServiceClient {
 
 func (b *BloockBridge) Record() proto.RecordServiceClient {
 	return b.record
+}
+
+func (b *BloockBridge) Proof() proto.ProofServiceClient {
+	return b.proof
 }

@@ -1,6 +1,6 @@
 use crate::proof::entity::anchor::ProofAnchor;
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct ProofRetrieveResponse {
     pub leaves: Vec<String>,
     pub nodes: Vec<String>,

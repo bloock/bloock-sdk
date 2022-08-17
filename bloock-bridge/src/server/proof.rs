@@ -122,7 +122,7 @@ impl ProofServiceHandler for ProofServer {
         };
 
         let record = match client.verify_proof(proof) {
-            Ok(proof) => proof,
+            Ok(record) => record,
             Err(e) => return VerifyProofResponse::new_error(e.to_string()),
         };
 
