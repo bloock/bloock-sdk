@@ -10,7 +10,7 @@ ifeq ($(UNAME_S),Darwin)
 ifeq ($(UNAME_M),x86_64)
 	cp ../../target/release/libbloock_bridge.a internal/ffi/native/macos/amd64/
 else
-	cp ../c/lib.a internal/ffi/native/macos/arm64/
+	cp ../../target/release/libbloock_bridge.a internal/ffi/native/macos/arm64/
 endif
 endif
 
