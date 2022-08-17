@@ -1,4 +1,4 @@
-import { u32 } from "./diplomat-runtime"
+import { usize } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 
 /**

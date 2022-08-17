@@ -4,14 +4,8 @@
 	lint clippy lint-js lint-go \
 	clean clean-rust clean-wasm-api clean-go clean-js 
 
-build: c-build wasm-build
-
-c-build:
-	cargo build -p bloock-c-api --release
-
-wasm-build:
-	$(MAKE) -C bloock-wasm-api build
-
+bridge-build:
+	$(MAKE) -C bloock-bridge build
 
 test: core-test libs-test c-test wasm-test go-test js-test 
 
@@ -21,12 +15,6 @@ core-test:
 libs-test:
 	$(MAKE) -C bloock-libs test
 	$(MAKE) -C bloock-libs wasm-test
-
-c-test:
-	cargo test -p bloock-c-api --release
-
-wasm-test:
-	$(MAKE) -C bloock-wasm-api test
 
 go-test: c-build
 	$(MAKE) -C languages/go test
@@ -39,13 +27,13 @@ php-test: c-build
 
 
 go-dev: c-build
-	$(MAKE) -C languages/go dev
+	$(MAKE) -C bloock-bridge go-dev
 
 js-dev: wasm-build
-	$(MAKE) -C languages/js dev
+	$(MAKE) -C bloock-bridge js-dev
 
 php-dev: c-build
-	$(MAKE) -C languages/php dev
+	$(MAKE) -C bloock-bridge php-dev
 
 
 fmt: fmt-rust fmt-js fmt-go fmt-php

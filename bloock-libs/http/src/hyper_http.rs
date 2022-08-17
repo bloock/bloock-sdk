@@ -84,6 +84,7 @@ impl HttpClientImpl {
 #[cfg(not(feature = "wasm"))]
 mod tests {
     use super::*;
+    use crate::HttpClient;
     use std::collections::HashMap;
 
     #[tokio::test]
