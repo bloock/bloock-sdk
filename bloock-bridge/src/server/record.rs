@@ -1,15 +1,31 @@
 use async_trait::async_trait;
-use bloock_core::client;
+use bloock_core::{client, record::entity::record::Record as RecordCore};
 
 use super::response_types::ResponseType;
 use crate::{
     entity_mappings::config::map_config,
-    items::{Error, RecordServiceHandler, SendRecordsResponse}, error::{config_data_error, BridgeError},
+    error::{config_data_error, BridgeError},
+    items::{
+        Error, FromHashRequest, FromHexRequest, FromHexResponse, FromStringRequest,
+        FromTypedArrayRequest, Record, RecordServiceHandler, SendRecordsResponse,
+    },
 };
 
 impl From<SendRecordsResponse> for ResponseType {
     fn from(res: SendRecordsResponse) -> Self {
         ResponseType::SendRecords(res)
+    }
+}
+
+impl From<Record> for ResponseType {
+    fn from(res: Record) -> Self {
+        ResponseType::Record(res)
+    }
+}
+
+impl From<FromHexResponse> for ResponseType {
+    fn from(res: FromHexResponse) -> Self {
+        ResponseType::RecordFromHex(res)
     }
 }
 
@@ -57,5 +73,33 @@ impl RecordServiceHandler for RecordServer {
                 .collect(),
             error: None,
         }
+    }
+
+    async fn from_hash(&self, req: FromHashRequest) -> Record {
+        RecordCore::from_hash(&req.hash).into()
+    }
+
+    async fn from_hex(&self, req: FromHexRequest) -> FromHexResponse {
+        match RecordCore::from_hex(&req.hex) {
+            Ok(record) => FromHexResponse {
+                record: Some(record.into()),
+                error: None,
+            },
+            Err(e) => FromHexResponse {
+                record: None,
+                error: Some(Error {
+                    kind: BridgeError::RecordError.to_string(),
+                    message: e.to_string(),
+                }),
+            },
+        }
+    }
+
+    async fn from_string(&self, req: FromStringRequest) -> Record {
+        RecordCore::from_string(&req.str).into()
+    }
+
+    async fn from_typed_array(&self, req: FromTypedArrayRequest) -> Record {
+        RecordCore::from_typed_array(&req.array).into()
     }
 }

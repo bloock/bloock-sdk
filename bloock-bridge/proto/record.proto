@@ -10,6 +10,10 @@ import "config.proto";
 
 service RecordService {
     rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
+    rpc FromHash(FromHashRequest) returns (Record);
+    rpc FromHex(FromHexRequest) returns (FromHexResponse);
+    rpc FromString(FromStringRequest) returns (Record);
+    rpc FromTypedArray(FromTypedArrayRequest) returns (Record);
 }
 
 message Record {
@@ -30,5 +34,26 @@ message SendRecordsRequest {
 
 message SendRecordsResponse {
     repeated RecordReceipt records = 1;
+    optional Error error = 2;
+}
+
+message FromHashRequest {
+    string hash = 1;
+}
+
+message FromHexRequest {
+    string hex = 1;
+}
+
+message FromStringRequest {
+    string str = 1;
+}
+
+message FromTypedArrayRequest {
+    bytes array = 1;
+}
+
+message FromHexResponse {
+    optional Record record = 1;
     optional Error error = 2;
 }

@@ -1,9 +1,8 @@
-package bloock
+package main
 
 import (
 	"context"
 	"errors"
-	"os"
 
 	"github.com/bloock/go-bridge/internal/bridge"
 	"github.com/bloock/go-bridge/internal/bridge/proto"
@@ -14,13 +13,13 @@ type Client struct {
 	configData *proto.ConfigData
 }
 
-func NewClient() Client {
+func NewClient(apiKey string) Client {
 	return Client{
 		client: bridge.NewBloockBridge(),
 		configData: &proto.ConfigData{
 			Config: &proto.Configuration{
 				Host:                       "https://api.bloock.dev",
-				ApiKey:                     os.Getenv("API_KEY"),
+				ApiKey:                     apiKey,
 				WaitMessageIntervalFactor:  2,
 				WaitMessageIntervalDefault: 5000,
 				KeyTypeAlgorithm:           "EC",
@@ -151,22 +150,54 @@ func (c Client) VerifyRecords(records []*proto.Record, network *proto.Network) (
 	return res.State, nil
 }
 
-func NewRecordFromObject(data interface{}) proto.Record {
-	panic("TODO")
+func (c Client) NewRecordFromHash(hash string) (*proto.Record, error) {
+    record, err := c.client.Record().FromHash(context.Background(), &proto.FromHashRequest{
+    	Hash: hash,
+    })
+
+    if err != nil {
+        return nil, err
+    }
+
+    return record, nil
 }
 
-func NewRecordFromHash(hash string) proto.Record {
-	panic("TODO")
+func (c Client) NewRecordFromHex(hex string) (*proto.Record, error) {
+    res, err := c.client.Record().FromHex(context.Background(), &proto.FromHexRequest{
+    	Hex: hex,
+    })
+
+    if err != nil {
+        return nil, err
+    }
+
+    if res.Error != nil {
+        return nil, err
+    }
+
+    return res.Record, nil
 }
 
-func NewRecordFromHex(hex string) (proto.Record, error) {
-	panic("TODO")
+func (c Client) NewRecordFromString(string string) (*proto.Record, error) {
+    record, err := c.client.Record().FromString(context.Background(), &proto.FromStringRequest{
+    	Str: string,
+    })
+
+    if err != nil {
+        return nil, err
+    }
+
+    return record, nil
 }
 
-func NewRecordFromString(string string) proto.Record {
-	panic("TODO")
-}
+func (c Client) NewRecordFromTypedArray(array []byte) (*proto.Record, error) {
+    record, err := c.client.Record().FromTypedArray(context.Background(), &proto.FromTypedArrayRequest{
+    	Array: array,
+    })
 
-func NewRecordFromUint8Array(array []byte) proto.Record {
-	panic("TODO")
+    if err != nil {
+        return nil, err
+    }
+
+    return record, nil
 }
