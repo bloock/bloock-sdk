@@ -76,7 +76,7 @@ impl ProofServiceHandler for ProofServer {
             Ok(config) => config,
             Err(_) => {
                 return ValidateRootResponse {
-                    state: 0,
+                    timestamp: 0,
                     error: Some(config_data_error()),
                 }
             }
@@ -89,13 +89,13 @@ impl ProofServiceHandler for ProofServer {
             None => return ValidateRootResponse::new_error("Missing root in request".to_string()),
         };
 
-        let state = match client.validate_root(root, req.network().into()).await {
+        let timestamp = match client.validate_root(root, req.network().into()).await {
             Ok(proof) => proof,
             Err(e) => return ValidateRootResponse::new_error(e.to_string()),
         };
 
         ValidateRootResponse {
-            state: state as u64,
+            timestamp: timestamp as u64,
             error: None,
         }
     }
@@ -137,7 +137,7 @@ impl ProofServiceHandler for ProofServer {
             Ok(config) => config,
             Err(_) => {
                 return VerifyRecordsResponse {
-                    state: 0,
+                    timestamp: 0,
                     error: Some(config_data_error()),
                 }
             }
@@ -151,16 +151,16 @@ impl ProofServiceHandler for ProofServer {
             .map(|record| record.clone().into())
             .collect();
 
-        let state = match client
+        let timestamp = match client
             .verify_records(records, Some(req.network().into()))
             .await
         {
-            Ok(state) => state,
+            Ok(timestamp) => timestamp,
             Err(e) => return VerifyRecordsResponse::new_error(e.to_string()),
         };
 
         VerifyRecordsResponse {
-            state: state as u64,
+            timestamp: timestamp as u64,
             error: None,
         }
     }
@@ -178,7 +178,7 @@ impl GetProofResponse {
 impl ValidateRootResponse {
     fn new_error(err: String) -> ValidateRootResponse {
         ValidateRootResponse {
-            state: 0,
+            timestamp: 0,
             error: Some(proof_error(err)),
         }
     }
@@ -196,7 +196,7 @@ impl VerifyProofResponse {
 impl VerifyRecordsResponse {
     fn new_error(err: String) -> VerifyRecordsResponse {
         VerifyRecordsResponse {
-            state: 0,
+            timestamp: 0,
             error: Some(proof_error(err)),
         }
     }

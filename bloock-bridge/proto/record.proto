@@ -21,7 +21,7 @@ message Record {
 }
 
 message RecordReceipt {
-    int32 anchor = 1;
+    int64 anchor = 1;
     string client = 2;
     string record = 3;
     string status = 4;

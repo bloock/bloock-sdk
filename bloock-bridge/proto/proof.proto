@@ -49,7 +49,7 @@ message ValidateRootRequest {
 }
 
 message ValidateRootResponse {
-    uint64 state = 1; // TODO Should be u128
+    uint64 timestamp = 1; // TODO Should be u128
     optional Error error = 2;
 }
 
@@ -70,6 +70,6 @@ message VerifyRecordsRequest {
 }
 
 message VerifyRecordsResponse {
-    uint64 state = 1; // TODO Should be u128
+    uint64 timestamp = 1; // TODO Should be u128
     optional Error error = 2;
 }

@@ -17,7 +17,7 @@ import (
 func Request(requestType string, payload []byte) ([]byte, error) {
 	payloadStr := base64.StdEncoding.EncodeToString(payload)
 
-	w := C.malloc(1024)
+	w := C.malloc(2048)
 	defer C.free(w)
 	writer := C.diplomat_simple_writeable((*C.char)(w), 2048)
 	r := C.BloockBridge_request(C.CString(requestType), C.ulong(len(requestType)), C.CString(payloadStr), C.ulong(len(payloadStr)), &writer)

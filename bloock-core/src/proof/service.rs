@@ -196,7 +196,7 @@ impl<H: Client> ProofService<H> {
             )
             .await
         {
-            Ok(state) => Ok(state),
+            Ok(timestamp) => Ok(timestamp),
             Err(e) => Err(ProofError::BlockchainError(e.to_string()).into()),
         }
     }
