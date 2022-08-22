@@ -27,13 +27,14 @@ func TestAcceptance(t *testing.T) {
 		assert.NoError(t, err)
 		records := []*bloock.Record{record}
 
-		res, err := sdk.SendRecords(records)
+		receipt, err := sdk.SendRecords(records)
 		assert.NoError(t, err)
-		assert.NotEqual(t, bloock.RecordReceipt{}, res[0])
+		assert.Greater(t, len(receipt), 0)
+		assert.NotEqual(t, bloock.RecordReceipt{}, receipt[0])
 
-		anchor, err := sdk.WaitAnchor(res[0].Anchor)
+		anchor, err := sdk.WaitAnchor(receipt[0].Anchor)
 		assert.NoError(t, err)
-		assert.Equal(t, res[0].Anchor, anchor.Id)
+		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
 		proof, err := sdk.GetProof(records)
 		assert.NoError(t, err)
@@ -43,37 +44,155 @@ func TestAcceptance(t *testing.T) {
 
 		timestamp, err := sdk.ValidateRoot(root, bloock.ListOfNetworks().BloockChain)
 		assert.NoError(t, err)
-		assert.Greater(t, timestamp, uint64(5000))
+		assert.Greater(t, timestamp, uint64(0))
+
+		timestamp, err = sdk.VerifyRecords(records)
+		assert.NoError(t, err)
+		assert.Greater(t, timestamp, uint64(0))
 	})
 
 	t.Run("Test send records invalid record input wrong char", func(t *testing.T) {
 		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
+		assert.NoError(t, err)
+
 		records := []*bloock.Record{record}
 		_, err = sdk.SendRecords(records)
-		assert.NotNil(t, err)
+
+		assert.Error(t, err)
 		assert.Equal(t, bloock.InvalidRecordError, err.Error())
 	})
 
 	t.Run("Test send records invalid record input missing chars", func(t *testing.T) {
 		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		assert.NoError(t, err)
 		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
+		assert.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
-
 		_, err = sdk.SendRecords(records)
-		assert.NotNil(t, err)
+
+		assert.Error(t, err)
 		assert.Equal(t, bloock.InvalidRecordError, err.Error())
 	})
 
 	t.Run("Test send records invalid record input wrong start", func(t *testing.T) {
 		record1, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		assert.NoError(t, err)
 		record2, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
+		assert.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
 
 		_, err = sdk.SendRecords(records)
-		assert.NotNil(t, err)
+		assert.Error(t, err)
 		assert.Equal(t, bloock.InvalidRecordError, err.Error())
+	})
+
+	t.Run("Test send records empty record input", func(t *testing.T) {
+		res, err := sdk.SendRecords([]*bloock.Record{})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Test get anchor non existing anchor", func(t *testing.T) {
+		_, err := sdk.GetAnchor(666666666666666666)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.AnchorNotFoundError, err.Error())
+	})
+
+	t.Run("Test wait anchor non existing anchor", func(t *testing.T) {
+		_, err := sdk.WaitAnchor(666666666666666666, 3000)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.WaitAnchorTimeoutError, err.Error())
+	})
+
+	t.Run("Test get proof invalid record input wrong char", func(t *testing.T) {
+		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
+		assert.NoError(t, err)
+		records := []*bloock.Record{record}
+
+		_, err = sdk.GetProof(records)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.InvalidRecordError, err.Error())
+	})
+
+	t.Run("Test get proof invalid record input missing chars", func(t *testing.T) {
+		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		assert.NoError(t, err)
+		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
+		assert.NoError(t, err)
+
+		records := []*bloock.Record{record1, record2}
+
+		_, err = sdk.GetProof(records)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.InvalidRecordError, err.Error())
+	})
+
+	t.Run("Test get proof invalid record input wrong start", func(t *testing.T) {
+		record1, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		record2, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
+
+		records := []*bloock.Record{record1, record2}
+
+		_, err = sdk.GetProof(records)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.InvalidRecordError, err.Error())
+	})
+
+	t.Run("Test get proof non-existant leaf", func(t *testing.T) {
+		record, err := sdk.NewRecordFromHash("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdee")
+		assert.NoError(t, err)
+
+		records := []*bloock.Record{record}
+
+		_, err = sdk.GetProof(records)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.RecordNotFoundError, err.Error())
+	})
+
+	t.Run("Test verify records invalid record input wrong char", func(t *testing.T) {
+		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
+		assert.NoError(t, err)
+		records := []*bloock.Record{record}
+
+		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.InvalidRecordError, err.Error())
+	})
+
+	t.Run("Test verify records invalid record input missing chars", func(t *testing.T) {
+		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		assert.NoError(t, err)
+		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
+		assert.NoError(t, err)
+
+		records := []*bloock.Record{record1, record2}
+
+		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.InvalidRecordError, err.Error())
+	})
+
+	t.Run("Test verify records invalid record input wrong start", func(t *testing.T) {
+		record1, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		record2, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
+
+		records := []*bloock.Record{record1, record2}
+
+		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.InvalidRecordError, err.Error())
+	})
+
+	t.Run("Test verify records non-existant leaf", func(t *testing.T) {
+		record, err := sdk.NewRecordFromHash("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdee")
+
+		records := []*bloock.Record{record}
+
+		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
+		assert.Error(t, err)
+		assert.Equal(t, bloock.RecordNotFoundError, err.Error())
 	})
 }
 

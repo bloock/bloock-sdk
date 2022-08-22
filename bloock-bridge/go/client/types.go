@@ -24,5 +24,8 @@ func ListOfNetworks() networks {
 }
 
 const (
-	InvalidRecordError = "Record error: Invalid record"
+	InvalidRecordError     = "Record error: Invalid record"
+	RecordNotFoundError    = "Infrastructure error: Http Client error: Request error - API connected by HttpClient found an error: record not found"
+	WaitAnchorTimeoutError = "Anchor error: Wait Anchor timed out"
+	AnchorNotFoundError    = "Infrastructure error: Http Client error: API connected by HttpClient found an error: anchor not found"
 )

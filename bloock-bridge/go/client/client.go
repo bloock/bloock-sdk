@@ -35,6 +35,7 @@ func (c Client) SendRecords(records []*Record) ([]*RecordReceipt, error) {
 		ConfigData: c.configData,
 		Records:    records,
 	})
+
 	if err != nil {
 		return []*RecordReceipt{}, err
 	}
@@ -51,6 +52,7 @@ func (c Client) GetAnchor(anchorID int64) (*Anchor, error) {
 		ConfigData: c.configData,
 		AnchorId:   anchorID,
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -73,6 +75,7 @@ func (c Client) WaitAnchor(anchorID int64, optional_timeout ...int64) (*Anchor, 
 		AnchorId:   anchorID,
 		Timeout:    timeout,
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -90,6 +93,7 @@ func (c Client) GetProof(records []*Record) (*Proof, error) {
 		ConfigData: c.configData,
 		Records:    records,
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -106,6 +110,7 @@ func (c Client) VerifyProof(proof *Proof) (*Record, error) {
 		ConfigData: c.configData,
 		Proof:      proof,
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -117,12 +122,18 @@ func (c Client) VerifyProof(proof *Proof) (*Record, error) {
 	return res.Record, nil
 }
 
-func (c Client) VerifyRecords(records []*Record, network *Network) (uint64, error) {
+func (c Client) VerifyRecords(records []*Record, optional_network ...Network) (uint64, error) {
+    var network *Network = nil
+    if len(optional_network) > 0 {
+        network = optional_network[0].Enum()
+    }
+
 	res, err := c.bridgeClient.Proof().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
 		ConfigData: c.configData,
 		Records:    records,
 		Network:    network,
 	})
+
 	if err != nil {
 		return 0, err
 	}
@@ -140,6 +151,7 @@ func (c Client) ValidateRoot(root *Record, network Network) (uint64, error) {
 		Root:       root,
 		Network:    network,
 	})
+
 	if err != nil {
 		return 0, err
 	}
@@ -155,7 +167,7 @@ func (c Client) NewRecordFromHash(hash string) (*Record, error) {
 	record, err := c.bridgeClient.Record().FromHash(context.Background(), &proto.FromHashRequest{
 		Hash: hash,
 	})
-    log.Println(record, err)
+
 	if err != nil {
 		return nil, err
 	}
@@ -167,6 +179,7 @@ func (c Client) NewRecordFromHex(hex string) (*Record, error) {
 	res, err := c.bridgeClient.Record().FromHex(context.Background(), &proto.FromHexRequest{
 		Hex: hex,
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -182,6 +195,7 @@ func (c Client) NewRecordFromString(string string) (*Record, error) {
 	record, err := c.bridgeClient.Record().FromString(context.Background(), &proto.FromStringRequest{
 		Str: string,
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -193,6 +207,7 @@ func (c Client) NewRecordFromTypedArray(array []byte) (*Record, error) {
 	record, err := c.bridgeClient.Record().FromTypedArray(context.Background(), &proto.FromTypedArrayRequest{
 		Array: array,
 	})
+
 	if err != nil {
 		return nil, err
 	}
