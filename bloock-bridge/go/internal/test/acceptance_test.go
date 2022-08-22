@@ -90,7 +90,7 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test send records empty record input", func(t *testing.T) {
 		res, err := sdk.SendRecords([]*bloock.Record{})
-		assert.Error(t, err)
+		assert.NoError(t, err)
 		assert.Nil(t, res)
 	})
 
