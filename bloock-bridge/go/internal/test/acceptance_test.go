@@ -3,21 +3,12 @@ package test
 import (
 	"math"
 	"math/rand"
-	"os"
 	"strconv"
 	"testing"
 
 	bloock "github.com/bloock/go-bridge/client"
 	"github.com/stretchr/testify/assert"
 )
-
-func GetSdk() bloock.Client {
-	apiKey := os.Getenv("API_KEY")
-	apiHost := os.Getenv("API_HOST")
-	client := bloock.NewClient(apiKey)
-	client.SetApiHost(apiHost)
-	return client
-}
 
 func TestAcceptance(t *testing.T) {
 	sdk := GetSdk()
