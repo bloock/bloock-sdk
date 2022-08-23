@@ -11,9 +11,11 @@ import {
   CallOptions,
   ServiceError,
 } from "@grpc/grpc-js";
-import * as _m0 from "protobufjs/minimal";
+import { ConfigData } from "./config";
+import _m0 from "protobufjs/minimal";
 
 export interface HelloRequest {
+  config?: ConfigData;
   name: string;
 }
 
@@ -28,7 +30,7 @@ export interface Error {
 }
 
 function createBaseHelloRequest(): HelloRequest {
-  return { name: "" };
+  return { config: undefined, name: "" };
 }
 
 export const HelloRequest = {
@@ -36,8 +38,11 @@ export const HelloRequest = {
     message: HelloRequest,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
+    if (message.config !== undefined) {
+      ConfigData.encode(message.config, writer.uint32(10).fork()).ldelim();
+    }
     if (message.name !== "") {
-      writer.uint32(10).string(message.name);
+      writer.uint32(18).string(message.name);
     }
     return writer;
   },
@@ -50,6 +55,9 @@ export const HelloRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          message.config = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
           message.name = reader.string();
           break;
         default:
@@ -62,12 +70,19 @@ export const HelloRequest = {
 
   fromJSON(object: any): HelloRequest {
     return {
+      config: isSet(object.config)
+        ? ConfigData.fromJSON(object.config)
+        : undefined,
       name: isSet(object.name) ? String(object.name) : "",
     };
   },
 
   toJSON(message: HelloRequest): unknown {
     const obj: any = {};
+    message.config !== undefined &&
+      (obj.config = message.config
+        ? ConfigData.toJSON(message.config)
+        : undefined);
     message.name !== undefined && (obj.name = message.name);
     return obj;
   },
@@ -76,6 +91,10 @@ export const HelloRequest = {
     object: I
   ): HelloRequest {
     const message = createBaseHelloRequest();
+    message.config =
+      object.config !== undefined && object.config !== null
+        ? ConfigData.fromPartial(object.config)
+        : undefined;
     message.name = object.name ?? "";
     return message;
   },

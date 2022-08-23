@@ -1,17 +1,38 @@
 import { ServiceDefinition } from "@grpc/grpc-js";
 import { FFIClient } from "../ffi/ffi";
 import { makeRequest } from "./connection";
+import { AnchorServiceClient, AnchorServiceService } from "./proto/anchor";
 import * as BloockGRPC from "./proto/bloock";
+import { ProofServiceClient, ProofServiceService } from "./proto/proof";
+import { RecordServiceClient, RecordServiceService } from "./proto/record";
 
 export class BloockBridge {
   private greeting: BloockGRPC.GreeterClient;
+  private anchor: AnchorServiceClient;
+  private record: RecordServiceClient;
+  private proof: ProofServiceClient;
 
   constructor() {
     this.greeting = new (this.createClient(BloockGRPC.GreeterService) as any)();
+    this.anchor = new (this.createClient(AnchorServiceService) as any)();
+    this.record = new (this.createClient(RecordServiceService) as any)();
+    this.proof = new (this.createClient(ProofServiceService) as any)();
   }
 
   public getGreeting(): BloockGRPC.GreeterClient {
     return this.greeting;
+  }
+
+  public getAnchor(): AnchorServiceClient {
+    return this.anchor;
+  }
+
+  public getRecord(): RecordServiceClient {
+    return this.record;
+  }
+
+  public getProof(): ProofServiceClient {
+    return this.proof;
   }
 
   private createClient(methods: ServiceDefinition): ServiceClientConstructor {
@@ -72,7 +93,7 @@ interface ServiceClient {
 }
 
 interface ServiceClientConstructor {
-  new (): ServiceClient;
+  new(): ServiceClient;
   service: ServiceDefinition;
   serviceName: string;
 }

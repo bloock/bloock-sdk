@@ -20,7 +20,7 @@ rimraf.sync(`${MODEL_DIR}/*`, {
 const protoConfig = [
   `--plugin=${PLUGIN_PATH}`,
 
-  "--ts_proto_opt=outputServices=grpc-js,env=node,useOptionals=messages,exportCommonSymbols=false",
+  "--ts_proto_opt=outputServices=grpc-js,env=node,useOptionals=messages,exportCommonSymbols=false,esModuleInterop=true",
 
   `--ts_proto_out=${MODEL_DIR}`,
   `--proto_path ${PROTO_DIR} ${PROTO_DIR}/*.proto`,
