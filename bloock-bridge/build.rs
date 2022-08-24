@@ -55,8 +55,8 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
             )
             .unwrap();
         }
-        // Final 404 arm and end fn
-        buf.push_str("\n}}");
+
+        buf.push_str("\n}");
     }
 
     fn finalize_package(&mut self, _package: &str, buf: &mut String) {
@@ -78,7 +78,7 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
         }
 
         writeln!(buf, "\tUnknown = {},", i).unwrap();
-        buf.push_str("}}\n");
+        buf.push_str("}\n");
 
         buf.push_str("\n\n");
         writeln!(buf, "impl {} {{", enum_name).unwrap();
@@ -104,8 +104,8 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
         }
         buf.push_str("\t\t\t_ => \"unknown\",\n");
 
-        buf.push_str("\t\t}}\n");
-        buf.push_str("\t}}\n");
+        buf.push_str("\t\t}\n");
+        buf.push_str("\t}\n");
 
         writeln!(buf).unwrap();
 
@@ -130,8 +130,8 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
         }
         buf.push_str("\t\t\t _ => BloockServer::Unknown,\n");
 
-        buf.push_str("\t\t}}\n");
-        buf.push_str("\t}}\n");
-        buf.push_str("}}\n");
+        buf.push_str("\t\t}\n");
+        buf.push_str("\t}\n");
+        buf.push_str("}\n");
     }
 }

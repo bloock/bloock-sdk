@@ -1,6 +1,6 @@
 copy_lib:
 	rm -rfv ./internal/ffi/native/*
-	cp -r ../../bloock-bridge/native/* ./internal/ffi/native/
+	cp -r ../../bloock-bridge/build/native/* ./internal/ffi/native/
 
 proto:
 	protoc -I ../../bloock-bridge/proto --go_out=./internal/bridge/proto \

@@ -2,7 +2,7 @@
 
 copy-lib:
 	rm -rfv src/ffi/native/*
-	cp ../../bloock-bridge/wasm/* src/ffi/native
+	cp ../../bloock-bridge/build/wasm/* src/ffi/native
 
 proto:
 	node bin/proto.js
