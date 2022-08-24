@@ -18,5 +18,5 @@ lint:
 	echo "Unimplemented"
 
 clean:
-	echo "Unimplemented"
+	./gradlew clean
 
