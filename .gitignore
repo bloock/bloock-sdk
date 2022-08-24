@@ -9,6 +9,8 @@ target
 
 bloock-libs/**/pkg
 
+*.class
+
 languages/go/vendor
 languages/js/node_modules
 languages/js/dist

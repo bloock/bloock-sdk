@@ -76,6 +76,6 @@ impl Server {
         &self,
         payload: &[u8],
     ) -> Result<T, BridgeError> {
-        T::decode(payload).map_err(|_| BridgeError::ResponseSerialization("".to_string()))
+        T::decode(payload).map_err(|e| BridgeError::RequestDeserialization(e.to_string()))
     }
 }

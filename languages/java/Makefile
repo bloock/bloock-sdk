@@ -2,17 +2,8 @@ UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 
 copy_lib:
-	cp ../c/*.h app/src/main/java/bloock/sdk/java/native/
-ifeq ($(UNAME_S),Linux)
-	cp ../c/lib.a app/src/main/java/bloock/sdk/java/native/
-endif
-ifeq ($(UNAME_S),Darwin)
-ifeq ($(UNAME_M),x86_64)
-	cp ../../target/release/libbloock_bridge.a app/src/main/java/bloock/sdk/java/native/
-else
-	cp ../c/lib.a app/src/main/java/bloock/sdk/java/native/
-endif
-endif
+	rm -rfv app/src/main/resources/*
+	cp -r ../../bloock-bridge/build/native/* app/src/main/resources/
 
 dev: copy_lib
 	./gradlew run
@@ -29,4 +20,3 @@ lint:
 clean:
 	echo "Unimplemented"
 
-.PHONY: copy_lib test fmt lint clean

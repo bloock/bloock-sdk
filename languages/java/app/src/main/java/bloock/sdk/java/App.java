@@ -4,7 +4,9 @@
 package bloock.sdk.java;
 
 import bloock.sdk.java.bridge.Bridge;
+import bloock.sdk.java.bridge.proto.AnchorOuterClass;
 import bloock.sdk.java.bridge.proto.Bloock;
+import bloock.sdk.java.bridge.proto.Config;
 
 import java.util.logging.Logger;
 
@@ -12,17 +14,29 @@ public class App {
     private static final Logger logger = Logger.getLogger(App.class.getName());
 
     public static void main(String[] args) {
-        logger.info("Starting request say hello");
+        logger.info("Starting request say hello with error");
         Bridge client = new Bridge();
         Bloock.HelloRequest request = Bloock.HelloRequest.newBuilder().setName("Marc").build();
-        Bloock.HelloResponse response = client.getGreeting().sayHello(request);
-        logger.info("Got response from say hello");
-        logger.info(response.toString());
-
-        logger.info("Starting request say hello with error");
-        request = Bloock.HelloRequest.newBuilder().setName("Marc").build();
-        response = client.getGreeting().sayHelloWithError(request);
+        Bloock.HelloResponse response = client.getGreeting().sayHelloWithError(request);
         logger.info("Got response from say hello with error");
         logger.info(response.toString());
+
+        logger.info("Starting request get anchor");
+        Config.ConfigData configData = Config.ConfigData.newBuilder()
+                .setConfig(
+                        Config.Configuration.newBuilder()
+                                .setHost("https://api.bloock.dev")
+                                .setApiKey("test_key")
+                                .build()
+                )
+                .putNetworksConfig(
+                        Config.Network.ETHEREUM_MAINNET_VALUE,
+                        Config.NetworkConfig.newBuilder().setContractAddress("0x522b2040CdfD247ED60921623044dF1c929524B7").build()
+                )
+                .build();
+        AnchorOuterClass.GetAnchorRequest anchorRequest = AnchorOuterClass.GetAnchorRequest.newBuilder().setConfigData(configData).setAnchorId(500).build();
+        AnchorOuterClass.GetAnchorResponse anchorResponse = client.getAnchor().getAnchor(anchorRequest);
+        logger.info("Got response from get anchor");
+        logger.info(anchorResponse.toString());
     }
 }

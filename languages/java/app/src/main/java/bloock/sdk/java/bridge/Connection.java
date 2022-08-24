@@ -4,8 +4,9 @@ import io.grpc.*;
 
 import javax.annotation.Nullable;
 
-public class Connection extends Channel {
+import bloock.sdk.java.ffi.Ffi;
 
+public class Connection extends Channel {
     @Override
     public <RequestT, ResponseT> ClientCall<RequestT, ResponseT> newCall(MethodDescriptor<RequestT, ResponseT> methodDescriptor, CallOptions callOptions) {
         return new ConnectionRequest<>(methodDescriptor, callOptions);

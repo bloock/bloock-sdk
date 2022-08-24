@@ -22,20 +22,21 @@ def protobufVersion = '3.21.1'
 def protocVersion = protobufVersion
 
 dependencies {
-    // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
-    
-    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
-    implementation "io.grpc:grpc-stub:${grpcVersion}"
     compileOnly "org.apache.tomcat:annotations-api:6.0.53"
 
-    // examples/advanced need this for JsonFormat
+    // Protobuf + GRPC
     implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
-
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
     runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
-
     testImplementation "io.grpc:grpc-testing:${grpcVersion}"
+
+    // FFI
+    implementation 'net.java.dev.jna:jna:5.12.1'
+
+    // Testing
     testImplementation "junit:junit:4.12"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation "org.mockito:mockito-core:3.4.0"
 }
 
@@ -58,7 +59,7 @@ protobuf {
 sourceSets {
     main {
         proto {
-            srcDir '../../proto'
+            srcDir '../../../bloock-bridge/proto'
         }
         java {
             srcDirs 'build/generated/source/proto/main/grpc'
