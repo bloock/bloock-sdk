@@ -3,7 +3,7 @@ use bloock_http::HttpClient;
 use bloock_http::MockClient;
 use bloock_web3::blockchain::Blockchain;
 use serde::Serialize;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use thiserror::Error;
 
 use crate::{
@@ -34,7 +34,7 @@ impl From<ProofError> for BloockError {
 
 pub fn configure(
     http: Arc<HttpClient>,
-    config_data: Arc<Mutex<ConfigData>>,
+    config_data: Arc<ConfigData>,
 ) -> service::ProofService<HttpClient> {
     return service::ProofService {
         http: Arc::clone(&http),

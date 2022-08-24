@@ -1,56 +1,51 @@
 pub mod items {
     include!(concat!(env!("OUT_DIR"), "/bloock.rs"));
 }
+mod entity_mappings;
 mod error;
+pub mod ffi;
 mod server;
 
-#[diplomat::bridge]
-pub mod ffi {
-    use crate::error::BridgeError;
-    use crate::server;
-    use diplomat_runtime::DiplomatResult;
-    use diplomat_runtime::DiplomatWriteable;
-    use prost::Message;
-    use std::fmt::Write;
+#[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
+pub mod wasm {
+    use crate::server::Server;
+    use js_sys::Promise;
+    use wasm_bindgen::prelude::*;
+    use web_sys::console;
 
-    pub struct BloockBridge {
-        _phantom: usize,
+    #[wasm_bindgen]
+    pub async fn request(request_type: String, payload: String) -> Result<JsValue, JsValue> {
+        Server::do_request(&request_type, &payload)
+            .await
+            .map(|r| r.into())
+            .map_err(|e| JsValue::from_str(&e.to_string()))
     }
-    impl BloockBridge {
-        pub fn request(
-            request_type: &str,
-            payload: &str,
-            response: &mut DiplomatWriteable,
-        ) -> DiplomatResult<(), ()> {
-            match BloockBridge::do_request(request_type, payload, response) {
-                Ok(r) => Ok(r).into(),
-                Err(e) => {
-                    println!("{}", e);
-                    Err(()).into()
-                }
+}
+
+#[cfg(not(any(target_arch = "wasm32", target_arch = "wasm64")))]
+pub mod default {
+    use crate::{ffi::string::FfiStr, server::Server};
+
+    #[no_mangle]
+    pub extern "C" fn request(request_type: FfiStr, payload: FfiStr) -> FfiStr<'static> {
+        let result = match bloock_executor::Executor::block_on(Server::do_request(
+            request_type.as_str(),
+            payload.as_str(),
+        )) {
+            Ok(r) => r,
+            Err(e) => {
+                println!("{}", e);
+                return FfiStr::from_string(e.to_string()).unwrap();
             }
-        }
+        };
+        let response = match result {
+            Ok(r) => r,
+            Err(e) => {
+                println!("{}", e);
+                e.to_string()
+            }
+        };
 
-        fn do_request(
-            request_type: &str,
-            payload: &str,
-            response: &mut DiplomatWriteable,
-        ) -> Result<(), BridgeError> {
-            let payload = payload.as_bytes();
-
-            let result = server::Server::new().dispatch(request_type, payload)?;
-
-            let mut result_vec = Vec::new();
-            result_vec.reserve(result.encoded_len());
-            result
-                .encode(&mut result_vec)
-                .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
-
-            let result_str = String::from_utf8(result_vec)
-                .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
-            write!(response, "{}", result_str);
-            response.flush();
-            Ok(()).into()
-        }
+        FfiStr::from_string(response).unwrap()
     }
 }

@@ -6,8 +6,9 @@ tmp/
 .vscode
 
 target
-bloock-bridge/go/vendor
 
-bloock-bridge/js/node_modules
-bloock-bridge/js/dist
-bloock-bridge/js/build
+bloock-libs/**/pkg
+
+languages/go/vendor
+languages/js/node_modules
+languages/js/dist

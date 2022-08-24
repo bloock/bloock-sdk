@@ -5,26 +5,46 @@ edition = "2021"
 
 [lib]
 bench = false
-crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 serde = { version = "1.0.123", features = ["std", "derive"] }
 serde_json = "1.0.82"
 thiserror = "1.0.31"
-tokio = { version = "1.19.2", optional = true, features = ["macros"] }
-async-trait = "0.1.56"
+async-trait = "0.1.57"
 mockall = { version = "0.11.2", optional = true }
 
-[dependencies.reqwest]
-version = "0.11.11"
-default-features = false
-features = ["json"]
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+ureq = "2.5.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys = "0.3.59"
+wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"]  }
+wasm-bindgen-futures = "0.4.32"
+web-sys = { version = "0.3.59", features = [     
+    "Headers",
+    "console",
+    "Request",
+    "RequestInit",
+    "RequestMode",
+    "Response",
+]}
  
 [dev-dependencies]
 mockall = "0.11.2"
-wasm-bindgen-test = "0.3.31"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tokio = { version = "1.19.2", features = ["rt", "macros"] }
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3.32"
 
 [features]
-default = ["reqwest/rustls-tls", "tokio"]
-wasm = []
 testing = ["mockall"]
+
+[[test]]
+name = "default"
+path = "tests/default.rs"
+
+[[test]]
+name = "wasm"
+path = "tests/wasm.rs"

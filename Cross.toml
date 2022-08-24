@@ -1,0 +1,20 @@
+[target.aarch64-unknown-linux-gnu]
+dockerfile = "./docker/Dockerfile.aarch64-unknown-linux-gnu"
+
+[target.x86_64-unknown-linux-gnu]
+dockerfile = "./docker/Dockerfile.x86_64-unknown-linux-gnu"
+
+[target.i686-unknown-linux-gnu]
+dockerfile = "./docker/Dockerfile.i686-unknown-linux-gnu"
+
+[target.x86_64-pc-windows-gnu]
+dockerfile = "./docker/Dockerfile.x86_64-pc-windows-gnu"
+
+[target.i686-pc-windows-gnu]
+dockerfile = "./docker/Dockerfile.i686-pc-windows-gnu"
+
+[target.aarch64-apple-darwin]
+dockerfile = "./docker/Dockerfile.aarch64-apple-darwin"
+
+[target.x86_64-apple-darwin]
+dockerfile = "./docker/Dockerfile.x86_64-apple-darwin"

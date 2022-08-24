@@ -5,19 +5,28 @@ edition = "2021"
 
 [lib]
 bench = false
-crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 thiserror = "1.0.31"
 hex = "0.4.3"
-getrandom = { version="0.2.7", features=["js"] }
-web3 = { version = "0.18.0", default-features = false, optional = true }
-tokio = { version = "1.19.2", optional = true, features = ["macros"] }
+bloock-hashing = { path = "../hashing" }
+serde = { version = "1.0.123", features = ["std", "derive"] }
+serde_json = "1.0.82"
+bloock-http = { path = "../http" }
 
 [dev-dependencies]
-mockall = "0.11.1"
-wasm-bindgen-test = "0.3.31"
+mockall = "0.11.2"
 
-[features]
-default = ["web3", "web3/http-rustls-tls", "tokio"]
-wasm = ["web3", "web3/http", "web3/wasm"]
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tokio = { version = "1.19.2", features = ["rt", "macros"] }
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3.32"
+
+[[test]]
+name = "default"
+path = "tests/default.rs"
+
+[[test]]
+name = "wasm"
+path = "tests/wasm.rs"
