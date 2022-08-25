@@ -23,7 +23,7 @@ copy-lib:
 	cp ../../target/wasm32-unknown-unknown/release/bloock_bridge.wasm src/ffi/native
 
 proto:
-	node bin/proto.js
+	node bin/proto.cjs
 
 build: install proto
 	yarn build
