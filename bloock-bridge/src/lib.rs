@@ -1,4 +1,6 @@
 pub mod items {
+    #![allow(unknown_lints)]
+    #![allow(clippy::all)]
     include!(concat!(env!("OUT_DIR"), "/bloock.rs"));
 }
 mod entity_mappings;

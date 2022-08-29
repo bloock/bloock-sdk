@@ -29,16 +29,16 @@ pub fn configure(
     http: Arc<HttpClient>,
     config_data: Arc<ConfigData>,
 ) -> service::RecordService<HttpClient> {
-    return service::RecordService {
+    service::RecordService {
         http: Arc::clone(&http),
         config_service: config::configure(Arc::clone(&config_data)),
-    };
+    }
 }
 
 #[cfg(test)]
 pub fn configure_test(http: Arc<MockClient>) -> service::RecordService<MockClient> {
-    return service::RecordService {
+    service::RecordService {
         http: Arc::clone(&http),
         config_service: config::configure_test(),
-    };
+    }
 }

@@ -26,7 +26,7 @@ pub enum ErrorKind {
     Operational(#[from] OperationalError),
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Eq, PartialEq)]
 #[serde(into = "FormattedBloockError")]
 pub struct BloockError(pub ErrorKind);
 

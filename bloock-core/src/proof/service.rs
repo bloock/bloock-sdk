@@ -34,7 +34,7 @@ pub struct ProofService<H: Client> {
 
 impl<H: Client> ProofService<H> {
     pub async fn get_proof(&self, mut records: Vec<Record>) -> BloockResult<Proof> {
-        if records.len() == 0 {
+        if records.is_empty() {
             return Err(ProofError::InvalidNumberOfRecords().into());
         }
 
@@ -93,7 +93,7 @@ impl<H: Client> ProofService<H> {
 
         let root = match self.verify_proof(proof) {
             Ok(root) => root,
-            Err(e) => return Err(e.into()),
+            Err(e) => return Err(e),
         };
 
         self.validate_root(root, network).await
@@ -157,7 +157,7 @@ impl<H: Client> ProofService<H> {
             stack.push((act_hash, act_depth as isize));
         }
 
-        match &stack.get(0) {
+        match &stack.first() {
             Some(r) => Ok(Record::from_hash(&hex::encode(&r.0))),
             None => Err(OperationalError::InvalidHash().into()),
         }
@@ -167,7 +167,7 @@ impl<H: Client> ProofService<H> {
         proof
             .leaves
             .iter()
-            .map(|leaf| Ok(Record::from_hash(leaf).get_uint8_array_hash()?))
+            .map(|leaf| Record::from_hash(leaf).get_uint8_array_hash())
             .collect::<BloockResult<Vec<H256>>>()
     }
 

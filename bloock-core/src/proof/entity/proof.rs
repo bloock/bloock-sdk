@@ -10,6 +10,7 @@ pub struct Proof {
 }
 
 impl Proof {
+    #[allow(dead_code)]
     fn is_valid(&self) -> bool {
         if self
             .leaves
@@ -45,6 +46,7 @@ impl Proof {
         true
     }
 
+    #[allow(dead_code)]
     fn to_string(&self) -> serde_json::Result<String> {
         serde_json::to_string(self)
     }

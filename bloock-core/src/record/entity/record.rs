@@ -130,6 +130,6 @@ mod tests {
     fn test_is_valid_wrong_char() {
         let record =
             Record::from_hash("G010101010101010101010101010101010101010101010101010101010101010");
-        assert!(record.is_valid() == false);
+        assert!(!record.is_valid());
     }
 }

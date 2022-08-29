@@ -55,7 +55,7 @@ impl<H: Client> RecordService<H> {
         Ok(records
             .iter()
             .map(|record| RecordReceipt {
-                anchor: response.anchor.clone(),
+                anchor: response.anchor,
                 client: response.client.clone(),
                 record: record.get_hash(),
                 status: response.status.clone(),

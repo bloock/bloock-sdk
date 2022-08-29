@@ -18,17 +18,18 @@ pub struct GreetingsServer {}
 #[async_trait(?Send)]
 impl GreeterHandler for GreetingsServer {
     async fn say_hello(&self, req: HelloRequest) -> HelloResponse {
-        let mut response = HelloResponse::default();
-        response.message = format!("Hello from Rust, {}!", req.name);
-        response
+        HelloResponse {
+            message: format!("Hello from Rust, {}!", req.name),
+            ..Default::default()
+        }
     }
     async fn say_hello_with_error(&self, req: HelloRequest) -> HelloResponse {
-        let mut response = HelloResponse::default();
-
-        response.error = Some(Error {
-            kind: "InvalidMethod".to_string(),
-            message: format!("Hello from Rust, {}!", req.name),
-        });
-        response
+        HelloResponse {
+            error: Some(Error {
+                kind: "InvalidMethod".to_string(),
+                message: format!("Hello from Rust, {}!", req.name),
+            }),
+            ..Default::default()
+        }
     }
 }

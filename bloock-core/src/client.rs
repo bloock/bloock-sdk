@@ -58,9 +58,9 @@ pub fn configure(config_data: ConfigData) -> BloockClient {
     let http_client = Arc::new(HttpClient::new(config_data.get_config().api_key));
     let config_data = Arc::new(config_data);
 
-    return BloockClient {
+    BloockClient {
         anchor_service: anchor::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         record_service: record::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
         proof_service: proof::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
-    };
+    }
 }

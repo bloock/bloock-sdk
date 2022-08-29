@@ -22,16 +22,16 @@ impl From<ConfigError> for BloockError {
 }
 
 pub fn configure(config_data: Arc<ConfigData>) -> service::ConfigService {
-    return service::ConfigService {
+    service::ConfigService {
         config_data: Arc::clone(&config_data),
-    };
+    }
 }
 
 #[cfg(test)]
 pub fn configure_test() -> service::ConfigService {
     let config_data = Arc::new(ConfigData::new("".to_string()));
 
-    return service::ConfigService {
+    service::ConfigService {
         config_data: Arc::clone(&config_data),
-    };
+    }
 }

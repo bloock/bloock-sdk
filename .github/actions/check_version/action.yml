@@ -1,0 +1,25 @@
+name: "Check Version"
+description: "Checks that the Bloock version numbers all match"
+runs:
+  using: "composite"
+  steps:
+    - name: Set version env
+      run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_ENV
+      shell: bash
+    - name: Check python version matches
+      run: grep "__version__ = \"$bloock_version\"" __init__.py
+      shell: bash
+      working-directory: languages/python/bloock
+    - name: Check java version matches
+      run: grep "version = '$bloock_version'" build.gradle
+      shell: bash
+      working-directory: languages/java/app
+    - name: Check JS version matches
+      run: |
+        grep "\"version\": \"$bloock_version\"" package.json
+      shell: bash
+      working-directory: languages/js
+    - name: Check bloock-bridge version matches
+      run: |
+        grep "^version = \"$bloock_version\"$" bloock-bridge/Cargo.toml
+      shell: bash

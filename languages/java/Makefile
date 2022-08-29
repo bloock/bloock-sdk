@@ -9,6 +9,9 @@ dev: copy_lib
 	./gradlew run
 
 test: copy_lib
+	./gradlew build
+
+test: copy_lib
 	./gradlew test
 
 fmt:

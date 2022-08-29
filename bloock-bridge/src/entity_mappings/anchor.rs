@@ -15,10 +15,7 @@ pub fn map_anchor_core(anchor: AnchorCore) -> Anchor {
 }
 
 fn map_anchor_networks(anchor_networks: Vec<AnchorNetworkCore>) -> Vec<AnchorNetwork> {
-    anchor_networks
-        .iter()
-        .map(|network| map_anchor_network(network))
-        .collect()
+    anchor_networks.iter().map(map_anchor_network).collect()
 }
 
 fn map_anchor_network(network: &AnchorNetworkCore) -> AnchorNetwork {

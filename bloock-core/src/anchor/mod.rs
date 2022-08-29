@@ -27,16 +27,16 @@ pub fn configure(
     http: Arc<HttpClient>,
     config_data: Arc<ConfigData>,
 ) -> service::AnchorService<HttpClient> {
-    return service::AnchorService {
+    service::AnchorService {
         http: Arc::clone(&http),
         config_service: config::configure(Arc::clone(&config_data)),
-    };
+    }
 }
 
 #[cfg(test)]
 pub fn configure_test(http: Arc<MockClient>) -> service::AnchorService<MockClient> {
-    return service::AnchorService {
+    service::AnchorService {
         http: Arc::clone(&http),
         config_service: config::configure_test(),
-    };
+    }
 }

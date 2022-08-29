@@ -32,9 +32,9 @@ public class Ffi {
             prefix = "bloock_bridge";
             suffix = ".dll";
         } else if (platform.contains("mac")) {
-            path = "x86_64-apple-darwin/libbloock_bridge.a";
+            path = "x86_64-apple-darwin/libbloock_bridge.dylib";
             prefix = "libbloock_bridge";
-            suffix = ".a";
+            suffix = ".dylib";
         } else {
             path = "linux/libpolar.so";
             prefix = "libbloock_bridge";
@@ -62,8 +62,6 @@ public class Ffi {
     public byte[] request(String requestType, String payload) {
         String encodedPayload = Base64.getEncoder().encodeToString(payload.getBytes());
         String encodedResponse = bloockLib.request(requestType, encodedPayload);
-        System.out.println("encodedResponse for " + requestType);
-        System.out.println(encodedResponse);
         return Base64.getDecoder().decode(encodedResponse.getBytes());
     }
 

@@ -74,7 +74,6 @@ mod test {
 
     use crate::{
         anchor::{self, entity::anchor::Anchor, AnchorError},
-        config::entity::config::Configuration,
         error::ErrorKind,
     };
 
@@ -115,10 +114,6 @@ mod test {
 
     #[tokio::test]
     async fn test_wait_anchor_timeout() {
-        let mut config = Configuration::default();
-        config.wait_message_interval_default = 10;
-        config.wait_message_interval_factor = 0;
-
         let anchor_id = 1;
         let anchor = Anchor {
             id: anchor_id,
@@ -166,10 +161,6 @@ mod test {
         let expected_anchor = anchor.clone();
 
         let mut retry_counter = 0;
-
-        let mut config = Configuration::default();
-        config.wait_message_interval_default = 1;
-        config.wait_message_interval_factor = 0;
 
         let mut http = MockClient::default();
         http.expect_get::<String, Anchor>()

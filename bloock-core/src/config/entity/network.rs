@@ -18,9 +18,9 @@ impl From<String> for Network {
     }
 }
 
-impl Into<String> for Network {
-    fn into(self) -> String {
-        match self {
+impl From<Network> for String {
+    fn from(n: Network) -> Self {
+        match n {
             Network::BloockChain => "bloock_chain".to_string(),
             Network::EthereumRinkeby => "ethereum_rinkeby".to_string(),
             Network::EthereumMainnet => "ethereum_mainnet".to_string(),
@@ -36,9 +36,5 @@ pub fn select_network(networks: &Vec<AnchorNetwork>) -> Network {
         }
     }
 
-    match Network::from(networks[0].name.clone()) {
-        Network::BloockChain => Network::BloockChain,
-        Network::EthereumRinkeby => Network::EthereumRinkeby,
-        Network::EthereumMainnet => Network::EthereumMainnet,
-    }
+    Network::from(networks[0].name.clone())
 }

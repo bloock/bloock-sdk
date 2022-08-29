@@ -12,10 +12,7 @@ pub fn map_network(network: Network) -> CoreNetwork {
 }
 
 pub fn map_network_from_i32(network: i32) -> Option<CoreNetwork> {
-    match Network::from_i32(network) {
-        Some(network) => Some(map_network(network)),
-        None => None,
-    }
+    Network::from_i32(network).map(map_network)
 }
 
 pub fn map_network_config(network: NetworkConfig) -> CoreNetworkConfig {

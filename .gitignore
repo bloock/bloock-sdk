@@ -11,6 +11,13 @@ bloock-libs/**/pkg
 
 *.class
 
+languages/python/.mypy_cache/
+languages/python/build
+languages/python/venv
+languages/python/*.egg-info/
+languages/python/_bloock_bridge_lib.abi3.so
+__pycache__/
+
 languages/go/vendor
 languages/js/node_modules
 languages/js/dist

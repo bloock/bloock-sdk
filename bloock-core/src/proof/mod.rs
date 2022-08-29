@@ -36,18 +36,18 @@ pub fn configure(
     http: Arc<HttpClient>,
     config_data: Arc<ConfigData>,
 ) -> service::ProofService<HttpClient> {
-    return service::ProofService {
+    service::ProofService {
         http: Arc::clone(&http),
         config_service: config::configure(Arc::clone(&config_data)),
         blockchain_client: Blockchain {},
-    };
+    }
 }
 
 #[cfg(test)]
 pub fn configure_test(http: Arc<MockClient>) -> service::ProofService<MockClient> {
-    return service::ProofService {
+    service::ProofService {
         http: Arc::clone(&http),
         config_service: config::configure_test(),
         blockchain_client: Blockchain {},
-    };
+    }
 }

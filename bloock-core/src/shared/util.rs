@@ -9,7 +9,7 @@ pub fn hex_to_u16(src: String) -> BloockResult<Vec<u16>> {
             }
             Ok(result)
         }
-        Err(_) => return Err(OperationalError::InvalidHash().into()),
+        Err(_) => Err(OperationalError::InvalidHash().into()),
     }
 }
 

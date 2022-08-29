@@ -11,6 +11,9 @@ pub struct FfiStr<'a> {
 }
 
 impl<'a> FfiStr<'a> {
+    /// # Safety
+    ///
+    /// Dereferences a pointer and is thus unsafe.
     #[inline]
     pub unsafe fn from_raw(ptr: *const c_char) -> Self {
         Self {

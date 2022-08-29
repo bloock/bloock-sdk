@@ -16,7 +16,7 @@ impl ConfigService {
     }
 
     pub fn get_api_base_url(&self) -> String {
-        self.get_config().host.clone()
+        self.get_config().host
     }
 
     pub fn get_network_config(&self, network: Network) -> NetworkConfiguration {
