@@ -142,6 +142,8 @@ dependencies = [
  "bloock-executor",
  "cbindgen",
  "convert_case",
+ "diplomat",
+ "diplomat-runtime",
  "js-sys",
  "prost",
  "prost-build",
@@ -237,6 +239,38 @@ name = "difflib"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6184e33543162437515c2e2b48714794e37845ec9851711914eec9d308f6ebe8"
+
+[[package]]
+name = "diplomat"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b827d7e3428372b0b3d98c243e7d53526b1ddc264586536644e86a3e2ec176f3"
+dependencies = [
+ "diplomat_core",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "diplomat-runtime"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e55ba854b349be22d95ff1f0d7ceec5bd11a68d6389f4e9a673f7e117f0170f4"
+
+[[package]]
+name = "diplomat_core"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbde4faa50fdeda288168cc7f85db22a1f63baecd088fb4a78ca7b5ce7a1f847"
+dependencies = [
+ "impls",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "syn",
+]
 
 [[package]]
 name = "downcast"
@@ -352,6 +386,12 @@ dependencies = [
  "unicode-bidi",
  "unicode-normalization",
 ]
+
+[[package]]
+name = "impls"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a46645bbd70538861a90d0f26c31537cdf1e44aae99a794fb75a664b70951bc"
 
 [[package]]
 name = "indexmap"

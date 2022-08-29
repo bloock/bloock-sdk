@@ -3,16 +3,21 @@ use bloock_core::config::entity::{
     config::NetworkConfiguration as CoreNetworkConfig, network::Network as CoreNetwork,
 };
 
-pub fn map_network(network: Network) -> CoreNetwork {
-    match network {
-        Network::BloockChain => CoreNetwork::BloockChain,
-        Network::EthereumMainnet => CoreNetwork::EthereumMainnet,
-        Network::EthereumRinkeby => CoreNetwork::EthereumRinkeby,
+impl Into<CoreNetwork> for Network {
+    fn into(self) -> CoreNetwork {
+        match self {
+            Network::BloockChain => CoreNetwork::BloockChain,
+            Network::EthereumMainnet => CoreNetwork::EthereumMainnet,
+            Network::EthereumRinkeby => CoreNetwork::EthereumRinkeby,
+        }
     }
 }
 
 pub fn map_network_from_i32(network: i32) -> Option<CoreNetwork> {
-    Network::from_i32(network).map(map_network)
+    match Network::from_i32(network) {
+        Some(network) => Some(network.into()),
+        None => None,
+    }
 }
 
 pub fn map_network_config(network: NetworkConfig) -> CoreNetworkConfig {

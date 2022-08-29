@@ -1,26 +1,41 @@
 import { ServiceDefinition } from "@grpc/grpc-js";
 import { FFIClient } from "../ffi/ffi";
 import { makeRequest } from "./connection";
-import * as BloockGRPC from "./proto/bloock";
-import * as AnchorGRPC from "./proto/anchor";
+import { AnchorServiceClient, AnchorServiceService } from "./proto/anchor";
+import { GreeterClient, GreeterService } from "./proto/bloock";
+import { ProofServiceClient, ProofServiceService } from "./proto/proof";
+import { RecordServiceClient, RecordServiceService } from "./proto/record";
 
 export class BloockBridge {
   private ffiClient: FFIClient;
-  private greeting: BloockGRPC.GreeterClient;
-  private anchor: AnchorGRPC.AnchorServiceClient;
+  private greeting: GreeterClient;
+  private anchor: AnchorServiceClient;
+  private record: RecordServiceClient;
+  private proof: ProofServiceClient;
 
   constructor() {
     this.ffiClient = new FFIClient();
-    this.greeting = new (this.createClient(BloockGRPC.GreeterService) as any)();
-    this.anchor = new (this.createClient(AnchorGRPC.AnchorServiceService) as any)();
+
+    this.greeting = new (this.createClient(GreeterService) as any)();
+    this.anchor = new (this.createClient(AnchorServiceService) as any)();
+    this.record = new (this.createClient(RecordServiceService) as any)();
+    this.proof = new (this.createClient(ProofServiceService) as any)();
   }
 
-  public getGreeting(): BloockGRPC.GreeterClient {
+  public getGreeting(): GreeterClient {
     return this.greeting;
   }
 
-  public getAnchor(): AnchorGRPC.AnchorServiceClient {
+  public getAnchor(): AnchorServiceClient {
     return this.anchor;
+  }
+
+  public getRecord(): RecordServiceClient {
+    return this.record;
+  }
+
+  public getProof(): ProofServiceClient {
+    return this.proof;
   }
 
   private createClient(methods: ServiceDefinition): ServiceClientConstructor {

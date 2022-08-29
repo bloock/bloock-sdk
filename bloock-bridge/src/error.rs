@@ -1,3 +1,4 @@
+use crate::items::Error as ProtoError;
 use thiserror::Error;
 
 #[derive(Error, Debug, PartialEq, Eq, Clone)]
@@ -8,6 +9,19 @@ pub enum BridgeError {
     ResponseSerialization(String),
     #[error("Invalid argument")]
     InvalidArgument,
-    #[error("Infrastructure error")]
-    InfrastructureError,
+    #[error("Anchor error")]
+    AnchorError,
+    #[error("Record error")]
+    RecordError,
+    #[error("Proof error")]
+    ProofError,
+    #[error("Anchor missing from request")]
+    MissingAnchor,
+}
+
+pub fn config_data_error() -> ProtoError {
+    ProtoError {
+        kind: BridgeError::InvalidArgument.to_string(),
+        message: "Invalid config data".to_string(),
+    }
 }

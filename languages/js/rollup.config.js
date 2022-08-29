@@ -13,12 +13,12 @@ const config = [
     inlineDynamicImports: true,
     output: [
       {
-        file: "dist/bloock-sdk.js",
+        file: "dist/index.js",
         format: "cjs",
         sourcemap: true,
       },
       {
-        file: `dist/bloock-sdk.mjs`,
+        file: `dist/index.mjs`,
         format: "es",
         sourcemap: true,
       },
@@ -37,7 +37,7 @@ const config = [
   {
     input: "dist/index.d.ts",
     output: {
-      file: "dist/bloock-sdk.d.ts",
+      file: "dist/index.d.ts",
       format: "es",
     },
     plugins: [dts()],

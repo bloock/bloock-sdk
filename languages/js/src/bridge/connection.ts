@@ -16,15 +16,14 @@ export const makeRequest = <RequestType, ResponseType>(
   const requestType = method;
   let payload = serialize(argument);
 
+  console.log(requestType, payload)
   ffiClient
     .request(requestType, payload.toString())
     .then((responsePayload) => {
       let response = deserialize(Buffer.from(responsePayload, "base64"));
-
       callback(null, response);
     })
     .catch((err) => {
-      console.log('connection error', requestType, err)
       callback(err, undefined);
     });
 };

@@ -1,5 +1,3 @@
-version = '0.1.0'
-
 plugins {
     // Provide convenience executables for trying out the examples.
     id 'application'
@@ -15,6 +13,8 @@ repositories {
     mavenCentral()
     mavenLocal()
 }
+
+version = '0.1.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

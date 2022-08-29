@@ -1,5 +1,7 @@
 mod anchor;
 mod greetings;
+mod proof;
+mod record;
 mod response_types;
 
 use crate::error::BridgeError;
@@ -7,15 +9,21 @@ use crate::items::AnchorServiceHandler;
 use crate::items::BloockServer;
 use crate::items::GreeterHandler;
 use crate::items::HelloResponse;
+use crate::items::ProofServiceHandler;
+use crate::items::RecordServiceHandler;
 use crate::server::response_types::ResponseType;
 
 use greetings::GreetingsServer;
 
 use self::anchor::AnchorServer;
+use self::proof::ProofServer;
+use self::record::RecordServer;
 
 pub struct Server {
     greeter: GreetingsServer,
     anchor: AnchorServer,
+    record: RecordServer,
+    proof: ProofServer,
 }
 
 impl Server {
@@ -23,6 +31,8 @@ impl Server {
         Self {
             greeter: GreetingsServer {},
             anchor: AnchorServer {},
+            record: RecordServer {},
+            proof: ProofServer {},
         }
     }
 
@@ -62,6 +72,51 @@ impl Server {
             BloockServer::AnchorServiceWaitAnchor => Ok(self
                 .anchor
                 .wait_anchor(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceSendRecords => Ok(self
+                .record
+                .send_records(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceFromHash => Ok(self
+                .record
+                .from_hash(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceFromHex => Ok(self
+                .record
+                .from_hex(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceFromString => Ok(self
+                .record
+                .from_string(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceFromTypedArray => Ok(self
+                .record
+                .from_typed_array(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::ProofServiceGetProof => Ok(self
+                .proof
+                .get_proof(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::ProofServiceValidateRoot => Ok(self
+                .proof
+                .validate_root(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::ProofServiceVerifyProof => Ok(self
+                .proof
+                .verify_proof(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::ProofServiceVerifyRecords => Ok(self
+                .proof
+                .verify_records(self.serialize_request(payload)?)
                 .await
                 .into()),
             _ => Ok(self

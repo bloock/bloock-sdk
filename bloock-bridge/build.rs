@@ -16,6 +16,8 @@ fn main() -> Result<()> {
                 "proto/bloock.proto",
                 "proto/config.proto",
                 "proto/anchor.proto",
+                "proto/record.proto",
+                "proto/proof.proto",
             ],
             &["proto/"],
         )?;
