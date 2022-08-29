@@ -10,10 +10,10 @@ pub struct ConfigData {
 }
 
 impl ConfigData {
-    pub fn new(api_key: String) -> Self {
+    pub fn new(api_key: String, host: String) -> Self {
         Self {
             config: Configuration {
-                host: String::from("https://api.bloock.com"),
+                host,
                 api_key,
                 wait_message_interval_factor: 2,
                 wait_message_interval_default: 5000,

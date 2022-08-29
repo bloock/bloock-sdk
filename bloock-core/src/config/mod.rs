@@ -29,7 +29,10 @@ pub fn configure(config_data: Arc<ConfigData>) -> service::ConfigService {
 
 #[cfg(test)]
 pub fn configure_test() -> service::ConfigService {
-    let config_data = Arc::new(ConfigData::new("".to_string()));
+    let config_data = Arc::new(ConfigData::new(
+        "".to_string(),
+        "https://api.bloock.com".to_string(),
+    ));
 
     service::ConfigService {
         config_data: Arc::clone(&config_data),

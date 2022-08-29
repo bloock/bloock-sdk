@@ -7,7 +7,6 @@ import (
 
 	"github.com/bloock/go-bridge/internal/bridge"
 	"github.com/bloock/go-bridge/internal/bridge/proto"
-	"github.com/bloock/go-bridge/internal/config"
 )
 
 type Client struct {
@@ -15,10 +14,12 @@ type Client struct {
 	configData   *proto.ConfigData
 }
 
-func NewClient(apiKey string) Client {
+func NewClient(apiKey string, host string) Client {
 	return Client{
 		bridgeClient: bridge.NewBloockBridge(),
-		configData:   config.NewConfigData(apiKey),
+		configData: &proto.ConfigData{
+			Config: &proto.Configuration{ApiKey: apiKey, Host: host},
+		},
 	}
 }
 

@@ -2,8 +2,8 @@ import { BloockClient, Anchor, Network, RecordReceipt } from "../dist/index"
 
 function getSdk(): BloockClient {
     const apiKey = process.env['API_KEY'] || ''
-    const apiHost = process.env['API_HOST'] || ''
-    let client = new BloockClient(apiKey)
+    const apiHost = process.env['API_HOST'] || 'https://api.bloock.dev'
+    let client = new BloockClient(apiKey, apiHost)
     client.setApiHost(apiHost)
     return client
 }
