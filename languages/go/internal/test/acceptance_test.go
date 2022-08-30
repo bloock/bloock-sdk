@@ -8,6 +8,7 @@ import (
 
 	bloock "github.com/bloock/go-bridge/client"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAcceptance(t *testing.T) {
@@ -15,36 +16,36 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Basic test E2E", func(t *testing.T) {
 		record, err := sdk.NewRecordFromString(randHex(64))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		records := []*bloock.Record{record}
 
 		receipt, err := sdk.SendRecords(records)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Greater(t, len(receipt), 0)
 		assert.NotEqual(t, bloock.RecordReceipt{}, receipt[0])
 
 		anchor, err := sdk.WaitAnchor(receipt[0].Anchor)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
 		proof, err := sdk.GetProof(records)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		root, err := sdk.VerifyProof(proof)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		timestamp, err := sdk.ValidateRoot(root, bloock.ListOfNetworks().BloockChain)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Greater(t, timestamp, uint64(0))
 
 		timestamp, err = sdk.VerifyRecords(records)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Greater(t, timestamp, uint64(0))
 	})
 
 	t.Run("Test send records invalid record input wrong char", func(t *testing.T) {
 		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		records := []*bloock.Record{record}
 		_, err = sdk.SendRecords(records)
@@ -55,9 +56,9 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test send records invalid record input missing chars", func(t *testing.T) {
 		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
 		_, err = sdk.SendRecords(records)
@@ -68,9 +69,9 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test send records invalid record input wrong start", func(t *testing.T) {
 		record1, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		record2, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
 
@@ -81,7 +82,7 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test send records empty record input", func(t *testing.T) {
 		res, err := sdk.SendRecords([]*bloock.Record{})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -99,7 +100,7 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test get proof invalid record input wrong char", func(t *testing.T) {
 		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		records := []*bloock.Record{record}
 
 		_, err = sdk.GetProof(records)
@@ -109,9 +110,9 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test get proof invalid record input missing chars", func(t *testing.T) {
 		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
 
@@ -133,7 +134,7 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test get proof non-existant leaf", func(t *testing.T) {
 		record, err := sdk.NewRecordFromHash("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdee")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		records := []*bloock.Record{record}
 
@@ -144,7 +145,7 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test verify records invalid record input wrong char", func(t *testing.T) {
 		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		records := []*bloock.Record{record}
 
 		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
@@ -154,9 +155,9 @@ func TestAcceptance(t *testing.T) {
 
 	t.Run("Test verify records invalid record input missing chars", func(t *testing.T) {
 		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
 

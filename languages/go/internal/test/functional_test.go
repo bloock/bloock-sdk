@@ -5,6 +5,7 @@ import (
 
 	bloock "github.com/bloock/go-bridge/client"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFunctionalSendRecord(t *testing.T) {
@@ -19,7 +20,7 @@ func TestFunctionalSendRecord(t *testing.T) {
 	records = append(records, record)
 
 	r, err := sdk.SendRecords(records)
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	assert.Greater(t, r[0].Anchor, int64(0))
 	assert.Greater(t, len(r[0].Client), 0)
 	assert.Equal(t, r[0].Record, records[0].GetHash())
@@ -38,12 +39,12 @@ func TestFunctionalWaitAnchor(t *testing.T) {
 	records = append(records, record)
 
 	r, err := sdk.SendRecords(records)
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	assert.NotNil(t, r)
 	assert.NotNil(t, r[0])
 
 	a, err := sdk.WaitAnchor(r[0].Anchor)
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	assert.Greater(t, a.Id, int64(0))
 	assert.Greater(t, len(a.BlockRoots), 0)
 	assert.Greater(t, len(a.Networks), 0)
@@ -63,7 +64,7 @@ func TestFunctionalGetProof(t *testing.T) {
 	records = append(records, record)
 
 	p, err := sdk.GetProof(records)
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	assert.NotNil(t, p)
 }
 
@@ -79,13 +80,14 @@ func TestFunctionalVerifyProof(t *testing.T) {
 	records = append(records, record)
 
 	p, err := sdk.GetProof(records)
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	assert.NotNil(t, p)
 
 	root, err := sdk.VerifyProof(p)
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	assert.NotNil(t, root)
 
 	timestamp, err := sdk.ValidateRoot(root, bloock.ListOfNetworks().BloockChain)
+    require.Nil(t, err)
 	assert.Greater(t, timestamp, uint64(0))
 }
