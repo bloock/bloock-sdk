@@ -49,7 +49,7 @@ export class BloockClient {
                 }
 
                 if (res.error != null) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.records);
@@ -75,7 +75,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.anchor!);
@@ -103,7 +103,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.anchor!);
@@ -130,7 +130,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.proof!);
@@ -158,7 +158,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.timestamp);
@@ -185,7 +185,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.record!);
@@ -213,7 +213,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.timestamp);
@@ -249,7 +249,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.record!);
