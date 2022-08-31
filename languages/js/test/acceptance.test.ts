@@ -87,7 +87,7 @@ describe('Acceptance Tests', () => {
     test('test_wait_anchor_non_existant_anchor', async () => {
         jest.setTimeout(5000)
         const sdk = getSdk()
-        await expect(sdk.waitAnchor(66666666, 3000)).rejects.toEqual(WaitAnchorTimeoutError)
+        await expect(sdk.waitAnchor(666666, 3000)).rejects.toEqual(WaitAnchorTimeoutError)
     })
 
     test('test_get_proof_invalid_record_input_wrong_char', async () => {
