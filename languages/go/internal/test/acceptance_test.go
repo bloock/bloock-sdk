@@ -24,7 +24,7 @@ func TestAcceptance(t *testing.T) {
 		assert.Greater(t, len(receipt), 0)
 		assert.NotEqual(t, bloock.RecordReceipt{}, receipt[0])
 
-		anchor, err := sdk.WaitAnchor(receipt[0].Anchor)
+		anchor, err := sdk.WaitAnchor(receipt[0].Anchor, bloock.NewAnchorParams())
 		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
@@ -38,7 +38,7 @@ func TestAcceptance(t *testing.T) {
 		require.NoError(t, err)
 		assert.Greater(t, timestamp, uint64(0))
 
-		timestamp, err = sdk.VerifyRecords(records)
+		timestamp, err = sdk.VerifyRecords(records, bloock.NewNetworkParams())
 		require.NoError(t, err)
 		assert.Greater(t, timestamp, uint64(0))
 	})
@@ -93,7 +93,10 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test wait anchor non existing anchor", func(t *testing.T) {
-		_, err := sdk.WaitAnchor(666666666666666666, 3000)
+        params := bloock.NewAnchorParams()
+        params.Timeout = 3000
+
+		_, err := sdk.WaitAnchor(666666666666666666, params)
 		assert.Error(t, err)
 		assert.Equal(t, bloock.WaitAnchorTimeoutError, err.Error())
 	})
@@ -148,7 +151,10 @@ func TestAcceptance(t *testing.T) {
 		require.NoError(t, err)
 		records := []*bloock.Record{record}
 
-		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
+        params := bloock.NewNetworkParams()
+        params.Network = bloock.ListOfNetworks().BloockChain
+
+		_, err = sdk.VerifyRecords(records, params)
 		assert.Error(t, err)
 		assert.Equal(t, bloock.InvalidRecordError, err.Error())
 	})
@@ -161,7 +167,10 @@ func TestAcceptance(t *testing.T) {
 
 		records := []*bloock.Record{record1, record2}
 
-		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
+        params := bloock.NewNetworkParams()
+        params.Network = bloock.ListOfNetworks().BloockChain
+
+		_, err = sdk.VerifyRecords(records, params)
 		assert.Error(t, err)
 		assert.Equal(t, bloock.InvalidRecordError, err.Error())
 	})
@@ -172,7 +181,10 @@ func TestAcceptance(t *testing.T) {
 
 		records := []*bloock.Record{record1, record2}
 
-		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
+        params := bloock.NewNetworkParams()
+        params.Network = bloock.ListOfNetworks().BloockChain
+
+		_, err = sdk.VerifyRecords(records, params)
 		assert.Error(t, err)
 		assert.Equal(t, bloock.InvalidRecordError, err.Error())
 	})
@@ -182,7 +194,10 @@ func TestAcceptance(t *testing.T) {
 
 		records := []*bloock.Record{record}
 
-		_, err = sdk.VerifyRecords(records, bloock.ListOfNetworks().BloockChain)
+        params := bloock.NewNetworkParams()
+        params.Network = bloock.ListOfNetworks().BloockChain
+
+		_, err = sdk.VerifyRecords(records,params)
 		assert.Error(t, err)
 		assert.Equal(t, bloock.RecordNotFoundError, err.Error())
 	})

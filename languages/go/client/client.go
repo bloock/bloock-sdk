@@ -3,7 +3,6 @@ package bloock
 import (
 	"context"
 	"errors"
-	"log"
 
 	"github.com/bloock/go-bridge/internal/bridge"
 	"github.com/bloock/go-bridge/internal/bridge/proto"
@@ -27,6 +26,7 @@ func (c Client) SetApiHost(host string) {
 	c.configData.Config.Host = host
 }
 
+// TODO Check c
 func (c Client) SetNetworkConfig(network Network, config *NetworkConfig) {
 	c.configData.NetworksConfig[int32(network)] = config
 }
@@ -65,16 +65,15 @@ func (c Client) GetAnchor(anchorID int64) (*Anchor, error) {
 	return res.Anchor, nil
 }
 
-func (c Client) WaitAnchor(anchorID int64, optional_timeout ...int64) (*Anchor, error) {
-	timeout := int64(120000)
-	if len(optional_timeout) > 0 {
-		timeout = optional_timeout[0]
+func (c Client) WaitAnchor(anchorID int64, params AnchorParams) (*Anchor, error) {
+	if params.Timeout == 0 {
+		params.Timeout = int64(120000)
 	}
 
 	res, err := c.bridgeClient.Anchor().WaitAnchor(context.Background(), &proto.WaitAnchorRequest{
 		ConfigData: c.configData,
 		AnchorId:   anchorID,
-		Timeout:    timeout,
+		Timeout:    params.Timeout,
 	})
 
 	if err != nil {
@@ -89,7 +88,6 @@ func (c Client) WaitAnchor(anchorID int64, optional_timeout ...int64) (*Anchor, 
 }
 
 func (c Client) GetProof(records []*Record) (*Proof, error) {
-	log.Println("Retrieving proof for records: ", records)
 	res, err := c.bridgeClient.Proof().GetProof(context.Background(), &proto.GetProofRequest{
 		ConfigData: c.configData,
 		Records:    records,
@@ -123,16 +121,11 @@ func (c Client) VerifyProof(proof *Proof) (*Record, error) {
 	return res.Record, nil
 }
 
-func (c Client) VerifyRecords(records []*Record, optional_network ...Network) (uint64, error) {
-	var network *Network = nil
-	if len(optional_network) > 0 {
-		network = optional_network[0].Enum()
-	}
-
+func (c Client) VerifyRecords(records []*Record, params NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Proof().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
 		ConfigData: c.configData,
 		Records:    records,
-		Network:    network,
+		Network:    params.Network.Enum(),
 	})
 
 	if err != nil {
@@ -186,7 +179,7 @@ func (c Client) NewRecordFromHex(hex string) (*Record, error) {
 	}
 
 	if res.Error != nil {
-		return nil, err
+		return nil, errors.New(res.Error.Message)
 	}
 
 	return res.Record, nil

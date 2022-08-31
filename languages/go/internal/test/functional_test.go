@@ -43,7 +43,7 @@ func TestFunctionalWaitAnchor(t *testing.T) {
 	assert.NotNil(t, r)
 	assert.NotNil(t, r[0])
 
-	a, err := sdk.WaitAnchor(r[0].Anchor)
+	a, err := sdk.WaitAnchor(r[0].Anchor, bloock.NewAnchorParams())
 	require.Nil(t, err)
 	assert.Greater(t, a.Id, int64(0))
 	assert.Greater(t, len(a.BlockRoots), 0)
