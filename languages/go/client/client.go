@@ -22,16 +22,15 @@ func NewClient(apiKey string, host string) Client {
 	}
 }
 
-func (c Client) SetApiHost(host string) {
+func (c *Client) SetApiHost(host string) {
 	c.configData.Config.Host = host
 }
 
-// TODO Check c
-func (c Client) SetNetworkConfig(network Network, config *NetworkConfig) {
+func (c *Client) SetNetworkConfig(network Network, config *NetworkConfig) {
 	c.configData.NetworksConfig[int32(network)] = config
 }
 
-func (c Client) SendRecords(records []*Record) ([]*RecordReceipt, error) {
+func (c *Client) SendRecords(records []*Record) ([]*RecordReceipt, error) {
 	res, err := c.bridgeClient.Record().SendRecords(context.Background(), &proto.SendRecordsRequest{
 		ConfigData: c.configData,
 		Records:    records,
@@ -48,7 +47,7 @@ func (c Client) SendRecords(records []*Record) ([]*RecordReceipt, error) {
 	return res.Records, nil
 }
 
-func (c Client) GetAnchor(anchorID int64) (*Anchor, error) {
+func (c *Client) GetAnchor(anchorID int64) (*Anchor, error) {
 	res, err := c.bridgeClient.Anchor().GetAnchor(context.Background(), &proto.GetAnchorRequest{
 		ConfigData: c.configData,
 		AnchorId:   anchorID,
@@ -65,7 +64,7 @@ func (c Client) GetAnchor(anchorID int64) (*Anchor, error) {
 	return res.Anchor, nil
 }
 
-func (c Client) WaitAnchor(anchorID int64, params AnchorParams) (*Anchor, error) {
+func (c *Client) WaitAnchor(anchorID int64, params AnchorParams) (*Anchor, error) {
 	if params.Timeout == 0 {
 		params.Timeout = int64(120000)
 	}
@@ -87,7 +86,7 @@ func (c Client) WaitAnchor(anchorID int64, params AnchorParams) (*Anchor, error)
 	return res.Anchor, nil
 }
 
-func (c Client) GetProof(records []*Record) (*Proof, error) {
+func (c *Client) GetProof(records []*Record) (*Proof, error) {
 	res, err := c.bridgeClient.Proof().GetProof(context.Background(), &proto.GetProofRequest{
 		ConfigData: c.configData,
 		Records:    records,
@@ -104,7 +103,7 @@ func (c Client) GetProof(records []*Record) (*Proof, error) {
 	return res.Proof, nil
 }
 
-func (c Client) VerifyProof(proof *Proof) (*Record, error) {
+func (c *Client) VerifyProof(proof *Proof) (*Record, error) {
 	res, err := c.bridgeClient.Proof().VerifyProof(context.Background(), &proto.VerifyProofRequest{
 		ConfigData: c.configData,
 		Proof:      proof,
@@ -121,7 +120,7 @@ func (c Client) VerifyProof(proof *Proof) (*Record, error) {
 	return res.Record, nil
 }
 
-func (c Client) VerifyRecords(records []*Record, params NetworkParams) (uint64, error) {
+func (c *Client) VerifyRecords(records []*Record, params NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Proof().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
 		ConfigData: c.configData,
 		Records:    records,
@@ -139,7 +138,7 @@ func (c Client) VerifyRecords(records []*Record, params NetworkParams) (uint64, 
 	return res.Timestamp, nil
 }
 
-func (c Client) ValidateRoot(root *Record, network Network) (uint64, error) {
+func (c *Client) ValidateRoot(root *Record, network Network) (uint64, error) {
 	res, err := c.bridgeClient.Proof().ValidateRoot(context.Background(), &proto.ValidateRootRequest{
 		ConfigData: c.configData,
 		Root:       root,
@@ -157,7 +156,7 @@ func (c Client) ValidateRoot(root *Record, network Network) (uint64, error) {
 	return res.Timestamp, nil
 }
 
-func (c Client) NewRecordFromHash(hash string) (*Record, error) {
+func (c *Client) NewRecordFromHash(hash string) (*Record, error) {
 	record, err := c.bridgeClient.Record().FromHash(context.Background(), &proto.FromHashRequest{
 		Hash: hash,
 	})
@@ -169,7 +168,7 @@ func (c Client) NewRecordFromHash(hash string) (*Record, error) {
 	return record, nil
 }
 
-func (c Client) NewRecordFromHex(hex string) (*Record, error) {
+func (c *Client) NewRecordFromHex(hex string) (*Record, error) {
 	res, err := c.bridgeClient.Record().FromHex(context.Background(), &proto.FromHexRequest{
 		Hex: hex,
 	})
@@ -185,7 +184,7 @@ func (c Client) NewRecordFromHex(hex string) (*Record, error) {
 	return res.Record, nil
 }
 
-func (c Client) NewRecordFromString(string string) (*Record, error) {
+func (c *Client) NewRecordFromString(string string) (*Record, error) {
 	record, err := c.bridgeClient.Record().FromString(context.Background(), &proto.FromStringRequest{
 		Str: string,
 	})
@@ -197,7 +196,7 @@ func (c Client) NewRecordFromString(string string) (*Record, error) {
 	return record, nil
 }
 
-func (c Client) NewRecordFromTypedArray(array []byte) (*Record, error) {
+func (c *Client) NewRecordFromTypedArray(array []byte) (*Record, error) {
 	record, err := c.bridgeClient.Record().FromTypedArray(context.Background(), &proto.FromTypedArrayRequest{
 		Array: array,
 	})
