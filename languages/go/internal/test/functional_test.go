@@ -12,11 +12,11 @@ func TestFunctionalSendRecord(t *testing.T) {
 	sdk := GetSdk()
 
 	records := make([]*bloock.Record, 0)
-	record, err := sdk.NewRecordFromString("Example Data 1")
+	record, err := bloock.NewRecordFromString("Example Data 1")
 	records = append(records, record)
-	record, err = sdk.NewRecordFromString("Example Data 2")
+	record, err = bloock.NewRecordFromString("Example Data 2")
 	records = append(records, record)
-	record, err = sdk.NewRecordFromString("Example Data 3")
+	record, err = bloock.NewRecordFromString("Example Data 3")
 	records = append(records, record)
 
 	r, err := sdk.SendRecords(records)
@@ -31,11 +31,11 @@ func TestFunctionalWaitAnchor(t *testing.T) {
 	sdk := GetSdk()
 
 	records := make([]*bloock.Record, 0)
-	record, err := sdk.NewRecordFromString("Example Data 4")
+	record, err := bloock.NewRecordFromString("Example Data 4")
 	records = append(records, record)
-	record, err = sdk.NewRecordFromString("Example Data 5")
+	record, err = bloock.NewRecordFromString("Example Data 5")
 	records = append(records, record)
-	record, err = sdk.NewRecordFromString("Example Data 6")
+	record, err = bloock.NewRecordFromString("Example Data 6")
 	records = append(records, record)
 
 	r, err := sdk.SendRecords(records)
@@ -56,11 +56,11 @@ func TestFunctionalGetProof(t *testing.T) {
 	sdk := GetSdk()
 
 	records := make([]*bloock.Record, 0)
-	record, err := sdk.NewRecordFromString("Example Data 4")
+	record, err := bloock.NewRecordFromString("Example Data 4")
 	records = append(records, record)
-	record, err = sdk.NewRecordFromString("Example Data 5")
+	record, err = bloock.NewRecordFromString("Example Data 5")
 	records = append(records, record)
-	record, err = sdk.NewRecordFromString("Example Data 6")
+	record, err = bloock.NewRecordFromString("Example Data 6")
 	records = append(records, record)
 
 	p, err := sdk.GetProof(records)
@@ -72,11 +72,11 @@ func TestFunctionalVerifyProof(t *testing.T) {
 	sdk := GetSdk()
 
 	records := make([]*bloock.Record, 0)
-	record, err := sdk.NewRecordFromString("Example Data 4")
+	record, err := bloock.NewRecordFromString("Example Data 4")
 	records = append(records, record)
-	record, err = sdk.NewRecordFromString("Example Data 5")
+	record, err = bloock.NewRecordFromString("Example Data 5")
 	records = append(records, record)
-	record, err = sdk.NewRecordFromString("Example Data 6")
+	record, err = bloock.NewRecordFromString("Example Data 6")
 	records = append(records, record)
 
 	p, err := sdk.GetProof(records)

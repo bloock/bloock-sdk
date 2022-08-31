@@ -15,7 +15,7 @@ func TestAcceptance(t *testing.T) {
 	sdk := GetSdk()
 
 	t.Run("Basic test E2E", func(t *testing.T) {
-		record, err := sdk.NewRecordFromString(randHex(64))
+		record, err := bloock.NewRecordFromString(randHex(64))
 		require.NoError(t, err)
 		records := []*bloock.Record{record}
 
@@ -44,7 +44,7 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test send records invalid record input wrong char", func(t *testing.T) {
-		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
+		record, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
 		require.NoError(t, err)
 
 		records := []*bloock.Record{record}
@@ -55,9 +55,9 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test send records invalid record input missing chars", func(t *testing.T) {
-		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		record1, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
 		require.NoError(t, err)
-		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
+		record2, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
 		require.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
@@ -68,9 +68,9 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test send records invalid record input wrong start", func(t *testing.T) {
-		record1, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		record1, err := bloock.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
 		require.NoError(t, err)
-		record2, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
+		record2, err := bloock.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
 		require.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
@@ -102,7 +102,7 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test get proof invalid record input wrong char", func(t *testing.T) {
-		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
+		record, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
 		require.NoError(t, err)
 		records := []*bloock.Record{record}
 
@@ -112,9 +112,9 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test get proof invalid record input missing chars", func(t *testing.T) {
-		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		record1, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
 		require.NoError(t, err)
-		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
+		record2, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
 		require.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
@@ -125,8 +125,8 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test get proof invalid record input wrong start", func(t *testing.T) {
-		record1, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
-		record2, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
+		record1, err := bloock.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		record2, err := bloock.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
 
 		records := []*bloock.Record{record1, record2}
 
@@ -136,7 +136,7 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test get proof non-existant leaf", func(t *testing.T) {
-		record, err := sdk.NewRecordFromHash("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdee")
+		record, err := bloock.NewRecordFromHash("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdee")
 		require.NoError(t, err)
 
 		records := []*bloock.Record{record}
@@ -147,7 +147,7 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test verify records invalid record input wrong char", func(t *testing.T) {
-		record, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
+		record, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aG")
 		require.NoError(t, err)
 		records := []*bloock.Record{record}
 
@@ -160,9 +160,9 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test verify records invalid record input missing chars", func(t *testing.T) {
-		record1, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		record1, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
 		require.NoError(t, err)
-		record2, err := sdk.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
+		record2, err := bloock.NewRecordFromHash("e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994")
 		require.NoError(t, err)
 
 		records := []*bloock.Record{record1, record2}
@@ -176,8 +176,8 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test verify records invalid record input wrong start", func(t *testing.T) {
-		record1, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
-		record2, err := sdk.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
+		record1, err := bloock.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994aa")
+		record2, err := bloock.NewRecordFromHash("0xe016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994bb")
 
 		records := []*bloock.Record{record1, record2}
 
@@ -190,7 +190,7 @@ func TestAcceptance(t *testing.T) {
 	})
 
 	t.Run("Test verify records non-existant leaf", func(t *testing.T) {
-		record, err := sdk.NewRecordFromHash("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdee")
+		record, err := bloock.NewRecordFromHash("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdee")
 
 		records := []*bloock.Record{record}
 
