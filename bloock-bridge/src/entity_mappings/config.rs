@@ -8,10 +8,7 @@ use bloock_core::config::{
     },
 };
 
-use crate::{
-    error::BridgeError,
-    items::ConfigData,
-};
+use crate::{error::BridgeError, items::ConfigData};
 
 use super::network::{map_network_config, map_network_from_i32};
 

@@ -82,6 +82,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "bloock-document"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
+ "wasm-bindgen-test",
+]
+
+[[package]]
 name = "bloock-executor"
 version = "0.1.0"
 dependencies = [

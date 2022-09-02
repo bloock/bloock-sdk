@@ -3,6 +3,7 @@
 members = [
     "bloock-core",
     "bloock-bridge",
+    "bloock-libs/document",
     "bloock-libs/executor",
     "bloock-libs/hashing",
     "bloock-libs/http",

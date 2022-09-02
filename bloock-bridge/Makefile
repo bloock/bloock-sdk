@@ -6,7 +6,7 @@ SHELL := /bin/bash
 
 define BUILD_RECIPE
 $(1):
-	cargo build --release --target $$@
+	$(2) cargo build --release --target $$@
 	rm -rfv build/native/$$@/*
 	mkdir -p build/native/$$@
 	cp ../target/$$@/release/libbloock_bridge* build/native/$$@/
@@ -16,19 +16,25 @@ build-all: build-linux build-windows build-darwin build-wasm
 
 # Linux
 
+build-linux:
+	cargo build --release
+
+build-linux-musl:
+	RUSTFLAGS="-C target-feature=-crt-static" cargo build --target x86_64-unknown-linux-musl --release
+
 build-linux: aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu i686-unknown-linux-gnu x86_64-unknown-linux-musl
 
 $(eval $(call BUILD_RECIPE,aarch64-unknown-linux-gnu))
+$(eval $(call BUILD_RECIPE,aarch64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static))
 $(eval $(call BUILD_RECIPE,x86_64-unknown-linux-gnu))
-$(eval $(call BUILD_RECIPE,i686-unknown-linux-gnu))
-$(eval $(call BUILD_RECIPE,x86_64-unknown-linux-musl))
+$(eval $(call BUILD_RECIPE,x86_64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static"))
 
 # Windows
 
-build-windows: x86_64-pc-windows-gnu i686-pc-windows-gnu
+build-windows: x86_64-pc-windows-gnu x86_64-pc-windows-msvc
 
 $(eval $(call BUILD_RECIPE,x86_64-pc-windows-gnu))
-$(eval $(call BUILD_RECIPE,i686-pc-windows-gnu))
+$(eval $(call BUILD_RECIPE,x86_64-pc-windows-msvc))
 
 # Darwin
 

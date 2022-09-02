@@ -4,38 +4,38 @@ use bloock_core::anchor::entity::anchor::{
 
 use crate::items::{Anchor, AnchorNetwork};
 
-impl Into<Anchor> for AnchorCore {
-    fn into(self) -> Anchor {
-        Anchor {
-            id: self.id,
-            block_roots: self.block_roots,
-            networks: self
+impl From<AnchorCore> for Anchor {
+    fn from(a: AnchorCore) -> Self {
+        Self {
+            id: a.id,
+            block_roots: a.block_roots,
+            networks: a
                 .networks
                 .iter()
                 .map(|network| network.clone().into())
                 .collect(),
-            root: self.root,
-            status: self.status,
+            root: a.root,
+            status: a.status,
         }
     }
 }
 
-impl Into<AnchorNetwork> for AnchorNetworkCore {
-    fn into(self) -> AnchorNetwork {
-        AnchorNetwork {
-            name: self.name.clone(),
-            state: self.state.clone(),
-            tx_hash: self.tx_hash.clone(),
+impl From<AnchorNetworkCore> for AnchorNetwork {
+    fn from(n: AnchorNetworkCore) -> Self {
+        Self {
+            name: n.name.clone(),
+            state: n.state.clone(),
+            tx_hash: n.tx_hash,
         }
     }
 }
 
-impl Into<AnchorNetworkCore> for AnchorNetwork {
-    fn into(self) -> AnchorNetworkCore {
-        AnchorNetworkCore {
-            name: self.name.clone(),
-            state: self.state.clone(),
-            tx_hash: self.tx_hash.clone(),
+impl From<AnchorNetwork> for AnchorNetworkCore {
+    fn from(n: AnchorNetwork) -> Self {
+        Self {
+            name: n.name.clone(),
+            state: n.state.clone(),
+            tx_hash: n.tx_hash,
         }
     }
 }

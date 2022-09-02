@@ -7,60 +7,60 @@ use crate::{
     items::{Proof, ProofAnchor},
 };
 
-impl Into<Proof> for ProofCore {
-    fn into(self) -> Proof {
-        Proof {
-            leaves: self.leaves,
-            nodes: self.nodes,
-            depth: self.depth,
-            bitmap: self.bitmap,
-            anchor: Some(self.anchor.into()),
+impl From<ProofCore> for Proof {
+    fn from(p: ProofCore) -> Self {
+        Self {
+            leaves: p.leaves,
+            nodes: p.nodes,
+            depth: p.depth,
+            bitmap: p.bitmap,
+            anchor: Some(p.anchor.into()),
         }
     }
 }
 
-impl Into<Result<ProofCore, BridgeError>> for Proof {
-    fn into(self) -> Result<ProofCore, BridgeError> {
-        let anchor = match self.anchor {
+impl From<Proof> for Result<ProofCore, BridgeError> {
+    fn from(p: Proof) -> Self {
+        let anchor = match p.anchor {
             Some(anchor) => anchor,
             None => return Err(BridgeError::MissingAnchor),
         };
         Ok(ProofCore {
-            leaves: self.leaves,
-            nodes: self.nodes,
-            depth: self.depth,
-            bitmap: self.bitmap,
+            leaves: p.leaves,
+            nodes: p.nodes,
+            depth: p.depth,
+            bitmap: p.bitmap,
             anchor: anchor.into(),
         })
     }
 }
 
-impl Into<ProofAnchor> for ProofAnchorCore {
-    fn into(self) -> ProofAnchor {
-        ProofAnchor {
-            anchor_id: self.anchor_id,
-            networks: self
+impl From<ProofAnchorCore> for ProofAnchor {
+    fn from(p: ProofAnchorCore) -> Self {
+        Self {
+            anchor_id: p.anchor_id,
+            networks: p
                 .networks
                 .iter()
                 .map(|network| network.clone().into())
                 .collect(),
-            root: self.root,
-            status: self.status,
+            root: p.root,
+            status: p.status,
         }
     }
 }
 
-impl Into<ProofAnchorCore> for ProofAnchor {
-    fn into(self) -> ProofAnchorCore {
-        ProofAnchorCore {
-            anchor_id: self.anchor_id,
-            networks: self
+impl From<ProofAnchor> for ProofAnchorCore {
+    fn from(p: ProofAnchor) -> Self {
+        Self {
+            anchor_id: p.anchor_id,
+            networks: p
                 .networks
                 .iter()
                 .map(|network| network.clone().into())
                 .collect(),
-            root: self.root,
-            status: self.status,
+            root: p.root,
+            status: p.status,
         }
     }
 }

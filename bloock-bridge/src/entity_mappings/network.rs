@@ -3,9 +3,9 @@ use bloock_core::config::entity::{
     config::NetworkConfiguration as CoreNetworkConfig, network::Network as CoreNetwork,
 };
 
-impl Into<CoreNetwork> for Network {
-    fn into(self) -> CoreNetwork {
-        match self {
+impl From<Network> for CoreNetwork {
+    fn from(n: Network) -> Self {
+        match n {
             Network::BloockChain => CoreNetwork::BloockChain,
             Network::EthereumMainnet => CoreNetwork::EthereumMainnet,
             Network::EthereumRinkeby => CoreNetwork::EthereumRinkeby,
@@ -14,10 +14,7 @@ impl Into<CoreNetwork> for Network {
 }
 
 pub fn map_network_from_i32(network: i32) -> Option<CoreNetwork> {
-    match Network::from_i32(network) {
-        Some(network) => Some(network.into()),
-        None => None,
-    }
+    Network::from_i32(network).map(|network| network.into())
 }
 
 pub fn map_network_config(network: NetworkConfig) -> CoreNetworkConfig {
