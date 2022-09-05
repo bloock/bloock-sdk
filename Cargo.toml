@@ -3,11 +3,11 @@
 members = [
     "bloock-core",
     "bloock-bridge",
-    "bloock-libs/document",
     "bloock-libs/executor",
     "bloock-libs/hashing",
     "bloock-libs/http",
-    "bloock-libs/web3"
+    "bloock-libs/web3",
+    "bloock-libs/builder"
 ]
 
 exclude = []

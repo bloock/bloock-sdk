@@ -7,6 +7,7 @@ pub trait Hashing {
     fn generate_hash(&self, data: &[u8]) -> String;
 }
 
+#[derive(Default)]
 pub struct Keccak256 {}
 
 impl Hashing for Keccak256 {

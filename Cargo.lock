@@ -65,6 +65,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "bloock-builder"
+version = "0.1.0"
+dependencies = [
+ "bloock-hashing",
+ "hex",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "bloock-core"
 version = "0.1.0"
 dependencies = [
@@ -79,16 +90,6 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tokio",
-]
-
-[[package]]
-name = "bloock-document"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
- "thiserror",
- "wasm-bindgen-test",
 ]
 
 [[package]]

@@ -1,9 +1,10 @@
+use crate::{BuilderError, Result};
 use serde::Serialize;
 use serde_json::Value;
-use thiserror::Error as ThisError;
-
+pub mod base;
 pub mod json;
-// pub mod pdf;
+#[macro_use]
+pub mod macros;
 
 #[derive(Serialize)]
 pub struct Metadata {
@@ -13,20 +14,16 @@ pub struct Metadata {
 
 pub trait DocumentHelper {
     fn get_data(&mut self) -> Option<Vec<u8>>;
-
-    fn get_proof(&mut self) -> Option<&mut Value>;
-
-    fn get_signatures(&mut self) -> Option<&mut Vec<Value>>;
-
-    fn get_payload(&self) -> Option<Vec<u8>>;
-
     fn set_data(&mut self, data: Vec<u8>) -> &Self;
 
+    fn get_payload(&self) -> Option<Vec<u8>>;
+    fn set_payload(&mut self, payload: Vec<u8>) -> &Self;
+
+    fn get_proof(&mut self) -> Option<&mut Value>;
     fn set_proof(&mut self, proof: Value) -> &Self;
 
+    fn get_signatures(&mut self) -> Option<&mut Vec<Value>>;
     fn set_signatures(&mut self, signatures: Vec<Value>) -> &Self;
-
-    fn set_payload(&mut self, payload: Vec<u8>) -> &Self;
 }
 
 pub struct DefaultDocumentArgs {}
@@ -38,13 +35,11 @@ where
 {
     const PROOF_KEY: &'static str = "proof";
     const SIGNATURES_KEY: &'static str = "signatures";
+    const ENCRYPTION_KEY: &'static str = "encryption";
 
     type DocumentArgs;
 
-    fn new<S: Into<Vec<u8>> + Send>(
-        src: S,
-        _args: Option<Self::DocumentArgs>,
-    ) -> Result<Self, DocumentError> {
+    fn new<S: Into<Vec<u8>> + Send>(src: S, _args: Option<Self::DocumentArgs>) -> Result<Self> {
         let mut doc = Self::setup(src.into())?;
 
         if let Some(proof) = doc.fetch_proof() {
@@ -63,7 +58,7 @@ where
         Ok(doc)
     }
 
-    fn setup(src: Vec<u8>) -> Result<Self, DocumentError>;
+    fn setup(src: Vec<u8>) -> Result<Self>;
 
     fn fetch_metadata<S: ToString>(&self, key: S) -> Option<Value>;
 
@@ -137,12 +132,22 @@ where
     fn build_file(&mut self, metadata: Metadata) -> Vec<u8>;
 }
 
-#[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
-pub enum DocumentError {
-    #[error("Document Error: {0}")]
-    DocumentError(String),
-    #[error("JSON Error: {0}")]
-    JsonError(String),
-    #[error("PDF Load error: {0}")]
-    PDFLoadError(String),
+pub trait DocumentType
+where
+    Self: Sized,
+{
+    fn from_vec(v: Vec<u8>) -> Result<Self>;
+    fn to_vec(&self) -> Result<Vec<u8>>;
 }
+
+impl DocumentType for String {
+    fn from_vec(v: Vec<u8>) -> Result<Self> {
+        String::from_utf8(v).map_err(|e| BuilderError::BaseLoadError(e.to_string()))
+    }
+
+    fn to_vec(&self) -> Result<Vec<u8>> {
+        Ok(self.as_bytes().to_vec())
+    }
+}
+
+impl_document_type_trait! { Vec<u8> }

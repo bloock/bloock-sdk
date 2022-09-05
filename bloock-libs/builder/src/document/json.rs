@@ -1,8 +1,9 @@
-use crate::{DefaultDocumentArgs, Document, DocumentError, DocumentHelper, Metadata};
+use super::{DefaultDocumentArgs, Document, DocumentHelper, Metadata};
+use crate::{BuilderError, Result};
 use serde_json::{json, Value};
 
-const DATA_KEY: &'static str = "_data_";
-const METADATA_KEY: &'static str = "_metadata_";
+const DATA_KEY: &str = "_data_";
+const METADATA_KEY: &str = "_metadata_";
 
 pub struct JSONDocument {
     source: Value,
@@ -59,9 +60,9 @@ impl DocumentHelper for JSONDocument {
 impl Document for JSONDocument {
     type DocumentArgs = DefaultDocumentArgs;
 
-    fn setup(src: Vec<u8>) -> Result<Self, DocumentError> {
+    fn setup(src: Vec<u8>) -> Result<Self> {
         let json: Value = serde_json::from_slice(src.as_slice())
-            .map_err(|e| DocumentError::JsonError(e.to_string()))?;
+            .map_err(|e| BuilderError::JsonLoadError(e.to_string()))?;
         Ok(JSONDocument {
             source: json,
             data: None,
@@ -83,9 +84,9 @@ impl Document for JSONDocument {
 
     fn fetch_data(&self) -> Option<Vec<u8>> {
         if let Some(d) = self.source.get(DATA_KEY) {
-            return serde_json::to_vec(d).ok();
+            serde_json::to_vec(d).ok()
         } else {
-            return serde_json::to_vec(&self.source).ok();
+            serde_json::to_vec(&self.source).ok()
         }
     }
 
@@ -100,7 +101,7 @@ impl Document for JSONDocument {
             }
             false => serde_json::to_vec(&self.data),
         }
-        .unwrap_or(vec![])
+        .unwrap_or_default()
     }
 }
 
@@ -109,7 +110,7 @@ mod tests {
     use serde_json::{json, Value};
 
     use super::JSONDocument;
-    use crate::{Document, DocumentHelper};
+    use super::{Document, DocumentHelper};
 
     const CONTENT: &str = "{\"hello\":\"world\"}";
 
@@ -297,7 +298,7 @@ mod tests {
 
         assert_eq!(
             file2.get_signatures().unwrap().clone(),
-            vec![signature.clone()],
+            vec![signature],
             "Invalid signatures received"
         );
         assert_eq!(
