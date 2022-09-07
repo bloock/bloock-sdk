@@ -1,6 +1,4 @@
-use serde_json::json;
-
-use super::Encrypter;
+use super::{Decrypter, Encrypter, Encryption};
 
 pub struct AesEncrypterArgs {
     pub secret: String,
@@ -24,14 +22,39 @@ impl AesEncrypter {
 }
 
 impl Encrypter for AesEncrypter {
-    fn encrypt(&self, _payload: &Option<Vec<u8>>) -> crate::Result<serde_json::Value> {
-        Ok(json!({
-            "encryption": "encryption1",
-            "header": {}
-        }))
+    fn encrypt(&self, _payload: &Vec<u8>) -> crate::Result<Encryption> {
+        Ok(Encryption {
+            protected: "protected".to_string(),
+            header: super::EncryptionHeader {
+                alg: "alg".to_string(),
+            },
+        })
     }
+}
 
-    fn decrypt(&self, _cipher_text: &Option<Vec<u8>>) -> crate::Result<Vec<u8>> {
+pub struct AesDecrypterArgs {
+    pub secret: String,
+}
+impl AesDecrypterArgs {
+    pub fn new(secret: &str) -> Self {
+        Self {
+            secret: secret.to_string(),
+        }
+    }
+}
+
+pub struct AesDecrypter {
+    _args: AesDecrypterArgs,
+}
+
+impl AesDecrypter {
+    pub fn new(args: AesDecrypterArgs) -> Self {
+        Self { _args: args }
+    }
+}
+
+impl Decrypter for AesEncrypter {
+    fn decrypt(&self, _cipher_text: &Vec<u8>) -> crate::Result<Vec<u8>> {
         todo!()
     }
 }

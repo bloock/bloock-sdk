@@ -1,153 +1,337 @@
+pub mod types;
+
+use std::fmt::{Debug, Display};
+
+use crate::{encrypter::Encryption, signer::Signature};
 use crate::{BuilderError, Result};
-use serde::Serialize;
-use serde_json::Value;
-pub mod base;
-pub mod json;
-#[macro_use]
-pub mod macros;
+use serde::{Deserialize, Serialize};
+use serde_json::json;
 
-#[derive(Serialize)]
-pub struct Metadata {
-    pub signatures: Option<Vec<Value>>,
-    pub proof: Option<Value>,
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
+pub struct Headers {
+    pub ty: String,
 }
 
-pub trait DocumentHelper {
-    fn get_data(&mut self) -> Option<Vec<u8>>;
-    fn set_data(&mut self, data: Vec<u8>) -> &Self;
-
-    fn get_payload(&self) -> Option<Vec<u8>>;
-    fn set_payload(&mut self, payload: Vec<u8>) -> &Self;
-
-    fn get_proof(&mut self) -> Option<&mut Value>;
-    fn set_proof(&mut self, proof: Value) -> &Self;
-
-    fn get_signatures(&mut self) -> Option<&mut Vec<Value>>;
-    fn set_signatures(&mut self, signatures: Vec<Value>) -> &Self;
+#[derive(Serialize, Deserialize)]
+pub struct Document {
+    pub headers: Headers,
+    pub payload: Vec<u8>,
+    pub signatures: Option<Vec<Signature>>,
+    pub encryption: Option<Encryption>,
+    pub proof: Option<String>,
 }
 
-pub struct DefaultDocumentArgs {}
-
-pub trait Document
-where
-    Self: DocumentHelper + Sized + Send,
-    <Self as Document>::DocumentArgs: Send,
-{
-    const PROOF_KEY: &'static str = "proof";
-    const SIGNATURES_KEY: &'static str = "signatures";
-    const ENCRYPTION_KEY: &'static str = "encryption";
-
-    type DocumentArgs;
-
-    fn new<S: Into<Vec<u8>> + Send>(src: S, _args: Option<Self::DocumentArgs>) -> Result<Self> {
-        let mut doc = Self::setup(src.into())?;
-
-        if let Some(proof) = doc.fetch_proof() {
-            doc.set_proof(proof);
+impl Document {
+    pub fn new(
+        headers: Headers,
+        payload: Vec<u8>,
+        signatures: Option<Vec<Signature>>,
+        encryption: Option<Encryption>,
+        proof: Option<String>,
+    ) -> Self {
+        Self {
+            headers,
+            payload,
+            signatures,
+            encryption,
+            proof,
         }
-        if let Some(signatures) = doc.fetch_signatures() {
-            doc.set_signatures(signatures);
-        }
-        if let Some(data) = doc.fetch_data() {
-            doc.set_data(data);
-        }
-        if let Some(payload) = doc.fetch_payload() {
-            doc.set_payload(payload);
-        }
-
-        Ok(doc)
     }
 
-    fn setup(src: Vec<u8>) -> Result<Self>;
-
-    fn fetch_metadata<S: ToString>(&self, key: S) -> Option<Value>;
-
-    fn fetch_data(&self) -> Option<Vec<u8>>;
-
-    fn fetch_proof(&self) -> Option<Value> {
-        let proof = self.fetch_metadata(Self::PROOF_KEY)?;
-        if proof.is_object() {
-            return Some(proof);
-        }
-
-        None
+    pub fn get_payload(&self) -> Result<Vec<u8>> {
+        base64_url::decode(&self.payload).map_err(|e| BuilderError::DecodeError(e.to_string()))
     }
 
-    fn fetch_signatures(&self) -> Option<Vec<Value>> {
-        let signatures = self.fetch_metadata(Self::SIGNATURES_KEY)?;
-        if signatures.is_array() {
-            return Some(signatures.as_array()?.clone());
-        }
-
-        None
-    }
-
-    fn fetch_payload(&mut self) -> Option<Vec<u8>> {
-        let mut metadata = Metadata {
-            proof: None,
-            signatures: None,
+    pub fn add_signature(&mut self, signature: Signature) -> &mut Self {
+        match self.signatures.as_mut() {
+            Some(signatures) => signatures.push(signature),
+            None => self.signatures = Some(vec![signature]),
         };
-
-        if let Some(s) = self.get_signatures() {
-            metadata.signatures = Some(s.clone());
-        }
-
-        Some(self.build_file(metadata))
-    }
-
-    fn add_signature(&mut self, signature: Value) -> &Self {
-        let mut doc_signatures = match self.get_signatures() {
-            Some(s) => s.clone(),
-            None => vec![],
-        };
-
-        doc_signatures.push(signature);
-
-        self.set_signatures(doc_signatures.clone());
-
-        if let Some(payload) = self.fetch_payload() {
-            self.set_payload(payload);
-        }
 
         self
     }
 
-    fn build(&mut self) -> Vec<u8> {
-        let mut metadata = Metadata {
-            proof: None,
-            signatures: None,
+    pub fn set_encryption(&mut self, encryption: Encryption) -> &mut Self {
+        self.encryption = Some(encryption);
+        self
+    }
+
+    pub fn set_proof(&mut self, proof: String) -> &mut Self {
+        self.proof = Some(proof);
+        self
+    }
+
+    pub fn serialize(&self) -> Result<String> {
+        let headers = serde_json::to_vec(&self.headers)
+            .map_err(|e| BuilderError::SerializeError(e.to_string()))?;
+
+        let signatures = self
+            .signatures
+            .as_ref()
+            .map(|s| serde_json::to_vec(s).map_err(|e| BuilderError::SerializeError(e.to_string())))
+            .unwrap_or(Ok(Vec::new()))?;
+
+        let encryption = self
+            .encryption
+            .as_ref()
+            .map(|e| serde_json::to_vec(e).map_err(|e| BuilderError::SerializeError(e.to_string())))
+            .unwrap_or(Ok(Vec::new()))?;
+
+        let proof = self.proof.clone().unwrap_or("".to_string());
+
+        Ok(format!(
+            "{}.{}.{}.{}.{}",
+            base64_url::encode(&headers),
+            base64_url::encode(&self.payload),
+            base64_url::encode(&signatures),
+            base64_url::encode(&encryption),
+            base64_url::encode(&proof)
+        ))
+    }
+
+    pub fn deserialize(bytes: Vec<u8>) -> Result<Self> {
+        serde_json::from_slice(&bytes).map_err(|e| BuilderError::DecodeError(e.to_string()))
+    }
+}
+
+impl Display for Document {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let encoded = self.serialize().unwrap_or("invalid_document".to_string());
+        let splitted: Vec<&str> = encoded.split(".").into_iter().collect();
+
+        fn decode_field(field: &str) -> Option<serde_json::Value> {
+            let decoded = base64_url::decode(field).ok()?;
+            serde_json::from_slice(&decoded).ok()
+        }
+
+        let headers = decode_field(splitted[0]);
+        let payload = decode_field(splitted[1]);
+        let signatures = decode_field(splitted[2]);
+        let encryption = decode_field(splitted[3]);
+        let proof = decode_field(splitted[4]);
+
+        let output = json!({
+            "headers": headers,
+            "payload": payload,
+            "signatures": signatures,
+            "encryption": encryption,
+            "proof": proof
+        });
+
+        f.write_str(&serde_json::to_string(&output).unwrap_or("invalid_document".to_string()))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use std::vec;
+
+    use serde_json::json;
+
+    use crate::{encrypter::EncryptionHeader, signer::SignatureHeader};
+
+    use super::{types::PayloadType, *};
+
+    #[test]
+    fn test_with_payload() {
+        let headers = PayloadType::String.to_header();
+        let payload = "Some string".as_bytes().to_vec();
+        let document = Document::new(headers, payload.clone(), None, None, None);
+
+        let expected_headers = base64_url::encode(
+            &serde_json::to_vec(&json!({
+                "ty": "string"
+            }))
+            .unwrap(),
+        );
+        let expected_payload = base64_url::encode(&payload);
+        let expected_output = format!("{}.{}...", expected_headers, expected_payload);
+
+        assert_eq!(
+            expected_output,
+            document.serialize().unwrap(),
+            "Unexpected output received"
+        );
+    }
+
+    #[test]
+    fn test_with_payload_and_signature() {
+        let headers = PayloadType::String.to_header();
+        let payload = "Some string".as_bytes().to_vec();
+        let signature = Signature {
+            protected: "e0".to_string(),
+            header: SignatureHeader {
+                alg: "ECSDA".to_string(),
+                kid: "1234567890abcdef".to_string(),
+            },
+            signature: "1234567890abcdef1234567890abcdef".to_string(),
         };
+        let document = Document::new(headers, payload.clone(), Some(vec![signature]), None, None);
 
-        if let Some(p) = self.get_proof() {
-            metadata.proof = Some(p.clone());
-        }
+        let expected_headers = base64_url::encode(
+            &serde_json::to_vec(&json!({
+                "ty": "string"
+            }))
+            .unwrap(),
+        );
+        let expected_payload = base64_url::encode(&payload);
+        let expected_signature = base64_url::encode(
+            &serde_json::to_vec(&json!([{
+                "header": {
+                    "alg": "ECSDA",
+                    "kid": "1234567890abcdef",
+                },
+                "protected": "e0",
+                "signature": "1234567890abcdef1234567890abcdef",
+            }]))
+            .unwrap(),
+        );
+        let expected_output = format!(
+            "{}.{}.{}..",
+            expected_headers, expected_payload, expected_signature
+        );
 
-        if let Some(s) = self.get_signatures() {
-            metadata.signatures = Some(s.clone());
-        }
-
-        self.build_file(metadata)
+        assert_eq!(
+            expected_output,
+            document.serialize().unwrap(),
+            "Unexpected output received"
+        );
     }
 
-    fn build_file(&mut self, metadata: Metadata) -> Vec<u8>;
-}
+    #[test]
+    fn test_with_payload_and_signature_and_encryption() {
+        let headers = PayloadType::String.to_header();
+        let payload = "Some string".as_bytes().to_vec();
+        let signature = Signature {
+            protected: "e0".to_string(),
+            header: SignatureHeader {
+                alg: "ECSDA".to_string(),
+                kid: "1234567890abcdef".to_string(),
+            },
+            signature: "1234567890abcdef1234567890abcdef".to_string(),
+        };
+        let encryption = Encryption {
+            protected: "e0".to_string(),
+            header: EncryptionHeader {
+                alg: "ECSDA".to_string(),
+            },
+        };
+        let document = Document::new(
+            headers,
+            payload.clone(),
+            Some(vec![signature]),
+            Some(encryption),
+            None,
+        );
 
-pub trait DocumentType
-where
-    Self: Sized,
-{
-    fn from_vec(v: Vec<u8>) -> Result<Self>;
-    fn to_vec(&self) -> Result<Vec<u8>>;
-}
+        let expected_headers = base64_url::encode(
+            &serde_json::to_vec(&json!({
+                "ty": "string"
+            }))
+            .unwrap(),
+        );
+        let expected_payload = base64_url::encode(&payload);
+        let expected_signature = base64_url::encode(
+            &serde_json::to_vec(&json!([{
+                "header": {
+                    "alg": "ECSDA",
+                    "kid": "1234567890abcdef",
+                },
+                "protected": "e0",
+                "signature": "1234567890abcdef1234567890abcdef",
+            }]))
+            .unwrap(),
+        );
+        let expected_encryption = base64_url::encode(
+            &serde_json::to_vec(&json!({
+                "header": {
+                    "alg": "ECSDA"
+                },
+                "protected": "e0"
+            }))
+            .unwrap(),
+        );
+        let expected_output = format!(
+            "{}.{}.{}.{}.",
+            expected_headers, expected_payload, expected_signature, expected_encryption
+        );
 
-impl DocumentType for String {
-    fn from_vec(v: Vec<u8>) -> Result<Self> {
-        String::from_utf8(v).map_err(|e| BuilderError::BaseLoadError(e.to_string()))
+        assert_eq!(
+            expected_output,
+            document.serialize().unwrap(),
+            "Unexpected output received"
+        );
     }
 
-    fn to_vec(&self) -> Result<Vec<u8>> {
-        Ok(self.as_bytes().to_vec())
+    #[test]
+    fn test_with_payload_and_signature_and_encryption_and_proof() {
+        let headers = PayloadType::String.to_header();
+        let payload = "Some string".as_bytes().to_vec();
+        let signature = Signature {
+            protected: "e0".to_string(),
+            header: SignatureHeader {
+                alg: "ECSDA".to_string(),
+                kid: "1234567890abcdef".to_string(),
+            },
+            signature: "1234567890abcdef1234567890abcdef".to_string(),
+        };
+        let encryption = Encryption {
+            protected: "e0".to_string(),
+            header: EncryptionHeader {
+                alg: "ECSDA".to_string(),
+            },
+        };
+        let proof = "this is a proof".to_string();
+        let document = Document::new(
+            headers,
+            payload.clone(),
+            Some(vec![signature]),
+            Some(encryption),
+            Some(proof.clone()),
+        );
+
+        let expected_headers = base64_url::encode(
+            &serde_json::to_vec(&json!({
+                "ty": "string"
+            }))
+            .unwrap(),
+        );
+        let expected_payload = base64_url::encode(&payload);
+        let expected_signature = base64_url::encode(
+            &serde_json::to_vec(&json!([{
+                "header": {
+                    "alg": "ECSDA",
+                    "kid": "1234567890abcdef",
+                },
+                "protected": "e0",
+                "signature": "1234567890abcdef1234567890abcdef",
+            }]))
+            .unwrap(),
+        );
+        let expected_encryption = base64_url::encode(
+            &serde_json::to_vec(&json!({
+                "header": {
+                    "alg": "ECSDA"
+                },
+                "protected": "e0"
+            }))
+            .unwrap(),
+        );
+        let expected_proof = base64_url::encode(&proof);
+        let expected_output = format!(
+            "{}.{}.{}.{}.{}",
+            expected_headers,
+            expected_payload,
+            expected_signature,
+            expected_encryption,
+            expected_proof
+        );
+
+        assert_eq!(
+            expected_output,
+            document.serialize().unwrap(),
+            "Unexpected output received"
+        );
     }
 }
-
-impl_document_type_trait! { Vec<u8> }

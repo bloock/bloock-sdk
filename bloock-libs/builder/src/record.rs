@@ -1,44 +1,27 @@
 use crate::document::Document;
-use bloock_hashing::hashing::{Hashing, Keccak256};
+use crate::hasher::{keccak::Keccak256, Hasher};
+use crate::{BuilderError, Result};
 
-pub struct Record<D: Document> {
-    document: D,
+pub struct Record {
+    pub document: Document,
     hash: String,
-    encrypted: Option<Vec<u8>>,
-    publish_url: Option<String>,
 }
 
-impl<D: Document> Record<D> {
-    pub fn new(document: D, encrypted: Option<Vec<u8>>, publish_url: Option<String>) -> Self {
-        let hashing_algorithm = Keccak256::default();
-        let hash = match document.get_payload() {
-            Some(p) => hashing_algorithm.generate_hash(&p),
-            None => hashing_algorithm.generate_hash(&[]),
-        };
-        Self {
-            document,
-            hash,
-            encrypted,
-            publish_url,
-        }
+impl Record {
+    pub fn new(document: Document) -> Result<Self> {
+        let hash = Keccak256::generate_hash(&document.get_payload()?);
+        Ok(Self { document, hash })
     }
 
     pub fn get_hash(self) -> String {
-        hex::encode(self.hash)
+        self.hash
     }
 
-    pub fn get_hash_bytes(self) -> Vec<u8> {
-        self.hash.into_bytes()
+    pub fn get_hash_bytes(self) -> Result<Vec<u8>> {
+        hex::decode(self.hash).map_err(|e| BuilderError::DecodeError(e.to_string()))
     }
 
-    pub fn retrieve(mut self) -> Vec<u8> {
-        match self.encrypted {
-            Some(e) => e,
-            None => self.document.build(),
-        }
-    }
-
-    pub fn get_publish_url(self) -> Option<String> {
-        self.publish_url
+    pub fn serialize(self) -> Result<String> {
+        self.document.serialize()
     }
 }

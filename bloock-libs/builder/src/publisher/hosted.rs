@@ -1,4 +1,4 @@
-use super::Publisher;
+use super::{Loader, Publisher};
 
 #[derive(Default)]
 pub struct HostedPublisherArgs {}
@@ -17,8 +17,25 @@ impl Publisher for HostedPublisher {
     fn publish(&self, _payload: &Option<Vec<u8>>) -> crate::Result<String> {
         Ok("https://google.com".to_string())
     }
+}
 
-    fn retrieve(&self, _uri: String) -> crate::Result<Vec<u8>> {
+#[derive(Default)]
+pub struct HostedLoaderArgs {
+    pub bloock_id: String,
+}
+
+pub struct HostedLoader {
+    _args: HostedLoaderArgs,
+}
+
+impl HostedLoader {
+    pub fn new(args: HostedLoaderArgs) -> Self {
+        Self { _args: args }
+    }
+}
+
+impl Loader for HostedLoader {
+    fn retrieve(&self) -> crate::Result<Vec<u8>> {
         todo!()
     }
 }

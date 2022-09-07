@@ -1,6 +1,4 @@
-use serde_json::json;
-
-use super::Signer;
+use super::{Signature, Signer};
 
 pub struct EcsdaSignerArgs {
     pub private_key: String,
@@ -28,14 +26,18 @@ impl EcsdaSigner {
 }
 
 impl Signer for EcsdaSigner {
-    fn sign(&self, _payload: &[u8]) -> crate::Result<serde_json::Value> {
-        Ok(json!({
-            "signature": "signature1",
-            "header": {}
-        }))
+    fn sign(&self, _payload: &[u8]) -> crate::Result<Signature> {
+        Ok(Signature {
+            protected: "protected".to_string(),
+            header: super::SignatureHeader {
+                alg: "alg".to_string(),
+                kid: "kid".to_string(),
+            },
+            signature: "signature".to_string(),
+        })
     }
 
-    fn verify(&self, _signature: &serde_json::Value) -> crate::Result<serde_json::Value> {
+    fn verify(&self, _signature: &serde_json::Value) -> crate::Result<bool> {
         todo!()
     }
 }
