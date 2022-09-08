@@ -17,7 +17,7 @@ use thiserror::Error as ThisError;
 pub type Result<T> = std::result::Result<T, BuilderError>;
 
 fn _main() {
-    let (_public_key, private_key) = EcsdaSigner::generate_keys();
+    let (_public_key, private_key) = EcsdaSigner::generate_keys().unwrap();
 
     let record = RecordBuilder::from_string("Hello world!".to_string())
         .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("secret")))
@@ -48,4 +48,16 @@ pub enum BuilderError {
     EncryptionError(String),
     #[error("Invalid JSON provided")]
     InvalidJson,
+    #[error("Invalid UTF-8 sequence: {0}")]
+    StringConversionError(String),
+    #[error("Error generating key pair: {0}")]
+    KeyPairError(String),
+    #[error("Error Signer: {0}")]
+    SignerError(String),
+    #[error("Error General Serialize: {0}")]
+    GeneralSerializeError(String),
+    #[error("Error General Deserialize: {0}")]
+    GeneralDeserializeError(String),
+    #[error("Error Verifier: {0}")]
+    VerifierError(String),
 }
