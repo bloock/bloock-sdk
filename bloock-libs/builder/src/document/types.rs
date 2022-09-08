@@ -1,6 +1,6 @@
 use super::Headers;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum PayloadType {
     String,
     Hex,
@@ -19,7 +19,7 @@ impl PayloadType {
                 ty: "hex".to_string(),
             },
             PayloadType::Json => Headers {
-                ty: "json".to_string(),
+                ty: "application/json".to_string(),
             },
             PayloadType::Bytes => Headers {
                 ty: "bytes".to_string(),

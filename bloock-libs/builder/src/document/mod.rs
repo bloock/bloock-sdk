@@ -4,15 +4,16 @@ use std::fmt::{Debug, Display};
 
 use crate::{encrypter::Encryption, signer::Signature};
 use crate::{BuilderError, Result};
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-#[derive(Serialize, Deserialize, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 pub struct Headers {
     pub ty: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Document {
     pub headers: Headers,
     pub payload: Vec<u8>,
@@ -38,8 +39,8 @@ impl Document {
         }
     }
 
-    pub fn get_payload(&self) -> Result<Vec<u8>> {
-        base64_url::decode(&self.payload).map_err(|e| BuilderError::DecodeError(e.to_string()))
+    pub fn get_payload(&self) -> &[u8] {
+        &self.payload
     }
 
     pub fn add_signature(&mut self, signature: Signature) -> &mut Self {
@@ -77,7 +78,7 @@ impl Document {
             .map(|e| serde_json::to_vec(e).map_err(|e| BuilderError::SerializeError(e.to_string())))
             .unwrap_or(Ok(Vec::new()))?;
 
-        let proof = self.proof.clone().unwrap_or("".to_string());
+        let proof = self.proof.clone().unwrap_or_else(|| "".to_string());
 
         Ok(format!(
             "{}.{}.{}.{}.{}",
@@ -90,14 +91,40 @@ impl Document {
     }
 
     pub fn deserialize(bytes: Vec<u8>) -> Result<Self> {
-        serde_json::from_slice(&bytes).map_err(|e| BuilderError::DecodeError(e.to_string()))
+        let encoded =
+            String::from_utf8(bytes).map_err(|e| BuilderError::DocumentError(e.to_string()))?;
+
+        let splitted: Vec<&str> = encoded.split('.').into_iter().collect();
+
+        fn deserialize_field<T: DeserializeOwned>(field: &str) -> Option<T> {
+            let decoded = base64_url::decode(field).ok()?;
+            serde_json::from_slice(&decoded).ok()
+        }
+
+        let headers: Headers = deserialize_field(splitted[0])
+            .ok_or_else(|| BuilderError::DecodeError("couldn't find headers".to_string()))?;
+        let payload: Vec<u8> = base64_url::decode(splitted[1])
+            .map_err(|_| BuilderError::DecodeError("couldn't find payload".to_string()))?;
+        let signatures: Option<Vec<Signature>> = deserialize_field(splitted[2]);
+        let encryption: Option<Encryption> = deserialize_field(splitted[3]);
+        let proof: Option<String> = deserialize_field(splitted[4]);
+
+        Ok(Self {
+            headers,
+            payload,
+            signatures,
+            encryption,
+            proof,
+        })
     }
 }
 
 impl Display for Document {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let encoded = self.serialize().unwrap_or("invalid_document".to_string());
-        let splitted: Vec<&str> = encoded.split(".").into_iter().collect();
+        let encoded = self
+            .serialize()
+            .unwrap_or_else(|_| "invalid_document".to_string());
+        let splitted: Vec<&str> = encoded.split('.').into_iter().collect();
 
         fn decode_field(field: &str) -> Option<serde_json::Value> {
             let decoded = base64_url::decode(field).ok()?;
@@ -118,7 +145,9 @@ impl Display for Document {
             "proof": proof
         });
 
-        f.write_str(&serde_json::to_string(&output).unwrap_or("invalid_document".to_string()))
+        f.write_str(
+            &serde_json::to_string(&output).unwrap_or_else(|_| "invalid_document".to_string()),
+        )
     }
 }
 

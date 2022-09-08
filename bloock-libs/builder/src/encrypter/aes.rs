@@ -22,7 +22,7 @@ impl AesEncrypter {
 }
 
 impl Encrypter for AesEncrypter {
-    fn encrypt(&self, _payload: &Vec<u8>) -> crate::Result<Encryption> {
+    fn encrypt(&self, _payload: &[u8]) -> crate::Result<Encryption> {
         Ok(Encryption {
             protected: "protected".to_string(),
             header: super::EncryptionHeader {
@@ -54,7 +54,7 @@ impl AesDecrypter {
 }
 
 impl Decrypter for AesEncrypter {
-    fn decrypt(&self, _cipher_text: &Vec<u8>) -> crate::Result<Vec<u8>> {
+    fn decrypt(&self, _cipher_text: &[u8]) -> crate::Result<Vec<u8>> {
         todo!()
     }
 }

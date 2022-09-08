@@ -46,13 +46,6 @@ pub enum BuilderError {
     SerializeError(String),
     #[error("Encryption error: {0}")]
     EncryptionError(String),
-}
-
-#[cfg(test)]
-mod tests {
-
-    use super::*;
-
-    #[test]
-    fn test_keccak_1() {}
+    #[error("Invalid JSON provided")]
+    InvalidJson,
 }
