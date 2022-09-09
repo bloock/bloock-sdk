@@ -1,7 +1,7 @@
-build: hashing-build executor-build http-build web3-build
+build: hasher-build executor-build http-build web3-build
 
-hashing-build:
-	cd hashing && cargo build
+hasher-build:
+	cd hasher && cargo build
 
 executor-build:
 	cd executor && cargo build
@@ -12,13 +12,19 @@ http-build:
 web3-build:
 	cd web3 && cargo build
 
-test: hashing-test builder-test executor-test http-test web3-test
+test: hasher-test signer-test encrypter-test publisher-test executor-test http-test web3-test
 
-hashing-test:
-	cd hashing && cargo test
+hasher-test:
+	cd hasher && cargo test
 
-builder-test:
-	cd builder && cargo test
+signer-test:
+	cd signer && cargo test
+
+encrypter-test:
+	cd encrypter && cargo test
+
+publisher-test:
+	cd publisher && cargo test
 
 executor-test:
 	cd executor && cargo test
@@ -29,17 +35,27 @@ http-test:
 web3-test:
 	cd web3 && cargo test
 
-wasm-test: hashing-wasm-test builder-wasm-test http-wasm-test web3-wasm-test
+wasm-test: hasher-wasm-test signer-wasm-test encrypter-wasm-test publisher-wasm-test http-wasm-test web3-wasm-test
 
-hashing-wasm-test:
-	cd hashing && wasm-pack test --firefox --headless 
-	cd hashing && wasm-pack test --chrome --headless 
-	cd hashing && wasm-pack test --node
+hasher-wasm-test:
+	cd hasher && wasm-pack test --firefox --headless 
+	cd hasher && wasm-pack test --chrome --headless 
+	cd hasher && wasm-pack test --node
 
-builder-wasm-test:
-	cd builder && wasm-pack test --firefox --headless 
-	cd builder && wasm-pack test --chrome --headless 
-	cd builder && wasm-pack test --node
+signer-wasm-test:
+	cd signer && wasm-pack test --firefox --headless 
+	cd signer && wasm-pack test --chrome --headless 
+	cd signer && wasm-pack test --node
+
+encrypter-wasm-test:
+	cd encrypter && wasm-pack test --firefox --headless 
+	cd encrypter && wasm-pack test --chrome --headless 
+	cd encrypter && wasm-pack test --node
+
+publisher-wasm-test:
+	cd publisher && wasm-pack test --firefox --headless 
+	cd publisher && wasm-pack test --chrome --headless 
+	cd publisher && wasm-pack test --node
 
 http-wasm-test:
 	cd http && wasm-pack test --firefox --headless 

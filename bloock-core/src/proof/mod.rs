@@ -24,6 +24,12 @@ pub enum ProofError {
     InvalidDepth(),
     #[error("Invalid bitmap")]
     InvalidBitmap(),
+    #[error("Invalid leaf")]
+    InvalidLeaf,
+    #[error("Invalid node")]
+    InvalidNode,
+    #[error("Invalid proof")]
+    InvalidProof,
 }
 
 impl From<ProofError> for BloockError {

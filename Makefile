@@ -1,5 +1,5 @@
 .PHONY: build c-build wasm-build  \
-	test core-test hashing-test http-test web3-test c-test wasm-test go-test js-test php-test  \
+	test core-test hasher-test http-test web3-test c-test wasm-test go-test js-test php-test  \
 	fmt fmt-rust fmt-go fmt-js fmt-php \
 	lint clippy lint-js lint-go \
 	clean clean-rust clean-wasm-api clean-go clean-js 

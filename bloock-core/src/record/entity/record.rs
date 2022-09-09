@@ -1,83 +1,62 @@
 use std::cmp::Ordering;
 
-use bloock_hashing::hashing::{Hashing, Keccak256, H256};
-use serde::{Deserialize, Serialize};
+use bloock_hasher::{keccak::Keccak256, Hasher, H256};
 
-use crate::error::{BloockResult, OperationalError};
+use crate::{
+    error::BloockResult,
+    proof::entity::proof::Proof,
+    record::{document::Document, RecordError},
+};
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Clone, Eq)]
 pub struct Record {
-    pub hash: String,
+    pub(crate) document: Option<Document>,
+    hash: H256,
 }
 
 impl Record {
-    const HASHING_ALGORITHM: Keccak256 = Keccak256 {};
-
-    pub fn from_hash(hash: &str) -> Self {
+    pub fn new(document: Document) -> Self {
+        let hash = Keccak256::generate_hash(document.get_payload());
         Self {
-            hash: hash.to_string(),
+            document: Some(document),
+            hash,
         }
     }
 
-    pub fn from_hex(hex_str: &str) -> BloockResult<Self> {
-        let bytes = match hex::decode(hex_str) {
-            Ok(bytes) => bytes,
-            Err(e) => return Err(OperationalError::Decoding(e.to_string()).into()),
-        };
-        Ok(Self {
-            hash: Self::HASHING_ALGORITHM.generate_hash(&bytes),
-        })
-    }
-
-    pub fn from_string(string: &str) -> Self {
+    pub fn from_hash(hash: H256) -> Self {
         Self {
-            hash: Self::HASHING_ALGORITHM.generate_hash(string.as_bytes()),
+            document: None,
+            hash,
         }
-    }
-
-    pub fn from_typed_array(src: &[u8]) -> Self {
-        Self {
-            hash: Self::HASHING_ALGORITHM.generate_hash(src),
-        }
-    }
-
-    pub fn from_pdf(_src: &[u8]) -> Self {
-        todo!()
-    }
-
-    pub fn from_json(_src: &str) -> Self {
-        todo!()
     }
 
     pub fn get_hash(&self) -> String {
-        self.hash.clone()
+        hex::encode(self.hash)
     }
 
-    pub fn is_valid(&self) -> bool {
-        self.hash.len() == 64 && hex::decode(&self.hash).is_ok()
+    pub fn get_hash_bytes(&self) -> H256 {
+        self.hash
     }
 
-    pub fn get_uint8_array_hash(&self) -> BloockResult<H256> {
-        match hex::decode(&self.hash) {
-            Ok(bytes) => bytes
-                .try_into()
-                .map_err(|_| OperationalError::InvalidHash().into()),
-            Err(e) => Err(OperationalError::Decoding(e.to_string()).into()),
+    pub fn get_payload(&self) -> Option<&Vec<u8>> {
+        match &self.document {
+            Some(d) => Some(&d.payload),
+            None => None,
         }
     }
-}
 
-impl PartialEq for Record {
-    fn eq(&self, other: &Self) -> bool {
-        self.hash == other.hash
+    pub fn get_proof(&self) -> Option<&Proof> {
+        match &self.document {
+            Some(d) => d.proof.as_ref(),
+            None => None,
+        }
     }
-}
 
-impl Eq for Record {}
-
-impl PartialOrd for Record {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.hash.partial_cmp(&other.hash)
+    pub fn serialize(self) -> BloockResult<String> {
+        match self.document {
+            Some(d) => d.serialize(),
+            None => Err(RecordError::DocumentNotFound.into()),
+        }
     }
 }
 
@@ -87,49 +66,64 @@ impl Ord for Record {
     }
 }
 
+impl PartialOrd for Record {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl PartialEq for Record {
+    fn eq(&self, other: &Self) -> bool {
+        self.hash == other.hash
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::record::entity::record::Record;
+
+    use crate::record::document::types::PayloadType;
+
+    use super::*;
 
     #[test]
-    fn test_from_hash() {
-        let hash = "test_hash";
-        assert_eq!(Record::from_hash(hash).get_hash(), hash)
-    }
+    fn test_new_record() {
+        let document = Document::new(
+            PayloadType::String.to_header(),
+            "Some String".as_bytes().to_vec(),
+            None,
+            None,
+            None,
+        );
+        let record = Record::new(document);
 
-    #[test]
-    fn test_from_string() {
-        let str = "testing keccak";
         assert_eq!(
-            Record::from_string(str).get_hash(),
-            "7e5e383e8e70e55cdccfccf40dfc5d4bed935613dffc806b16b4675b555be139".to_string()
-        )
-    }
-
-    #[test]
-    fn test_from_uint8() {
-        let array = &[
-            16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-            16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
-            17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
-        ];
-        assert_eq!(
-            Record::from_typed_array(array).get_hash(),
-            "e016214a5c4abb88b8b614a916b1a6f075dfcf6fbc16c1e9d6e8ebcec81994a5".to_string()
+            String::from("b585bd5a04d10f064ba44be7fae68c9837bd3be24168bc46bdf041fc2762154b"),
+            record.get_hash(),
+            "Wrong record hash received"
         );
     }
 
     #[test]
-    fn test_is_valid_ok() {
-        let record =
-            Record::from_hash("1010101010101010101010101010101010101010101010101010101010101010");
-        assert!(record.is_valid());
-    }
+    fn test_record_serialize() {
+        let payload = "Test Data".as_bytes().to_vec();
+        let document = Document::new(
+            PayloadType::String.to_header(),
+            payload.clone(),
+            None,
+            None,
+            None,
+        );
+        let record = Record::new(document);
 
-    #[test]
-    fn test_is_valid_wrong_char() {
-        let record =
-            Record::from_hash("G010101010101010101010101010101010101010101010101010101010101010");
-        assert!(!record.is_valid());
+        let expected_headers =
+            base64_url::encode(&serde_json::to_vec(&PayloadType::String.to_header()).unwrap());
+        let expected_payload = base64_url::encode(&payload);
+        let expected_output = format!("{}.{}...", expected_headers, expected_payload);
+
+        assert_eq!(
+            expected_output,
+            record.serialize().unwrap(),
+            "Wrong record hash received"
+        )
     }
 }

@@ -2,7 +2,10 @@ use crate::anchor::AnchorError;
 use crate::config::ConfigError;
 use crate::proof::ProofError;
 use crate::record::RecordError;
+use bloock_encrypter::EncrypterError;
 use bloock_http::HttpError;
+use bloock_publisher::PublisherError;
+use bloock_signer::SignerError;
 use std::fmt;
 
 use serde::Serialize;
@@ -53,6 +56,12 @@ impl BloockError {
 pub enum InfrastructureError {
     #[error("Http Client error: {0}")]
     Http(#[from] HttpError),
+    #[error("{0}")]
+    SignerError(#[from] SignerError),
+    #[error("{0}")]
+    EncrypterError(#[from] EncrypterError),
+    #[error("{0}")]
+    PublisherError(#[from] PublisherError),
 }
 
 impl From<InfrastructureError> for BloockError {

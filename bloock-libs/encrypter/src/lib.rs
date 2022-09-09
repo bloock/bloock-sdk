@@ -1,7 +1,9 @@
-use crate::Result;
 use serde::{Deserialize, Serialize};
+use thiserror::Error as ThisError;
 
 pub mod aes;
+
+pub type Result<T> = std::result::Result<T, EncrypterError>;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EncryptionHeader {
@@ -21,3 +23,6 @@ pub trait Encrypter {
 pub trait Decrypter {
     fn decrypt(&self, cipher_text: &[u8]) -> Result<Vec<u8>>;
 }
+
+#[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
+pub enum EncrypterError {}

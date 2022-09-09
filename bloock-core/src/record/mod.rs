@@ -10,6 +10,8 @@ use crate::{
     error::{BloockError, ErrorKind},
 };
 
+pub mod builder;
+pub mod document;
 pub mod entity;
 pub mod service;
 
@@ -17,6 +19,16 @@ pub mod service;
 pub enum RecordError {
     #[error("Invalid record")]
     InvalidRecord(),
+    #[error("Invalid hex provided")]
+    InvalidHex,
+    #[error("Invalid JSON provided")]
+    InvalidJson,
+    #[error("Couldn't find document")]
+    DocumentNotFound,
+    #[error("Couldn't serialize document: {0}")]
+    DocumentSerializationError(String),
+    #[error("Couldn't deserialize document: {0}")]
+    DocumentDeserializationError(String),
 }
 
 impl From<RecordError> for BloockError {

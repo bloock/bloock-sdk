@@ -74,34 +74,33 @@ dependencies = [
 ]
 
 [[package]]
-name = "bloock-builder"
-version = "0.1.0"
-dependencies = [
- "base64-url",
- "hex",
- "infer",
- "josekit",
- "serde",
- "serde_json",
- "thiserror",
- "tiny-keccak",
-]
-
-[[package]]
 name = "bloock-core"
 version = "0.1.0"
 dependencies = [
+ "base64-url",
  "bitvec",
- "bloock-hashing",
+ "bloock-encrypter",
+ "bloock-hasher",
  "bloock-http",
+ "bloock-publisher",
+ "bloock-signer",
  "bloock-web3",
  "cfg-if",
  "hex",
+ "infer",
  "mockall",
  "serde",
  "serde_json",
  "thiserror",
  "tokio",
+]
+
+[[package]]
+name = "bloock-encrypter"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
@@ -114,7 +113,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "bloock-hashing"
+name = "bloock-hasher"
 version = "0.1.0"
 dependencies = [
  "hex",
@@ -141,10 +140,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "bloock-publisher"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "bloock-signer"
+version = "0.1.0"
+dependencies = [
+ "base64-url",
+ "josekit",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "bloock-web3"
 version = "0.1.0"
 dependencies = [
- "bloock-hashing",
+ "bloock-hasher",
  "bloock-http",
  "hex",
  "mockall",

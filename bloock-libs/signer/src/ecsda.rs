@@ -1,4 +1,4 @@
-use crate::{builder::Builder, BuilderError};
+use crate::SignerError;
 
 use super::{JWSignatures, Signature, Signer};
 use josekit::jws::{self, alg::ecdsa::EcdsaJwsAlgorithm, JwsHeaderSet, ES256K};
@@ -27,39 +27,39 @@ impl EcsdaSigner {
     pub fn generate_keys() -> crate::Result<(String, String)> {
         let key_pair = ES256K
             .generate_key_pair()
-            .map_err(|e| BuilderError::KeyPairError(e.to_string()).into())?;
+            .map_err(|e| SignerError::KeyPairError(e.to_string()))?;
 
         let pem_bytes_pvk = key_pair.to_pem_private_key();
         let pem_string_pvk = str::from_utf8(&pem_bytes_pvk)
-            .map_err(|e| BuilderError::StringConversionError(e.to_string()).into())?;
+            .map_err(|e| SignerError::StringConversionError(e.to_string()))?;
 
         let pem_bytes_puk = key_pair.to_pem_public_key();
         let pem_string_puk = str::from_utf8(&pem_bytes_puk)
-            .map_err(|e| BuilderError::StringConversionError(e.to_string()).into())?;
+            .map_err(|e| SignerError::StringConversionError(e.to_string()))?;
 
         Ok((pem_string_pvk.to_string(), pem_string_puk.to_string()))
     }
 }
 
 impl Signer for EcsdaSigner {
-    fn sign(&self, _payload: &[u8]) -> crate::Result<Signature> {
+    fn sign(&self, payload: &[u8]) -> crate::Result<Signature> {
         let key_pair = ES256K
             .key_pair_from_pem(self._args.private_key.as_bytes())
-            .map_err(|e| BuilderError::KeyPairError(e.to_string()).into())?;
+            .map_err(|e| SignerError::KeyPairError(e.to_string()))?;
 
         let pem_bytes_pub = key_pair.to_pem_public_key();
-        let pem_string_pub = str::from_utf8(&pem_bytes_pub)
-            .map_err(|e| BuilderError::KeyPairError(e.to_string()).into())?;
+        let pem_string_pub =
+            str::from_utf8(&pem_bytes_pub).map_err(|e| SignerError::KeyPairError(e.to_string()))?;
 
         let signer = ES256K
             .signer_from_jwk(&key_pair.to_jwk_key_pair())
-            .map_err(|e| BuilderError::SignerError(e.to_string()).into())?;
+            .map_err(|e| SignerError::SignerError(e.to_string()))?;
 
         let mut header = JwsHeaderSet::new();
         header.set_algorithm(EcdsaJwsAlgorithm::Es256k.to_string(), false);
         header.set_key_id(pem_string_pub, false);
-        let json = jws::serialize_general_json(&_payload, &vec![(&header, &*signer)])
-            .map_err(|e| BuilderError::GeneralSerializeError(e.to_string()).into())?;
+        let json = jws::serialize_general_json(payload, &[(&header, &*signer)])
+            .map_err(|e| SignerError::GeneralSerializeError(e.to_string()))?;
 
         let jws_signatures: JWSignatures = serde_json::from_str(&json).unwrap();
         let signature: Signature = Signature::from(jws_signatures);
@@ -67,19 +67,18 @@ impl Signer for EcsdaSigner {
         Ok(signature)
     }
 
-    fn verify(&self, _payload: &[u8], _signature: Signature) -> crate::Result<bool> {
-        let string_payload = str::from_utf8(&_payload)
-            .map_err(|e| BuilderError::StringConversionError(e.to_string()).into())?;
+    fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
+        let string_payload = str::from_utf8(payload)
+            .map_err(|e| SignerError::StringConversionError(e.to_string()))?;
         let string_base64url_encoded = base64_url::encode(string_payload);
 
-        let pem_bytes_pub = _signature.header.kid.as_bytes();
+        let pem_bytes_pub = signature.header.kid.as_bytes();
 
         let verifier = ES256K
             .verifier_from_pem(pem_bytes_pub)
-            .map_err(|e| BuilderError::VerifierError(e.to_string()).into())?;
+            .map_err(|e| SignerError::VerifierError(e.to_string()))?;
 
-        let mut vec_signatures = Vec::new();
-        vec_signatures.push(_signature);
+        let vec_signatures = vec![signature];
         let new_json = JWSignatures {
             signatures: vec_signatures,
             payload: string_base64url_encoded,
@@ -87,7 +86,7 @@ impl Signer for EcsdaSigner {
         let json = serde_json::to_string(&new_json).unwrap();
 
         let (_payload, _header) = jws::deserialize_json(json.as_bytes(), &verifier)
-            .map_err(|e| BuilderError::GeneralDeserializeError(e.to_string()).into())?;
+            .map_err(|e| SignerError::GeneralDeserializeError(e.to_string()))?;
 
         Ok(true)
     }
@@ -95,12 +94,10 @@ impl Signer for EcsdaSigner {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::signer::ecsda::EcsdaSigner;
-    use crate::signer::ecsda::EcsdaSignerArgs;
-    use crate::signer::Signature;
-    use crate::signer::SignatureHeader;
-    use crate::signer::Signer;
+    use crate::{
+        ecsda::{EcsdaSigner, EcsdaSignerArgs},
+        Signature, SignatureHeader, Signer,
+    };
 
     #[test]
     fn test_sign_and_verify_ok() {
@@ -112,17 +109,17 @@ mod tests {
         let string_payload = "hello world";
 
         let c = EcsdaSigner::new(EcsdaSignerArgs { private_key: pvk });
-        let signature = match c.sign(&string_payload.as_bytes().to_vec()) {
+        let signature = match c.sign(string_payload.as_bytes()) {
             Ok(signature) => signature,
             Err(e) => panic!("{}", e),
         };
         assert_eq!(signature.header.alg.as_str(), "ES256K");
 
-        let result = match c.verify(&string_payload.as_bytes().to_vec(), signature.clone()) {
+        let result = match c.verify(string_payload.as_bytes(), signature) {
             Ok(result) => result,
             Err(e) => panic!("{}", e),
         };
-        assert_eq!(result, true);
+        assert!(result);
     }
 
     #[test]
@@ -133,7 +130,7 @@ mod tests {
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: pvk.to_string(),
         });
-        let result = c.sign(&string_payload.as_bytes().to_vec());
+        let result = c.sign(string_payload.as_bytes());
         assert!(result.is_err());
     }
 
@@ -155,7 +152,7 @@ mod tests {
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: "".to_string(),
         });
-        let result = c.verify(&string_payload.as_bytes().to_vec(), json_signature);
+        let result = c.verify(string_payload.as_bytes(), json_signature);
 
         assert!(result.is_err());
     }
@@ -178,7 +175,7 @@ mod tests {
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: "".to_string(),
         });
-        let result = c.verify(&string_payload.as_bytes().to_vec(), json_signature);
+        let result = c.verify(string_payload.as_bytes(), json_signature);
 
         assert!(result.is_err());
     }
@@ -201,7 +198,7 @@ mod tests {
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: "".to_string(),
         });
-        let result = c.verify(&string_payload.as_bytes().to_vec(), json_signature);
+        let result = c.verify(string_payload.as_bytes(), json_signature);
 
         assert!(result.is_err());
     }
@@ -224,7 +221,7 @@ mod tests {
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: "".to_string(),
         });
-        let result = c.verify(&string_payload.as_bytes().to_vec(), json_signature);
+        let result = c.verify(string_payload.as_bytes(), json_signature);
 
         assert!(result.is_err());
     }

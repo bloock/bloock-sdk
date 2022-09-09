@@ -1,4 +1,4 @@
-use bloock_hashing::hashing::{Hashing, Keccak256};
+use bloock_hasher::{keccak::Keccak256, Hasher};
 use serde::{Deserialize, Serialize};
 
 use crate::BlockchainError;
@@ -43,10 +43,8 @@ impl Request {
         let mut result = [0u8; 4];
 
         let data: Vec<u8> = From::from("getState(bytes32)");
-        let hashing_algorithm = Keccak256 {};
-        let hash = hashing_algorithm.generate_hash(&data);
-        let hash_vec = hex::decode(hash).expect("Shouldn't fail to decode hash from hex");
-        result.copy_from_slice(&hash_vec[..4]);
+        let hash = Keccak256::generate_hash(&data);
+        result.copy_from_slice(&hash[..4]);
 
         result
     }

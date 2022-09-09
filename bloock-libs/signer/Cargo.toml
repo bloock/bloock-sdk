@@ -1,5 +1,5 @@
 [package]
-name = "bloock-builder"
+name = "bloock-signer"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,10 +8,7 @@ bench = false
 
 [dependencies]
 base64-url = "1.4.13"
-hex = "0.4.3"
-infer = "0.9.0"
 serde = { version = "1.0.123", features = ["std", "derive"] }
 serde_json = "1.0.82"
 thiserror = "1.0.31"
-tiny-keccak = { version = "2.0.2", features = ["keccak"] }
 josekit = "0.8.1"

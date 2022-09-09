@@ -1,10 +1,11 @@
-use crate::Result;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use thiserror::Error as ThisError;
 
 pub mod ecsda;
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub type Result<T> = std::result::Result<T, SignerError>;
+
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct JWSignatures {
     pub signatures: Vec<Signature>,
     pub payload: String,
@@ -36,4 +37,20 @@ impl From<JWSignatures> for Signature {
             header: s.signatures[0].header.clone(),
         }
     }
+}
+
+#[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
+pub enum SignerError {
+    #[error("Invalid UTF-8 sequence: {0}")]
+    StringConversionError(String),
+    #[error("Error generating key pair: {0}")]
+    KeyPairError(String),
+    #[error("Error Signer: {0}")]
+    SignerError(String),
+    #[error("Error General Serialize: {0}")]
+    GeneralSerializeError(String),
+    #[error("Error General Deserialize: {0}")]
+    GeneralDeserializeError(String),
+    #[error("Error Verifier: {0}")]
+    VerifierError(String),
 }

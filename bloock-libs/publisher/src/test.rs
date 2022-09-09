@@ -1,9 +1,7 @@
-use crate::document::Document;
-
 use super::Loader;
 
 pub struct TestLoaderArgs {
-    pub document: Document,
+    pub document: Vec<u8>,
 }
 
 pub struct TestLoader {
@@ -18,6 +16,6 @@ impl TestLoader {
 
 impl Loader for TestLoader {
     fn retrieve(&self) -> crate::Result<Vec<u8>> {
-        Ok(self.args.document.serialize()?.as_bytes().to_vec())
+        Ok(self.args.document.clone())
     }
 }
