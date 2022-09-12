@@ -2,7 +2,11 @@ use crate::SignerError;
 
 use super::{JWSignatures, Signature, Signer};
 use josekit::jws::{self, alg::ecdsa::EcdsaJwsAlgorithm, JwsHeaderSet, ES256K};
-use std::str;
+use secp256k1::ecdsa::Signature as ECDSASignature;
+use secp256k1::hashes::sha256;
+use secp256k1::rand::rngs::OsRng;
+use secp256k1::{Message, PublicKey, Secp256k1, SecretKey};
+use std::str::{self, FromStr};
 
 pub struct EcsdaSignerArgs {
     pub private_key: String,
@@ -39,6 +43,17 @@ impl EcsdaSigner {
 
         Ok((pem_string_pvk.to_string(), pem_string_puk.to_string()))
     }
+
+    fn try_generate_keys() -> crate::Result<(String, String)> {
+        let secp = Secp256k1::new();
+        let (secret_key, public_key) = secp.generate_keypair(&mut OsRng);
+
+        let secret_key_string = secret_key.display_secret().to_string();
+
+        let public_key_string = public_key.to_string();
+
+        Ok((secret_key_string, public_key_string))
+    }
 }
 
 impl Signer for EcsdaSigner {
@@ -67,6 +82,27 @@ impl Signer for EcsdaSigner {
         Ok(signature)
     }
 
+    fn try_sign(&self, payload: &[u8]) -> crate::Result<Signature> {
+        let secp = Secp256k1::new();
+        let secret_key = SecretKey::from_str(self._args.private_key.as_str()).unwrap();
+        let public_key = PublicKey::from_secret_key(&secp, &secret_key);
+
+        let message = Message::from_hashed_data::<sha256::Hash>(payload);
+
+        let sig = secp.sign_ecdsa(&message, &secret_key);
+
+        let signature = Signature {
+            protected: "".to_string(),
+            signature: sig.to_string(),
+            header: crate::SignatureHeader {
+                alg: ("ES256K".to_string()),
+                kid: (public_key.to_string()),
+            },
+        };
+
+        Ok(signature)
+    }
+
     fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
         let string_payload = str::from_utf8(payload)
             .map_err(|e| SignerError::StringConversionError(e.to_string()))?;
@@ -90,6 +126,23 @@ impl Signer for EcsdaSigner {
 
         Ok(true)
     }
+
+    fn try_verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
+        let secp = Secp256k1::new();
+
+        let public_key_string = signature.header.kid;
+        let public_key = PublicKey::from_str(&public_key_string).unwrap();
+
+        let message = Message::from_hashed_data::<sha256::Hash>(payload);
+        let signature_string = signature.signature;
+
+        let signature = ECDSASignature::from_str(&signature_string).unwrap();
+
+        secp.verify_ecdsa(&message, &signature, &public_key)
+            .unwrap();
+
+        Ok(true)
+    }
 }
 
 #[cfg(test)]
@@ -101,7 +154,7 @@ mod tests {
 
     #[test]
     fn test_sign_and_verify_ok() {
-        let (pvk, _pb) = match EcsdaSigner::generate_keys() {
+        let (pvk, _pb) = match EcsdaSigner::try_generate_keys() {
             Ok((pvk, pb)) => (pvk, pb),
             Err(e) => panic!("{}", e),
         };
@@ -109,13 +162,13 @@ mod tests {
         let string_payload = "hello world";
 
         let c = EcsdaSigner::new(EcsdaSignerArgs { private_key: pvk });
-        let signature = match c.sign(string_payload.as_bytes()) {
+        let signature = match c.try_sign(string_payload.as_bytes()) {
             Ok(signature) => signature,
             Err(e) => panic!("{}", e),
         };
         assert_eq!(signature.header.alg.as_str(), "ES256K");
 
-        let result = match c.verify(string_payload.as_bytes(), signature) {
+        let result = match c.try_verify(string_payload.as_bytes(), signature) {
             Ok(result) => result,
             Err(e) => panic!("{}", e),
         };
@@ -185,7 +238,7 @@ mod tests {
         let string_payload = "hello world";
 
         let json_header = SignatureHeader {
-            alg: "ES256".to_string(),
+            alg: "ES256K".to_string(),
             kid: "-----BEGIN PUBLIC KEY-----\nMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAE46ZAneMnEOsK5WvckA4PUqytnH5OxmpO\nRdBtNjvB8f4SWOppIORyY0lrd+BH47tmm0BvPLm8CyAuvjHJPD0gCA==\n-----END PUBLIC KEY-----\n".to_string()
         };
 
@@ -198,9 +251,9 @@ mod tests {
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: "".to_string(),
         });
-        let result = c.verify(string_payload.as_bytes(), json_signature);
+        let result = c.verify(string_payload.as_bytes(), json_signature).unwrap();
 
-        assert!(result.is_err());
+        assert_eq!(result, true);
     }
 
     #[test]

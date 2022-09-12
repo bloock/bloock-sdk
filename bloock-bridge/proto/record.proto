@@ -20,11 +20,67 @@ message Record {
     string hash = 1;
 }
 
+message Signer {
+    string alg = 1;
+    SignerArgs args = 2;
+}
+
+message SignerArgs {
+    string private_key = 1;
+}
+
+message Encrypter {
+    string alg = 1;
+    EncrypterArgs args = 2;
+}
+
+message EncrypterArgs {
+    string secret = 1;
+}
+
+message Signature {
+    string signature = 1;
+    SignatureHeader header = 2;
+}
+
+message SignatureHeader {
+    string alg = 1;
+    string kid = 2;
+}
+
+message Encryption {
+    EncryptionHeader header = 1;
+}
+
+message EncryptionHeader {
+    string alg = 1;
+}
+
 message RecordReceipt {
     int64 anchor = 1;
     string client = 2;
     string record = 3;
     string status = 4;
+}
+
+message RecordBuilderRequest {
+    string type = 1;
+    string payload = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+}
+
+message RecordBuilderHeaderResponse {
+    string ty = 1;
+}
+
+message RecordBuilderResponse {
+    RecordBuilderHeaderResponse headers = 1;
+    string payload = 2;
+    repeated Signature signatures = 3;
+    Encryption encryption = 4;
+    Proof proof = 5; 
+    optional Error error = 6;
 }
 
 message SendRecordsRequest {
