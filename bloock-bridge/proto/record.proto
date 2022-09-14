@@ -7,17 +7,29 @@ option java_package = "bloock.sdk.java.bridge.proto";
 
 import "bloock.proto";
 import "config.proto";
+import "proof.proto";
 
 service RecordService {
     rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
-    rpc FromHash(FromHashRequest) returns (Record);
-    rpc FromHex(FromHexRequest) returns (FromHexResponse);
-    rpc FromString(FromStringRequest) returns (Record);
-    rpc FromTypedArray(FromTypedArrayRequest) returns (Record);
+    rpc BuildRecord(RecordBuilderRequest) returns (RecordBuilderResponse);
+    rpc GetHash(Record) returns (RecordHash);
+}
+
+message RecordHash {
+  string hash = 1;
+  optional Error error = 2;
+}
+
+message RecordHeader {
+    string ty = 1;
 }
 
 message Record {
-    string hash = 1;
+    RecordHeader headers = 1;
+    bytes payload = 2;
+    repeated Signature signatures = 3;
+    optional Encryption encryption = 4;
+    optional Proof proof = 5; 
 }
 
 message Signer {
@@ -40,7 +52,8 @@ message EncrypterArgs {
 
 message Signature {
     string signature = 1;
-    SignatureHeader header = 2;
+    string protected = 2;
+    SignatureHeader header = 3;
 }
 
 message SignatureHeader {
@@ -70,46 +83,17 @@ message RecordBuilderRequest {
     optional Encrypter encrypter = 4;
 }
 
-message RecordBuilderHeaderResponse {
-    string ty = 1;
-}
-
 message RecordBuilderResponse {
-    RecordBuilderHeaderResponse headers = 1;
-    string payload = 2;
-    repeated Signature signatures = 3;
-    Encryption encryption = 4;
-    Proof proof = 5; 
-    optional Error error = 6;
+    Record record = 1;
+    optional Error error = 2;
 }
 
 message SendRecordsRequest {
     ConfigData config_data = 1;
-    repeated Record records = 2;
+    repeated string records = 2;
 }
 
 message SendRecordsResponse {
     repeated RecordReceipt records = 1;
-    optional Error error = 2;
-}
-
-message FromHashRequest {
-    string hash = 1;
-}
-
-message FromHexRequest {
-    string hex = 1;
-}
-
-message FromStringRequest {
-    string str = 1;
-}
-
-message FromTypedArrayRequest {
-    bytes array = 1;
-}
-
-message FromHexResponse {
-    optional Record record = 1;
     optional Error error = 2;
 }

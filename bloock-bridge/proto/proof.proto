@@ -7,7 +7,6 @@ option java_package = "bloock.sdk.java.bridge.proto";
 
 import "bloock.proto";
 import "config.proto";
-import "record.proto";
 import "anchor.proto";
 
 service ProofService {
@@ -34,7 +33,7 @@ message ProofAnchor {
 
 message GetProofRequest {
     ConfigData config_data = 1;
-    repeated Record records = 2;
+    repeated string records = 2;
 }
 
 message GetProofResponse {
@@ -44,7 +43,7 @@ message GetProofResponse {
 
 message ValidateRootRequest {
     ConfigData config_data = 1;
-    Record root = 2;
+    string root = 2;
     Network network = 3;
 }
 
@@ -59,13 +58,13 @@ message VerifyProofRequest {
 }
 
 message VerifyProofResponse {
-    optional Record record = 1;
+    optional string record = 1;
     optional Error error = 2;
 }
 
 message VerifyRecordsRequest {
     ConfigData config_data = 1;
-    repeated Record records = 2;
+    repeated string records = 2;
     optional Network network = 3;
 }
 

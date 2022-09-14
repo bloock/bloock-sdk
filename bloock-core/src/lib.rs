@@ -5,3 +5,5 @@ pub mod error;
 pub mod proof;
 pub mod record;
 pub mod shared;
+
+pub use bloock_signer::{Signature, SignatureHeader};

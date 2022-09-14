@@ -27,8 +27,6 @@ pub struct SignatureHeader {
 pub trait Signer {
     fn sign(&self, payload: &[u8]) -> Result<Signature>;
     fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool>;
-    fn try_sign(&self, payload: &[u8]) -> crate::Result<Signature>;
-    fn try_verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool>;
 }
 
 impl From<JWSignatures> for Signature {
@@ -49,6 +47,12 @@ pub enum SignerError {
     KeyPairError(String),
     #[error("Error Signer: {0}")]
     SignerError(String),
+    #[error("Invalid Secret Key: {0}")]
+    InvalidSecretKey(String),
+    #[error("Invalid Public Key: {0}")]
+    InvalidPublicKey(String),
+    #[error("Invalid Signature: {0}")]
+    InvalidSignature(String),
     #[error("Error General Serialize: {0}")]
     GeneralSerializeError(String),
     #[error("Error General Deserialize: {0}")]
