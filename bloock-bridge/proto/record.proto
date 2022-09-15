@@ -63,6 +63,7 @@ message SignatureHeader {
 
 message Encryption {
     EncryptionHeader header = 1;
+    string protected = 2;
 }
 
 message EncryptionHeader {

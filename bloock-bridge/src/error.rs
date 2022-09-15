@@ -1,5 +1,8 @@
 use crate::items::Error as ProtoError;
+use bloock_core::error::BloockError;
 use thiserror::Error;
+
+pub type BridgeResult<T> = Result<T, BridgeError>;
 
 #[derive(Error, Debug, PartialEq, Eq, Clone)]
 pub enum BridgeError {
@@ -17,6 +20,8 @@ pub enum BridgeError {
     ProofError,
     #[error("Anchor missing from request")]
     MissingAnchor,
+    #[error("{0}")]
+    BloockError(#[from] BloockError),
 }
 
 pub fn config_data_error() -> ProtoError {

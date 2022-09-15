@@ -79,26 +79,6 @@ impl Server {
                 .send_records(self.serialize_request(payload)?)
                 .await
                 .into()),
-            BloockServer::RecordServiceFromHash => Ok(self
-                .record
-                .from_hash(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceFromHex => Ok(self
-                .record
-                .from_hex(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceFromString => Ok(self
-                .record
-                .from_string(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceFromTypedArray => Ok(self
-                .record
-                .from_typed_array(self.serialize_request(payload)?)
-                .await
-                .into()),
             BloockServer::ProofServiceGetProof => Ok(self
                 .proof
                 .get_proof(self.serialize_request(payload)?)

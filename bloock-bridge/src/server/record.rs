@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use bloock_core::{client, record::entity::record::Record as RecordCore};
+use bloock_core::{client, error::BloockError, record::entity::record::Record as RecordCore};
 
 use super::response_types::ResponseType;
 use crate::{
@@ -44,15 +44,25 @@ impl RecordServiceHandler for RecordServer {
         };
 
         let client = client::configure(config_data);
-        let receipts = match client
-            .send_records(
-                req.records
-                    .iter()
-                    .map(|record| record.clone().into())
-                    .collect(),
-            )
-            .await
+
+        let records = match req
+            .records
+            .iter()
+            .map(|record| record.try_into())
+            .collect::<Result<Vec<RecordCore>, BloockError>>()
         {
+            Ok(r) => r,
+            Err(e) => {
+                return SendRecordsResponse {
+                    records: vec![],
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
+        let receipts = match client.send_records(records).await {
             Ok(receipts) => receipts,
             Err(e) => {
                 return SendRecordsResponse {
@@ -74,8 +84,23 @@ impl RecordServiceHandler for RecordServer {
         }
     }
 
-    async fn get_hash(&self, req: Record) -> RecordHash {}
+    async fn get_hash(&self, _req: Record) -> RecordHash {
+        RecordHash {
+            hash: "".to_string(),
+            error: None,
+        }
+    }
 
-    async fn build_record(&self, req: crate::items::RecordBuilderRequest) -> RecordBuilderResponse {
+    async fn build_record(
+        &self,
+        _req: crate::items::RecordBuilderRequest,
+    ) -> RecordBuilderResponse {
+        RecordBuilderResponse {
+            record: None,
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: "not implemented".to_string(),
+            }),
+        }
     }
 }

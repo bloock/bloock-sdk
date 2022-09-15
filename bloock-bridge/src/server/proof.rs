@@ -1,5 +1,12 @@
+use std::convert::TryInto;
+
 use async_trait::async_trait;
-use bloock_core::client;
+use bloock_core::{
+    client,
+    error::{BloockError, BloockResult},
+    proof::entity::proof::Proof,
+    record::entity::record::Record,
+};
 
 use crate::{
     entity_mappings::config::map_config,
@@ -54,11 +61,15 @@ impl ProofServiceHandler for ProofServer {
 
         let client = client::configure(config_data);
 
-        let records = req
+        let records = match req
             .records
             .iter()
-            .map(|record| record.clone().into())
-            .collect();
+            .map(|record| record.try_into())
+            .collect::<BloockResult<Vec<Record>>>()
+        {
+            Ok(r) => r,
+            Err(e) => return GetProofResponse::new_error(e.to_string()),
+        };
 
         let proof = match client.get_proof(records).await {
             Ok(proof) => proof,
@@ -84,9 +95,10 @@ impl ProofServiceHandler for ProofServer {
 
         let client = client::configure(config_data);
 
-        let root = match req.root.clone() {
-            Some(root) => root.into(),
-            None => return ValidateRootResponse::new_error("Missing root in request".to_string()),
+        let req_root: Result<Record, BloockError> = (&req.root).try_into();
+        let root = match req_root {
+            Ok(r) => r,
+            Err(e) => return ValidateRootResponse::new_error(e.to_string()),
         };
 
         let timestamp = match client.validate_root(root, req.network().into()).await {
@@ -113,12 +125,13 @@ impl ProofServiceHandler for ProofServer {
 
         let client = client::configure(config_data);
 
-        let proof = match req.proof {
-            Some(proof) => match proof.into() {
-                Ok(proof) => proof,
-                Err(e) => return VerifyProofResponse::new_error(e.to_string()),
-            },
+        let req_proof: Result<Proof, BridgeError> = match req.proof {
+            Some(proof) => proof.try_into(),
             None => return VerifyProofResponse::new_error("Missing proof in request".to_string()),
+        };
+        let proof = match req_proof {
+            Ok(proof) => proof,
+            Err(e) => return VerifyProofResponse::new_error(e.to_string()),
         };
 
         let record = match client.verify_proof(proof) {
@@ -127,7 +140,7 @@ impl ProofServiceHandler for ProofServer {
         };
 
         VerifyProofResponse {
-            record: Some(record.into()),
+            record: Some(record.get_hash()),
             error: None,
         }
     }
@@ -145,11 +158,15 @@ impl ProofServiceHandler for ProofServer {
 
         let client = client::configure(config_data);
 
-        let records = req
+        let records = match req
             .records
             .iter()
-            .map(|record| record.clone().into())
-            .collect();
+            .map(|r| r.try_into())
+            .collect::<Result<Vec<Record>, BloockError>>()
+        {
+            Ok(r) => r,
+            Err(e) => return VerifyRecordsResponse::new_error(e.to_string()),
+        };
 
         let timestamp = match client
             .verify_records(records, Some(req.network().into()))

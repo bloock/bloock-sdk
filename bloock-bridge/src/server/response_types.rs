@@ -1,4 +1,3 @@
-use crate::items::FromHexResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetProofResponse;
 use crate::items::Record;
@@ -16,7 +15,6 @@ pub enum ResponseType {
     GetAnchor(GetAnchorResponse),
     WaitAnchor(WaitAnchorResponse),
     Record(Record),
-    RecordFromHex(FromHexResponse),
     SendRecords(SendRecordsResponse),
     GetProof(GetProofResponse),
     ValidateRoot(ValidateRootResponse),
@@ -39,7 +37,6 @@ impl ResponseType {
             ResponseType::VerifyProof(r) => r.encode(&mut result_vec),
             ResponseType::VerifyRecords(r) => r.encode(&mut result_vec),
             ResponseType::Record(r) => r.encode(&mut result_vec),
-            ResponseType::RecordFromHex(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -57,7 +54,6 @@ impl ResponseType {
             ResponseType::VerifyProof(r) => r.encoded_len(),
             ResponseType::VerifyRecords(r) => r.encoded_len(),
             ResponseType::Record(r) => r.encoded_len(),
-            ResponseType::RecordFromHex(r) => r.encoded_len(),
         }
     }
 }

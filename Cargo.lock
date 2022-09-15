@@ -123,6 +123,7 @@ name = "bloock-hasher"
 version = "0.1.0"
 dependencies = [
  "hex",
+ "serde",
  "thiserror",
  "tiny-keccak",
 ]

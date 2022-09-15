@@ -1,4 +1,5 @@
 use std::convert::TryInto;
+use serde::Serialize;
 use thiserror::Error as ThisError;
 
 pub mod keccak;
@@ -16,7 +17,11 @@ pub fn from_hex(hex: &str) -> Result<H256> {
     d.try_into().map_err(|_| HasherError::InvalidHashEncoding)
 }
 
-#[derive(ThisError, Debug)]
+pub fn to_hex(bytes: H256) -> String {
+    hex::encode(bytes)
+}
+
+#[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
 pub enum HasherError {
     #[error("Invalid hash encoding")]
     InvalidHashEncoding,

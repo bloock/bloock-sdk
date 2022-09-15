@@ -1,9 +1,9 @@
 use std::cmp::Ordering;
 
-use bloock_hasher::{keccak::Keccak256, Hasher, H256};
+use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
 
 use crate::{
-    error::BloockResult,
+    error::{BloockError, BloockResult, InfrastructureError},
     proof::entity::proof::Proof,
     record::{document::Document, RecordError},
 };
@@ -75,6 +75,15 @@ impl PartialOrd for Record {
 impl PartialEq for Record {
     fn eq(&self, other: &Self) -> bool {
         self.hash == other.hash
+    }
+}
+
+impl TryFrom<&String> for Record {
+    type Error = BloockError;
+    fn try_from(s: &String) -> BloockResult<Self> {
+        Ok(Record::from_hash(
+            from_hex(s).map_err(InfrastructureError::HasherError)?,
+        ))
     }
 }
 
