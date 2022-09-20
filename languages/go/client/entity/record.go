@@ -21,10 +21,10 @@ func NewRecordFromProto(r *proto.Record) Record {
 }
 
 func (r Record) ToProto() *proto.Record {
-    signatures := make([]*proto.Signature, len(r.Signatures))
-    for i, signature := range signatures {
-        signatures[i] = signature
-    }
+	signatures := make([]*proto.Signature, len(r.Signatures))
+	for i, signature := range signatures {
+		signatures[i] = signature
+	}
 
 	return &proto.Record{
 		Headers:    r.Headers.ToProto(),
@@ -33,6 +33,14 @@ func (r Record) ToProto() *proto.Record {
 		Encryption: r.Encryption.ToProto(),
 		Proof:      r.Proof.ToProto(),
 	}
+}
+
+func MapRecordsToProto(records []Record) []*proto.Record {
+	recordsProto := make([]*proto.Record, len(records))
+	for i, record := range records {
+		recordsProto[i] = record.ToProto()
+	}
+	return recordsProto
 }
 
 type RecordHeader struct {
@@ -91,4 +99,20 @@ func (e EncryptionHeader) ToProto() *proto.EncryptionHeader {
 	return &proto.EncryptionHeader{
 		Alg: e.Alg,
 	}
+}
+
+type RecordReceipt struct {
+	Anchor int64
+	Client string
+	Record string
+	Status string
+}
+
+func NewRecordReceiptFromProto(r *proto.RecordReceipt) RecordReceipt {
+    return RecordReceipt{
+    	Anchor: r.Anchor,
+    	Client: r.Client,
+    	Record: r.Record,
+    	Status: r.Status,
+    }
 }

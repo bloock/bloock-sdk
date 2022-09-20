@@ -10,6 +10,16 @@ type Proof struct {
 	anchor ProofAnchor
 }
 
+func NewProofFromProto(p *proto.Proof) Proof {
+    return Proof{
+    	leaves: p.Leaves,
+    	nodes:  p.Nodes,
+    	depth:  p.Depth,
+    	bitmap: p.Bitmap,
+    	anchor: NewProofAnchorFromProto(p.Anchor),
+    }
+}
+
 func (p Proof) ToProto() *proto.Proof {
 	return &proto.Proof{
 		Leaves: p.leaves,
@@ -26,6 +36,15 @@ type ProofAnchor struct {
 	Root     string
 	Status   string
 }
+
+func NewProofAnchorFromProto(p *proto.ProofAnchor) ProofAnchor {
+    return ProofAnchor{
+    	AnchorID: p.AnchorId,
+    	Networks: MapAnchorNetworksFromProto(p.Networks),
+    	Root:     p.Root,
+    	Status:   p.Status,
+    }
+} 
 
 func (p ProofAnchor) ToProto() *proto.ProofAnchor {
 	networks := make([]*proto.AnchorNetwork, len(p.Networks))

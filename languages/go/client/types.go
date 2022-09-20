@@ -2,8 +2,6 @@ package bloock
 
 import "github.com/bloock/go-bridge/internal/bridge/proto"
 
-type RecordReceipt = proto.RecordReceipt
-type Anchor = proto.Anchor
 type Network = proto.Network
 type NetworkConfig = proto.NetworkConfig
 

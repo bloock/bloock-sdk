@@ -38,31 +38,39 @@ func GetPayloadTypes() PayloadTypes {
 	}
 }
 
-func NewRecordBuilder(payload []byte, payloadType PayloadType) RecordBuilder {
-	return RecordBuilder{
-		payload:     base64.RawStdEncoding.EncodeToString(payload),
-		payloadType: payloadType,
-	}
-}
-
-func (b RecordBuilder) WithSigner(signer *entity.Signer) RecordBuilder {
+func (b RecordBuilder) WithSigner(signer entity.Signer) RecordBuilder {
 	b.signer = signer.ToProto()
 	return b
 }
 
-func (b RecordBuilder) WithEncrypter(encrypter *entity.Encrypter) RecordBuilder {
+func (b RecordBuilder) WithEncrypter(encrypter entity.Encrypter) RecordBuilder {
 	b.encrypter = encrypter.ToProto()
 	return b
 }
 
 func (b RecordBuilder) Build() (entity.Record, error) {
 	bridgeClient := bridge.NewBloockBridge()
-	res, err := bridgeClient.Record().BuildRecord(context.Background(), &proto.RecordBuilderRequest{
-		Payload:   b.payload,
-		Type:      string(b.payloadType),
-		Signer:    &proto.Signer{},
-		Encrypter: &proto.Encrypter{},
-	})
+
+	var res *proto.RecordBuilderResponse
+	var err error
+
+	switch b.payloadType {
+	case GetPayloadTypes().String:
+		// TODO BuildRecordFromString
+		res, err = bridgeClient.Record().BuildRecord(context.Background(), &proto.RecordBuilderRequest{
+			Payload:   b.payload,
+			Type:      string(b.payloadType),
+			Signer:    &proto.Signer{},
+			Encrypter: &proto.Encrypter{},
+		})
+	default: // TODO BuildRecordFrom... All types
+		res, err = bridgeClient.Record().BuildRecord(context.Background(), &proto.RecordBuilderRequest{
+			Payload:   b.payload,
+			Type:      string(b.payloadType),
+			Signer:    &proto.Signer{},
+			Encrypter: &proto.Encrypter{},
+		})
+	}
 
 	if err != nil {
 		return entity.Record{}, err
@@ -82,28 +90,28 @@ func NewRecordBuilderFromRecord(record entity.Record) (RecordBuilder, error) {
 	}
 
 	return RecordBuilder{
-		payload:     base64.RawStdEncoding.EncodeToString(payload),
+		payload:     string(payload),
 		payloadType: GetPayloadTypes().Bytes,
 	}, nil
 }
 
 func NewRecordBuilderFromString(str string) RecordBuilder {
 	return RecordBuilder{
-		payload:     base64.RawStdEncoding.EncodeToString([]byte(str)),
+		payload:     str,
 		payloadType: GetPayloadTypes().String,
 	}
 }
 
 func NewRecordBuilderFromHex(hex string) RecordBuilder {
 	return RecordBuilder{
-		payload:     base64.RawStdEncoding.EncodeToString([]byte(hex)),
+		payload:     hex,
 		payloadType: GetPayloadTypes().Hex,
 	}
 }
 
 func NewRecordBuilderFromJSON(json string) RecordBuilder {
 	return RecordBuilder{
-		payload:     base64.RawStdEncoding.EncodeToString([]byte(json)),
+		payload:     json,
 		payloadType: GetPayloadTypes().Json,
 	}
 }

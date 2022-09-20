@@ -2,16 +2,29 @@ package entity
 
 import "github.com/bloock/go-bridge/internal/bridge/proto"
 
-type Signer struct {
+type Signer interface {
+	ToProto() *proto.Signer
+}
+
+type EcsdaSigner struct {
 	Alg  string
 	Args SignerArgs
 }
 
-func (s Signer) ToProto() *proto.Signer {
-    return &proto.Signer{
-    	Alg:  s.Alg,
-    	Args: s.Args.ToProto(),
+func NewEcsdaSigner(privateKey string) EcsdaSigner {
+    return EcsdaSigner{
+    	Alg:  "ECSDA",
+    	Args: SignerArgs{
+    		PrivateKey: privateKey,
+    	},
     }
+}
+
+func (s EcsdaSigner) ToProto() *proto.Signer {
+	return &proto.Signer{
+		Alg:  s.Alg,
+		Args: s.Args.ToProto(),
+	}
 }
 
 type SignerArgs struct {
@@ -19,7 +32,7 @@ type SignerArgs struct {
 }
 
 func (s SignerArgs) ToProto() *proto.SignerArgs {
-    return &proto.SignerArgs{
-    	PrivateKey: s.PrivateKey,
-    }
+	return &proto.SignerArgs{
+		PrivateKey: s.PrivateKey,
+	}
 }

@@ -2,12 +2,25 @@ package entity
 
 import "github.com/bloock/go-bridge/internal/bridge/proto"
 
-type Encrypter struct {
+type Encrypter interface {
+    ToProto() *proto.Encrypter
+}
+
+type AesEncrypter struct {
 	Alg  string
 	Args EncrypterArgs
 }
 
-func (e Encrypter) ToProto() *proto.Encrypter {
+func NewAesEncrypter(secret string) AesEncrypter {
+    return AesEncrypter{
+    	Alg:  "AES",
+    	Args: EncrypterArgs{
+    		Secret: secret,
+    	},
+    }
+}
+
+func (e AesEncrypter) ToProto() *proto.Encrypter {
 	return &proto.Encrypter{
 		Alg:  e.Alg,
 		Args: e.Args.ToProto(),
