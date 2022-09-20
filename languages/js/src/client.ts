@@ -2,16 +2,16 @@ import { BloockBridge } from "./bridge/bridge";
 import { Anchor, GetAnchorRequest, WaitAnchorRequest } from "./bridge/proto/anchor";
 import { ConfigData, Network, NetworkConfig } from "./bridge/proto/config";
 import { GetProofRequest, Proof, ValidateRootRequest, VerifyProofRequest, VerifyRecordsRequest } from "./bridge/proto/proof";
-import { FromHashRequest, FromHexRequest, FromStringRequest, FromTypedArrayRequest, Record, RecordReceipt, SendRecordsRequest } from "./bridge/proto/record";
+import { Record, RecordReceipt, SendRecordsRequest } from "./bridge/proto/record";
 import { NewConfigData } from "./config/config";
 
 export class BloockClient {
     private bridge: BloockBridge;
     private configData: ConfigData;
 
-    constructor(apiKey: string) {
+    constructor(apiKey: string, host: string) {
         this.bridge = new BloockBridge();
-        this.configData = NewConfigData(apiKey);
+        this.configData = NewConfigData(apiKey, host);
     }
 
     /**
@@ -49,7 +49,7 @@ export class BloockClient {
                 }
 
                 if (res.error != null) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.records);
@@ -75,7 +75,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.anchor!);
@@ -103,7 +103,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.anchor!);
@@ -130,7 +130,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.proof!);
@@ -158,7 +158,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.timestamp);
@@ -185,7 +185,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.record!);
@@ -213,78 +213,10 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.timestamp);
-            });
-        });
-    }
-
-    public async newRecordFromHash(hash: string): Promise<Record> {
-        let request = FromHashRequest.fromPartial({
-            hash: hash,
-        });
-
-        return new Promise((resolve, reject) => {
-            this.bridge.getRecord().fromHash(request, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-
-                resolve(res);
-            });
-        });
-    }
-
-    public async newRecordFromHex(hex: string): Promise<Record> {
-        let request = FromHexRequest.fromPartial({
-            hex: hex,
-        });
-
-        return new Promise((resolve, reject) => {
-            this.bridge.getRecord().fromHex(request, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-
-                if (res.error) {
-                    reject(res.error);
-                }
-
-                resolve(res.record!);
-            });
-        });
-    }
-
-    public async newRecordFromString(str: string): Promise<Record> {
-        let request = FromStringRequest.fromPartial({
-            str: str
-        });
-
-        return new Promise((resolve, reject) => {
-            this.bridge.getRecord().fromString(request, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-
-                resolve(res);
-            });
-        });
-    }
-
-    public async newRecordFromTypedArray(array: Buffer): Promise<Record> {
-        let request = FromTypedArrayRequest.fromPartial({
-            array: array
-        });
-
-        return new Promise((resolve, reject) => {
-            this.bridge.getRecord().fromTypedArray(request, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-
-                resolve(res);
             });
         });
     }

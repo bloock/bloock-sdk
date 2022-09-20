@@ -8,14 +8,11 @@ const config: Config.InitialOptions = {
             useESM: true,
         },
     },
+    preset: 'ts-jest',
     moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.js$': '$1',
     },
     verbose: true,
-    preset: 'ts-jest',
     testEnvironment: 'node',
-    transform: {
-        "^.+\\.[t|j]sx?$": "ts-jest",
-    },
 };
 export default config;

@@ -1,9 +1,9 @@
-import { BloockClient, Anchor, Network, RecordReceipt } from "../dist/index"
+import { BloockClient, Anchor, Network, RecordReceipt, Record } from "../dist/index"
 
 function getSdk(): BloockClient {
     const apiKey = process.env['API_KEY'] || ''
-    const apiHost = process.env['API_HOST'] || ''
-    let client = new BloockClient(apiKey)
+    const apiHost = process.env['API_HOST'] || 'https://api.bloock.dev'
+    let client = new BloockClient(apiKey, apiHost)
     client.setApiHost(apiHost)
     return client
 }
@@ -16,9 +16,9 @@ describe('Functional Tests', () => {
         const sdk = getSdk()
 
         const records = [
-            await sdk.newRecordFromString('Example Data 1'),
-            await sdk.newRecordFromString('Example Data 2'),
-            await sdk.newRecordFromString('Example Data 3')
+            await Record.FromString('Example Data 1'),
+            await Record.FromString('Example Data 2'),
+            await Record.FromString('Example Data 3')
         ]
 
         const sendReceipt = await sdk.sendRecords(records)
@@ -36,9 +36,9 @@ describe('Functional Tests', () => {
         const sdk = getSdk()
 
         const records = [
-            await sdk.newRecordFromString('Example Data 4'),
-            await sdk.newRecordFromString('Example Data 5'),
-            await sdk.newRecordFromString('Example Data 6')
+            await Record.FromString('Example Data 4'),
+            await Record.FromString('Example Data 5'),
+            await Record.FromString('Example Data 6')
         ]
 
         const sendReceipt = await sdk.sendRecords(records)
@@ -62,9 +62,9 @@ describe('Functional Tests', () => {
         const sdk = getSdk()
 
         const records = [
-            await sdk.newRecordFromString('Example Data 7'),
-            await sdk.newRecordFromString('Example Data 8'),
-            await sdk.newRecordFromString('Example Data 9')
+            await Record.FromString('Example Data 7'),
+            await Record.FromString('Example Data 8'),
+            await Record.FromString('Example Data 9')
         ]
 
         const sendReceipt = await sdk.sendRecords(records)
@@ -86,9 +86,9 @@ describe('Functional Tests', () => {
         const sdk = getSdk()
 
         const records = [
-            await sdk.newRecordFromString('Example Data 4'),
-            await sdk.newRecordFromString('Example Data 5'),
-            await sdk.newRecordFromString('Example Data 6')
+            await Record.FromString('Example Data 4'),
+            await Record.FromString('Example Data 5'),
+            await Record.FromString('Example Data 6')
         ]
 
         let proof = await sdk.getProof(records)
@@ -101,9 +101,9 @@ describe('Functional Tests', () => {
         const sdk = getSdk()
 
         const records = [
-            await sdk.newRecordFromString('Example Data 4'),
-            await sdk.newRecordFromString('Example Data 5'),
-            await sdk.newRecordFromString('Example Data 6')
+            await Record.FromString('Example Data 4'),
+            await Record.FromString('Example Data 5'),
+            await Record.FromString('Example Data 6')
         ]
 
         let proof = await sdk.getProof(records)

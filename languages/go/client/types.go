@@ -23,6 +23,22 @@ func ListOfNetworks() networks {
 	}
 }
 
+type AnchorParams struct {
+	Timeout		int64
+}
+
+func NewAnchorParams() AnchorParams {
+	return AnchorParams{}
+}
+
+type NetworkParams struct {
+	Network 	Network
+}
+
+func NewNetworkParams() NetworkParams {
+	return NetworkParams{}
+}
+
 const (
 	InvalidRecordError     = "Record error: Invalid record"
 	RecordNotFoundError    = "Infrastructure error: Http Client error: Request error - API connected by HttpClient found an error: record not found"
