@@ -23,10 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RecordServiceClient interface {
 	SendRecords(ctx context.Context, in *SendRecordsRequest, opts ...grpc.CallOption) (*SendRecordsResponse, error)
-	FromHash(ctx context.Context, in *FromHashRequest, opts ...grpc.CallOption) (*Record, error)
-	FromHex(ctx context.Context, in *FromHexRequest, opts ...grpc.CallOption) (*FromHexResponse, error)
-	FromString(ctx context.Context, in *FromStringRequest, opts ...grpc.CallOption) (*Record, error)
-	FromTypedArray(ctx context.Context, in *FromTypedArrayRequest, opts ...grpc.CallOption) (*Record, error)
+	BuildRecord(ctx context.Context, in *RecordBuilderRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
 }
 
 type recordServiceClient struct {
@@ -46,36 +44,18 @@ func (c *recordServiceClient) SendRecords(ctx context.Context, in *SendRecordsRe
 	return out, nil
 }
 
-func (c *recordServiceClient) FromHash(ctx context.Context, in *FromHashRequest, opts ...grpc.CallOption) (*Record, error) {
-	out := new(Record)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/FromHash", in, out, opts...)
+func (c *recordServiceClient) BuildRecord(ctx context.Context, in *RecordBuilderRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
+	out := new(RecordBuilderResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecord", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *recordServiceClient) FromHex(ctx context.Context, in *FromHexRequest, opts ...grpc.CallOption) (*FromHexResponse, error) {
-	out := new(FromHexResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/FromHex", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *recordServiceClient) FromString(ctx context.Context, in *FromStringRequest, opts ...grpc.CallOption) (*Record, error) {
-	out := new(Record)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/FromString", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *recordServiceClient) FromTypedArray(ctx context.Context, in *FromTypedArrayRequest, opts ...grpc.CallOption) (*Record, error) {
-	out := new(Record)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/FromTypedArray", in, out, opts...)
+func (c *recordServiceClient) GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error) {
+	out := new(RecordHash)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetHash", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,10 +67,8 @@ func (c *recordServiceClient) FromTypedArray(ctx context.Context, in *FromTypedA
 // for forward compatibility
 type RecordServiceServer interface {
 	SendRecords(context.Context, *SendRecordsRequest) (*SendRecordsResponse, error)
-	FromHash(context.Context, *FromHashRequest) (*Record, error)
-	FromHex(context.Context, *FromHexRequest) (*FromHexResponse, error)
-	FromString(context.Context, *FromStringRequest) (*Record, error)
-	FromTypedArray(context.Context, *FromTypedArrayRequest) (*Record, error)
+	BuildRecord(context.Context, *RecordBuilderRequest) (*RecordBuilderResponse, error)
+	GetHash(context.Context, *Record) (*RecordHash, error)
 	mustEmbedUnimplementedRecordServiceServer()
 }
 
@@ -101,17 +79,11 @@ type UnimplementedRecordServiceServer struct {
 func (UnimplementedRecordServiceServer) SendRecords(context.Context, *SendRecordsRequest) (*SendRecordsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendRecords not implemented")
 }
-func (UnimplementedRecordServiceServer) FromHash(context.Context, *FromHashRequest) (*Record, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FromHash not implemented")
+func (UnimplementedRecordServiceServer) BuildRecord(context.Context, *RecordBuilderRequest) (*RecordBuilderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BuildRecord not implemented")
 }
-func (UnimplementedRecordServiceServer) FromHex(context.Context, *FromHexRequest) (*FromHexResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FromHex not implemented")
-}
-func (UnimplementedRecordServiceServer) FromString(context.Context, *FromStringRequest) (*Record, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FromString not implemented")
-}
-func (UnimplementedRecordServiceServer) FromTypedArray(context.Context, *FromTypedArrayRequest) (*Record, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FromTypedArray not implemented")
+func (UnimplementedRecordServiceServer) GetHash(context.Context, *Record) (*RecordHash, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
 }
 func (UnimplementedRecordServiceServer) mustEmbedUnimplementedRecordServiceServer() {}
 
@@ -144,74 +116,38 @@ func _RecordService_SendRecords_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RecordService_FromHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FromHashRequest)
+func _RecordService_BuildRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordBuilderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecordServiceServer).FromHash(ctx, in)
+		return srv.(RecordServiceServer).BuildRecord(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bloock.RecordService/FromHash",
+		FullMethod: "/bloock.RecordService/BuildRecord",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).FromHash(ctx, req.(*FromHashRequest))
+		return srv.(RecordServiceServer).BuildRecord(ctx, req.(*RecordBuilderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RecordService_FromHex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FromHexRequest)
+func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Record)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecordServiceServer).FromHex(ctx, in)
+		return srv.(RecordServiceServer).GetHash(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bloock.RecordService/FromHex",
+		FullMethod: "/bloock.RecordService/GetHash",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).FromHex(ctx, req.(*FromHexRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RecordService_FromString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FromStringRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).FromString(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/FromString",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).FromString(ctx, req.(*FromStringRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RecordService_FromTypedArray_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FromTypedArrayRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).FromTypedArray(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/FromTypedArray",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).FromTypedArray(ctx, req.(*FromTypedArrayRequest))
+		return srv.(RecordServiceServer).GetHash(ctx, req.(*Record))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -228,20 +164,12 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RecordService_SendRecords_Handler,
 		},
 		{
-			MethodName: "FromHash",
-			Handler:    _RecordService_FromHash_Handler,
+			MethodName: "BuildRecord",
+			Handler:    _RecordService_BuildRecord_Handler,
 		},
 		{
-			MethodName: "FromHex",
-			Handler:    _RecordService_FromHex_Handler,
-		},
-		{
-			MethodName: "FromString",
-			Handler:    _RecordService_FromString_Handler,
-		},
-		{
-			MethodName: "FromTypedArray",
-			Handler:    _RecordService_FromTypedArray_Handler,
+			MethodName: "GetHash",
+			Handler:    _RecordService_GetHash_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

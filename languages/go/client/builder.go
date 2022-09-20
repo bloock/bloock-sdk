@@ -6,13 +6,14 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/bloock/go-bridge/client/entity"
 	"github.com/bloock/go-bridge/internal/bridge"
 	"github.com/bloock/go-bridge/internal/bridge/proto"
 )
 
-type Builder struct {
+type RecordBuilder struct {
 	payload     string
-	payloadType string
+	payloadType PayloadType
 	signer      *proto.Signer
 	encrypter   *proto.Encrypter
 }
@@ -37,86 +38,86 @@ func GetPayloadTypes() PayloadTypes {
 	}
 }
 
-func NewBuilder(payload []byte, payloadType PayloadType) Builder {
-	return Builder{
+func NewRecordBuilder(payload []byte, payloadType PayloadType) RecordBuilder {
+	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString(payload),
-		payloadType: string(payloadType),
+		payloadType: payloadType,
 	}
 }
 
-func (b Builder) WithSigner(signer *proto.Signer) Builder {
-	b.signer = signer
+func (b RecordBuilder) WithSigner(signer *entity.Signer) RecordBuilder {
+	b.signer = signer.ToProto()
 	return b
 }
 
-func (b Builder) WithEncrypter(encrypter *proto.Encrypter) Builder {
-	b.encrypter = encrypter
+func (b RecordBuilder) WithEncrypter(encrypter *entity.Encrypter) RecordBuilder {
+	b.encrypter = encrypter.ToProto()
 	return b
 }
 
-func (b Builder) Build() (*proto.Record, error) {
+func (b RecordBuilder) Build() (entity.Record, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().BuildRecord(context.Background(), &proto.RecordBuilderRequest{
 		Payload:   b.payload,
-		Type:      b.payloadType,
+		Type:      string(b.payloadType),
 		Signer:    &proto.Signer{},
 		Encrypter: &proto.Encrypter{},
 	})
 
 	if err != nil {
-		return nil, err
+		return entity.Record{}, err
 	}
 
 	if res.Error != nil {
-		return nil, errors.New(res.Error.Message)
+		return entity.Record{}, errors.New(res.Error.Message)
 	}
 
-	return res.Record, nil
+	return entity.NewRecordFromProto(res.Record), nil
 }
 
-func NewBuilderFromRecord(record *Record) (Builder, error) {
+func NewRecordBuilderFromRecord(record entity.Record) (RecordBuilder, error) {
 	payload, err := json.Marshal(record)
 	if err != nil {
-		return Builder{}, err
+		return RecordBuilder{}, err
 	}
 
-	return Builder{
+	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString(payload),
-		payloadType: string(GetPayloadTypes().Bytes),
+		payloadType: GetPayloadTypes().Bytes,
 	}, nil
 }
 
-func NewBuilderFromString(str string) Builder {
-	return Builder{
+func NewRecordBuilderFromString(str string) RecordBuilder {
+	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString([]byte(str)),
-		payloadType: string(GetPayloadTypes().String),
+		payloadType: GetPayloadTypes().String,
 	}
 }
 
-func NewBuilderFromHex(hex string) Builder {
-	return Builder{
+func NewRecordBuilderFromHex(hex string) RecordBuilder {
+	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString([]byte(hex)),
-		payloadType: string(GetPayloadTypes().Hex),
+		payloadType: GetPayloadTypes().Hex,
 	}
 }
 
-func NewBuilderFromJSON(json string) Builder {
-	return Builder{
+func NewRecordBuilderFromJSON(json string) RecordBuilder {
+	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString([]byte(json)),
-		payloadType: string(GetPayloadTypes().Json),
+		payloadType: GetPayloadTypes().Json,
 	}
 }
 
-func NewBuilderFromFile(file_bytes []byte) Builder {
-	return Builder{
+func NewRecordBuilderFromFile(file_bytes []byte) RecordBuilder {
+	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString(file_bytes),
-		payloadType: string(GetPayloadTypes().Bytes),
+		payloadType: GetPayloadTypes().Bytes,
 	}
 }
 
-func NewBuilderFromBytes(bytes []byte) Builder {
-	return Builder{
+func NewRecordBuilderFromBytes(bytes []byte) RecordBuilder {
+	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString(bytes),
-		payloadType: string(GetPayloadTypes().Bytes),
+		payloadType: GetPayloadTypes().Bytes,
 	}
 }
