@@ -12,10 +12,11 @@ import "proof.proto";
 service RecordService {
     rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
     rpc BuildRecordFromString(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
-    rpc BuildRecordFromHex(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
-    rpc BuildRecordFromJSON(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
-    rpc BuildRecordFromFile(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromHex(RecordBuilderFromHexRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromJSON(RecordBuilderFromJSONRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromFile(RecordBuilderFromFileRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromBytes(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);
     rpc GetHash(Record) returns (RecordHash);
 }
 
@@ -90,17 +91,39 @@ message RecordReceipt {
 }
 
 message RecordBuilderFromStringRequest {
-    string type = 1;
-    string payload = 2;
-    optional Signer signer = 3;
-    optional Encrypter encrypter = 4;
+    string payload = 1;
+    optional Signer signer = 2;
+    optional Encrypter encrypter = 3;
+}
+
+message RecordBuilderFromHexRequest {
+    string payload = 1;
+    optional Signer signer = 2;
+    optional Encrypter encrypter = 3;
+}
+
+message RecordBuilderFromJSONRequest {
+    string payload = 1;
+    optional Signer signer = 2;
+    optional Encrypter encrypter = 3;
 }
 
 message RecordBuilderFromBytesRequest {
-    string type = 1;
-    bytes payload = 2;
-    optional Signer signer = 3;
-    optional Encrypter encrypter = 4;
+    bytes payload = 1;
+    optional Signer signer = 2;
+    optional Encrypter encrypter = 3;
+}
+
+message RecordBuilderFromFileRequest {
+    bytes payload = 1;
+    optional Signer signer = 2;
+    optional Encrypter encrypter = 3;
+}
+
+message RecordBuilderFromRecordRequest {
+    Record payload = 1;
+    optional Signer signer = 2;
+    optional Encrypter encrypter = 3;
 }
 
 message RecordBuilderResponse {
