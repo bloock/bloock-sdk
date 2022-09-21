@@ -1,6 +1,12 @@
 package entity
 
-import "github.com/bloock/go-bridge/internal/bridge/proto"
+import (
+	"context"
+	"errors"
+
+	"github.com/bloock/go-bridge/internal/bridge"
+	"github.com/bloock/go-bridge/internal/bridge/proto"
+)
 
 type Record struct {
 	Headers    RecordHeader
@@ -38,6 +44,21 @@ func (r Record) ToProto() *proto.Record {
 		Encryption: r.Encryption.ToProto(),
 		Proof:      r.Proof.ToProto(),
 	}
+}
+
+func (r Record) GetHash() (string, error) {
+	bridgeClient := bridge.NewBloockBridge()
+    res, err := bridgeClient.Record().GetHash(context.Background(), r.ToProto())
+
+    if err != nil {
+        return "", err
+    }
+
+    if res.Error != nil {
+        return "", errors.New(res.Error.Message)
+    }
+
+    return res.Hash, nil
 }
 
 func MapRecordsToProto(records []Record) []*proto.Record {
