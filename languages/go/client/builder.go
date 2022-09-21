@@ -18,16 +18,6 @@ type RecordBuilder struct {
 	encrypter   *proto.Encrypter
 }
 
-type PayloadType int
-
-const (
-	String PayloadType = iota
-	Hex
-	Json
-	Bytes
-	File
-)
-
 func (b RecordBuilder) WithSigner(signer entity.Signer) RecordBuilder {
 	b.signer = signer.ToProto()
 	return b
