@@ -3,6 +3,7 @@ package bloock
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/bloock/go-bridge/client/entity"
 	"github.com/bloock/go-bridge/internal/bridge"
@@ -34,6 +35,7 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 
 	switch b.payloadType {
 	case proto.RecordTypes_STRING:
+        fmt.Println("==> ", b.payload.(string))
 		res, err = bridgeClient.Record().BuildRecordFromString(context.Background(), &proto.RecordBuilderFromStringRequest{
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
@@ -46,30 +48,29 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 			Encrypter: b.encrypter,
 		})
 	case proto.RecordTypes_FILE:
-		res, err = bridgeClient.Record().BuildRecordFromFile(context.Background(), &proto.RecordBuilderFromBytesRequest{
+		res, err = bridgeClient.Record().BuildRecordFromFile(context.Background(), &proto.RecordBuilderFromFileRequest{
 			Payload:   b.payload.([]byte),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
 		})
 	case proto.RecordTypes_JSON:
-		res, err = bridgeClient.Record().BuildRecordFromJSON(context.Background(), &proto.RecordBuilderFromStringRequest{
+		res, err = bridgeClient.Record().BuildRecordFromJSON(context.Background(), &proto.RecordBuilderFromJSONRequest{
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
 		})
 	case proto.RecordTypes_HEX:
-		res, err = bridgeClient.Record().BuildRecordFromHex(context.Background(), &proto.RecordBuilderFromStringRequest{
+		res, err = bridgeClient.Record().BuildRecordFromHex(context.Background(), &proto.RecordBuilderFromHexRequest{
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
 		})
 	case proto.RecordTypes_RECORD:
-		// TODO
-		// res, err = bridgeClient.Record().BuildRecordFromRecord(context.Background(), &proto.RecordBuilderFromRecordRequest{
-		// 	Payload:   b.payload.(*proto.Record),
-		// 	Signer:    b.signer,
-		// 	Encrypter: b.encrypter,
-		// })
+		res, err = bridgeClient.Record().BuildRecordFromRecord(context.Background(), &proto.RecordBuilderFromRecordRequest{
+			Payload:   b.payload.(*proto.Record),
+			Signer:    b.signer,
+			Encrypter: b.encrypter,
+		})
 	}
 
 	if err != nil {

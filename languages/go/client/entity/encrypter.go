@@ -7,13 +7,13 @@ type Encrypter interface {
 }
 
 type AesEncrypter struct {
-	Alg  string
+	Alg  proto.EncrypterAlg
 	Args EncrypterArgs
 }
 
 func NewAesEncrypter(secret string) AesEncrypter {
     return AesEncrypter{
-    	Alg:  "AES",
+    	Alg:  proto.EncrypterAlg_A256GCM,
     	Args: EncrypterArgs{
     		Secret: secret,
     	},

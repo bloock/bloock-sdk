@@ -24,10 +24,11 @@ const _ = grpc.SupportPackageIsVersion7
 type RecordServiceClient interface {
 	SendRecords(ctx context.Context, in *SendRecordsRequest, opts ...grpc.CallOption) (*SendRecordsResponse, error)
 	BuildRecordFromString(ctx context.Context, in *RecordBuilderFromStringRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
-	BuildRecordFromHex(ctx context.Context, in *RecordBuilderFromStringRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
-	BuildRecordFromJSON(ctx context.Context, in *RecordBuilderFromStringRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
-	BuildRecordFromFile(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	BuildRecordFromHex(ctx context.Context, in *RecordBuilderFromHexRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	BuildRecordFromJSON(ctx context.Context, in *RecordBuilderFromJSONRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	BuildRecordFromFile(ctx context.Context, in *RecordBuilderFromFileRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromBytes(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
 }
 
@@ -57,7 +58,7 @@ func (c *recordServiceClient) BuildRecordFromString(ctx context.Context, in *Rec
 	return out, nil
 }
 
-func (c *recordServiceClient) BuildRecordFromHex(ctx context.Context, in *RecordBuilderFromStringRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
+func (c *recordServiceClient) BuildRecordFromHex(ctx context.Context, in *RecordBuilderFromHexRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
 	out := new(RecordBuilderResponse)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromHex", in, out, opts...)
 	if err != nil {
@@ -66,7 +67,7 @@ func (c *recordServiceClient) BuildRecordFromHex(ctx context.Context, in *Record
 	return out, nil
 }
 
-func (c *recordServiceClient) BuildRecordFromJSON(ctx context.Context, in *RecordBuilderFromStringRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
+func (c *recordServiceClient) BuildRecordFromJSON(ctx context.Context, in *RecordBuilderFromJSONRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
 	out := new(RecordBuilderResponse)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromJSON", in, out, opts...)
 	if err != nil {
@@ -75,7 +76,7 @@ func (c *recordServiceClient) BuildRecordFromJSON(ctx context.Context, in *Recor
 	return out, nil
 }
 
-func (c *recordServiceClient) BuildRecordFromFile(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
+func (c *recordServiceClient) BuildRecordFromFile(ctx context.Context, in *RecordBuilderFromFileRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
 	out := new(RecordBuilderResponse)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromFile", in, out, opts...)
 	if err != nil {
@@ -87,6 +88,15 @@ func (c *recordServiceClient) BuildRecordFromFile(ctx context.Context, in *Recor
 func (c *recordServiceClient) BuildRecordFromBytes(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
 	out := new(RecordBuilderResponse)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromBytes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *recordServiceClient) BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
+	out := new(RecordBuilderResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromRecord", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,10 +118,11 @@ func (c *recordServiceClient) GetHash(ctx context.Context, in *Record, opts ...g
 type RecordServiceServer interface {
 	SendRecords(context.Context, *SendRecordsRequest) (*SendRecordsResponse, error)
 	BuildRecordFromString(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error)
-	BuildRecordFromHex(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error)
-	BuildRecordFromJSON(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error)
-	BuildRecordFromFile(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error)
+	BuildRecordFromHex(context.Context, *RecordBuilderFromHexRequest) (*RecordBuilderResponse, error)
+	BuildRecordFromJSON(context.Context, *RecordBuilderFromJSONRequest) (*RecordBuilderResponse, error)
+	BuildRecordFromFile(context.Context, *RecordBuilderFromFileRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromBytes(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error)
+	BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error)
 	GetHash(context.Context, *Record) (*RecordHash, error)
 	mustEmbedUnimplementedRecordServiceServer()
 }
@@ -126,17 +137,20 @@ func (UnimplementedRecordServiceServer) SendRecords(context.Context, *SendRecord
 func (UnimplementedRecordServiceServer) BuildRecordFromString(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromString not implemented")
 }
-func (UnimplementedRecordServiceServer) BuildRecordFromHex(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error) {
+func (UnimplementedRecordServiceServer) BuildRecordFromHex(context.Context, *RecordBuilderFromHexRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromHex not implemented")
 }
-func (UnimplementedRecordServiceServer) BuildRecordFromJSON(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error) {
+func (UnimplementedRecordServiceServer) BuildRecordFromJSON(context.Context, *RecordBuilderFromJSONRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromJSON not implemented")
 }
-func (UnimplementedRecordServiceServer) BuildRecordFromFile(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error) {
+func (UnimplementedRecordServiceServer) BuildRecordFromFile(context.Context, *RecordBuilderFromFileRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromFile not implemented")
 }
 func (UnimplementedRecordServiceServer) BuildRecordFromBytes(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromBytes not implemented")
+}
+func (UnimplementedRecordServiceServer) BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromRecord not implemented")
 }
 func (UnimplementedRecordServiceServer) GetHash(context.Context, *Record) (*RecordHash, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
@@ -191,7 +205,7 @@ func _RecordService_BuildRecordFromString_Handler(srv interface{}, ctx context.C
 }
 
 func _RecordService_BuildRecordFromHex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecordBuilderFromStringRequest)
+	in := new(RecordBuilderFromHexRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -203,13 +217,13 @@ func _RecordService_BuildRecordFromHex_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/bloock.RecordService/BuildRecordFromHex",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).BuildRecordFromHex(ctx, req.(*RecordBuilderFromStringRequest))
+		return srv.(RecordServiceServer).BuildRecordFromHex(ctx, req.(*RecordBuilderFromHexRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _RecordService_BuildRecordFromJSON_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecordBuilderFromStringRequest)
+	in := new(RecordBuilderFromJSONRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -221,13 +235,13 @@ func _RecordService_BuildRecordFromJSON_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/bloock.RecordService/BuildRecordFromJSON",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).BuildRecordFromJSON(ctx, req.(*RecordBuilderFromStringRequest))
+		return srv.(RecordServiceServer).BuildRecordFromJSON(ctx, req.(*RecordBuilderFromJSONRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _RecordService_BuildRecordFromFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecordBuilderFromBytesRequest)
+	in := new(RecordBuilderFromFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -239,7 +253,7 @@ func _RecordService_BuildRecordFromFile_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/bloock.RecordService/BuildRecordFromFile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).BuildRecordFromFile(ctx, req.(*RecordBuilderFromBytesRequest))
+		return srv.(RecordServiceServer).BuildRecordFromFile(ctx, req.(*RecordBuilderFromFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -258,6 +272,24 @@ func _RecordService_BuildRecordFromBytes_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RecordServiceServer).BuildRecordFromBytes(ctx, req.(*RecordBuilderFromBytesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RecordService_BuildRecordFromRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordBuilderFromRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).BuildRecordFromRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/BuildRecordFromRecord",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).BuildRecordFromRecord(ctx, req.(*RecordBuilderFromRecordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -310,6 +342,10 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BuildRecordFromBytes",
 			Handler:    _RecordService_BuildRecordFromBytes_Handler,
+		},
+		{
+			MethodName: "BuildRecordFromRecord",
+			Handler:    _RecordService_BuildRecordFromRecord_Handler,
 		},
 		{
 			MethodName: "GetHash",

@@ -7,13 +7,13 @@ type Signer interface {
 }
 
 type EcsdaSigner struct {
-	Alg  string
+	Alg  proto.SignerAlg
 	Args SignerArgs
 }
 
 func NewEcsdaSigner(privateKey string) EcsdaSigner {
     return EcsdaSigner{
-    	Alg:  "ECSDA",
+    	Alg:  proto.SignerAlg_ES256K,
     	Args: SignerArgs{
     		PrivateKey: privateKey,
     	},
