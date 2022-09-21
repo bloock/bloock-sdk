@@ -117,7 +117,7 @@ impl RecordServiceHandler for RecordServer {
 
     async fn build_record_from_hex(
         &self,
-        req: crate::items::RecordBuilderFromStringRequest,
+        req: crate::items::RecordBuilderFromHexRequest,
     ) -> RecordBuilderResponse {
         let builder = RecordBuilder::from_hex(req.payload).unwrap();
         build_record(builder, req.signer, req.encrypter)
@@ -125,7 +125,7 @@ impl RecordServiceHandler for RecordServer {
 
     async fn build_record_from_json(
         &self,
-        req: crate::items::RecordBuilderFromStringRequest,
+        req: crate::items::RecordBuilderFromJsonRequest,
     ) -> RecordBuilderResponse {
         let builder = RecordBuilder::from_json(req.payload).unwrap();
         build_record(builder, req.signer, req.encrypter)
@@ -133,7 +133,7 @@ impl RecordServiceHandler for RecordServer {
 
     async fn build_record_from_file(
         &self,
-        req: crate::items::RecordBuilderFromBytesRequest,
+        req: crate::items::RecordBuilderFromFileRequest,
     ) -> RecordBuilderResponse {
         let builder = RecordBuilder::from_file(req.payload);
         build_record(builder, req.signer, req.encrypter)
@@ -143,7 +143,49 @@ impl RecordServiceHandler for RecordServer {
         &self,
         req: crate::items::RecordBuilderFromBytesRequest,
     ) -> RecordBuilderResponse {
-        let builder = RecordBuilder::from_file(req.payload);
+        let builder = RecordBuilder::from_bytes(req.payload);
+        build_record(builder, req.signer, req.encrypter)
+    }
+
+    async fn build_record_from_record(
+        &self,
+        req: crate::items::RecordBuilderFromRecordRequest,
+    ) -> RecordBuilderResponse {
+        let payload: RecordCore = match req.payload {
+            Some(p) => match p.try_into() {
+                Ok(p) => p,
+                Err(e) => {
+                    return RecordBuilderResponse {
+                        record: None,
+                        error: Some(Error {
+                            kind: BridgeError::RecordError.to_string(),
+                            message: e.to_string(),
+                        }),
+                    }
+                }
+            },
+            None => {
+                return RecordBuilderResponse {
+                    record: None,
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: "no record payload found".to_string(),
+                    }),
+                }
+            }
+        };
+        let builder = match RecordBuilder::from_record(payload) {
+            Ok(builder) => builder,
+            Err(e) => {
+                return RecordBuilderResponse {
+                    record: None,
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
         build_record(builder, req.signer, req.encrypter)
     }
 }
