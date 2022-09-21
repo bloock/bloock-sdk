@@ -13,30 +13,20 @@ import (
 
 type RecordBuilder struct {
 	payload     string
-	payloadType PayloadType
+	payloadType proto.RecordTypes
 	signer      *proto.Signer
 	encrypter   *proto.Encrypter
 }
 
-type PayloadType string
+type PayloadType int
 
-type PayloadTypes struct {
-	String PayloadType
-	Hex    PayloadType
-	Json   PayloadType
-	Bytes  PayloadType
-	File   PayloadType
-}
-
-func GetPayloadTypes() PayloadTypes {
-	return PayloadTypes{
-		String: "string",
-		Hex:    "hex",
-		Json:   "json",
-		Bytes:  "bytes",
-		File:   "file",
-	}
-}
+const (
+	String PayloadType = iota
+	Hex
+	Json
+	Bytes
+	File
+)
 
 func (b RecordBuilder) WithSigner(signer entity.Signer) RecordBuilder {
 	b.signer = signer.ToProto()
@@ -55,18 +45,15 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 	var err error
 
 	switch b.payloadType {
-	case GetPayloadTypes().String:
-		// TODO BuildRecordFromString
+	case proto.RecordTypes_STRING:
+	case proto.RecordTypes_BYTES:
+	case proto.RecordTypes_FILE:
+	case proto.RecordTypes_JSON:
+	case proto.RecordTypes_HEX:
+		// TODO BuildRecordFrom... All types
 		res, err = bridgeClient.Record().BuildRecord(context.Background(), &proto.RecordBuilderRequest{
 			Payload:   b.payload,
-			Type:      string(b.payloadType),
-			Signer:    &proto.Signer{},
-			Encrypter: &proto.Encrypter{},
-		})
-	default: // TODO BuildRecordFrom... All types
-		res, err = bridgeClient.Record().BuildRecord(context.Background(), &proto.RecordBuilderRequest{
-			Payload:   b.payload,
-			Type:      string(b.payloadType),
+			Type:      "",
 			Signer:    &proto.Signer{},
 			Encrypter: &proto.Encrypter{},
 		})
@@ -91,41 +78,41 @@ func NewRecordBuilderFromRecord(record entity.Record) (RecordBuilder, error) {
 
 	return RecordBuilder{
 		payload:     string(payload),
-		payloadType: GetPayloadTypes().Bytes,
+		payloadType: proto.RecordTypes_BYTES,
 	}, nil
 }
 
 func NewRecordBuilderFromString(str string) RecordBuilder {
 	return RecordBuilder{
 		payload:     str,
-		payloadType: GetPayloadTypes().String,
+		payloadType: proto.RecordTypes_STRING,
 	}
 }
 
 func NewRecordBuilderFromHex(hex string) RecordBuilder {
 	return RecordBuilder{
 		payload:     hex,
-		payloadType: GetPayloadTypes().Hex,
+		payloadType: proto.RecordTypes_HEX,
 	}
 }
 
 func NewRecordBuilderFromJSON(json string) RecordBuilder {
 	return RecordBuilder{
 		payload:     json,
-		payloadType: GetPayloadTypes().Json,
+		payloadType: proto.RecordTypes_JSON,
 	}
 }
 
 func NewRecordBuilderFromFile(file_bytes []byte) RecordBuilder {
 	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString(file_bytes),
-		payloadType: GetPayloadTypes().Bytes,
+		payloadType: proto.RecordTypes_RECORD,
 	}
 }
 
 func NewRecordBuilderFromBytes(bytes []byte) RecordBuilder {
 	return RecordBuilder{
 		payload:     base64.RawStdEncoding.EncodeToString(bytes),
-		payloadType: GetPayloadTypes().Bytes,
+		payloadType: proto.RecordTypes_BYTES,
 	}
 }

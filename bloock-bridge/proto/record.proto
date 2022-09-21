@@ -9,6 +9,15 @@ import "bloock.proto";
 import "config.proto";
 import "proof.proto";
 
+enum RecordTypes {
+	STRING = 0;
+	HEX = 1;
+	JSON = 2;
+	BYTES = 3;
+	FILE = 4;
+    RECORD = 5;
+}
+
 service RecordService {
     rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
     rpc BuildRecord(RecordBuilderRequest) returns (RecordBuilderResponse);
