@@ -11,12 +11,17 @@ type Record struct {
 }
 
 func NewRecordFromProto(r *proto.Record) Record {
+	signatures := make([]Signature, len(r.Signatures))
+	for i, signature := range r.Signatures {
+		signatures[i] = NewSignatureFromProto(signature)
+	}
+
 	return Record{
-		Headers:    RecordHeader{},
+		Headers:    NewRecordHeaderFromProto(r.Headers),
 		Payload:    r.Payload,
-		Signatures: []Signature{},
-		Encryption: Encryption{},
-		Proof:      Proof{},
+		Signatures: signatures,
+		Encryption: NewEncryptionFromProto(r.Encryption),
+		Proof:      NewProofFromProto(r.Proof),
 	}
 }
 
@@ -47,6 +52,12 @@ type RecordHeader struct {
 	Ty string
 }
 
+func NewRecordHeaderFromProto(r *proto.RecordHeader) RecordHeader {
+	return RecordHeader{
+		Ty: r.Ty,
+	}
+}
+
 func (rh RecordHeader) ToProto() *proto.RecordHeader {
 	return &proto.RecordHeader{
 		Ty: rh.Ty,
@@ -57,6 +68,14 @@ type Signature struct {
 	Signature string
 	Protected string
 	Header    SignatureHeader
+}
+
+func NewSignatureFromProto(s *proto.Signature) Signature {
+	return Signature{
+		Signature: s.Signature,
+		Protected: s.Protected,
+		Header:    NewSignatureHeaderFromProto(s.Header),
+	}
 }
 
 func (s Signature) ToProto() *proto.Signature {
@@ -72,6 +91,13 @@ type SignatureHeader struct {
 	Kid string
 }
 
+func NewSignatureHeaderFromProto(s *proto.SignatureHeader) SignatureHeader {
+	return SignatureHeader{
+		Alg: s.Alg,
+		Kid: s.Kid,
+	}
+}
+
 func (s SignatureHeader) ToProto() *proto.SignatureHeader {
 	return &proto.SignatureHeader{
 		Alg: s.Alg,
@@ -84,6 +110,13 @@ type Encryption struct {
 	Protected string
 }
 
+func NewEncryptionFromProto(e *proto.Encryption) Encryption {
+	return Encryption{
+		Header:    NewEncryptionHeaderFromProto(e.Header),
+		Protected: e.Protected,
+	}
+}
+
 func (e Encryption) ToProto() *proto.Encryption {
 	return &proto.Encryption{
 		Header:    e.Header.ToProto(),
@@ -93,6 +126,12 @@ func (e Encryption) ToProto() *proto.Encryption {
 
 type EncryptionHeader struct {
 	Alg string
+}
+
+func NewEncryptionHeaderFromProto(e *proto.EncryptionHeader) EncryptionHeader {
+	return EncryptionHeader{
+		Alg: e.Alg,
+	}
 }
 
 func (e EncryptionHeader) ToProto() *proto.EncryptionHeader {
@@ -109,10 +148,10 @@ type RecordReceipt struct {
 }
 
 func NewRecordReceiptFromProto(r *proto.RecordReceipt) RecordReceipt {
-    return RecordReceipt{
-    	Anchor: r.Anchor,
-    	Client: r.Client,
-    	Record: r.Record,
-    	Status: r.Status,
-    }
+	return RecordReceipt{
+		Anchor: r.Anchor,
+		Client: r.Client,
+		Record: r.Record,
+		Status: r.Status,
+	}
 }
