@@ -1,9 +1,9 @@
-use std::convert::TryFrom;
+use std::convert::{TryFrom, TryInto};
 
 use crate::{
     error::{BridgeError, BridgeResult},
     items::{
-        Encryption, EncryptionHeader, Record, RecordHeader, RecordReceipt, Signature,
+        Encryption, EncryptionHeader, Proof, Record, RecordHeader, RecordReceipt, Signature,
         SignatureHeader,
     },
 };
@@ -24,8 +24,23 @@ impl From<RecordHeader> for Headers {
     }
 }
 
+impl From<Headers> for RecordHeader {
+    fn from(h: Headers) -> Self {
+        Self { ty: h.ty }
+    }
+}
+
 impl From<SignatureHeader> for SignatureHeaderCore {
     fn from(s: SignatureHeader) -> Self {
+        Self {
+            alg: s.alg,
+            kid: s.kid,
+        }
+    }
+}
+
+impl From<SignatureHeaderCore> for SignatureHeader {
+    fn from(s: SignatureHeaderCore) -> Self {
         Self {
             alg: s.alg,
             kid: s.kid,
@@ -52,9 +67,25 @@ impl TryFrom<Signature> for SignatureCore {
     }
 }
 
+impl From<SignatureCore> for Signature {
+    fn from(s: SignatureCore) -> Self {
+        Self {
+            signature: s.signature,
+            protected: s.protected,
+            header: Some(s.header.into()),
+        }
+    }
+}
+
 impl From<EncryptionHeader> for EncryptionHeaderCore {
     fn from(s: EncryptionHeader) -> Self {
         Self { alg: s.alg }
+    }
+}
+
+impl From<EncryptionHeaderCore> for EncryptionHeader {
+    fn from(e: EncryptionHeaderCore) -> Self {
+        Self { alg: e.alg }
     }
 }
 
@@ -73,6 +104,15 @@ impl TryFrom<Encryption> for EncryptionCore {
             header: encryption_header,
             protected: e.protected,
         })
+    }
+}
+
+impl From<EncryptionCore> for Encryption {
+    fn from(e: EncryptionCore) -> Self {
+        Self {
+            header: Some(e.header.into()),
+            protected: e.protected,
+        }
     }
 }
 
@@ -112,6 +152,44 @@ impl TryFrom<Record> for RecordCore {
             record_proof,
         );
         Ok(RecordCore::new(document))
+    }
+}
+
+impl TryFrom<RecordCore> for Record {
+    type Error = BridgeError;
+    fn try_from(r: RecordCore) -> BridgeResult<Record> {
+        let record_serialize = match r.serialize() {
+            Ok(record_serialize) => record_serialize,
+            Err(_e) => BridgeError::RecordError.to_string(),
+        };
+
+        let document = match Document::deserialize(record_serialize.as_bytes().to_vec()) {
+            Ok(document) => document,
+            Err(e) => return Err(BridgeError::BloockError(e)),
+        };
+
+        let signatures: Vec<Signature> = match document.signatures {
+            Some(signatures) => signatures.iter().map(|s| s.clone().into()).collect(),
+            None => vec![],
+        };
+
+        let encryption: Option<Encryption> = match document.encryption {
+            Some(e) => Some(e.into()),
+            None => None,
+        };
+
+        let proof: Option<Proof> = match document.proof {
+            Some(e) => Some(e.into()),
+            None => None,
+        };
+
+        Ok(Record {
+            headers: Some(document.headers.into()),
+            payload: document.payload,
+            signatures: signatures,
+            encryption: encryption,
+            proof: proof,
+        })
     }
 }
 

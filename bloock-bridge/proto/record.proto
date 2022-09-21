@@ -20,7 +20,11 @@ enum RecordTypes {
 
 service RecordService {
     rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
-    rpc BuildRecord(RecordBuilderRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromString(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromHex(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromJSON(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromFile(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromBytes(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
     rpc GetHash(Record) returns (RecordHash);
 }
 
@@ -41,8 +45,16 @@ message Record {
     optional Proof proof = 5; 
 }
 
+enum SignerAlg {
+    ES256K = 0;
+}
+
+enum EncrypterAlg {
+    A256GCM = 0;
+}
+
 message Signer {
-    string alg = 1;
+    SignerAlg alg = 1;
     SignerArgs args = 2;
 }
 
@@ -51,7 +63,7 @@ message SignerArgs {
 }
 
 message Encrypter {
-    string alg = 1;
+    EncrypterAlg alg = 1;
     EncrypterArgs args = 2;
 }
 
@@ -86,9 +98,16 @@ message RecordReceipt {
     string status = 4;
 }
 
-message RecordBuilderRequest {
+message RecordBuilderFromStringRequest {
     string type = 1;
     string payload = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+}
+
+message RecordBuilderFromBytesRequest {
+    string type = 1;
+    bytes payload = 2;
     optional Signer signer = 3;
     optional Encrypter encrypter = 4;
 }
