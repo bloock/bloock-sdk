@@ -62,7 +62,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/workflows/build_js.yml
 
-  test_go:
+  validate_go:
     name: Test go ${{ matrix.go-version }} on ${{ matrix.os }}
     needs: [build_go]
     runs-on: ubuntu-latest
