@@ -10,7 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
         with:
           path: |
             ~/.cargo/registry

@@ -9,7 +9,6 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    if: ${{ !env.ACT }}
     steps:
       - uses: actions/checkout@v2
 
@@ -17,7 +16,6 @@ jobs:
       - uses: ./.github/actions/check_version
 
       - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
         with:
           path: |
             ~/.cargo/registry
@@ -48,30 +46,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features --all-targets -- -D warnings
 
-      ## Check Python
-      - name: Install Python 3.7
-        uses: actions/setup-python@v1
-        with:
-          python-version: "3.7"
-      - name: Install Python formatter
-        run: pip install black
-      - name: Check Python formatting
-        run: black --check languages/python
-
-      ## Check Ruby
-      # - name: Install Ruby + gems
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     bundler-cache: true
-      #     ruby-version: 2.4
-      #     working-directory: "languages/ruby"
-      # - name: Lint Ruby code
-      #   working-directory: "languages/ruby"
-      #   run: make lint
-      # - name: Check Ruby types
-      #   working-directory: "languages/ruby"
-      #   run: make typecheck | grep '0 problems found in 0 of'
-
       ## Check Node.js
       - name: Use Node.js 12
         uses: actions/setup-node@v1
@@ -88,18 +62,6 @@ jobs:
         working-directory: "languages/js"
         run: make lint
 
-      ## Check Java
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: "11"
-      - name: Check formatting of Java library
-        uses: axel-op/googlejavaformat-action@v3
-        with:
-          skipCommit: true
-          args: "--dry-run --set-exit-if-changed"
-          files: languages/java/**/*.java
-
       ## Check Go
       - name: Check formatting of Go library
         working-directory: "languages/go"
@@ -110,7 +72,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
         with:
           path: |
             ~/.cargo/registry
@@ -140,7 +101,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
         with:
           path: |
             ~/.cargo/registry
@@ -177,108 +137,12 @@ jobs:
         working-directory: "bloock-libs"
         run: make wasm-test
 
-  python_test:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-            ${{ runner.os }}-cargo-test-
-      - name: Install Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - name: Install Python 3.7
-        uses: actions/setup-python@v1
-        with:
-          python-version: "3.7"
-      - name: Test python
-        run: make python-test
-      - name: Lint Python code
-        run: make -C languages/python lint
-
-  # ruby_test:
-  #   runs-on: ubuntu-latest
-  #   needs: [build]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           ~/.cargo/registry
-  #           ~/.cargo/git
-  #           target
-  #         key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-  #           ${{ runner.os }}-cargo-test-
-  #     - name: Install Rust stable toolchain
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         profile: minimal
-  #         toolchain: stable
-  #         override: true
-  #         components: rustfmt, clippy
-  #     - name: Install Ruby + gems
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         bundler-cache: true
-  #         ruby-version: 2.4
-  #         working-directory: "languages/ruby"
-  #     - name: Test ruby
-  #       run: make ruby-test
-
-  java_test:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-            ${{ runner.os }}-cargo-test-
-      - name: Install Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: "10"
-      - name: Test java
-        run: make java-test
-        env:
-          MVN_FLAGS: "-q"
-
   js_test:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
         with:
           path: |
             ~/.cargo/registry
@@ -314,7 +178,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
         with:
           path: |
             ~/.cargo/registry
@@ -337,65 +200,3 @@ jobs:
           go-version: "1.14"
       - name: Test go
         run: make go-test
-
-  # docs_test:
-  #   runs-on: ubuntu-latest
-  #   needs: [build]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           ~/.cargo/registry
-  #           ~/.cargo/git
-  #           target
-  #         key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-  #           ${{ runner.os }}-cargo-test-
-
-  #     - name: Install Python 3.7
-  #       uses: actions/setup-python@v1
-  #       with:
-  #         python-version: "3.7"
-
-  #     - name: install aspell
-  #       run: sudo apt-get install aspell
-  #     - name: Check spelling
-  #       run: make -C docs spelling
-
-  #     - name: Install Rust stable toolchain
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         profile: minimal
-  #         toolchain: stable
-  #         override: true
-  #         components: rustfmt, clippy
-  #     - name: Install Ruby + gems
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: 2.4
-  #         bundler-cache: true
-  #     - name: Use Node.js 12
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: "12"
-  #     - name: Install Java
-  #       uses: actions/setup-java@v1
-  #       with:
-  #         java-version: "10"
-  #     - name: Build python lib
-  #       run: make python-build
-  #     - name: Python test deps
-  #       run: make -C languages/python/oso test-requirements
-  #     - name: Build js lib
-  #       run: |
-  #         rustup target add wasm32-unknown-unknown
-  #         curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-  #         make -C languages/js build
-  #     - name: Install yard (for doc build)
-  #       run: gem install yard
-  #     - name: Doc test
-  #       env:
-  #         MVN_FLAGS: "-q"
-  #       run: make -C docs test
