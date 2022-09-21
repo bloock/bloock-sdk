@@ -2,8 +2,6 @@ package bloock
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/json"
 	"errors"
 
 	"github.com/bloock/go-bridge/client/entity"
@@ -12,7 +10,7 @@ import (
 )
 
 type RecordBuilder struct {
-	payload     string
+	payload     interface{}
 	payloadType proto.RecordTypes
 	signer      *proto.Signer
 	encrypter   *proto.Encrypter
@@ -36,17 +34,42 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 
 	switch b.payloadType {
 	case proto.RecordTypes_STRING:
-	case proto.RecordTypes_BYTES:
-	case proto.RecordTypes_FILE:
-	case proto.RecordTypes_JSON:
-	case proto.RecordTypes_HEX:
-		// TODO BuildRecordFrom... All types
-		res, err = bridgeClient.Record().BuildRecord(context.Background(), &proto.RecordBuilderRequest{
-			Payload:   b.payload,
-			Type:      "",
-			Signer:    &proto.Signer{},
-			Encrypter: &proto.Encrypter{},
+		res, err = bridgeClient.Record().BuildRecordFromString(context.Background(), &proto.RecordBuilderFromStringRequest{
+			Payload:   b.payload.(string),
+			Signer:    b.signer,
+			Encrypter: b.encrypter,
 		})
+	case proto.RecordTypes_BYTES:
+		res, err = bridgeClient.Record().BuildRecordFromBytes(context.Background(), &proto.RecordBuilderFromBytesRequest{
+			Payload:   b.payload.([]byte),
+			Signer:    b.signer,
+			Encrypter: b.encrypter,
+		})
+	case proto.RecordTypes_FILE:
+		res, err = bridgeClient.Record().BuildRecordFromFile(context.Background(), &proto.RecordBuilderFromBytesRequest{
+			Payload:   b.payload.([]byte),
+			Signer:    b.signer,
+			Encrypter: b.encrypter,
+		})
+	case proto.RecordTypes_JSON:
+		res, err = bridgeClient.Record().BuildRecordFromJSON(context.Background(), &proto.RecordBuilderFromStringRequest{
+			Payload:   b.payload.(string),
+			Signer:    b.signer,
+			Encrypter: b.encrypter,
+		})
+	case proto.RecordTypes_HEX:
+		res, err = bridgeClient.Record().BuildRecordFromHex(context.Background(), &proto.RecordBuilderFromStringRequest{
+			Payload:   b.payload.(string),
+			Signer:    b.signer,
+			Encrypter: b.encrypter,
+		})
+	case proto.RecordTypes_RECORD:
+		// TODO
+		// res, err = bridgeClient.Record().BuildRecordFromRecord(context.Background(), &proto.RecordBuilderFromRecordRequest{
+		// 	Payload:   b.payload.(*proto.Record),
+		// 	Signer:    b.signer,
+		// 	Encrypter: b.encrypter,
+		// })
 	}
 
 	if err != nil {
@@ -61,13 +84,8 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 }
 
 func NewRecordBuilderFromRecord(record entity.Record) (RecordBuilder, error) {
-	payload, err := json.Marshal(record)
-	if err != nil {
-		return RecordBuilder{}, err
-	}
-
 	return RecordBuilder{
-		payload:     string(payload),
+		payload:     record.ToProto(),
 		payloadType: proto.RecordTypes_BYTES,
 	}, nil
 }
@@ -95,14 +113,14 @@ func NewRecordBuilderFromJSON(json string) RecordBuilder {
 
 func NewRecordBuilderFromFile(file_bytes []byte) RecordBuilder {
 	return RecordBuilder{
-		payload:     base64.RawStdEncoding.EncodeToString(file_bytes),
+		payload:     file_bytes,
 		payloadType: proto.RecordTypes_RECORD,
 	}
 }
 
 func NewRecordBuilderFromBytes(bytes []byte) RecordBuilder {
 	return RecordBuilder{
-		payload:     base64.RawStdEncoding.EncodeToString(bytes),
+		payload:     bytes,
 		payloadType: proto.RecordTypes_BYTES,
 	}
 }
