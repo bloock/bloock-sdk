@@ -1,0 +1,34 @@
+name: Build Go
+
+on:
+  workflow_call:
+
+jobs:
+  build_go:
+    name: Build go.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download static libs
+        uses: actions/download-artifact@v1
+        with:
+          name: bloock_static_library
+      - name: Copy libraries into go package.
+        run: |
+          mkdir -p languages/go/internal/ffi/native
+          cp -r bloock_static_library/bloock_bridge.h languages/go/internal/ffi/native/bloock_bridge.h
+          mkdir -p languages/go/native/linux
+          cp -r bloock_static_library/libpolar-musl.a languages/go/internal/ffi/native/linux/libpolar.a
+          mkdir -p languages/go/native/macos/amd64
+          cp -r bloock_static_library/libpolar-macOS.a languages/go/internal/ffi/native/macos/amd64/libpolar.a
+          mkdir -p languages/go/native/macos/arm64
+          cp -r bloock_static_library/libpolar-macOS-arm.a languages/go/internal/ffi/native/macos/arm64/libpolar.a
+          mkdir -p languages/go/native/windows
+          cp -r bloock_static_library/libpolar-Windows.a languages/go/internal/ffi/native/windows/libpolar.a
+          rm languages/go/Makefile
+      - name: Copy license.
+        run: cp LICENSE languages/go/LICENSE
+      - uses: actions/upload-artifact@v2
+        with:
+          name: go
+          path: languages/go
