@@ -84,11 +84,11 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 	return entity.NewRecordFromProto(res.Record), nil
 }
 
-func NewRecordBuilderFromRecord(record entity.Record) (RecordBuilder, error) {
+func NewRecordBuilderFromRecord(record entity.Record) RecordBuilder {
 	return RecordBuilder{
 		payload:     record.ToProto(),
 		payloadType: proto.RecordTypes_BYTES,
-	}, nil
+	}
 }
 
 func NewRecordBuilderFromString(str string) RecordBuilder {

@@ -202,15 +202,3 @@ func TestAcceptance(t *testing.T) {
 		assert.Equal(t, bloock.RecordNotFoundError, err.Error())
 	})
 }
-
-func randHex(length int) string {
-	maxlength := 8
-	min := math.Pow(16, math.Min(float64(length), float64(maxlength))-1)
-	max := math.Pow(16, math.Min(float64(length), float64(maxlength))) - 1
-	n := int((rand.Float64() * (max - min + 1)) + min)
-	r := strconv.Itoa(n)
-	for len(r) < length {
-		r += randHex(length - maxlength)
-	}
-	return r
-}
