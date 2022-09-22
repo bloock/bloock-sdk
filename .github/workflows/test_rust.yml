@@ -2,13 +2,6 @@ name: Test Rust
 
 on:
   workflow_call:
-    inputs:
-      os:
-        required: true
-        type: string
-      go-version:
-        required: true
-        type: string
 
 jobs:
   test_go:
@@ -16,22 +9,26 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Set up go
-        uses: actions/setup-go@v2
+      - uses: actions/cache@v2
         with:
-          go-version: ${{ inputs.go-version }}
-      - name: Download go package from package run
-        uses: actions/download-artifact@v1
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          name: go
-      - name: Test
-        run: go test -v ./...
-        working-directory: go
-      - name: Test musl
-        if: runner.os == 'Linux'
-        run: docker run --rm -v `pwd`:/bloock tetafro/golang-gcc:${{ inputs.go-version }}-alpine /bin/sh -c 'cd /bloock && go test -v ./...'
-        working-directory: go
-      - name: Test buster
-        if: runner.os == 'Linux'
-        run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-buster /bin/sh -c 'cd /bloock && go test -v ./...'
-        working-directory: go
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: arduino/setup-protoc@v1
+        with:
+          version: "3.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test Libs
+        run: make libs-test
+      - name: Test Core
+        run: make core-test
+      - name: Test Bridge
+        run: make bridge-test

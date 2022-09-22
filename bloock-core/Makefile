@@ -1,7 +1,7 @@
 test:
-	cargo test
+	cargo test --release
 
 wasm-test:
-	wasm-pack test --firefox --headless 
-	wasm-pack test --chrome --headless 
-	wasm-pack test --node
+	wasm-pack test --firefox --headless --release
+	wasm-pack test --chrome --headless --release
+	wasm-pack test --node --release

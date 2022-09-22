@@ -7,7 +7,7 @@
 bridge-build:
 	$(MAKE) -C bloock-bridge build
 
-rust-test: core-test libs-test c-test wasm-test go-test js-test 
+rust-test: libs-test core-test bridge-test 
 
 bridge-test:
 	$(MAKE) -C bloock-bridge test
