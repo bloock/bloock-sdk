@@ -7,9 +7,6 @@ jobs:
   build_linux:
     name: Build lib Linux
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target: [x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
@@ -29,10 +26,12 @@ jobs:
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install rustup target
-        run: rustup target add ${{ matrix.target }}
       - name: Build release libraries
-        run: make -C bloock-bridge ${{ matrix.target }}
+        run: make -C bloock-bridge x86_64-unknown-linux-gnu
+      - name: Install rustup target
+        run: rustup target add x86_64-unknown-linux-musl
+      - name: Build release musl libraries
+        run: RUSTFLAGS="-C target-feature=-crt-static" make -C bloock-bridge x86_64-unknown-linux-musl
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_library
@@ -44,10 +43,12 @@ jobs:
           name: bloock_library
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.so
+            bloock-bridge/build/native/x86_64-unknown-linux-gnu/libbloock_bridge.so
+            bloock-bridge/build/native/x86_64-unknown-linux-musl/libbloock_bridge.so
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_static_library
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.a
+            bloock-bridge/build/native/x86_64-unknown-linux-gnu/libbloock_bridge.so
+            bloock-bridge/build/native/x86_64-unknown-linux-musl/libbloock_bridge.a
