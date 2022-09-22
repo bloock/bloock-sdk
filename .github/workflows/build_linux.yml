@@ -28,7 +28,9 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build release libraries
         run: make -C bloock-bridge x86_64-unknown-linux-gnu
-      - name: Install rustup target
+      - name: Install musl tools
+        run: apt-get install musl-tools
+      - name: Install rustup musl target
         run: rustup target add x86_64-unknown-linux-musl
       - name: Build release musl libraries
         run: RUSTFLAGS="-C target-feature=-crt-static" make -C bloock-bridge x86_64-unknown-linux-musl
