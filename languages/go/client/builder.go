@@ -3,7 +3,6 @@ package bloock
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/bloock/go-bridge/client/entity"
 	"github.com/bloock/go-bridge/internal/bridge"
@@ -35,7 +34,6 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 
 	switch b.payloadType {
 	case proto.RecordTypes_STRING:
-        fmt.Println("==> ", b.payload.(string))
 		res, err = bridgeClient.Record().BuildRecordFromString(context.Background(), &proto.RecordBuilderFromStringRequest{
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
