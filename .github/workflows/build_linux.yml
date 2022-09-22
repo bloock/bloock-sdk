@@ -52,4 +52,4 @@ jobs:
           if-no-files-found: error
           path: |
             bloock-bridge/build/native/bloock_bridge.h
-            bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.so
+            bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.a

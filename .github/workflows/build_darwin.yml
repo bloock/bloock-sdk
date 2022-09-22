@@ -41,7 +41,7 @@ jobs:
             bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.a
             bloock-bridge/build/native/bloock_bridge.h
   merge_fat:
-    name: Build lib Darwin
+    name: Merge fat libs
     needs: [build_darwin]
     runs-on: macos-11
     steps:
