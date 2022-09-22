@@ -1,6 +1,7 @@
 use crate::items::GetAnchorResponse;
 use crate::items::GetProofResponse;
 use crate::items::Record;
+use crate::items::RecordBuilderResponse;
 use crate::items::SendRecordsResponse;
 use crate::items::ValidateRootResponse;
 use crate::items::VerifyProofResponse;
@@ -20,6 +21,7 @@ pub enum ResponseType {
     ValidateRoot(ValidateRootResponse),
     VerifyProof(VerifyProofResponse),
     VerifyRecords(VerifyRecordsResponse),
+    BuildRecord(RecordBuilderResponse),
 }
 
 impl ResponseType {
@@ -37,6 +39,7 @@ impl ResponseType {
             ResponseType::VerifyProof(r) => r.encode(&mut result_vec),
             ResponseType::VerifyRecords(r) => r.encode(&mut result_vec),
             ResponseType::Record(r) => r.encode(&mut result_vec),
+            ResponseType::BuildRecord(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -54,6 +57,7 @@ impl ResponseType {
             ResponseType::VerifyProof(r) => r.encoded_len(),
             ResponseType::VerifyRecords(r) => r.encoded_len(),
             ResponseType::Record(r) => r.encoded_len(),
+            ResponseType::BuildRecord(r) => r.encoded_len(),
         }
     }
 }
