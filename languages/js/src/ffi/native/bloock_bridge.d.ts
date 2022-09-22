@@ -12,12 +12,16 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly request: (a: number, b: number, c: number, d: number) => number;
+  readonly rustsecp256k1_v0_5_0_context_create: (a: number) => number;
+  readonly rustsecp256k1_v0_5_0_context_destroy: (a: number) => void;
+  readonly rustsecp256k1_v0_5_0_default_illegal_callback_fn: (a: number, b: number) => void;
+  readonly rustsecp256k1_v0_5_0_default_error_callback_fn: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_export_2: WebAssembly.Table;
-  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hfda02fad6b509ccb: (a: number, b: number, c: number) => void;
+  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__he198c3b73f8043c1: (a: number, b: number, c: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
-  readonly wasm_bindgen__convert__closures__invoke2_mut__h0a9609553c454b20: (a: number, b: number, c: number, d: number) => void;
+  readonly wasm_bindgen__convert__closures__invoke2_mut__h86d90b4ab5ca7f0f: (a: number, b: number, c: number, d: number) => void;
 }
 
 /**

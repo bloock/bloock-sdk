@@ -54,7 +54,7 @@ export class ProofAnchor {
     toProto(): ProofAnchorProto {
         return ProofAnchorProto.fromPartial({
             anchorId: this.anchorID,
-            networks: this.networks,
+            networks: this.networks.map((n) => n.toProto()),
             root: this.root,
             status: this.status
         });

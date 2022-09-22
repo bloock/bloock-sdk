@@ -7,6 +7,7 @@ import {
     Encryption as EncryptionProto,
     EncryptionHeader as EncryptionHeaderProto,
 } from "../bridge/proto/record";
+import { Proof } from "./proof";
 
 export class Record {
     headers?: RecordHeader;
@@ -32,7 +33,7 @@ export class Record {
             r.payload,
             r.signatures.map((x) => Signature.fromProto(x)), 
             Encryption.fromProto(r.encryption!), 
-            r.proof
+            Proof.fromProto(r.proof!),
         );
     }
 

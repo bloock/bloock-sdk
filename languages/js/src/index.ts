@@ -1,11 +1,10 @@
 import { BloockClient } from "./client";
-import { Record } from "./record";
 import { Anchor } from "./bridge/proto/anchor";
 import { Network } from "./bridge/proto/config";
 import { RecordReceipt } from "./bridge/proto/record";
 import './fetch-polyfill';
 
-export { BloockClient, Anchor, Network, RecordReceipt, Record }
+export { BloockClient, Anchor, Network, RecordReceipt }
 
 // async function main() {
 //   let bridge = new BloockBridge();
