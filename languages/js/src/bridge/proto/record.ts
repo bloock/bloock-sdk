@@ -151,7 +151,7 @@ export interface Signer {
 }
 
 export interface SignerArgs {
-  privateKey: string;
+  privateKey?: string | undefined;
 }
 
 export interface Encrypter {
@@ -160,7 +160,7 @@ export interface Encrypter {
 }
 
 export interface EncrypterArgs {
-  secret: string;
+  secret?: string | undefined;
 }
 
 export interface Signature {
@@ -556,7 +556,7 @@ export const Signer = {
 };
 
 function createBaseSignerArgs(): SignerArgs {
-  return { privateKey: "" };
+  return { privateKey: undefined };
 }
 
 export const SignerArgs = {
@@ -564,7 +564,7 @@ export const SignerArgs = {
     message: SignerArgs,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.privateKey !== "") {
+    if (message.privateKey !== undefined) {
       writer.uint32(10).string(message.privateKey);
     }
     return writer;
@@ -590,7 +590,9 @@ export const SignerArgs = {
 
   fromJSON(object: any): SignerArgs {
     return {
-      privateKey: isSet(object.privateKey) ? String(object.privateKey) : "",
+      privateKey: isSet(object.privateKey)
+        ? String(object.privateKey)
+        : undefined,
     };
   },
 
@@ -604,7 +606,7 @@ export const SignerArgs = {
     object: I
   ): SignerArgs {
     const message = createBaseSignerArgs();
-    message.privateKey = object.privateKey ?? "";
+    message.privateKey = object.privateKey ?? undefined;
     return message;
   },
 };
@@ -681,7 +683,7 @@ export const Encrypter = {
 };
 
 function createBaseEncrypterArgs(): EncrypterArgs {
-  return { secret: "" };
+  return { secret: undefined };
 }
 
 export const EncrypterArgs = {
@@ -689,7 +691,7 @@ export const EncrypterArgs = {
     message: EncrypterArgs,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.secret !== "") {
+    if (message.secret !== undefined) {
       writer.uint32(10).string(message.secret);
     }
     return writer;
@@ -715,7 +717,7 @@ export const EncrypterArgs = {
 
   fromJSON(object: any): EncrypterArgs {
     return {
-      secret: isSet(object.secret) ? String(object.secret) : "",
+      secret: isSet(object.secret) ? String(object.secret) : undefined,
     };
   },
 
@@ -729,7 +731,7 @@ export const EncrypterArgs = {
     object: I
   ): EncrypterArgs {
     const message = createBaseEncrypterArgs();
-    message.secret = object.secret ?? "";
+    message.secret = object.secret ?? undefined;
     return message;
   },
 };
