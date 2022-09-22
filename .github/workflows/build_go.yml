@@ -19,8 +19,6 @@ jobs:
           cp -r bloock_static_library/bloock_bridge.h languages/go/internal/ffi/native/bloock_bridge.h
           mkdir -p languages/go/internal/ffi/native/x86_64-unknown-linux-musl
           cp -r bloock_static_library/x86_64-unknown-linux-musl/libbloock_bridge.a languages/go/internal/ffi/native/x86_64-unknown-linux-musl/libbloock_bridge.a
-          mkdir -p languages/go/internal/ffi/native/aarch64-unknown-linux-musl
-          cp -r bloock_static_library/aarch64-unknown-linux-musl/libbloock_bridge.a languages/go/internal/ffi/native/aarch64-unknown-linux-musl/libbloock_bridge.a
           mkdir -p languages/go/internal/ffi/native/x86_64-apple-darwin
           cp -r bloock_static_library/x86_64-apple-darwin/libbloock_bridge.a languages/go/internal/ffi/native/x86_64-apple-darwin/libbloock_bridge.a
           mkdir -p languages/go/internal/ffi/native/aarch64-apple-darwin
