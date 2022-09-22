@@ -16,7 +16,7 @@ export const makeRequest = <RequestType, ResponseType>(
   const requestType = method;
   let payload = serialize(argument);
 
-  console.log(requestType, payload)
+  console.log(requestType, payload);
   ffiClient
     .request(requestType, payload.toString())
     .then((responsePayload) => {

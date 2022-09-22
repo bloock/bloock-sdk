@@ -96,7 +96,7 @@ interface ServiceClient {
 }
 
 interface ServiceClientConstructor {
-  new(): ServiceClient;
+  new (): ServiceClient;
   service: ServiceDefinition;
   serviceName: string;
 }

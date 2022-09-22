@@ -11,32 +11,46 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/check_version
 
-  build:
+  check_rust:
     needs: [version]
+    uses: ./.github/workflows/check_rust.yml
+
+  build_rust:
+    needs: [check_rust]
     uses: ./.github/workflows/build_linux.yml
     with:
       target: x86_64-unknown-linux-gnu
 
-  check_rust:
-    needs: [build]
-    uses: ./.github/workflows/check_rust.yml
-
   test_rust:
-    needs: [check_rust]
+    needs: [build_rust]
     uses: ./.github/workflows/test_rust.yml
 
   check_js:
-    needs: [build]
+    needs: [build_rust]
     uses: ./.github/workflows/check_js.yml
 
-  test_js:
+  build_js:
     needs: [check_js]
-    uses: ./.github/workflows/test_rust.yml
+    uses: ./.github/workflows/build_js.yml
+
+  test_js:
+    needs: [build_js]
+    uses: ./.github/workflows/test_js.yml
+    with:
+      os: ubuntu-latest
+      node-version: 16
 
   check_go:
-    needs: [build]
+    needs: [build_rust]
     uses: ./.github/workflows/check_go.yml
 
-  test_go:
+  build_go:
     needs: [check_go]
-    uses: ./.github/workflows/test_rust.yml
+    uses: ./.github/workflows/build_go.yml
+
+  test_go:
+    needs: [build_go]
+    uses: ./.github/workflows/test_go.yml
+    with:
+      os: ubuntu-latest
+      go-version: 18

@@ -13,7 +13,9 @@
     "lint": "eslint \"**/*.ts\"",
     "clean": "rimraf dist/*",
     "build:bundle": "rollup --config",
-    "build": "run-s clean build:bundle"
+    "build": "run-s clean build:bundle",
+    "fmt": "prettier --write 'src/**/*.[jt]s' 'test/**/*.[jt]s'",
+    "fmtcheck": "prettier --check 'src/**/*.[jt]s' 'test/**/*.[jt]s'"
   },
   "keywords": [],
   "author": "Marc Baqué",
