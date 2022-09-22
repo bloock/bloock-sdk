@@ -1,0 +1,47 @@
+name: Build Darwin
+
+on:
+  workflow_call:
+
+jobs:
+  build_darwin:
+    name: Build release libraries on Darwin
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: arduino/setup-protoc@v1
+        with:
+          version: "3.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build release libraries
+        run: make -C bloock-bridge x86_64-apple-darwin
+      - name: Build release arm libraries
+        run: make -C bloock-bridge aarch64-apple-darwin
+      - name: Merge dynamic libs into fat dynamic lib
+        run: lipo -create bloock-bridge/build/native/aarch64-apple-darwin/libbloock_bridge.dylib bloock-bridge/build/native/x86_64-apple-darwin/libbloock_bridge.dylib -output bloock-bridge/build/native/libbloock_bridge-fat.dylib
+      - name: Merge static libs into fat static lib
+        run: lipo -create bloock-bridge/build/native/aarch64-apple-darwin/libbloock_bridge.a bloock-bridge/build/native/x86_64-apple-darwin/libbloock_bridge.a -output bloock-bridge/build/native/libbloock_bridge-fat.a
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bloock_library
+          if-no-files-found: error
+          path: |
+            bloock-bridge/build/native/libbloock_bridge-fat.dylib
+            bloock-bridge/build/native/x86_64-apple-darwin/libbloock_bridge.dylib
+            bloock-bridge/build/native/aarch64-apple-darwin/libbloock_bridge.dylib
+            bloock-bridge/build/native/bloock_bridge.h
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bloock_static_library
+          if-no-files-found: error
+          path: |
+            bloock-bridge/build/native/libbloock_bridge-fat.a
+            bloock-bridge/build/native/x86_64-apple-darwin/libbloock_bridge.a
+            bloock-bridge/build/native/aarch64-apple-darwin/libbloock_bridge.a
+            bloock-bridge/build/native/bloock_bridge.h

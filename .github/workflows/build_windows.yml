@@ -1,0 +1,54 @@
+name: Build Windows
+
+on:
+  workflow_call:
+
+jobs:
+  build_windows:
+    name: Build release libraries on Windows
+    runs-on: windows-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        target: [x86_64-pc-windows-msvc, x86_64-pc-windows-gnu]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        if: ${{ !env.ACT }}
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: arduino/setup-protoc@v1
+        with:
+          version: "3.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build release library
+        working-directory: bloock-bridge
+        run: make build-windows
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bloock_library
+          if-no-files-found: error
+          path: |
+            bloock-bridge/build/native/x86_64-pc-windows-gnu/libbloock_bridge.dll
+            bloock-bridge/build/native/i686-pc-windows-gnu/libbloock_bridge.dll
+            bloock-bridge/build/native/bloock_bridge.h
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bloock_static_library
+          if-no-files-found: error
+          path: |
+            bloock-bridge/build/native/x86_64-pc-windows-gnu/libbloock_bridge.lib
+            bloock-bridge/build/native/x86_64-pc-windows-gnu/libbloock_bridge.a
+            bloock-bridge/build/native/i686-pc-windows-gnu/libbloock_bridge.lib
+            bloock-bridge/build/native/i686-pc-windows-gnu/libbloock_bridge.a
+            bloock-bridge/build/native/bloock_bridge.h

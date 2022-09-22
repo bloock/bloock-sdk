@@ -11,9 +11,7 @@ mod server;
 #[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
 pub mod wasm {
     use crate::server::Server;
-    use js_sys::Promise;
     use wasm_bindgen::prelude::*;
-    use web_sys::console;
 
     #[wasm_bindgen]
     pub async fn request(request_type: String, payload: String) -> Result<JsValue, JsValue> {
