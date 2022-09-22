@@ -13,13 +13,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "12"
+      - name: Install dependencies
+        working-directory: "languages/js"
+        run: yarn install
       - name: Check formatting of JS library
         working-directory: "languages/js"
-        run: make fmtcheck
-      - name: Add WebAssembly target
-        run: rustup target add wasm32-unknown-unknown
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        run: yarn run fmtcheck
       - name: Lint JS library
         working-directory: "languages/js"
-        run: make lint
+        run: yarn run lint

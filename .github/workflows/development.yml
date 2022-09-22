@@ -19,7 +19,7 @@ jobs:
     needs: [check_rust]
     uses: ./.github/workflows/build_linux.yml
     with:
-      target: x86_64-unknown-linux-gnu
+      target: x86_64-unknown-linux-musl
 
   test_rust:
     needs: [build_rust]
@@ -53,4 +53,4 @@ jobs:
     uses: ./.github/workflows/test_go.yml
     with:
       os: ubuntu-latest
-      go-version: 18
+      go-version: "1.18"
