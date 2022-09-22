@@ -23,68 +23,36 @@ jobs:
         run: grep "${github_ref/refs\/tags\/v/}" VERSION
 
   build_wasm:
-    name: Build release libraries on WASM
-    runs-on: ubuntu-latest
     needs: [version]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/build_wasm.yml
+    uses: ./.github/workflows/build_wasm.yml
 
   build_linux:
-    name: Build release libraries on Linux
-    runs-on: ubuntu-latest
     needs: [version]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/build_linux.yml
+    uses: ./.github/workflows/build_linux.yml
 
   build_darwin:
-    name: Build release libraries on Darwin
-    runs-on: macos-11
     needs: [version]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/build_darwin.yml
+    uses: ./.github/workflows/build_darwin.yml
 
   build_windows:
-    name: Build release libraries on Windows
-    runs-on: windows-latest
     needs: [version]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/build_windows.yml
+    uses: ./.github/workflows/build_windows.yml
 
   build_go:
-    name: Build go.
-    runs-on: ubuntu-latest
     needs: [build_linux, build_darwin, build_windows]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/build_go.yml
+    uses: ./.github/workflows/build_go.yml
 
   build_js:
-    name: Build js.
-    runs-on: ubuntu-latest
     needs: [build_wasm]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/build_js.yml
+    uses: ./.github/workflows/build_js.yml
 
   validate_go:
-    name: Test go ${{ matrix.go-version }} on ${{ matrix.os }}
     needs: [build_go]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/test_go.yml
+    uses: ./.github/workflows/test_go.yml
 
   validate_js:
-    name: Test node ${{ matrix.node-version }} on ${{ matrix.os }}
     needs: [build_js]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/test_js.yml
+    uses: ./.github/workflows/test_js.yml
 
   release:
     name: Create release
