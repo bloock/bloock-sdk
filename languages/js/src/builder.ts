@@ -1,4 +1,4 @@
-import { BloockBridge } from "./bridge/bridge";
+import {BloockBridge} from './bridge/bridge';
 import {
   Encrypter,
   RecordTypes,
@@ -10,9 +10,10 @@ import {
   RecordBuilderFromBytesRequest,
   RecordBuilderFromFileRequest,
   RecordBuilderFromRecordRequest,
-} from "./bridge/proto/record";
+} from './bridge/proto/record';
 
 export class RecordBuilder {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   payload: any;
   payloadType!: RecordTypes;
   signer: Signer | undefined;
@@ -58,10 +59,10 @@ export class RecordBuilder {
   }
 
   build(): Promise<Record> {
-    let bridge = new BloockBridge();
+    const bridge = new BloockBridge();
     switch (this.payloadType) {
       case RecordTypes.STRING: {
-        let req = RecordBuilderFromStringRequest.fromPartial({
+        const req = RecordBuilderFromStringRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -82,7 +83,7 @@ export class RecordBuilder {
         });
       }
       case RecordTypes.JSON: {
-        let req = RecordBuilderFromJSONRequest.fromPartial({
+        const req = RecordBuilderFromJSONRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -103,7 +104,7 @@ export class RecordBuilder {
         });
       }
       case RecordTypes.HEX: {
-        let req = RecordBuilderFromHexRequest.fromPartial({
+        const req = RecordBuilderFromHexRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -124,7 +125,7 @@ export class RecordBuilder {
         });
       }
       case RecordTypes.BYTES: {
-        let req = RecordBuilderFromBytesRequest.fromPartial({
+        const req = RecordBuilderFromBytesRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -145,7 +146,7 @@ export class RecordBuilder {
         });
       }
       case RecordTypes.FILE: {
-        let req = RecordBuilderFromFileRequest.fromPartial({
+        const req = RecordBuilderFromFileRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -166,7 +167,7 @@ export class RecordBuilder {
         });
       }
       case RecordTypes.RECORD: {
-        let req = RecordBuilderFromRecordRequest.fromPartial({
+        const req = RecordBuilderFromRecordRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -187,6 +188,6 @@ export class RecordBuilder {
         });
       }
     }
-    return Promise.reject(new Error("Unexpected record type"));
+    return Promise.reject(new Error('Unexpected record type'));
   }
 }

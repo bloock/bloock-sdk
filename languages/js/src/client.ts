@@ -1,23 +1,22 @@
-import { BloockBridge } from "./bridge/bridge";
-
+import {BloockBridge} from './bridge/bridge';
 import {
   Anchor,
   GetAnchorRequest,
   WaitAnchorRequest,
-} from "./bridge/proto/anchor";
-import { ConfigData, Network, NetworkConfig } from "./bridge/proto/config";
+} from './bridge/proto/anchor';
+import {ConfigData, Network, NetworkConfig} from './bridge/proto/config';
 import {
   GetProofRequest,
   ValidateRootRequest,
   VerifyProofRequest,
   VerifyRecordsRequest,
-} from "./bridge/proto/proof";
-import { SendRecordsRequest } from "./bridge/proto/record";
+} from './bridge/proto/proof';
+import {SendRecordsRequest} from './bridge/proto/record';
 
-import { Proof } from "./entity/proof";
-import { RecordReceipt } from "./entity/record";
+import {Proof} from './entity/proof';
+import {RecordReceipt} from './entity/record';
 
-import { NewConfigData } from "./config/config";
+import {NewConfigData} from './config/config';
 
 export class BloockClient {
   private bridge: BloockBridge;
@@ -51,7 +50,7 @@ export class BloockClient {
    * @returns {Promise<RecordReceipt[]>} List of RecordReceipt of each Record sent or error.
    */
   public async sendRecords(records: string[]): Promise<RecordReceipt[]> {
-    let request = SendRecordsRequest.fromPartial({
+    const request = SendRecordsRequest.fromPartial({
       configData: this.configData,
       records: records,
     });
@@ -62,11 +61,11 @@ export class BloockClient {
           reject(err);
         }
 
-        if (res.error != null) {
+        if (res.error !== undefined) {
           reject(res.error.message);
         }
 
-        resolve(res.records.map((r) => RecordReceipt.fromProto(r)));
+        resolve(res.records.map(r => RecordReceipt.fromProto(r)));
       });
     });
   }
@@ -77,7 +76,7 @@ export class BloockClient {
    * @returns {Promise<Anchor>} Anchor object matching the id or error
    */
   public async getAnchor(anchorId: number): Promise<Anchor> {
-    let request = GetAnchorRequest.fromPartial({
+    const request = GetAnchorRequest.fromPartial({
       configData: this.configData,
       anchorId: anchorId,
     });
@@ -104,10 +103,10 @@ export class BloockClient {
    * @returns {Promise<Anchor>} Anchor object matching the id.
    */
   public async waitAnchor(anchorId: number, timeout?: number): Promise<Anchor> {
-    let request = WaitAnchorRequest.fromPartial({
+    const request = WaitAnchorRequest.fromPartial({
       configData: this.configData,
       anchorId: anchorId,
-      timeout: timeout != null ? timeout : 120000,
+      timeout: timeout !== null ? timeout : 120000,
     });
 
     return new Promise((resolve, reject) => {
@@ -132,7 +131,7 @@ export class BloockClient {
    * the integrity of the records in the input list. If no record was requested, then returns None.
    */
   public async getProof(records: string[]): Promise<Proof> {
-    let request = GetProofRequest.fromPartial({
+    const request = GetProofRequest.fromPartial({
       configData: this.configData,
       records: records,
     });
@@ -159,7 +158,7 @@ export class BloockClient {
    * @returns {Promise<number>} A number representing the timestamp in milliseconds when the anchor was registered in Blockchain
    */
   public async validateRoot(root: string, network: Network): Promise<number> {
-    let request = ValidateRootRequest.fromPartial({
+    const request = ValidateRootRequest.fromPartial({
       configData: this.configData,
       root: root,
       network: network,
@@ -187,7 +186,7 @@ export class BloockClient {
    * @throws {ProofException} Error when verifying the proof
    */
   public async verifyProof(proof: Proof): Promise<string> {
-    let request = VerifyProofRequest.fromPartial({
+    const request = VerifyProofRequest.fromPartial({
       configData: this.configData,
       proof: proof.toProto(),
     });
@@ -217,7 +216,7 @@ export class BloockClient {
     records: string[],
     network?: Network
   ): Promise<number> {
-    let request = VerifyRecordsRequest.fromPartial({
+    const request = VerifyRecordsRequest.fromPartial({
       configData: this.configData,
       records: records,
       network: network,

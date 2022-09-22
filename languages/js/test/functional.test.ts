@@ -1,4 +1,4 @@
-test.skip("Skip for the moment", () => {});
+test.skip('Skip for the moment', () => {});
 // import { BloockClient, Anchor, Network, RecordReceipt, Record } from "../dist/index"
 //
 // function getSdk(): BloockClient {

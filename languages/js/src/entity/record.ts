@@ -6,8 +6,8 @@ import {
   SignatureHeader as SignatureHeaderProto,
   Encryption as EncryptionProto,
   EncryptionHeader as EncryptionHeaderProto,
-} from "../bridge/proto/record";
-import { Proof } from "./proof";
+} from '../bridge/proto/record';
+import {Proof} from './proof';
 
 export class Record {
   headers?: RecordHeader;
@@ -34,7 +34,7 @@ export class Record {
     return new Record(
       RecordHeader.fromProto(r.headers!),
       r.payload,
-      r.signatures.map((x) => Signature.fromProto(x)),
+      r.signatures.map(x => Signature.fromProto(x)),
       Encryption.fromProto(r.encryption!),
       Proof.fromProto(r.proof!)
     );
@@ -56,7 +56,7 @@ export class RecordHeader {
   }
 
   toProto(): RecordHeaderProto {
-    return RecordHeaderProto.fromPartial({ ty: this.ty });
+    return RecordHeaderProto.fromPartial({ty: this.ty});
   }
 }
 
@@ -101,7 +101,7 @@ export class SignatureHeader {
   }
 
   toProto(): SignatureHeaderProto {
-    return SignatureHeaderProto.fromPartial({ alg: this.alg, kid: this.kid });
+    return SignatureHeaderProto.fromPartial({alg: this.alg, kid: this.kid});
   }
 }
 
@@ -138,7 +138,7 @@ export class EncryptionHeader {
   }
 
   toProto(): EncryptionHeaderProto {
-    return EncryptionHeaderProto.fromPartial({ alg: this.alg });
+    return EncryptionHeaderProto.fromPartial({alg: this.alg});
   }
 }
 

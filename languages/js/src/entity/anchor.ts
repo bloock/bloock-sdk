@@ -1,4 +1,4 @@
-import { AnchorNetwork as AnchorNetworkProto } from "../bridge/proto/anchor";
+import {AnchorNetwork as AnchorNetworkProto} from '../bridge/proto/anchor';
 
 export class AnchorNetwork {
   name: string;

@@ -1,4 +1,4 @@
-import init, { request } from "./native/bloock_bridge";
+import init, {request} from './native/bloock_bridge';
 
 export class FFIClient {
   private ready: Promise<void>;
@@ -10,22 +10,24 @@ export class FFIClient {
   }
   public async request(type: string, payload: string): Promise<string> {
     await this.ready;
-    let buffer = Buffer.from(payload);
-    return request(type, buffer.toString("base64"));
+    const buffer = Buffer.from(payload);
+    return request(type, buffer.toString('base64'));
   }
 
   private async init() {
-    const wasmPath = (await import("path")).resolve(
+    const wasmPath = (await import('path')).resolve(
       __dirname,
-      "./bloock_bridge_bg.wasm"
+      './bloock_bridge_bg.wasm'
     );
     let wasmFile;
 
-    if (typeof window === "undefined") {
+    // @ts-ignore
+    if (typeof window === 'undefined') {
       // Node
-      wasmFile = new Uint8Array((await import("fs")).readFileSync(wasmPath));
+      wasmFile = new Uint8Array((await import('fs')).readFileSync(wasmPath));
     } else {
       // Browser
+      // @ts-ignore
       wasmFile = await fetch(wasmPath);
     }
 

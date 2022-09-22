@@ -1,4 +1,4 @@
-test.skip("Skip for the moment", () => {});
+test.skip('Skip for the moment', () => {});
 // import { BloockClient, Network, Record } from "../dist/index"
 // import { InvalidNumberOfRecords, InvalidRecordError, RecordNotFoundError, WaitAnchorTimeoutError } from "../src/errors"
 //

@@ -10,12 +10,12 @@ import {
   Metadata,
   CallOptions,
   ServiceError,
-} from "@grpc/grpc-js";
-import { ConfigData } from "./config";
-import Long from "long";
-import { Error } from "./bloock";
-import { Proof } from "./proof";
-import _m0 from "protobufjs/minimal";
+} from '@grpc/grpc-js';
+import {ConfigData} from './config';
+import Long from 'long';
+import {Error} from './bloock';
+import {Proof} from './proof';
+import _m0 from 'protobufjs/minimal';
 
 export enum RecordTypes {
   STRING = 0,
@@ -30,25 +30,25 @@ export enum RecordTypes {
 export function recordTypesFromJSON(object: any): RecordTypes {
   switch (object) {
     case 0:
-    case "STRING":
+    case 'STRING':
       return RecordTypes.STRING;
     case 1:
-    case "HEX":
+    case 'HEX':
       return RecordTypes.HEX;
     case 2:
-    case "JSON":
+    case 'JSON':
       return RecordTypes.JSON;
     case 3:
-    case "BYTES":
+    case 'BYTES':
       return RecordTypes.BYTES;
     case 4:
-    case "FILE":
+    case 'FILE':
       return RecordTypes.FILE;
     case 5:
-    case "RECORD":
+    case 'RECORD':
       return RecordTypes.RECORD;
     case -1:
-    case "UNRECOGNIZED":
+    case 'UNRECOGNIZED':
     default:
       return RecordTypes.UNRECOGNIZED;
   }
@@ -57,20 +57,20 @@ export function recordTypesFromJSON(object: any): RecordTypes {
 export function recordTypesToJSON(object: RecordTypes): string {
   switch (object) {
     case RecordTypes.STRING:
-      return "STRING";
+      return 'STRING';
     case RecordTypes.HEX:
-      return "HEX";
+      return 'HEX';
     case RecordTypes.JSON:
-      return "JSON";
+      return 'JSON';
     case RecordTypes.BYTES:
-      return "BYTES";
+      return 'BYTES';
     case RecordTypes.FILE:
-      return "FILE";
+      return 'FILE';
     case RecordTypes.RECORD:
-      return "RECORD";
+      return 'RECORD';
     case RecordTypes.UNRECOGNIZED:
     default:
-      return "UNRECOGNIZED";
+      return 'UNRECOGNIZED';
   }
 }
 
@@ -82,10 +82,10 @@ export enum SignerAlg {
 export function signerAlgFromJSON(object: any): SignerAlg {
   switch (object) {
     case 0:
-    case "ES256K":
+    case 'ES256K':
       return SignerAlg.ES256K;
     case -1:
-    case "UNRECOGNIZED":
+    case 'UNRECOGNIZED':
     default:
       return SignerAlg.UNRECOGNIZED;
   }
@@ -94,10 +94,10 @@ export function signerAlgFromJSON(object: any): SignerAlg {
 export function signerAlgToJSON(object: SignerAlg): string {
   switch (object) {
     case SignerAlg.ES256K:
-      return "ES256K";
+      return 'ES256K';
     case SignerAlg.UNRECOGNIZED:
     default:
-      return "UNRECOGNIZED";
+      return 'UNRECOGNIZED';
   }
 }
 
@@ -109,10 +109,10 @@ export enum EncrypterAlg {
 export function encrypterAlgFromJSON(object: any): EncrypterAlg {
   switch (object) {
     case 0:
-    case "A256GCM":
+    case 'A256GCM':
       return EncrypterAlg.A256GCM;
     case -1:
-    case "UNRECOGNIZED":
+    case 'UNRECOGNIZED':
     default:
       return EncrypterAlg.UNRECOGNIZED;
   }
@@ -121,10 +121,10 @@ export function encrypterAlgFromJSON(object: any): EncrypterAlg {
 export function encrypterAlgToJSON(object: EncrypterAlg): string {
   switch (object) {
     case EncrypterAlg.A256GCM:
-      return "A256GCM";
+      return 'A256GCM';
     case EncrypterAlg.UNRECOGNIZED:
     default:
-      return "UNRECOGNIZED";
+      return 'UNRECOGNIZED';
   }
 }
 
@@ -242,7 +242,7 @@ export interface SendRecordsResponse {
 }
 
 function createBaseRecordHash(): RecordHash {
-  return { hash: "", error: undefined };
+  return {hash: '', error: undefined};
 }
 
 export const RecordHash = {
@@ -250,7 +250,7 @@ export const RecordHash = {
     message: RecordHash,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.hash !== "") {
+    if (message.hash !== '') {
       writer.uint32(10).string(message.hash);
     }
     if (message.error !== undefined) {
@@ -282,7 +282,7 @@ export const RecordHash = {
 
   fromJSON(object: any): RecordHash {
     return {
-      hash: isSet(object.hash) ? String(object.hash) : "",
+      hash: isSet(object.hash) ? String(object.hash) : '',
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
@@ -299,7 +299,7 @@ export const RecordHash = {
     object: I
   ): RecordHash {
     const message = createBaseRecordHash();
-    message.hash = object.hash ?? "";
+    message.hash = object.hash ?? '';
     message.error =
       object.error !== undefined && object.error !== null
         ? Error.fromPartial(object.error)
@@ -309,7 +309,7 @@ export const RecordHash = {
 };
 
 function createBaseRecordHeader(): RecordHeader {
-  return { ty: "" };
+  return {ty: ''};
 }
 
 export const RecordHeader = {
@@ -317,7 +317,7 @@ export const RecordHeader = {
     message: RecordHeader,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.ty !== "") {
+    if (message.ty !== '') {
       writer.uint32(10).string(message.ty);
     }
     return writer;
@@ -343,7 +343,7 @@ export const RecordHeader = {
 
   fromJSON(object: any): RecordHeader {
     return {
-      ty: isSet(object.ty) ? String(object.ty) : "",
+      ty: isSet(object.ty) ? String(object.ty) : '',
     };
   },
 
@@ -357,7 +357,7 @@ export const RecordHeader = {
     object: I
   ): RecordHeader {
     const message = createBaseRecordHeader();
-    message.ty = object.ty ?? "";
+    message.ty = object.ty ?? '';
     return message;
   },
 };
@@ -454,7 +454,7 @@ export const Record = {
         message.payload !== undefined ? message.payload : Buffer.alloc(0)
       ));
     if (message.signatures) {
-      obj.signatures = message.signatures.map((e) =>
+      obj.signatures = message.signatures.map(e =>
         e ? Signature.toJSON(e) : undefined
       );
     } else {
@@ -477,7 +477,7 @@ export const Record = {
         : undefined;
     message.payload = object.payload ?? Buffer.alloc(0);
     message.signatures =
-      object.signatures?.map((e) => Signature.fromPartial(e)) || [];
+      object.signatures?.map(e => Signature.fromPartial(e)) || [];
     message.encryption =
       object.encryption !== undefined && object.encryption !== null
         ? Encryption.fromPartial(object.encryption)
@@ -491,7 +491,7 @@ export const Record = {
 };
 
 function createBaseSigner(): Signer {
-  return { alg: 0, args: undefined };
+  return {alg: 0, args: undefined};
 }
 
 export const Signer = {
@@ -556,7 +556,7 @@ export const Signer = {
 };
 
 function createBaseSignerArgs(): SignerArgs {
-  return { privateKey: undefined };
+  return {privateKey: undefined};
 }
 
 export const SignerArgs = {
@@ -612,7 +612,7 @@ export const SignerArgs = {
 };
 
 function createBaseEncrypter(): Encrypter {
-  return { alg: 0, args: undefined };
+  return {alg: 0, args: undefined};
 }
 
 export const Encrypter = {
@@ -683,7 +683,7 @@ export const Encrypter = {
 };
 
 function createBaseEncrypterArgs(): EncrypterArgs {
-  return { secret: undefined };
+  return {secret: undefined};
 }
 
 export const EncrypterArgs = {
@@ -737,7 +737,7 @@ export const EncrypterArgs = {
 };
 
 function createBaseSignature(): Signature {
-  return { signature: "", protected: "", header: undefined };
+  return {signature: '', protected: '', header: undefined};
 }
 
 export const Signature = {
@@ -745,10 +745,10 @@ export const Signature = {
     message: Signature,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.signature !== "") {
+    if (message.signature !== '') {
       writer.uint32(10).string(message.signature);
     }
-    if (message.protected !== "") {
+    if (message.protected !== '') {
       writer.uint32(18).string(message.protected);
     }
     if (message.header !== undefined) {
@@ -783,8 +783,8 @@ export const Signature = {
 
   fromJSON(object: any): Signature {
     return {
-      signature: isSet(object.signature) ? String(object.signature) : "",
-      protected: isSet(object.protected) ? String(object.protected) : "",
+      signature: isSet(object.signature) ? String(object.signature) : '',
+      protected: isSet(object.protected) ? String(object.protected) : '',
       header: isSet(object.header)
         ? SignatureHeader.fromJSON(object.header)
         : undefined,
@@ -806,8 +806,8 @@ export const Signature = {
     object: I
   ): Signature {
     const message = createBaseSignature();
-    message.signature = object.signature ?? "";
-    message.protected = object.protected ?? "";
+    message.signature = object.signature ?? '';
+    message.protected = object.protected ?? '';
     message.header =
       object.header !== undefined && object.header !== null
         ? SignatureHeader.fromPartial(object.header)
@@ -817,7 +817,7 @@ export const Signature = {
 };
 
 function createBaseSignatureHeader(): SignatureHeader {
-  return { alg: "", kid: "" };
+  return {alg: '', kid: ''};
 }
 
 export const SignatureHeader = {
@@ -825,10 +825,10 @@ export const SignatureHeader = {
     message: SignatureHeader,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.alg !== "") {
+    if (message.alg !== '') {
       writer.uint32(10).string(message.alg);
     }
-    if (message.kid !== "") {
+    if (message.kid !== '') {
       writer.uint32(18).string(message.kid);
     }
     return writer;
@@ -857,8 +857,8 @@ export const SignatureHeader = {
 
   fromJSON(object: any): SignatureHeader {
     return {
-      alg: isSet(object.alg) ? String(object.alg) : "",
-      kid: isSet(object.kid) ? String(object.kid) : "",
+      alg: isSet(object.alg) ? String(object.alg) : '',
+      kid: isSet(object.kid) ? String(object.kid) : '',
     };
   },
 
@@ -873,14 +873,14 @@ export const SignatureHeader = {
     object: I
   ): SignatureHeader {
     const message = createBaseSignatureHeader();
-    message.alg = object.alg ?? "";
-    message.kid = object.kid ?? "";
+    message.alg = object.alg ?? '';
+    message.kid = object.kid ?? '';
     return message;
   },
 };
 
 function createBaseEncryption(): Encryption {
-  return { header: undefined, protected: "" };
+  return {header: undefined, protected: ''};
 }
 
 export const Encryption = {
@@ -894,7 +894,7 @@ export const Encryption = {
         writer.uint32(10).fork()
       ).ldelim();
     }
-    if (message.protected !== "") {
+    if (message.protected !== '') {
       writer.uint32(18).string(message.protected);
     }
     return writer;
@@ -926,7 +926,7 @@ export const Encryption = {
       header: isSet(object.header)
         ? EncryptionHeader.fromJSON(object.header)
         : undefined,
-      protected: isSet(object.protected) ? String(object.protected) : "",
+      protected: isSet(object.protected) ? String(object.protected) : '',
     };
   },
 
@@ -948,13 +948,13 @@ export const Encryption = {
       object.header !== undefined && object.header !== null
         ? EncryptionHeader.fromPartial(object.header)
         : undefined;
-    message.protected = object.protected ?? "";
+    message.protected = object.protected ?? '';
     return message;
   },
 };
 
 function createBaseEncryptionHeader(): EncryptionHeader {
-  return { alg: "" };
+  return {alg: ''};
 }
 
 export const EncryptionHeader = {
@@ -962,7 +962,7 @@ export const EncryptionHeader = {
     message: EncryptionHeader,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.alg !== "") {
+    if (message.alg !== '') {
       writer.uint32(10).string(message.alg);
     }
     return writer;
@@ -988,7 +988,7 @@ export const EncryptionHeader = {
 
   fromJSON(object: any): EncryptionHeader {
     return {
-      alg: isSet(object.alg) ? String(object.alg) : "",
+      alg: isSet(object.alg) ? String(object.alg) : '',
     };
   },
 
@@ -1002,13 +1002,13 @@ export const EncryptionHeader = {
     object: I
   ): EncryptionHeader {
     const message = createBaseEncryptionHeader();
-    message.alg = object.alg ?? "";
+    message.alg = object.alg ?? '';
     return message;
   },
 };
 
 function createBaseRecordReceipt(): RecordReceipt {
-  return { anchor: 0, client: "", record: "", status: "" };
+  return {anchor: 0, client: '', record: '', status: ''};
 }
 
 export const RecordReceipt = {
@@ -1019,13 +1019,13 @@ export const RecordReceipt = {
     if (message.anchor !== 0) {
       writer.uint32(8).int64(message.anchor);
     }
-    if (message.client !== "") {
+    if (message.client !== '') {
       writer.uint32(18).string(message.client);
     }
-    if (message.record !== "") {
+    if (message.record !== '') {
       writer.uint32(26).string(message.record);
     }
-    if (message.status !== "") {
+    if (message.status !== '') {
       writer.uint32(34).string(message.status);
     }
     return writer;
@@ -1061,9 +1061,9 @@ export const RecordReceipt = {
   fromJSON(object: any): RecordReceipt {
     return {
       anchor: isSet(object.anchor) ? Number(object.anchor) : 0,
-      client: isSet(object.client) ? String(object.client) : "",
-      record: isSet(object.record) ? String(object.record) : "",
-      status: isSet(object.status) ? String(object.status) : "",
+      client: isSet(object.client) ? String(object.client) : '',
+      record: isSet(object.record) ? String(object.record) : '',
+      status: isSet(object.status) ? String(object.status) : '',
     };
   },
 
@@ -1081,15 +1081,15 @@ export const RecordReceipt = {
   ): RecordReceipt {
     const message = createBaseRecordReceipt();
     message.anchor = object.anchor ?? 0;
-    message.client = object.client ?? "";
-    message.record = object.record ?? "";
-    message.status = object.status ?? "";
+    message.client = object.client ?? '';
+    message.record = object.record ?? '';
+    message.status = object.status ?? '';
     return message;
   },
 };
 
 function createBaseRecordBuilderFromStringRequest(): RecordBuilderFromStringRequest {
-  return { payload: "", signer: undefined, encrypter: undefined };
+  return {payload: '', signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromStringRequest = {
@@ -1097,7 +1097,7 @@ export const RecordBuilderFromStringRequest = {
     message: RecordBuilderFromStringRequest,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.payload !== "") {
+    if (message.payload !== '') {
       writer.uint32(10).string(message.payload);
     }
     if (message.signer !== undefined) {
@@ -1138,7 +1138,7 @@ export const RecordBuilderFromStringRequest = {
 
   fromJSON(object: any): RecordBuilderFromStringRequest {
     return {
-      payload: isSet(object.payload) ? String(object.payload) : "",
+      payload: isSet(object.payload) ? String(object.payload) : '',
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter)
         ? Encrypter.fromJSON(object.encrypter)
@@ -1162,7 +1162,7 @@ export const RecordBuilderFromStringRequest = {
     object: I
   ): RecordBuilderFromStringRequest {
     const message = createBaseRecordBuilderFromStringRequest();
-    message.payload = object.payload ?? "";
+    message.payload = object.payload ?? '';
     message.signer =
       object.signer !== undefined && object.signer !== null
         ? Signer.fromPartial(object.signer)
@@ -1176,7 +1176,7 @@ export const RecordBuilderFromStringRequest = {
 };
 
 function createBaseRecordBuilderFromHexRequest(): RecordBuilderFromHexRequest {
-  return { payload: "", signer: undefined, encrypter: undefined };
+  return {payload: '', signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromHexRequest = {
@@ -1184,7 +1184,7 @@ export const RecordBuilderFromHexRequest = {
     message: RecordBuilderFromHexRequest,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.payload !== "") {
+    if (message.payload !== '') {
       writer.uint32(10).string(message.payload);
     }
     if (message.signer !== undefined) {
@@ -1225,7 +1225,7 @@ export const RecordBuilderFromHexRequest = {
 
   fromJSON(object: any): RecordBuilderFromHexRequest {
     return {
-      payload: isSet(object.payload) ? String(object.payload) : "",
+      payload: isSet(object.payload) ? String(object.payload) : '',
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter)
         ? Encrypter.fromJSON(object.encrypter)
@@ -1249,7 +1249,7 @@ export const RecordBuilderFromHexRequest = {
     object: I
   ): RecordBuilderFromHexRequest {
     const message = createBaseRecordBuilderFromHexRequest();
-    message.payload = object.payload ?? "";
+    message.payload = object.payload ?? '';
     message.signer =
       object.signer !== undefined && object.signer !== null
         ? Signer.fromPartial(object.signer)
@@ -1263,7 +1263,7 @@ export const RecordBuilderFromHexRequest = {
 };
 
 function createBaseRecordBuilderFromJSONRequest(): RecordBuilderFromJSONRequest {
-  return { payload: "", signer: undefined, encrypter: undefined };
+  return {payload: '', signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromJSONRequest = {
@@ -1271,7 +1271,7 @@ export const RecordBuilderFromJSONRequest = {
     message: RecordBuilderFromJSONRequest,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.payload !== "") {
+    if (message.payload !== '') {
       writer.uint32(10).string(message.payload);
     }
     if (message.signer !== undefined) {
@@ -1312,7 +1312,7 @@ export const RecordBuilderFromJSONRequest = {
 
   fromJSON(object: any): RecordBuilderFromJSONRequest {
     return {
-      payload: isSet(object.payload) ? String(object.payload) : "",
+      payload: isSet(object.payload) ? String(object.payload) : '',
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter)
         ? Encrypter.fromJSON(object.encrypter)
@@ -1336,7 +1336,7 @@ export const RecordBuilderFromJSONRequest = {
     object: I
   ): RecordBuilderFromJSONRequest {
     const message = createBaseRecordBuilderFromJSONRequest();
-    message.payload = object.payload ?? "";
+    message.payload = object.payload ?? '';
     message.signer =
       object.signer !== undefined && object.signer !== null
         ? Signer.fromPartial(object.signer)
@@ -1350,7 +1350,7 @@ export const RecordBuilderFromJSONRequest = {
 };
 
 function createBaseRecordBuilderFromBytesRequest(): RecordBuilderFromBytesRequest {
-  return { payload: Buffer.alloc(0), signer: undefined, encrypter: undefined };
+  return {payload: Buffer.alloc(0), signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromBytesRequest = {
@@ -1442,7 +1442,7 @@ export const RecordBuilderFromBytesRequest = {
 };
 
 function createBaseRecordBuilderFromFileRequest(): RecordBuilderFromFileRequest {
-  return { payload: Buffer.alloc(0), signer: undefined, encrypter: undefined };
+  return {payload: Buffer.alloc(0), signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromFileRequest = {
@@ -1534,7 +1534,7 @@ export const RecordBuilderFromFileRequest = {
 };
 
 function createBaseRecordBuilderFromRecordRequest(): RecordBuilderFromRecordRequest {
-  return { payload: undefined, signer: undefined, encrypter: undefined };
+  return {payload: undefined, signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromRecordRequest = {
@@ -1629,7 +1629,7 @@ export const RecordBuilderFromRecordRequest = {
 };
 
 function createBaseRecordBuilderResponse(): RecordBuilderResponse {
-  return { record: undefined, error: undefined };
+  return {record: undefined, error: undefined};
 }
 
 export const RecordBuilderResponse = {
@@ -1703,7 +1703,7 @@ export const RecordBuilderResponse = {
 };
 
 function createBaseSendRecordsRequest(): SendRecordsRequest {
-  return { configData: undefined, records: [] };
+  return {configData: undefined, records: []};
 }
 
 export const SendRecordsRequest = {
@@ -1759,7 +1759,7 @@ export const SendRecordsRequest = {
         ? ConfigData.toJSON(message.configData)
         : undefined);
     if (message.records) {
-      obj.records = message.records.map((e) => e);
+      obj.records = message.records.map(e => e);
     } else {
       obj.records = [];
     }
@@ -1774,13 +1774,13 @@ export const SendRecordsRequest = {
       object.configData !== undefined && object.configData !== null
         ? ConfigData.fromPartial(object.configData)
         : undefined;
-    message.records = object.records?.map((e) => e) || [];
+    message.records = object.records?.map(e => e) || [];
     return message;
   },
 };
 
 function createBaseSendRecordsResponse(): SendRecordsResponse {
-  return { records: [], error: undefined };
+  return {records: [], error: undefined};
 }
 
 export const SendRecordsResponse = {
@@ -1830,7 +1830,7 @@ export const SendRecordsResponse = {
   toJSON(message: SendRecordsResponse): unknown {
     const obj: any = {};
     if (message.records) {
-      obj.records = message.records.map((e) =>
+      obj.records = message.records.map(e =>
         e ? RecordReceipt.toJSON(e) : undefined
       );
     } else {
@@ -1846,7 +1846,7 @@ export const SendRecordsResponse = {
   ): SendRecordsResponse {
     const message = createBaseSendRecordsResponse();
     message.records =
-      object.records?.map((e) => RecordReceipt.fromPartial(e)) || [];
+      object.records?.map(e => RecordReceipt.fromPartial(e)) || [];
     message.error =
       object.error !== undefined && object.error !== null
         ? Error.fromPartial(object.error)
@@ -1858,7 +1858,7 @@ export const SendRecordsResponse = {
 export type RecordServiceService = typeof RecordServiceService;
 export const RecordServiceService = {
   sendRecords: {
-    path: "/bloock.RecordService/SendRecords",
+    path: '/bloock.RecordService/SendRecords',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: SendRecordsRequest) =>
@@ -1869,7 +1869,7 @@ export const RecordServiceService = {
     responseDeserialize: (value: Buffer) => SendRecordsResponse.decode(value),
   },
   buildRecordFromString: {
-    path: "/bloock.RecordService/BuildRecordFromString",
+    path: '/bloock.RecordService/BuildRecordFromString',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: RecordBuilderFromStringRequest) =>
@@ -1881,7 +1881,7 @@ export const RecordServiceService = {
     responseDeserialize: (value: Buffer) => RecordBuilderResponse.decode(value),
   },
   buildRecordFromHex: {
-    path: "/bloock.RecordService/BuildRecordFromHex",
+    path: '/bloock.RecordService/BuildRecordFromHex',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: RecordBuilderFromHexRequest) =>
@@ -1893,7 +1893,7 @@ export const RecordServiceService = {
     responseDeserialize: (value: Buffer) => RecordBuilderResponse.decode(value),
   },
   buildRecordFromJSON: {
-    path: "/bloock.RecordService/BuildRecordFromJSON",
+    path: '/bloock.RecordService/BuildRecordFromJSON',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: RecordBuilderFromJSONRequest) =>
@@ -1905,7 +1905,7 @@ export const RecordServiceService = {
     responseDeserialize: (value: Buffer) => RecordBuilderResponse.decode(value),
   },
   buildRecordFromFile: {
-    path: "/bloock.RecordService/BuildRecordFromFile",
+    path: '/bloock.RecordService/BuildRecordFromFile',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: RecordBuilderFromFileRequest) =>
@@ -1917,7 +1917,7 @@ export const RecordServiceService = {
     responseDeserialize: (value: Buffer) => RecordBuilderResponse.decode(value),
   },
   buildRecordFromBytes: {
-    path: "/bloock.RecordService/BuildRecordFromBytes",
+    path: '/bloock.RecordService/BuildRecordFromBytes',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: RecordBuilderFromBytesRequest) =>
@@ -1929,7 +1929,7 @@ export const RecordServiceService = {
     responseDeserialize: (value: Buffer) => RecordBuilderResponse.decode(value),
   },
   buildRecordFromRecord: {
-    path: "/bloock.RecordService/BuildRecordFromRecord",
+    path: '/bloock.RecordService/BuildRecordFromRecord',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: RecordBuilderFromRecordRequest) =>
@@ -1941,7 +1941,7 @@ export const RecordServiceService = {
     responseDeserialize: (value: Buffer) => RecordBuilderResponse.decode(value),
   },
   getHash: {
-    path: "/bloock.RecordService/GetHash",
+    path: '/bloock.RecordService/GetHash',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: Record) =>
@@ -2170,7 +2170,7 @@ export interface RecordServiceClient extends Client {
 
 export const RecordServiceClient = makeGenericClientConstructor(
   RecordServiceService,
-  "bloock.RecordService"
+  'bloock.RecordService'
 ) as unknown as {
   new (
     address: string,
@@ -2184,16 +2184,16 @@ declare var self: any | undefined;
 declare var window: any | undefined;
 declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
-  throw "Unable to locate global object";
+  if (typeof globalThis !== 'undefined') return globalThis;
+  if (typeof self !== 'undefined') return self;
+  if (typeof window !== 'undefined') return window;
+  if (typeof global !== 'undefined') return global;
+  throw 'Unable to locate global object';
 })();
 
 function bytesFromBase64(b64: string): Uint8Array {
   if (globalThis.Buffer) {
-    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
+    return Uint8Array.from(globalThis.Buffer.from(b64, 'base64'));
   } else {
     const bin = globalThis.atob(b64);
     const arr = new Uint8Array(bin.length);
@@ -2206,13 +2206,13 @@ function bytesFromBase64(b64: string): Uint8Array {
 
 function base64FromBytes(arr: Uint8Array): string {
   if (globalThis.Buffer) {
-    return globalThis.Buffer.from(arr).toString("base64");
+    return globalThis.Buffer.from(arr).toString('base64');
   } else {
     const bin: string[] = [];
-    arr.forEach((byte) => {
+    arr.forEach(byte => {
       bin.push(String.fromCharCode(byte));
     });
-    return globalThis.btoa(bin.join(""));
+    return globalThis.btoa(bin.join(''));
   }
 }
 
@@ -2232,19 +2232,19 @@ type DeepPartial<T> = T extends Builtin
   : T extends ReadonlyArray<infer U>
   ? ReadonlyArray<DeepPartial<U>>
   : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+  ? {[K in keyof T]?: DeepPartial<T[K]>}
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+  : P & {[K in keyof P]: Exact<P[K], I[K]>} & {
       [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
     };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
   }
   return long.toNumber();
 }

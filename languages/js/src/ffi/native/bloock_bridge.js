@@ -22,7 +22,7 @@ function takeObject(idx) {
   return ret;
 }
 
-const cachedTextDecoder = new TextDecoder("utf-8", {
+const cachedTextDecoder = new TextDecoder('utf-8', {
   ignoreBOM: true,
   fatal: true,
 });
@@ -53,10 +53,10 @@ function addHeapObject(obj) {
 
 let WASM_VECTOR_LEN = 0;
 
-const cachedTextEncoder = new TextEncoder("utf-8");
+const cachedTextEncoder = new TextEncoder('utf-8');
 
 const encodeString =
-  typeof cachedTextEncoder.encodeInto === "function"
+  typeof cachedTextEncoder.encodeInto === 'function'
     ? function (arg, view) {
         return cachedTextEncoder.encodeInto(arg, view);
       }
@@ -118,7 +118,7 @@ function getInt32Memory0() {
 }
 
 function makeMutClosure(arg0, arg1, dtor, f) {
-  const state = { a: arg0, b: arg1, cnt: 1, dtor };
+  const state = {a: arg0, b: arg1, cnt: 1, dtor};
   const real = (...args) => {
     // First up with a closure we increment the internal reference
     // count. This ensures that the Rust closure environment won't
@@ -187,14 +187,14 @@ function __wbg_adapter_36(arg0, arg1, arg2, arg3) {
 }
 
 async function load(module, imports) {
-  if (typeof Response === "function" && module instanceof Response) {
-    if (typeof WebAssembly.instantiateStreaming === "function") {
+  if (typeof Response === 'function' && module instanceof Response) {
+    if (typeof WebAssembly.instantiateStreaming === 'function') {
       try {
         return await WebAssembly.instantiateStreaming(module, imports);
       } catch (e) {
-        if (module.headers.get("Content-Type") != "application/wasm") {
+        if (module.headers.get('Content-Type') != 'application/wasm') {
           console.warn(
-            "`WebAssembly.instantiateStreaming` failed because your server does not serve wasm with `application/wasm` MIME type. Falling back to `WebAssembly.instantiate` which is slower. Original error:\n",
+            '`WebAssembly.instantiateStreaming` failed because your server does not serve wasm with `application/wasm` MIME type. Falling back to `WebAssembly.instantiate` which is slower. Original error:\n',
             e
           );
         } else {
@@ -209,7 +209,7 @@ async function load(module, imports) {
     const instance = await WebAssembly.instantiate(module, imports);
 
     if (instance instanceof WebAssembly.Instance) {
-      return { instance, module };
+      return {instance, module};
     } else {
       return instance;
     }
@@ -299,7 +299,7 @@ function getImports() {
   };
   imports.wbg.__wbg_new_52205195aa880fc2 = function (arg0, arg1) {
     try {
-      var state0 = { a: arg0, b: arg1 };
+      var state0 = {a: arg0, b: arg1};
       var cb0 = (arg0, arg1) => {
         const a = state0.a;
         state0.a = 0;
@@ -391,25 +391,25 @@ function initSync(bytes) {
 }
 
 async function init(input) {
-  if (typeof input === "undefined") {
-    input = new URL("bloock_bridge_bg.wasm", import.meta.url);
+  if (typeof input === 'undefined') {
+    input = new URL('bloock_bridge_bg.wasm', import.meta.url);
   }
   const imports = getImports();
 
   if (
-    typeof input === "string" ||
-    (typeof Request === "function" && input instanceof Request) ||
-    (typeof URL === "function" && input instanceof URL)
+    typeof input === 'string' ||
+    (typeof Request === 'function' && input instanceof Request) ||
+    (typeof URL === 'function' && input instanceof URL)
   ) {
     input = fetch(input);
   }
 
   initMemory(imports);
 
-  const { instance, module } = await load(await input, imports);
+  const {instance, module} = await load(await input, imports);
 
   return finalizeInit(instance, module);
 }
 
-export { initSync };
+export {initSync};
 export default init;

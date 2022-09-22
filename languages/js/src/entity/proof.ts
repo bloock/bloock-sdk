@@ -1,8 +1,8 @@
-import { AnchorNetwork } from "./anchor";
+import {AnchorNetwork} from './anchor';
 import {
   Proof as ProofProto,
   ProofAnchor as ProofAnchorProto,
-} from "../bridge/proto/proof";
+} from '../bridge/proto/proof';
 
 export class Proof {
   leaves: string[];
@@ -67,7 +67,7 @@ export class ProofAnchor {
   static fromProto(p: ProofAnchorProto): ProofAnchor {
     return new ProofAnchor(
       p.anchorId,
-      p.networks.map((x) => AnchorNetwork.fromProto(x)),
+      p.networks.map(x => AnchorNetwork.fromProto(x)),
       p.root,
       p.status
     );
@@ -76,7 +76,7 @@ export class ProofAnchor {
   toProto(): ProofAnchorProto {
     return ProofAnchorProto.fromPartial({
       anchorId: this.anchorID,
-      networks: this.networks.map((n) => n.toProto()),
+      networks: this.networks.map(n => n.toProto()),
       root: this.root,
       status: this.status,
     });
