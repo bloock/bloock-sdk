@@ -33,8 +33,7 @@ jobs:
       - name: Install rustup target
         run: rustup target add ${{ matrix.target }}
       - name: Build release library
-        working-directory: bloock-bridge
-        run: make build-windows
+        run: make -C bloock-bridge ${{ matrix.target }}
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_library
