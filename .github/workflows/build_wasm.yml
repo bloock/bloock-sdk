@@ -1,0 +1,33 @@
+name: Build WASM
+
+on:
+  workflow_call:
+
+jobs:
+  build_wasm:
+    name: Build release libraries on WASM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
+      - uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: "latest"
+      - uses: arduino/setup-protoc@v1
+        with:
+          version: "3.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build release libraries
+        run: make -C bloock-bridge build-wasm
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bloock_library_wasm
+          if-no-files-found: error
+          path: |
+            bloock-bridge/build/wasm
