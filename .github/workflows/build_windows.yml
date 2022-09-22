@@ -38,16 +38,13 @@ jobs:
           name: bloock_library
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/x86_64-pc-windows-gnu/libbloock_bridge.dll
-            bloock-bridge/build/native/i686-pc-windows-gnu/libbloock_bridge.dll
+            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.dll
             bloock-bridge/build/native/bloock_bridge.h
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_static_library
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/x86_64-pc-windows-gnu/libbloock_bridge.lib
-            bloock-bridge/build/native/x86_64-pc-windows-gnu/libbloock_bridge.a
-            bloock-bridge/build/native/i686-pc-windows-gnu/libbloock_bridge.lib
-            bloock-bridge/build/native/i686-pc-windows-gnu/libbloock_bridge.a
+            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.lib
+            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.a
             bloock-bridge/build/native/bloock_bridge.h
