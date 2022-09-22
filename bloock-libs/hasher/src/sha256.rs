@@ -1,6 +1,6 @@
 use super::Hasher;
 use crate::H256;
-use sha2::{digest::FixedOutput, Digest};
+use sha2::Digest;
 
 #[derive(Default)]
 pub struct Sha256 {}

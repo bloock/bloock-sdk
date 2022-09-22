@@ -29,7 +29,7 @@ jobs:
         run: |
           make build
           rm -rf node_modules
-          rm languages/js/Makefile
+          rm Makefile
       - name: Copy master README into project directory
         working-directory: languages/js
         run: cp ../../README.md .

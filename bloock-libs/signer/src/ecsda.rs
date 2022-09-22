@@ -4,7 +4,7 @@ use libsecp256k1::{Message, PublicKey, SecretKey};
 use crate::SignerError;
 
 use super::{Signature, Signer};
-use std::str::{self, FromStr};
+use std::str;
 
 pub struct EcsdaSignerArgs {
     pub private_key: String,
