@@ -2,10 +2,7 @@ name: Development
 on:
   push:
     branches:
-      - master
       - feature/EIT-2580
-  pull_request:
-    types: [opened, synchronize, reopened]
 
 jobs:
   check:
