@@ -2,6 +2,10 @@ name: Build Linux
 
 on:
   workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
 
 jobs:
   build_linux:
@@ -26,31 +30,26 @@ jobs:
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build release libraries
-        run: make -C bloock-bridge x86_64-unknown-linux-gnu
       - name: Install musl tools
-        run: sudo apt-get install musl-tools
-      - name: Install rustup musl target
-        run: rustup target add x86_64-unknown-linux-musl
-      - name: Build release musl libraries
-        run: RUSTFLAGS="-C target-feature=-crt-static" make -C bloock-bridge x86_64-unknown-linux-musl
+        if: ${{ inputs.target }} == 'x86_64-unknown-linux-musl'
+        run: |
+          sudo apt-get install musl-tools
+          export RUSTFLAGS="-C target-feature=-crt-static"
+      - name: Install rustup target
+        run: rustup target add ${{ inputs.target }}
+      - name: Build release libraries
+        run: make -C bloock-bridge ${{ inputs.target }}
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_library
           if-no-files-found: error
           path: |
             bloock-bridge/build/native/bloock_bridge.h
-      - uses: actions/upload-artifact@v2
-        with:
-          name: bloock_library
-          if-no-files-found: error
-          path: |
-            bloock-bridge/build/native/x86_64-unknown-linux-gnu/libbloock_bridge.so
-            bloock-bridge/build/native/x86_64-unknown-linux-musl/libbloock_bridge.so
+            bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.so
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_static_library
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/x86_64-unknown-linux-gnu/libbloock_bridge.so
-            bloock-bridge/build/native/x86_64-unknown-linux-musl/libbloock_bridge.a
+            bloock-bridge/build/native/bloock_bridge.h
+            bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.so

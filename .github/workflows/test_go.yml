@@ -2,36 +2,36 @@ name: Test Go
 
 on:
   workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      go-version:
+        required: true
+        type: string
 
 jobs:
   test_go:
     name: Test Go.
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-11, windows-latest]
-        go-version: ["1.14", "1.15", "1.16", "1.17"]
+    runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: ${{ inputs.go-version }}
       - name: Download go package from package run
         uses: actions/download-artifact@v1
         with:
           name: go
-      - name: "test"
-        run: |
-          go build
-          go test -v ./...
-
+      - name: Test
+        run: go test -v ./...
         working-directory: go
-      - name: "test musl"
+      - name: Test musl
         if: runner.os == 'Linux'
-        run: docker run --rm -v `pwd`:/bloock tetafro/golang-gcc:${{ matrix.go-version }}-alpine /bin/sh -c 'cd /bloock && go test -v ./...'
+        run: docker run --rm -v `pwd`:/bloock tetafro/golang-gcc:${{ inputs.go-version }}-alpine /bin/sh -c 'cd /bloock && go test -v ./...'
         working-directory: go
-      - name: "test buster"
+      - name: Test buster
         if: runner.os == 'Linux'
-        run: docker run --rm -v `pwd`:/bloock golang:${{ matrix.go-version }}-buster /bin/sh -c 'cd /bloock && go test -v ./...'
+        run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-buster /bin/sh -c 'cd /bloock && go test -v ./...'
         working-directory: go

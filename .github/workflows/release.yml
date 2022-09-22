@@ -28,6 +28,11 @@ jobs:
   build_linux:
     needs: [version]
     uses: ./.github/workflows/build_linux.yml
+    strategy:
+      matrix:
+        target: [x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl]
+    with:
+      target: ${{ matrix.target }}
 
   build_darwin:
     needs: [version]
@@ -36,6 +41,11 @@ jobs:
   build_windows:
     needs: [version]
     uses: ./.github/workflows/build_windows.yml
+    strategy:
+      matrix:
+        target: [x86_64-pc-windows-msvc, x86_64-pc-windows-gnu]
+    with:
+      target: ${{ matrix.target }}
 
   build_go:
     needs: [build_linux, build_darwin, build_windows]
@@ -45,19 +55,33 @@ jobs:
     needs: [build_wasm]
     uses: ./.github/workflows/build_js.yml
 
-  validate_go:
+  test_go:
     needs: [build_go]
     uses: ./.github/workflows/test_go.yml
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-11, windows-latest]
+        go-version: ["1.14", "1.15", "1.16", "1.17"]
+    with:
+      os: ${{ matrix.os }}
+      go-version: ${{ matrix.go-version }}
 
-  validate_js:
+  test_js:
     needs: [build_js]
     uses: ./.github/workflows/test_js.yml
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-11, windows-latest]
+        node-version: ["12", "14", "16"]
+    with:
+      os: ${{ matrix.os }}
+      node-version: ${{ matrix.node-version }}
 
   release:
     name: Create release
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [build_js, build_go, validate_js, validate_go]
+    needs: [build_js, build_go, test_js, test_go]
     steps:
       - name: Download bloock dylibs
         uses: actions/download-artifact@v1
@@ -118,7 +142,7 @@ jobs:
     name: Alert on failure
     if: ${{ !success() }}
     runs-on: ubuntu-latest
-    needs: [validate_js, validate_go]
+    needs: [test_js, test_go]
     steps:
       - uses: rtCamp/action-slack-notify@master
         if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'

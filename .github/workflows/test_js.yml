@@ -2,21 +2,24 @@ name: Test JS
 
 on:
   workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      node-version:
+        required: true
+        type: string
 
 jobs:
   test_js:
     name: Test JS
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-11, windows-latest]
-        node-version: ["12", "14", "16"]
+    runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ inputs.node-version }}
       - name: Download bloock js from package run
         uses: actions/download-artifact@v1
         with:

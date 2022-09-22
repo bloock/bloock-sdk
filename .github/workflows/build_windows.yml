@@ -2,14 +2,15 @@ name: Build Windows
 
 on:
   workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
 
 jobs:
   build_windows:
     name: Build lib Windows
     runs-on: windows-latest
-    strategy:
-      matrix:
-        target: [x86_64-pc-windows-msvc, x86_64-pc-windows-gnu]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
@@ -30,21 +31,21 @@ jobs:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install rustup target
-        run: rustup target add ${{ matrix.target }}
+        run: rustup target add ${{ inputs.target }}
       - name: Build release library
-        run: make -C bloock-bridge ${{ matrix.target }}
+        run: make -C bloock-bridge ${{ inputs.target }}
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_library
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.dll
+            bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.dll
             bloock-bridge/build/native/bloock_bridge.h
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_static_library
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.lib
-            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.a
+            bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.lib
+            bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.a
             bloock-bridge/build/native/bloock_bridge.h
