@@ -4,8 +4,8 @@ on:
   workflow_call:
 
 jobs:
-  test_go:
-    name: Test Go.
+  test_rust:
+    name: Test Rust.
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v2
