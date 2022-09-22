@@ -5,7 +5,7 @@ on:
 
 jobs:
   build_linux:
-    name: Build release libraries on Linux
+    name: Build lib Linux
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 1

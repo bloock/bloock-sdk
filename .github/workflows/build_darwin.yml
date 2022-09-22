@@ -5,8 +5,12 @@ on:
 
 jobs:
   build_darwin:
-    name: Build release libraries on Darwin
+    name: Build lib Darwin
     runs-on: macos-11
+    strategy:
+      max-parallel: 1
+      matrix:
+        target: [x86_64-apple-darwin, aarch64-apple-darwin]
     steps:
       - uses: actions/checkout@v2
       - name: Install Rust stable toolchain
@@ -19,6 +23,8 @@ jobs:
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install rustup target
+        run: rustup target add ${{ matrix.target }}
       - name: Build release libraries
         run: make -C bloock-bridge x86_64-apple-darwin
       - name: Build release arm libraries

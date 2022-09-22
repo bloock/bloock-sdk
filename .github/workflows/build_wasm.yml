@@ -5,7 +5,7 @@ on:
 
 jobs:
   build_wasm:
-    name: Build release libraries on WASM
+    name: Build lib WASM
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
