@@ -33,7 +33,7 @@ jobs:
       - name: Install arm tools
         if: ${{ inputs.target }} == 'aarch64-unknown-linux-gnu' || ${{ inputs.target }} == 'aarch64-unknown-linux-musl'
         run: |
-          sudo apt-get install clang llvm
+          sudo apt-get install clang llvm build-essential
       - name: Install musl tools
         if: ${{ inputs.target }} == 'x86_64-unknown-linux-musl' || ${{ inputs.target }} == 'aarch64-unknown-linux-musl'
         run: |
