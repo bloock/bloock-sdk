@@ -1,0 +1,29 @@
+name: Test JS
+
+on:
+  workflow_call:
+
+jobs:
+  test_js:
+    name: Test JS
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-11, windows-latest]
+        node-version: ["12", "14", "16"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Download bloock js from package run
+        uses: actions/download-artifact@v1
+        with:
+          name: bloock_js_node
+      - name: Install production dependencies
+        run: yarn install --production
+        working-directory: bloock_js_node
+      - name: Run tests
+        run: yarn test
+        working-directory: bloock_js_node
