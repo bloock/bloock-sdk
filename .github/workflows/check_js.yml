@@ -9,17 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js
+      - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ inputs.node-version }}
-      - name: Download bloock js from package run
-        uses: actions/download-artifact@v1
-        with:
-          name: bloock_js_node
-      - name: Install production dependencies
-        run: yarn install --production
-        working-directory: bloock_js_node
-      - name: Run tests
-        run: yarn test
-        working-directory: bloock_js_node
+          node-version: "12"
+      - name: Check formatting of JS library
+        working-directory: "languages/js"
+        run: make fmtcheck
+      - name: Add WebAssembly target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: Lint JS library
+        working-directory: "languages/js"
+        run: make lint

@@ -15,20 +15,25 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-check-${{ hashFiles('**/Cargo.lock') }}
       - name: Install Rust stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
+          components: rustfmt, clippy
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Test Libs
-        run: make libs-test
-      - name: Test Core
-        run: make core-test
-      - name: Test Bridge
-        run: make bridge-test
+      - name: Check Rust formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+      - name: Check clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features --all-targets -- -D warnings

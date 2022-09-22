@@ -5,196 +5,38 @@ on:
       - feature/EIT-2580
 
 jobs:
-  check:
+  version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      ## Check Version
       - uses: ./.github/actions/check_version
 
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-check-${{ hashFiles('**/Cargo.lock') }}
-
-      ## Check Rust
-      - name: Install Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - uses: arduino/setup-protoc@v1
-        with:
-          version: "3.x"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check Rust formatting
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-      - name: Check clippy
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features --all-targets -- -D warnings
-
-      ## Check Node.js
-      - name: Use Node.js 12
-        uses: actions/setup-node@v1
-        with:
-          node-version: "12"
-      - name: Check formatting of JS library
-        working-directory: "languages/js"
-        run: make fmtcheck
-      - name: Add WebAssembly target
-        run: rustup target add wasm32-unknown-unknown
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      - name: Lint JS library
-        working-directory: "languages/js"
-        run: make lint
-
-      ## Check Go
-      - name: Check formatting of Go library
-        working-directory: "languages/go"
-        run: make lint
-
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-            ${{ runner.os }}-cargo-test-
-      - name: Install Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - uses: arduino/setup-protoc@v1
-        with:
-          version: "3.x"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build Bloock Bridge
-        run: cargo build -p bloock_bridge
-  # tests all core bloock code and the rust language integration
-  rust_test:
-    runs-on: ubuntu-latest
+    needs: [version]
+    uses: ./.github/workflows/build_linux.yml
+    with:
+      target: x86_64-unknown-linux-gnu
+
+  check_rust:
     needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-            ${{ runner.os }}-cargo-test-
-      - name: Install Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - name: Test Bloock Libs
-        working-directory: "bloock-libs"
-        run: make test
+    uses: ./.github/workflows/check_rust.yml
 
-      - name: Test Bloock Libs WASM
-        working-directory: "bloock-libs"
-        run: make wasm-test
+  test_rust:
+    needs: [check_rust]
+    uses: ./.github/workflows/test_rust.yml
 
-      - name: Test Bloock Core
-        working-directory: "bloock-libs"
-        run: make test
-
-      - name: Test Bloock Bridge
-        working-directory: "bloock-libs"
-        run: make test
-
-      - name: Test Bloock Bridge WASM
-        working-directory: "bloock-libs"
-        run: make wasm-test
-
-  js_test:
-    runs-on: ubuntu-latest
+  check_js:
     needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-            ${{ runner.os }}-cargo-test-
-      - name: Install Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - name: Use Node.js 12
-        uses: actions/setup-node@v1
-        with:
-          node-version: "12"
-      - name: Add WebAssembly target
-        run: rustup target add wasm32-unknown-unknown
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      - name: Test polar-wasm-api
-        run: make wasm-test
-      - name: Test js
-        run: make js-test
+    uses: ./.github/workflows/check_js.yml
 
-  go_test:
-    runs-on: ubuntu-latest
+  test_js:
+    needs: [check_js]
+    uses: ./.github/workflows/test_rust.yml
+
+  check_go:
     needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-            ${{ runner.os }}-cargo-test-
-      - name: Install Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - name: Use Go 1.14
-        uses: actions/setup-go@v2
-        with:
-          go-version: "1.14"
-      - name: Test go
-        run: make go-test
+    uses: ./.github/workflows/check_go.yml
+
+  test_go:
+    needs: [check_go]
+    uses: ./.github/workflows/test_rust.yml

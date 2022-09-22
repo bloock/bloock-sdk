@@ -24,8 +24,8 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: bloock_js_node
-      - name: Install production dependencies
-        run: yarn install --production
+      - name: Install dependencies
+        run: yarn install
         working-directory: bloock_js_node
       - name: Run tests
         run: yarn test
