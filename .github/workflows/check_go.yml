@@ -1,0 +1,30 @@
+name: Check Go
+
+on:
+  workflow_call:
+
+jobs:
+  check_go:
+    name: Check Go.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ inputs.go-version }}
+      - name: Download go package from package run
+        uses: actions/download-artifact@v1
+        with:
+          name: go
+      - name: Test
+        run: go test -v ./...
+        working-directory: go
+      - name: Test musl
+        if: runner.os == 'Linux'
+        run: docker run --rm -v `pwd`:/bloock tetafro/golang-gcc:${{ inputs.go-version }}-alpine /bin/sh -c 'cd /bloock && go test -v ./...'
+        working-directory: go
+      - name: Test buster
+        if: runner.os == 'Linux'
+        run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-buster /bin/sh -c 'cd /bloock && go test -v ./...'
+        working-directory: go
