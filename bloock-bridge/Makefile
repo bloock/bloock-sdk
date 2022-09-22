@@ -16,16 +16,10 @@ build-all: build-linux build-windows build-darwin build-wasm
 
 # Linux
 
-build-linux:
-	cargo build --release
-
-build-linux-musl:
-	RUSTFLAGS="-C target-feature=-crt-static" cargo build --target x86_64-unknown-linux-musl --release
-
 build-linux: aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu i686-unknown-linux-gnu x86_64-unknown-linux-musl
 
 $(eval $(call BUILD_RECIPE,aarch64-unknown-linux-gnu))
-$(eval $(call BUILD_RECIPE,aarch64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static))
+$(eval $(call BUILD_RECIPE,aarch64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static"))
 $(eval $(call BUILD_RECIPE,x86_64-unknown-linux-gnu))
 $(eval $(call BUILD_RECIPE,x86_64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static"))
 
