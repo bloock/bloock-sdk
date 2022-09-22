@@ -44,11 +44,17 @@ jobs:
         run: |
           export CC_aarch64_unknown_linux_musl=clang
           export AR_aarch64_unknown_linux_musl=llvm-ar
+          export CFLAGS_aarch64_unknown_linux_musl="--sysroot=/usr/aarch64-linux-musl"
           export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
+          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-musl-gcc
+          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUNNER="qemu-aarch64 -L /usr/aarch64-linux-musl"
 
           export CC_aarch64_unknown_linux_gnu=clang
           export AR_aarch64_unknown_linux_gnu=llvm-ar
+          export CFLAGS_aarch64_unknown_linux_gnu="--sysroot=/usr/aarch64-linux-gnu"
           export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
+          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER="qemu-aarch64 -L /usr/aarch64-linux-gnu"
 
           make -C bloock-bridge ${{ inputs.target }}
       - uses: actions/upload-artifact@v2
