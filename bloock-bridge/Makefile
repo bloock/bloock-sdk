@@ -51,3 +51,11 @@ build-wasm:
 	wasm-pack -q build --out-dir build/wasm --target web
 	rm build/wasm/.gitignore
 	rm build/wasm/package.json
+
+test:
+	cargo test
+
+wasm-test:
+	wasm-pack test --firefox --headless 
+	wasm-pack test --chrome --headless 
+	wasm-pack test --node

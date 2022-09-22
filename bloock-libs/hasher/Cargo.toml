@@ -11,3 +11,4 @@ serde = { version = "1.0.123", features = ["std", "derive"] }
 hex = "0.4.3"
 thiserror = "1.0.31"
 tiny-keccak = { version = "2.0.2", features = ["keccak"] }
+sha2 = "0.10.6"
