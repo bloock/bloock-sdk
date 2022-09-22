@@ -2,10 +2,6 @@ package bloock
 
 import "github.com/bloock/go-bridge/internal/bridge/proto"
 
-type Record = proto.Record
-type RecordReceipt = proto.RecordReceipt
-type Anchor = proto.Anchor
-type Proof = proto.Proof
 type Network = proto.Network
 type NetworkConfig = proto.NetworkConfig
 
@@ -21,6 +17,22 @@ func ListOfNetworks() networks {
 		EthereumRinkeby: proto.Network_ETHEREUM_RINKEBY,
 		EthereumMainnet: proto.Network_ETHEREUM_MAINNET,
 	}
+}
+
+type AnchorParams struct {
+	Timeout		int64
+}
+
+func NewAnchorParams() AnchorParams {
+	return AnchorParams{}
+}
+
+type NetworkParams struct {
+	Network 	Network
+}
+
+func NewNetworkParams() NetworkParams {
+	return NetworkParams{}
 }
 
 const (

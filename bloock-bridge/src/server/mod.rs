@@ -99,6 +99,36 @@ impl Server {
                 .verify_records(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceBuildRecordFromString => Ok(self
+                .record
+                .build_record_from_string(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceBuildRecordFromHex => Ok(self
+                .record
+                .build_record_from_hex(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceBuildRecordFromJson => Ok(self
+                .record
+                .build_record_from_json(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceBuildRecordFromFile => Ok(self
+                .record
+                .build_record_from_file(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceBuildRecordFromBytes => Ok(self
+                .record
+                .build_record_from_bytes(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::RecordServiceBuildRecordFromRecord => Ok(self
+                .record
+                .build_record_from_record(self.serialize_request(payload)?)
+                .await
+                .into()),
             _ => Ok(self
                 .greeter
                 .say_hello(self.serialize_request(payload)?)

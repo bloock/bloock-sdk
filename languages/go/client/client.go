@@ -3,11 +3,10 @@ package bloock
 import (
 	"context"
 	"errors"
-	"log"
 
+	"github.com/bloock/go-bridge/client/entity"
 	"github.com/bloock/go-bridge/internal/bridge"
 	"github.com/bloock/go-bridge/internal/bridge/proto"
-	"github.com/bloock/go-bridge/internal/config"
 )
 
 type Client struct {
@@ -15,123 +14,123 @@ type Client struct {
 	configData   *proto.ConfigData
 }
 
-func NewClient(apiKey string) Client {
+func NewClient(apiKey string, host string) Client {
 	return Client{
 		bridgeClient: bridge.NewBloockBridge(),
-		configData:   config.NewConfigData(apiKey),
+		configData: &proto.ConfigData{
+			Config: &proto.Configuration{ApiKey: apiKey, Host: host},
+		},
 	}
 }
 
-func (c Client) SetApiHost(host string) {
+func (c *Client) SetApiHost(host string) {
 	c.configData.Config.Host = host
 }
 
-func (c Client) SetNetworkConfig(network Network, config *NetworkConfig) {
+func (c *Client) SetNetworkConfig(network Network, config *NetworkConfig) {
 	c.configData.NetworksConfig[int32(network)] = config
 }
 
-func (c Client) SendRecords(records []*Record) ([]*RecordReceipt, error) {
-	res, err := c.bridgeClient.Record().SendRecords(context.Background(), &proto.SendRecordsRequest{
+func (c *Client) SendRecords(records []string) ([]entity.RecordReceipt, error) {
+    res, err := c.bridgeClient.Record().SendRecords(context.Background(), &proto.SendRecordsRequest{
 		ConfigData: c.configData,
 		Records:    records,
 	})
 
 	if err != nil {
-		return []*RecordReceipt{}, err
+		return []entity.RecordReceipt{}, err
 	}
 
 	if res.Error != nil {
-		return []*RecordReceipt{}, errors.New(res.Error.Message)
+		return []entity.RecordReceipt{}, errors.New(res.Error.Message)
 	}
 
-	return res.Records, nil
+    receipts := make([]entity.RecordReceipt, len(res.Records))
+    for i, record := range res.Records {
+        receipts[i] = entity.NewRecordReceiptFromProto(record)
+    }
+
+	return receipts, nil
 }
 
-func (c Client) GetAnchor(anchorID int64) (*Anchor, error) {
+func (c *Client) GetAnchor(anchorID int64) (entity.Anchor, error) {
 	res, err := c.bridgeClient.Anchor().GetAnchor(context.Background(), &proto.GetAnchorRequest{
 		ConfigData: c.configData,
 		AnchorId:   anchorID,
 	})
 
 	if err != nil {
-		return nil, err
+		return entity.Anchor{}, err
 	}
 
 	if res.Error != nil {
-		return nil, errors.New(res.Error.Message)
+		return entity.Anchor{}, errors.New(res.Error.Message)
 	}
 
-	return res.Anchor, nil
+	return entity.NewAnchorFromProto(res.Anchor), nil
 }
 
-func (c Client) WaitAnchor(anchorID int64, optional_timeout ...int64) (*Anchor, error) {
-	timeout := int64(120000)
-	if len(optional_timeout) > 0 {
-		timeout = optional_timeout[0]
+func (c *Client) WaitAnchor(anchorID int64, params AnchorParams) (entity.Anchor, error) {
+	if params.Timeout == 0 {
+		params.Timeout = int64(120000)
 	}
 
 	res, err := c.bridgeClient.Anchor().WaitAnchor(context.Background(), &proto.WaitAnchorRequest{
 		ConfigData: c.configData,
 		AnchorId:   anchorID,
-		Timeout:    timeout,
+		Timeout:    params.Timeout,
 	})
 
 	if err != nil {
-		return nil, err
+		return entity.Anchor{}, err
 	}
 
 	if res.Error != nil {
-		return nil, errors.New(res.Error.Message)
+		return entity.Anchor{}, errors.New(res.Error.Message)
 	}
 
-	return res.Anchor, nil
+	return entity.NewAnchorFromProto(res.Anchor), nil
 }
 
-func (c Client) GetProof(records []*Record) (*Proof, error) {
-	log.Println("Retrieving proof for records: ", records)
+func (c *Client) GetProof(records []string) (entity.Proof, error) {
 	res, err := c.bridgeClient.Proof().GetProof(context.Background(), &proto.GetProofRequest{
 		ConfigData: c.configData,
 		Records:    records,
 	})
 
 	if err != nil {
-		return nil, err
+		return entity.Proof{}, err
 	}
 
 	if res.Error != nil {
-		return nil, errors.New(res.Error.Message)
+		return entity.Proof{}, errors.New(res.Error.Message)
 	}
 
-	return res.Proof, nil
+	return entity.NewProofFromProto(res.Proof), nil
 }
 
-func (c Client) VerifyProof(proof *Proof) (*Record, error) {
+func (c *Client) VerifyProof(proof entity.Proof) (string, error) {
 	res, err := c.bridgeClient.Proof().VerifyProof(context.Background(), &proto.VerifyProofRequest{
 		ConfigData: c.configData,
-		Proof:      proof,
+		Proof:      proof.ToProto(),
 	})
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if res.Error != nil {
-		return nil, errors.New(res.Error.Message)
+		return "", errors.New(res.Error.Message)
 	}
 
-	return res.Record, nil
+	return *res.Record, nil
 }
 
-func (c Client) VerifyRecords(records []*Record, optional_network ...Network) (uint64, error) {
-	var network *Network = nil
-	if len(optional_network) > 0 {
-		network = optional_network[0].Enum()
-	}
-
+func (c *Client) VerifyRecords(records []string, params NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Proof().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
 		ConfigData: c.configData,
 		Records:    records,
-		Network:    network,
+		Network:    params.Network.Enum(),
 	})
 
 	if err != nil {
@@ -145,7 +144,7 @@ func (c Client) VerifyRecords(records []*Record, optional_network ...Network) (u
 	return res.Timestamp, nil
 }
 
-func (c Client) ValidateRoot(root *Record, network Network) (uint64, error) {
+func (c *Client) ValidateRoot(root string, network Network) (uint64, error) {
 	res, err := c.bridgeClient.Proof().ValidateRoot(context.Background(), &proto.ValidateRootRequest{
 		ConfigData: c.configData,
 		Root:       root,
@@ -161,56 +160,4 @@ func (c Client) ValidateRoot(root *Record, network Network) (uint64, error) {
 	}
 
 	return res.Timestamp, nil
-}
-
-func (c Client) NewRecordFromHash(hash string) (*Record, error) {
-	record, err := c.bridgeClient.Record().FromHash(context.Background(), &proto.FromHashRequest{
-		Hash: hash,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return record, nil
-}
-
-func (c Client) NewRecordFromHex(hex string) (*Record, error) {
-	res, err := c.bridgeClient.Record().FromHex(context.Background(), &proto.FromHexRequest{
-		Hex: hex,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	if res.Error != nil {
-		return nil, err
-	}
-
-	return res.Record, nil
-}
-
-func (c Client) NewRecordFromString(string string) (*Record, error) {
-	record, err := c.bridgeClient.Record().FromString(context.Background(), &proto.FromStringRequest{
-		Str: string,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return record, nil
-}
-
-func (c Client) NewRecordFromTypedArray(array []byte) (*Record, error) {
-	record, err := c.bridgeClient.Record().FromTypedArray(context.Background(), &proto.FromTypedArrayRequest{
-		Array: array,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return record, nil
 }

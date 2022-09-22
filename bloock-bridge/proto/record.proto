@@ -9,6 +9,15 @@ import "bloock.proto";
 import "config.proto";
 import "proof.proto";
 
+enum RecordTypes {
+	STRING = 0;
+	HEX = 1;
+	JSON = 2;
+	BYTES = 3;
+	FILE = 4;
+    RECORD = 5;
+}
+
 service RecordService {
     rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
     rpc BuildRecordFromString(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
@@ -51,7 +60,7 @@ message Signer {
 }
 
 message SignerArgs {
-    string private_key = 1;
+    optional string private_key = 1;
 }
 
 message Encrypter {
@@ -60,7 +69,7 @@ message Encrypter {
 }
 
 message EncrypterArgs {
-    string secret = 1;
+    optional string secret = 1;
 }
 
 message Signature {

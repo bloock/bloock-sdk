@@ -1,17 +1,22 @@
 import { BloockBridge } from "./bridge/bridge";
+
 import { Anchor, GetAnchorRequest, WaitAnchorRequest } from "./bridge/proto/anchor";
 import { ConfigData, Network, NetworkConfig } from "./bridge/proto/config";
-import { GetProofRequest, Proof, ValidateRootRequest, VerifyProofRequest, VerifyRecordsRequest } from "./bridge/proto/proof";
-import { FromHashRequest, FromHexRequest, FromStringRequest, FromTypedArrayRequest, Record, RecordReceipt, SendRecordsRequest } from "./bridge/proto/record";
+import { GetProofRequest, ValidateRootRequest, VerifyProofRequest, VerifyRecordsRequest } from "./bridge/proto/proof";
+import { SendRecordsRequest } from "./bridge/proto/record";
+
+import { Proof } from "./entity/proof";
+import { RecordReceipt } from "./entity/record";
+
 import { NewConfigData } from "./config/config";
 
 export class BloockClient {
     private bridge: BloockBridge;
     private configData: ConfigData;
 
-    constructor(apiKey: string) {
+    constructor(apiKey: string, host: string) {
         this.bridge = new BloockBridge();
-        this.configData = NewConfigData(apiKey);
+        this.configData = NewConfigData(apiKey, host);
     }
 
     /**
@@ -36,7 +41,7 @@ export class BloockClient {
     * @param  {Record[]} records List of Record to send.
     * @returns {Promise<RecordReceipt[]>} List of RecordReceipt of each Record sent or error.
     */
-    public async sendRecords(records: Record[]): Promise<RecordReceipt[]> {
+    public async sendRecords(records: string[]): Promise<RecordReceipt[]> {
         let request = SendRecordsRequest.fromPartial({
             configData: this.configData,
             records: records,
@@ -49,10 +54,10 @@ export class BloockClient {
                 }
 
                 if (res.error != null) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
-                resolve(res.records);
+                resolve(res.records.map((r) => RecordReceipt.fromProto(r)));
             });
         });
     }
@@ -75,7 +80,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.anchor!);
@@ -103,7 +108,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.anchor!);
@@ -117,7 +122,7 @@ export class BloockClient {
      * @returns {Promise<Proof>} The Proof object containing the elements necessary to verify
      * the integrity of the records in the input list. If no record was requested, then returns None.
      */
-    public async getProof(records: Record[]): Promise<Proof> {
+    public async getProof(records: string[]): Promise<Proof> {
         let request = GetProofRequest.fromPartial({
             configData: this.configData,
             records: records,
@@ -130,10 +135,10 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
-                resolve(res.proof!);
+                resolve(Proof.fromProto(res.proof!));
             });
         });
     }
@@ -144,7 +149,7 @@ export class BloockClient {
      * @param {Network} network blockchain network where the record will be validated
      * @returns {Promise<number>} A number representing the timestamp in milliseconds when the anchor was registered in Blockchain
      */
-    public async validateRoot(root: Record, network: Network): Promise<number> {
+    public async validateRoot(root: string, network: Network): Promise<number> {
         let request = ValidateRootRequest.fromPartial({
             configData: this.configData,
             root: root,
@@ -158,7 +163,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.timestamp);
@@ -172,10 +177,10 @@ export class BloockClient {
      * @returns {Promise<Record>} Record prepared to validate in Blockchain
      * @throws {ProofException} Error when verifying the proof
      */
-    public async verifyProof(proof: Proof): Promise<Record> {
+    public async verifyProof(proof: Proof): Promise<string> {
         let request = VerifyProofRequest.fromPartial({
             configData: this.configData,
-            proof: proof,
+            proof: proof.toProto(),
         });
 
         return new Promise((resolve, reject) => {
@@ -185,7 +190,7 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.record!);
@@ -199,7 +204,7 @@ export class BloockClient {
      * @param  {Network} network OPTIONAL. Blockchain network where the records will be validated
      * @returns {Promise<number>} A number representing the timestamp in milliseconds when the anchor was registered in Blockchain
      */
-    public async verifyRecords(records: Record[], network?: Network): Promise<number> {
+    public async verifyRecords(records: string[], network?: Network): Promise<number> {
         let request = VerifyRecordsRequest.fromPartial({
             configData: this.configData,
             records: records,
@@ -213,78 +218,10 @@ export class BloockClient {
                 }
 
                 if (res.error) {
-                    reject(res.error);
+                    reject(res.error.message);
                 }
 
                 resolve(res.timestamp);
-            });
-        });
-    }
-
-    public async newRecordFromHash(hash: string): Promise<Record> {
-        let request = FromHashRequest.fromPartial({
-            hash: hash,
-        });
-
-        return new Promise((resolve, reject) => {
-            this.bridge.getRecord().fromHash(request, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-
-                resolve(res);
-            });
-        });
-    }
-
-    public async newRecordFromHex(hex: string): Promise<Record> {
-        let request = FromHexRequest.fromPartial({
-            hex: hex,
-        });
-
-        return new Promise((resolve, reject) => {
-            this.bridge.getRecord().fromHex(request, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-
-                if (res.error) {
-                    reject(res.error);
-                }
-
-                resolve(res.record!);
-            });
-        });
-    }
-
-    public async newRecordFromString(str: string): Promise<Record> {
-        let request = FromStringRequest.fromPartial({
-            str: str
-        });
-
-        return new Promise((resolve, reject) => {
-            this.bridge.getRecord().fromString(request, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-
-                resolve(res);
-            });
-        });
-    }
-
-    public async newRecordFromTypedArray(array: Buffer): Promise<Record> {
-        let request = FromTypedArrayRequest.fromPartial({
-            array: array
-        });
-
-        return new Promise((resolve, reject) => {
-            this.bridge.getRecord().fromTypedArray(request, (err, res) => {
-                if (err) {
-                    reject(err);
-                }
-
-                resolve(res);
             });
         });
     }

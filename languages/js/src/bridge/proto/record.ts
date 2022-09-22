@@ -17,6 +17,63 @@ import { Error } from "./bloock";
 import { Proof } from "./proof";
 import _m0 from "protobufjs/minimal";
 
+export enum RecordTypes {
+  STRING = 0,
+  HEX = 1,
+  JSON = 2,
+  BYTES = 3,
+  FILE = 4,
+  RECORD = 5,
+  UNRECOGNIZED = -1,
+}
+
+export function recordTypesFromJSON(object: any): RecordTypes {
+  switch (object) {
+    case 0:
+    case "STRING":
+      return RecordTypes.STRING;
+    case 1:
+    case "HEX":
+      return RecordTypes.HEX;
+    case 2:
+    case "JSON":
+      return RecordTypes.JSON;
+    case 3:
+    case "BYTES":
+      return RecordTypes.BYTES;
+    case 4:
+    case "FILE":
+      return RecordTypes.FILE;
+    case 5:
+    case "RECORD":
+      return RecordTypes.RECORD;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return RecordTypes.UNRECOGNIZED;
+  }
+}
+
+export function recordTypesToJSON(object: RecordTypes): string {
+  switch (object) {
+    case RecordTypes.STRING:
+      return "STRING";
+    case RecordTypes.HEX:
+      return "HEX";
+    case RecordTypes.JSON:
+      return "JSON";
+    case RecordTypes.BYTES:
+      return "BYTES";
+    case RecordTypes.FILE:
+      return "FILE";
+    case RecordTypes.RECORD:
+      return "RECORD";
+    case RecordTypes.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export enum SignerAlg {
   ES256K = 0,
   UNRECOGNIZED = -1,
