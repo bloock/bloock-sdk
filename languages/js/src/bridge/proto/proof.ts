@@ -12,7 +12,6 @@ import {
   ServiceError,
 } from "@grpc/grpc-js";
 import { ConfigData, Network, networkFromJSON, networkToJSON } from "./config";
-import { Record } from "./record";
 import Long from "long";
 import { AnchorNetwork } from "./anchor";
 import { Error } from "./bloock";
@@ -35,7 +34,7 @@ export interface ProofAnchor {
 
 export interface GetProofRequest {
   configData?: ConfigData;
-  records: Record[];
+  records: string[];
 }
 
 export interface GetProofResponse {
@@ -45,7 +44,7 @@ export interface GetProofResponse {
 
 export interface ValidateRootRequest {
   configData?: ConfigData;
-  root?: Record;
+  root: string;
   network: Network;
 }
 
@@ -61,13 +60,13 @@ export interface VerifyProofRequest {
 }
 
 export interface VerifyProofResponse {
-  record?: Record | undefined;
+  record?: string | undefined;
   error?: Error | undefined;
 }
 
 export interface VerifyRecordsRequest {
   configData?: ConfigData;
-  records: Record[];
+  records: string[];
   network?: Network | undefined;
 }
 
@@ -286,7 +285,7 @@ export const GetProofRequest = {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
     for (const v of message.records) {
-      Record.encode(v!, writer.uint32(18).fork()).ldelim();
+      writer.uint32(18).string(v!);
     }
     return writer;
   },
@@ -302,7 +301,7 @@ export const GetProofRequest = {
           message.configData = ConfigData.decode(reader, reader.uint32());
           break;
         case 2:
-          message.records.push(Record.decode(reader, reader.uint32()));
+          message.records.push(reader.string());
           break;
         default:
           reader.skipType(tag & 7);
@@ -318,7 +317,7 @@ export const GetProofRequest = {
         ? ConfigData.fromJSON(object.configData)
         : undefined,
       records: Array.isArray(object?.records)
-        ? object.records.map((e: any) => Record.fromJSON(e))
+        ? object.records.map((e: any) => String(e))
         : [],
     };
   },
@@ -330,9 +329,7 @@ export const GetProofRequest = {
         ? ConfigData.toJSON(message.configData)
         : undefined);
     if (message.records) {
-      obj.records = message.records.map((e) =>
-        e ? Record.toJSON(e) : undefined
-      );
+      obj.records = message.records.map((e) => e);
     } else {
       obj.records = [];
     }
@@ -347,7 +344,7 @@ export const GetProofRequest = {
       object.configData !== undefined && object.configData !== null
         ? ConfigData.fromPartial(object.configData)
         : undefined;
-    message.records = object.records?.map((e) => Record.fromPartial(e)) || [];
+    message.records = object.records?.map((e) => e) || [];
     return message;
   },
 };
@@ -424,7 +421,7 @@ export const GetProofResponse = {
 };
 
 function createBaseValidateRootRequest(): ValidateRootRequest {
-  return { configData: undefined, root: undefined, network: 0 };
+  return { configData: undefined, root: "", network: 0 };
 }
 
 export const ValidateRootRequest = {
@@ -435,8 +432,8 @@ export const ValidateRootRequest = {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
-    if (message.root !== undefined) {
-      Record.encode(message.root, writer.uint32(18).fork()).ldelim();
+    if (message.root !== "") {
+      writer.uint32(18).string(message.root);
     }
     if (message.network !== 0) {
       writer.uint32(24).int32(message.network);
@@ -455,7 +452,7 @@ export const ValidateRootRequest = {
           message.configData = ConfigData.decode(reader, reader.uint32());
           break;
         case 2:
-          message.root = Record.decode(reader, reader.uint32());
+          message.root = reader.string();
           break;
         case 3:
           message.network = reader.int32() as any;
@@ -473,7 +470,7 @@ export const ValidateRootRequest = {
       configData: isSet(object.configData)
         ? ConfigData.fromJSON(object.configData)
         : undefined,
-      root: isSet(object.root) ? Record.fromJSON(object.root) : undefined,
+      root: isSet(object.root) ? String(object.root) : "",
       network: isSet(object.network) ? networkFromJSON(object.network) : 0,
     };
   },
@@ -484,8 +481,7 @@ export const ValidateRootRequest = {
       (obj.configData = message.configData
         ? ConfigData.toJSON(message.configData)
         : undefined);
-    message.root !== undefined &&
-      (obj.root = message.root ? Record.toJSON(message.root) : undefined);
+    message.root !== undefined && (obj.root = message.root);
     message.network !== undefined &&
       (obj.network = networkToJSON(message.network));
     return obj;
@@ -499,10 +495,7 @@ export const ValidateRootRequest = {
       object.configData !== undefined && object.configData !== null
         ? ConfigData.fromPartial(object.configData)
         : undefined;
-    message.root =
-      object.root !== undefined && object.root !== null
-        ? Record.fromPartial(object.root)
-        : undefined;
+    message.root = object.root ?? "";
     message.network = object.network ?? 0;
     return message;
   },
@@ -664,7 +657,7 @@ export const VerifyProofResponse = {
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
     if (message.record !== undefined) {
-      Record.encode(message.record, writer.uint32(10).fork()).ldelim();
+      writer.uint32(10).string(message.record);
     }
     if (message.error !== undefined) {
       Error.encode(message.error, writer.uint32(18).fork()).ldelim();
@@ -680,7 +673,7 @@ export const VerifyProofResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.record = Record.decode(reader, reader.uint32());
+          message.record = reader.string();
           break;
         case 2:
           message.error = Error.decode(reader, reader.uint32());
@@ -695,15 +688,14 @@ export const VerifyProofResponse = {
 
   fromJSON(object: any): VerifyProofResponse {
     return {
-      record: isSet(object.record) ? Record.fromJSON(object.record) : undefined,
+      record: isSet(object.record) ? String(object.record) : undefined,
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: VerifyProofResponse): unknown {
     const obj: any = {};
-    message.record !== undefined &&
-      (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    message.record !== undefined && (obj.record = message.record);
     message.error !== undefined &&
       (obj.error = message.error ? Error.toJSON(message.error) : undefined);
     return obj;
@@ -713,10 +705,7 @@ export const VerifyProofResponse = {
     object: I
   ): VerifyProofResponse {
     const message = createBaseVerifyProofResponse();
-    message.record =
-      object.record !== undefined && object.record !== null
-        ? Record.fromPartial(object.record)
-        : undefined;
+    message.record = object.record ?? undefined;
     message.error =
       object.error !== undefined && object.error !== null
         ? Error.fromPartial(object.error)
@@ -738,7 +727,7 @@ export const VerifyRecordsRequest = {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
     for (const v of message.records) {
-      Record.encode(v!, writer.uint32(18).fork()).ldelim();
+      writer.uint32(18).string(v!);
     }
     if (message.network !== undefined) {
       writer.uint32(24).int32(message.network);
@@ -760,7 +749,7 @@ export const VerifyRecordsRequest = {
           message.configData = ConfigData.decode(reader, reader.uint32());
           break;
         case 2:
-          message.records.push(Record.decode(reader, reader.uint32()));
+          message.records.push(reader.string());
           break;
         case 3:
           message.network = reader.int32() as any;
@@ -779,7 +768,7 @@ export const VerifyRecordsRequest = {
         ? ConfigData.fromJSON(object.configData)
         : undefined,
       records: Array.isArray(object?.records)
-        ? object.records.map((e: any) => Record.fromJSON(e))
+        ? object.records.map((e: any) => String(e))
         : [],
       network: isSet(object.network)
         ? networkFromJSON(object.network)
@@ -794,9 +783,7 @@ export const VerifyRecordsRequest = {
         ? ConfigData.toJSON(message.configData)
         : undefined);
     if (message.records) {
-      obj.records = message.records.map((e) =>
-        e ? Record.toJSON(e) : undefined
-      );
+      obj.records = message.records.map((e) => e);
     } else {
       obj.records = [];
     }
@@ -816,7 +803,7 @@ export const VerifyRecordsRequest = {
       object.configData !== undefined && object.configData !== null
         ? ConfigData.fromPartial(object.configData)
         : undefined;
-    message.records = object.records?.map((e) => Record.fromPartial(e)) || [];
+    message.records = object.records?.map((e) => e) || [];
     message.network = object.network ?? undefined;
     return message;
   },

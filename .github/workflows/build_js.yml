@@ -26,9 +26,8 @@ jobs:
         working-directory: languages/js
         run: yarn install
       - name: Build
-        working-directory: languages/js
         run: |
-          make build
+          make -C languages/js build
           rm -rf node_modules
       - name: Copy master README into project directory
         working-directory: languages/js
