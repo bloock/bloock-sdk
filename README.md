@@ -16,11 +16,14 @@ This
 
 ## Language support
 
-|  Language  | Requirements | Link         | Documentation |
-|------------|--------------|:------------:|:-------------:|
-| Javascript | Node: >=12.20.0<br>NPM: >=6.4.1 | Link | Docs |
-| Go         | 1.18+        | Link         | Docs          |
-
+|  Language  | Requirements                    | Link         | Documentation | Support            |
+|------------|---------------------------------|:------------:|:-------------:|:------------------:|
+| Javascript | Node: >=12.20.0<br>NPM: >=6.4.1 | Link         | Docs          | :white_check_mark: |
+| Go         | 1.18+                           | Link         | Docs          | :white_check_mark: |
+| Java       |                                 |              |               | :soon:             |
+| PHP        |                                 |              |               | :soon:             |
+| Python     |                                 |              |               | :soon:             |
+| Rust       |                                 |              |               | :soon:             |
 
 ## OS Support
 

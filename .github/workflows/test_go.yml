@@ -16,15 +16,16 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: Download go package from package run
+        uses: actions/download-artifact@v1
+        with:
+          name: go
       - name: Set up go
         uses: actions/setup-go@v3
         with:
           go-version: ${{ inputs.go-version }}
           cache: true
-      - name: Download go package from package run
-        uses: actions/download-artifact@v1
-        with:
-          name: go
+          cache-dependency-path: go/go.sum
       - name: Test
         run: go test -v ./...
         working-directory: go
