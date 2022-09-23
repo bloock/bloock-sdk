@@ -6,7 +6,7 @@ on:
 jobs:
   build_darwin:
     name: Build lib Darwin
-    runs-on: macos-11
+    runs-on: macos-latest
     strategy:
       matrix:
         target: [x86_64-apple-darwin, aarch64-apple-darwin]
@@ -43,7 +43,7 @@ jobs:
   merge_fat:
     name: Merge fat libs
     needs: [build_darwin]
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - name: Download lib

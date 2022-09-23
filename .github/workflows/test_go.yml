@@ -29,7 +29,7 @@ jobs:
         working-directory: go
       - name: Test musl
         if: runner.os == 'Linux'
-        run: docker run --rm -v `pwd`:/bloock tetafro/golang-gcc:${{ inputs.go-version }}-alpine /bin/sh -c 'cd /bloock && go test -v ./...'
+        run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-alpine /bin/sh -c 'cd /bloock && go test -v ./...'
         working-directory: go
       - name: Test buster
         if: runner.os == 'Linux'
