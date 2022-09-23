@@ -129,6 +129,11 @@ impl Server {
                 .build_record_from_record(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceGetHash => Ok(self
+                .record
+                .get_hash(self.serialize_request(payload)?)
+                .await
+                .into()),
             _ => Ok(self
                 .greeter
                 .say_hello(self.serialize_request(payload)?)

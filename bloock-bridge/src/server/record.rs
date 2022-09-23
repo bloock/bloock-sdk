@@ -37,6 +37,12 @@ impl From<RecordBuilderResponse> for ResponseType {
     }
 }
 
+impl From<RecordHash> for ResponseType {
+    fn from(res: RecordHash) -> Self {
+        ResponseType::GetHash(res)
+    }
+}
+
 pub struct RecordServer {}
 
 #[async_trait(?Send)]
@@ -108,7 +114,7 @@ impl RecordServiceHandler for RecordServer {
         };
         let hash = record.get_hash();
         RecordHash {
-            hash: hash,
+            hash,
             error: None,
         }
     }
