@@ -35,14 +35,14 @@ jobs:
         run: make -C bloock-bridge ${{ matrix.target }}
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_library
+          name: bloock_core_lib_dynamic
           if-no-files-found: error
           path: |
             bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.dylib
             bloock-bridge/build/native/bloock_bridge.h
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_static_library
+          name: bloock_core_lib_static
           if-no-files-found: error
           path: |
             bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.a
@@ -56,24 +56,24 @@ jobs:
       - name: Download lib
         uses: actions/download-artifact@v1
         with:
-          name: bloock_library
+          name: bloock_core_lib_dynamic
       - name: Download static lib
         uses: actions/download-artifact@v1
         with:
-          name: bloock_static_library
+          name: bloock_core_lib_static
       - name: Merge dynamic libs into fat dynamic lib
-        run: lipo -create bloock_library/aarch64-apple-darwin/libbloock_bridge.dylib bloock_library/x86_64-apple-darwin/libbloock_bridge.dylib -output bloock_library/libbloock_bridge-fat.dylib
+        run: lipo -create bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.dylib bloock_core_lib_dynamic/x86_64-apple-darwin/libbloock_bridge.dylib -output bloock_core_lib_dynamic/libbloock_bridge-fat.dylib
       - name: Merge static libs into fat static lib
-        run: lipo -create bloock_static_library/aarch64-apple-darwin/libbloock_bridge.a bloock_static_library/x86_64-apple-darwin/libbloock_bridge.a -output bloock_static_library/libbloock_bridge-fat.a
+        run: lipo -create bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a -output bloock_core_lib_static/libbloock_bridge-fat.a
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_library
+          name: bloock_core_lib_dynamic
           if-no-files-found: error
           path: |
-            bloock_library/libbloock_bridge-fat.dylib
+            bloock_core_lib_dynamic/libbloock_bridge-fat.dylib
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_static_library
+          name: bloock_core_lib_static
           if-no-files-found: error
           path: |
-            bloock_static_library/libbloock_bridge-fat.a
+            bloock_core_lib_static/libbloock_bridge-fat.a

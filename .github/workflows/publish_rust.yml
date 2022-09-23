@@ -18,15 +18,15 @@ jobs:
       - name: Download bloock dylibs
         uses: actions/download-artifact@v1
         with:
-          name: bloock_library
+          name: bloock_core_lib_dynamic
       - name: Zip libraries
-        run: zip --junk-paths -r bloock-lib.zip bloock_library/
+        run: zip --junk-paths -r bloock-core-lib-dynamic.zip bloock_core_lib_dynamic/
       - name: Upload Libraries
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ inputs.release_url }}
-          asset_path: ./bloock-lib.zip
-          asset_name: bloock-lib-${{ inputs.version }}.zip
+          asset_path: ./bloock-core-lib-dynamic.zip
+          asset_name: bloock-core-lib-dynamic-${{ inputs.version }}.zip
           asset_content_type: application/zip

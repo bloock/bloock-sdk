@@ -34,7 +34,7 @@ jobs:
         run: make -C bloock-bridge build-wasm
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_library_wasm
+          name: bloock_core_lib_wasm
           if-no-files-found: error
           path: |
             bloock-bridge/build/wasm

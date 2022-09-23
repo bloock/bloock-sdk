@@ -12,23 +12,23 @@ jobs:
       - name: Download static libs
         uses: actions/download-artifact@v1
         with:
-          name: bloock_static_library
+          name: bloock_core_lib_static
       - name: Copy libraries into go package.
         run: |
           mkdir -p languages/go/internal/ffi/native
-          [[ -e bloock_static_library/bloock_bridge.h ]] && cp bloock_static_library/bloock_bridge.h languages/go/internal/ffi/native/bloock_bridge.h
+          [[ -e bloock_core_lib_static/bloock_bridge.h ]] && cp bloock_core_lib_static/bloock_bridge.h languages/go/internal/ffi/native/bloock_bridge.h
           mkdir -p languages/go/internal/ffi/native/x86_64-unknown-linux-musl
-          [[ -e bloock_static_library/x86_64-unknown-linux-musl/libbloock_bridge.a ]] && cp bloock_static_library/x86_64-unknown-linux-musl/libbloock_bridge.a languages/go/internal/ffi/native/x86_64-unknown-linux-musl/libbloock_bridge.a
+          [[ -e bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a languages/go/internal/ffi/native/x86_64-unknown-linux-musl/libbloock_bridge.a
           mkdir -p languages/go/internal/ffi/native/x86_64-apple-darwin
-          [[ -e bloock_static_library/x86_64-apple-darwin/libbloock_bridge.a ]] && cp bloock_static_library/x86_64-apple-darwin/libbloock_bridge.a languages/go/internal/ffi/native/x86_64-apple-darwin/libbloock_bridge.a
+          [[ -e bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a languages/go/internal/ffi/native/x86_64-apple-darwin/libbloock_bridge.a
           mkdir -p languages/go/internal/ffi/native/aarch64-apple-darwin
-          [[ -e bloock_static_library/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_static_library/aarch64-apple-darwin/libbloock_bridge.a languages/go/internal/ffi/native/aarch64-apple-darwin/libbloock_bridge.a
+          [[ -e bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a languages/go/internal/ffi/native/aarch64-apple-darwin/libbloock_bridge.a
           mkdir -p languages/go/internal/ffi/native/x86_64-pc-windows-gnu
-          [[ -e bloock_static_library/x86_64-pc-windows-gnu/libbloock_bridge.a ]] && cp bloock_static_library/x86_64-pc-windows-gnu/libbloock_bridge.a languages/go/internal/ffi/native/x86_64-pc-windows-gnu/libbloock_bridge.a
+          [[ -e bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a languages/go/internal/ffi/native/x86_64-pc-windows-gnu/libbloock_bridge.a
           rm languages/go/Makefile
       - name: Copy license.
         run: cp LICENSE languages/go/LICENSE
       - uses: actions/upload-artifact@v2
         with:
-          name: go
+          name: bloock_lib_go
           path: languages/go

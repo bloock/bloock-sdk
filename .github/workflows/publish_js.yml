@@ -17,12 +17,12 @@ jobs:
       - name: Download bloock js lib
         uses: actions/download-artifact@v1
         with:
-          name: bloock_js_node
+          name: bloock_lib_js
       - name: Install dependencies
-        working-directory: bloock_js_node
+        working-directory: bloock_lib_js
         run: yarn install --frozen-lockfile
       - name: Create JS release artifact
-        working-directory: bloock_js_node
+        working-directory: bloock_lib_js
         run: npm pack
       - name: Upload Js Package
         uses: actions/upload-release-asset@v1
@@ -30,6 +30,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ inputs.release_url }}
-          asset_path: ./bloock_js_node/bloock-${{ inputs.version }}.tgz
-          asset_name: bloock-js-node-${{ inputs.version }}.tgz
+          asset_path: ./bloock_lib_js/bloock-${{ inputs.version }}.tgz
+          asset_name: bloock-lib-js-${{ inputs.version }}.tgz
           asset_content_type: application/gzip

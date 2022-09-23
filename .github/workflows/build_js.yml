@@ -16,11 +16,11 @@ jobs:
       - name: Download WASM libs
         uses: actions/download-artifact@v1
         with:
-          name: bloock_library_wasm
+          name: bloock_core_lib_wasm
       - name: Copy libraries.
         run: |
           mkdir -p languages/js/src/ffi/native
-          cp bloock_library_wasm/* languages/js/src/ffi/native
+          cp bloock_core_lib_wasm/* languages/js/src/ffi/native
       - name: Install dependencies
         working-directory: languages/js
         run: yarn install --frozen-lockfile
@@ -35,5 +35,5 @@ jobs:
         run: cp ../../README.md .
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_js_node
+          name: bloock_lib_js
           path: languages/js/*

@@ -19,19 +19,19 @@ jobs:
       - name: Download go package from package run
         uses: actions/download-artifact@v1
         with:
-          name: go
+          name: bloock_lib_go
       - name: Set up go
         uses: actions/setup-go@v3
         with:
           go-version: ${{ inputs.go-version }}
       - name: Test
         run: go test -v ./...
-        working-directory: go
+        working-directory: bloock_lib_js
       - name: Test musl
         if: runner.os == 'Linux'
         run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-alpine /bin/sh -c 'apk add build-base && cd /bloock && go test -v ./...'
-        working-directory: go
+        working-directory: bloock_lib_js
       - name: Test buster
         if: runner.os == 'Linux'
         run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-buster /bin/sh -c 'cd /bloock && go test -v ./...'
-        working-directory: go
+        working-directory: bloock_lib_js

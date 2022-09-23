@@ -41,14 +41,14 @@ jobs:
           make -C bloock-bridge ${{ inputs.target }}
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_library
+          name: bloock_core_lib_dynamic
           if-no-files-found: error
           path: |
             bloock-bridge/build/native/bloock_bridge.h
             bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.so
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_static_library
+          name: bloock_core_lib_static
           if-no-files-found: error
           path: |
             bloock-bridge/build/native/bloock_bridge.h
