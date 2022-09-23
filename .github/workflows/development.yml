@@ -28,6 +28,11 @@ jobs:
   test_rust:
     needs: [build_linux, build_wasm]
     uses: ./.github/workflows/test_rust.yml
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    with:
+      os: ${{ matrix.os }}
 
   check_js:
     needs: [build_wasm]

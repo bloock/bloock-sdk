@@ -58,6 +58,11 @@ jobs:
   test_rust:
     needs: [build_linux, build_darwin, build_windows, build_wasm]
     uses: ./.github/workflows/test_rust.yml
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    with:
+      os: ${{ matrix.os }}
 
   test_go:
     needs: [build_go]

@@ -2,6 +2,10 @@ name: Test Rust
 
 on:
   workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
 
 jobs:
   test_rust:
