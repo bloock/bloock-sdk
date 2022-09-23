@@ -34,6 +34,9 @@ jobs:
         run: rustup target add ${{ inputs.target }}
       - name: Build release library
         run: make -C bloock-bridge ${{ inputs.target }}
+      - run: |
+          cp bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.dll bloock-bridge/build/native/Z/libbloock_bridge_${{ inputs.target }}.dll
+          cp bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.a bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.a
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_core_lib_dynamic

@@ -33,19 +33,23 @@ jobs:
         run: rustup target add ${{ matrix.target }}
       - name: Build release libraries
         run: make -C bloock-bridge ${{ matrix.target }}
+      - run: |
+          cp bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.dylib bloock-bridge/build/native/libbloock_bridge_${{ matrix.target }}.dylib
+          cp bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.a bloock-bridge/build/native/libbloock_bridge_${{ matrix.target }}.a
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_core_lib_dynamic
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.dylib
+            bloock-bridge/build/native/libbloock_bridge_${{ matrix.target }}.dylib
             bloock-bridge/build/native/bloock_bridge.h
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_core_lib_static
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/${{ matrix.target }}/libbloock_bridge.a
+            bloock-bridge/build/native/libbloock_bridge_${{ matrix.target }}.dylib
+            bloock-bridge/build/native/libbloock_bridge_${{ matrix.target }}.a
             bloock-bridge/build/native/bloock_bridge.h
   merge_fat:
     name: Merge fat libs
