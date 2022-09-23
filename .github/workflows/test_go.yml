@@ -26,12 +26,12 @@ jobs:
           go-version: ${{ inputs.go-version }}
       - name: Test
         run: go test -v ./...
-        working-directory: bloock_lib_js
+        working-directory: bloock_lib_go
       - name: Test musl
         if: runner.os == 'Linux'
         run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-alpine /bin/sh -c 'apk add build-base && cd /bloock && go test -v ./...'
-        working-directory: bloock_lib_js
+        working-directory: bloock_lib_go
       - name: Test buster
         if: runner.os == 'Linux'
         run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-buster /bin/sh -c 'cd /bloock && go test -v ./...'
-        working-directory: bloock_lib_js
+        working-directory: bloock_lib_go
