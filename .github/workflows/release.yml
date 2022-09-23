@@ -86,79 +86,50 @@ jobs:
       os: ${{ matrix.os }}
       node-version: ${{ matrix.node-version }}
 
-  release:
-    name: Create release
+  create_release:
+    name: Create Release
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [build_js, build_go, test_rust, test_js, test_go]
+    needs: [version, test_rust, test_js, test_go]
+    # if: startsWith(github.ref, 'refs/tags/')
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-      - name: Download bloock dylibs
-        uses: actions/download-artifact@v1
-        with:
-          name: bloock_library
-      - name: Zip libraries
-        run: zip --junk-paths -r bloock-lib.zip bloock_library/
-      - name: Create JS release artifact
-        working-directory: bloock_js_node
-        run: npm pack
-      - name: Download bloock go lib
-        uses: actions/download-artifact@v1
-        with:
-          name: go
-      - name: Zip Go source code
-        run: zip -r go-bloock.zip go/
+      - name: Set version env
+        id: version
+        env:
+          github_ref: ${{ github.ref }}
+        run: echo "::set-output name=version::${github_ref/refs\/tags\/v/}"
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.version.outputs.bloock_version }}
-          release_name: bloock ${{ steps.version.outputs.bloock_version }}
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: bloock ${{ steps.version.outputs.version }}
           body: |
-            bloock ${{ steps.version.outputs.bloock_version }}
+            bloock ${{ steps.version.outputs.version }}
           draft: false
           prerelease: true
-      - name: Upload Libraries
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bloock-lib.zip
-          asset_name: bloock-lib-${{ steps.version.outputs.bloock_version }}.zip
-          asset_content_type: application/zip
-      - name: Upload Js Package
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bloock_js_node/bloock-${{ steps.version.outputs.bloock_version }}.tgz
-          asset_name: bloock-js-node-${{ steps.version.outputs.bloock_version }}.tgz
-          asset_content_type: application/gzip
-      - name: Upload go package
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./go-bloock.zip
-          asset_name: go-bloock-${{ steps.version.outputs.bloock_version }}.zip
-          asset_content_type: application/zip
-  # TODO(gj): update this to post to Quill or a private channel on community Slack.
-  alert-failure:
-    name: Alert on failure
-    if: ${{ !success() }}
-    runs-on: ubuntu-latest
-    needs: [test_js, test_go]
-    steps:
-      - uses: rtCamp/action-slack-notify@master
-        if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
-        env:
-          SLACK_CHANNEL: firehose
-          SLACK_COLOR: "danger"
-          SLACK_MESSAGE: "${{ github.event.head_commit.url }}"
-          SLACK_TITLE: "Release job failed."
-          SLACK_USERNAME: github-actions
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TO_FIREHOSE }}
+
+  publish_rust:
+    needs: [create_release]
+    uses: ./.github/workflows/publish_rust.yml
+    with:
+      version: ${{ needs.create_release.outputs.version }}
+      release_url: ${{ needs.create_release.outputs.release_url }}
+
+  publish_go:
+    needs: [create_release]
+    uses: ./.github/workflows/publish_go.yml
+    with:
+      version: ${{ needs.create_release.outputs.version }}
+      release_url: ${{ needs.create_release.outputs.release_url }}
+
+  publish_js:
+    needs: [create_release]
+    uses: ./.github/workflows/publish_js.yml
+    with:
+      version: ${{ needs.create_release.outputs.version }}
+      release_url: ${{ needs.create_release.outputs.release_url }}

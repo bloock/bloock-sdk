@@ -1,0 +1,26 @@
+name: Publish JS
+
+on:
+  workflow_call:
+
+jobs:
+  upload_js:
+    name: Upload JS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download bloock dylibs
+        uses: actions/download-artifact@v1
+        with:
+          name: bloock_js_node
+      - name: Create JS release artifact
+        working-directory: bloock_js_node
+        run: npm pack
+      - name: Upload Js Package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ inputs.release_url }}
+          asset_path: ./bloock_js_node/bloock-${{ inputs.version }}.tgz
+          asset_name: bloock-js-node-${{ inputs.version }}.tgz
+          asset_content_type: application/gzip

@@ -1,0 +1,32 @@
+name: Publish Rust
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      release_url:
+        required: true
+        type: string
+
+jobs:
+  upload_rust:
+    name: Upload Rust
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download bloock dylibs
+        uses: actions/download-artifact@v1
+        with:
+          name: bloock_library
+      - name: Zip libraries
+        run: zip --junk-paths -r bloock-lib.zip bloock_library/
+      - name: Upload Libraries
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ inputs.release_url }}
+          asset_path: ./bloock-lib.zip
+          asset_name: bloock-lib-${{ inputs.version }}.zip
+          asset_content_type: application/zip
