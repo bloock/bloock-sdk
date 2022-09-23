@@ -2,7 +2,13 @@ name: Publish JS
 
 on:
   workflow_call:
-
+    inputs:
+      version:
+        required: true
+        type: string
+      release_url:
+        required: true
+        type: string
 jobs:
   upload_js:
     name: Upload JS
