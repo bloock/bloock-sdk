@@ -23,7 +23,7 @@ jobs:
           cp bloock_library_wasm/* languages/js/src/ffi/native
       - name: Install dependencies
         working-directory: languages/js
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Build
         working-directory: languages/js
         run: |

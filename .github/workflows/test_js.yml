@@ -25,7 +25,7 @@ jobs:
         with:
           name: bloock_js_node
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
         working-directory: bloock_js_node
       - name: Run tests
         run: yarn test

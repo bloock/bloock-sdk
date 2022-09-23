@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ inputs.go-version }}
+          cache: true
       - name: Download go package from package run
         uses: actions/download-artifact@v1
         with:
