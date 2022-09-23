@@ -14,13 +14,17 @@ package ffi
 import "C"
 import (
 	"encoding/base64"
+	"fmt"
 )
 
 func Request(requestType string, payload []byte) ([]byte, error) {
+    fmt.Println("payload: ", payload)
 	payloadStr := base64.StdEncoding.EncodeToString(payload)
+    fmt.Println("payloadStr: ", payloadStr)
 
 	r := C.request(C.CString(requestType), C.CString(payloadStr))
 
 	encodedResponse := C.GoString(r)
+    fmt.Println("encodedResponse: ", encodedResponse)
 	return base64.StdEncoding.DecodeString(encodedResponse)
 }

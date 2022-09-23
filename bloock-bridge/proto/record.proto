@@ -22,7 +22,7 @@ service RecordService {
     rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
     rpc BuildRecordFromString(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromHex(RecordBuilderFromHexRequest) returns (RecordBuilderResponse);
-    rpc BuildRecordFromJSON(RecordBuilderFromJSONRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromJson(RecordBuilderFromJSONRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromFile(RecordBuilderFromFileRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromBytes(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);

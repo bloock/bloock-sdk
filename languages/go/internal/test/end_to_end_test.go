@@ -88,8 +88,8 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
-        network := bloock.NewNetworkParams()
-        network.Network = bloock.ListOfNetworks().BloockChain
+	    network := bloock.NewNetworkParams()
+	    network.Network = bloock.ListOfNetworks().BloockChain
 		timestamp, err := sdk.VerifyRecords(records, network)
 		require.NoError(t, err)
 		assert.Greater(t, timestamp, uint64(0))
@@ -116,12 +116,16 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		records = append(records, hash)
 
-        record, err = bloock.NewRecordBuilderFromJSON("{\"hello\":\"world\"}").Build()
+		record, err = bloock.NewRecordBuilderFromJSON("{\"hello\":\"world\"}").Build()
 		require.NoError(t, err)
-        hash, err = record.GetHash()
+		hash, err = record.GetHash()
 		require.NoError(t, err)
 		records = append(records, hash)
 
+		record, err = bloock.NewRecordBuilderFromString(randHex(64)).Build()
+		require.NoError(t, err)
+		hash, err = record.GetHash()
+		require.NoError(t, err)
 		record, err = bloock.NewRecordBuilderFromRecord(record).Build()
 		require.NoError(t, err)
 		hash, err = record.GetHash()
@@ -143,7 +147,9 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
-		timestamp, err := sdk.VerifyRecords(records, bloock.NewNetworkParams())
+		network := bloock.NewNetworkParams()
+		network.Network = bloock.ListOfNetworks().BloockChain
+		timestamp, err := sdk.VerifyRecords(records, network)
 		require.NoError(t, err)
 		assert.Greater(t, timestamp, uint64(0))
 	})
