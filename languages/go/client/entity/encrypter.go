@@ -33,6 +33,6 @@ type EncrypterArgs struct {
 
 func (e EncrypterArgs) ToProto() *proto.EncrypterArgs {
 	return &proto.EncrypterArgs{
-		Secret: e.Secret,
+		Secret: &e.Secret,
 	}
 }

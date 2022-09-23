@@ -1,6 +1,7 @@
 package test
 
 import (
+	"encoding/hex"
 	"testing"
 
 	bloock "github.com/bloock/go-bridge/client"
@@ -15,6 +16,7 @@ func TestEndToEnd(t *testing.T) {
 	t.Run("Basic E2E", func(t *testing.T) {
 		record, err := bloock.NewRecordBuilderFromString(randHex(64)).Build()
 		require.NoError(t, err)
+
 		hash, err := record.GetHash()
 		require.NoError(t, err)
 		records := []string{hash}
@@ -86,7 +88,9 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
-		timestamp, err := sdk.VerifyRecords(records, bloock.NewNetworkParams())
+        network := bloock.NewNetworkParams()
+        network.Network = bloock.ListOfNetworks().BloockChain
+		timestamp, err := sdk.VerifyRecords(records, network)
 		require.NoError(t, err)
 		assert.Greater(t, timestamp, uint64(0))
 	})
@@ -106,15 +110,15 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		records = append(records, hash)
 
-		record, err = bloock.NewRecordBuilderFromHex(randHex(64)).Build()
+		record, err = bloock.NewRecordBuilderFromHex(hex.EncodeToString([]byte(randHex(64)))).Build()
 		require.NoError(t, err)
 		hash, err = record.GetHash()
 		require.NoError(t, err)
 		records = append(records, hash)
 
-		record, err = bloock.NewRecordBuilderFromJSON("{\"name\":\"John\",\"age\":30,\"car\":null}").Build()
+        record, err = bloock.NewRecordBuilderFromJSON("{\"hello\":\"world\"}").Build()
 		require.NoError(t, err)
-		hash, err = record.GetHash()
+        hash, err = record.GetHash()
 		require.NoError(t, err)
 		records = append(records, hash)
 

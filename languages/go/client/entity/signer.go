@@ -33,6 +33,6 @@ type SignerArgs struct {
 
 func (s SignerArgs) ToProto() *proto.SignerArgs {
 	return &proto.SignerArgs{
-		PrivateKey: s.PrivateKey,
+		PrivateKey: &s.PrivateKey,
 	}
 }
