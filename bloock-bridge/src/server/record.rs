@@ -333,10 +333,7 @@ fn build_record(
 
     RecordBuilderResponse {
         record: Some(record),
-        error: Some(Error {
-            kind: BridgeError::RecordError.to_string(),
-            message: "not implemented".to_string(),
-        }),
+        error: None,
     }
 }
 
@@ -365,12 +362,14 @@ mod tests {
         let result_payload = String::from_utf8(record.payload).unwrap();
         let result_encryption = record.encryption;
         let result_proof = record.proof;
+        let result_error = response.error;
 
         assert_eq!("string", result_ty);
         assert_eq!(0, result_signature.len());
         assert_eq!(content, result_payload);
         assert_eq!(None, result_encryption);
         assert_eq!(None, result_proof);
+        assert_eq!(None, result_error);
     }
 
     #[tokio::test]
@@ -400,6 +399,7 @@ mod tests {
         let result_payload = String::from_utf8(record.payload).unwrap();
         let result_encryption = record.encryption;
         let result_proof = record.proof;
+        let result_error = response.error;
 
         assert_eq!("string", result_ty);
         assert_eq!(1, result_signature.len());
@@ -412,6 +412,7 @@ mod tests {
         assert_eq!(content, result_payload);
         assert_eq!(None, result_encryption);
         assert_eq!(None, result_proof);
+        assert_eq!(None, result_error);
     }
 
     #[tokio::test]
@@ -442,10 +443,12 @@ mod tests {
         let result_ty = record.headers.unwrap().ty;
         let result_signature = record.signatures.clone();
         let result_encryption_alg = record.encryption.unwrap().header.unwrap().alg;
+        let result_error = response.error;
 
         assert_eq!("string", result_ty);
         assert_eq!(1, result_signature.len());
         assert_eq!("alg", result_encryption_alg);
+        assert_eq!(None, result_error);
     }
 
     #[tokio::test]
@@ -462,8 +465,10 @@ mod tests {
         let response = server.record.build_record_from_hex(request).await;
         let record = response.record.unwrap();
         let result_ty = record.headers.unwrap().ty;
+        let result_error = response.error;
 
         assert_eq!("hex", result_ty);
+        assert_eq!(None, result_error);
     }
 
     #[tokio::test]
@@ -480,8 +485,10 @@ mod tests {
         let response = server.record.build_record_from_json(request).await;
         let record = response.record.unwrap();
         let result_ty = record.headers.unwrap().ty;
+        let result_error = response.error;
 
         assert_eq!("application/json", result_ty);
+        assert_eq!(None, result_error);
     }
 
     #[tokio::test]
@@ -500,9 +507,11 @@ mod tests {
         let record = response.record.unwrap();
         let result_ty = record.headers.unwrap().ty;
         let result_payload = String::from_utf8(record.payload).unwrap();
+        let result_error = response.error;
 
         assert_eq!("unknown_file", result_ty);
         assert_eq!(content, result_payload);
+        assert_eq!(None, result_error);
     }
 
     #[tokio::test]
@@ -521,9 +530,11 @@ mod tests {
         let record = response.record.unwrap();
         let result_ty = record.headers.unwrap().ty;
         let result_payload = String::from_utf8(record.payload).unwrap();
+        let result_error = response.error;
 
         assert_eq!("bytes", result_ty);
         assert_eq!(content, result_payload);
+        assert_eq!(None, result_error);
     }
 
     #[tokio::test]
@@ -556,8 +567,10 @@ mod tests {
         let record = response.record.unwrap();
         let result_ty = record.headers.unwrap().ty;
         let result_payload = String::from_utf8(record.payload).unwrap();
+        let result_error = response.error;
 
         assert_eq!("string", result_ty);
         assert_eq!(content, result_payload);
+        assert_eq!(None, result_error);
     }
 }
