@@ -36,7 +36,7 @@ jobs:
         run: make -C bloock-bridge ${{ inputs.target }}
       - run: |
           dir
-          dir bloock-bridge/build/native
+          dir bloock-bridge/build/native/${{ inputs.target }}
           cp bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.lib bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.lib
           cp bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.dll bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.dll
           cp bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.a bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.a
