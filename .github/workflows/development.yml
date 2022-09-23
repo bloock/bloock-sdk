@@ -23,9 +23,7 @@ jobs:
 
   build_wasm:
     needs: [check_rust]
-    uses: ./.github/workflows/build_linux.yml
-    with:
-      target: x86_64-unknown-linux-musl
+    uses: ./.github/workflows/build_wasm.yml
 
   test_rust:
     needs: [build_linux, build_wasm]
