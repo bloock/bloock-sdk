@@ -1,12 +1,4 @@
-import {
-    Record as RecordProto,
-    RecordReceipt as RecordReceiptProto,
-    RecordHeader as RecordHeaderProto,
-    Signature as SignatureProto,
-    SignatureHeader as SignatureHeaderProto,
-    Encryption as EncryptionProto,
-    EncryptionHeader as EncryptionHeaderProto,
-} from "../bridge/proto/record";
+import * as proto from "../bridge/proto/record";
 import { Proof } from "./proof";
 
 export class Record {
@@ -27,7 +19,7 @@ export class Record {
         this.proof = proof;
     }
 
-    static fromProto(r: RecordProto) {
+    static fromProto(r: proto.Record) {
         return new Record(
             RecordHeader.fromProto(r.headers!), 
             r.payload,
@@ -37,8 +29,12 @@ export class Record {
         );
     }
 
-    toProto(): RecordProto {
-        return RecordProto.fromPartial({});
+    toProto(): proto.Record {
+        return proto.Record.fromPartial({});
+    }
+
+    getHash(): string {
+        return "TODO";
     }
 }
 
@@ -48,12 +44,12 @@ export class RecordHeader {
         this.ty = ty;
     }
 
-    static fromProto(recordHeader: RecordHeaderProto): RecordHeader {
+    static fromProto(recordHeader: proto.RecordHeader): RecordHeader {
         return new RecordHeader(recordHeader.ty);
     }
 
-    toProto(): RecordHeaderProto {
-        return RecordHeaderProto.fromPartial({ ty: this.ty })
+    toProto(): proto.RecordHeader {
+        return proto.RecordHeader.fromPartial({ ty: this.ty })
     }
 }
 
@@ -68,12 +64,12 @@ export class Signature {
         this.header = header;
     }
 
-    static fromProto(s: SignatureProto): Signature {
+    static fromProto(s: proto.Signature): Signature {
         return new Signature(s.signature, s.protected, SignatureHeader.fromProto(s.header!));
     }
 
-    toProto(): SignatureProto {
-        return SignatureProto.fromPartial({
+    toProto(): proto.Signature {
+        return proto.Signature.fromPartial({
             signature: this.signature,
             protected: this.protected,
             header: this.header.toProto(),
@@ -89,12 +85,12 @@ export class SignatureHeader {
         this.kid = kid;
     }
 
-    public static fromProto(s: SignatureHeaderProto): SignatureHeader {
+    public static fromProto(s: proto.SignatureHeader): SignatureHeader {
         return new SignatureHeader(s.alg, s.kid);
     }
 
-    toProto(): SignatureHeaderProto {
-        return SignatureHeaderProto.fromPartial({ alg: this.alg, kid: this.kid });
+    toProto(): proto.SignatureHeader {
+        return proto.SignatureHeader.fromPartial({ alg: this.alg, kid: this.kid });
     }
 }
 
@@ -107,12 +103,12 @@ export class Encryption {
         this.protected = prot;
     }
 
-    static fromProto(e: EncryptionProto): Encryption {
+    static fromProto(e: proto.Encryption): Encryption {
         return new Encryption(EncryptionHeader.fromProto(e.header!), e.protected);
     }
 
-    toProto(): EncryptionProto {
-        return EncryptionProto.fromPartial({ header: this.header.toProto(), protected: this.protected });
+    toProto(): proto.Encryption {
+        return proto.Encryption.fromPartial({ header: this.header.toProto(), protected: this.protected });
     }
 }
 
@@ -123,12 +119,12 @@ export class EncryptionHeader {
         this.alg = alg;
     }
 
-    static fromProto(e: EncryptionHeaderProto): EncryptionHeader {
+    static fromProto(e: proto.EncryptionHeader): EncryptionHeader {
         return new EncryptionHeader(e.alg);
     }
 
-    toProto(): EncryptionHeaderProto {
-        return EncryptionHeaderProto.fromPartial({ alg: this.alg });
+    toProto(): proto.EncryptionHeader {
+        return proto.EncryptionHeader.fromPartial({ alg: this.alg });
     }
 }
 
@@ -145,12 +141,12 @@ export class RecordReceipt {
         this.status = status;
     }
 
-    static fromProto(r: RecordReceiptProto): RecordReceipt {
+    static fromProto(r: proto.RecordReceipt): RecordReceipt {
         return new RecordReceipt(r.anchor, r.client, r.record, r.status);
     }
 
-    toProto(): RecordReceiptProto {
-        return RecordReceiptProto.fromPartial({
+    toProto(): proto.RecordReceipt {
+        return proto.RecordReceipt.fromPartial({
             anchor: this.anchor,
             client: this.client,
             record: this.record,

@@ -1,9 +1,11 @@
 import { BloockBridge } from "./bridge/bridge"
 import { 
-    Encrypter, RecordTypes, Signer, Record, RecordBuilderFromStringRequest,
+    Encrypter, RecordTypes, Signer, RecordBuilderFromStringRequest,
     RecordBuilderFromJSONRequest, RecordBuilderFromHexRequest, RecordBuilderFromBytesRequest,
     RecordBuilderFromFileRequest, RecordBuilderFromRecordRequest 
 } from "./bridge/proto/record"
+
+import { Record } from "./entity/record"
 
 export class RecordBuilder {
     payload: any
@@ -50,7 +52,7 @@ export class RecordBuilder {
         return this;
     }
 
-    build(): Promise<Record> {
+    async build(): Promise<Record> {
         let bridge = new BloockBridge();
         switch (this.payloadType) {
             case RecordTypes.STRING: {
@@ -70,7 +72,7 @@ export class RecordBuilder {
                             reject(res.error.message);
                         }
 
-                        resolve(res.record!);
+                        resolve(Record.fromProto(res.record!));
                     });
                 });
             }
@@ -91,7 +93,7 @@ export class RecordBuilder {
                             reject(res.error.message);
                         }
 
-                        resolve(res.record!);
+                        resolve(Record.fromProto(res.record!));
                     });
                 });
             }
@@ -112,7 +114,7 @@ export class RecordBuilder {
                             reject(res.error.message);
                         }
 
-                        resolve(res.record!);
+                        resolve(Record.fromProto(res.record!));
                     });
                 });
             }
@@ -133,7 +135,7 @@ export class RecordBuilder {
                             reject(res.error.message);
                         }
 
-                        resolve(res.record!);
+                        resolve(Record.fromProto(res.record!));
                     });
                 });
             }
@@ -154,7 +156,7 @@ export class RecordBuilder {
                             reject(res.error.message);
                         }
 
-                        resolve(res.record!);
+                        resolve(Record.fromProto(res.record!));
                     });
                 });
             }
@@ -175,7 +177,7 @@ export class RecordBuilder {
                             reject(res.error.message);
                         }
 
-                        resolve(res.record!);
+                        resolve(Record.fromProto(res.record!));
                     });
                 });
             }

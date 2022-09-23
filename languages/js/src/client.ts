@@ -1,11 +1,12 @@
 import { BloockBridge } from "./bridge/bridge";
 
-import { Anchor, GetAnchorRequest, WaitAnchorRequest } from "./bridge/proto/anchor";
+import { GetAnchorRequest, WaitAnchorRequest } from "./bridge/proto/anchor";
 import { ConfigData, Network, NetworkConfig } from "./bridge/proto/config";
 import { GetProofRequest, ValidateRootRequest, VerifyProofRequest, VerifyRecordsRequest } from "./bridge/proto/proof";
 import { SendRecordsRequest } from "./bridge/proto/record";
 
 import { Proof } from "./entity/proof";
+import { Anchor } from "./entity/anchor";
 import { RecordReceipt } from "./entity/record";
 
 import { NewConfigData } from "./config/config";
@@ -83,7 +84,7 @@ export class BloockClient {
                     reject(res.error.message);
                 }
 
-                resolve(res.anchor!);
+                resolve(Anchor.fromProto(res.anchor!));
             });
         });
     }
@@ -111,7 +112,7 @@ export class BloockClient {
                     reject(res.error.message);
                 }
 
-                resolve(res.anchor!);
+                resolve(Anchor.fromProto(res.anchor!));
             });
         });
     }
