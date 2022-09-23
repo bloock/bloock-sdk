@@ -11,7 +11,6 @@ rust-test: libs-test core-test bridge-test
 
 bridge-test:
 	$(MAKE) -C bloock-bridge test
-	$(MAKE) -C bloock-bridge wasm-test
 
 core-test:
 	$(MAKE) -C bloock-core test

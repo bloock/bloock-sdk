@@ -31,7 +31,7 @@ impl EcsdaSigner {
         let public_key = PublicKey::from_secret_key(&secret_key);
         Ok((
             hex::encode(secret_key.serialize()),
-            hex::encode(public_key.serialize()),
+            hex::encode(public_key.serialize_compressed()),
         ))
     }
 }
@@ -55,7 +55,7 @@ impl Signer for EcsdaSigner {
             signature: hex::encode(sig.0.serialize()),
             header: crate::SignatureHeader {
                 alg: "ES256K".to_string(),
-                kid: hex::encode(public_key.serialize()),
+                kid: hex::encode(public_key.serialize_compressed()),
             },
         };
 
