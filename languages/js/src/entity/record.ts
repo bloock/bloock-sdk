@@ -1,3 +1,4 @@
+import { BloockBridge } from "../bridge/bridge";
 import * as proto from "../bridge/proto/record";
 import { Proof } from "./proof";
 
@@ -9,8 +10,8 @@ export class Record {
     proof?: Proof | undefined;
 
     constructor(
-        headers: RecordHeader, payload: Buffer, signatures: Signature[],
-        encryption: Encryption, proof: Proof
+        headers: RecordHeader | undefined, payload: Buffer, signatures: Signature[],
+        encryption: Encryption | undefined, proof: Proof | undefined
     ) {
         this.headers = headers;
         this.payload = payload;
@@ -21,11 +22,11 @@ export class Record {
 
     static fromProto(r: proto.Record) {
         return new Record(
-            RecordHeader.fromProto(r.headers!), 
+            r.headers == undefined ? undefined : RecordHeader.fromProto(r.headers),
             r.payload,
-            r.signatures.map((x) => Signature.fromProto(x)), 
-            Encryption.fromProto(r.encryption!), 
-            Proof.fromProto(r.proof!),
+            r.signatures.map((x) => Signature.fromProto(x)),
+            r.encryption == undefined ? undefined : Encryption.fromProto(r.encryption),
+            r.proof == undefined ? undefined : Proof.fromProto(r.proof),
         );
     }
 
@@ -33,8 +34,21 @@ export class Record {
         return proto.Record.fromPartial({});
     }
 
-    getHash(): string {
-        return "TODO";
+    async getHash(): Promise<string> {
+        let bridge = new BloockBridge();
+        return new Promise((resolve, reject) => {
+            bridge.getRecord().getHash(this.toProto(), (err, res) => {
+                if (err) {
+                    reject(err);
+                }
+
+                if (res.error) {
+                    reject(res.error.message);
+                }
+
+                resolve(res.hash);
+            })
+        });
     }
 }
 

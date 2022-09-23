@@ -1,5 +1,4 @@
-import { RecordBuilder } from "../src/builder";
-import {  Network } from "../dist/index"
+import { RecordBuilder, Network } from "../dist/index"
 import * as util from "./util"
 
 describe('E2E Tests', () => {
@@ -9,7 +8,10 @@ describe('E2E Tests', () => {
         const sdk = util.getSdk();
 
         const records = [await RecordBuilder.fromString(util.randHex(64)).build()];
-        const hashes = records.map((r) => r.getHash());
+        let hashes = [];
+        for (let record of records) {
+            hashes.push(await record.getHash());
+        }
 
         const sendReceipt = await sdk.sendRecords(hashes);
         if (!sendReceipt) {
