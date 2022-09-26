@@ -6,9 +6,6 @@ on:
       version:
         required: true
         type: string
-      release_url:
-        required: true
-        type: string
     secrets:
       repo_api_token:
         required: true
@@ -18,21 +15,6 @@ jobs:
     name: Upload Go.
     runs-on: ubuntu-latest
     steps:
-      - name: Download bloock go lib
-        uses: actions/download-artifact@v1
-        with:
-          name: bloock_lib_go
-      - name: Zip Go source code
-        run: zip -r bloock-lib-go.zip bloock_lib_go/
-      - name: Upload go package
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ inputs.release_url }}
-          asset_path: ./bloock-lib-go.zip
-          asset_name: bloock-lib-go-${{ inputs.version }}.zip
-          asset_content_type: application/zip
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:

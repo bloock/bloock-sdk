@@ -1,4 +1,4 @@
-name: Publish Rust
+name: Publish Go
 
 on:
   workflow_call:
@@ -11,22 +11,22 @@ on:
         type: string
 
 jobs:
-  upload_rust:
-    name: Upload Rust
+  release_go:
+    name: Upload Go.
     runs-on: ubuntu-latest
     steps:
-      - name: Download bloock dylibs
+      - name: Download bloock go lib
         uses: actions/download-artifact@v1
         with:
-          name: bloock_core_lib_dynamic
-      - name: Zip libraries
-        run: zip --junk-paths -r bloock-core-lib-dynamic.zip bloock_core_lib_dynamic/
-      - name: Upload Libraries
+          name: bloock_lib_go
+      - name: Zip Go source code
+        run: zip -r bloock-lib-go.zip bloock_lib_go/
+      - name: Upload go package
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ inputs.release_url }}
-          asset_path: ./bloock-core-lib-dynamic.zip
-          asset_name: bloock-core-lib-dynamic-${{ inputs.version }}.zip
+          asset_path: ./bloock-lib-go.zip
+          asset_name: bloock-lib-go-${{ inputs.version }}.zip
           asset_content_type: application/zip

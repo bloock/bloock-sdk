@@ -4,7 +4,7 @@ on:
     tags:
       - "v*"
     branches:
-      - feature/EIT-2580
+      - master
 
 jobs:
   version:
@@ -109,27 +109,23 @@ jobs:
           draft: false
           prerelease: true
 
-  publish_rust:
+  release_rust:
     needs: [create_release]
-    uses: ./.github/workflows/publish_rust.yml
+    uses: ./.github/workflows/release_rust.yml
     with:
       version: ${{ needs.create_release.outputs.version }}
       release_url: ${{ needs.create_release.outputs.release_url }}
 
-  publish_go:
+  release_go:
     needs: [create_release]
-    uses: ./.github/workflows/publish_go.yml
+    uses: ./.github/workflows/release_go.yml
     with:
       version: ${{ needs.create_release.outputs.version }}
       release_url: ${{ needs.create_release.outputs.release_url }}
-    secrets:
-      repo_api_token: ${{ secrets.REPO_API_TOKEN }}
 
-  publish_js:
+  release_js:
     needs: [create_release]
-    uses: ./.github/workflows/publish_js.yml
+    uses: ./.github/workflows/release_js.yml
     with:
       version: ${{ needs.create_release.outputs.version }}
       release_url: ${{ needs.create_release.outputs.release_url }}
-    secrets:
-      npm_auth_token: ${{ secrets.NPM_AUTH_TOKEN }}

@@ -1,0 +1,35 @@
+name: Publish Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version Number"
+        required: true
+
+jobs:
+  mark-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark release as latest
+        uses: tubone24/update_release@v1.3.1
+        with:
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: "v${{ github.event.inputs.version }}"
+
+  publish_go:
+    needs: [create_release]
+    uses: ./.github/workflows/publish_go.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      repo_api_token: ${{ secrets.REPO_API_TOKEN }}
+
+  publish_js:
+    needs: [create_release]
+    uses: ./.github/workflows/publish_js.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      npm_auth_token: ${{ secrets.NPM_AUTH_TOKEN }}

@@ -6,9 +6,6 @@ on:
       version:
         required: true
         type: string
-      release_url:
-        required: true
-        type: string
     secrets:
       npm_auth_token:
         required: true
@@ -22,25 +19,13 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: bloock_lib_js
-      - name: Install dependencies
-        working-directory: bloock_lib_js
-        run: yarn install --frozen-lockfile
-      - name: Create JS release artifact
-        working-directory: bloock_lib_js
-        run: npm pack
-      - name: Upload Js Package
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ inputs.release_url }}
-          asset_path: ./bloock_lib_js/bloock-sdk-${{ inputs.version }}.tgz
-          asset_name: bloock-lib-js-${{ inputs.version }}.tgz
-          asset_content_type: application/gzip
       - name: Use Node.js 16
         uses: actions/setup-node@v1
         with:
           node-version: "16"
+      - name: Install dependencies
+        working-directory: bloock_lib_js
+        run: yarn install --frozen-lockfile
       - name: Set up .npmrc
         working-directory: bloock_lib_js
         run: echo '//registry.npmjs.org/:_authToken=${{ secrets.npm_auth_token }}' > .npmrc
