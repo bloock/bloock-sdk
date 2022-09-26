@@ -5,7 +5,7 @@ edition = "2021"
 
 [lib]
 name = "bloock_bridge"
-crate-type = ["lib", "staticlib", "cdylib", "rlib"]
+crate-type = ["lib", "staticlib", "cdylib"]
 bench = false
 
 [dependencies]
