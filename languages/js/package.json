@@ -16,9 +16,7 @@
     "fmt": "prettier --write 'src/**/*.[jt]s' 'test/**/*.[jt]s'",
     "fmtcheck": "prettier --check 'src/**/*.[jt]s' 'test/**/*.[jt]s'",
     "fix": "gts fix",
-    "prepare": "yarn run build",
-    "pretest": "yarn run build",
-    "posttest": "yarn run lint"
+    "pretest": "yarn run build"
   },
   "keywords": [],
   "author": "Marc Baqué",
