@@ -25,12 +25,11 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+          target: ${{ inputs.target }}
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install rustup target
-        run: rustup target add ${{ matrix.target }}
       - name: Build release libraries
         run: make -C bloock-bridge ${{ matrix.target }}
       - run: |

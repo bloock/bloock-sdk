@@ -26,6 +26,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+          target: ${{ inputs.target }}
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
@@ -34,8 +35,6 @@ jobs:
         if: ${{ inputs.target }} == 'x86_64-unknown-linux-musl'
         run: |
           sudo apt-get install musl-tools
-      - name: Install rustup target
-        run: rustup target add ${{ inputs.target }}
       - name: Build release libraries
         run: |
           make -C bloock-bridge ${{ inputs.target }}

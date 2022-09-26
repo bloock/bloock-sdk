@@ -26,12 +26,11 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+          target: ${{ inputs.target }}
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install rustup target
-        run: rustup target add ${{ inputs.target }}
       - name: Build release library
         run: make -C bloock-bridge ${{ inputs.target }}
       - run: |
@@ -39,9 +38,8 @@ jobs:
           dir target
           dir target/${{ inputs.target }}/release
           dir bloock-bridge/build/native/${{ inputs.target }}
-          cp bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.lib bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.lib
-          cp bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.dll bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.dll
-          cp bloock-bridge/build/native/${{ inputs.target }}/libbloock_bridge.a bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.a
+          cp bloock-bridge/build/native/${{ inputs.target }}/bloock_bridge.lib bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.lib
+          cp bloock-bridge/build/native/${{ inputs.target }}/bloock_bridge.dll bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.dll
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_core_lib_dynamic
@@ -55,5 +53,4 @@ jobs:
           if-no-files-found: error
           path: |
             bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.lib
-            bloock-bridge/build/native/libbloock_bridge_${{ inputs.target }}.a
             bloock-bridge/build/native/bloock_bridge.h
