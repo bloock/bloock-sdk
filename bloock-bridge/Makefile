@@ -10,7 +10,6 @@ $(1):
 	rm -rfv build/native/$$@/*
 	mkdir -p build/native/$$@
 	cp ../target/$$@/release/libbloock_bridge* build/native/$$@/
-	cp ../target/$$@/release/bloock_bridge* build/native/$$@/
 endef
 
 build-all: build-linux build-windows build-darwin build-wasm
