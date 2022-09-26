@@ -37,6 +37,6 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.repo_api_token }}
-          repository: bloock/bloock-sdk
+          repository: bloock/bloock-sdk-go
           event-type: bloock_publish
           client-payload: '{"version": "${{ inputs.version }}"}'
