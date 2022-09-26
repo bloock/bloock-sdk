@@ -1,8 +1,8 @@
 import { BloockBridge } from "./bridge/bridge"
-import { 
+import {
     Encrypter, RecordTypes, Signer, RecordBuilderFromStringRequest,
     RecordBuilderFromJSONRequest, RecordBuilderFromHexRequest, RecordBuilderFromBytesRequest,
-    RecordBuilderFromFileRequest, RecordBuilderFromRecordRequest 
+    RecordBuilderFromFileRequest, RecordBuilderFromRecordRequest
 } from "./bridge/proto/record"
 
 import { Record } from "./entity/record"
@@ -66,10 +66,12 @@ export class RecordBuilder {
                     bridge.getRecord().buildRecordFromString(req, (err, res) => {
                         if (err) {
                             reject(err);
+                            return;
                         }
 
                         if (res.error) {
                             reject(res.error.message);
+                            return;
                         }
 
                         resolve(Record.fromProto(res.record!));
@@ -84,13 +86,15 @@ export class RecordBuilder {
                 });
 
                 return new Promise((resolve, reject) => {
-                    bridge.getRecord().buildRecordFromJSON(req, (err, res) => {
+                    bridge.getRecord().buildRecordFromJson(req, (err, res) => {
                         if (err) {
                             reject(err);
+                            return;
                         }
 
                         if (res.error) {
                             reject(res.error.message);
+                            return;
                         }
 
                         resolve(Record.fromProto(res.record!));
@@ -108,10 +112,12 @@ export class RecordBuilder {
                     bridge.getRecord().buildRecordFromHex(req, (err, res) => {
                         if (err) {
                             reject(err);
+                            return;
                         }
 
                         if (res.error) {
                             reject(res.error.message);
+                            return;
                         }
 
                         resolve(Record.fromProto(res.record!));
@@ -129,10 +135,12 @@ export class RecordBuilder {
                     bridge.getRecord().buildRecordFromBytes(req, (err, res) => {
                         if (err) {
                             reject(err);
+                            return;
                         }
 
                         if (res.error) {
                             reject(res.error.message);
+                            return;
                         }
 
                         resolve(Record.fromProto(res.record!));
@@ -150,10 +158,12 @@ export class RecordBuilder {
                     bridge.getRecord().buildRecordFromFile(req, (err, res) => {
                         if (err) {
                             reject(err);
+                            return;
                         }
 
                         if (res.error) {
                             reject(res.error.message);
+                            return;
                         }
 
                         resolve(Record.fromProto(res.record!));
@@ -171,10 +181,12 @@ export class RecordBuilder {
                     bridge.getRecord().buildRecordFromRecord(req, (err, res) => {
                         if (err) {
                             reject(err);
+                            return;
                         }
 
                         if (res.error) {
                             reject(res.error.message);
+                            return;
                         }
 
                         resolve(Record.fromProto(res.record!));

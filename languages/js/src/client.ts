@@ -52,10 +52,12 @@ export class BloockClient {
             this.bridge.getRecord().sendRecords(request, (err, res) => {
                 if (err) {
                     reject(err);
+                    return;
                 }
 
-                if (res.error != null) {
+                if (res.error) {
                     reject(res.error.message);
+                    return;
                 }
 
                 resolve(res.records.map((r) => RecordReceipt.fromProto(r)));
@@ -78,10 +80,12 @@ export class BloockClient {
             this.bridge.getAnchor().getAnchor(request, (err, res) => {
                 if (err) {
                     reject(err);
+                    return;
                 }
 
                 if (res.error) {
                     reject(res.error.message);
+                    return;
                 }
 
                 resolve(Anchor.fromProto(res.anchor!));
@@ -106,10 +110,12 @@ export class BloockClient {
             this.bridge.getAnchor().waitAnchor(request, (err, res) => {
                 if (err) {
                     reject(err);
+                    return;
                 }
 
                 if (res.error) {
                     reject(res.error.message);
+                    return;
                 }
 
                 resolve(Anchor.fromProto(res.anchor!));
@@ -133,10 +139,12 @@ export class BloockClient {
             this.bridge.getProof().getProof(request, (err, res) => {
                 if (err) {
                     reject(err);
+                    return;
                 }
 
                 if (res.error) {
                     reject(res.error.message);
+                    return;
                 }
 
                 resolve(Proof.fromProto(res.proof!));
@@ -161,10 +169,12 @@ export class BloockClient {
             this.bridge.getProof().validateRoot(request, (err, res) => {
                 if (err) {
                     reject(err);
+                    return;
                 }
 
                 if (res.error) {
                     reject(res.error.message);
+                    return;
                 }
 
                 resolve(res.timestamp);
@@ -188,10 +198,12 @@ export class BloockClient {
             this.bridge.getProof().verifyProof(request, (err, res) => {
                 if (err) {
                     reject(err);
+                    return;
                 }
 
                 if (res.error) {
                     reject(res.error.message);
+                    return;
                 }
 
                 resolve(res.record!);
@@ -216,10 +228,12 @@ export class BloockClient {
             this.bridge.getProof().verifyRecords(request, (err, res) => {
                 if (err) {
                     reject(err);
+                    return;
                 }
 
                 if (res.error) {
                     reject(res.error.message);
+                    return;
                 }
 
                 resolve(res.timestamp);

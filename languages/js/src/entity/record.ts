@@ -31,7 +31,13 @@ export class Record {
     }
 
     toProto(): proto.Record {
-        return proto.Record.fromPartial({});
+        return proto.Record.fromPartial({
+            headers: this.headers,
+            payload: this.payload,
+            signatures: this.signatures.map((s) => s.toProto()),
+            encryption: this.encryption,
+            proof: this.proof
+        });
     }
 
     async getHash(): Promise<string> {
