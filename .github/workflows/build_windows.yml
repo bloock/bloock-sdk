@@ -32,9 +32,8 @@ jobs:
         run: rustup target add x86_64-pc-windows-gnu
       - name: Build release MinGW library
         run: make -C bloock-bridge x86_64-pc-windows-gnu
-      - run: |
-          dir target/x86_64-pc-windows-msvc/release
-          dir target/x86_64-pc-windows-gnu/release
+      - name: Copy files
+        run: |
           cp target/x86_64-pc-windows-msvc/release/bloock_bridge.lib bloock-bridge/build/native/libbloock_bridge_windows.lib
           cp target/x86_64-pc-windows-msvc/release/bloock_bridge.dll bloock-bridge/build/native/libbloock_bridge_windows.dll
           cp target/x86_64-pc-windows-gnu/release/libbloock_bridge.a bloock-bridge/build/native/bloock_bridge_windows.a
