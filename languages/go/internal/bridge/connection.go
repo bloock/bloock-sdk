@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bloock/go-bridge/internal/ffi"
+	"github.com/bloock/bloock-sdk-go/internal/ffi"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )

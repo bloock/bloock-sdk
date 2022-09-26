@@ -6,12 +6,10 @@ describe('E2E Tests', () => {
     const sdk = util.getSdk();
 
     const records = [await RecordBuilder.fromString(util.randHex(64)).build()];
-    console.log('~~> ~~> ', records[0]);
     const hashes = [];
     for (const record of records) {
       hashes.push(await record.getHash());
     }
-    console.log('==>==>==>==>==>==>==>', hashes);
 
     const sendReceipt = await sdk.sendRecords(hashes);
     if (!sendReceipt) {
@@ -19,20 +17,15 @@ describe('E2E Tests', () => {
       return;
     }
 
-    console.log('Waiting for anchor...');
-    await new Promise(r => setTimeout(r, 110000));
+    await sdk.waitAnchor(sendReceipt[0].anchor);
 
     const proof = await sdk.getProof(hashes);
-    console.log('PROOF: ', proof);
-    console.log('PROTO PROOF: ', proof.toProto());
     const root = await sdk.verifyProof(proof);
 
-    const timestamp = await sdk.validateRoot(root, Network.BLOOCK_CHAIN);
-    console.log('----->', timestamp);
+    let timestamp = await sdk.validateRoot(root, Network.BLOOCK_CHAIN);
     expect(timestamp).toBeGreaterThan(0);
 
-    // timestamp = await sdk.verifyRecords(hashes, Network.BLOOCK_CHAIN);
-    // console.log("----->", timestamp);
-    // expect(timestamp).toBeGreaterThan(0);
+    timestamp = await sdk.verifyRecords(hashes, Network.BLOOCK_CHAIN);
+    expect(timestamp).toBeGreaterThan(0);
   }, 120000);
 });

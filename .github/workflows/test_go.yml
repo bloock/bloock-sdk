@@ -9,6 +9,11 @@ on:
       go-version:
         required: true
         type: string
+    secrets:
+      api_host:
+        required: true
+      api_key:
+        required: true
 
 jobs:
   test_go:
@@ -25,13 +30,13 @@ jobs:
         with:
           go-version: ${{ inputs.go-version }}
       - name: Test
-        run: go test -v ./...
+        run: API_HOST=${{ secrets.api_host }} API_KEY=${{ secrets.api_key }} go test -v ./...
         working-directory: bloock_lib_go
       - name: Test musl
         if: runner.os == 'Linux'
-        run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-alpine /bin/sh -c 'apk add build-base && cd /bloock && go test -v ./...'
+        run: docker run --env API_HOST=${{ secrets.api_host }} --env API_KEY=${{ secrets.api_key }} --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-alpine /bin/sh -c 'apk add build-base && cd /bloock && go test -v ./...'
         working-directory: bloock_lib_go
       - name: Test buster
         if: runner.os == 'Linux'
-        run: docker run --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-buster /bin/sh -c 'cd /bloock && go test -v ./...'
+        run: docker run --env API_HOST=${{ secrets.api_host }} --env API_KEY=${{ secrets.api_key }} --rm -v `pwd`:/bloock golang:${{ inputs.go-version }}-buster /bin/sh -c 'cd /bloock && go test -v ./...'
         working-directory: bloock_lib_go

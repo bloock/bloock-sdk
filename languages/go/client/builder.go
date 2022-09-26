@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/go-bridge/client/entity"
-	"github.com/bloock/go-bridge/internal/bridge"
-	"github.com/bloock/go-bridge/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/client/entity"
+	"github.com/bloock/bloock-sdk-go/internal/bridge"
+	"github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 )
 
 type RecordBuilder struct {

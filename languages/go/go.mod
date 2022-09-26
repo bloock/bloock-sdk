@@ -1,4 +1,4 @@
-module github.com/bloock/go-bridge
+module github.com/bloock/bloock-sdk-go
 
 go 1.17
 

@@ -3,7 +3,7 @@ package test
 // import (
 // 	"testing"
 //
-// 	bloock "github.com/bloock/go-bridge/client"
+// 	bloock "github.com/bloock/bloock-sdk-go/client"
 // 	"github.com/stretchr/testify/assert"
 // 	"github.com/stretchr/testify/require"
 // )

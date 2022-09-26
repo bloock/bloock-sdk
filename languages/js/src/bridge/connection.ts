@@ -16,9 +16,8 @@ export const makeRequest = <RequestType, ResponseType>(
   const requestType = method;
   const payload = serialize(argument);
 
-  console.log(requestType, payload);
   ffiClient
-    .request(requestType, payload.toString())
+    .request(requestType, payload)
     .then(responsePayload => {
       const response = deserialize(Buffer.from(responsePayload, 'base64'));
       callback(null, response);

@@ -8,10 +8,10 @@ export class FFIClient {
       this.init().then(resolve).catch(reject);
     });
   }
-  public async request(type: string, payload: string): Promise<string> {
+  public async request(type: string, payload: Buffer): Promise<string> {
     await this.ready;
-    const buffer = Buffer.from(payload);
-    return request(type, buffer.toString('base64'));
+
+    return request(type, payload.toString('base64'));
   }
 
   private async init() {

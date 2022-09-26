@@ -1,6 +1,6 @@
 package bridge
 
-import "github.com/bloock/go-bridge/internal/bridge/proto"
+import "github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 
 type BloockBridge struct {
 	greeting proto.GreeterClient

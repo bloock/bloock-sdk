@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/bloock/go-bridge/internal/bridge/proto"
+import "github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 
 type Anchor struct {
 	Id         int64

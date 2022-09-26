@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 pub struct Configuration {
     pub host: String,
     pub api_key: String,
-    pub wait_message_interval_factor: i32,
-    pub wait_message_interval_default: i32,
+    pub wait_message_interval_factor: u128,
+    pub wait_message_interval_default: u128,
     pub key_type_algorithm: String,
     pub elliptic_curve_key: String,
     pub signature_algorithm: String,

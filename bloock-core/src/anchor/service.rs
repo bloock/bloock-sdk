@@ -4,10 +4,6 @@ use crate::error::BloockResult;
 use crate::error::InfrastructureError;
 use bloock_http::Client;
 use std::sync::Arc;
-use std::{
-    thread,
-    time::{Duration, SystemTime},
-};
 
 pub struct AnchorService<H: Client> {
     pub http: Arc<H>,
@@ -24,15 +20,17 @@ impl<H: Client> AnchorService<H> {
         }
     }
 
-    pub async fn wait_anchor(&self, anchor_id: i64, timeout: i64) -> BloockResult<Anchor> {
+    pub async fn wait_anchor(&self, anchor_id: i64, mut timeout: i64) -> BloockResult<Anchor> {
+        if timeout == 0 {
+            timeout = 120000;
+        }
         let config = self.config_service.get_config();
 
         let mut attempts = 0;
-        let start = SystemTime::now();
-        let mut next_try =
-            start + Duration::from_millis(config.wait_message_interval_default as u64);
+        let start = get_current_timestamp();
+        let mut next_try = start + config.wait_message_interval_default;
 
-        let timeout_time = start + Duration::from_millis(timeout as u64);
+        let timeout_time = start + timeout as u128;
 
         loop {
             if let Ok(anchor) = self.get_anchor(anchor_id).await {
@@ -40,30 +38,61 @@ impl<H: Client> AnchorService<H> {
                     return Ok(anchor);
                 }
             }
-            let mut current_time = SystemTime::now();
+            let mut current_time = get_current_timestamp();
             if current_time > timeout_time {
                 return Err(AnchorError::AnchorTimeout()).map_err(|e| e.into());
             }
 
-            thread::sleep(Duration::from_millis(1000));
+            sleep(1000).await;
 
-            current_time = SystemTime::now();
+            current_time = get_current_timestamp();
             while current_time < next_try && current_time < timeout_time {
-                thread::sleep(Duration::from_millis(200));
-                current_time = SystemTime::now();
+                sleep(200).await;
+                current_time = get_current_timestamp();
             }
 
             if current_time >= timeout_time {
                 return Err(AnchorError::AnchorTimeout()).map_err(|e| e.into());
             }
 
-            next_try += Duration::from_millis(
-                (attempts * config.wait_message_interval_factor
-                    + config.wait_message_interval_default) as u64,
-            );
+            next_try += attempts * config.wait_message_interval_factor
+                + config.wait_message_interval_default;
             attempts += 1;
         }
     }
+}
+
+#[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
+fn get_current_timestamp() -> u128 {
+    (js_sys::Date::now()) as u128
+}
+
+#[cfg(not(any(target_arch = "wasm32", target_arch = "wasm64")))]
+fn get_current_timestamp() -> u128 {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_millis(),
+        Err(_) => 1,
+    }
+}
+
+#[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
+async fn sleep(duration: u64) {
+    let promise = js_sys::Promise::new(&mut |resolve, _| {
+        web_sys::window()
+            .unwrap()
+            .set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, duration as i32)
+            .unwrap();
+    });
+
+    wasm_bindgen_futures::JsFuture::from(promise).await.unwrap();
+}
+
+#[cfg(not(any(target_arch = "wasm32", target_arch = "wasm64")))]
+async fn sleep(duration: u64) {
+    use std::time::Duration;
+
+    std::thread::sleep(Duration::from_millis(duration))
 }
 
 #[cfg(test)]

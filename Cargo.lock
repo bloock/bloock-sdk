@@ -112,11 +112,14 @@ dependencies = [
  "cfg-if",
  "hex",
  "infer",
+ "js-sys",
  "mockall",
  "serde",
  "serde_json",
  "thiserror",
  "tokio",
+ "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]
