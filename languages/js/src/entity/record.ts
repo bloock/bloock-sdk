@@ -1,6 +1,6 @@
-import { BloockBridge } from "../bridge/bridge";
-import * as proto from "../bridge/proto/record";
-import { Proof } from "./proof";
+import {BloockBridge} from '../bridge/bridge';
+import * as proto from '../bridge/proto/record';
+import {Proof} from './proof';
 
 export class Record {
   headers?: RecordHeader;
@@ -10,8 +10,11 @@ export class Record {
   proof?: Proof | undefined;
 
   constructor(
-    headers: RecordHeader | undefined, payload: Buffer, signatures: Signature[],
-    encryption: Encryption | undefined, proof: Proof | undefined
+    headers: RecordHeader | undefined,
+    payload: Buffer,
+    signatures: Signature[],
+    encryption: Encryption | undefined,
+    proof: Proof | undefined
   ) {
     this.headers = headers;
     this.payload = payload;
@@ -22,11 +25,13 @@ export class Record {
 
   static fromProto(r: proto.Record) {
     return new Record(
-      r.headers == undefined ? undefined : RecordHeader.fromProto(r.headers),
+      r.headers === undefined ? undefined : RecordHeader.fromProto(r.headers),
       r.payload,
-      r.signatures.map((x) => Signature.fromProto(x)),
-      r.encryption == undefined ? undefined : Encryption.fromProto(r.encryption),
-      r.proof == undefined ? undefined : Proof.fromProto(r.proof),
+      r.signatures.map(x => Signature.fromProto(x)),
+      r.encryption === undefined
+        ? undefined
+        : Encryption.fromProto(r.encryption),
+      r.proof === undefined ? undefined : Proof.fromProto(r.proof)
     );
   }
 
@@ -34,14 +39,14 @@ export class Record {
     return proto.Record.fromPartial({
       headers: this.headers,
       payload: this.payload,
-      signatures: this.signatures.map((s) => s.toProto()),
+      signatures: this.signatures.map(s => s.toProto()),
       encryption: this.encryption,
-      proof: this.proof
+      proof: this.proof,
     });
   }
 
   async getHash(): Promise<string> {
-    let bridge = new BloockBridge();
+    const bridge = new BloockBridge();
     return new Promise((resolve, reject) => {
       bridge.getRecord().getHash(this.toProto(), (err, res) => {
         if (err) {
@@ -53,7 +58,7 @@ export class Record {
         }
 
         resolve(res.hash);
-      })
+      });
     });
   }
 }
@@ -69,7 +74,7 @@ export class RecordHeader {
   }
 
   toProto(): proto.RecordHeader {
-    return proto.RecordHeader.fromPartial({ ty: this.ty })
+    return proto.RecordHeader.fromPartial({ty: this.ty});
   }
 }
 
@@ -85,7 +90,11 @@ export class Signature {
   }
 
   static fromProto(s: proto.Signature): Signature {
-    return new Signature(s.signature, s.protected, SignatureHeader.fromProto(s.header!));
+    return new Signature(
+      s.signature,
+      s.protected,
+      SignatureHeader.fromProto(s.header!)
+    );
   }
 
   toProto(): proto.Signature {
@@ -110,7 +119,7 @@ export class SignatureHeader {
   }
 
   toProto(): proto.SignatureHeader {
-    return proto.SignatureHeader.fromPartial({ alg: this.alg, kid: this.kid });
+    return proto.SignatureHeader.fromPartial({alg: this.alg, kid: this.kid});
   }
 }
 
@@ -128,7 +137,10 @@ export class Encryption {
   }
 
   toProto(): proto.Encryption {
-    return proto.Encryption.fromPartial({ header: this.header.toProto(), protected: this.protected });
+    return proto.Encryption.fromPartial({
+      header: this.header.toProto(),
+      protected: this.protected,
+    });
   }
 }
 
@@ -144,7 +156,7 @@ export class EncryptionHeader {
   }
 
   toProto(): proto.EncryptionHeader {
-    return proto.EncryptionHeader.fromPartial({ alg: this.alg });
+    return proto.EncryptionHeader.fromPartial({alg: this.alg});
   }
 }
 

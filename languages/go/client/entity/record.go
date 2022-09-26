@@ -17,9 +17,9 @@ type Record struct {
 }
 
 func NewRecordFromProto(r *proto.Record) Record {
-    if r == nil {
-        return Record{}
-    }
+	if r == nil {
+		return Record{}
+	}
 
 	signatures := make([]Signature, len(r.Signatures))
 	for i, signature := range r.Signatures {
@@ -78,9 +78,9 @@ type RecordHeader struct {
 }
 
 func NewRecordHeaderFromProto(r *proto.RecordHeader) RecordHeader {
-    if r == nil {
-        return RecordHeader{}
-    }
+	if r == nil {
+		return RecordHeader{}
+	}
 	return RecordHeader{
 		Ty: r.Ty,
 	}
@@ -99,9 +99,9 @@ type Signature struct {
 }
 
 func NewSignatureFromProto(s *proto.Signature) Signature {
-    if s == nil {
-        return Signature{}
-    }
+	if s == nil {
+		return Signature{}
+	}
 	return Signature{
 		Signature: s.Signature,
 		Protected: s.Protected,
@@ -123,9 +123,9 @@ type SignatureHeader struct {
 }
 
 func NewSignatureHeaderFromProto(s *proto.SignatureHeader) SignatureHeader {
-    if s == nil {
-        return SignatureHeader{}
-    }
+	if s == nil {
+		return SignatureHeader{}
+	}
 	return SignatureHeader{
 		Alg: s.Alg,
 		Kid: s.Kid,
@@ -145,9 +145,9 @@ type Encryption struct {
 }
 
 func NewEncryptionFromProto(e *proto.Encryption) Encryption {
-    if e == nil {
-        return Encryption{}
-    }
+	if e == nil {
+		return Encryption{}
+	}
 	return Encryption{
 		Header:    NewEncryptionHeaderFromProto(e.Header),
 		Protected: e.Protected,
@@ -166,9 +166,9 @@ type EncryptionHeader struct {
 }
 
 func NewEncryptionHeaderFromProto(e *proto.EncryptionHeader) EncryptionHeader {
-    if e == nil {
-        return EncryptionHeader{}
-    }
+	if e == nil {
+		return EncryptionHeader{}
+	}
 	return EncryptionHeader{
 		Alg: e.Alg,
 	}
@@ -188,9 +188,9 @@ type RecordReceipt struct {
 }
 
 func NewRecordReceiptFromProto(r *proto.RecordReceipt) RecordReceipt {
-    if r == nil {
-        return RecordReceipt{}
-    }
+	if r == nil {
+		return RecordReceipt{}
+	}
 	return RecordReceipt{
 		Anchor: r.Anchor,
 		Client: r.Client,

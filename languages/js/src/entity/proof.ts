@@ -1,5 +1,5 @@
-import { AnchorNetwork } from "./anchor";
-import * as proto from "../bridge/proto/proof";
+import {AnchorNetwork} from './anchor';
+import * as proto from '../bridge/proto/proof';
 
 export class Proof {
   leaves: string[];
@@ -23,7 +23,13 @@ export class Proof {
   }
 
   static fromProto(p: proto.Proof): Proof {
-    return new Proof(p.leaves, p.nodes, p.depth, p.bitmap, ProofAnchor.fromProto(p.anchor!));
+    return new Proof(
+      p.leaves,
+      p.nodes,
+      p.depth,
+      p.bitmap,
+      ProofAnchor.fromProto(p.anchor!)
+    );
   }
 
   toProto(): proto.Proof {
@@ -56,15 +62,20 @@ export class ProofAnchor {
   }
 
   static fromProto(p: proto.ProofAnchor): ProofAnchor {
-    return new ProofAnchor(p.anchorId, p.networks.map((x) => AnchorNetwork.fromProto(x)), p.root, p.status)
+    return new ProofAnchor(
+      p.anchorId,
+      p.networks.map(x => AnchorNetwork.fromProto(x)),
+      p.root,
+      p.status
+    );
   }
 
   toProto(): proto.ProofAnchor {
     return proto.ProofAnchor.fromPartial({
       anchorId: this.anchorID,
-      networks: this.networks.map((n) => n.toProto()),
+      networks: this.networks.map(n => n.toProto()),
       root: this.root,
-      status: this.status
+      status: this.status,
     });
   }
 }

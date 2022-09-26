@@ -1,4 +1,4 @@
-import * as proto from "../bridge/proto/anchor";
+import * as proto from '../bridge/proto/anchor';
 
 export class Anchor {
   id: number;
@@ -23,9 +23,11 @@ export class Anchor {
 
   static fromProto(a: proto.Anchor): Anchor {
     return new Anchor(
-      a.id, a.blockRoots,
-      a.networks.map((n) => AnchorNetwork.fromProto(n)),
-      a.root, a.status
+      a.id,
+      a.blockRoots,
+      a.networks.map(n => AnchorNetwork.fromProto(n)),
+      a.root,
+      a.status
     );
   }
 }
@@ -46,6 +48,10 @@ export class AnchorNetwork {
   }
 
   toProto(): proto.AnchorNetwork {
-    return proto.AnchorNetwork.fromPartial({ name: this.name, state: this.state, txHash: this.txHash });
+    return proto.AnchorNetwork.fromPartial({
+      name: this.name,
+      state: this.state,
+      txHash: this.txHash,
+    });
   }
 }

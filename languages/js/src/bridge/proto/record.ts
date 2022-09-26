@@ -11,10 +11,10 @@ import {
   CallOptions,
   ServiceError,
 } from '@grpc/grpc-js';
-import { ConfigData } from './config';
+import {ConfigData} from './config';
 import Long from 'long';
-import { Error } from './bloock';
-import { Proof } from './proof';
+import {Error} from './bloock';
+import {Proof} from './proof';
 import _m0 from 'protobufjs/minimal';
 
 export enum RecordTypes {
@@ -242,7 +242,7 @@ export interface SendRecordsResponse {
 }
 
 function createBaseRecordHash(): RecordHash {
-  return { hash: '', error: undefined };
+  return {hash: '', error: undefined};
 }
 
 export const RecordHash = {
@@ -309,7 +309,7 @@ export const RecordHash = {
 };
 
 function createBaseRecordHeader(): RecordHeader {
-  return { ty: '' };
+  return {ty: ''};
 }
 
 export const RecordHeader = {
@@ -491,7 +491,7 @@ export const Record = {
 };
 
 function createBaseSigner(): Signer {
-  return { alg: 0, args: undefined };
+  return {alg: 0, args: undefined};
 }
 
 export const Signer = {
@@ -556,7 +556,7 @@ export const Signer = {
 };
 
 function createBaseSignerArgs(): SignerArgs {
-  return { privateKey: undefined };
+  return {privateKey: undefined};
 }
 
 export const SignerArgs = {
@@ -612,7 +612,7 @@ export const SignerArgs = {
 };
 
 function createBaseEncrypter(): Encrypter {
-  return { alg: 0, args: undefined };
+  return {alg: 0, args: undefined};
 }
 
 export const Encrypter = {
@@ -683,7 +683,7 @@ export const Encrypter = {
 };
 
 function createBaseEncrypterArgs(): EncrypterArgs {
-  return { secret: undefined };
+  return {secret: undefined};
 }
 
 export const EncrypterArgs = {
@@ -737,7 +737,7 @@ export const EncrypterArgs = {
 };
 
 function createBaseSignature(): Signature {
-  return { signature: '', protected: '', header: undefined };
+  return {signature: '', protected: '', header: undefined};
 }
 
 export const Signature = {
@@ -817,7 +817,7 @@ export const Signature = {
 };
 
 function createBaseSignatureHeader(): SignatureHeader {
-  return { alg: '', kid: '' };
+  return {alg: '', kid: ''};
 }
 
 export const SignatureHeader = {
@@ -880,7 +880,7 @@ export const SignatureHeader = {
 };
 
 function createBaseEncryption(): Encryption {
-  return { header: undefined, protected: '' };
+  return {header: undefined, protected: ''};
 }
 
 export const Encryption = {
@@ -954,7 +954,7 @@ export const Encryption = {
 };
 
 function createBaseEncryptionHeader(): EncryptionHeader {
-  return { alg: '' };
+  return {alg: ''};
 }
 
 export const EncryptionHeader = {
@@ -1008,7 +1008,7 @@ export const EncryptionHeader = {
 };
 
 function createBaseRecordReceipt(): RecordReceipt {
-  return { anchor: 0, client: '', record: '', status: '' };
+  return {anchor: 0, client: '', record: '', status: ''};
 }
 
 export const RecordReceipt = {
@@ -1089,7 +1089,7 @@ export const RecordReceipt = {
 };
 
 function createBaseRecordBuilderFromStringRequest(): RecordBuilderFromStringRequest {
-  return { payload: '', signer: undefined, encrypter: undefined };
+  return {payload: '', signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromStringRequest = {
@@ -1176,7 +1176,7 @@ export const RecordBuilderFromStringRequest = {
 };
 
 function createBaseRecordBuilderFromHexRequest(): RecordBuilderFromHexRequest {
-  return { payload: '', signer: undefined, encrypter: undefined };
+  return {payload: '', signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromHexRequest = {
@@ -1263,7 +1263,7 @@ export const RecordBuilderFromHexRequest = {
 };
 
 function createBaseRecordBuilderFromJSONRequest(): RecordBuilderFromJSONRequest {
-  return { payload: '', signer: undefined, encrypter: undefined };
+  return {payload: '', signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromJSONRequest = {
@@ -1350,7 +1350,7 @@ export const RecordBuilderFromJSONRequest = {
 };
 
 function createBaseRecordBuilderFromBytesRequest(): RecordBuilderFromBytesRequest {
-  return { payload: Buffer.alloc(0), signer: undefined, encrypter: undefined };
+  return {payload: Buffer.alloc(0), signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromBytesRequest = {
@@ -1442,7 +1442,7 @@ export const RecordBuilderFromBytesRequest = {
 };
 
 function createBaseRecordBuilderFromFileRequest(): RecordBuilderFromFileRequest {
-  return { payload: Buffer.alloc(0), signer: undefined, encrypter: undefined };
+  return {payload: Buffer.alloc(0), signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromFileRequest = {
@@ -1534,7 +1534,7 @@ export const RecordBuilderFromFileRequest = {
 };
 
 function createBaseRecordBuilderFromRecordRequest(): RecordBuilderFromRecordRequest {
-  return { payload: undefined, signer: undefined, encrypter: undefined };
+  return {payload: undefined, signer: undefined, encrypter: undefined};
 }
 
 export const RecordBuilderFromRecordRequest = {
@@ -1629,7 +1629,7 @@ export const RecordBuilderFromRecordRequest = {
 };
 
 function createBaseRecordBuilderResponse(): RecordBuilderResponse {
-  return { record: undefined, error: undefined };
+  return {record: undefined, error: undefined};
 }
 
 export const RecordBuilderResponse = {
@@ -1703,7 +1703,7 @@ export const RecordBuilderResponse = {
 };
 
 function createBaseSendRecordsRequest(): SendRecordsRequest {
-  return { configData: undefined, records: [] };
+  return {configData: undefined, records: []};
 }
 
 export const SendRecordsRequest = {
@@ -1780,7 +1780,7 @@ export const SendRecordsRequest = {
 };
 
 function createBaseSendRecordsResponse(): SendRecordsResponse {
-  return { records: [], error: undefined };
+  return {records: [], error: undefined};
 }
 
 export const SendRecordsResponse = {
@@ -1893,7 +1893,7 @@ export const RecordServiceService = {
     responseDeserialize: (value: Buffer) => RecordBuilderResponse.decode(value),
   },
   buildRecordFromJson: {
-    path: "/bloock.RecordService/BuildRecordFromJson",
+    path: '/bloock.RecordService/BuildRecordFromJson',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: RecordBuilderFromJSONRequest) =>
@@ -2172,7 +2172,7 @@ export const RecordServiceClient = makeGenericClientConstructor(
   RecordServiceService,
   'bloock.RecordService'
 ) as unknown as {
-  new(
+  new (
     address: string,
     credentials: ChannelCredentials,
     options?: Partial<ChannelOptions>
@@ -2232,15 +2232,15 @@ type DeepPartial<T> = T extends Builtin
   : T extends ReadonlyArray<infer U>
   ? ReadonlyArray<DeepPartial<U>>
   : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+  ? {[K in keyof T]?: DeepPartial<T[K]>}
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
-    [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
-  };
+  : P & {[K in keyof P]: Exact<P[K], I[K]>} & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
