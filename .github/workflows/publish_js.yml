@@ -30,6 +30,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ inputs.release_url }}
-          asset_path: ./bloock_lib_js/bloock-${{ inputs.version }}.tgz
+          asset_path: ./bloock_lib_js/bloock-sdk-${{ inputs.version }}.tgz
           asset_name: bloock-lib-js-${{ inputs.version }}.tgz
           asset_content_type: application/gzip
