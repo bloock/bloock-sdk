@@ -69,6 +69,9 @@ jobs:
     with:
       os: ${{ matrix.os }}
       go-version: ${{ matrix.go-version }}
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
 
   test_js:
     needs: [build_js]
@@ -80,6 +83,9 @@ jobs:
     with:
       os: ${{ matrix.os }}
       node-version: ${{ matrix.node-version }}
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
 
   create_release:
     name: Create Release
