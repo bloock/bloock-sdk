@@ -34,9 +34,9 @@ jobs:
         run: make -C bloock-bridge x86_64-pc-windows-gnu
       - name: Copy files
         run: |
-          cp target/x86_64-pc-windows-msvc/release/bloock_bridge.lib bloock-bridge/build/native/libbloock_bridge_windows.lib
-          cp target/x86_64-pc-windows-msvc/release/bloock_bridge.dll bloock-bridge/build/native/libbloock_bridge_windows.dll
-          cp target/x86_64-pc-windows-gnu/release/libbloock_bridge.a bloock-bridge/build/native/bloock_bridge_windows.a
+          cp target/x86_64-pc-windows-msvc/release/bloock_bridge.lib bloock-bridge/build/native/bloock_bridge_windows.lib
+          cp target/x86_64-pc-windows-msvc/release/bloock_bridge.dll bloock-bridge/build/native/bloock_bridge_windows.dll
+          cp target/x86_64-pc-windows-gnu/release/libbloock_bridge.a bloock-bridge/build/native/libbloock_bridge_windows.a
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_core_lib_dynamic
@@ -49,6 +49,6 @@ jobs:
           name: bloock_core_lib_static
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/libbloock_bridge_windows.lib
-            bloock-bridge/build/native/bloock_bridge_windows.a
+            bloock-bridge/build/native/bloock_bridge_windows.lib
+            bloock-bridge/build/native/libbloock_bridge_windows.a
             bloock-bridge/build/native/bloock_bridge.h
