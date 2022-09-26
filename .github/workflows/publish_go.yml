@@ -30,3 +30,10 @@ jobs:
           asset_path: ./bloock-lib-go.zip
           asset_name: bloock-lib-go-${{ inputs.version }}.zip
           asset_content_type: application/zip
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_API_TOKEN }}
+          repository: bloock/bloock-sdk
+          event-type: bloock_publish
+          client-payload: '{"version": "${{ inputs.version }}"}'
