@@ -30,6 +30,9 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
+		get_anchor, err := sdk.GetAnchor(receipt[0].Anchor)
+		assert.Equal(t, receipt[0].Anchor, get_anchor.Id)
+
 		proof, err := sdk.GetProof(records)
 		require.NoError(t, err)
 
@@ -88,8 +91,8 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
-	    network := bloock.NewNetworkParams()
-	    network.Network = bloock.ListOfNetworks().BloockChain
+		network := bloock.NewNetworkParams()
+		network.Network = bloock.ListOfNetworks().BloockChain
 		timestamp, err := sdk.VerifyRecords(records, network)
 		require.NoError(t, err)
 		assert.Greater(t, timestamp, uint64(0))
@@ -154,4 +157,76 @@ func TestEndToEnd(t *testing.T) {
 		assert.Greater(t, timestamp, uint64(0))
 	})
 
+	t.Run("Basic E2E with Signer", func(t *testing.T) {
+		record, err := bloock.
+			NewRecordBuilderFromString(randHex(64)).
+			WithSigner(entity.NewEcsdaSigner("8895301b0321ba12945a130e5ee5f77de8eee43afd35fd86290369931ac39572")).
+			Build()
+
+		require.NoError(t, err)
+
+		hash, err := record.GetHash()
+		require.NoError(t, err)
+		records := []string{hash}
+
+		receipt, err := sdk.SendRecords(records)
+		require.NoError(t, err)
+		assert.Greater(t, len(receipt), 0)
+		assert.NotEqual(t, entity.RecordReceipt{}, receipt[0])
+
+		anchor, err := sdk.WaitAnchor(receipt[0].Anchor, bloock.NewAnchorParams())
+		require.NoError(t, err)
+		assert.Equal(t, receipt[0].Anchor, anchor.Id)
+
+		proof, err := sdk.GetProof(records)
+		require.NoError(t, err)
+
+		root, err := sdk.VerifyProof(proof)
+		require.NoError(t, err)
+
+		timestamp, err := sdk.ValidateRoot(root, bloock.ListOfNetworks().BloockChain)
+		require.NoError(t, err)
+		assert.Greater(t, timestamp, uint64(0))
+	})
+
+	t.Run("Basic E2E with multiple signatures", func(t *testing.T) {
+		privateKey := "8895301b0321ba12945a130e5ee5f77de8eee43afd35fd86290369931ac39572"
+		record, err := bloock.
+			NewRecordBuilderFromString(randHex(64)).
+			WithSigner(entity.NewEcsdaSigner(privateKey)).
+			Build()
+
+		privateKey2 := "5392a24a173f8f43adf662e02b2412d7d303e126662e073bfd7237a985aeebb4"
+		record2, err := bloock.
+			NewRecordBuilderFromRecord(record).
+			WithSigner(entity.NewEcsdaSigner(privateKey2)).
+			Build()
+
+		assert.Equal(t, len(record2.Signatures), 2)
+
+		require.NoError(t, err)
+
+		hash, err := record2.GetHash()
+		require.NoError(t, err)
+		records := []string{hash}
+
+		receipt, err := sdk.SendRecords(records)
+		require.NoError(t, err)
+		assert.Greater(t, len(receipt), 0)
+		assert.NotEqual(t, entity.RecordReceipt{}, receipt[0])
+
+		anchor, err := sdk.WaitAnchor(receipt[0].Anchor, bloock.NewAnchorParams())
+		require.NoError(t, err)
+		assert.Equal(t, receipt[0].Anchor, anchor.Id)
+
+		proof, err := sdk.GetProof(records)
+		require.NoError(t, err)
+
+		root, err := sdk.VerifyProof(proof)
+		require.NoError(t, err)
+
+		timestamp, err := sdk.ValidateRoot(root, bloock.ListOfNetworks().BloockChain)
+		require.NoError(t, err)
+		assert.Greater(t, timestamp, uint64(0))
+	})
 }

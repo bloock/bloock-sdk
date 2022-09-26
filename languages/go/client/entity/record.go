@@ -37,8 +37,8 @@ func NewRecordFromProto(r *proto.Record) Record {
 
 func (r Record) ToProto() *proto.Record {
 	signatures := make([]*proto.Signature, len(r.Signatures))
-	for i, signature := range signatures {
-		signatures[i] = signature
+	for i, signature := range r.Signatures {
+		signatures[i] = signature.ToProto()
 	}
 
 	return &proto.Record{
