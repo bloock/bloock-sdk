@@ -24,7 +24,7 @@ jobs:
           mkdir -p languages/go/internal/ffi/native/aarch64-apple-darwin
           [[ -e bloock_core_lib_static/libbloock_bridge_aarch64-apple-darwin.a ]] && cp bloock_core_lib_static/libbloock_bridge_aarch64-apple-darwin.a languages/go/internal/ffi/native/aarch64-apple-darwin/libbloock_bridge.a
           mkdir -p languages/go/internal/ffi/native/x86_64-pc-windows-gnu
-          [[ -e bloock_core_lib_static/libbloock_bridge_x86_64-pc-windows-gnu.a ]] && cp bloock_core_lib_static/libbloock_bridge_x86_64-pc-windows-gnu.a languages/go/internal/ffi/native/x86_64-pc-windows-gnu/libbloock_bridge.a
+          [[ -e bloock_core_lib_static/bloock_bridge_x86_64-pc-windows-gnu.a ]] && cp bloock_core_lib_static/bloock_bridge_x86_64-pc-windows-gnu.a languages/go/internal/ffi/native/x86_64-pc-windows-gnu/bloock_bridge.a
           rm languages/go/Makefile
       - name: Copy license.
         run: cp LICENSE languages/go/LICENSE
