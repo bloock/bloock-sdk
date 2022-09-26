@@ -42,7 +42,7 @@ jobs:
           name: bloock_core_lib_dynamic
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/libbloock_bridge_windows.dll
+            bloock-bridge/build/native/bloock_bridge_windows.dll
             bloock-bridge/build/native/bloock_bridge.h
       - uses: actions/upload-artifact@v2
         with:

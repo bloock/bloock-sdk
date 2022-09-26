@@ -33,3 +33,12 @@ jobs:
           asset_path: ./bloock_lib_js/bloock-sdk-${{ inputs.version }}.tgz
           asset_name: bloock-lib-js-${{ inputs.version }}.tgz
           asset_content_type: application/gzip
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16"
+      - name: Set up .npmrc
+        working-directory: bloock_lib_js
+        run: echo '//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}' > .npmrc
+      - run: npm publish
+        working-directory: bloock_lib_js
