@@ -26,6 +26,8 @@ jobs:
           toolchain: stable
           override: true
           target: ${{ inputs.target }}
+      - name: Install rustup target
+        run: rustup default ${{ matrix.target }}
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
