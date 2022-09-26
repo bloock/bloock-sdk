@@ -9,6 +9,10 @@ on:
       release_url:
         required: true
         type: string
+    secrets:
+      npm_auth_token:
+        required: true
+
 jobs:
   upload_js:
     name: Upload JS
@@ -39,6 +43,6 @@ jobs:
           node-version: "16"
       - name: Set up .npmrc
         working-directory: bloock_lib_js
-        run: echo '//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}' > .npmrc
+        run: echo '//registry.npmjs.org/:_authToken=${{ secrets.npm_auth_token }}' > .npmrc
       - run: npm publish
         working-directory: bloock_lib_js
