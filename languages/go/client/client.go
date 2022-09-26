@@ -32,7 +32,7 @@ func (c *Client) SetNetworkConfig(network Network, config *NetworkConfig) {
 }
 
 func (c *Client) SendRecords(records []string) ([]entity.RecordReceipt, error) {
-    res, err := c.bridgeClient.Record().SendRecords(context.Background(), &proto.SendRecordsRequest{
+	res, err := c.bridgeClient.Record().SendRecords(context.Background(), &proto.SendRecordsRequest{
 		ConfigData: c.configData,
 		Records:    records,
 	})
@@ -45,10 +45,10 @@ func (c *Client) SendRecords(records []string) ([]entity.RecordReceipt, error) {
 		return []entity.RecordReceipt{}, errors.New(res.Error.Message)
 	}
 
-    receipts := make([]entity.RecordReceipt, len(res.Records))
-    for i, record := range res.Records {
-        receipts[i] = entity.NewRecordReceiptFromProto(record)
-    }
+	receipts := make([]entity.RecordReceipt, len(res.Records))
+	for i, record := range res.Records {
+		receipts[i] = entity.NewRecordReceiptFromProto(record)
+	}
 
 	return receipts, nil
 }

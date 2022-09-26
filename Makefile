@@ -7,14 +7,19 @@
 bridge-build:
 	$(MAKE) -C bloock-bridge build
 
-test: core-test libs-test c-test wasm-test go-test js-test 
+rust-test: libs-test core-test bridge-test 
+
+bridge-test:
+	$(MAKE) -C bloock-bridge test
 
 core-test:
-	cargo test -p bloock-core --release
+	$(MAKE) -C bloock-core test
+	$(MAKE) -C bloock-core wasm-test
 
 libs-test:
 	$(MAKE) -C bloock-libs test
 	$(MAKE) -C bloock-libs wasm-test
+
 
 go-test: c-build
 	$(MAKE) -C languages/go test

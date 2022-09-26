@@ -173,22 +173,16 @@ impl TryFrom<RecordCore> for Record {
             None => vec![],
         };
 
-        let encryption: Option<Encryption> = match document.encryption {
-            Some(e) => Some(e.into()),
-            None => None,
-        };
+        let encryption: Option<Encryption> = document.encryption.map(|e| e.into());
 
-        let proof: Option<Proof> = match document.proof {
-            Some(e) => Some(e.into()),
-            None => None,
-        };
+        let proof: Option<Proof> = document.proof.map(|e| e.into());
 
         Ok(Record {
             headers: Some(document.headers.into()),
             payload: document.payload,
-            signatures: signatures,
-            encryption: encryption,
-            proof: proof,
+            signatures,
+            encryption,
+            proof,
         })
     }
 }

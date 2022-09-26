@@ -20,7 +20,7 @@ func ListOfNetworks() networks {
 }
 
 type AnchorParams struct {
-	Timeout		int64
+	Timeout int64
 }
 
 func NewAnchorParams() AnchorParams {
@@ -28,7 +28,7 @@ func NewAnchorParams() AnchorParams {
 }
 
 type NetworkParams struct {
-	Network 	Network
+	Network Network
 }
 
 func NewNetworkParams() NetworkParams {

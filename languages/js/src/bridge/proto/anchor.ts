@@ -10,11 +10,11 @@ import {
   Metadata,
   CallOptions,
   ServiceError,
-} from "@grpc/grpc-js";
-import { ConfigData } from "./config";
-import Long from "long";
-import { Error } from "./bloock";
-import _m0 from "protobufjs/minimal";
+} from '@grpc/grpc-js';
+import {ConfigData} from './config';
+import Long from 'long';
+import {Error} from './bloock';
+import _m0 from 'protobufjs/minimal';
 
 export interface Anchor {
   id: number;
@@ -52,7 +52,7 @@ export interface WaitAnchorResponse {
 }
 
 function createBaseAnchor(): Anchor {
-  return { id: 0, blockRoots: [], networks: [], root: "", status: "" };
+  return {id: 0, blockRoots: [], networks: [], root: '', status: ''};
 }
 
 export const Anchor = {
@@ -69,10 +69,10 @@ export const Anchor = {
     for (const v of message.networks) {
       AnchorNetwork.encode(v!, writer.uint32(26).fork()).ldelim();
     }
-    if (message.root !== "") {
+    if (message.root !== '') {
       writer.uint32(34).string(message.root);
     }
-    if (message.status !== "") {
+    if (message.status !== '') {
       writer.uint32(42).string(message.status);
     }
     return writer;
@@ -117,8 +117,8 @@ export const Anchor = {
       networks: Array.isArray(object?.networks)
         ? object.networks.map((e: any) => AnchorNetwork.fromJSON(e))
         : [],
-      root: isSet(object.root) ? String(object.root) : "",
-      status: isSet(object.status) ? String(object.status) : "",
+      root: isSet(object.root) ? String(object.root) : '',
+      status: isSet(object.status) ? String(object.status) : '',
     };
   },
 
@@ -126,12 +126,12 @@ export const Anchor = {
     const obj: any = {};
     message.id !== undefined && (obj.id = Math.round(message.id));
     if (message.blockRoots) {
-      obj.blockRoots = message.blockRoots.map((e) => e);
+      obj.blockRoots = message.blockRoots.map(e => e);
     } else {
       obj.blockRoots = [];
     }
     if (message.networks) {
-      obj.networks = message.networks.map((e) =>
+      obj.networks = message.networks.map(e =>
         e ? AnchorNetwork.toJSON(e) : undefined
       );
     } else {
@@ -145,17 +145,17 @@ export const Anchor = {
   fromPartial<I extends Exact<DeepPartial<Anchor>, I>>(object: I): Anchor {
     const message = createBaseAnchor();
     message.id = object.id ?? 0;
-    message.blockRoots = object.blockRoots?.map((e) => e) || [];
+    message.blockRoots = object.blockRoots?.map(e => e) || [];
     message.networks =
-      object.networks?.map((e) => AnchorNetwork.fromPartial(e)) || [];
-    message.root = object.root ?? "";
-    message.status = object.status ?? "";
+      object.networks?.map(e => AnchorNetwork.fromPartial(e)) || [];
+    message.root = object.root ?? '';
+    message.status = object.status ?? '';
     return message;
   },
 };
 
 function createBaseAnchorNetwork(): AnchorNetwork {
-  return { name: "", state: "", txHash: "" };
+  return {name: '', state: '', txHash: ''};
 }
 
 export const AnchorNetwork = {
@@ -163,13 +163,13 @@ export const AnchorNetwork = {
     message: AnchorNetwork,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.name !== "") {
+    if (message.name !== '') {
       writer.uint32(10).string(message.name);
     }
-    if (message.state !== "") {
+    if (message.state !== '') {
       writer.uint32(18).string(message.state);
     }
-    if (message.txHash !== "") {
+    if (message.txHash !== '') {
       writer.uint32(26).string(message.txHash);
     }
     return writer;
@@ -201,9 +201,9 @@ export const AnchorNetwork = {
 
   fromJSON(object: any): AnchorNetwork {
     return {
-      name: isSet(object.name) ? String(object.name) : "",
-      state: isSet(object.state) ? String(object.state) : "",
-      txHash: isSet(object.txHash) ? String(object.txHash) : "",
+      name: isSet(object.name) ? String(object.name) : '',
+      state: isSet(object.state) ? String(object.state) : '',
+      txHash: isSet(object.txHash) ? String(object.txHash) : '',
     };
   },
 
@@ -219,15 +219,15 @@ export const AnchorNetwork = {
     object: I
   ): AnchorNetwork {
     const message = createBaseAnchorNetwork();
-    message.name = object.name ?? "";
-    message.state = object.state ?? "";
-    message.txHash = object.txHash ?? "";
+    message.name = object.name ?? '';
+    message.state = object.state ?? '';
+    message.txHash = object.txHash ?? '';
     return message;
   },
 };
 
 function createBaseGetAnchorRequest(): GetAnchorRequest {
-  return { configData: undefined, anchorId: 0 };
+  return {configData: undefined, anchorId: 0};
 }
 
 export const GetAnchorRequest = {
@@ -299,7 +299,7 @@ export const GetAnchorRequest = {
 };
 
 function createBaseGetAnchorResponse(): GetAnchorResponse {
-  return { anchor: undefined, error: undefined };
+  return {anchor: undefined, error: undefined};
 }
 
 export const GetAnchorResponse = {
@@ -370,7 +370,7 @@ export const GetAnchorResponse = {
 };
 
 function createBaseWaitAnchorRequest(): WaitAnchorRequest {
-  return { configData: undefined, anchorId: 0, timeout: 0 };
+  return {configData: undefined, anchorId: 0, timeout: 0};
 }
 
 export const WaitAnchorRequest = {
@@ -452,7 +452,7 @@ export const WaitAnchorRequest = {
 };
 
 function createBaseWaitAnchorResponse(): WaitAnchorResponse {
-  return { anchor: undefined, error: undefined };
+  return {anchor: undefined, error: undefined};
 }
 
 export const WaitAnchorResponse = {
@@ -525,7 +525,7 @@ export const WaitAnchorResponse = {
 export type AnchorServiceService = typeof AnchorServiceService;
 export const AnchorServiceService = {
   getAnchor: {
-    path: "/bloock.AnchorService/GetAnchor",
+    path: '/bloock.AnchorService/GetAnchor',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: GetAnchorRequest) =>
@@ -536,7 +536,7 @@ export const AnchorServiceService = {
     responseDeserialize: (value: Buffer) => GetAnchorResponse.decode(value),
   },
   waitAnchor: {
-    path: "/bloock.AnchorService/WaitAnchor",
+    path: '/bloock.AnchorService/WaitAnchor',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: WaitAnchorRequest) =>
@@ -588,7 +588,7 @@ export interface AnchorServiceClient extends Client {
 
 export const AnchorServiceClient = makeGenericClientConstructor(
   AnchorServiceService,
-  "bloock.AnchorService"
+  'bloock.AnchorService'
 ) as unknown as {
   new (
     address: string,
@@ -602,11 +602,11 @@ declare var self: any | undefined;
 declare var window: any | undefined;
 declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
-  throw "Unable to locate global object";
+  if (typeof globalThis !== 'undefined') return globalThis;
+  if (typeof self !== 'undefined') return self;
+  if (typeof window !== 'undefined') return window;
+  if (typeof global !== 'undefined') return global;
+  throw 'Unable to locate global object';
 })();
 
 type Builtin =
@@ -625,19 +625,19 @@ type DeepPartial<T> = T extends Builtin
   : T extends ReadonlyArray<infer U>
   ? ReadonlyArray<DeepPartial<U>>
   : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+  ? {[K in keyof T]?: DeepPartial<T[K]>}
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+  : P & {[K in keyof P]: Exact<P[K], I[K]>} & {
       [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
     };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
   }
   return long.toNumber();
 }

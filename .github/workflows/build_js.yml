@@ -9,38 +9,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-release-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Use Node.js 12
+      - name: Use Node.js 16
         uses: actions/setup-node@v1
         with:
-          node-version: "12"
-      - name: Install Rust stable toolchain
-        uses: actions-rs/toolchain@v1
+          node-version: "16"
+      - name: Download WASM libs
+        uses: actions/download-artifact@v1
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - name: Add WebAssembly target
-        run: rustup target add wasm32-unknown-unknown
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          name: bloock_core_lib_wasm
+      - name: Copy libraries.
+        run: |
+          mkdir -p languages/js/src/ffi/native
+          cp bloock_core_lib_wasm/* languages/js/src/ffi/native
+      - name: Install dependencies
+        working-directory: languages/js
+        run: yarn install --frozen-lockfile
       - name: Build
         working-directory: languages/js
         run: |
-          make CARGO_FLAGS=--release build
+          make build
           rm -rf node_modules
+          rm Makefile
       - name: Copy master README into project directory
         working-directory: languages/js
         run: cp ../../README.md .
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_js_node
+          name: bloock_lib_js
           path: languages/js/*

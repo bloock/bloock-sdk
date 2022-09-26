@@ -1,0 +1,24 @@
+name: Check JS
+
+on:
+  workflow_call:
+
+jobs:
+  check_js:
+    name: Check JS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16"
+      - name: Install dependencies
+        working-directory: "languages/js"
+        run: yarn install --frozen-lockfile
+      - name: Check formatting of JS library
+        working-directory: "languages/js"
+        run: yarn run fmtcheck
+      - name: Lint JS library
+        working-directory: "languages/js"
+        run: yarn run lint

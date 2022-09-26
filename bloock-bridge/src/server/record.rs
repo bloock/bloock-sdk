@@ -107,10 +107,7 @@ impl RecordServiceHandler for RecordServer {
             }
         };
         let hash = record.get_hash();
-        RecordHash {
-            hash: hash,
-            error: None,
-        }
+        RecordHash { hash, error: None }
     }
 
     async fn build_record_from_string(

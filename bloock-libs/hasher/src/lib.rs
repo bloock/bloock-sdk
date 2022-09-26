@@ -1,8 +1,9 @@
-use std::convert::TryInto;
 use serde::Serialize;
+use std::convert::TryInto;
 use thiserror::Error as ThisError;
 
 pub mod keccak;
+pub mod sha256;
 
 pub type Result<T> = std::result::Result<T, HasherError>;
 

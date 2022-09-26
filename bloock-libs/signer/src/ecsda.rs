@@ -1,11 +1,10 @@
+use bloock_hasher::{sha256::Sha256, Hasher};
+use libsecp256k1::{Message, PublicKey, SecretKey};
+
 use crate::SignerError;
 
 use super::{Signature, Signer};
-use secp256k1::ecdsa::Signature as ECDSASignature;
-use secp256k1::hashes::sha256;
-use secp256k1::rand::rngs::OsRng;
-use secp256k1::{Message, PublicKey, Secp256k1, SecretKey};
-use std::str::{self, FromStr};
+use std::str;
 
 pub struct EcsdaSignerArgs {
     pub private_key: String,
@@ -28,33 +27,35 @@ impl EcsdaSigner {
     }
 
     pub fn generate_keys() -> crate::Result<(String, String)> {
-        let secp = Secp256k1::new();
-        let (secret_key, public_key) = secp.generate_keypair(&mut OsRng);
-
-        let secret_key_string = secret_key.display_secret().to_string();
-        let public_key_string = public_key.to_string();
-
-        Ok((secret_key_string, public_key_string))
+        let secret_key = SecretKey::random(&mut rand::rngs::OsRng::default());
+        let public_key = PublicKey::from_secret_key(&secret_key);
+        Ok((
+            hex::encode(secret_key.serialize()),
+            hex::encode(public_key.serialize_compressed()),
+        ))
     }
 }
 
 impl Signer for EcsdaSigner {
     fn sign(&self, payload: &[u8]) -> crate::Result<Signature> {
-        let secp = Secp256k1::new();
-        let secret_key = SecretKey::from_str(self._args.private_key.as_str())
+        let secret_key_hex = hex::decode(self._args.private_key.as_bytes())
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
-        let public_key = PublicKey::from_secret_key(&secp, &secret_key);
+        let secret_key = SecretKey::parse_slice(&secret_key_hex)
+            .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
+        let public_key = PublicKey::from_secret_key(&secret_key);
 
-        let message = Message::from_hashed_data::<sha256::Hash>(payload);
+        let hash = Sha256::generate_hash(payload);
 
-        let sig = secp.sign_ecdsa(&message, &secret_key);
+        let message = Message::parse(&hash);
+
+        let sig = libsecp256k1::sign(&message, &secret_key);
 
         let signature = Signature {
             protected: base64_url::encode("{}"),
-            signature: sig.to_string(),
+            signature: hex::encode(sig.0.serialize()),
             header: crate::SignatureHeader {
-                alg: ("ES256K".to_string()),
-                kid: (public_key.to_string()),
+                alg: "ES256K".to_string(),
+                kid: hex::encode(public_key.serialize_compressed()),
             },
         };
 
@@ -62,22 +63,22 @@ impl Signer for EcsdaSigner {
     }
 
     fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
-        let secp = Secp256k1::new();
-
-        let public_key_string = signature.header.kid;
-        let public_key = PublicKey::from_str(&public_key_string)
+        let public_key_hex = hex::decode(signature.header.kid.as_bytes())
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
-        let message = Message::from_hashed_data::<sha256::Hash>(payload);
+        let public_key = PublicKey::parse_slice(&public_key_hex, None)
+            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
-        let signature_string = signature.signature;
-        let signature = ECDSASignature::from_str(&signature_string)
+        let hash = Sha256::generate_hash(payload);
+        let message = Message::parse(&hash);
+
+        let signature_string = hex::decode(signature.signature)
             .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
 
-        secp.verify_ecdsa(&message, &signature, &public_key)
-            .map_err(|e| SignerError::VerifierError(e.to_string()))?;
+        let signature = libsecp256k1::Signature::parse_standard_slice(&signature_string)
+            .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
 
-        Ok(true)
+        Ok(libsecp256k1::verify(&message, &signature, &public_key))
     }
 }
 

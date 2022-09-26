@@ -1,0 +1,67 @@
+name: Development
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/check_version
+
+  check_rust:
+    needs: [version]
+    uses: ./.github/workflows/check_rust.yml
+
+  build_linux:
+    needs: [check_rust]
+    uses: ./.github/workflows/build_linux.yml
+    with:
+      target: x86_64-unknown-linux-musl
+
+  build_wasm:
+    needs: [check_rust]
+    uses: ./.github/workflows/build_wasm.yml
+
+  test_rust:
+    needs: [build_linux, build_wasm]
+    uses: ./.github/workflows/test_rust.yml
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    with:
+      os: ${{ matrix.os }}
+
+  check_js:
+    needs: [build_wasm]
+    uses: ./.github/workflows/check_js.yml
+
+  build_js:
+    needs: [check_js]
+    uses: ./.github/workflows/build_js.yml
+
+  test_js:
+    needs: [build_js]
+    uses: ./.github/workflows/test_js.yml
+    with:
+      os: ubuntu-latest
+      node-version: 16
+
+  check_go:
+    needs: [build_linux]
+    uses: ./.github/workflows/check_go.yml
+
+  build_go:
+    needs: [check_go]
+    uses: ./.github/workflows/build_go.yml
+
+  test_go:
+    needs: [build_go]
+    uses: ./.github/workflows/test_go.yml
+    with:
+      os: ubuntu-latest
+      go-version: "1.18"

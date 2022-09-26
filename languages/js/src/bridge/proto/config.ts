@@ -1,5 +1,5 @@
 /* eslint-disable */
-import _m0 from "protobufjs/minimal";
+import _m0 from 'protobufjs/minimal';
 
 export enum Network {
   ETHEREUM_MAINNET = 0,
@@ -11,16 +11,16 @@ export enum Network {
 export function networkFromJSON(object: any): Network {
   switch (object) {
     case 0:
-    case "ETHEREUM_MAINNET":
+    case 'ETHEREUM_MAINNET':
       return Network.ETHEREUM_MAINNET;
     case 1:
-    case "ETHEREUM_RINKEBY":
+    case 'ETHEREUM_RINKEBY':
       return Network.ETHEREUM_RINKEBY;
     case 2:
-    case "BLOOCK_CHAIN":
+    case 'BLOOCK_CHAIN':
       return Network.BLOOCK_CHAIN;
     case -1:
-    case "UNRECOGNIZED":
+    case 'UNRECOGNIZED':
     default:
       return Network.UNRECOGNIZED;
   }
@@ -29,20 +29,20 @@ export function networkFromJSON(object: any): Network {
 export function networkToJSON(object: Network): string {
   switch (object) {
     case Network.ETHEREUM_MAINNET:
-      return "ETHEREUM_MAINNET";
+      return 'ETHEREUM_MAINNET';
     case Network.ETHEREUM_RINKEBY:
-      return "ETHEREUM_RINKEBY";
+      return 'ETHEREUM_RINKEBY';
     case Network.BLOOCK_CHAIN:
-      return "BLOOCK_CHAIN";
+      return 'BLOOCK_CHAIN';
     case Network.UNRECOGNIZED:
     default:
-      return "UNRECOGNIZED";
+      return 'UNRECOGNIZED';
   }
 }
 
 export interface ConfigData {
   config?: Configuration;
-  networksConfig: { [key: number]: NetworkConfig };
+  networksConfig: {[key: number]: NetworkConfig};
 }
 
 export interface ConfigData_NetworksConfigEntry {
@@ -67,7 +67,7 @@ export interface NetworkConfig {
 }
 
 function createBaseConfigData(): ConfigData {
-  return { config: undefined, networksConfig: {} };
+  return {config: undefined, networksConfig: {}};
 }
 
 export const ConfigData = {
@@ -80,7 +80,7 @@ export const ConfigData = {
     }
     Object.entries(message.networksConfig).forEach(([key, value]) => {
       ConfigData_NetworksConfigEntry.encode(
-        { key: key as any, value },
+        {key: key as any, value},
         writer.uint32(18).fork()
       ).ldelim();
     });
@@ -155,7 +155,7 @@ export const ConfigData = {
         : undefined;
     message.networksConfig = Object.entries(
       object.networksConfig ?? {}
-    ).reduce<{ [key: number]: NetworkConfig }>((acc, [key, value]) => {
+    ).reduce<{[key: number]: NetworkConfig}>((acc, [key, value]) => {
       if (value !== undefined) {
         acc[Number(key)] = NetworkConfig.fromPartial(value);
       }
@@ -166,7 +166,7 @@ export const ConfigData = {
 };
 
 function createBaseConfigData_NetworksConfigEntry(): ConfigData_NetworksConfigEntry {
-  return { key: 0, value: undefined };
+  return {key: 0, value: undefined};
 }
 
 export const ConfigData_NetworksConfigEntry = {
@@ -241,13 +241,13 @@ export const ConfigData_NetworksConfigEntry = {
 
 function createBaseConfiguration(): Configuration {
   return {
-    host: "",
-    apiKey: "",
+    host: '',
+    apiKey: '',
     waitMessageIntervalFactor: 0,
     waitMessageIntervalDefault: 0,
-    keyTypeAlgorithm: "",
-    ellipticCurveKey: "",
-    signatureAlgorithm: "",
+    keyTypeAlgorithm: '',
+    ellipticCurveKey: '',
+    signatureAlgorithm: '',
   };
 }
 
@@ -256,10 +256,10 @@ export const Configuration = {
     message: Configuration,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.host !== "") {
+    if (message.host !== '') {
       writer.uint32(10).string(message.host);
     }
-    if (message.apiKey !== "") {
+    if (message.apiKey !== '') {
       writer.uint32(18).string(message.apiKey);
     }
     if (message.waitMessageIntervalFactor !== 0) {
@@ -268,13 +268,13 @@ export const Configuration = {
     if (message.waitMessageIntervalDefault !== 0) {
       writer.uint32(32).int32(message.waitMessageIntervalDefault);
     }
-    if (message.keyTypeAlgorithm !== "") {
+    if (message.keyTypeAlgorithm !== '') {
       writer.uint32(42).string(message.keyTypeAlgorithm);
     }
-    if (message.ellipticCurveKey !== "") {
+    if (message.ellipticCurveKey !== '') {
       writer.uint32(50).string(message.ellipticCurveKey);
     }
-    if (message.signatureAlgorithm !== "") {
+    if (message.signatureAlgorithm !== '') {
       writer.uint32(58).string(message.signatureAlgorithm);
     }
     return writer;
@@ -318,8 +318,8 @@ export const Configuration = {
 
   fromJSON(object: any): Configuration {
     return {
-      host: isSet(object.host) ? String(object.host) : "",
-      apiKey: isSet(object.apiKey) ? String(object.apiKey) : "",
+      host: isSet(object.host) ? String(object.host) : '',
+      apiKey: isSet(object.apiKey) ? String(object.apiKey) : '',
       waitMessageIntervalFactor: isSet(object.waitMessageIntervalFactor)
         ? Number(object.waitMessageIntervalFactor)
         : 0,
@@ -328,13 +328,13 @@ export const Configuration = {
         : 0,
       keyTypeAlgorithm: isSet(object.keyTypeAlgorithm)
         ? String(object.keyTypeAlgorithm)
-        : "",
+        : '',
       ellipticCurveKey: isSet(object.ellipticCurveKey)
         ? String(object.ellipticCurveKey)
-        : "",
+        : '',
       signatureAlgorithm: isSet(object.signatureAlgorithm)
         ? String(object.signatureAlgorithm)
-        : "",
+        : '',
     };
   },
 
@@ -363,19 +363,19 @@ export const Configuration = {
     object: I
   ): Configuration {
     const message = createBaseConfiguration();
-    message.host = object.host ?? "";
-    message.apiKey = object.apiKey ?? "";
+    message.host = object.host ?? '';
+    message.apiKey = object.apiKey ?? '';
     message.waitMessageIntervalFactor = object.waitMessageIntervalFactor ?? 0;
     message.waitMessageIntervalDefault = object.waitMessageIntervalDefault ?? 0;
-    message.keyTypeAlgorithm = object.keyTypeAlgorithm ?? "";
-    message.ellipticCurveKey = object.ellipticCurveKey ?? "";
-    message.signatureAlgorithm = object.signatureAlgorithm ?? "";
+    message.keyTypeAlgorithm = object.keyTypeAlgorithm ?? '';
+    message.ellipticCurveKey = object.ellipticCurveKey ?? '';
+    message.signatureAlgorithm = object.signatureAlgorithm ?? '';
     return message;
   },
 };
 
 function createBaseNetworkConfig(): NetworkConfig {
-  return { ContractAddress: "", ContractAbi: "", HttpProvider: "" };
+  return {ContractAddress: '', ContractAbi: '', HttpProvider: ''};
 }
 
 export const NetworkConfig = {
@@ -383,13 +383,13 @@ export const NetworkConfig = {
     message: NetworkConfig,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.ContractAddress !== "") {
+    if (message.ContractAddress !== '') {
       writer.uint32(10).string(message.ContractAddress);
     }
-    if (message.ContractAbi !== "") {
+    if (message.ContractAbi !== '') {
       writer.uint32(18).string(message.ContractAbi);
     }
-    if (message.HttpProvider !== "") {
+    if (message.HttpProvider !== '') {
       writer.uint32(26).string(message.HttpProvider);
     }
     return writer;
@@ -423,11 +423,11 @@ export const NetworkConfig = {
     return {
       ContractAddress: isSet(object.ContractAddress)
         ? String(object.ContractAddress)
-        : "",
-      ContractAbi: isSet(object.ContractAbi) ? String(object.ContractAbi) : "",
+        : '',
+      ContractAbi: isSet(object.ContractAbi) ? String(object.ContractAbi) : '',
       HttpProvider: isSet(object.HttpProvider)
         ? String(object.HttpProvider)
-        : "",
+        : '',
     };
   },
 
@@ -446,9 +446,9 @@ export const NetworkConfig = {
     object: I
   ): NetworkConfig {
     const message = createBaseNetworkConfig();
-    message.ContractAddress = object.ContractAddress ?? "";
-    message.ContractAbi = object.ContractAbi ?? "";
-    message.HttpProvider = object.HttpProvider ?? "";
+    message.ContractAddress = object.ContractAddress ?? '';
+    message.ContractAbi = object.ContractAbi ?? '';
+    message.HttpProvider = object.HttpProvider ?? '';
     return message;
   },
 };
@@ -469,18 +469,18 @@ type DeepPartial<T> = T extends Builtin
   : T extends ReadonlyArray<infer U>
   ? ReadonlyArray<DeepPartial<U>>
   : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+  ? {[K in keyof T]?: DeepPartial<T[K]>}
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+  : P & {[K in keyof P]: Exact<P[K], I[K]>} & {
       [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
     };
 
 function isObject(value: any): boolean {
-  return typeof value === "object" && value !== null;
+  return typeof value === 'object' && value !== null;
 }
 
 function isSet(value: any): boolean {
