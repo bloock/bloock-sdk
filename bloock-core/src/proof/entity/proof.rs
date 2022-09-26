@@ -7,13 +7,13 @@ use serde::{de::Error, Deserialize, Deserializer};
 
 #[derive(Deserialize, Clone, Debug, Eq, PartialEq)]
 pub struct Proof {
+    pub anchor: ProofAnchor,
+    pub bitmap: String,
+    pub depth: String,
     #[serde(deserialize_with = "from_hex")]
     pub leaves: Vec<H256>,
     #[serde(deserialize_with = "from_hex")]
     pub nodes: Vec<H256>,
-    pub depth: String,
-    pub bitmap: String,
-    pub anchor: ProofAnchor,
 }
 
 impl Proof {
@@ -52,11 +52,11 @@ impl Serialize for Proof {
 
         let leaves: Vec<String> = self.leaves.iter().map(hex::encode).collect();
         let nodes: Vec<String> = self.nodes.iter().map(hex::encode).collect();
+        state.serialize_field("anchor", &self.anchor)?;
+        state.serialize_field("bitmap", &self.bitmap)?;
+        state.serialize_field("depth", &self.depth)?;
         state.serialize_field("leaves", &leaves)?;
         state.serialize_field("nodes", &nodes)?;
-        state.serialize_field("depth", &self.depth)?;
-        state.serialize_field("bitmap", &self.bitmap)?;
-        state.serialize_field("anchor", &self.anchor)?;
         state.end()
     }
 }

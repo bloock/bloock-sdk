@@ -10,12 +10,12 @@ import {
   Metadata,
   CallOptions,
   ServiceError,
-} from "@grpc/grpc-js";
-import { ConfigData, Network, networkFromJSON, networkToJSON } from "./config";
-import Long from "long";
-import { AnchorNetwork } from "./anchor";
-import { Error } from "./bloock";
-import _m0 from "protobufjs/minimal";
+} from '@grpc/grpc-js';
+import {ConfigData, Network, networkFromJSON, networkToJSON} from './config';
+import Long from 'long';
+import {AnchorNetwork} from './anchor';
+import {Error} from './bloock';
+import _m0 from 'protobufjs/minimal';
 
 export interface Proof {
   leaves: string[];
@@ -77,7 +77,7 @@ export interface VerifyRecordsResponse {
 }
 
 function createBaseProof(): Proof {
-  return { leaves: [], nodes: [], depth: "", bitmap: "", anchor: undefined };
+  return {leaves: [], nodes: [], depth: '', bitmap: '', anchor: undefined};
 }
 
 export const Proof = {
@@ -88,10 +88,10 @@ export const Proof = {
     for (const v of message.nodes) {
       writer.uint32(18).string(v!);
     }
-    if (message.depth !== "") {
+    if (message.depth !== '') {
       writer.uint32(26).string(message.depth);
     }
-    if (message.bitmap !== "") {
+    if (message.bitmap !== '') {
       writer.uint32(34).string(message.bitmap);
     }
     if (message.anchor !== undefined) {
@@ -138,8 +138,8 @@ export const Proof = {
       nodes: Array.isArray(object?.nodes)
         ? object.nodes.map((e: any) => String(e))
         : [],
-      depth: isSet(object.depth) ? String(object.depth) : "",
-      bitmap: isSet(object.bitmap) ? String(object.bitmap) : "",
+      depth: isSet(object.depth) ? String(object.depth) : '',
+      bitmap: isSet(object.bitmap) ? String(object.bitmap) : '',
       anchor: isSet(object.anchor)
         ? ProofAnchor.fromJSON(object.anchor)
         : undefined,
@@ -149,12 +149,12 @@ export const Proof = {
   toJSON(message: Proof): unknown {
     const obj: any = {};
     if (message.leaves) {
-      obj.leaves = message.leaves.map((e) => e);
+      obj.leaves = message.leaves.map(e => e);
     } else {
       obj.leaves = [];
     }
     if (message.nodes) {
-      obj.nodes = message.nodes.map((e) => e);
+      obj.nodes = message.nodes.map(e => e);
     } else {
       obj.nodes = [];
     }
@@ -169,10 +169,10 @@ export const Proof = {
 
   fromPartial<I extends Exact<DeepPartial<Proof>, I>>(object: I): Proof {
     const message = createBaseProof();
-    message.leaves = object.leaves?.map((e) => e) || [];
-    message.nodes = object.nodes?.map((e) => e) || [];
-    message.depth = object.depth ?? "";
-    message.bitmap = object.bitmap ?? "";
+    message.leaves = object.leaves?.map(e => e) || [];
+    message.nodes = object.nodes?.map(e => e) || [];
+    message.depth = object.depth ?? '';
+    message.bitmap = object.bitmap ?? '';
     message.anchor =
       object.anchor !== undefined && object.anchor !== null
         ? ProofAnchor.fromPartial(object.anchor)
@@ -182,7 +182,7 @@ export const Proof = {
 };
 
 function createBaseProofAnchor(): ProofAnchor {
-  return { anchorId: 0, networks: [], root: "", status: "" };
+  return {anchorId: 0, networks: [], root: '', status: ''};
 }
 
 export const ProofAnchor = {
@@ -196,10 +196,10 @@ export const ProofAnchor = {
     for (const v of message.networks) {
       AnchorNetwork.encode(v!, writer.uint32(18).fork()).ldelim();
     }
-    if (message.root !== "") {
+    if (message.root !== '') {
       writer.uint32(26).string(message.root);
     }
-    if (message.status !== "") {
+    if (message.status !== '') {
       writer.uint32(34).string(message.status);
     }
     return writer;
@@ -238,8 +238,8 @@ export const ProofAnchor = {
       networks: Array.isArray(object?.networks)
         ? object.networks.map((e: any) => AnchorNetwork.fromJSON(e))
         : [],
-      root: isSet(object.root) ? String(object.root) : "",
-      status: isSet(object.status) ? String(object.status) : "",
+      root: isSet(object.root) ? String(object.root) : '',
+      status: isSet(object.status) ? String(object.status) : '',
     };
   },
 
@@ -248,7 +248,7 @@ export const ProofAnchor = {
     message.anchorId !== undefined &&
       (obj.anchorId = Math.round(message.anchorId));
     if (message.networks) {
-      obj.networks = message.networks.map((e) =>
+      obj.networks = message.networks.map(e =>
         e ? AnchorNetwork.toJSON(e) : undefined
       );
     } else {
@@ -265,15 +265,15 @@ export const ProofAnchor = {
     const message = createBaseProofAnchor();
     message.anchorId = object.anchorId ?? 0;
     message.networks =
-      object.networks?.map((e) => AnchorNetwork.fromPartial(e)) || [];
-    message.root = object.root ?? "";
-    message.status = object.status ?? "";
+      object.networks?.map(e => AnchorNetwork.fromPartial(e)) || [];
+    message.root = object.root ?? '';
+    message.status = object.status ?? '';
     return message;
   },
 };
 
 function createBaseGetProofRequest(): GetProofRequest {
-  return { configData: undefined, records: [] };
+  return {configData: undefined, records: []};
 }
 
 export const GetProofRequest = {
@@ -329,7 +329,7 @@ export const GetProofRequest = {
         ? ConfigData.toJSON(message.configData)
         : undefined);
     if (message.records) {
-      obj.records = message.records.map((e) => e);
+      obj.records = message.records.map(e => e);
     } else {
       obj.records = [];
     }
@@ -344,13 +344,13 @@ export const GetProofRequest = {
       object.configData !== undefined && object.configData !== null
         ? ConfigData.fromPartial(object.configData)
         : undefined;
-    message.records = object.records?.map((e) => e) || [];
+    message.records = object.records?.map(e => e) || [];
     return message;
   },
 };
 
 function createBaseGetProofResponse(): GetProofResponse {
-  return { proof: undefined, error: undefined };
+  return {proof: undefined, error: undefined};
 }
 
 export const GetProofResponse = {
@@ -421,7 +421,7 @@ export const GetProofResponse = {
 };
 
 function createBaseValidateRootRequest(): ValidateRootRequest {
-  return { configData: undefined, root: "", network: 0 };
+  return {configData: undefined, root: '', network: 0};
 }
 
 export const ValidateRootRequest = {
@@ -432,7 +432,7 @@ export const ValidateRootRequest = {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
-    if (message.root !== "") {
+    if (message.root !== '') {
       writer.uint32(18).string(message.root);
     }
     if (message.network !== 0) {
@@ -470,7 +470,7 @@ export const ValidateRootRequest = {
       configData: isSet(object.configData)
         ? ConfigData.fromJSON(object.configData)
         : undefined,
-      root: isSet(object.root) ? String(object.root) : "",
+      root: isSet(object.root) ? String(object.root) : '',
       network: isSet(object.network) ? networkFromJSON(object.network) : 0,
     };
   },
@@ -495,14 +495,14 @@ export const ValidateRootRequest = {
       object.configData !== undefined && object.configData !== null
         ? ConfigData.fromPartial(object.configData)
         : undefined;
-    message.root = object.root ?? "";
+    message.root = object.root ?? '';
     message.network = object.network ?? 0;
     return message;
   },
 };
 
 function createBaseValidateRootResponse(): ValidateRootResponse {
-  return { timestamp: 0, error: undefined };
+  return {timestamp: 0, error: undefined};
 }
 
 export const ValidateRootResponse = {
@@ -573,7 +573,7 @@ export const ValidateRootResponse = {
 };
 
 function createBaseVerifyProofRequest(): VerifyProofRequest {
-  return { configData: undefined, proof: undefined };
+  return {configData: undefined, proof: undefined};
 }
 
 export const VerifyProofRequest = {
@@ -648,7 +648,7 @@ export const VerifyProofRequest = {
 };
 
 function createBaseVerifyProofResponse(): VerifyProofResponse {
-  return { record: undefined, error: undefined };
+  return {record: undefined, error: undefined};
 }
 
 export const VerifyProofResponse = {
@@ -715,7 +715,7 @@ export const VerifyProofResponse = {
 };
 
 function createBaseVerifyRecordsRequest(): VerifyRecordsRequest {
-  return { configData: undefined, records: [], network: undefined };
+  return {configData: undefined, records: [], network: undefined};
 }
 
 export const VerifyRecordsRequest = {
@@ -783,7 +783,7 @@ export const VerifyRecordsRequest = {
         ? ConfigData.toJSON(message.configData)
         : undefined);
     if (message.records) {
-      obj.records = message.records.map((e) => e);
+      obj.records = message.records.map(e => e);
     } else {
       obj.records = [];
     }
@@ -803,14 +803,14 @@ export const VerifyRecordsRequest = {
       object.configData !== undefined && object.configData !== null
         ? ConfigData.fromPartial(object.configData)
         : undefined;
-    message.records = object.records?.map((e) => e) || [];
+    message.records = object.records?.map(e => e) || [];
     message.network = object.network ?? undefined;
     return message;
   },
 };
 
 function createBaseVerifyRecordsResponse(): VerifyRecordsResponse {
-  return { timestamp: 0, error: undefined };
+  return {timestamp: 0, error: undefined};
 }
 
 export const VerifyRecordsResponse = {
@@ -883,7 +883,7 @@ export const VerifyRecordsResponse = {
 export type ProofServiceService = typeof ProofServiceService;
 export const ProofServiceService = {
   getProof: {
-    path: "/bloock.ProofService/GetProof",
+    path: '/bloock.ProofService/GetProof',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: GetProofRequest) =>
@@ -894,7 +894,7 @@ export const ProofServiceService = {
     responseDeserialize: (value: Buffer) => GetProofResponse.decode(value),
   },
   validateRoot: {
-    path: "/bloock.ProofService/ValidateRoot",
+    path: '/bloock.ProofService/ValidateRoot',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: ValidateRootRequest) =>
@@ -905,7 +905,7 @@ export const ProofServiceService = {
     responseDeserialize: (value: Buffer) => ValidateRootResponse.decode(value),
   },
   verifyProof: {
-    path: "/bloock.ProofService/VerifyProof",
+    path: '/bloock.ProofService/VerifyProof',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: VerifyProofRequest) =>
@@ -916,7 +916,7 @@ export const ProofServiceService = {
     responseDeserialize: (value: Buffer) => VerifyProofResponse.decode(value),
   },
   verifyRecords: {
-    path: "/bloock.ProofService/VerifyRecords",
+    path: '/bloock.ProofService/VerifyRecords',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: VerifyRecordsRequest) =>
@@ -1027,7 +1027,7 @@ export interface ProofServiceClient extends Client {
 
 export const ProofServiceClient = makeGenericClientConstructor(
   ProofServiceService,
-  "bloock.ProofService"
+  'bloock.ProofService'
 ) as unknown as {
   new (
     address: string,
@@ -1041,11 +1041,11 @@ declare var self: any | undefined;
 declare var window: any | undefined;
 declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
-  throw "Unable to locate global object";
+  if (typeof globalThis !== 'undefined') return globalThis;
+  if (typeof self !== 'undefined') return self;
+  if (typeof window !== 'undefined') return window;
+  if (typeof global !== 'undefined') return global;
+  throw 'Unable to locate global object';
 })();
 
 type Builtin =
@@ -1064,19 +1064,19 @@ type DeepPartial<T> = T extends Builtin
   : T extends ReadonlyArray<infer U>
   ? ReadonlyArray<DeepPartial<U>>
   : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+  ? {[K in keyof T]?: DeepPartial<T[K]>}
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+  : P & {[K in keyof P]: Exact<P[K], I[K]>} & {
       [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
     };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
   }
   return long.toNumber();
 }

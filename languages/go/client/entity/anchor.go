@@ -46,7 +46,7 @@ func MapAnchorNetworksFromProto(n []*proto.AnchorNetwork) []AnchorNetwork {
 	for i, network := range n {
 		networks[i] = NewAnchorNetworkFromProto(network)
 	}
-    return networks
+	return networks
 }
 
 func (a AnchorNetwork) ToProto() *proto.AnchorNetwork {

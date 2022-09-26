@@ -12,23 +12,23 @@ jobs:
       - name: Download static libs
         uses: actions/download-artifact@v1
         with:
-          name: bloock_static_library
+          name: bloock_core_lib_static
       - name: Copy libraries into go package.
         run: |
           mkdir -p languages/go/internal/ffi/native
-          cp -r bloock_static_library/bloock_bridge.h languages/go/internal/ffi/native/bloock_bridge.h
-          mkdir -p languages/go/native/linux
-          cp -r bloock_static_library/libpolar-musl.a languages/go/internal/ffi/native/linux/libpolar.a
-          mkdir -p languages/go/native/macos/amd64
-          cp -r bloock_static_library/libpolar-macOS.a languages/go/internal/ffi/native/macos/amd64/libpolar.a
-          mkdir -p languages/go/native/macos/arm64
-          cp -r bloock_static_library/libpolar-macOS-arm.a languages/go/internal/ffi/native/macos/arm64/libpolar.a
-          mkdir -p languages/go/native/windows
-          cp -r bloock_static_library/libpolar-Windows.a languages/go/internal/ffi/native/windows/libpolar.a
+          [[ -e bloock_core_lib_static/bloock_bridge.h ]] && cp bloock_core_lib_static/bloock_bridge.h languages/go/internal/ffi/native/bloock_bridge.h
+          mkdir -p languages/go/internal/ffi/native/x86_64-unknown-linux-musl
+          [[ -e bloock_core_lib_static/libbloock_bridge_x86_64-unknown-linux-musl.a ]] && cp bloock_core_lib_static/libbloock_bridge_x86_64-unknown-linux-musl.a languages/go/internal/ffi/native/x86_64-unknown-linux-musl/libbloock_bridge.a
+          mkdir -p languages/go/internal/ffi/native/x86_64-apple-darwin
+          [[ -e bloock_core_lib_static/libbloock_bridge_x86_64-apple-darwin.a ]] && cp bloock_core_lib_static/libbloock_bridge_x86_64-apple-darwin.a languages/go/internal/ffi/native/x86_64-apple-darwin/libbloock_bridge.a
+          mkdir -p languages/go/internal/ffi/native/aarch64-apple-darwin
+          [[ -e bloock_core_lib_static/libbloock_bridge_aarch64-apple-darwin.a ]] && cp bloock_core_lib_static/libbloock_bridge_aarch64-apple-darwin.a languages/go/internal/ffi/native/aarch64-apple-darwin/libbloock_bridge.a
+          mkdir -p languages/go/internal/ffi/native/x86_64-pc-windows-gnu
+          [[ -e bloock_core_lib_static/libbloock_bridge_windows.a ]] && cp bloock_core_lib_static/libbloock_bridge_windows.a languages/go/internal/ffi/native/x86_64-pc-windows-gnu/libbloock_bridge_windows.a
           rm languages/go/Makefile
       - name: Copy license.
         run: cp LICENSE languages/go/LICENSE
       - uses: actions/upload-artifact@v2
         with:
-          name: go
+          name: bloock_lib_go
           path: languages/go

@@ -1,0 +1,24 @@
+name: Publish Go
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+    secrets:
+      repo_api_token:
+        required: true
+
+jobs:
+  upload_go:
+    name: Upload Go.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.repo_api_token }}
+          repository: bloock/bloock-sdk-go
+          event-type: bloock_publish
+          client-payload: '{"version": "${{ inputs.version }}"}'

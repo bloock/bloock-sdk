@@ -10,9 +10,9 @@ import {
   Metadata,
   CallOptions,
   ServiceError,
-} from "@grpc/grpc-js";
-import { ConfigData } from "./config";
-import _m0 from "protobufjs/minimal";
+} from '@grpc/grpc-js';
+import {ConfigData} from './config';
+import _m0 from 'protobufjs/minimal';
 
 export interface HelloRequest {
   config?: ConfigData;
@@ -30,7 +30,7 @@ export interface Error {
 }
 
 function createBaseHelloRequest(): HelloRequest {
-  return { config: undefined, name: "" };
+  return {config: undefined, name: ''};
 }
 
 export const HelloRequest = {
@@ -41,7 +41,7 @@ export const HelloRequest = {
     if (message.config !== undefined) {
       ConfigData.encode(message.config, writer.uint32(10).fork()).ldelim();
     }
-    if (message.name !== "") {
+    if (message.name !== '') {
       writer.uint32(18).string(message.name);
     }
     return writer;
@@ -73,7 +73,7 @@ export const HelloRequest = {
       config: isSet(object.config)
         ? ConfigData.fromJSON(object.config)
         : undefined,
-      name: isSet(object.name) ? String(object.name) : "",
+      name: isSet(object.name) ? String(object.name) : '',
     };
   },
 
@@ -95,13 +95,13 @@ export const HelloRequest = {
       object.config !== undefined && object.config !== null
         ? ConfigData.fromPartial(object.config)
         : undefined;
-    message.name = object.name ?? "";
+    message.name = object.name ?? '';
     return message;
   },
 };
 
 function createBaseHelloResponse(): HelloResponse {
-  return { message: "", error: undefined };
+  return {message: '', error: undefined};
 }
 
 export const HelloResponse = {
@@ -109,7 +109,7 @@ export const HelloResponse = {
     message: HelloResponse,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.message !== "") {
+    if (message.message !== '') {
       writer.uint32(10).string(message.message);
     }
     if (message.error !== undefined) {
@@ -141,7 +141,7 @@ export const HelloResponse = {
 
   fromJSON(object: any): HelloResponse {
     return {
-      message: isSet(object.message) ? String(object.message) : "",
+      message: isSet(object.message) ? String(object.message) : '',
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
@@ -158,7 +158,7 @@ export const HelloResponse = {
     object: I
   ): HelloResponse {
     const message = createBaseHelloResponse();
-    message.message = object.message ?? "";
+    message.message = object.message ?? '';
     message.error =
       object.error !== undefined && object.error !== null
         ? Error.fromPartial(object.error)
@@ -168,15 +168,15 @@ export const HelloResponse = {
 };
 
 function createBaseError(): Error {
-  return { kind: "", message: "" };
+  return {kind: '', message: ''};
 }
 
 export const Error = {
   encode(message: Error, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.kind !== "") {
+    if (message.kind !== '') {
       writer.uint32(10).string(message.kind);
     }
-    if (message.message !== "") {
+    if (message.message !== '') {
       writer.uint32(18).string(message.message);
     }
     return writer;
@@ -205,8 +205,8 @@ export const Error = {
 
   fromJSON(object: any): Error {
     return {
-      kind: isSet(object.kind) ? String(object.kind) : "",
-      message: isSet(object.message) ? String(object.message) : "",
+      kind: isSet(object.kind) ? String(object.kind) : '',
+      message: isSet(object.message) ? String(object.message) : '',
     };
   },
 
@@ -219,8 +219,8 @@ export const Error = {
 
   fromPartial<I extends Exact<DeepPartial<Error>, I>>(object: I): Error {
     const message = createBaseError();
-    message.kind = object.kind ?? "";
-    message.message = object.message ?? "";
+    message.kind = object.kind ?? '';
+    message.message = object.message ?? '';
     return message;
   },
 };
@@ -230,7 +230,7 @@ export type GreeterService = typeof GreeterService;
 export const GreeterService = {
   /** Sends a greeting */
   sayHello: {
-    path: "/bloock.Greeter/SayHello",
+    path: '/bloock.Greeter/SayHello',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: HelloRequest) =>
@@ -242,7 +242,7 @@ export const GreeterService = {
   },
   /** Sends another greeting */
   sayHelloWithError: {
-    path: "/bloock.Greeter/SayHelloWithError",
+    path: '/bloock.Greeter/SayHelloWithError',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: HelloRequest) =>
@@ -298,7 +298,7 @@ export interface GreeterClient extends Client {
 
 export const GreeterClient = makeGenericClientConstructor(
   GreeterService,
-  "bloock.Greeter"
+  'bloock.Greeter'
 ) as unknown as {
   new (
     address: string,
@@ -324,13 +324,13 @@ type DeepPartial<T> = T extends Builtin
   : T extends ReadonlyArray<infer U>
   ? ReadonlyArray<DeepPartial<U>>
   : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+  ? {[K in keyof T]?: DeepPartial<T[K]>}
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+  : P & {[K in keyof P]: Exact<P[K], I[K]>} & {
       [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
     };
 

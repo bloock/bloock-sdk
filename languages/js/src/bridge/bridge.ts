@@ -1,10 +1,10 @@
-import { ServiceDefinition } from "@grpc/grpc-js";
-import { FFIClient } from "../ffi/ffi";
-import { makeRequest } from "./connection";
-import { AnchorServiceClient, AnchorServiceService } from "./proto/anchor";
-import { GreeterClient, GreeterService } from "./proto/bloock";
-import { ProofServiceClient, ProofServiceService } from "./proto/proof";
-import { RecordServiceClient, RecordServiceService } from "./proto/record";
+import {ServiceDefinition} from '@grpc/grpc-js';
+import {FFIClient} from '../ffi/ffi';
+import {makeRequest} from './connection';
+import {AnchorServiceClient, AnchorServiceService} from './proto/anchor';
+import {GreeterClient, GreeterService} from './proto/bloock';
+import {ProofServiceClient, ProofServiceService} from './proto/proof';
+import {RecordServiceClient, RecordServiceService} from './proto/record';
 
 export class BloockBridge {
   private ffiClient: FFIClient;
@@ -16,9 +16,13 @@ export class BloockBridge {
   constructor() {
     this.ffiClient = new FFIClient();
 
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     this.greeting = new (this.createClient(GreeterService) as any)();
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     this.anchor = new (this.createClient(AnchorServiceService) as any)();
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     this.record = new (this.createClient(RecordServiceService) as any)();
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     this.proof = new (this.createClient(ProofServiceService) as any)();
   }
 
@@ -45,13 +49,13 @@ export class BloockBridge {
       [methodName: string]: Function;
     }
 
-    Object.keys(methods).forEach((name) => {
+    Object.keys(methods).forEach(name => {
       if (this.isPrototypePolluted(name)) {
         return;
       }
       const attrs = methods[name];
-      if (typeof name === "string" && name.charAt(0) === "$") {
-        throw new Error("Method names cannot start with $");
+      if (typeof name === 'string' && name.charAt(0) === '$') {
+        throw new Error('Method names cannot start with $');
       }
       const serialize = attrs.requestSerialize;
       const deserialize = attrs.responseDeserialize;
@@ -68,7 +72,7 @@ export class BloockBridge {
     });
 
     ServiceClientImpl.service = methods;
-    ServiceClientImpl.serviceName = "serviceName";
+    ServiceClientImpl.serviceName = 'serviceName';
 
     return ServiceClientImpl;
   }
@@ -87,7 +91,7 @@ export class BloockBridge {
   }
 
   private isPrototypePolluted(key: string) {
-    return ["__proto__", "prototype", "constructor"].indexOf(key) >= 0;
+    return ['__proto__', 'prototype', 'constructor'].indexOf(key) >= 0;
   }
 }
 
@@ -96,7 +100,7 @@ interface ServiceClient {
 }
 
 interface ServiceClientConstructor {
-  new(): ServiceClient;
+  new (): ServiceClient;
   service: ServiceDefinition;
   serviceName: string;
 }

@@ -1,5 +1,5 @@
-import { ServiceError } from "@grpc/grpc-js";
-import { FFIClient } from "../ffi/ffi";
+import {ServiceError} from '@grpc/grpc-js';
+import {FFIClient} from '../ffi/ffi';
 
 export interface RequestCallback<ResponseType> {
   (err: ServiceError | null, value?: ResponseType): void;
@@ -14,16 +14,16 @@ export const makeRequest = <RequestType, ResponseType>(
   callback: RequestCallback<ResponseType>
 ): void => {
   const requestType = method;
-  let payload = serialize(argument);
+  const payload = serialize(argument);
 
-  console.log(requestType, payload)
+  console.log(requestType, payload);
   ffiClient
     .request(requestType, payload.toString())
-    .then((responsePayload) => {
-      let response = deserialize(Buffer.from(responsePayload, "base64"));
+    .then(responsePayload => {
+      const response = deserialize(Buffer.from(responsePayload, 'base64'));
       callback(null, response);
     })
-    .catch((err) => {
+    .catch(err => {
       callback(err, undefined);
     });
 };

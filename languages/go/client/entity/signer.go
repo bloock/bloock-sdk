@@ -12,12 +12,12 @@ type EcsdaSigner struct {
 }
 
 func NewEcsdaSigner(privateKey string) EcsdaSigner {
-    return EcsdaSigner{
-    	Alg:  proto.SignerAlg_ES256K,
-    	Args: SignerArgs{
-    		PrivateKey: privateKey,
-    	},
-    }
+	return EcsdaSigner{
+		Alg: proto.SignerAlg_ES256K,
+		Args: SignerArgs{
+			PrivateKey: privateKey,
+		},
+	}
 }
 
 func (s EcsdaSigner) ToProto() *proto.Signer {

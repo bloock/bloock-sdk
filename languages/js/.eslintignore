@@ -1,0 +1,7 @@
+dist/
+bin/
+src/bridge/proto/
+src/ffi/native/
+jest.config.ts
+rollup.config.js
+rollup.test.config.js

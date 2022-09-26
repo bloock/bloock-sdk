@@ -3,7 +3,7 @@ package entity
 import "github.com/bloock/go-bridge/internal/bridge/proto"
 
 type Encrypter interface {
-    ToProto() *proto.Encrypter
+	ToProto() *proto.Encrypter
 }
 
 type AesEncrypter struct {
@@ -12,12 +12,12 @@ type AesEncrypter struct {
 }
 
 func NewAesEncrypter(secret string) AesEncrypter {
-    return AesEncrypter{
-    	Alg:  proto.EncrypterAlg_A256GCM,
-    	Args: EncrypterArgs{
-    		Secret: secret,
-    	},
-    }
+	return AesEncrypter{
+		Alg: proto.EncrypterAlg_A256GCM,
+		Args: EncrypterArgs{
+			Secret: secret,
+		},
+	}
 }
 
 func (e AesEncrypter) ToProto() *proto.Encrypter {

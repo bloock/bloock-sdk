@@ -1,23 +1,13 @@
 {
+  "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
     "moduleResolution": "node",
-    "removeComments": false,
-    "sourceMap": true,
-    "target": "es2018",
     "outDir": "dist",
-    "declaration": true,
-    "strict": true,
     "module": "esnext",
-    "noEmitOnError": true,
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "declaration": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "noUnusedLocals": true,
     "noImplicitAny": true,
-    "allowJs": true,
     "types": [
       "node",
       "jest"
