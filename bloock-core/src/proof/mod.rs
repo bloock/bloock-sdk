@@ -20,6 +20,8 @@ pub enum ProofError {
     InvalidNumberOfRecords(),
     #[error("Blockchain Error - {0}")]
     BlockchainError(String),
+    #[error("Verification Error - {0}")]
+    VerificationError(String),
     #[error("Invalid depth")]
     InvalidDepth(),
     #[error("Invalid bitmap")]
@@ -30,6 +32,8 @@ pub enum ProofError {
     InvalidNode,
     #[error("Invalid proof")]
     InvalidProof,
+    #[error("Invalid verification")]
+    InvalidVerification,
 }
 
 impl From<ProofError> for BloockError {
