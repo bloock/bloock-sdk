@@ -2,6 +2,7 @@
 
 copy-lib:
 	rm -rfv src/ffi/native/*
+	mkdir -p src/ffi/native
 	cp ../../bloock-bridge/build/wasm/* src/ffi/native
 
 proto:

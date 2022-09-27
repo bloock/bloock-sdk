@@ -4,8 +4,16 @@ import {Network} from './bridge/proto/config';
 import {RecordReceipt} from './bridge/proto/record';
 import './fetch-polyfill';
 import {RecordBuilder} from './builder';
+import {EcsdaSigner} from './entity/signer';
 
-export {BloockClient, Anchor, Network, RecordReceipt, RecordBuilder};
+export {
+  BloockClient,
+  Anchor,
+  Network,
+  RecordReceipt,
+  RecordBuilder,
+  EcsdaSigner,
+};
 
 // async function main() {
 //   let bridge = new BloockBridge();

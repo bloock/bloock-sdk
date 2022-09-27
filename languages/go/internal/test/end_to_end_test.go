@@ -45,8 +45,6 @@ func TestEndToEnd(t *testing.T) {
 
 		record, err = bloock.NewRecordBuilderFromString("Hello world 2").Build()
 		require.NoError(t, err)
-		hash, err = record.GetHash()
-		require.NoError(t, err)
 		record, err = bloock.NewRecordBuilderFromRecord(record).Build()
 		require.NoError(t, err)
 		hash, err = record.GetHash()

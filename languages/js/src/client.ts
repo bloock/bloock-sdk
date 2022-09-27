@@ -8,11 +8,11 @@ import {
   VerifyProofRequest,
   VerifyRecordsRequest,
 } from './bridge/proto/proof';
-import {SendRecordsRequest} from './bridge/proto/record';
+import {GenerateKeysRequest, SendRecordsRequest} from './bridge/proto/record';
 
 import {Proof} from './entity/proof';
 import {Anchor} from './entity/anchor';
-import {RecordReceipt} from './entity/record';
+import {Keys, RecordReceipt} from './entity/record';
 
 import {NewConfigData} from './config/config';
 
@@ -246,6 +246,30 @@ export class BloockClient {
 
         resolve(res.timestamp);
       });
+    });
+  }
+
+  /**
+   * It generates a public and a private key
+   * @returns {Promise<Keys>} An object containing both the public and the private key
+   */
+  public async generateKeys(): Promise<Keys> {
+    return new Promise((resolve, reject) => {
+      this.bridge
+        .getRecord()
+        .generateKeys(GenerateKeysRequest.fromPartial({}), (err, res) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          if (res.error) {
+            reject(res.error.message);
+            return;
+          }
+
+          resolve(Keys.fromProto(res));
+        });
     });
   }
 }

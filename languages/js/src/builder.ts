@@ -2,7 +2,6 @@ import {BloockBridge} from './bridge/bridge';
 import {
   Encrypter,
   RecordTypes,
-  Signer,
   RecordBuilderFromStringRequest,
   RecordBuilderFromJSONRequest,
   RecordBuilderFromHexRequest,
@@ -12,6 +11,7 @@ import {
 } from './bridge/proto/record';
 
 import {Record} from './entity/record';
+import {Signer} from './entity/signer';
 
 export class RecordBuilder {
   payload: any;
@@ -37,7 +37,7 @@ export class RecordBuilder {
   }
 
   public static fromBytes(bytes: Uint8Array): RecordBuilder {
-    return new RecordBuilder(bytes, RecordTypes.HEX);
+    return new RecordBuilder(bytes, RecordTypes.BYTES);
   }
 
   public static fromFile(bytes: Uint8Array): RecordBuilder {
@@ -48,12 +48,12 @@ export class RecordBuilder {
     return new RecordBuilder(bytes, RecordTypes.RECORD);
   }
 
-  withSigner(signer: Signer): RecordBuilder {
+  public withSigner(signer: Signer): RecordBuilder {
     this.signer = signer;
     return this;
   }
 
-  withEncrypter(encrypter: Encrypter): RecordBuilder {
+  public withEncrypter(encrypter: Encrypter): RecordBuilder {
     this.encrypter = encrypter;
     return this;
   }

@@ -186,3 +186,17 @@ export class RecordReceipt {
     });
   }
 }
+
+export class Keys {
+  publicKey: string;
+  privateKey: string;
+
+  constructor(publicKey: string, privateKey: string) {
+    this.publicKey = publicKey;
+    this.privateKey = privateKey;
+  }
+
+  static fromProto(k: proto.GenerateKeysResponse): Keys {
+    return new Keys(k.publicKey, k.privateKey);
+  }
+}
