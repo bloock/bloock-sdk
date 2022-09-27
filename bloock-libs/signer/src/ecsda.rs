@@ -6,7 +6,7 @@ use crate::{SignerError, Verifier};
 use super::{Signature, Signer};
 use std::str;
 
-pub const ECSDA_ALG: &'static str = "ES256K";
+pub const ECSDA_ALG: &str = "ES256K";
 
 pub struct EcsdaSignerArgs {
     pub private_key: String,
