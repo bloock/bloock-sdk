@@ -1,3 +1,4 @@
+use crate::items::GenerateKeysResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetProofResponse;
 use crate::items::Record;
@@ -22,6 +23,7 @@ pub enum ResponseType {
     VerifyProof(VerifyProofResponse),
     VerifyRecords(VerifyRecordsResponse),
     BuildRecord(RecordBuilderResponse),
+    GenerateKeys(GenerateKeysResponse),
 }
 
 impl ResponseType {
@@ -40,6 +42,7 @@ impl ResponseType {
             ResponseType::VerifyRecords(r) => r.encode(&mut result_vec),
             ResponseType::Record(r) => r.encode(&mut result_vec),
             ResponseType::BuildRecord(r) => r.encode(&mut result_vec),
+            ResponseType::GenerateKeys(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -58,6 +61,7 @@ impl ResponseType {
             ResponseType::VerifyRecords(r) => r.encoded_len(),
             ResponseType::Record(r) => r.encoded_len(),
             ResponseType::BuildRecord(r) => r.encoded_len(),
+            ResponseType::GenerateKeys(r) => r.encoded_len(),
         }
     }
 }
