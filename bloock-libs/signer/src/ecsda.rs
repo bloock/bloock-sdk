@@ -1,10 +1,12 @@
 use bloock_hasher::{sha256::Sha256, Hasher};
 use libsecp256k1::{Message, PublicKey, SecretKey};
 
-use crate::SignerError;
+use crate::{SignerError, Verifier};
 
 use super::{Signature, Signer};
 use std::str;
+
+pub const ECSDA_ALG: &str = "ES256K";
 
 pub struct EcsdaSignerArgs {
     pub private_key: String,
@@ -54,14 +56,18 @@ impl Signer for EcsdaSigner {
             protected: base64_url::encode("{}"),
             signature: hex::encode(sig.0.serialize()),
             header: crate::SignatureHeader {
-                alg: "ES256K".to_string(),
+                alg: ECSDA_ALG.to_string(),
                 kid: hex::encode(public_key.serialize_compressed()),
             },
         };
 
         Ok(signature)
     }
+}
 
+pub struct EcsdaVerifier {}
+
+impl Verifier for EcsdaVerifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
         let public_key_hex = hex::decode(signature.header.kid.as_bytes())
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
@@ -85,8 +91,9 @@ impl Signer for EcsdaSigner {
 #[cfg(test)]
 mod tests {
     use crate::{
+        create_verifier_from_signature,
         ecsda::{EcsdaSigner, EcsdaSignerArgs},
-        Signature, SignatureHeader, Signer,
+        Signature, SignatureHeader, Signer, Verifier,
     };
 
     #[test]
@@ -105,7 +112,10 @@ mod tests {
         };
         assert_eq!(signature.header.alg.as_str(), "ES256K");
 
-        let result = match c.verify(string_payload.as_bytes(), signature) {
+        let result = match create_verifier_from_signature(&signature)
+            .unwrap()
+            .verify(string_payload.as_bytes(), signature)
+        {
             Ok(result) => result,
             Err(e) => panic!("{}", e),
         };
@@ -139,10 +149,9 @@ mod tests {
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
         };
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs {
-            private_key: "".to_string(),
-        });
-        let result = c.verify(string_payload.as_bytes(), json_signature);
+        let result = create_verifier_from_signature(&json_signature)
+            .unwrap()
+            .verify(string_payload.as_bytes(), json_signature);
 
         assert!(result.is_err());
     }
@@ -162,10 +171,9 @@ mod tests {
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
         };
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs {
-            private_key: "".to_string(),
-        });
-        let result = c.verify(string_payload.as_bytes(), json_signature);
+        let result = create_verifier_from_signature(&json_signature)
+            .unwrap()
+            .verify(string_payload.as_bytes(), json_signature);
 
         assert!(result.is_err());
     }
@@ -185,10 +193,9 @@ mod tests {
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
         };
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs {
-            private_key: "".to_string(),
-        });
-        let result = c.verify(string_payload.as_bytes(), json_signature);
+        let result = create_verifier_from_signature(&json_signature)
+            .unwrap()
+            .verify(string_payload.as_bytes(), json_signature);
 
         assert!(result.is_err());
     }

@@ -1,9 +1,6 @@
 import {BloockBridge} from './bridge/bridge';
-import {
-  Anchor,
-  GetAnchorRequest,
-  WaitAnchorRequest,
-} from './bridge/proto/anchor';
+
+import {GetAnchorRequest, WaitAnchorRequest} from './bridge/proto/anchor';
 import {ConfigData, Network, NetworkConfig} from './bridge/proto/config';
 import {
   GetProofRequest,
@@ -11,10 +8,11 @@ import {
   VerifyProofRequest,
   VerifyRecordsRequest,
 } from './bridge/proto/proof';
-import {SendRecordsRequest} from './bridge/proto/record';
+import {GenerateKeysRequest, SendRecordsRequest} from './bridge/proto/record';
 
 import {Proof} from './entity/proof';
-import {RecordReceipt} from './entity/record';
+import {Anchor} from './entity/anchor';
+import {Keys, RecordReceipt} from './entity/record';
 
 import {NewConfigData} from './config/config';
 
@@ -59,10 +57,12 @@ export class BloockClient {
       this.bridge.getRecord().sendRecords(request, (err, res) => {
         if (err) {
           reject(err);
+          return;
         }
 
-        if (res.error !== undefined) {
+        if (res.error) {
           reject(res.error.message);
+          return;
         }
 
         resolve(res.records.map(r => RecordReceipt.fromProto(r)));
@@ -85,13 +85,15 @@ export class BloockClient {
       this.bridge.getAnchor().getAnchor(request, (err, res) => {
         if (err) {
           reject(err);
+          return;
         }
 
         if (res.error) {
           reject(res.error.message);
+          return;
         }
 
-        resolve(res.anchor!);
+        resolve(Anchor.fromProto(res.anchor!));
       });
     });
   }
@@ -113,13 +115,15 @@ export class BloockClient {
       this.bridge.getAnchor().waitAnchor(request, (err, res) => {
         if (err) {
           reject(err);
+          return;
         }
 
         if (res.error) {
           reject(res.error.message);
+          return;
         }
 
-        resolve(res.anchor!);
+        resolve(Anchor.fromProto(res.anchor!));
       });
     });
   }
@@ -140,10 +144,12 @@ export class BloockClient {
       this.bridge.getProof().getProof(request, (err, res) => {
         if (err) {
           reject(err);
+          return;
         }
 
         if (res.error) {
           reject(res.error.message);
+          return;
         }
 
         resolve(Proof.fromProto(res.proof!));
@@ -168,10 +174,12 @@ export class BloockClient {
       this.bridge.getProof().validateRoot(request, (err, res) => {
         if (err) {
           reject(err);
+          return;
         }
 
         if (res.error) {
           reject(res.error.message);
+          return;
         }
 
         resolve(res.timestamp);
@@ -195,10 +203,12 @@ export class BloockClient {
       this.bridge.getProof().verifyProof(request, (err, res) => {
         if (err) {
           reject(err);
+          return;
         }
 
         if (res.error) {
           reject(res.error.message);
+          return;
         }
 
         resolve(res.record!);
@@ -226,14 +236,40 @@ export class BloockClient {
       this.bridge.getProof().verifyRecords(request, (err, res) => {
         if (err) {
           reject(err);
+          return;
         }
 
         if (res.error) {
           reject(res.error.message);
+          return;
         }
 
         resolve(res.timestamp);
       });
+    });
+  }
+
+  /**
+   * It generates a public and a private key
+   * @returns {Promise<Keys>} An object containing both the public and the private key
+   */
+  public async generateKeys(): Promise<Keys> {
+    return new Promise((resolve, reject) => {
+      this.bridge
+        .getRecord()
+        .generateKeys(GenerateKeysRequest.fromPartial({}), (err, res) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          if (res.error) {
+            reject(res.error.message);
+            return;
+          }
+
+          resolve(Keys.fromProto(res));
+        });
     });
   }
 }

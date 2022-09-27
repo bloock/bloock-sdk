@@ -9,6 +9,11 @@ on:
       node-version:
         required: true
         type: string
+    secrets:
+      api_host:
+        required: true
+      api_key:
+        required: true
 
 jobs:
   test_js:
@@ -28,5 +33,5 @@ jobs:
         run: yarn install --frozen-lockfile
         working-directory: bloock_lib_js
       - name: Run tests
-        run: yarn test
+        run: API_HOST=${{ secrets.api_host }} API_KEY=${{ secrets.api_key }} yarn run test
         working-directory: bloock_lib_js

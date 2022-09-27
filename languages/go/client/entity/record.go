@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/go-bridge/internal/bridge"
-	"github.com/bloock/go-bridge/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/internal/bridge"
+	"github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 )
 
 type Record struct {
@@ -17,6 +17,10 @@ type Record struct {
 }
 
 func NewRecordFromProto(r *proto.Record) Record {
+	if r == nil {
+		return Record{}
+	}
+
 	signatures := make([]Signature, len(r.Signatures))
 	for i, signature := range r.Signatures {
 		signatures[i] = NewSignatureFromProto(signature)
@@ -33,8 +37,8 @@ func NewRecordFromProto(r *proto.Record) Record {
 
 func (r Record) ToProto() *proto.Record {
 	signatures := make([]*proto.Signature, len(r.Signatures))
-	for i, signature := range signatures {
-		signatures[i] = signature
+	for i, signature := range r.Signatures {
+		signatures[i] = signature.ToProto()
 	}
 
 	return &proto.Record{
@@ -74,6 +78,9 @@ type RecordHeader struct {
 }
 
 func NewRecordHeaderFromProto(r *proto.RecordHeader) RecordHeader {
+	if r == nil {
+		return RecordHeader{}
+	}
 	return RecordHeader{
 		Ty: r.Ty,
 	}
@@ -92,6 +99,9 @@ type Signature struct {
 }
 
 func NewSignatureFromProto(s *proto.Signature) Signature {
+	if s == nil {
+		return Signature{}
+	}
 	return Signature{
 		Signature: s.Signature,
 		Protected: s.Protected,
@@ -113,6 +123,9 @@ type SignatureHeader struct {
 }
 
 func NewSignatureHeaderFromProto(s *proto.SignatureHeader) SignatureHeader {
+	if s == nil {
+		return SignatureHeader{}
+	}
 	return SignatureHeader{
 		Alg: s.Alg,
 		Kid: s.Kid,
@@ -132,6 +145,9 @@ type Encryption struct {
 }
 
 func NewEncryptionFromProto(e *proto.Encryption) Encryption {
+	if e == nil {
+		return Encryption{}
+	}
 	return Encryption{
 		Header:    NewEncryptionHeaderFromProto(e.Header),
 		Protected: e.Protected,
@@ -150,6 +166,9 @@ type EncryptionHeader struct {
 }
 
 func NewEncryptionHeaderFromProto(e *proto.EncryptionHeader) EncryptionHeader {
+	if e == nil {
+		return EncryptionHeader{}
+	}
 	return EncryptionHeader{
 		Alg: e.Alg,
 	}
@@ -169,10 +188,28 @@ type RecordReceipt struct {
 }
 
 func NewRecordReceiptFromProto(r *proto.RecordReceipt) RecordReceipt {
+	if r == nil {
+		return RecordReceipt{}
+	}
 	return RecordReceipt{
 		Anchor: r.Anchor,
 		Client: r.Client,
 		Record: r.Record,
 		Status: r.Status,
+	}
+}
+
+type Keys struct {
+	PublicKey  string
+	PrivateKey string
+}
+
+func NewKeysFromProto(k *proto.GenerateKeysResponse) Keys {
+	if k == nil {
+		return Keys{}
+	}
+	return Keys{
+		PublicKey:  k.PublicKey,
+		PrivateKey: k.PrivateKey,
 	}
 }

@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/go-bridge/client/entity"
-	"github.com/bloock/go-bridge/internal/bridge"
-	"github.com/bloock/go-bridge/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/client/entity"
+	"github.com/bloock/bloock-sdk-go/internal/bridge"
+	"github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 )
 
 type RecordBuilder struct {
@@ -52,7 +52,7 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 			Encrypter: b.encrypter,
 		})
 	case proto.RecordTypes_JSON:
-		res, err = bridgeClient.Record().BuildRecordFromJSON(context.Background(), &proto.RecordBuilderFromJSONRequest{
+		res, err = bridgeClient.Record().BuildRecordFromJson(context.Background(), &proto.RecordBuilderFromJSONRequest{
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
@@ -85,7 +85,7 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 func NewRecordBuilderFromRecord(record entity.Record) RecordBuilder {
 	return RecordBuilder{
 		payload:     record.ToProto(),
-		payloadType: proto.RecordTypes_BYTES,
+		payloadType: proto.RecordTypes_RECORD,
 	}
 }
 
@@ -113,7 +113,7 @@ func NewRecordBuilderFromJSON(json string) RecordBuilder {
 func NewRecordBuilderFromFile(file_bytes []byte) RecordBuilder {
 	return RecordBuilder{
 		payload:     file_bytes,
-		payloadType: proto.RecordTypes_RECORD,
+		payloadType: proto.RecordTypes_FILE,
 	}
 }
 

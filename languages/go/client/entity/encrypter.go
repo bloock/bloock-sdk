@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/bloock/go-bridge/internal/bridge/proto"
+import "github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 
 type Encrypter interface {
 	ToProto() *proto.Encrypter
@@ -33,6 +33,6 @@ type EncrypterArgs struct {
 
 func (e EncrypterArgs) ToProto() *proto.EncrypterArgs {
 	return &proto.EncrypterArgs{
-		Secret: e.Secret,
+		Secret: &e.Secret,
 	}
 }

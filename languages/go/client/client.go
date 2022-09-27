@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/go-bridge/client/entity"
-	"github.com/bloock/go-bridge/internal/bridge"
-	"github.com/bloock/go-bridge/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/client/entity"
+	"github.com/bloock/bloock-sdk-go/internal/bridge"
+	"github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 )
 
 type Client struct {
@@ -160,4 +160,18 @@ func (c *Client) ValidateRoot(root string, network Network) (uint64, error) {
 	}
 
 	return res.Timestamp, nil
+}
+
+func (c *Client) GenerateKeys() (entity.Keys, error) {
+	res, err := c.bridgeClient.Record().GenerateKeys(context.Background(), &proto.GenerateKeysRequest{})
+
+	if err != nil {
+		return entity.Keys{}, err
+	}
+
+	if res.Error != nil {
+		return entity.Keys{}, errors.New(res.Error.Message)
+	}
+
+	return entity.NewKeysFromProto(res), nil
 }

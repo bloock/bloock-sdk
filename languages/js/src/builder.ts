@@ -2,8 +2,6 @@ import {BloockBridge} from './bridge/bridge';
 import {
   Encrypter,
   RecordTypes,
-  Signer,
-  Record,
   RecordBuilderFromStringRequest,
   RecordBuilderFromJSONRequest,
   RecordBuilderFromHexRequest,
@@ -12,8 +10,10 @@ import {
   RecordBuilderFromRecordRequest,
 } from './bridge/proto/record';
 
+import {Record} from './entity/record';
+import {Signer} from './entity/signer';
+
 export class RecordBuilder {
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
   payload: any;
   payloadType!: RecordTypes;
   signer: Signer | undefined;
@@ -37,7 +37,7 @@ export class RecordBuilder {
   }
 
   public static fromBytes(bytes: Uint8Array): RecordBuilder {
-    return new RecordBuilder(bytes, RecordTypes.HEX);
+    return new RecordBuilder(bytes, RecordTypes.BYTES);
   }
 
   public static fromFile(bytes: Uint8Array): RecordBuilder {
@@ -48,17 +48,17 @@ export class RecordBuilder {
     return new RecordBuilder(bytes, RecordTypes.RECORD);
   }
 
-  withSigner(signer: Signer): RecordBuilder {
+  public withSigner(signer: Signer): RecordBuilder {
     this.signer = signer;
     return this;
   }
 
-  withEncrypter(encrypter: Encrypter): RecordBuilder {
+  public withEncrypter(encrypter: Encrypter): RecordBuilder {
     this.encrypter = encrypter;
     return this;
   }
 
-  build(): Promise<Record> {
+  async build(): Promise<Record> {
     const bridge = new BloockBridge();
     switch (this.payloadType) {
       case RecordTypes.STRING: {
@@ -72,13 +72,15 @@ export class RecordBuilder {
           bridge.getRecord().buildRecordFromString(req, (err, res) => {
             if (err) {
               reject(err);
+              return;
             }
 
             if (res.error) {
               reject(res.error.message);
+              return;
             }
 
-            resolve(res.record!);
+            resolve(Record.fromProto(res.record!));
           });
         });
       }
@@ -90,16 +92,18 @@ export class RecordBuilder {
         });
 
         return new Promise((resolve, reject) => {
-          bridge.getRecord().buildRecordFromJSON(req, (err, res) => {
+          bridge.getRecord().buildRecordFromJson(req, (err, res) => {
             if (err) {
               reject(err);
+              return;
             }
 
             if (res.error) {
               reject(res.error.message);
+              return;
             }
 
-            resolve(res.record!);
+            resolve(Record.fromProto(res.record!));
           });
         });
       }
@@ -114,13 +118,15 @@ export class RecordBuilder {
           bridge.getRecord().buildRecordFromHex(req, (err, res) => {
             if (err) {
               reject(err);
+              return;
             }
 
             if (res.error) {
               reject(res.error.message);
+              return;
             }
 
-            resolve(res.record!);
+            resolve(Record.fromProto(res.record!));
           });
         });
       }
@@ -135,13 +141,15 @@ export class RecordBuilder {
           bridge.getRecord().buildRecordFromBytes(req, (err, res) => {
             if (err) {
               reject(err);
+              return;
             }
 
             if (res.error) {
               reject(res.error.message);
+              return;
             }
 
-            resolve(res.record!);
+            resolve(Record.fromProto(res.record!));
           });
         });
       }
@@ -156,13 +164,15 @@ export class RecordBuilder {
           bridge.getRecord().buildRecordFromFile(req, (err, res) => {
             if (err) {
               reject(err);
+              return;
             }
 
             if (res.error) {
               reject(res.error.message);
+              return;
             }
 
-            resolve(res.record!);
+            resolve(Record.fromProto(res.record!));
           });
         });
       }
@@ -177,13 +187,15 @@ export class RecordBuilder {
           bridge.getRecord().buildRecordFromRecord(req, (err, res) => {
             if (err) {
               reject(err);
+              return;
             }
 
             if (res.error) {
               reject(res.error.message);
+              return;
             }
 
-            resolve(res.record!);
+            resolve(Record.fromProto(res.record!));
           });
         });
       }

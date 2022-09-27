@@ -50,6 +50,9 @@ jobs:
     with:
       os: ubuntu-latest
       node-version: 16
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
 
   check_go:
     needs: [build_linux]
@@ -65,3 +68,6 @@ jobs:
     with:
       os: ubuntu-latest
       go-version: "1.18"
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}

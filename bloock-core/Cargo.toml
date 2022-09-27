@@ -15,6 +15,7 @@ hex = "0.4.3"
 bitvec = "1"
 infer = "0.9.0"
 base64-url = "1.4.13"
+async-std = "1.12.0"
 bloock-hasher = { path = "../bloock-libs/hasher" }
 bloock-signer = { path = "../bloock-libs/signer" }
 bloock-encrypter = { path = "../bloock-libs/encrypter" }
@@ -32,3 +33,7 @@ path = "../bloock-libs/http"
 version = "=0.1.0"
 features = ["testing"]
 
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = { version = "0.3.52" }
+js-sys = "0.3.59"
+wasm-bindgen-futures = "0.4.32"

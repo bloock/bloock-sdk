@@ -38,6 +38,12 @@ impl From<RecordBuilderResponse> for ResponseType {
     }
 }
 
+impl From<RecordHash> for ResponseType {
+    fn from(res: RecordHash) -> Self {
+        ResponseType::GetHash(res)
+    }
+}
+
 impl From<GenerateKeysResponse> for ResponseType {
     fn from(res: GenerateKeysResponse) -> Self {
         ResponseType::GenerateKeys(res)

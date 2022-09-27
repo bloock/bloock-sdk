@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/bloock/go-bridge/internal/bridge/proto"
+import "github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 
 type Signer interface {
 	ToProto() *proto.Signer
@@ -33,6 +33,6 @@ type SignerArgs struct {
 
 func (s SignerArgs) ToProto() *proto.SignerArgs {
 	return &proto.SignerArgs{
-		PrivateKey: s.PrivateKey,
+		PrivateKey: &s.PrivateKey,
 	}
 }

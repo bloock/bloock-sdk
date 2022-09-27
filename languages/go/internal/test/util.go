@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	bloock "github.com/bloock/go-bridge/client"
+	bloock "github.com/bloock/bloock-sdk-go/client"
 )
 
 func GetSdk() bloock.Client {

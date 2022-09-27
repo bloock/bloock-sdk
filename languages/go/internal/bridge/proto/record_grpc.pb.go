@@ -25,11 +25,12 @@ type RecordServiceClient interface {
 	SendRecords(ctx context.Context, in *SendRecordsRequest, opts ...grpc.CallOption) (*SendRecordsResponse, error)
 	BuildRecordFromString(ctx context.Context, in *RecordBuilderFromStringRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromHex(ctx context.Context, in *RecordBuilderFromHexRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
-	BuildRecordFromJSON(ctx context.Context, in *RecordBuilderFromJSONRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	BuildRecordFromJson(ctx context.Context, in *RecordBuilderFromJSONRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromFile(ctx context.Context, in *RecordBuilderFromFileRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromBytes(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
+	GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error)
 }
 
 type recordServiceClient struct {
@@ -67,9 +68,9 @@ func (c *recordServiceClient) BuildRecordFromHex(ctx context.Context, in *Record
 	return out, nil
 }
 
-func (c *recordServiceClient) BuildRecordFromJSON(ctx context.Context, in *RecordBuilderFromJSONRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
+func (c *recordServiceClient) BuildRecordFromJson(ctx context.Context, in *RecordBuilderFromJSONRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
 	out := new(RecordBuilderResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromJSON", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromJson", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -112,6 +113,15 @@ func (c *recordServiceClient) GetHash(ctx context.Context, in *Record, opts ...g
 	return out, nil
 }
 
+func (c *recordServiceClient) GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error) {
+	out := new(GenerateKeysResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/GenerateKeys", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RecordServiceServer is the server API for RecordService service.
 // All implementations must embed UnimplementedRecordServiceServer
 // for forward compatibility
@@ -119,11 +129,12 @@ type RecordServiceServer interface {
 	SendRecords(context.Context, *SendRecordsRequest) (*SendRecordsResponse, error)
 	BuildRecordFromString(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromHex(context.Context, *RecordBuilderFromHexRequest) (*RecordBuilderResponse, error)
-	BuildRecordFromJSON(context.Context, *RecordBuilderFromJSONRequest) (*RecordBuilderResponse, error)
+	BuildRecordFromJson(context.Context, *RecordBuilderFromJSONRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromFile(context.Context, *RecordBuilderFromFileRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromBytes(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error)
 	GetHash(context.Context, *Record) (*RecordHash, error)
+	GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error)
 	mustEmbedUnimplementedRecordServiceServer()
 }
 
@@ -140,8 +151,8 @@ func (UnimplementedRecordServiceServer) BuildRecordFromString(context.Context, *
 func (UnimplementedRecordServiceServer) BuildRecordFromHex(context.Context, *RecordBuilderFromHexRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromHex not implemented")
 }
-func (UnimplementedRecordServiceServer) BuildRecordFromJSON(context.Context, *RecordBuilderFromJSONRequest) (*RecordBuilderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromJSON not implemented")
+func (UnimplementedRecordServiceServer) BuildRecordFromJson(context.Context, *RecordBuilderFromJSONRequest) (*RecordBuilderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromJson not implemented")
 }
 func (UnimplementedRecordServiceServer) BuildRecordFromFile(context.Context, *RecordBuilderFromFileRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromFile not implemented")
@@ -154,6 +165,9 @@ func (UnimplementedRecordServiceServer) BuildRecordFromRecord(context.Context, *
 }
 func (UnimplementedRecordServiceServer) GetHash(context.Context, *Record) (*RecordHash, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
+}
+func (UnimplementedRecordServiceServer) GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateKeys not implemented")
 }
 func (UnimplementedRecordServiceServer) mustEmbedUnimplementedRecordServiceServer() {}
 
@@ -222,20 +236,20 @@ func _RecordService_BuildRecordFromHex_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RecordService_BuildRecordFromJSON_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RecordService_BuildRecordFromJson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RecordBuilderFromJSONRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecordServiceServer).BuildRecordFromJSON(ctx, in)
+		return srv.(RecordServiceServer).BuildRecordFromJson(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bloock.RecordService/BuildRecordFromJSON",
+		FullMethod: "/bloock.RecordService/BuildRecordFromJson",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).BuildRecordFromJSON(ctx, req.(*RecordBuilderFromJSONRequest))
+		return srv.(RecordServiceServer).BuildRecordFromJson(ctx, req.(*RecordBuilderFromJSONRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -312,6 +326,24 @@ func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecordService_GenerateKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateKeysRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).GenerateKeys(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/GenerateKeys",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).GenerateKeys(ctx, req.(*GenerateKeysRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RecordService_ServiceDesc is the grpc.ServiceDesc for RecordService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -332,8 +364,8 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RecordService_BuildRecordFromHex_Handler,
 		},
 		{
-			MethodName: "BuildRecordFromJSON",
-			Handler:    _RecordService_BuildRecordFromJSON_Handler,
+			MethodName: "BuildRecordFromJson",
+			Handler:    _RecordService_BuildRecordFromJson_Handler,
 		},
 		{
 			MethodName: "BuildRecordFromFile",
@@ -350,6 +382,10 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHash",
 			Handler:    _RecordService_GetHash_Handler,
+		},
+		{
+			MethodName: "GenerateKeys",
+			Handler:    _RecordService_GenerateKeys_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

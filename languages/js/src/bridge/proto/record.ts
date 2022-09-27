@@ -128,6 +128,14 @@ export function encrypterAlgToJSON(object: EncrypterAlg): string {
   }
 }
 
+export interface GenerateKeysRequest {}
+
+export interface GenerateKeysResponse {
+  privateKey: string;
+  publicKey: string;
+  error?: Error | undefined;
+}
+
 export interface RecordHash {
   hash: string;
   error?: Error | undefined;
@@ -240,6 +248,129 @@ export interface SendRecordsResponse {
   records: RecordReceipt[];
   error?: Error | undefined;
 }
+
+function createBaseGenerateKeysRequest(): GenerateKeysRequest {
+  return {};
+}
+
+export const GenerateKeysRequest = {
+  encode(
+    _: GenerateKeysRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateKeysRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateKeysRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): GenerateKeysRequest {
+    return {};
+  },
+
+  toJSON(_: GenerateKeysRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GenerateKeysRequest>, I>>(
+    _: I
+  ): GenerateKeysRequest {
+    const message = createBaseGenerateKeysRequest();
+    return message;
+  },
+};
+
+function createBaseGenerateKeysResponse(): GenerateKeysResponse {
+  return {privateKey: '', publicKey: '', error: undefined};
+}
+
+export const GenerateKeysResponse = {
+  encode(
+    message: GenerateKeysResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.privateKey !== '') {
+      writer.uint32(10).string(message.privateKey);
+    }
+    if (message.publicKey !== '') {
+      writer.uint32(18).string(message.publicKey);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): GenerateKeysResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateKeysResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.privateKey = reader.string();
+          break;
+        case 2:
+          message.publicKey = reader.string();
+          break;
+        case 3:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenerateKeysResponse {
+    return {
+      privateKey: isSet(object.privateKey) ? String(object.privateKey) : '',
+      publicKey: isSet(object.publicKey) ? String(object.publicKey) : '',
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: GenerateKeysResponse): unknown {
+    const obj: any = {};
+    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
+    message.publicKey !== undefined && (obj.publicKey = message.publicKey);
+    message.error !== undefined &&
+      (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GenerateKeysResponse>, I>>(
+    object: I
+  ): GenerateKeysResponse {
+    const message = createBaseGenerateKeysResponse();
+    message.privateKey = object.privateKey ?? '';
+    message.publicKey = object.publicKey ?? '';
+    message.error =
+      object.error !== undefined && object.error !== null
+        ? Error.fromPartial(object.error)
+        : undefined;
+    return message;
+  },
+};
 
 function createBaseRecordHash(): RecordHash {
   return {hash: '', error: undefined};
@@ -1892,8 +2023,8 @@ export const RecordServiceService = {
       Buffer.from(RecordBuilderResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer) => RecordBuilderResponse.decode(value),
   },
-  buildRecordFromJSON: {
-    path: '/bloock.RecordService/BuildRecordFromJSON',
+  buildRecordFromJson: {
+    path: '/bloock.RecordService/BuildRecordFromJson',
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: RecordBuilderFromJSONRequest) =>
@@ -1951,6 +2082,17 @@ export const RecordServiceService = {
       Buffer.from(RecordHash.encode(value).finish()),
     responseDeserialize: (value: Buffer) => RecordHash.decode(value),
   },
+  generateKeys: {
+    path: '/bloock.RecordService/GenerateKeys',
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GenerateKeysRequest) =>
+      Buffer.from(GenerateKeysRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => GenerateKeysRequest.decode(value),
+    responseSerialize: (value: GenerateKeysResponse) =>
+      Buffer.from(GenerateKeysResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => GenerateKeysResponse.decode(value),
+  },
 } as const;
 
 export interface RecordServiceServer extends UntypedServiceImplementation {
@@ -1963,7 +2105,7 @@ export interface RecordServiceServer extends UntypedServiceImplementation {
     RecordBuilderFromHexRequest,
     RecordBuilderResponse
   >;
-  buildRecordFromJSON: handleUnaryCall<
+  buildRecordFromJson: handleUnaryCall<
     RecordBuilderFromJSONRequest,
     RecordBuilderResponse
   >;
@@ -1980,6 +2122,7 @@ export interface RecordServiceServer extends UntypedServiceImplementation {
     RecordBuilderResponse
   >;
   getHash: handleUnaryCall<Record, RecordHash>;
+  generateKeys: handleUnaryCall<GenerateKeysRequest, GenerateKeysResponse>;
 }
 
 export interface RecordServiceClient extends Client {
@@ -2055,14 +2198,14 @@ export interface RecordServiceClient extends Client {
       response: RecordBuilderResponse
     ) => void
   ): ClientUnaryCall;
-  buildRecordFromJSON(
+  buildRecordFromJson(
     request: RecordBuilderFromJSONRequest,
     callback: (
       error: ServiceError | null,
       response: RecordBuilderResponse
     ) => void
   ): ClientUnaryCall;
-  buildRecordFromJSON(
+  buildRecordFromJson(
     request: RecordBuilderFromJSONRequest,
     metadata: Metadata,
     callback: (
@@ -2070,7 +2213,7 @@ export interface RecordServiceClient extends Client {
       response: RecordBuilderResponse
     ) => void
   ): ClientUnaryCall;
-  buildRecordFromJSON(
+  buildRecordFromJson(
     request: RecordBuilderFromJSONRequest,
     metadata: Metadata,
     options: Partial<CallOptions>,
@@ -2165,6 +2308,30 @@ export interface RecordServiceClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: RecordHash) => void
+  ): ClientUnaryCall;
+  generateKeys(
+    request: GenerateKeysRequest,
+    callback: (
+      error: ServiceError | null,
+      response: GenerateKeysResponse
+    ) => void
+  ): ClientUnaryCall;
+  generateKeys(
+    request: GenerateKeysRequest,
+    metadata: Metadata,
+    callback: (
+      error: ServiceError | null,
+      response: GenerateKeysResponse
+    ) => void
+  ): ClientUnaryCall;
+  generateKeys(
+    request: GenerateKeysRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (
+      error: ServiceError | null,
+      response: GenerateKeysResponse
+    ) => void
   ): ClientUnaryCall;
 }
 

@@ -27,7 +27,7 @@ jobs:
       - name: Build
         working-directory: languages/js
         run: |
-          make build
+          yarn build
           rm -rf node_modules
           rm Makefile
       - name: Copy master README into project directory

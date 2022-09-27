@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/bloock/go-bridge/internal/bridge/proto"
+import "github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 
 type Proof struct {
 	leaves []string
@@ -11,6 +11,9 @@ type Proof struct {
 }
 
 func NewProofFromProto(p *proto.Proof) Proof {
+	if p == nil {
+		return Proof{}
+	}
 	return Proof{
 		leaves: p.Leaves,
 		nodes:  p.Nodes,
@@ -38,6 +41,9 @@ type ProofAnchor struct {
 }
 
 func NewProofAnchorFromProto(p *proto.ProofAnchor) ProofAnchor {
+	if p == nil {
+		return ProofAnchor{}
+	}
 	return ProofAnchor{
 		AnchorID: p.AnchorId,
 		Networks: MapAnchorNetworksFromProto(p.Networks),

@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/bloock/go-bridge/internal/bridge/proto"
+import "github.com/bloock/bloock-sdk-go/internal/bridge/proto"
 
 type Anchor struct {
 	Id         int64
@@ -11,6 +11,10 @@ type Anchor struct {
 }
 
 func NewAnchorFromProto(a *proto.Anchor) Anchor {
+	if a == nil {
+		return Anchor{}
+	}
+
 	return Anchor{
 		Id:         a.Id,
 		BlockRoots: a.BlockRoots,
@@ -27,6 +31,9 @@ type AnchorNetwork struct {
 }
 
 func NewAnchorNetworkFromProto(a *proto.AnchorNetwork) AnchorNetwork {
+	if a == nil {
+		return AnchorNetwork{}
+	}
 	return AnchorNetwork{
 		Name:   a.Name,
 		State:  a.State,

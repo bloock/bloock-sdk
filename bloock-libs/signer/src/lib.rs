@@ -1,3 +1,4 @@
+use ecsda::{EcsdaVerifier, ECSDA_ALG};
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
 
@@ -26,7 +27,17 @@ pub struct SignatureHeader {
 
 pub trait Signer {
     fn sign(&self, payload: &[u8]) -> Result<Signature>;
+}
+
+pub trait Verifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool>;
+}
+
+pub fn create_verifier_from_signature(signature: &Signature) -> Result<impl Verifier> {
+    match signature.header.alg.as_str() {
+        ECSDA_ALG => Ok(EcsdaVerifier {}),
+        _ => Err(SignerError::InvalidSignatureAlg()),
+    }
 }
 
 impl From<JWSignatures> for Signature {
@@ -53,6 +64,8 @@ pub enum SignerError {
     InvalidPublicKey(String),
     #[error("Invalid Signature: {0}")]
     InvalidSignature(String),
+    #[error("Invalid signature algorithm found")]
+    InvalidSignatureAlg(),
     #[error("Error General Serialize: {0}")]
     GeneralSerializeError(String),
     #[error("Error General Deserialize: {0}")]
