@@ -30,6 +30,7 @@ type RecordServiceClient interface {
 	BuildRecordFromBytes(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
+	GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error)
 }
 
 type recordServiceClient struct {
@@ -112,6 +113,15 @@ func (c *recordServiceClient) GetHash(ctx context.Context, in *Record, opts ...g
 	return out, nil
 }
 
+func (c *recordServiceClient) GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error) {
+	out := new(GenerateKeysResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/GenerateKeys", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RecordServiceServer is the server API for RecordService service.
 // All implementations must embed UnimplementedRecordServiceServer
 // for forward compatibility
@@ -124,6 +134,7 @@ type RecordServiceServer interface {
 	BuildRecordFromBytes(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error)
 	GetHash(context.Context, *Record) (*RecordHash, error)
+	GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error)
 	mustEmbedUnimplementedRecordServiceServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedRecordServiceServer) BuildRecordFromRecord(context.Context, *
 }
 func (UnimplementedRecordServiceServer) GetHash(context.Context, *Record) (*RecordHash, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
+}
+func (UnimplementedRecordServiceServer) GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateKeys not implemented")
 }
 func (UnimplementedRecordServiceServer) mustEmbedUnimplementedRecordServiceServer() {}
 
@@ -312,6 +326,24 @@ func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecordService_GenerateKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateKeysRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).GenerateKeys(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/GenerateKeys",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).GenerateKeys(ctx, req.(*GenerateKeysRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RecordService_ServiceDesc is the grpc.ServiceDesc for RecordService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +382,10 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHash",
 			Handler:    _RecordService_GetHash_Handler,
+		},
+		{
+			MethodName: "GenerateKeys",
+			Handler:    _RecordService_GenerateKeys_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
