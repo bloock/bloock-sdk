@@ -108,13 +108,13 @@ impl<H: Client> ProofService<H> {
             };
 
             for signature in signatures {
-                let verifier = bloock_signer::create_verifier_from_signature(&signature)
+                let verifier = bloock_signer::create_verifier_from_signature(signature)
                     .map_err(|e| ProofError::VerificationError(e.to_string()))?;
                 let verification_response =
                     verifier
                         .verify(&document.payload, signature.clone())
                         .map_err(|e| ProofError::VerificationError(e.to_string()))?;
-                if verification_response == false {
+                if !verification_response {
                     return Err(ProofError::InvalidVerification.into());
                 }
             }
