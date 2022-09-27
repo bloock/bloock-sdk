@@ -7,7 +7,8 @@ tmp/
 
 target
 
-bloock-bridge/build/*
+bloock-bridge/build/wasm
+bloock-bridge/build/native
 bloock-libs/**/pkg
 
 *.class
@@ -20,9 +21,14 @@ languages/python/_bloock_bridge_lib.abi3.so
 __pycache__/
 
 languages/go/vendor
+languages/go/internal/ffi/native
+
 languages/js/node_modules
 languages/js/dist
-languages/js/src/ffi/native/*
+languages/js/src/ffi/native/bloock_bridge_bg.wasm
+languages/js/src/ffi/native/bloock_bridge_bg.wasm.d.ts
+languages/js/src/ffi/native/bloock_bridge.d.ts
+languages/js/src/ffi/native/bloock_bridge.js
 
 *.a
 *.d
