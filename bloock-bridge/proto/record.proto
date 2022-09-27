@@ -27,6 +27,15 @@ service RecordService {
     rpc BuildRecordFromBytes(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);
     rpc GetHash(Record) returns (RecordHash);
+    rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
+}
+
+message GenerateKeysRequest {}
+
+message GenerateKeysResponse {
+    string privateKey = 1;
+    string publicKey = 2;
+    optional Error error = 3;
 }
 
 message RecordHash {

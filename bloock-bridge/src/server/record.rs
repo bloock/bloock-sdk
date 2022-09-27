@@ -14,8 +14,9 @@ use crate::{
     entity_mappings::config::map_config,
     error::{config_data_error, BridgeError},
     items::{
-        Encrypter, EncrypterAlg, Error, Record, RecordBuilderResponse, RecordHash,
-        RecordServiceHandler, SendRecordsResponse, Signer, SignerAlg,
+        Encrypter, EncrypterAlg, Error, GenerateKeysRequest, GenerateKeysResponse, Record,
+        RecordBuilderResponse, RecordHash, RecordServiceHandler, SendRecordsResponse, Signer,
+        SignerAlg,
     },
 };
 
@@ -40,6 +41,12 @@ impl From<RecordBuilderResponse> for ResponseType {
 impl From<RecordHash> for ResponseType {
     fn from(res: RecordHash) -> Self {
         ResponseType::GetHash(res)
+    }
+}
+
+impl From<GenerateKeysResponse> for ResponseType {
+    fn from(res: GenerateKeysResponse) -> Self {
+        ResponseType::GenerateKeys(res)
     }
 }
 
@@ -114,6 +121,27 @@ impl RecordServiceHandler for RecordServer {
         };
         let hash = record.get_hash();
         RecordHash { hash, error: None }
+    }
+
+    async fn generate_keys(&self, _req: GenerateKeysRequest) -> GenerateKeysResponse {
+        let (private_key, public_key) = match EcsdaSigner::generate_keys() {
+            Ok(p) => p,
+            Err(e) => {
+                return GenerateKeysResponse {
+                    private_key: "".to_string(),
+                    public_key: "".to_string(),
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
+        return GenerateKeysResponse {
+            private_key,
+            public_key,
+            error: None,
+        };
     }
 
     async fn build_record_from_string(
@@ -343,7 +371,10 @@ fn build_record(
 #[cfg(test)]
 mod tests {
     use crate::{
-        items::{EncrypterAlg, EncrypterArgs, RecordServiceHandler, SignerAlg, SignerArgs},
+        items::{
+            EncrypterAlg, EncrypterArgs, GenerateKeysRequest, RecordServiceHandler, SignerAlg,
+            SignerArgs,
+        },
         server::Server,
     };
 
@@ -575,5 +606,16 @@ mod tests {
         assert_eq!("string", result_ty);
         assert_eq!(content, result_payload);
         assert_eq!(None, result_error);
+    }
+
+    #[tokio::test]
+    async fn test_generate_keys() {
+        let request_generate_keys = GenerateKeysRequest {};
+
+        let server = Server::new();
+        let keys_response = server.record.generate_keys(request_generate_keys).await;
+        let error_response = keys_response.error;
+
+        assert_eq!(None, error_response);
     }
 }
