@@ -205,11 +205,11 @@ type Keys struct {
 }
 
 func NewKeysFromProto(k *proto.GenerateKeysResponse) Keys {
-    if k == nil {
-        return Keys{}
-    }
-    return Keys{
-    	PublicKey:  k.PublicKey,
-    	PrivateKey: k.PrivateKey,
-    }
+	if k == nil {
+		return Keys{}
+	}
+	return Keys{
+		PublicKey:  k.PublicKey,
+		PrivateKey: k.PrivateKey,
+	}
 }
