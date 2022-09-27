@@ -2,8 +2,10 @@ use super::{entity::anchor::Anchor, AnchorError};
 use crate::config::service::ConfigService;
 use crate::error::BloockResult;
 use crate::error::InfrastructureError;
+use async_std::task;
 use bloock_http::Client;
 use std::sync::Arc;
+use std::time::Duration;
 
 pub struct AnchorService<H: Client> {
     pub http: Arc<H>,
@@ -38,16 +40,17 @@ impl<H: Client> AnchorService<H> {
                     return Ok(anchor);
                 }
             }
+
             let mut current_time = get_current_timestamp();
             if current_time > timeout_time {
                 return Err(AnchorError::AnchorTimeout()).map_err(|e| e.into());
             }
 
-            sleep(1000).await;
+            task::sleep(Duration::from_millis(1000)).await;
 
             current_time = get_current_timestamp();
             while current_time < next_try && current_time < timeout_time {
-                sleep(200).await;
+                task::sleep(Duration::from_millis(200)).await;
                 current_time = get_current_timestamp();
             }
 
@@ -74,25 +77,6 @@ fn get_current_timestamp() -> u128 {
         Ok(d) => d.as_millis(),
         Err(_) => 1,
     }
-}
-
-#[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
-async fn sleep(duration: u64) {
-    let promise = js_sys::Promise::new(&mut |resolve, _| {
-        web_sys::window()
-            .unwrap()
-            .set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, duration as i32)
-            .unwrap();
-    });
-
-    wasm_bindgen_futures::JsFuture::from(promise).await.unwrap();
-}
-
-#[cfg(not(any(target_arch = "wasm32", target_arch = "wasm64")))]
-async fn sleep(duration: u64) {
-    use std::time::Duration;
-
-    std::thread::sleep(Duration::from_millis(duration))
 }
 
 #[cfg(test)]

@@ -15,6 +15,7 @@ hex = "0.4.3"
 bitvec = "1"
 infer = "0.9.0"
 base64-url = "1.4.13"
+async-std = "1.12.0"
 bloock-hasher = { path = "../bloock-libs/hasher" }
 bloock-signer = { path = "../bloock-libs/signer" }
 bloock-encrypter = { path = "../bloock-libs/encrypter" }
