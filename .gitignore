@@ -7,6 +7,7 @@ tmp/
 
 target
 
+bloock-bridge/build/*
 bloock-libs/**/pkg
 
 *.class
@@ -21,3 +22,9 @@ __pycache__/
 languages/go/vendor
 languages/js/node_modules
 languages/js/dist
+languages/js/src/ffi/native/*
+
+*.a
+*.d
+*.so
+*.dylib
