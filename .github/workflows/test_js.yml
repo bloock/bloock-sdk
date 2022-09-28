@@ -33,5 +33,8 @@ jobs:
         run: yarn install --frozen-lockfile
         working-directory: bloock_lib_js
       - name: Run tests
-        run: API_HOST=${{ secrets.api_host }} API_KEY=${{ secrets.api_key }} yarn run test
+        run: yarn run test
         working-directory: bloock_lib_js
+        env:
+          API_HOST: ${{ secrets.api_host }}
+          API_KEY: ${{ secrets.api_key }}

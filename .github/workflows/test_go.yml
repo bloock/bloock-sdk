@@ -30,7 +30,10 @@ jobs:
         with:
           go-version: ${{ inputs.go-version }}
       - name: Test
-        run: API_HOST=${{ secrets.api_host }} API_KEY=${{ secrets.api_key }} go test -v ./...
+        run: go test -v ./...
+        env:
+          API_HOST: ${{ secrets.api_host }}
+          API_KEY: ${{ secrets.api_key }}
         working-directory: bloock_lib_go
       - name: Test musl
         if: runner.os == 'Linux'
