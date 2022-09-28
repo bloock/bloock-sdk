@@ -10,7 +10,6 @@ import config_pb2
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
-import record_pb2
 import sys
 import typing
 
@@ -83,12 +82,12 @@ class GetProofRequest(google.protobuf.message.Message):
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
-    def records(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[record_pb2.Record]: ...
+    def records(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        records: collections.abc.Iterable[record_pb2.Record] | None = ...,
+        records: collections.abc.Iterable[builtins.str] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "records", b"records"]) -> None: ...
@@ -124,17 +123,16 @@ class ValidateRootRequest(google.protobuf.message.Message):
     NETWORK_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def root(self) -> record_pb2.Record: ...
+    root: builtins.str
     network: config_pb2.Network.ValueType
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        root: record_pb2.Record | None = ...,
+        root: builtins.str = ...,
         network: config_pb2.Network.ValueType = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "root", b"root"]) -> builtins.bool: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "network", b"network", "root", b"root"]) -> None: ...
 
 global___ValidateRootRequest = ValidateRootRequest
@@ -185,14 +183,13 @@ class VerifyProofResponse(google.protobuf.message.Message):
 
     RECORD_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def record(self) -> record_pb2.Record: ...
+    record: builtins.str
     @property
     def error(self) -> bloock_pb2.Error: ...
     def __init__(
         self,
         *,
-        record: record_pb2.Record | None = ...,
+        record: builtins.str | None = ...,
         error: bloock_pb2.Error | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "_record", b"_record", "error", b"error", "record", b"record"]) -> builtins.bool: ...
@@ -213,13 +210,13 @@ class VerifyRecordsRequest(google.protobuf.message.Message):
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
-    def records(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[record_pb2.Record]: ...
+    def records(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     network: config_pb2.Network.ValueType
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        records: collections.abc.Iterable[record_pb2.Record] | None = ...,
+        records: collections.abc.Iterable[builtins.str] | None = ...,
         network: config_pb2.Network.ValueType | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_network", b"_network", "config_data", b"config_data", "network", b"network"]) -> builtins.bool: ...
