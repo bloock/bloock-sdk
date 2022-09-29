@@ -29,7 +29,11 @@ pub fn map_config(config_data: Option<ConfigData>) -> Result<CoreConfigData, Bri
         networks_config.insert(network, map_network_config(config.clone()));
     }
 
-    let mut default_config = CoreConfigData::new(config.api_key, config.host);
+    let mut default_config = CoreConfigData::new(config.api_key);
+
+    if !config.host.is_empty() {
+        default_config.config.host = config.host;
+    }
 
     if !networks_config.is_empty() {
         default_config.networks_config = networks_config;

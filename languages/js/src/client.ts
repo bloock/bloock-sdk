@@ -20,9 +20,9 @@ export class BloockClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
-  constructor(apiKey: string, host: string) {
+  constructor(apiKey: string) {
     this.bridge = new BloockBridge();
-    this.configData = NewConfigData(apiKey, host);
+    this.configData = NewConfigData(apiKey);
   }
 
   /**

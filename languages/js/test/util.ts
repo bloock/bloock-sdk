@@ -3,8 +3,10 @@ import {BloockClient} from '../dist/index';
 export function getSdk(): BloockClient {
   const apiKey = process.env['API_KEY'] || '';
   const apiHost = process.env['API_HOST'] || '';
-  const client = new BloockClient(apiKey, apiHost);
-  client.setApiHost(apiHost);
+  const client = new BloockClient(apiKey);
+  if (apiHost) {
+    client.setApiHost(apiHost);
+  }
   return client;
 }
 

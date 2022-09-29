@@ -14,11 +14,11 @@ type Client struct {
 	configData   *proto.ConfigData
 }
 
-func NewClient(apiKey string, host string) Client {
+func NewClient(apiKey string) Client {
 	return Client{
 		bridgeClient: bridge.NewBloockBridge(),
 		configData: &proto.ConfigData{
-			Config: &proto.Configuration{ApiKey: apiKey, Host: host},
+			Config: &proto.Configuration{ApiKey: apiKey},
 		},
 	}
 }
