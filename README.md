@@ -2,7 +2,7 @@
 
 [![Release](https://img.shields.io/github/release/bloock/bloock-sdk.svg?style=flat-square)](https://github.com/bloock/bloock-sdk/releases)
 ![npm](https://img.shields.io/npm/v/@bloock/sdk)
-[![GoDoc](https://pkg.go.dev/badge/github.com/bloock/bloock-sdk-go?status.svg)](https://pkg.go.dev/github.com/bloock/bloock-sdk-go?tab=doc)
+[![GoDoc](https://pkg.go.dev/badge/github.com/bloock/bloock-sdk-go/v2?status.svg)](https://pkg.go.dev/github.com/bloock/bloock-sdk-go/v2?tab=doc)
 
 
 **BLOOCK** guarantees data integrity and authenticity in a simple, scalable, and confidential manner on top of distributed ledger technologies. Through BLOOCK, enterprises can minimize the principal risks and difficulties faced when defining, developing and managing a blockchain project. 

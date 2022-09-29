@@ -1,4 +1,4 @@
-module github.com/bloock/bloock-sdk-go
+module github.com/bloock/bloock-sdk-go/v2
 
 go 1.17
 

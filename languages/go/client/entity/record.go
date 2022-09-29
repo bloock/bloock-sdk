@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/bloock-sdk-go/internal/bridge"
-	"github.com/bloock/bloock-sdk-go/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
+	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
 type Record struct {

@@ -3,8 +3,8 @@ package test
 import (
 	"testing"
 
-	bloock "github.com/bloock/bloock-sdk-go/client"
-	"github.com/bloock/bloock-sdk-go/client/entity"
+	bloock "github.com/bloock/bloock-sdk-go/v2/client"
+	"github.com/bloock/bloock-sdk-go/v2/client/entity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

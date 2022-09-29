@@ -1,6 +1,6 @@
 package config
 
-import "github.com/bloock/bloock-sdk-go/internal/bridge/proto"
+import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 func NewConfigData(apiKey string) *proto.ConfigData {
 	return &proto.ConfigData{
