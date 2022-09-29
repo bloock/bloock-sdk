@@ -6,6 +6,8 @@ pub type BridgeResult<T> = Result<T, BridgeError>;
 
 #[derive(Error, Debug, PartialEq, Eq, Clone)]
 pub enum BridgeError {
+    #[error("Service not found")]
+    ServiceNotFound,
     #[error("Couldn't deserialize request: {0}")]
     RequestDeserialization(String),
     #[error("Couldn't serialize response: {0}")]

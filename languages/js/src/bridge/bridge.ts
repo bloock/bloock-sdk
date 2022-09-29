@@ -2,13 +2,11 @@ import {ServiceDefinition} from '@grpc/grpc-js';
 import {FFIClient} from '../ffi/ffi';
 import {makeRequest} from './connection';
 import {AnchorServiceClient, AnchorServiceService} from './proto/anchor';
-import {GreeterClient, GreeterService} from './proto/bloock';
 import {ProofServiceClient, ProofServiceService} from './proto/proof';
 import {RecordServiceClient, RecordServiceService} from './proto/record';
 
 export class BloockBridge {
   private ffiClient: FFIClient;
-  private greeting: GreeterClient;
   private anchor: AnchorServiceClient;
   private record: RecordServiceClient;
   private proof: ProofServiceClient;
@@ -17,17 +15,11 @@ export class BloockBridge {
     this.ffiClient = new FFIClient();
 
     /* eslint-disable  @typescript-eslint/no-explicit-any */
-    this.greeting = new (this.createClient(GreeterService) as any)();
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
     this.anchor = new (this.createClient(AnchorServiceService) as any)();
     /* eslint-disable  @typescript-eslint/no-explicit-any */
     this.record = new (this.createClient(RecordServiceService) as any)();
     /* eslint-disable  @typescript-eslint/no-explicit-any */
     this.proof = new (this.createClient(ProofServiceService) as any)();
-  }
-
-  public getGreeting(): GreeterClient {
-    return this.greeting;
   }
 
   public getAnchor(): AnchorServiceClient {

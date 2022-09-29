@@ -13,7 +13,7 @@ fn main() -> Result<()> {
         }))
         .compile_protos(
             &[
-                "proto/bloock.proto",
+                "proto/shared.proto",
                 "proto/config.proto",
                 "proto/anchor.proto",
                 "proto/record.proto",

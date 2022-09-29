@@ -14,7 +14,7 @@ import {
 import {ConfigData, Network, networkFromJSON, networkToJSON} from './config';
 import Long from 'long';
 import {AnchorNetwork} from './anchor';
-import {Error} from './bloock';
+import {Error} from './shared';
 import _m0 from 'protobufjs/minimal';
 
 export interface Proof {

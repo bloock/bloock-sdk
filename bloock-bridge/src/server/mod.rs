@@ -1,26 +1,19 @@
 mod anchor;
-mod greetings;
 mod proof;
 mod record;
 mod response_types;
 
+use self::anchor::AnchorServer;
+use self::proof::ProofServer;
+use self::record::RecordServer;
 use crate::error::BridgeError;
 use crate::items::AnchorServiceHandler;
 use crate::items::BloockServer;
-use crate::items::GreeterHandler;
-use crate::items::HelloResponse;
 use crate::items::ProofServiceHandler;
 use crate::items::RecordServiceHandler;
 use crate::server::response_types::ResponseType;
 
-use greetings::GreetingsServer;
-
-use self::anchor::AnchorServer;
-use self::proof::ProofServer;
-use self::record::RecordServer;
-
 pub struct Server {
-    greeter: GreetingsServer,
     anchor: AnchorServer,
     record: RecordServer,
     proof: ProofServer,
@@ -29,7 +22,6 @@ pub struct Server {
 impl Server {
     pub fn new() -> Self {
         Self {
-            greeter: GreetingsServer {},
             anchor: AnchorServer {},
             record: RecordServer {},
             proof: ProofServer {},
@@ -54,16 +46,6 @@ impl Server {
     ) -> Result<ResponseType, BridgeError> {
         let request: BloockServer = BloockServer::from_str(request_type);
         match request {
-            BloockServer::GreeterSayHello => Ok(self
-                .greeter
-                .say_hello(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::GreeterSayHelloWithError => Ok(self
-                .greeter
-                .say_hello_with_error(self.serialize_request(payload)?)
-                .await
-                .into()),
             BloockServer::AnchorServiceGetAnchor => Ok(self
                 .anchor
                 .get_anchor(self.serialize_request(payload)?)
@@ -139,11 +121,7 @@ impl Server {
                 .generate_keys(self.serialize_request(payload)?)
                 .await
                 .into()),
-            _ => Ok(self
-                .greeter
-                .say_hello(self.serialize_request(payload)?)
-                .await
-                .into()),
+            _ => Err(BridgeError::ServiceNotFound),
         }
     }
 

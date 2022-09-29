@@ -23,7 +23,8 @@ message Configuration {
 enum Network {
     ETHEREUM_MAINNET = 0;
     ETHEREUM_RINKEBY = 1;
-    BLOOCK_CHAIN = 2;
+    GNOSIS_CHAIN = 2;
+    BLOOCK_CHAIN = 3;
 }
 
 message NetworkConfig {
