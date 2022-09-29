@@ -13,6 +13,7 @@ bloock-libs/**/pkg
 
 *.class
 
+languages/python/bloock/_ffi/native
 languages/python/.mypy_cache/
 languages/python/build
 languages/python/venv
