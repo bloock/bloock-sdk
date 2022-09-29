@@ -1,5 +1,9 @@
 # Bloock SDKs
 
+[![Release](https://img.shields.io/github/release/bloock/bloock-sdk.svg?style=flat-square)](https://github.com/bloock/bloock-sdk/releases)
+![npm](https://img.shields.io/npm/v/@bloock/sdk)
+[![GoDoc](https://pkg.go.dev/badge/github.com/bloock/bloock-sdk-go?status.svg)](https://pkg.go.dev/github.com/bloock/bloock-sdk-go?tab=doc)
+
 
 **BLOOCK** guarantees data integrity and authenticity in a simple, scalable, and confidential manner on top of distributed ledger technologies. Through BLOOCK, enterprises can minimize the principal risks and difficulties faced when defining, developing and managing a blockchain project. 
 -	Easy to use
@@ -10,7 +14,7 @@
 -	Predictable efficient cost
 
 
-**We want your feedback!** Please feel free to open a GitHub issue for suggested improvements or feature requests. If you need  support, contact [help@bloock.com](mailto:help@bloock.com).
+**We want your feedback!** Please feel free to open a GitHub issue for suggested improvements or feature requests. If you need  support, contact [support@bloock.com](mailto:support@bloock.com).
 
 
 ## Getting started
@@ -18,6 +22,33 @@
 - For a guide about how to set up one of our SDKs, visit [Set up](https://docs.bloock.com/libraries-integrations/set-up).
 - Check our full documentation at [docs.bloock.com](https://docs.bloock.com).
 
+
+## Language support
+
+|  Language  | Requirements                    | Source        | Link        | Support  |
+|------------|---------------------------------|:-------------:|:-----------:|:--------:|
+| Javascript | Node: >=12.20.0<br>NPM: >=6.4.1 | [`Source JS`] | [`Link JS`] | ✓        |
+| Go         | 1.18+                           | [`Source Go`] | [`Link Go`] | ✓        |
+| Python     | -                               | -             | -           | :soon:   |
+| Java       | -                               | -             | -           | :soon:   |
+| PHP        | -                               | -             | -           | :soon:   |
+| Rust       | -                               | -             | -           | :soon:   |
+
+
+## OS support
+
+| OS       | Arch   | Env type | Support  |
+|----------|:------:|:--------:|:--------:|
+| Linux    | x86_64 | gnu      | ✓        |
+| Linux    | x86_64 | musl     | ✓        |
+| Linux    | arm64  | gnu      | -        |
+| Linux    | arm64  | musl     | -        |
+| Windows  | x86_32 | mingw    | -        |
+| Windows  | x86_32 | msvc     | -        |
+| Windows  | x86_64 | mingw    | ✓        |
+| Windows  | x86_64 | msvc     | ✓        |
+| MacOS    | x86_64 | -        | ✓        |
+| MacOS    | arm64  | -        | ✓        |
 
 
 ## Concept
@@ -29,7 +60,7 @@ BLOOCK offers direct integrations with multiple programming languages (see [Lang
 
 To achieve interoperability between different programming languages, we use an architecture that has the following elements:
 
-[IMAGE]
+![Architecture](https://raw.githubusercontent.com/bloock/bloock-sdk/master/docs/architecture.png)
 
 - Bloock Libs: Contain specific utilities used accross different features. Such as: hashing algorithms, digital signature algorithms, encrytption algorigthms, HTTP communication, ...
 - Bloock Core: Contains all the bussiness logic for every feature.
@@ -48,7 +79,7 @@ Most languages have some type of ability to communicate with another language, t
 
 To support this two cases, we chose Rust as a Core programming language because is able to compile to C and WebAssembly.
 
-[Image]
+![Interoperability](https://raw.githubusercontent.com/bloock/bloock-sdk/master/docs/interoperability.png)
 
 Finally, to give full support, we generate C builds for different OS and architectures. See [OS support](#os-support).
 
@@ -57,38 +88,7 @@ Finally, to give full support, we generate C builds for different OS and archite
 
 In order to minimize the effort dedicated to interact with the FFI layer which, specially in C, is time consuming we use [Protocol Buffers](https://developers.google.com/protocol-buffers) and a modified [GRPC](https://grpc.io/) protocol in such a way that we define in-memory endpoints that are called by the language-specific SDKs (client) and served by the Rust Bridge (server).
 
-[Image]
-
-
-
-## Language support
-
-|  Language  | Requirements                    | Source        | Link        | Support  |
-|------------|---------------------------------|:-------------:|:-----------:|:--------:|
-| Javascript | Node: >=12.20.0<br>NPM: >=6.4.1 | [`Source JS`] | [`Link JS`] | ✓        |
-| Go         | 1.18+                           | [`Source Go`] | [`Link Go`] | ✓        |
-| Python     | -                               | -             | -           | :soon:   |
-| Java       | -                               | -             | -           | :soon:   |
-| PHP        | -                               | -             | -           | :soon:   |
-| Rust       | -                               | -             | -           | :soon:   |
-
-
-
-## OS support
-
-
-| OS       | Arch   | Env type | Support  |
-|----------|:------:|:--------:|:--------:|
-| Linux    | x86_64 | gnu      | ✓        |
-| Linux    | x86_64 | musl     | ✓        |
-| Linux    | arm64  | gnu      | -        |
-| Linux    | arm64  | musl     | -        |
-| Windows  | x86_32 | mingw    | -        |
-| Windows  | x86_32 | msvc     | -        |
-| Windows  | x86_64 | mingw    | ✓        |
-| Windows  | x86_64 | msvc     | ✓        |
-| MacOS    | x86_64 | -        | ✓        |
-| MacOS    | arm64  | -        | ✓        |
+![Transport](https://raw.githubusercontent.com/bloock/bloock-sdk/master/docs/transport.png)
 
 
 ## License
