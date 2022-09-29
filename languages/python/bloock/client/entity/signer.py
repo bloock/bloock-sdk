@@ -1,3 +1,4 @@
+from abc import abstractmethod
 import bloock._bridge.proto.record_pb2 as proto
 
 class SignerArgs():
@@ -11,6 +12,10 @@ class Signer():
     def __init__(self, alg: proto.SignerAlg.ValueType, args: SignerArgs) -> None:
         self.alg = alg
         self.args = args
+
+    @abstractmethod
+    def to_proto(self):
+        raise NotImplementedError
 
 class EcsdaSigner(Signer):
     def __init__(self, secret: str) -> None:
