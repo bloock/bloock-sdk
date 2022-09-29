@@ -1,5 +1,5 @@
-import bloock._bridge.proto.record_pb2 as proto
 from __future__ import annotations
+import bloock._bridge.proto.record_pb2 as proto
 
 from bloock.client.entity.proof import Proof
 

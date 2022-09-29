@@ -1,6 +1,7 @@
 from typing import List
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
+from bloock._bridge.proto.bloock_pb2 import Error
 from bloock._bridge.proto.config_pb2 import ConfigData, Configuration, Network, NetworkConfig
 from bloock._bridge.proto.proof_pb2 import GetProofRequest, ValidateRootRequest, VerifyProofRequest, VerifyRecordsRequest
 from bloock._bridge.proto.record_pb2 import GenerateKeysRequest, SendRecordsRequest
@@ -27,9 +28,8 @@ class Client:
             SendRecordsRequest(config_data=self.confid_data, records=records)
         )
 
-        if res.error:
-            raise Exception(res.error)
-
+        if res.error != Error():
+            raise Exception(res.error.message)
         return list(map(lambda x: RecordReceipt.from_proto(x), res.records))
 
     def get_anchor(self, anchor_id: int) -> Anchor:
@@ -37,8 +37,8 @@ class Client:
             GetAnchorRequest(config_data=self.confid_data, anchor_id=anchor_id)
         )
 
-        if res.error:
-            raise Exception(res.error)
+        if res.error != Error():
+            raise Exception(res.error.message)
 
         return Anchor.from_proto(res.anchor)
 
@@ -47,8 +47,8 @@ class Client:
             WaitAnchorRequest(config_data=self.confid_data, anchor_id=anchor_id, timeout=timeout)
         )
 
-        if res.error:
-            raise Exception(res.error)
+        if res.error != Error():
+            raise Exception(res.error.message)
 
         return Anchor.from_proto(res.anchor)
 
@@ -57,8 +57,8 @@ class Client:
             GetProofRequest(config_data=self.confid_data, records=records)
         )
 
-        if res.error:
-            raise Exception(res.error)
+        if res.error != Error():
+            raise Exception(res.error.message)
 
         return Proof.from_proto(res.proof)
 
@@ -67,8 +67,8 @@ class Client:
             VerifyProofRequest(config_data=self.confid_data, proof=proof.to_proto())
         )
 
-        if res.error:
-            raise Exception(res.error)
+        if res.error != Error():
+            raise Exception(res.error.message)
 
         return res.record
 
@@ -77,8 +77,8 @@ class Client:
             VerifyRecordsRequest(config_data=self.confid_data, records=records, network=network)
         )
 
-        if res.error:
-            raise Exception(res.error)
+        if res.error != Error():
+            raise Exception(res.error.message)
 
         return res.timestamp
 
@@ -87,8 +87,8 @@ class Client:
             ValidateRootRequest(config_data=self.confid_data, root=root, network=network)
         )
 
-        if res.error:
-            raise Exception(res.error)
+        if res.error != Error():
+            raise Exception(res.error.message)
 
         return res.timestamp
 
@@ -97,7 +97,7 @@ class Client:
             GenerateKeysRequest()
         )
 
-        if res.error:
-            raise Exception(res.error)
+        if res.error != Error():
+            raise Exception(res.error.message)
 
         return Keys.from_proto(res)
