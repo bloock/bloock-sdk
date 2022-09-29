@@ -89,18 +89,51 @@ class Record():
     @staticmethod
     def from_proto(record: proto.Record) -> Record:
         return Record(
-            headers = RecordHeader.from_proto(record.headers),
-            payload = record.payload,
-            signatures = list(map(lambda x: Signature.from_proto(x), record.signatures)),
-            encryption = Encryption.from_proto(record.encryption),
-            proof = Proof.from_proto(record.proof),
+            headers=RecordHeader.from_proto(record.headers),
+            payload=record.payload,
+            signatures=list(map(lambda x: Signature.from_proto(x), record.signatures)),
+            encryption=Encryption.from_proto(record.encryption),
+            proof=Proof.from_proto(record.proof),
         )
 
     def to_proto(self) -> proto.Record:
         return proto.Record(
-            headers = self.headers.to_proto(),
-            payload = self.payload,
-            signatures = list(map(lambda x: x.to_proto(), self.signatures)),
-            encryption = self.encryption.to_proto(),
-            proof = self.proof.to_proto(),
+            headers=self.headers.to_proto(),
+            payload=self.payload,
+            signatures=list(map(lambda x: x.to_proto(), self.signatures)),
+            encryption=self.encryption.to_proto(),
+            proof=self.proof.to_proto(),
         )
+
+class RecordReceipt:
+    def __init__(self, anchor: int, client: str, record: str, status: str) -> None:
+        self.anchor = anchor
+        self.client = client
+        self.record = record
+        self.status = status
+
+    @staticmethod
+    def from_proto(receipt: proto.RecordReceipt) -> RecordReceipt:
+        return RecordReceipt(
+            anchor=receipt.anchor,
+            client=receipt.client,
+            record=receipt.record,
+            status=receipt.status
+        )
+
+    def to_proto(self) -> proto.RecordReceipt:
+        return proto.RecordReceipt(
+            anchor=self.anchor,
+            client=self.client,
+            record=self.record,
+            status=self.status
+        )
+
+class Keys:
+    def __init__(self, public_key: str, private_key: str) -> None:
+        self.public_key = public_key
+        self.private_key = private_key
+
+    @staticmethod
+    def from_proto(res: proto.GenerateKeysResponse) -> Keys:
+        return Keys(res.publicKey, res.privateKey)
