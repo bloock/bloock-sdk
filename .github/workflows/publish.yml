@@ -19,7 +19,7 @@ jobs:
           TAG_NAME: "v${{ github.event.inputs.version }}"
 
   publish_go:
-    needs: [create_release]
+    needs: [mark-latest]
     uses: ./.github/workflows/publish_go.yml
     with:
       version: ${{ github.event.inputs.version }}
@@ -27,7 +27,7 @@ jobs:
       repo_api_token: ${{ secrets.REPO_API_TOKEN }}
 
   publish_js:
-    needs: [create_release]
+    needs: [mark-latest]
     uses: ./.github/workflows/publish_js.yml
     with:
       version: ${{ github.event.inputs.version }}
