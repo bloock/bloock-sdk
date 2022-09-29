@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	bloock "github.com/bloock/bloock-sdk-go/v2/client"
+	"github.com/bloock/bloock-sdk-go/v2/builder"
 	"github.com/bloock/bloock-sdk-go/v2/client/entity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -15,44 +15,44 @@ func TestEndToEnd(t *testing.T) {
 	t.Run("E2E using all the builders", func(t *testing.T) {
 		records := []string{}
 
-		record, err := bloock.NewRecordBuilderFromString("Hello world").Build()
+		record, err := builder.NewRecordBuilderFromString("Hello world").Build()
 		require.NoError(t, err)
 		hash, err := record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, hash, "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")
 		records = append(records, hash)
 
-		record, err = bloock.NewRecordBuilderFromBytes([]byte{1, 2, 3, 4, 5}).Build()
+		record, err = builder.NewRecordBuilderFromBytes([]byte{1, 2, 3, 4, 5}).Build()
 		require.NoError(t, err)
 		hash, err = record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, hash, "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4")
 		records = append(records, hash)
 
-		record, err = bloock.NewRecordBuilderFromHex("1234567890abcdef").Build()
+		record, err = builder.NewRecordBuilderFromHex("1234567890abcdef").Build()
 		require.NoError(t, err)
 		hash, err = record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, hash, "ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f")
 		records = append(records, hash)
 
-		record, err = bloock.NewRecordBuilderFromJSON("{\"hello\":\"world\"}").Build()
+		record, err = builder.NewRecordBuilderFromJSON("{\"hello\":\"world\"}").Build()
 		require.NoError(t, err)
 		hash, err = record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, hash, "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312")
 		records = append(records, hash)
 
-		record, err = bloock.NewRecordBuilderFromString("Hello world 2").Build()
+		record, err = builder.NewRecordBuilderFromString("Hello world 2").Build()
 		require.NoError(t, err)
-		record, err = bloock.NewRecordBuilderFromRecord(record).Build()
+		record, err = builder.NewRecordBuilderFromRecord(record).Build()
 		require.NoError(t, err)
 		hash, err = record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, hash, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6")
 		records = append(records, hash)
 
-		record, err = bloock.NewRecordBuilderFromFile([]byte{2, 3, 4, 5, 6}).Build()
+		record, err = builder.NewRecordBuilderFromFile([]byte{2, 3, 4, 5, 6}).Build()
 		require.NoError(t, err)
 		hash, err = record.GetHash()
 		require.NoError(t, err)
@@ -62,7 +62,7 @@ func TestEndToEnd(t *testing.T) {
 		keys, err := sdk.GenerateKeys()
 		require.NoError(t, err)
 
-		record, err = bloock.
+		record, err = builder.
 			NewRecordBuilderFromString("Hello world 3").
 			WithSigner(entity.NewEcsdaSigner(keys.PrivateKey)).
 			Build()
@@ -70,7 +70,7 @@ func TestEndToEnd(t *testing.T) {
 		keys, err = sdk.GenerateKeys()
 		require.NoError(t, err)
 
-		recordWithMultipleSignatures, err := bloock.
+		recordWithMultipleSignatures, err := builder.
 			NewRecordBuilderFromRecord(record).
 			WithSigner(entity.NewEcsdaSigner(keys.PrivateKey)).
 			Build()
@@ -87,7 +87,7 @@ func TestEndToEnd(t *testing.T) {
 		assert.Greater(t, len(receipt), 0)
 		assert.NotEqual(t, entity.RecordReceipt{}, receipt[0])
 
-		anchor, err := sdk.WaitAnchor(receipt[0].Anchor, bloock.NewAnchorParams())
+		anchor, err := sdk.WaitAnchor(receipt[0].Anchor, entity.NewAnchorParams())
 		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
 
@@ -99,12 +99,12 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotEqual(t, "", proof)
 
-		timestampValidateRoot, err := sdk.ValidateRoot(root, bloock.ListOfNetworks().BloockChain)
+		timestampValidateRoot, err := sdk.ValidateRoot(root, entity.ListOfNetworks().BloockChain)
 		require.NoError(t, err)
 		assert.Greater(t, timestampValidateRoot, uint64(0))
 
-		network := bloock.NewNetworkParams()
-		network.Network = bloock.ListOfNetworks().BloockChain
+		network := entity.NewNetworkParams()
+		network.Network = entity.ListOfNetworks().BloockChain
 		timestampVerifyRecords, err := sdk.VerifyRecords(records, network)
 		require.NoError(t, err)
 		assert.Greater(t, timestampVerifyRecords, uint64(0))

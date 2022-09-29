@@ -1,4 +1,4 @@
-package bloock
+package client
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func (c *Client) SetApiHost(host string) {
 	c.configData.Config.Host = host
 }
 
-func (c *Client) SetNetworkConfig(network Network, config *NetworkConfig) {
+func (c *Client) SetNetworkConfig(network entity.Network, config *entity.NetworkConfig) {
 	c.configData.NetworksConfig[int32(network)] = config
 }
 
@@ -70,7 +70,7 @@ func (c *Client) GetAnchor(anchorID int64) (entity.Anchor, error) {
 	return entity.NewAnchorFromProto(res.Anchor), nil
 }
 
-func (c *Client) WaitAnchor(anchorID int64, params AnchorParams) (entity.Anchor, error) {
+func (c *Client) WaitAnchor(anchorID int64, params entity.AnchorParams) (entity.Anchor, error) {
 	if params.Timeout == 0 {
 		params.Timeout = int64(120000)
 	}
@@ -126,7 +126,7 @@ func (c *Client) VerifyProof(proof entity.Proof) (string, error) {
 	return *res.Record, nil
 }
 
-func (c *Client) VerifyRecords(records []string, params NetworkParams) (uint64, error) {
+func (c *Client) VerifyRecords(records []string, params entity.NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Proof().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
 		ConfigData: c.configData,
 		Records:    records,
@@ -144,7 +144,7 @@ func (c *Client) VerifyRecords(records []string, params NetworkParams) (uint64, 
 	return res.Timestamp, nil
 }
 
-func (c *Client) ValidateRoot(root string, network Network) (uint64, error) {
+func (c *Client) ValidateRoot(root string, network entity.Network) (uint64, error) {
 	res, err := c.bridgeClient.Proof().ValidateRoot(context.Background(), &proto.ValidateRootRequest{
 		ConfigData: c.configData,
 		Root:       root,
