@@ -3,13 +3,13 @@
 isort:skip_file
 """
 import anchor_pb2
-import bloock_pb2
 import builtins
 import collections.abc
 import config_pb2
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
+import shared_pb2
 import sys
 import typing
 
@@ -102,12 +102,12 @@ class GetProofResponse(google.protobuf.message.Message):
     @property
     def proof(self) -> global___Proof: ...
     @property
-    def error(self) -> bloock_pb2.Error: ...
+    def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
         proof: global___Proof | None = ...,
-        error: bloock_pb2.Error | None = ...,
+        error: shared_pb2.Error | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "proof", b"proof"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "proof", b"proof"]) -> None: ...
@@ -145,12 +145,12 @@ class ValidateRootResponse(google.protobuf.message.Message):
     timestamp: builtins.int
     """TODO Should be u128"""
     @property
-    def error(self) -> bloock_pb2.Error: ...
+    def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
         timestamp: builtins.int = ...,
-        error: bloock_pb2.Error | None = ...,
+        error: shared_pb2.Error | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "timestamp", b"timestamp"]) -> None: ...
@@ -185,12 +185,12 @@ class VerifyProofResponse(google.protobuf.message.Message):
     ERROR_FIELD_NUMBER: builtins.int
     record: builtins.str
     @property
-    def error(self) -> bloock_pb2.Error: ...
+    def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
         record: builtins.str | None = ...,
-        error: bloock_pb2.Error | None = ...,
+        error: shared_pb2.Error | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "_record", b"_record", "error", b"error", "record", b"record"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "_record", b"_record", "error", b"error", "record", b"record"]) -> None: ...
@@ -233,12 +233,12 @@ class VerifyRecordsResponse(google.protobuf.message.Message):
     timestamp: builtins.int
     """TODO Should be u128"""
     @property
-    def error(self) -> bloock_pb2.Error: ...
+    def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
         timestamp: builtins.int = ...,
-        error: bloock_pb2.Error | None = ...,
+        error: shared_pb2.Error | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "timestamp", b"timestamp"]) -> None: ...

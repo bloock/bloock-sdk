@@ -18,10 +18,10 @@ class Signer():
         raise NotImplementedError
 
 class EcsdaSigner(Signer):
-    def __init__(self, secret: str) -> None:
+    def __init__(self, private_key: str) -> None:
         super().__init__(
             alg=proto.ES256K,
-            args=SignerArgs(secret)
+            args=SignerArgs(private_key)
         )
 
     def to_proto(self) -> proto.Signer:

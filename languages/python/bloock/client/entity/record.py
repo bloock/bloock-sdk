@@ -1,5 +1,7 @@
 from __future__ import annotations
+from bloock._bridge import bridge
 import bloock._bridge.proto.record_pb2 as proto
+from bloock._bridge.proto.shared_pb2 import Error
 
 from bloock.client.entity.proof import Proof
 
@@ -104,6 +106,13 @@ class Record():
             encryption=self.encryption.to_proto(),
             proof=self.proof.to_proto(),
         )
+
+    def get_hash(self) -> str:
+        client = bridge.BloockBridge()
+        res = client.record().GetHash(self.to_proto())
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.hash
 
 class RecordReceipt:
     def __init__(self, anchor: int, client: str, record: str, status: str) -> None:

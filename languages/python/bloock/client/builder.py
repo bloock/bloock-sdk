@@ -1,7 +1,7 @@
 from __future__ import annotations
 from bloock._bridge import bridge
-from bloock._bridge.proto.bloock_pb2 import Error
 import bloock._bridge.proto.record_pb2 as proto
+from bloock._bridge.proto.shared_pb2 import Error
 from bloock.client.entity.encrypter import Encrypter
 from bloock.client.entity.record import Record
 from bloock.client.entity.signer import Signer
@@ -68,11 +68,13 @@ class RecordBuilder:
             encrypter=None,
         )
 
-    def with_signer(self, signer: Signer):
+    def with_signer(self, signer: Signer) -> RecordBuilder:
         self.signer = signer.to_proto()
+        return self
 
-    def with_encrypter(self, encrypter: Encrypter):
+    def with_encrypter(self, encrypter: Encrypter) -> RecordBuilder:
         self.encrypter = encrypter.to_proto()
+        return self
 
     def build(self) -> Record:
         client = bridge.BloockBridge()

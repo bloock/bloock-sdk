@@ -17,7 +17,7 @@ dev: copy_lib proto build
 	python3 main.py
 
 test: copy_lib proto
-	echo "unimplemented"
+	python3 -m unittest
 
 fmt:
 	black .

@@ -26,13 +26,15 @@ class _NetworkEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTy
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ETHEREUM_MAINNET: _Network.ValueType  # 0
     ETHEREUM_RINKEBY: _Network.ValueType  # 1
-    BLOOCK_CHAIN: _Network.ValueType  # 2
+    GNOSIS_CHAIN: _Network.ValueType  # 2
+    BLOOCK_CHAIN: _Network.ValueType  # 3
 
 class Network(_Network, metaclass=_NetworkEnumTypeWrapper): ...
 
 ETHEREUM_MAINNET: Network.ValueType  # 0
 ETHEREUM_RINKEBY: Network.ValueType  # 1
-BLOOCK_CHAIN: Network.ValueType  # 2
+GNOSIS_CHAIN: Network.ValueType  # 2
+BLOOCK_CHAIN: Network.ValueType  # 3
 global___Network = Network
 
 class ConfigData(google.protobuf.message.Message):
