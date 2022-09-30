@@ -1,14 +1,14 @@
 from abc import abstractmethod
 import bloock._bridge.proto.record_pb2 as proto
 
-class EncrypterArgs():
+class EncrypterArgs:
     def __init__(self, secret: str) -> None:
         self.secret = secret
 
     def to_proto(self) -> proto.EncrypterArgs:
         return proto.EncrypterArgs(secret=self.secret)
 
-class Encrypter():
+class Encrypter:
     def __init__(self, alg: proto.EncrypterAlg.ValueType, args: EncrypterArgs) -> None:
         self.alg = alg
         self.args = args

@@ -1,14 +1,14 @@
 from abc import abstractmethod
 import bloock._bridge.proto.record_pb2 as proto
 
-class SignerArgs():
+class SignerArgs:
     def __init__(self, private_key: str) -> None:
         self.private_key = private_key
 
     def to_proto(self) -> proto.SignerArgs:
         return proto.SignerArgs(private_key=self.private_key)
 
-class Signer():
+class Signer:
     def __init__(self, alg: proto.SignerAlg.ValueType, args: SignerArgs) -> None:
         self.alg = alg
         self.args = args

@@ -6,7 +6,7 @@ from bloock._bridge.proto.shared_pb2 import Error
 from bloock.client.entity.proof import Proof
 
 
-class RecordHeader():
+class RecordHeader:
     def __init__(self, ty: str) -> None:
         self.ty = ty
 
@@ -17,7 +17,7 @@ class RecordHeader():
     def to_proto(self) -> proto.RecordHeader:
         return proto.RecordHeader(ty=self.ty)
 
-class Signature():
+class Signature:
     def __init__(self, signature: str, protected: str, header: SignatureHeader) -> None:
         self.signature = signature
         self.protected = protected
@@ -62,7 +62,7 @@ class EncryptionHeader:
     def to_proto(self) -> proto.EncryptionHeader:
         return proto.EncryptionHeader(alg=self.alg)
 
-class Encryption():
+class Encryption:
     def __init__(self, header: EncryptionHeader, protected: str) -> None:
         self.header = header
         self.protected = protected
@@ -80,7 +80,7 @@ class Encryption():
             protected=self.protected
         )
 
-class Record():
+class Record:
     def __init__(self, headers: RecordHeader, payload: bytes, signatures: list[Signature], encryption: Encryption, proof: Proof) -> None:
         self.headers = headers
         self.payload = payload
