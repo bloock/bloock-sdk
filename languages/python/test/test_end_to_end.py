@@ -56,6 +56,8 @@ class TestE2E(unittest.TestCase):
           .with_signer(EcsdaSigner(keys.private_key))\
           .build()
 
+        self.assertEqual(len(record_with_multiple_signatures.signatures), 2)
+
         hash = record_with_multiple_signatures.get_hash()
         self.assertEqual(hash, '79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f')
         records.append(hash)
