@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/bloock/bloock-sdk-go/internal/bridge/proto"
+import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 type Encrypter interface {
 	ToProto() *proto.Encrypter

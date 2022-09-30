@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package bloock;
 
-option go_package = "github.com/bloock/bloock-sdk-go/internal/bridge/proto";
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "bloock.sdk.java.bridge.proto";
 
 message ConfigData {
@@ -23,7 +23,8 @@ message Configuration {
 enum Network {
     ETHEREUM_MAINNET = 0;
     ETHEREUM_RINKEBY = 1;
-    BLOOCK_CHAIN = 2;
+    GNOSIS_CHAIN = 2;
+    BLOOCK_CHAIN = 3;
 }
 
 message NetworkConfig {

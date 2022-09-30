@@ -13,7 +13,7 @@ import {
 } from '@grpc/grpc-js';
 import {ConfigData} from './config';
 import Long from 'long';
-import {Error} from './bloock';
+import {Error} from './shared';
 import {Proof} from './proof';
 import _m0 from 'protobufjs/minimal';
 

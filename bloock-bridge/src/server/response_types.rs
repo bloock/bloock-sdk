@@ -10,11 +10,9 @@ use crate::items::VerifyProofResponse;
 use crate::items::VerifyRecordsResponse;
 use crate::items::WaitAnchorResponse;
 use crate::server::BridgeError;
-use crate::server::HelloResponse;
 use prost::Message;
 
 pub enum ResponseType {
-    Hello(HelloResponse),
     GetAnchor(GetAnchorResponse),
     WaitAnchor(WaitAnchorResponse),
     Record(Record),
@@ -34,7 +32,6 @@ impl ResponseType {
         result_vec.reserve(self.len());
 
         match self {
-            ResponseType::Hello(r) => r.encode(&mut result_vec),
             ResponseType::GetAnchor(r) => r.encode(&mut result_vec),
             ResponseType::WaitAnchor(r) => r.encode(&mut result_vec),
             ResponseType::SendRecords(r) => r.encode(&mut result_vec),
@@ -54,7 +51,6 @@ impl ResponseType {
 
     pub fn len(&self) -> usize {
         match self {
-            ResponseType::Hello(r) => r.encoded_len(),
             ResponseType::GetAnchor(r) => r.encoded_len(),
             ResponseType::WaitAnchor(r) => r.encoded_len(),
             ResponseType::SendRecords(r) => r.encoded_len(),

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "bloock.sdk.java.bridge.proto";
+
+
+message Error {
+    string kind = 1;
+    string message = 2;
+}

@@ -9,6 +9,7 @@ impl From<Network> for CoreNetwork {
             Network::BloockChain => CoreNetwork::BloockChain,
             Network::EthereumMainnet => CoreNetwork::EthereumMainnet,
             Network::EthereumRinkeby => CoreNetwork::EthereumRinkeby,
+            Network::GnosisChain => CoreNetwork::GnosisChain,
         }
     }
 }

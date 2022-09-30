@@ -1,6 +1,7 @@
 use bitvec::{order::Msb0, prelude::BitVec};
 use bloock_hasher::{keccak::Keccak256, Hasher, H256};
 use bloock_http::{Client, HttpError};
+use bloock_signer::Verifier;
 use bloock_web3::blockchain::Blockchain;
 
 use std::sync::Arc;
@@ -95,6 +96,29 @@ impl<H: Client> ProofService<H> {
         records: Vec<Record>,
         network: Option<Network>,
     ) -> BloockResult<u128> {
+        for record in records.iter() {
+            let document = match &record.document {
+                Some(d) => d,
+                None => continue,
+            };
+
+            let signatures = match &document.signatures {
+                Some(s) => s,
+                None => continue,
+            };
+
+            for signature in signatures {
+                let verifier = bloock_signer::create_verifier_from_signature(signature)
+                    .map_err(|e| ProofError::VerificationError(e.to_string()))?;
+                let verification_response =
+                    verifier
+                        .verify(&document.payload, signature.clone())
+                        .map_err(|e| ProofError::VerificationError(e.to_string()))?;
+                if !verification_response {
+                    return Err(ProofError::InvalidVerification.into());
+                }
+            }
+        }
         let proof = match self.get_proof(records).await {
             Ok(proof) => proof,
             Err(e) => return Err(e),

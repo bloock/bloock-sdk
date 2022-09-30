@@ -5,12 +5,14 @@ pub enum Network {
     EthereumMainnet,
     EthereumRinkeby,
     BloockChain,
+    GnosisChain,
 }
 
 impl From<String> for Network {
     fn from(str: String) -> Self {
         match str.as_ref() {
             "bloock_chain" => Network::BloockChain,
+            "gnosis_chain" => Network::GnosisChain,
             "ethereum_rinkeby" => Network::EthereumRinkeby,
             "ethereum_mainnet" => Network::EthereumMainnet,
             _ => Network::EthereumMainnet,
@@ -24,6 +26,7 @@ impl From<Network> for String {
             Network::BloockChain => "bloock_chain".to_string(),
             Network::EthereumRinkeby => "ethereum_rinkeby".to_string(),
             Network::EthereumMainnet => "ethereum_mainnet".to_string(),
+            Network::GnosisChain => "gnosis_chain".to_string(),
         }
     }
 }
