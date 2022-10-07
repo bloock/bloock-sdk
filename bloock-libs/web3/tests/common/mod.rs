@@ -1,9 +1,9 @@
 use bloock_web3::blockchain::Blockchain;
 
 pub async fn get_state() {
-    let state = "fd6d38f2dbbf3e875af204b5e0a337906e5a00e36ade46a2de8b18ad0f05247c";
-    let contract_address = "7E22c795325E76306920293F62a02F353536280b";
-    let provider = "https://rinkeby.infura.io/v3/40e23a35d578492daacb318023772b52";
+    let state = "009b54cfa8b1aaf914dd8d0399256e4bea76d08c3291cb96f66c3a65a9c15a26";
+    let contract_address = "522b2040CdfD247ED60921623044dF1c929524B7";
+    let provider = "https://mainnet.infura.io/v3/40e23a35d578492daacb318023772b52";
 
     let web3 = Blockchain {};
     let timestamp = web3
@@ -16,7 +16,7 @@ pub async fn get_state() {
         .unwrap();
 
     assert_eq!(
-        timestamp, 1655801554,
+        timestamp, 1664086163,
         "Timestamp doesn't match the expected"
     );
 }
