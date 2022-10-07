@@ -1,20 +1,8 @@
 /* eslint-disable */
-import {
-  makeGenericClientConstructor,
-  ChannelCredentials,
-  ChannelOptions,
-  UntypedServiceImplementation,
-  handleUnaryCall,
-  Client,
-  ClientUnaryCall,
-  Metadata,
-  CallOptions,
-  ServiceError,
-} from '@grpc/grpc-js';
-import {ConfigData} from './config';
-import Long from 'long';
-import {Error} from './shared';
-import _m0 from 'protobufjs/minimal';
+import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { ConfigData } from "./config";
+import { Error } from "./shared";
 
 export interface Anchor {
   id: number;
@@ -52,14 +40,11 @@ export interface WaitAnchorResponse {
 }
 
 function createBaseAnchor(): Anchor {
-  return {id: 0, blockRoots: [], networks: [], root: '', status: ''};
+  return { id: 0, blockRoots: [], networks: [], root: "", status: "" };
 }
 
 export const Anchor = {
-  encode(
-    message: Anchor,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Anchor, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== 0) {
       writer.uint32(8).int64(message.id);
     }
@@ -69,10 +54,10 @@ export const Anchor = {
     for (const v of message.networks) {
       AnchorNetwork.encode(v!, writer.uint32(26).fork()).ldelim();
     }
-    if (message.root !== '') {
+    if (message.root !== "") {
       writer.uint32(34).string(message.root);
     }
-    if (message.status !== '') {
+    if (message.status !== "") {
       writer.uint32(42).string(message.status);
     }
     return writer;
@@ -111,14 +96,10 @@ export const Anchor = {
   fromJSON(object: any): Anchor {
     return {
       id: isSet(object.id) ? Number(object.id) : 0,
-      blockRoots: Array.isArray(object?.blockRoots)
-        ? object.blockRoots.map((e: any) => String(e))
-        : [],
-      networks: Array.isArray(object?.networks)
-        ? object.networks.map((e: any) => AnchorNetwork.fromJSON(e))
-        : [],
-      root: isSet(object.root) ? String(object.root) : '',
-      status: isSet(object.status) ? String(object.status) : '',
+      blockRoots: Array.isArray(object?.blockRoots) ? object.blockRoots.map((e: any) => String(e)) : [],
+      networks: Array.isArray(object?.networks) ? object.networks.map((e: any) => AnchorNetwork.fromJSON(e)) : [],
+      root: isSet(object.root) ? String(object.root) : "",
+      status: isSet(object.status) ? String(object.status) : "",
     };
   },
 
@@ -126,14 +107,12 @@ export const Anchor = {
     const obj: any = {};
     message.id !== undefined && (obj.id = Math.round(message.id));
     if (message.blockRoots) {
-      obj.blockRoots = message.blockRoots.map(e => e);
+      obj.blockRoots = message.blockRoots.map((e) => e);
     } else {
       obj.blockRoots = [];
     }
     if (message.networks) {
-      obj.networks = message.networks.map(e =>
-        e ? AnchorNetwork.toJSON(e) : undefined
-      );
+      obj.networks = message.networks.map((e) => e ? AnchorNetwork.toJSON(e) : undefined);
     } else {
       obj.networks = [];
     }
@@ -145,31 +124,27 @@ export const Anchor = {
   fromPartial<I extends Exact<DeepPartial<Anchor>, I>>(object: I): Anchor {
     const message = createBaseAnchor();
     message.id = object.id ?? 0;
-    message.blockRoots = object.blockRoots?.map(e => e) || [];
-    message.networks =
-      object.networks?.map(e => AnchorNetwork.fromPartial(e)) || [];
-    message.root = object.root ?? '';
-    message.status = object.status ?? '';
+    message.blockRoots = object.blockRoots?.map((e) => e) || [];
+    message.networks = object.networks?.map((e) => AnchorNetwork.fromPartial(e)) || [];
+    message.root = object.root ?? "";
+    message.status = object.status ?? "";
     return message;
   },
 };
 
 function createBaseAnchorNetwork(): AnchorNetwork {
-  return {name: '', state: '', txHash: ''};
+  return { name: "", state: "", txHash: "" };
 }
 
 export const AnchorNetwork = {
-  encode(
-    message: AnchorNetwork,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
-    if (message.name !== '') {
+  encode(message: AnchorNetwork, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    if (message.state !== '') {
+    if (message.state !== "") {
       writer.uint32(18).string(message.state);
     }
-    if (message.txHash !== '') {
+    if (message.txHash !== "") {
       writer.uint32(26).string(message.txHash);
     }
     return writer;
@@ -201,9 +176,9 @@ export const AnchorNetwork = {
 
   fromJSON(object: any): AnchorNetwork {
     return {
-      name: isSet(object.name) ? String(object.name) : '',
-      state: isSet(object.state) ? String(object.state) : '',
-      txHash: isSet(object.txHash) ? String(object.txHash) : '',
+      name: isSet(object.name) ? String(object.name) : "",
+      state: isSet(object.state) ? String(object.state) : "",
+      txHash: isSet(object.txHash) ? String(object.txHash) : "",
     };
   },
 
@@ -215,26 +190,21 @@ export const AnchorNetwork = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<AnchorNetwork>, I>>(
-    object: I
-  ): AnchorNetwork {
+  fromPartial<I extends Exact<DeepPartial<AnchorNetwork>, I>>(object: I): AnchorNetwork {
     const message = createBaseAnchorNetwork();
-    message.name = object.name ?? '';
-    message.state = object.state ?? '';
-    message.txHash = object.txHash ?? '';
+    message.name = object.name ?? "";
+    message.state = object.state ?? "";
+    message.txHash = object.txHash ?? "";
     return message;
   },
 };
 
 function createBaseGetAnchorRequest(): GetAnchorRequest {
-  return {configData: undefined, anchorId: 0};
+  return { configData: undefined, anchorId: 0 };
 }
 
 export const GetAnchorRequest = {
-  encode(
-    message: GetAnchorRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: GetAnchorRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
@@ -267,9 +237,7 @@ export const GetAnchorRequest = {
 
   fromJSON(object: any): GetAnchorRequest {
     return {
-      configData: isSet(object.configData)
-        ? ConfigData.fromJSON(object.configData)
-        : undefined,
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       anchorId: isSet(object.anchorId) ? Number(object.anchorId) : 0,
     };
   },
@@ -277,36 +245,27 @@ export const GetAnchorRequest = {
   toJSON(message: GetAnchorRequest): unknown {
     const obj: any = {};
     message.configData !== undefined &&
-      (obj.configData = message.configData
-        ? ConfigData.toJSON(message.configData)
-        : undefined);
-    message.anchorId !== undefined &&
-      (obj.anchorId = Math.round(message.anchorId));
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.anchorId !== undefined && (obj.anchorId = Math.round(message.anchorId));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<GetAnchorRequest>, I>>(
-    object: I
-  ): GetAnchorRequest {
+  fromPartial<I extends Exact<DeepPartial<GetAnchorRequest>, I>>(object: I): GetAnchorRequest {
     const message = createBaseGetAnchorRequest();
-    message.configData =
-      object.configData !== undefined && object.configData !== null
-        ? ConfigData.fromPartial(object.configData)
-        : undefined;
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
     message.anchorId = object.anchorId ?? 0;
     return message;
   },
 };
 
 function createBaseGetAnchorResponse(): GetAnchorResponse {
-  return {anchor: undefined, error: undefined};
+  return { anchor: undefined, error: undefined };
 }
 
 export const GetAnchorResponse = {
-  encode(
-    message: GetAnchorResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: GetAnchorResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.anchor !== undefined) {
       Anchor.encode(message.anchor, writer.uint32(10).fork()).ldelim();
     }
@@ -346,38 +305,27 @@ export const GetAnchorResponse = {
 
   toJSON(message: GetAnchorResponse): unknown {
     const obj: any = {};
-    message.anchor !== undefined &&
-      (obj.anchor = message.anchor ? Anchor.toJSON(message.anchor) : undefined);
-    message.error !== undefined &&
-      (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    message.anchor !== undefined && (obj.anchor = message.anchor ? Anchor.toJSON(message.anchor) : undefined);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<GetAnchorResponse>, I>>(
-    object: I
-  ): GetAnchorResponse {
+  fromPartial<I extends Exact<DeepPartial<GetAnchorResponse>, I>>(object: I): GetAnchorResponse {
     const message = createBaseGetAnchorResponse();
-    message.anchor =
-      object.anchor !== undefined && object.anchor !== null
-        ? Anchor.fromPartial(object.anchor)
-        : undefined;
-    message.error =
-      object.error !== undefined && object.error !== null
-        ? Error.fromPartial(object.error)
-        : undefined;
+    message.anchor = (object.anchor !== undefined && object.anchor !== null)
+      ? Anchor.fromPartial(object.anchor)
+      : undefined;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
 };
 
 function createBaseWaitAnchorRequest(): WaitAnchorRequest {
-  return {configData: undefined, anchorId: 0, timeout: 0};
+  return { configData: undefined, anchorId: 0, timeout: 0 };
 }
 
 export const WaitAnchorRequest = {
-  encode(
-    message: WaitAnchorRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: WaitAnchorRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
@@ -416,9 +364,7 @@ export const WaitAnchorRequest = {
 
   fromJSON(object: any): WaitAnchorRequest {
     return {
-      configData: isSet(object.configData)
-        ? ConfigData.fromJSON(object.configData)
-        : undefined,
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       anchorId: isSet(object.anchorId) ? Number(object.anchorId) : 0,
       timeout: isSet(object.timeout) ? Number(object.timeout) : 0,
     };
@@ -427,24 +373,17 @@ export const WaitAnchorRequest = {
   toJSON(message: WaitAnchorRequest): unknown {
     const obj: any = {};
     message.configData !== undefined &&
-      (obj.configData = message.configData
-        ? ConfigData.toJSON(message.configData)
-        : undefined);
-    message.anchorId !== undefined &&
-      (obj.anchorId = Math.round(message.anchorId));
-    message.timeout !== undefined &&
-      (obj.timeout = Math.round(message.timeout));
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.anchorId !== undefined && (obj.anchorId = Math.round(message.anchorId));
+    message.timeout !== undefined && (obj.timeout = Math.round(message.timeout));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<WaitAnchorRequest>, I>>(
-    object: I
-  ): WaitAnchorRequest {
+  fromPartial<I extends Exact<DeepPartial<WaitAnchorRequest>, I>>(object: I): WaitAnchorRequest {
     const message = createBaseWaitAnchorRequest();
-    message.configData =
-      object.configData !== undefined && object.configData !== null
-        ? ConfigData.fromPartial(object.configData)
-        : undefined;
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
     message.anchorId = object.anchorId ?? 0;
     message.timeout = object.timeout ?? 0;
     return message;
@@ -452,14 +391,11 @@ export const WaitAnchorRequest = {
 };
 
 function createBaseWaitAnchorResponse(): WaitAnchorResponse {
-  return {anchor: undefined, error: undefined};
+  return { anchor: undefined, error: undefined };
 }
 
 export const WaitAnchorResponse = {
-  encode(
-    message: WaitAnchorResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: WaitAnchorResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.anchor !== undefined) {
       Anchor.encode(message.anchor, writer.uint32(10).fork()).ldelim();
     }
@@ -499,145 +435,107 @@ export const WaitAnchorResponse = {
 
   toJSON(message: WaitAnchorResponse): unknown {
     const obj: any = {};
-    message.anchor !== undefined &&
-      (obj.anchor = message.anchor ? Anchor.toJSON(message.anchor) : undefined);
-    message.error !== undefined &&
-      (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    message.anchor !== undefined && (obj.anchor = message.anchor ? Anchor.toJSON(message.anchor) : undefined);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<WaitAnchorResponse>, I>>(
-    object: I
-  ): WaitAnchorResponse {
+  fromPartial<I extends Exact<DeepPartial<WaitAnchorResponse>, I>>(object: I): WaitAnchorResponse {
     const message = createBaseWaitAnchorResponse();
-    message.anchor =
-      object.anchor !== undefined && object.anchor !== null
-        ? Anchor.fromPartial(object.anchor)
-        : undefined;
-    message.error =
-      object.error !== undefined && object.error !== null
-        ? Error.fromPartial(object.error)
-        : undefined;
+    message.anchor = (object.anchor !== undefined && object.anchor !== null)
+      ? Anchor.fromPartial(object.anchor)
+      : undefined;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
 };
 
-export type AnchorServiceService = typeof AnchorServiceService;
-export const AnchorServiceService = {
-  getAnchor: {
-    path: '/bloock.AnchorService/GetAnchor',
-    requestStream: false,
-    responseStream: false,
-    requestSerialize: (value: GetAnchorRequest) =>
-      Buffer.from(GetAnchorRequest.encode(value).finish()),
-    requestDeserialize: (value: Buffer) => GetAnchorRequest.decode(value),
-    responseSerialize: (value: GetAnchorResponse) =>
-      Buffer.from(GetAnchorResponse.encode(value).finish()),
-    responseDeserialize: (value: Buffer) => GetAnchorResponse.decode(value),
-  },
-  waitAnchor: {
-    path: '/bloock.AnchorService/WaitAnchor',
-    requestStream: false,
-    responseStream: false,
-    requestSerialize: (value: WaitAnchorRequest) =>
-      Buffer.from(WaitAnchorRequest.encode(value).finish()),
-    requestDeserialize: (value: Buffer) => WaitAnchorRequest.decode(value),
-    responseSerialize: (value: WaitAnchorResponse) =>
-      Buffer.from(WaitAnchorResponse.encode(value).finish()),
-    responseDeserialize: (value: Buffer) => WaitAnchorResponse.decode(value),
+export interface AnchorService {
+  GetAnchor(request: GetAnchorRequest): Promise<GetAnchorResponse>;
+  WaitAnchor(request: WaitAnchorRequest): Promise<WaitAnchorResponse>;
+}
+
+export class AnchorServiceClientImpl implements AnchorService {
+  private readonly rpc: Rpc;
+  constructor(rpc: Rpc) {
+    this.rpc = rpc;
+    this.GetAnchor = this.GetAnchor.bind(this);
+    this.WaitAnchor = this.WaitAnchor.bind(this);
+  }
+  GetAnchor(request: GetAnchorRequest): Promise<GetAnchorResponse> {
+    const data = GetAnchorRequest.encode(request).finish();
+    const promise = this.rpc.request("bloock.AnchorService", "GetAnchor", data);
+    return promise.then((data) => GetAnchorResponse.decode(new _m0.Reader(data)));
+  }
+
+  WaitAnchor(request: WaitAnchorRequest): Promise<WaitAnchorResponse> {
+    const data = WaitAnchorRequest.encode(request).finish();
+    const promise = this.rpc.request("bloock.AnchorService", "WaitAnchor", data);
+    return promise.then((data) => WaitAnchorResponse.decode(new _m0.Reader(data)));
+  }
+}
+
+export type AnchorServiceDefinition = typeof AnchorServiceDefinition;
+export const AnchorServiceDefinition = {
+  name: "AnchorService",
+  fullName: "bloock.AnchorService",
+  methods: {
+    getAnchor: {
+      name: "GetAnchor",
+      requestType: GetAnchorRequest,
+      requestStream: false,
+      responseType: GetAnchorResponse,
+      responseStream: false,
+      options: {},
+    },
+    waitAnchor: {
+      name: "WaitAnchor",
+      requestType: WaitAnchorRequest,
+      requestStream: false,
+      responseType: WaitAnchorResponse,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
-export interface AnchorServiceServer extends UntypedServiceImplementation {
-  getAnchor: handleUnaryCall<GetAnchorRequest, GetAnchorResponse>;
-  waitAnchor: handleUnaryCall<WaitAnchorRequest, WaitAnchorResponse>;
+interface Rpc {
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
-
-export interface AnchorServiceClient extends Client {
-  getAnchor(
-    request: GetAnchorRequest,
-    callback: (error: ServiceError | null, response: GetAnchorResponse) => void
-  ): ClientUnaryCall;
-  getAnchor(
-    request: GetAnchorRequest,
-    metadata: Metadata,
-    callback: (error: ServiceError | null, response: GetAnchorResponse) => void
-  ): ClientUnaryCall;
-  getAnchor(
-    request: GetAnchorRequest,
-    metadata: Metadata,
-    options: Partial<CallOptions>,
-    callback: (error: ServiceError | null, response: GetAnchorResponse) => void
-  ): ClientUnaryCall;
-  waitAnchor(
-    request: WaitAnchorRequest,
-    callback: (error: ServiceError | null, response: WaitAnchorResponse) => void
-  ): ClientUnaryCall;
-  waitAnchor(
-    request: WaitAnchorRequest,
-    metadata: Metadata,
-    callback: (error: ServiceError | null, response: WaitAnchorResponse) => void
-  ): ClientUnaryCall;
-  waitAnchor(
-    request: WaitAnchorRequest,
-    metadata: Metadata,
-    options: Partial<CallOptions>,
-    callback: (error: ServiceError | null, response: WaitAnchorResponse) => void
-  ): ClientUnaryCall;
-}
-
-export const AnchorServiceClient = makeGenericClientConstructor(
-  AnchorServiceService,
-  'bloock.AnchorService'
-) as unknown as {
-  new (
-    address: string,
-    credentials: ChannelCredentials,
-    options?: Partial<ChannelOptions>
-  ): AnchorServiceClient;
-  service: typeof AnchorServiceService;
-};
 
 declare var self: any | undefined;
 declare var window: any | undefined;
 declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== 'undefined') return globalThis;
-  if (typeof self !== 'undefined') return self;
-  if (typeof window !== 'undefined') return window;
-  if (typeof global !== 'undefined') return global;
-  throw 'Unable to locate global object';
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
+  throw "Unable to locate global object";
 })();
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? {[K in keyof T]?: DeepPartial<T[K]>}
+type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type Exact<P, I extends P> = P extends Builtin
-  ? P
-  : P & {[K in keyof P]: Exact<P[K], I[K]>} & {
-      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
-    };
+type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
   }
   return long.toNumber();
 }

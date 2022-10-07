@@ -1,5 +1,5 @@
-import {AnchorNetwork} from './anchor';
-import * as proto from '../bridge/proto/proof';
+import { AnchorNetwork } from "./anchor";
+import * as proto from "../bridge/proto/proof";
 
 export class Proof {
   leaves: string[];
@@ -38,7 +38,7 @@ export class Proof {
       nodes: this.nodes,
       depth: this.depth,
       bitmap: this.bitmap,
-      anchor: this.anchor.toProto(),
+      anchor: this.anchor.toProto()
     });
   }
 }
@@ -75,7 +75,7 @@ export class ProofAnchor {
       anchorId: this.anchorID,
       networks: this.networks.map(n => n.toProto()),
       root: this.root,
-      status: this.status,
+      status: this.status
     });
   }
 }

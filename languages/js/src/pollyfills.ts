@@ -1,4 +1,4 @@
-import fetch, {Headers, Request, Response} from 'node-fetch';
+import fetch, { Headers, Request, Response } from "node-fetch";
 
 // @ts-ignore: Declare fetch for browser & node
 if (!globalThis.fetch) {
@@ -10,4 +10,12 @@ if (!globalThis.fetch) {
   globalThis.Request = Request;
   // @ts-ignore: Declare fetch Response for browser & node
   globalThis.Response = Response;
+}
+
+if (typeof TextEncoder === "undefined") {
+  global.TextEncoder = require("util").TextEncoder;
+}
+
+if (typeof TextDecoder === "undefined") {
+  global.TextDecoder = require("util").TextDecoder;
 }

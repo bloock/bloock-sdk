@@ -16,9 +16,6 @@ jobs:
       - name: Install dependencies
         working-directory: "languages/js"
         run: yarn install --frozen-lockfile
-      - name: Check formatting of JS library
-        working-directory: "languages/js"
-        run: yarn run fmtcheck
       - name: Lint JS library
         working-directory: "languages/js"
         run: yarn run lint

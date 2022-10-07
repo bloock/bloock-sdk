@@ -1,4 +1,4 @@
-import * as proto from '../bridge/proto/record';
+import * as proto from "../bridge/proto/record";
 
 export interface Signer {
   alg: proto.SignerAlg;
@@ -15,7 +15,10 @@ export class EcsdaSigner implements Signer {
   }
 
   public toProto(): proto.Signer {
-    return proto.Signer.fromPartial({alg: this.alg, args: this.args.toProto()});
+    return proto.Signer.fromPartial({
+      alg: this.alg,
+      args: this.args.toProto()
+    });
   }
 }
 
@@ -26,6 +29,6 @@ export class SignerArgs {
   }
 
   public toProto(): proto.SignerArgs {
-    return proto.SignerArgs.fromPartial({privateKey: this.privateKey});
+    return proto.SignerArgs.fromPartial({ privateKey: this.privateKey });
   }
 }

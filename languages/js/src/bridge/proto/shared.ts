@@ -1,5 +1,5 @@
 /* eslint-disable */
-import _m0 from 'protobufjs/minimal';
+import _m0 from "protobufjs/minimal";
 
 export interface Error {
   kind: string;
@@ -7,15 +7,15 @@ export interface Error {
 }
 
 function createBaseError(): Error {
-  return {kind: '', message: ''};
+  return { kind: "", message: "" };
 }
 
 export const Error = {
   encode(message: Error, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.kind !== '') {
+    if (message.kind !== "") {
       writer.uint32(10).string(message.kind);
     }
-    if (message.message !== '') {
+    if (message.message !== "") {
       writer.uint32(18).string(message.message);
     }
     return writer;
@@ -44,8 +44,8 @@ export const Error = {
 
   fromJSON(object: any): Error {
     return {
-      kind: isSet(object.kind) ? String(object.kind) : '',
-      message: isSet(object.message) ? String(object.message) : '',
+      kind: isSet(object.kind) ? String(object.kind) : "",
+      message: isSet(object.message) ? String(object.message) : "",
     };
   },
 
@@ -58,37 +58,22 @@ export const Error = {
 
   fromPartial<I extends Exact<DeepPartial<Error>, I>>(object: I): Error {
     const message = createBaseError();
-    message.kind = object.kind ?? '';
-    message.message = object.message ?? '';
+    message.kind = object.kind ?? "";
+    message.message = object.message ?? "";
     return message;
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? {[K in keyof T]?: DeepPartial<T[K]>}
+type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type Exact<P, I extends P> = P extends Builtin
-  ? P
-  : P & {[K in keyof P]: Exact<P[K], I[K]>} & {
-      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
-    };
+type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
