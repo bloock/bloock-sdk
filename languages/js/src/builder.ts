@@ -1,4 +1,4 @@
-import {BloockBridge} from './bridge/bridge';
+import { BloockBridge } from "./bridge/bridge";
 import {
   Encrypter,
   RecordTypes,
@@ -7,11 +7,11 @@ import {
   RecordBuilderFromHexRequest,
   RecordBuilderFromBytesRequest,
   RecordBuilderFromFileRequest,
-  RecordBuilderFromRecordRequest,
-} from './bridge/proto/record';
+  RecordBuilderFromRecordRequest
+} from "./bridge/proto/record";
 
-import {Record} from './entity/record';
-import {Signer} from './entity/signer';
+import { Record } from "./entity/record";
+import { Signer } from "./entity/signer";
 
 export class RecordBuilder {
   payload: any;
@@ -65,141 +65,87 @@ export class RecordBuilder {
         const req = RecordBuilderFromStringRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
-          encrypter: this.encrypter,
+          encrypter: this.encrypter
         });
 
-        return new Promise((resolve, reject) => {
-          bridge.getRecord().buildRecordFromString(req, (err, res) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-
-            if (res.error) {
-              reject(res.error.message);
-              return;
-            }
-
-            resolve(Record.fromProto(res.record!));
+        return bridge
+          .getRecord()
+          .BuildRecordFromString(req)
+          .then(res => {
+            return Record.fromProto(res.record!);
           });
-        });
       }
       case RecordTypes.JSON: {
         const req = RecordBuilderFromJSONRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
-          encrypter: this.encrypter,
+          encrypter: this.encrypter
         });
 
-        return new Promise((resolve, reject) => {
-          bridge.getRecord().buildRecordFromJson(req, (err, res) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-
-            if (res.error) {
-              reject(res.error.message);
-              return;
-            }
-
-            resolve(Record.fromProto(res.record!));
+        return bridge
+          .getRecord()
+          .BuildRecordFromJson(req)
+          .then(res => {
+            return Record.fromProto(res.record!);
           });
-        });
       }
       case RecordTypes.HEX: {
         const req = RecordBuilderFromHexRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
-          encrypter: this.encrypter,
+          encrypter: this.encrypter
         });
 
-        return new Promise((resolve, reject) => {
-          bridge.getRecord().buildRecordFromHex(req, (err, res) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-
-            if (res.error) {
-              reject(res.error.message);
-              return;
-            }
-
-            resolve(Record.fromProto(res.record!));
+        return bridge
+          .getRecord()
+          .BuildRecordFromHex(req)
+          .then(res => {
+            return Record.fromProto(res.record!);
           });
-        });
       }
       case RecordTypes.BYTES: {
         const req = RecordBuilderFromBytesRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
-          encrypter: this.encrypter,
+          encrypter: this.encrypter
         });
 
-        return new Promise((resolve, reject) => {
-          bridge.getRecord().buildRecordFromBytes(req, (err, res) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-
-            if (res.error) {
-              reject(res.error.message);
-              return;
-            }
-
-            resolve(Record.fromProto(res.record!));
+        return bridge
+          .getRecord()
+          .BuildRecordFromBytes(req)
+          .then(res => {
+            return Record.fromProto(res.record!);
           });
-        });
       }
       case RecordTypes.FILE: {
         const req = RecordBuilderFromFileRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
-          encrypter: this.encrypter,
+          encrypter: this.encrypter
         });
 
-        return new Promise((resolve, reject) => {
-          bridge.getRecord().buildRecordFromFile(req, (err, res) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-
-            if (res.error) {
-              reject(res.error.message);
-              return;
-            }
-
-            resolve(Record.fromProto(res.record!));
+        return bridge
+          .getRecord()
+          .BuildRecordFromFile(req)
+          .then(res => {
+            return Record.fromProto(res.record!);
           });
-        });
       }
       case RecordTypes.RECORD: {
         const req = RecordBuilderFromRecordRequest.fromPartial({
           payload: this.payload,
           signer: this.signer,
-          encrypter: this.encrypter,
+          encrypter: this.encrypter
         });
 
-        return new Promise((resolve, reject) => {
-          bridge.getRecord().buildRecordFromRecord(req, (err, res) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-
-            if (res.error) {
-              reject(res.error.message);
-              return;
-            }
-
-            resolve(Record.fromProto(res.record!));
+        return bridge
+          .getRecord()
+          .BuildRecordFromRecord(req)
+          .then(res => {
+            return Record.fromProto(res.record!);
           });
-        });
       }
     }
-    return Promise.reject(new Error('Unexpected record type'));
+    return Promise.reject(new Error("Unexpected record type"));
   }
 }

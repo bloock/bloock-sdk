@@ -1,5 +1,5 @@
 const path = require('path');
-const {execSync} = require('child_process');
+const { execSync } = require('child_process');
 const rimraf = require('rimraf');
 
 const PROTO_DIR = path.join(__dirname, '../../../bloock-bridge/proto');
@@ -14,13 +14,13 @@ const PLUGIN_PATH = path.join(
 );
 
 rimraf.sync(`${MODEL_DIR}/*`, {
-  glob: {ignore: `${MODEL_DIR}/tsconfig.json`},
+  glob: { ignore: `${MODEL_DIR}/tsconfig.json` },
 });
 
 const protoConfig = [
   `--plugin=${PLUGIN_PATH}`,
 
-  '--ts_proto_opt=outputServices=grpc-js,env=node,useOptionals=messages,exportCommonSymbols=false,esModuleInterop=true',
+  '--ts_proto_opt=outputServices=generic-definitions,snakeToCamel=true,outputServices=default,useOptionals=messages,exportCommonSymbols=false,esModuleInterop=true',
 
   `--ts_proto_out=${MODEL_DIR}`,
   `--proto_path ${PROTO_DIR} ${PROTO_DIR}/*.proto`,

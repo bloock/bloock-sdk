@@ -1,17 +1,17 @@
-import {BloockBridge} from '../bridge/bridge';
-import * as proto from '../bridge/proto/record';
-import {Proof} from './proof';
+import { BloockBridge } from "../bridge/bridge";
+import * as proto from "../bridge/proto/record";
+import { Proof } from "./proof";
 
 export class Record {
   headers?: RecordHeader;
-  payload: Buffer;
+  payload: Uint8Array;
   signatures: Signature[];
   encryption?: Encryption | undefined;
   proof?: Proof | undefined;
 
   constructor(
     headers: RecordHeader | undefined,
-    payload: Buffer,
+    payload: Uint8Array,
     signatures: Signature[],
     encryption: Encryption | undefined,
     proof: Proof | undefined
@@ -41,25 +41,18 @@ export class Record {
       payload: this.payload,
       signatures: this.signatures.map(s => s.toProto()),
       encryption: this.encryption,
-      proof: this.proof,
+      proof: this.proof
     });
   }
 
   async getHash(): Promise<string> {
     const bridge = new BloockBridge();
-    return new Promise((resolve, reject) => {
-      bridge.getRecord().getHash(this.toProto(), (err, res) => {
-        if (err) {
-          reject(err);
-        }
-
-        if (res.error) {
-          reject(res.error.message);
-        }
-
-        resolve(res.hash);
+    return bridge
+      .getRecord()
+      .GetHash(this.toProto())
+      .then(res => {
+        return res.hash;
       });
-    });
   }
 }
 
@@ -74,7 +67,7 @@ export class RecordHeader {
   }
 
   toProto(): proto.RecordHeader {
-    return proto.RecordHeader.fromPartial({ty: this.ty});
+    return proto.RecordHeader.fromPartial({ ty: this.ty });
   }
 }
 
@@ -101,7 +94,7 @@ export class Signature {
     return proto.Signature.fromPartial({
       signature: this.signature,
       protected: this.protected,
-      header: this.header.toProto(),
+      header: this.header.toProto()
     });
   }
 }
@@ -119,7 +112,7 @@ export class SignatureHeader {
   }
 
   toProto(): proto.SignatureHeader {
-    return proto.SignatureHeader.fromPartial({alg: this.alg, kid: this.kid});
+    return proto.SignatureHeader.fromPartial({ alg: this.alg, kid: this.kid });
   }
 }
 
@@ -139,7 +132,7 @@ export class Encryption {
   toProto(): proto.Encryption {
     return proto.Encryption.fromPartial({
       header: this.header.toProto(),
-      protected: this.protected,
+      protected: this.protected
     });
   }
 }
@@ -156,7 +149,7 @@ export class EncryptionHeader {
   }
 
   toProto(): proto.EncryptionHeader {
-    return proto.EncryptionHeader.fromPartial({alg: this.alg});
+    return proto.EncryptionHeader.fromPartial({ alg: this.alg });
   }
 }
 
@@ -182,7 +175,7 @@ export class RecordReceipt {
       anchor: this.anchor,
       client: this.client,
       record: this.record,
-      status: this.status,
+      status: this.status
     });
   }
 }

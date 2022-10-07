@@ -1,36 +1,39 @@
-import init, {request} from './native/bloock_bridge';
+import { base64ToBytes, bytesToBase64 } from "./base64";
+import init, { request } from "./native/bloock_bridge";
 
 export class FFIClient {
   private ready: Promise<void>;
 
   constructor() {
     this.ready = new Promise((resolve, reject) => {
-      this.init().then(resolve).catch(reject);
+      this.init()
+        .then(resolve)
+        .catch(reject);
     });
   }
-  public async request(type: string, payload: Buffer): Promise<string> {
+  public async request(type: string, payload: Uint8Array): Promise<Uint8Array> {
     await this.ready;
 
-    return request(type, payload.toString('base64'));
+    let response = await request(type, bytesToBase64(payload));
+    return base64ToBytes(response);
   }
 
   private async init() {
-    const wasmPath = (await import('path')).resolve(
-      __dirname,
-      './bloock_bridge_bg.wasm'
-    );
     let wasmFile;
-
-    // @ts-ignore
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       // Node
-      wasmFile = new Uint8Array((await import('fs')).readFileSync(wasmPath));
+      const fs = await import("fs");
+      wasmFile = new Uint8Array(
+        fs.readFileSync(__dirname + "/bloock_bridge_bg.wasm")
+      );
     } else {
       // Browser
-      // @ts-ignore
+      const wasmPath = new URL(
+        "bloock_bridge_bg.wasm",
+        import.meta.url
+      ).toString();
       wasmFile = await fetch(wasmPath);
     }
-
     await init(wasmFile);
   }
 }

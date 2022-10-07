@@ -1,17 +1,25 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
     "moduleResolution": "node",
     "outDir": "dist",
     "module": "esnext",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "importHelpers": true,
     "declaration": true,
+    "sourceMap": true,
+    "rootDir": "./src",
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "noImplicitAny": true,
-    "types": [
-      "node",
-      "jest"
-    ],
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
   },
   "include": [
     "src"
