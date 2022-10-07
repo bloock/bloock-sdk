@@ -6,7 +6,7 @@ copy-lib:
 	cp ../../bloock-bridge/build/wasm/* src/ffi/native
 
 proto:
-	node bin/proto.js
+	node scripts/proto.js
 
 build: proto copy-lib
 	yarn build
@@ -14,7 +14,7 @@ build: proto copy-lib
 dev: build
 	yarn start
 
-test: build
+test:
 	yarn run test
 
 fmt:

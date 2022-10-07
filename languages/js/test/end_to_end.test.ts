@@ -1,15 +1,29 @@
-import {RecordBuilder, Network, EcsdaSigner} from '../dist/index';
-import * as util from './util';
+import {
+  RecordBuilder,
+  Network,
+  EcsdaSigner,
+  BloockClient
+} from "../dist/index";
 
-describe('E2E Tests', () => {
-  test('test_basic_e2e', async () => {
-    const sdk = util.getSdk();
+function getSdk() {
+  const apiKey = process.env["API_KEY"] || "";
+  const apiHost = process.env["API_HOST"] || "";
+  const client = new BloockClient(apiKey);
+  if (apiHost) {
+    client.setApiHost(apiHost);
+  }
+  return client;
+}
+
+describe("E2E Tests", () => {
+  test("test_basic_e2e", async () => {
+    const sdk = getSdk();
 
     const records = [];
-    let record = await RecordBuilder.fromString('Hello world').build();
+    let record = await RecordBuilder.fromString("Hello world").build();
     let hash = await record.getHash();
     expect(hash).toEqual(
-      'ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd'
+      "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
     );
     records.push(hash);
 
@@ -18,29 +32,29 @@ describe('E2E Tests', () => {
     ).build();
     hash = await record.getHash();
     expect(hash).toEqual(
-      '7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4'
+      "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4"
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromHex('1234567890abcdef').build();
+    record = await RecordBuilder.fromHex("1234567890abcdef").build();
     hash = await record.getHash();
     expect(hash).toEqual(
-      'ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f'
+      "ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f"
     );
     records.push(hash);
 
     record = await RecordBuilder.fromJson('{"hello":"world"}').build();
     hash = await record.getHash();
     expect(hash).toEqual(
-      '586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312'
+      "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromString('Hello world 2').build();
+    record = await RecordBuilder.fromString("Hello world 2").build();
     record = await RecordBuilder.fromRecord(record).build();
     hash = await record.getHash();
     expect(hash).toEqual(
-      '96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6'
+      "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
     );
     records.push(hash);
 
@@ -49,13 +63,13 @@ describe('E2E Tests', () => {
     ).build();
     hash = await record.getHash();
     expect(hash).toEqual(
-      '507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446'
+      "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446"
     );
     records.push(hash);
 
     let keys = await sdk.generateKeys();
 
-    record = await RecordBuilder.fromString('Hello world 3')
+    record = await RecordBuilder.fromString("Hello world 3")
       .withSigner(new EcsdaSigner(keys.privateKey))
       .build();
 
@@ -67,7 +81,7 @@ describe('E2E Tests', () => {
 
     hash = await recordWithMultipleSignatures.getHash();
     expect(hash).toEqual(
-      '79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f'
+      "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
     );
     records.push(hash);
 

@@ -1,20 +1,20 @@
-import {BloockBridge} from './bridge/bridge';
+import { BloockBridge } from "./bridge/bridge";
 
-import {GetAnchorRequest, WaitAnchorRequest} from './bridge/proto/anchor';
-import {ConfigData, Network, NetworkConfig} from './bridge/proto/config';
+import { GetAnchorRequest, WaitAnchorRequest } from "./bridge/proto/anchor";
+import { ConfigData, Network, NetworkConfig } from "./bridge/proto/config";
 import {
   GetProofRequest,
   ValidateRootRequest,
   VerifyProofRequest,
-  VerifyRecordsRequest,
-} from './bridge/proto/proof';
-import {GenerateKeysRequest, SendRecordsRequest} from './bridge/proto/record';
+  VerifyRecordsRequest
+} from "./bridge/proto/proof";
+import { GenerateKeysRequest, SendRecordsRequest } from "./bridge/proto/record";
 
-import {Proof} from './entity/proof';
-import {Anchor} from './entity/anchor';
-import {Keys, RecordReceipt} from './entity/record';
+import { Proof } from "./entity/proof";
+import { Anchor } from "./entity/anchor";
+import { Keys, RecordReceipt } from "./entity/record";
 
-import {NewConfigData} from './config/config';
+import { NewConfigData } from "./config/config";
 
 export class BloockClient {
   private bridge: BloockBridge;
@@ -50,24 +50,15 @@ export class BloockClient {
   public async sendRecords(records: string[]): Promise<RecordReceipt[]> {
     const request = SendRecordsRequest.fromPartial({
       configData: this.configData,
-      records: records,
+      records: records
     });
 
-    return new Promise((resolve, reject) => {
-      this.bridge.getRecord().sendRecords(request, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        if (res.error) {
-          reject(res.error.message);
-          return;
-        }
-
-        resolve(res.records.map(r => RecordReceipt.fromProto(r)));
+    return this.bridge
+      .getRecord()
+      .SendRecords(request)
+      .then(res => {
+        return res.records.map(r => RecordReceipt.fromProto(r));
       });
-    });
   }
 
   /**
@@ -78,24 +69,15 @@ export class BloockClient {
   public async getAnchor(anchorId: number): Promise<Anchor> {
     const request = GetAnchorRequest.fromPartial({
       configData: this.configData,
-      anchorId: anchorId,
+      anchorId: anchorId
     });
 
-    return new Promise((resolve, reject) => {
-      this.bridge.getAnchor().getAnchor(request, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        if (res.error) {
-          reject(res.error.message);
-          return;
-        }
-
-        resolve(Anchor.fromProto(res.anchor!));
+    return this.bridge
+      .getAnchor()
+      .GetAnchor(request)
+      .then(res => {
+        return Anchor.fromProto(res.anchor!);
       });
-    });
   }
 
   /**
@@ -108,24 +90,15 @@ export class BloockClient {
     const request = WaitAnchorRequest.fromPartial({
       configData: this.configData,
       anchorId: anchorId,
-      timeout: timeout !== null ? timeout : 120000,
+      timeout: timeout !== null ? timeout : 120000
     });
 
-    return new Promise((resolve, reject) => {
-      this.bridge.getAnchor().waitAnchor(request, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        if (res.error) {
-          reject(res.error.message);
-          return;
-        }
-
-        resolve(Anchor.fromProto(res.anchor!));
+    return this.bridge
+      .getAnchor()
+      .WaitAnchor(request)
+      .then(res => {
+        return Anchor.fromProto(res.anchor!);
       });
-    });
   }
 
   /**
@@ -137,24 +110,15 @@ export class BloockClient {
   public async getProof(records: string[]): Promise<Proof> {
     const request = GetProofRequest.fromPartial({
       configData: this.configData,
-      records: records,
+      records: records
     });
 
-    return new Promise((resolve, reject) => {
-      this.bridge.getProof().getProof(request, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        if (res.error) {
-          reject(res.error.message);
-          return;
-        }
-
-        resolve(Proof.fromProto(res.proof!));
+    return this.bridge
+      .getProof()
+      .GetProof(request)
+      .then(res => {
+        return Proof.fromProto(res.proof!);
       });
-    });
   }
 
   /**
@@ -167,24 +131,15 @@ export class BloockClient {
     const request = ValidateRootRequest.fromPartial({
       configData: this.configData,
       root: root,
-      network: network,
+      network: network
     });
 
-    return new Promise((resolve, reject) => {
-      this.bridge.getProof().validateRoot(request, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        if (res.error) {
-          reject(res.error.message);
-          return;
-        }
-
-        resolve(res.timestamp);
+    return this.bridge
+      .getProof()
+      .ValidateRoot(request)
+      .then(res => {
+        return res.timestamp;
       });
-    });
   }
 
   /**
@@ -196,24 +151,15 @@ export class BloockClient {
   public async verifyProof(proof: Proof): Promise<string> {
     const request = VerifyProofRequest.fromPartial({
       configData: this.configData,
-      proof: proof.toProto(),
+      proof: proof.toProto()
     });
 
-    return new Promise((resolve, reject) => {
-      this.bridge.getProof().verifyProof(request, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        if (res.error) {
-          reject(res.error.message);
-          return;
-        }
-
-        resolve(res.record!);
+    return this.bridge
+      .getProof()
+      .VerifyProof(request)
+      .then(res => {
+        return res.record!;
       });
-    });
   }
 
   /**
@@ -229,24 +175,15 @@ export class BloockClient {
     const request = VerifyRecordsRequest.fromPartial({
       configData: this.configData,
       records: records,
-      network: network,
+      network: network
     });
 
-    return new Promise((resolve, reject) => {
-      this.bridge.getProof().verifyRecords(request, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        if (res.error) {
-          reject(res.error.message);
-          return;
-        }
-
-        resolve(res.timestamp);
+    return this.bridge
+      .getProof()
+      .VerifyRecords(request)
+      .then(res => {
+        return res.timestamp;
       });
-    });
   }
 
   /**
@@ -254,22 +191,12 @@ export class BloockClient {
    * @returns {Promise<Keys>} An object containing both the public and the private key
    */
   public async generateKeys(): Promise<Keys> {
-    return new Promise((resolve, reject) => {
-      this.bridge
-        .getRecord()
-        .generateKeys(GenerateKeysRequest.fromPartial({}), (err, res) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-
-          if (res.error) {
-            reject(res.error.message);
-            return;
-          }
-
-          resolve(Keys.fromProto(res));
-        });
-    });
+    let request = GenerateKeysRequest.fromPartial({});
+    return this.bridge
+      .getRecord()
+      .GenerateKeys(request)
+      .then(res => {
+        return Keys.fromProto(res);
+      });
   }
 }

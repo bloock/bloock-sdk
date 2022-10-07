@@ -1,4 +1,4 @@
-import * as proto from '../bridge/proto/anchor';
+import * as proto from "../bridge/proto/anchor";
 
 export class Anchor {
   id: number;
@@ -51,7 +51,7 @@ export class AnchorNetwork {
     return proto.AnchorNetwork.fromPartial({
       name: this.name,
       state: this.state,
-      txHash: this.txHash,
+      txHash: this.txHash
     });
   }
 }
