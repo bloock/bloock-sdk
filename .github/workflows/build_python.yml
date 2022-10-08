@@ -29,6 +29,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.8.1
         env:
           CIBW_BUILD: "*64"
+          CIBW_ENVIRONMENT: BLOOCK_ENV=CI
           CIBW_ARCHS: "${{ inputs.os == 'macos-latest' && 'x86_64 arm64 universal2' || 'auto' }}"
         with:
           package-dir: languages/python/bloock
