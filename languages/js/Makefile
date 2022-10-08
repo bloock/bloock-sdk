@@ -14,7 +14,7 @@ build: proto copy-lib
 dev: build
 	yarn start
 
-test:
+test: build
 	yarn run test
 
 fmt:

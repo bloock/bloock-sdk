@@ -2,8 +2,11 @@ from __future__ import annotations
 import bloock._bridge.proto.proof_pb2 as proto
 from bloock.client.entity.anchor import AnchorNetwork
 
+
 class ProofAnchor:
-    def __init__(self, anchor_id: int, networks: list[AnchorNetwork], root: str, status: str) -> None:
+    def __init__(
+        self, anchor_id: int, networks: list[AnchorNetwork], root: str, status: str
+    ) -> None:
         self.anchor_id = anchor_id
         self.networks = networks
         self.root = root
@@ -23,11 +26,19 @@ class ProofAnchor:
             anchor_id=self.anchor_id,
             networks=list(map(lambda x: x.to_proto(), self.networks)),
             root=self.root,
-            status=self.status
+            status=self.status,
         )
 
+
 class Proof:
-    def __init__(self, leaves: list[str], nodes: list[str], depth: str, bitmap: str, anchor: ProofAnchor) -> None:
+    def __init__(
+        self,
+        leaves: list[str],
+        nodes: list[str],
+        depth: str,
+        bitmap: str,
+        anchor: ProofAnchor,
+    ) -> None:
         self.leaves = leaves
         self.nodes = nodes
         self.depth = depth
@@ -46,9 +57,9 @@ class Proof:
 
     def to_proto(self) -> proto.Proof:
         return proto.Proof(
-                leaves=self.leaves,
-                nodes=self.nodes,
-                depth=self.depth,
-                bitmap=self.bitmap,
-                anchor=self.anchor.to_proto(),
+            leaves=self.leaves,
+            nodes=self.nodes,
+            depth=self.depth,
+            bitmap=self.bitmap,
+            anchor=self.anchor.to_proto(),
         )

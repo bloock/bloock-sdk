@@ -5,22 +5,32 @@ import platform
 
 ffi_builder = FFI()
 
-if platform.machine() == "x86_64" and sys.platform.startswith("linux"):
-    lib_dirs =  "./bloock/_ffi/native/x86_64-unknown-linux-gnu"
-elif sys.platform.startswith("win"):
-    lib_dirs =  "./bloock/_ffi/native/x86_64-pc-windows-gnu"
-elif platform.machine() == "x86_64" and sys.platform.startswith("darwin"):
-    lib_dirs =  "./bloock/_ffi/native/x86_64-apple-darwin"
+env = os.environ.get("BLOOCK_ENV", "DEVELOPMENT")
+
+if env == "CI":
+    lib_dirs = "./bloock/_ffi/native"
 else:
-    lib_dirs = "./bloock/_ffi/native/aarch64-apple-darwin"
+    if sys.platform.startswith("linux"):
+        lib_dirs = "./bloock/_ffi/native/x86_64-unknown-linux-gnu"
+    elif sys.platform.startswith("win"):
+        lib_dirs = "./bloock/_ffi/native/x86_64-pc-windows-gnu"
+    elif platform.machine() == "x86_64" and sys.platform.startswith("darwin"):
+        lib_dirs = "./bloock/_ffi/native/x86_64-apple-darwin"
+    else:
+        lib_dirs = "./bloock/_ffi/native/aarch64-apple-darwin"
+
 
 include_dir = "./bloock/_ffi/native"
+
 libs: List[str] = []
 if sys.platform.startswith("win"):
     libs.extend(
         (
-            f"{lib_dirs}/polar.lib",
+            f"{lib_dirs}/libbloock_bridge.lib",
             "Ws2_32.lib",
+            "advapi32.lib",
+            "userenv.lib",
+            "bcrypt.lib",
         )
     )
 elif sys.platform.startswith("darwin"):

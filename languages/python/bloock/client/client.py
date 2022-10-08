@@ -1,8 +1,18 @@
 from typing import List
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
-from bloock._bridge.proto.config_pb2 import ConfigData, Configuration, Network, NetworkConfig
-from bloock._bridge.proto.proof_pb2 import GetProofRequest, ValidateRootRequest, VerifyProofRequest, VerifyRecordsRequest
+from bloock._bridge.proto.config_pb2 import (
+    ConfigData,
+    Configuration,
+    Network,
+    NetworkConfig,
+)
+from bloock._bridge.proto.proof_pb2 import (
+    GetProofRequest,
+    ValidateRootRequest,
+    VerifyProofRequest,
+    VerifyRecordsRequest,
+)
 from bloock._bridge.proto.record_pb2 import GenerateKeysRequest, SendRecordsRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.client.entity.anchor import Anchor
@@ -44,7 +54,9 @@ class Client:
 
     def wait_anchor(self, anchor_id: int, timeout=120000) -> Anchor:
         res = self.bridge_client.anchor().WaitAnchor(
-            WaitAnchorRequest(config_data=self.confid_data, anchor_id=anchor_id, timeout=timeout)
+            WaitAnchorRequest(
+                config_data=self.confid_data, anchor_id=anchor_id, timeout=timeout
+            )
         )
 
         if res.error != Error():
@@ -74,7 +86,9 @@ class Client:
 
     def verify_records(self, records: list[str], network=Network.BLOOCK_CHAIN) -> int:
         res = self.bridge_client.proof().VerifyRecords(
-            VerifyRecordsRequest(config_data=self.confid_data, records=records, network=network)
+            VerifyRecordsRequest(
+                config_data=self.confid_data, records=records, network=network
+            )
         )
 
         if res.error != Error():
@@ -84,7 +98,9 @@ class Client:
 
     def validate_root(self, root: str, network: Network.ValueType) -> int:
         res = self.bridge_client.proof().ValidateRoot(
-            ValidateRootRequest(config_data=self.confid_data, root=root, network=network)
+            ValidateRootRequest(
+                config_data=self.confid_data, root=root, network=network
+            )
         )
 
         if res.error != Error():
@@ -93,9 +109,7 @@ class Client:
         return res.timestamp
 
     def generate_keys(self) -> Keys:
-        res = self.bridge_client.record().GenerateKeys(
-            GenerateKeysRequest()
-        )
+        res = self.bridge_client.record().GenerateKeys(GenerateKeysRequest())
 
         if res.error != Error():
             raise Exception(res.error.message)

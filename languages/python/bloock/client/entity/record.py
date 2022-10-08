@@ -17,6 +17,7 @@ class RecordHeader:
     def to_proto(self) -> proto.RecordHeader:
         return proto.RecordHeader(ty=self.ty)
 
+
 class Signature:
     def __init__(self, signature: str, protected: str, header: SignatureHeader) -> None:
         self.signature = signature
@@ -26,16 +27,16 @@ class Signature:
     @staticmethod
     def from_proto(signature: proto.Signature) -> Signature:
         return Signature(
-            signature=signature.signature, 
-            protected=signature.protected, 
-            header=SignatureHeader.from_proto(signature.header)
+            signature=signature.signature,
+            protected=signature.protected,
+            header=SignatureHeader.from_proto(signature.header),
         )
 
     def to_proto(self) -> proto.Signature:
         return proto.Signature(
-            signature=self.signature, 
-            protected=self.protected, 
-            header=self.header.to_proto()
+            signature=self.signature,
+            protected=self.protected,
+            header=self.header.to_proto(),
         )
 
 
@@ -51,6 +52,7 @@ class SignatureHeader:
     def to_proto(self) -> proto.SignatureHeader:
         return proto.SignatureHeader(alg=self.alg, kid=self.kid)
 
+
 class EncryptionHeader:
     def __init__(self, alg: str) -> None:
         self.alg = alg
@@ -62,6 +64,7 @@ class EncryptionHeader:
     def to_proto(self) -> proto.EncryptionHeader:
         return proto.EncryptionHeader(alg=self.alg)
 
+
 class Encryption:
     def __init__(self, header: EncryptionHeader, protected: str) -> None:
         self.header = header
@@ -71,17 +74,22 @@ class Encryption:
     def from_proto(encryption: proto.Encryption) -> Encryption:
         return Encryption(
             header=EncryptionHeader.from_proto(encryption.header),
-            protected=encryption.protected
+            protected=encryption.protected,
         )
 
     def to_proto(self) -> proto.Encryption:
-        return proto.Encryption(
-            header=self.header.to_proto(),
-            protected=self.protected
-        )
+        return proto.Encryption(header=self.header.to_proto(), protected=self.protected)
+
 
 class Record:
-    def __init__(self, headers: RecordHeader, payload: bytes, signatures: list[Signature], encryption: Encryption, proof: Proof) -> None:
+    def __init__(
+        self,
+        headers: RecordHeader,
+        payload: bytes,
+        signatures: list[Signature],
+        encryption: Encryption,
+        proof: Proof,
+    ) -> None:
         self.headers = headers
         self.payload = payload
         self.signatures = signatures
@@ -114,6 +122,7 @@ class Record:
             raise Exception(res.error.message)
         return res.hash
 
+
 class RecordReceipt:
     def __init__(self, anchor: int, client: str, record: str, status: str) -> None:
         self.anchor = anchor
@@ -127,7 +136,7 @@ class RecordReceipt:
             anchor=receipt.anchor,
             client=receipt.client,
             record=receipt.record,
-            status=receipt.status
+            status=receipt.status,
         )
 
     def to_proto(self) -> proto.RecordReceipt:
@@ -135,8 +144,9 @@ class RecordReceipt:
             anchor=self.anchor,
             client=self.client,
             record=self.record,
-            status=self.status
+            status=self.status,
         )
+
 
 class Keys:
     def __init__(self, public_key: str, private_key: str) -> None:

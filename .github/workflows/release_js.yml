@@ -1,4 +1,4 @@
-name: Publish JS
+name: Release JS
 
 on:
   workflow_call:

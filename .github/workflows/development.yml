@@ -71,3 +71,23 @@ jobs:
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
+
+  check_python:
+    needs: [build_linux]
+    uses: ./.github/workflows/check_python.yml
+
+  build_python:
+    needs: [check_python]
+    uses: ./.github/workflows/build_python.yml
+    with:
+      os: ubuntu-latest
+
+  test_python:
+    needs: [build_python]
+    uses: ./.github/workflows/test_python.yml
+    with:
+      os: ubuntu-latest
+      python-version: "3.7"
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}

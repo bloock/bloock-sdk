@@ -7,6 +7,7 @@ type NetworkConfig = proto.NetworkConfig
 
 type networks struct {
 	BloockChain     Network
+	EthereumGnosis  Network
 	EthereumRinkeby Network
 	EthereumMainnet Network
 }
@@ -14,6 +15,7 @@ type networks struct {
 func ListOfNetworks() networks {
 	return networks{
 		BloockChain:     proto.Network_BLOOCK_CHAIN,
+		EthereumGnosis:  proto.Network_GNOSIS_CHAIN,
 		EthereumRinkeby: proto.Network_ETHEREUM_RINKEBY,
 		EthereumMainnet: proto.Network_ETHEREUM_MAINNET,
 	}

@@ -1,6 +1,7 @@
 from .channel import Channel
 from .proto import anchor_pb2_grpc, record_pb2_grpc, proof_pb2_grpc
 
+
 class BloockBridge:
     def __init__(self):
         channel = Channel()
