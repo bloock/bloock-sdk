@@ -17,9 +17,10 @@ languages/python/bloock/_ffi/native
 languages/python/.eggs
 languages/python/dist
 languages/python/.mypy_cache/
-languages/python/build
-languages/python/venv
-languages/python/*.egg-info/
+languages/python/**/build
+languages/python/**/wheelhouse
+languages/python/**/venv
+languages/python/**/*.egg-info/
 languages/python/_bloock_bridge_lib.abi3.so
 __pycache__/
 
