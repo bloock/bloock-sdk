@@ -50,6 +50,6 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     python_requires=">=3.6",
     setup_requires=["cffi>=1.0.0", "wheel"],
-    cffi_modules=["bloock/_ffi/build.py:ffi_builder"],
+    cffi_modules=["_ffi/build.py:ffi_builder"],
     install_requires=install_requires,
 )
