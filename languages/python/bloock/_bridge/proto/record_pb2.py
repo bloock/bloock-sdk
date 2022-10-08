@@ -8,6 +8,7 @@ from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
+
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -18,13 +19,15 @@ from . import config_pb2 as config__pb2
 from . import proof_pb2 as proof__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0crecord.proto\x12\x06\x62loock\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\x1a\x0bproof.proto\"\x15\n\x13GenerateKeysRequest\"j\n\x14GenerateKeysResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"G\n\nRecordHash\x12\x0c\n\x04hash\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x1a\n\x0cRecordHeader\x12\n\n\x02ty\x18\x01 \x01(\t\"\xd0\x01\n\x06Record\x12%\n\x07headers\x18\x01 \x01(\x0b\x32\x14.bloock.RecordHeader\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12%\n\nsignatures\x18\x03 \x03(\x0b\x32\x11.bloock.Signature\x12+\n\nencryption\x18\x04 \x01(\x0b\x32\x12.bloock.EncryptionH\x00\x88\x01\x01\x12!\n\x05proof\x18\x05 \x01(\x0b\x32\r.bloock.ProofH\x01\x88\x01\x01\x42\r\n\x0b_encryptionB\x08\n\x06_proof\"J\n\x06Signer\x12\x1e\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x11.bloock.SignerAlg\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.SignerArgs\"6\n\nSignerArgs\x12\x18\n\x0bprivate_key\x18\x01 \x01(\tH\x00\x88\x01\x01\x42\x0e\n\x0c_private_key\"S\n\tEncrypter\x12!\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x14.bloock.EncrypterAlg\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.EncrypterArgs\"/\n\rEncrypterArgs\x12\x13\n\x06secret\x18\x01 \x01(\tH\x00\x88\x01\x01\x42\t\n\x07_secret\"Z\n\tSignature\x12\x11\n\tsignature\x18\x01 \x01(\t\x12\x11\n\tprotected\x18\x02 \x01(\t\x12\'\n\x06header\x18\x03 \x01(\x0b\x32\x17.bloock.SignatureHeader\"+\n\x0fSignatureHeader\x12\x0b\n\x03\x61lg\x18\x01 \x01(\t\x12\x0b\n\x03kid\x18\x02 \x01(\t\"I\n\nEncryption\x12(\n\x06header\x18\x01 \x01(\x0b\x32\x18.bloock.EncryptionHeader\x12\x11\n\tprotected\x18\x02 \x01(\t\"\x1f\n\x10\x45ncryptionHeader\x12\x0b\n\x03\x61lg\x18\x01 \x01(\t\"O\n\rRecordReceipt\x12\x0e\n\x06\x61nchor\x18\x01 \x01(\x03\x12\x0e\n\x06\x63lient\x18\x02 \x01(\t\x12\x0e\n\x06record\x18\x03 \x01(\t\x12\x0e\n\x06status\x18\x04 \x01(\t\"\x9a\x01\n\x1eRecordBuilderFromStringRequest\x12\x0f\n\x07payload\x18\x01 \x01(\t\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter\"\x97\x01\n\x1bRecordBuilderFromHexRequest\x12\x0f\n\x07payload\x18\x01 \x01(\t\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter\"\x98\x01\n\x1cRecordBuilderFromJSONRequest\x12\x0f\n\x07payload\x18\x01 \x01(\t\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter\"\x99\x01\n\x1dRecordBuilderFromBytesRequest\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter\"\x98\x01\n\x1cRecordBuilderFromFileRequest\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter\"\xaa\x01\n\x1eRecordBuilderFromRecordRequest\x12\x1f\n\x07payload\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter\"d\n\x15RecordBuilderResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"N\n\x12SendRecordsRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07records\x18\x02 \x03(\t\"j\n\x13SendRecordsResponse\x12&\n\x07records\x18\x01 \x03(\x0b\x32\x15.bloock.RecordReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error*M\n\x0bRecordTypes\x12\n\n\x06STRING\x10\x00\x12\x07\n\x03HEX\x10\x01\x12\x08\n\x04JSON\x10\x02\x12\t\n\x05\x42YTES\x10\x03\x12\x08\n\x04\x46ILE\x10\x04\x12\n\n\x06RECORD\x10\x05*\x17\n\tSignerAlg\x12\n\n\x06\x45S256K\x10\x00*\x1b\n\x0c\x45ncrypterAlg\x12\x0b\n\x07\x41\x32\x35\x36GCM\x10\x00\x32\x81\x06\n\rRecordService\x12\x46\n\x0bSendRecords\x12\x1a.bloock.SendRecordsRequest\x1a\x1b.bloock.SendRecordsResponse\x12^\n\x15\x42uildRecordFromString\x12&.bloock.RecordBuilderFromStringRequest\x1a\x1d.bloock.RecordBuilderResponse\x12X\n\x12\x42uildRecordFromHex\x12#.bloock.RecordBuilderFromHexRequest\x1a\x1d.bloock.RecordBuilderResponse\x12Z\n\x13\x42uildRecordFromJson\x12$.bloock.RecordBuilderFromJSONRequest\x1a\x1d.bloock.RecordBuilderResponse\x12Z\n\x13\x42uildRecordFromFile\x12$.bloock.RecordBuilderFromFileRequest\x1a\x1d.bloock.RecordBuilderResponse\x12\\\n\x14\x42uildRecordFromBytes\x12%.bloock.RecordBuilderFromBytesRequest\x1a\x1d.bloock.RecordBuilderResponse\x12^\n\x15\x42uildRecordFromRecord\x12&.bloock.RecordBuilderFromRecordRequest\x1a\x1d.bloock.RecordBuilderResponse\x12-\n\x07GetHash\x12\x0e.bloock.Record\x1a\x12.bloock.RecordHash\x12I\n\x0cGenerateKeys\x12\x1b.bloock.GenerateKeysRequest\x1a\x1c.bloock.GenerateKeysResponseBX\n\x1c\x62loock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
+    b'\n\x0crecord.proto\x12\x06\x62loock\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\x1a\x0bproof.proto"\x15\n\x13GenerateKeysRequest"j\n\x14GenerateKeysResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"G\n\nRecordHash\x12\x0c\n\x04hash\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"\x1a\n\x0cRecordHeader\x12\n\n\x02ty\x18\x01 \x01(\t"\xd0\x01\n\x06Record\x12%\n\x07headers\x18\x01 \x01(\x0b\x32\x14.bloock.RecordHeader\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12%\n\nsignatures\x18\x03 \x03(\x0b\x32\x11.bloock.Signature\x12+\n\nencryption\x18\x04 \x01(\x0b\x32\x12.bloock.EncryptionH\x00\x88\x01\x01\x12!\n\x05proof\x18\x05 \x01(\x0b\x32\r.bloock.ProofH\x01\x88\x01\x01\x42\r\n\x0b_encryptionB\x08\n\x06_proof"J\n\x06Signer\x12\x1e\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x11.bloock.SignerAlg\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.SignerArgs"6\n\nSignerArgs\x12\x18\n\x0bprivate_key\x18\x01 \x01(\tH\x00\x88\x01\x01\x42\x0e\n\x0c_private_key"S\n\tEncrypter\x12!\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x14.bloock.EncrypterAlg\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.EncrypterArgs"/\n\rEncrypterArgs\x12\x13\n\x06secret\x18\x01 \x01(\tH\x00\x88\x01\x01\x42\t\n\x07_secret"Z\n\tSignature\x12\x11\n\tsignature\x18\x01 \x01(\t\x12\x11\n\tprotected\x18\x02 \x01(\t\x12\'\n\x06header\x18\x03 \x01(\x0b\x32\x17.bloock.SignatureHeader"+\n\x0fSignatureHeader\x12\x0b\n\x03\x61lg\x18\x01 \x01(\t\x12\x0b\n\x03kid\x18\x02 \x01(\t"I\n\nEncryption\x12(\n\x06header\x18\x01 \x01(\x0b\x32\x18.bloock.EncryptionHeader\x12\x11\n\tprotected\x18\x02 \x01(\t"\x1f\n\x10\x45ncryptionHeader\x12\x0b\n\x03\x61lg\x18\x01 \x01(\t"O\n\rRecordReceipt\x12\x0e\n\x06\x61nchor\x18\x01 \x01(\x03\x12\x0e\n\x06\x63lient\x18\x02 \x01(\t\x12\x0e\n\x06record\x18\x03 \x01(\t\x12\x0e\n\x06status\x18\x04 \x01(\t"\x9a\x01\n\x1eRecordBuilderFromStringRequest\x12\x0f\n\x07payload\x18\x01 \x01(\t\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter"\x97\x01\n\x1bRecordBuilderFromHexRequest\x12\x0f\n\x07payload\x18\x01 \x01(\t\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter"\x98\x01\n\x1cRecordBuilderFromJSONRequest\x12\x0f\n\x07payload\x18\x01 \x01(\t\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter"\x99\x01\n\x1dRecordBuilderFromBytesRequest\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter"\x98\x01\n\x1cRecordBuilderFromFileRequest\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter"\xaa\x01\n\x1eRecordBuilderFromRecordRequest\x12\x1f\n\x07payload\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12#\n\x06signer\x18\x02 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypter"d\n\x15RecordBuilderResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"N\n\x12SendRecordsRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07records\x18\x02 \x03(\t"j\n\x13SendRecordsResponse\x12&\n\x07records\x18\x01 \x03(\x0b\x32\x15.bloock.RecordReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error*M\n\x0bRecordTypes\x12\n\n\x06STRING\x10\x00\x12\x07\n\x03HEX\x10\x01\x12\x08\n\x04JSON\x10\x02\x12\t\n\x05\x42YTES\x10\x03\x12\x08\n\x04\x46ILE\x10\x04\x12\n\n\x06RECORD\x10\x05*\x17\n\tSignerAlg\x12\n\n\x06\x45S256K\x10\x00*\x1b\n\x0c\x45ncrypterAlg\x12\x0b\n\x07\x41\x32\x35\x36GCM\x10\x00\x32\x81\x06\n\rRecordService\x12\x46\n\x0bSendRecords\x12\x1a.bloock.SendRecordsRequest\x1a\x1b.bloock.SendRecordsResponse\x12^\n\x15\x42uildRecordFromString\x12&.bloock.RecordBuilderFromStringRequest\x1a\x1d.bloock.RecordBuilderResponse\x12X\n\x12\x42uildRecordFromHex\x12#.bloock.RecordBuilderFromHexRequest\x1a\x1d.bloock.RecordBuilderResponse\x12Z\n\x13\x42uildRecordFromJson\x12$.bloock.RecordBuilderFromJSONRequest\x1a\x1d.bloock.RecordBuilderResponse\x12Z\n\x13\x42uildRecordFromFile\x12$.bloock.RecordBuilderFromFileRequest\x1a\x1d.bloock.RecordBuilderResponse\x12\\\n\x14\x42uildRecordFromBytes\x12%.bloock.RecordBuilderFromBytesRequest\x1a\x1d.bloock.RecordBuilderResponse\x12^\n\x15\x42uildRecordFromRecord\x12&.bloock.RecordBuilderFromRecordRequest\x1a\x1d.bloock.RecordBuilderResponse\x12-\n\x07GetHash\x12\x0e.bloock.Record\x1a\x12.bloock.RecordHash\x12I\n\x0cGenerateKeys\x12\x1b.bloock.GenerateKeysRequest\x1a\x1c.bloock.GenerateKeysResponseBX\n\x1c\x62loock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3'
+)
 
-_RECORDTYPES = DESCRIPTOR.enum_types_by_name['RecordTypes']
+_RECORDTYPES = DESCRIPTOR.enum_types_by_name["RecordTypes"]
 RecordTypes = enum_type_wrapper.EnumTypeWrapper(_RECORDTYPES)
-_SIGNERALG = DESCRIPTOR.enum_types_by_name['SignerAlg']
+_SIGNERALG = DESCRIPTOR.enum_types_by_name["SignerAlg"]
 SignerAlg = enum_type_wrapper.EnumTypeWrapper(_SIGNERALG)
-_ENCRYPTERALG = DESCRIPTOR.enum_types_by_name['EncrypterAlg']
+_ENCRYPTERALG = DESCRIPTOR.enum_types_by_name["EncrypterAlg"]
 EncrypterAlg = enum_type_wrapper.EnumTypeWrapper(_ENCRYPTERALG)
 STRING = 0
 HEX = 1
@@ -36,247 +39,351 @@ ES256K = 0
 A256GCM = 0
 
 
-_GENERATEKEYSREQUEST = DESCRIPTOR.message_types_by_name['GenerateKeysRequest']
-_GENERATEKEYSRESPONSE = DESCRIPTOR.message_types_by_name['GenerateKeysResponse']
-_RECORDHASH = DESCRIPTOR.message_types_by_name['RecordHash']
-_RECORDHEADER = DESCRIPTOR.message_types_by_name['RecordHeader']
-_RECORD = DESCRIPTOR.message_types_by_name['Record']
-_SIGNER = DESCRIPTOR.message_types_by_name['Signer']
-_SIGNERARGS = DESCRIPTOR.message_types_by_name['SignerArgs']
-_ENCRYPTER = DESCRIPTOR.message_types_by_name['Encrypter']
-_ENCRYPTERARGS = DESCRIPTOR.message_types_by_name['EncrypterArgs']
-_SIGNATURE = DESCRIPTOR.message_types_by_name['Signature']
-_SIGNATUREHEADER = DESCRIPTOR.message_types_by_name['SignatureHeader']
-_ENCRYPTION = DESCRIPTOR.message_types_by_name['Encryption']
-_ENCRYPTIONHEADER = DESCRIPTOR.message_types_by_name['EncryptionHeader']
-_RECORDRECEIPT = DESCRIPTOR.message_types_by_name['RecordReceipt']
-_RECORDBUILDERFROMSTRINGREQUEST = DESCRIPTOR.message_types_by_name['RecordBuilderFromStringRequest']
-_RECORDBUILDERFROMHEXREQUEST = DESCRIPTOR.message_types_by_name['RecordBuilderFromHexRequest']
-_RECORDBUILDERFROMJSONREQUEST = DESCRIPTOR.message_types_by_name['RecordBuilderFromJSONRequest']
-_RECORDBUILDERFROMBYTESREQUEST = DESCRIPTOR.message_types_by_name['RecordBuilderFromBytesRequest']
-_RECORDBUILDERFROMFILEREQUEST = DESCRIPTOR.message_types_by_name['RecordBuilderFromFileRequest']
-_RECORDBUILDERFROMRECORDREQUEST = DESCRIPTOR.message_types_by_name['RecordBuilderFromRecordRequest']
-_RECORDBUILDERRESPONSE = DESCRIPTOR.message_types_by_name['RecordBuilderResponse']
-_SENDRECORDSREQUEST = DESCRIPTOR.message_types_by_name['SendRecordsRequest']
-_SENDRECORDSRESPONSE = DESCRIPTOR.message_types_by_name['SendRecordsResponse']
-GenerateKeysRequest = _reflection.GeneratedProtocolMessageType('GenerateKeysRequest', (_message.Message,), {
-  'DESCRIPTOR' : _GENERATEKEYSREQUEST,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.GenerateKeysRequest)
-  })
+_GENERATEKEYSREQUEST = DESCRIPTOR.message_types_by_name["GenerateKeysRequest"]
+_GENERATEKEYSRESPONSE = DESCRIPTOR.message_types_by_name["GenerateKeysResponse"]
+_RECORDHASH = DESCRIPTOR.message_types_by_name["RecordHash"]
+_RECORDHEADER = DESCRIPTOR.message_types_by_name["RecordHeader"]
+_RECORD = DESCRIPTOR.message_types_by_name["Record"]
+_SIGNER = DESCRIPTOR.message_types_by_name["Signer"]
+_SIGNERARGS = DESCRIPTOR.message_types_by_name["SignerArgs"]
+_ENCRYPTER = DESCRIPTOR.message_types_by_name["Encrypter"]
+_ENCRYPTERARGS = DESCRIPTOR.message_types_by_name["EncrypterArgs"]
+_SIGNATURE = DESCRIPTOR.message_types_by_name["Signature"]
+_SIGNATUREHEADER = DESCRIPTOR.message_types_by_name["SignatureHeader"]
+_ENCRYPTION = DESCRIPTOR.message_types_by_name["Encryption"]
+_ENCRYPTIONHEADER = DESCRIPTOR.message_types_by_name["EncryptionHeader"]
+_RECORDRECEIPT = DESCRIPTOR.message_types_by_name["RecordReceipt"]
+_RECORDBUILDERFROMSTRINGREQUEST = DESCRIPTOR.message_types_by_name[
+    "RecordBuilderFromStringRequest"
+]
+_RECORDBUILDERFROMHEXREQUEST = DESCRIPTOR.message_types_by_name[
+    "RecordBuilderFromHexRequest"
+]
+_RECORDBUILDERFROMJSONREQUEST = DESCRIPTOR.message_types_by_name[
+    "RecordBuilderFromJSONRequest"
+]
+_RECORDBUILDERFROMBYTESREQUEST = DESCRIPTOR.message_types_by_name[
+    "RecordBuilderFromBytesRequest"
+]
+_RECORDBUILDERFROMFILEREQUEST = DESCRIPTOR.message_types_by_name[
+    "RecordBuilderFromFileRequest"
+]
+_RECORDBUILDERFROMRECORDREQUEST = DESCRIPTOR.message_types_by_name[
+    "RecordBuilderFromRecordRequest"
+]
+_RECORDBUILDERRESPONSE = DESCRIPTOR.message_types_by_name["RecordBuilderResponse"]
+_SENDRECORDSREQUEST = DESCRIPTOR.message_types_by_name["SendRecordsRequest"]
+_SENDRECORDSRESPONSE = DESCRIPTOR.message_types_by_name["SendRecordsResponse"]
+GenerateKeysRequest = _reflection.GeneratedProtocolMessageType(
+    "GenerateKeysRequest",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _GENERATEKEYSREQUEST,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.GenerateKeysRequest)
+    },
+)
 _sym_db.RegisterMessage(GenerateKeysRequest)
 
-GenerateKeysResponse = _reflection.GeneratedProtocolMessageType('GenerateKeysResponse', (_message.Message,), {
-  'DESCRIPTOR' : _GENERATEKEYSRESPONSE,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.GenerateKeysResponse)
-  })
+GenerateKeysResponse = _reflection.GeneratedProtocolMessageType(
+    "GenerateKeysResponse",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _GENERATEKEYSRESPONSE,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.GenerateKeysResponse)
+    },
+)
 _sym_db.RegisterMessage(GenerateKeysResponse)
 
-RecordHash = _reflection.GeneratedProtocolMessageType('RecordHash', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDHASH,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordHash)
-  })
+RecordHash = _reflection.GeneratedProtocolMessageType(
+    "RecordHash",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDHASH,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordHash)
+    },
+)
 _sym_db.RegisterMessage(RecordHash)
 
-RecordHeader = _reflection.GeneratedProtocolMessageType('RecordHeader', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDHEADER,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordHeader)
-  })
+RecordHeader = _reflection.GeneratedProtocolMessageType(
+    "RecordHeader",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDHEADER,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordHeader)
+    },
+)
 _sym_db.RegisterMessage(RecordHeader)
 
-Record = _reflection.GeneratedProtocolMessageType('Record', (_message.Message,), {
-  'DESCRIPTOR' : _RECORD,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.Record)
-  })
+Record = _reflection.GeneratedProtocolMessageType(
+    "Record",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORD,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.Record)
+    },
+)
 _sym_db.RegisterMessage(Record)
 
-Signer = _reflection.GeneratedProtocolMessageType('Signer', (_message.Message,), {
-  'DESCRIPTOR' : _SIGNER,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.Signer)
-  })
+Signer = _reflection.GeneratedProtocolMessageType(
+    "Signer",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _SIGNER,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.Signer)
+    },
+)
 _sym_db.RegisterMessage(Signer)
 
-SignerArgs = _reflection.GeneratedProtocolMessageType('SignerArgs', (_message.Message,), {
-  'DESCRIPTOR' : _SIGNERARGS,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.SignerArgs)
-  })
+SignerArgs = _reflection.GeneratedProtocolMessageType(
+    "SignerArgs",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _SIGNERARGS,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.SignerArgs)
+    },
+)
 _sym_db.RegisterMessage(SignerArgs)
 
-Encrypter = _reflection.GeneratedProtocolMessageType('Encrypter', (_message.Message,), {
-  'DESCRIPTOR' : _ENCRYPTER,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.Encrypter)
-  })
+Encrypter = _reflection.GeneratedProtocolMessageType(
+    "Encrypter",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _ENCRYPTER,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.Encrypter)
+    },
+)
 _sym_db.RegisterMessage(Encrypter)
 
-EncrypterArgs = _reflection.GeneratedProtocolMessageType('EncrypterArgs', (_message.Message,), {
-  'DESCRIPTOR' : _ENCRYPTERARGS,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.EncrypterArgs)
-  })
+EncrypterArgs = _reflection.GeneratedProtocolMessageType(
+    "EncrypterArgs",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _ENCRYPTERARGS,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.EncrypterArgs)
+    },
+)
 _sym_db.RegisterMessage(EncrypterArgs)
 
-Signature = _reflection.GeneratedProtocolMessageType('Signature', (_message.Message,), {
-  'DESCRIPTOR' : _SIGNATURE,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.Signature)
-  })
+Signature = _reflection.GeneratedProtocolMessageType(
+    "Signature",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _SIGNATURE,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.Signature)
+    },
+)
 _sym_db.RegisterMessage(Signature)
 
-SignatureHeader = _reflection.GeneratedProtocolMessageType('SignatureHeader', (_message.Message,), {
-  'DESCRIPTOR' : _SIGNATUREHEADER,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.SignatureHeader)
-  })
+SignatureHeader = _reflection.GeneratedProtocolMessageType(
+    "SignatureHeader",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _SIGNATUREHEADER,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.SignatureHeader)
+    },
+)
 _sym_db.RegisterMessage(SignatureHeader)
 
-Encryption = _reflection.GeneratedProtocolMessageType('Encryption', (_message.Message,), {
-  'DESCRIPTOR' : _ENCRYPTION,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.Encryption)
-  })
+Encryption = _reflection.GeneratedProtocolMessageType(
+    "Encryption",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _ENCRYPTION,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.Encryption)
+    },
+)
 _sym_db.RegisterMessage(Encryption)
 
-EncryptionHeader = _reflection.GeneratedProtocolMessageType('EncryptionHeader', (_message.Message,), {
-  'DESCRIPTOR' : _ENCRYPTIONHEADER,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.EncryptionHeader)
-  })
+EncryptionHeader = _reflection.GeneratedProtocolMessageType(
+    "EncryptionHeader",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _ENCRYPTIONHEADER,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.EncryptionHeader)
+    },
+)
 _sym_db.RegisterMessage(EncryptionHeader)
 
-RecordReceipt = _reflection.GeneratedProtocolMessageType('RecordReceipt', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDRECEIPT,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordReceipt)
-  })
+RecordReceipt = _reflection.GeneratedProtocolMessageType(
+    "RecordReceipt",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDRECEIPT,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordReceipt)
+    },
+)
 _sym_db.RegisterMessage(RecordReceipt)
 
-RecordBuilderFromStringRequest = _reflection.GeneratedProtocolMessageType('RecordBuilderFromStringRequest', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDBUILDERFROMSTRINGREQUEST,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromStringRequest)
-  })
+RecordBuilderFromStringRequest = _reflection.GeneratedProtocolMessageType(
+    "RecordBuilderFromStringRequest",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDBUILDERFROMSTRINGREQUEST,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromStringRequest)
+    },
+)
 _sym_db.RegisterMessage(RecordBuilderFromStringRequest)
 
-RecordBuilderFromHexRequest = _reflection.GeneratedProtocolMessageType('RecordBuilderFromHexRequest', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDBUILDERFROMHEXREQUEST,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromHexRequest)
-  })
+RecordBuilderFromHexRequest = _reflection.GeneratedProtocolMessageType(
+    "RecordBuilderFromHexRequest",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDBUILDERFROMHEXREQUEST,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromHexRequest)
+    },
+)
 _sym_db.RegisterMessage(RecordBuilderFromHexRequest)
 
-RecordBuilderFromJSONRequest = _reflection.GeneratedProtocolMessageType('RecordBuilderFromJSONRequest', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDBUILDERFROMJSONREQUEST,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromJSONRequest)
-  })
+RecordBuilderFromJSONRequest = _reflection.GeneratedProtocolMessageType(
+    "RecordBuilderFromJSONRequest",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDBUILDERFROMJSONREQUEST,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromJSONRequest)
+    },
+)
 _sym_db.RegisterMessage(RecordBuilderFromJSONRequest)
 
-RecordBuilderFromBytesRequest = _reflection.GeneratedProtocolMessageType('RecordBuilderFromBytesRequest', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDBUILDERFROMBYTESREQUEST,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromBytesRequest)
-  })
+RecordBuilderFromBytesRequest = _reflection.GeneratedProtocolMessageType(
+    "RecordBuilderFromBytesRequest",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDBUILDERFROMBYTESREQUEST,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromBytesRequest)
+    },
+)
 _sym_db.RegisterMessage(RecordBuilderFromBytesRequest)
 
-RecordBuilderFromFileRequest = _reflection.GeneratedProtocolMessageType('RecordBuilderFromFileRequest', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDBUILDERFROMFILEREQUEST,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromFileRequest)
-  })
+RecordBuilderFromFileRequest = _reflection.GeneratedProtocolMessageType(
+    "RecordBuilderFromFileRequest",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDBUILDERFROMFILEREQUEST,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromFileRequest)
+    },
+)
 _sym_db.RegisterMessage(RecordBuilderFromFileRequest)
 
-RecordBuilderFromRecordRequest = _reflection.GeneratedProtocolMessageType('RecordBuilderFromRecordRequest', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDBUILDERFROMRECORDREQUEST,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromRecordRequest)
-  })
+RecordBuilderFromRecordRequest = _reflection.GeneratedProtocolMessageType(
+    "RecordBuilderFromRecordRequest",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDBUILDERFROMRECORDREQUEST,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordBuilderFromRecordRequest)
+    },
+)
 _sym_db.RegisterMessage(RecordBuilderFromRecordRequest)
 
-RecordBuilderResponse = _reflection.GeneratedProtocolMessageType('RecordBuilderResponse', (_message.Message,), {
-  'DESCRIPTOR' : _RECORDBUILDERRESPONSE,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.RecordBuilderResponse)
-  })
+RecordBuilderResponse = _reflection.GeneratedProtocolMessageType(
+    "RecordBuilderResponse",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _RECORDBUILDERRESPONSE,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.RecordBuilderResponse)
+    },
+)
 _sym_db.RegisterMessage(RecordBuilderResponse)
 
-SendRecordsRequest = _reflection.GeneratedProtocolMessageType('SendRecordsRequest', (_message.Message,), {
-  'DESCRIPTOR' : _SENDRECORDSREQUEST,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.SendRecordsRequest)
-  })
+SendRecordsRequest = _reflection.GeneratedProtocolMessageType(
+    "SendRecordsRequest",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _SENDRECORDSREQUEST,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.SendRecordsRequest)
+    },
+)
 _sym_db.RegisterMessage(SendRecordsRequest)
 
-SendRecordsResponse = _reflection.GeneratedProtocolMessageType('SendRecordsResponse', (_message.Message,), {
-  'DESCRIPTOR' : _SENDRECORDSRESPONSE,
-  '__module__' : 'record_pb2'
-  # @@protoc_insertion_point(class_scope:bloock.SendRecordsResponse)
-  })
+SendRecordsResponse = _reflection.GeneratedProtocolMessageType(
+    "SendRecordsResponse",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _SENDRECORDSRESPONSE,
+        "__module__": "record_pb2"
+        # @@protoc_insertion_point(class_scope:bloock.SendRecordsResponse)
+    },
+)
 _sym_db.RegisterMessage(SendRecordsResponse)
 
-_RECORDSERVICE = DESCRIPTOR.services_by_name['RecordService']
+_RECORDSERVICE = DESCRIPTOR.services_by_name["RecordService"]
 if _descriptor._USE_C_DESCRIPTORS == False:
 
-  DESCRIPTOR._options = None
-  DESCRIPTOR._serialized_options = b'\n\034bloock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
-  _RECORDTYPES._serialized_start=2340
-  _RECORDTYPES._serialized_end=2417
-  _SIGNERALG._serialized_start=2419
-  _SIGNERALG._serialized_end=2442
-  _ENCRYPTERALG._serialized_start=2444
-  _ENCRYPTERALG._serialized_end=2471
-  _GENERATEKEYSREQUEST._serialized_start=65
-  _GENERATEKEYSREQUEST._serialized_end=86
-  _GENERATEKEYSRESPONSE._serialized_start=88
-  _GENERATEKEYSRESPONSE._serialized_end=194
-  _RECORDHASH._serialized_start=196
-  _RECORDHASH._serialized_end=267
-  _RECORDHEADER._serialized_start=269
-  _RECORDHEADER._serialized_end=295
-  _RECORD._serialized_start=298
-  _RECORD._serialized_end=506
-  _SIGNER._serialized_start=508
-  _SIGNER._serialized_end=582
-  _SIGNERARGS._serialized_start=584
-  _SIGNERARGS._serialized_end=638
-  _ENCRYPTER._serialized_start=640
-  _ENCRYPTER._serialized_end=723
-  _ENCRYPTERARGS._serialized_start=725
-  _ENCRYPTERARGS._serialized_end=772
-  _SIGNATURE._serialized_start=774
-  _SIGNATURE._serialized_end=864
-  _SIGNATUREHEADER._serialized_start=866
-  _SIGNATUREHEADER._serialized_end=909
-  _ENCRYPTION._serialized_start=911
-  _ENCRYPTION._serialized_end=984
-  _ENCRYPTIONHEADER._serialized_start=986
-  _ENCRYPTIONHEADER._serialized_end=1017
-  _RECORDRECEIPT._serialized_start=1019
-  _RECORDRECEIPT._serialized_end=1098
-  _RECORDBUILDERFROMSTRINGREQUEST._serialized_start=1101
-  _RECORDBUILDERFROMSTRINGREQUEST._serialized_end=1255
-  _RECORDBUILDERFROMHEXREQUEST._serialized_start=1258
-  _RECORDBUILDERFROMHEXREQUEST._serialized_end=1409
-  _RECORDBUILDERFROMJSONREQUEST._serialized_start=1412
-  _RECORDBUILDERFROMJSONREQUEST._serialized_end=1564
-  _RECORDBUILDERFROMBYTESREQUEST._serialized_start=1567
-  _RECORDBUILDERFROMBYTESREQUEST._serialized_end=1720
-  _RECORDBUILDERFROMFILEREQUEST._serialized_start=1723
-  _RECORDBUILDERFROMFILEREQUEST._serialized_end=1875
-  _RECORDBUILDERFROMRECORDREQUEST._serialized_start=1878
-  _RECORDBUILDERFROMRECORDREQUEST._serialized_end=2048
-  _RECORDBUILDERRESPONSE._serialized_start=2050
-  _RECORDBUILDERRESPONSE._serialized_end=2150
-  _SENDRECORDSREQUEST._serialized_start=2152
-  _SENDRECORDSREQUEST._serialized_end=2230
-  _SENDRECORDSRESPONSE._serialized_start=2232
-  _SENDRECORDSRESPONSE._serialized_end=2338
-  _RECORDSERVICE._serialized_start=2474
-  _RECORDSERVICE._serialized_end=3243
+    DESCRIPTOR._options = None
+    DESCRIPTOR._serialized_options = b"\n\034bloock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+    _RECORDTYPES._serialized_start = 2340
+    _RECORDTYPES._serialized_end = 2417
+    _SIGNERALG._serialized_start = 2419
+    _SIGNERALG._serialized_end = 2442
+    _ENCRYPTERALG._serialized_start = 2444
+    _ENCRYPTERALG._serialized_end = 2471
+    _GENERATEKEYSREQUEST._serialized_start = 65
+    _GENERATEKEYSREQUEST._serialized_end = 86
+    _GENERATEKEYSRESPONSE._serialized_start = 88
+    _GENERATEKEYSRESPONSE._serialized_end = 194
+    _RECORDHASH._serialized_start = 196
+    _RECORDHASH._serialized_end = 267
+    _RECORDHEADER._serialized_start = 269
+    _RECORDHEADER._serialized_end = 295
+    _RECORD._serialized_start = 298
+    _RECORD._serialized_end = 506
+    _SIGNER._serialized_start = 508
+    _SIGNER._serialized_end = 582
+    _SIGNERARGS._serialized_start = 584
+    _SIGNERARGS._serialized_end = 638
+    _ENCRYPTER._serialized_start = 640
+    _ENCRYPTER._serialized_end = 723
+    _ENCRYPTERARGS._serialized_start = 725
+    _ENCRYPTERARGS._serialized_end = 772
+    _SIGNATURE._serialized_start = 774
+    _SIGNATURE._serialized_end = 864
+    _SIGNATUREHEADER._serialized_start = 866
+    _SIGNATUREHEADER._serialized_end = 909
+    _ENCRYPTION._serialized_start = 911
+    _ENCRYPTION._serialized_end = 984
+    _ENCRYPTIONHEADER._serialized_start = 986
+    _ENCRYPTIONHEADER._serialized_end = 1017
+    _RECORDRECEIPT._serialized_start = 1019
+    _RECORDRECEIPT._serialized_end = 1098
+    _RECORDBUILDERFROMSTRINGREQUEST._serialized_start = 1101
+    _RECORDBUILDERFROMSTRINGREQUEST._serialized_end = 1255
+    _RECORDBUILDERFROMHEXREQUEST._serialized_start = 1258
+    _RECORDBUILDERFROMHEXREQUEST._serialized_end = 1409
+    _RECORDBUILDERFROMJSONREQUEST._serialized_start = 1412
+    _RECORDBUILDERFROMJSONREQUEST._serialized_end = 1564
+    _RECORDBUILDERFROMBYTESREQUEST._serialized_start = 1567
+    _RECORDBUILDERFROMBYTESREQUEST._serialized_end = 1720
+    _RECORDBUILDERFROMFILEREQUEST._serialized_start = 1723
+    _RECORDBUILDERFROMFILEREQUEST._serialized_end = 1875
+    _RECORDBUILDERFROMRECORDREQUEST._serialized_start = 1878
+    _RECORDBUILDERFROMRECORDREQUEST._serialized_end = 2048
+    _RECORDBUILDERRESPONSE._serialized_start = 2050
+    _RECORDBUILDERRESPONSE._serialized_end = 2150
+    _SENDRECORDSREQUEST._serialized_start = 2152
+    _SENDRECORDSREQUEST._serialized_end = 2230
+    _SENDRECORDSRESPONSE._serialized_start = 2232
+    _SENDRECORDSRESPONSE._serialized_end = 2338
+    _RECORDSERVICE._serialized_start = 2474
+    _RECORDSERVICE._serialized_end = 3243
 # @@protoc_insertion_point(module_scope)

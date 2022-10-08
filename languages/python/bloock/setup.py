@@ -25,9 +25,19 @@ def read(rel_path):
         return fp.read()
 
 
+def get_version(rel_path):
+    """Get version from file. Copied from pip: https://github.com/pypa/pip/blob/master/setup.py#L19"""
+    for line in read(rel_path).splitlines():
+        if line.startswith("__version__"):
+            # __version__ = "0.9"
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    raise RuntimeError("Unable to find version string.")
+
+
 setup(
     name="bloock-sdk",
-    version="0.1.0",
+    version=get_version("__init__.py"),
     description="Bloock library for Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
