@@ -1,4 +1,3 @@
-from typing import List
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
 from bloock._bridge.proto.config_pb2 import (
@@ -33,7 +32,7 @@ class Client:
     def set_network_config(self, network: Network.ValueType, config: NetworkConfig):
         self.confid_data.networks_config[network].CopyFrom(config)
 
-    def send_records(self, records: List[str]) -> list[RecordReceipt]:
+    def send_records(self, records: list[str]) -> list[RecordReceipt]:
         res = self.bridge_client.record().SendRecords(
             SendRecordsRequest(config_data=self.confid_data, records=records)
         )
