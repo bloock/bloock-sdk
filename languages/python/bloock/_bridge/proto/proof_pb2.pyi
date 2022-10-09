@@ -3,14 +3,13 @@
 isort:skip_file
 """
 import anchor_pb2
-import bloock_pb2
 import builtins
 import collections.abc
 import config_pb2
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
-import record_pb2
+import shared_pb2
 import sys
 import typing
 
@@ -30,9 +29,17 @@ class Proof(google.protobuf.message.Message):
     BITMAP_FIELD_NUMBER: builtins.int
     ANCHOR_FIELD_NUMBER: builtins.int
     @property
-    def leaves(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    def leaves(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        builtins.str
+    ]: ...
     @property
-    def nodes(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    def nodes(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        builtins.str
+    ]: ...
     depth: builtins.str
     bitmap: builtins.str
     @property
@@ -46,8 +53,24 @@ class Proof(google.protobuf.message.Message):
         bitmap: builtins.str = ...,
         anchor: global___ProofAnchor | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["anchor", b"anchor"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["anchor", b"anchor", "bitmap", b"bitmap", "depth", b"depth", "leaves", b"leaves", "nodes", b"nodes"]) -> None: ...
+    def HasField(
+        self, field_name: typing_extensions.Literal["anchor", b"anchor"]
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "anchor",
+            b"anchor",
+            "bitmap",
+            b"bitmap",
+            "depth",
+            b"depth",
+            "leaves",
+            b"leaves",
+            "nodes",
+            b"nodes",
+        ],
+    ) -> None: ...
 
 global___Proof = Proof
 
@@ -60,7 +83,11 @@ class ProofAnchor(google.protobuf.message.Message):
     STATUS_FIELD_NUMBER: builtins.int
     anchor_id: builtins.int
     @property
-    def networks(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[anchor_pb2.AnchorNetwork]: ...
+    def networks(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
+        anchor_pb2.AnchorNetwork
+    ]: ...
     root: builtins.str
     status: builtins.str
     def __init__(
@@ -71,7 +98,19 @@ class ProofAnchor(google.protobuf.message.Message):
         root: builtins.str = ...,
         status: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["anchor_id", b"anchor_id", "networks", b"networks", "root", b"root", "status", b"status"]) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "anchor_id",
+            b"anchor_id",
+            "networks",
+            b"networks",
+            "root",
+            b"root",
+            "status",
+            b"status",
+        ],
+    ) -> None: ...
 
 global___ProofAnchor = ProofAnchor
 
@@ -83,15 +122,26 @@ class GetProofRequest(google.protobuf.message.Message):
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
-    def records(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[record_pb2.Record]: ...
+    def records(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        builtins.str
+    ]: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        records: collections.abc.Iterable[record_pb2.Record] | None = ...,
+        records: collections.abc.Iterable[builtins.str] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "records", b"records"]) -> None: ...
+    def HasField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "records", b"records"
+        ],
+    ) -> None: ...
 
 global___GetProofRequest = GetProofRequest
 
@@ -103,16 +153,28 @@ class GetProofResponse(google.protobuf.message.Message):
     @property
     def proof(self) -> global___Proof: ...
     @property
-    def error(self) -> bloock_pb2.Error: ...
+    def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
         proof: global___Proof | None = ...,
-        error: bloock_pb2.Error | None = ...,
+        error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "proof", b"proof"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "proof", b"proof"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "error", b"error", "proof", b"proof"
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "error", b"error", "proof", b"proof"
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
 
 global___GetProofResponse = GetProofResponse
 
@@ -124,18 +186,24 @@ class ValidateRootRequest(google.protobuf.message.Message):
     NETWORK_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def root(self) -> record_pb2.Record: ...
+    root: builtins.str
     network: config_pb2.Network.ValueType
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        root: record_pb2.Record | None = ...,
+        root: builtins.str = ...,
         network: config_pb2.Network.ValueType = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "root", b"root"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "network", b"network", "root", b"root"]) -> None: ...
+    def HasField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "network", b"network", "root", b"root"
+        ],
+    ) -> None: ...
 
 global___ValidateRootRequest = ValidateRootRequest
 
@@ -147,16 +215,26 @@ class ValidateRootResponse(google.protobuf.message.Message):
     timestamp: builtins.int
     """TODO Should be u128"""
     @property
-    def error(self) -> bloock_pb2.Error: ...
+    def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
         timestamp: builtins.int = ...,
-        error: bloock_pb2.Error | None = ...,
+        error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "timestamp", b"timestamp"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "error", b"error", "timestamp", b"timestamp"
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
 
 global___ValidateRootResponse = ValidateRootResponse
 
@@ -175,8 +253,18 @@ class VerifyProofRequest(google.protobuf.message.Message):
         config_data: config_pb2.ConfigData | None = ...,
         proof: global___Proof | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "proof", b"proof"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "proof", b"proof"]) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "proof", b"proof"
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "proof", b"proof"
+        ],
+    ) -> None: ...
 
 global___VerifyProofRequest = VerifyProofRequest
 
@@ -185,22 +273,49 @@ class VerifyProofResponse(google.protobuf.message.Message):
 
     RECORD_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
+    record: builtins.str
     @property
-    def record(self) -> record_pb2.Record: ...
-    @property
-    def error(self) -> bloock_pb2.Error: ...
+    def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
-        record: record_pb2.Record | None = ...,
-        error: bloock_pb2.Error | None = ...,
+        record: builtins.str | None = ...,
+        error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "_record", b"_record", "error", b"error", "record", b"record"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "_record", b"_record", "error", b"error", "record", b"record"]) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error",
+            b"_error",
+            "_record",
+            b"_record",
+            "error",
+            b"error",
+            "record",
+            b"record",
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error",
+            b"_error",
+            "_record",
+            b"_record",
+            "error",
+            b"error",
+            "record",
+            b"record",
+        ],
+    ) -> None: ...
     @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
     @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_record", b"_record"]) -> typing_extensions.Literal["record"] | None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_record", b"_record"]
+    ) -> typing_extensions.Literal["record"] | None: ...
 
 global___VerifyProofResponse = VerifyProofResponse
 
@@ -213,18 +328,46 @@ class VerifyRecordsRequest(google.protobuf.message.Message):
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
-    def records(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[record_pb2.Record]: ...
+    def records(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        builtins.str
+    ]: ...
     network: config_pb2.Network.ValueType
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        records: collections.abc.Iterable[record_pb2.Record] | None = ...,
+        records: collections.abc.Iterable[builtins.str] | None = ...,
         network: config_pb2.Network.ValueType | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_network", b"_network", "config_data", b"config_data", "network", b"network"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_network", b"_network", "config_data", b"config_data", "network", b"network", "records", b"records"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_network", b"_network"]) -> typing_extensions.Literal["network"] | None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_network",
+            b"_network",
+            "config_data",
+            b"config_data",
+            "network",
+            b"network",
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_network",
+            b"_network",
+            "config_data",
+            b"config_data",
+            "network",
+            b"network",
+            "records",
+            b"records",
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_network", b"_network"]
+    ) -> typing_extensions.Literal["network"] | None: ...
 
 global___VerifyRecordsRequest = VerifyRecordsRequest
 
@@ -236,15 +379,25 @@ class VerifyRecordsResponse(google.protobuf.message.Message):
     timestamp: builtins.int
     """TODO Should be u128"""
     @property
-    def error(self) -> bloock_pb2.Error: ...
+    def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
         timestamp: builtins.int = ...,
-        error: bloock_pb2.Error | None = ...,
+        error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "timestamp", b"timestamp"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "error", b"error", "timestamp", b"timestamp"
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
 
 global___VerifyRecordsResponse = VerifyRecordsResponse

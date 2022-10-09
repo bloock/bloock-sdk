@@ -26,6 +26,15 @@ jobs:
     secrets:
       repo_api_token: ${{ secrets.REPO_API_TOKEN }}
 
+  publish_python:
+    needs: [mark-latest]
+    uses: ./.github/workflows/publish_python.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      twine_username: ${{ secrets.TWINE_USERNAME }}
+      twine_password: ${{ secrets.TWINE_PASSWORD }}
+
   publish_js:
     needs: [mark-latest]
     uses: ./.github/workflows/publish_js.yml

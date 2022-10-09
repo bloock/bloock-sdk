@@ -15,30 +15,50 @@ class RecordServiceStub(object):
             channel: A grpc.Channel.
         """
         self.SendRecords = channel.unary_unary(
-                '/bloock.RecordService/SendRecords',
-                request_serializer=record__pb2.SendRecordsRequest.SerializeToString,
-                response_deserializer=record__pb2.SendRecordsResponse.FromString,
-                )
-        self.FromHash = channel.unary_unary(
-                '/bloock.RecordService/FromHash',
-                request_serializer=record__pb2.FromHashRequest.SerializeToString,
-                response_deserializer=record__pb2.Record.FromString,
-                )
-        self.FromHex = channel.unary_unary(
-                '/bloock.RecordService/FromHex',
-                request_serializer=record__pb2.FromHexRequest.SerializeToString,
-                response_deserializer=record__pb2.FromHexResponse.FromString,
-                )
-        self.FromString = channel.unary_unary(
-                '/bloock.RecordService/FromString',
-                request_serializer=record__pb2.FromStringRequest.SerializeToString,
-                response_deserializer=record__pb2.Record.FromString,
-                )
-        self.FromTypedArray = channel.unary_unary(
-                '/bloock.RecordService/FromTypedArray',
-                request_serializer=record__pb2.FromTypedArrayRequest.SerializeToString,
-                response_deserializer=record__pb2.Record.FromString,
-                )
+            "/bloock.RecordService/SendRecords",
+            request_serializer=record__pb2.SendRecordsRequest.SerializeToString,
+            response_deserializer=record__pb2.SendRecordsResponse.FromString,
+        )
+        self.BuildRecordFromString = channel.unary_unary(
+            "/bloock.RecordService/BuildRecordFromString",
+            request_serializer=record__pb2.RecordBuilderFromStringRequest.SerializeToString,
+            response_deserializer=record__pb2.RecordBuilderResponse.FromString,
+        )
+        self.BuildRecordFromHex = channel.unary_unary(
+            "/bloock.RecordService/BuildRecordFromHex",
+            request_serializer=record__pb2.RecordBuilderFromHexRequest.SerializeToString,
+            response_deserializer=record__pb2.RecordBuilderResponse.FromString,
+        )
+        self.BuildRecordFromJson = channel.unary_unary(
+            "/bloock.RecordService/BuildRecordFromJson",
+            request_serializer=record__pb2.RecordBuilderFromJSONRequest.SerializeToString,
+            response_deserializer=record__pb2.RecordBuilderResponse.FromString,
+        )
+        self.BuildRecordFromFile = channel.unary_unary(
+            "/bloock.RecordService/BuildRecordFromFile",
+            request_serializer=record__pb2.RecordBuilderFromFileRequest.SerializeToString,
+            response_deserializer=record__pb2.RecordBuilderResponse.FromString,
+        )
+        self.BuildRecordFromBytes = channel.unary_unary(
+            "/bloock.RecordService/BuildRecordFromBytes",
+            request_serializer=record__pb2.RecordBuilderFromBytesRequest.SerializeToString,
+            response_deserializer=record__pb2.RecordBuilderResponse.FromString,
+        )
+        self.BuildRecordFromRecord = channel.unary_unary(
+            "/bloock.RecordService/BuildRecordFromRecord",
+            request_serializer=record__pb2.RecordBuilderFromRecordRequest.SerializeToString,
+            response_deserializer=record__pb2.RecordBuilderResponse.FromString,
+        )
+        self.GetHash = channel.unary_unary(
+            "/bloock.RecordService/GetHash",
+            request_serializer=record__pb2.Record.SerializeToString,
+            response_deserializer=record__pb2.RecordHash.FromString,
+        )
+        self.GenerateKeys = channel.unary_unary(
+            "/bloock.RecordService/GenerateKeys",
+            request_serializer=record__pb2.GenerateKeysRequest.SerializeToString,
+            response_deserializer=record__pb2.GenerateKeysResponse.FromString,
+        )
 
 
 class RecordServiceServicer(object):
@@ -47,152 +67,373 @@ class RecordServiceServicer(object):
     def SendRecords(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
-    def FromHash(self, request, context):
+    def BuildRecordFromString(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
-    def FromHex(self, request, context):
+    def BuildRecordFromHex(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
-    def FromString(self, request, context):
+    def BuildRecordFromJson(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
-    def FromTypedArray(self, request, context):
+    def BuildRecordFromFile(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def BuildRecordFromBytes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def BuildRecordFromRecord(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def GetHash(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def GenerateKeys(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_RecordServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'SendRecords': grpc.unary_unary_rpc_method_handler(
-                    servicer.SendRecords,
-                    request_deserializer=record__pb2.SendRecordsRequest.FromString,
-                    response_serializer=record__pb2.SendRecordsResponse.SerializeToString,
-            ),
-            'FromHash': grpc.unary_unary_rpc_method_handler(
-                    servicer.FromHash,
-                    request_deserializer=record__pb2.FromHashRequest.FromString,
-                    response_serializer=record__pb2.Record.SerializeToString,
-            ),
-            'FromHex': grpc.unary_unary_rpc_method_handler(
-                    servicer.FromHex,
-                    request_deserializer=record__pb2.FromHexRequest.FromString,
-                    response_serializer=record__pb2.FromHexResponse.SerializeToString,
-            ),
-            'FromString': grpc.unary_unary_rpc_method_handler(
-                    servicer.FromString,
-                    request_deserializer=record__pb2.FromStringRequest.FromString,
-                    response_serializer=record__pb2.Record.SerializeToString,
-            ),
-            'FromTypedArray': grpc.unary_unary_rpc_method_handler(
-                    servicer.FromTypedArray,
-                    request_deserializer=record__pb2.FromTypedArrayRequest.FromString,
-                    response_serializer=record__pb2.Record.SerializeToString,
-            ),
+        "SendRecords": grpc.unary_unary_rpc_method_handler(
+            servicer.SendRecords,
+            request_deserializer=record__pb2.SendRecordsRequest.FromString,
+            response_serializer=record__pb2.SendRecordsResponse.SerializeToString,
+        ),
+        "BuildRecordFromString": grpc.unary_unary_rpc_method_handler(
+            servicer.BuildRecordFromString,
+            request_deserializer=record__pb2.RecordBuilderFromStringRequest.FromString,
+            response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
+        ),
+        "BuildRecordFromHex": grpc.unary_unary_rpc_method_handler(
+            servicer.BuildRecordFromHex,
+            request_deserializer=record__pb2.RecordBuilderFromHexRequest.FromString,
+            response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
+        ),
+        "BuildRecordFromJson": grpc.unary_unary_rpc_method_handler(
+            servicer.BuildRecordFromJson,
+            request_deserializer=record__pb2.RecordBuilderFromJSONRequest.FromString,
+            response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
+        ),
+        "BuildRecordFromFile": grpc.unary_unary_rpc_method_handler(
+            servicer.BuildRecordFromFile,
+            request_deserializer=record__pb2.RecordBuilderFromFileRequest.FromString,
+            response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
+        ),
+        "BuildRecordFromBytes": grpc.unary_unary_rpc_method_handler(
+            servicer.BuildRecordFromBytes,
+            request_deserializer=record__pb2.RecordBuilderFromBytesRequest.FromString,
+            response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
+        ),
+        "BuildRecordFromRecord": grpc.unary_unary_rpc_method_handler(
+            servicer.BuildRecordFromRecord,
+            request_deserializer=record__pb2.RecordBuilderFromRecordRequest.FromString,
+            response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
+        ),
+        "GetHash": grpc.unary_unary_rpc_method_handler(
+            servicer.GetHash,
+            request_deserializer=record__pb2.Record.FromString,
+            response_serializer=record__pb2.RecordHash.SerializeToString,
+        ),
+        "GenerateKeys": grpc.unary_unary_rpc_method_handler(
+            servicer.GenerateKeys,
+            request_deserializer=record__pb2.GenerateKeysRequest.FromString,
+            response_serializer=record__pb2.GenerateKeysResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'bloock.RecordService', rpc_method_handlers)
+        "bloock.RecordService", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class RecordService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def SendRecords(request,
+    def SendRecords(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/bloock.RecordService/SendRecords',
+            "/bloock.RecordService/SendRecords",
             record__pb2.SendRecordsRequest.SerializeToString,
             record__pb2.SendRecordsResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def FromHash(request,
+    def BuildRecordFromString(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/bloock.RecordService/FromHash',
-            record__pb2.FromHashRequest.SerializeToString,
-            record__pb2.Record.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            "/bloock.RecordService/BuildRecordFromString",
+            record__pb2.RecordBuilderFromStringRequest.SerializeToString,
+            record__pb2.RecordBuilderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def FromHex(request,
+    def BuildRecordFromHex(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/bloock.RecordService/FromHex',
-            record__pb2.FromHexRequest.SerializeToString,
-            record__pb2.FromHexResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            "/bloock.RecordService/BuildRecordFromHex",
+            record__pb2.RecordBuilderFromHexRequest.SerializeToString,
+            record__pb2.RecordBuilderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def FromString(request,
+    def BuildRecordFromJson(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/bloock.RecordService/FromString',
-            record__pb2.FromStringRequest.SerializeToString,
-            record__pb2.Record.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            "/bloock.RecordService/BuildRecordFromJson",
+            record__pb2.RecordBuilderFromJSONRequest.SerializeToString,
+            record__pb2.RecordBuilderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def FromTypedArray(request,
+    def BuildRecordFromFile(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/bloock.RecordService/FromTypedArray',
-            record__pb2.FromTypedArrayRequest.SerializeToString,
-            record__pb2.Record.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            "/bloock.RecordService/BuildRecordFromFile",
+            record__pb2.RecordBuilderFromFileRequest.SerializeToString,
+            record__pb2.RecordBuilderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def BuildRecordFromBytes(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/bloock.RecordService/BuildRecordFromBytes",
+            record__pb2.RecordBuilderFromBytesRequest.SerializeToString,
+            record__pb2.RecordBuilderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def BuildRecordFromRecord(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/bloock.RecordService/BuildRecordFromRecord",
+            record__pb2.RecordBuilderFromRecordRequest.SerializeToString,
+            record__pb2.RecordBuilderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def GetHash(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/bloock.RecordService/GetHash",
+            record__pb2.Record.SerializeToString,
+            record__pb2.RecordHash.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def GenerateKeys(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/bloock.RecordService/GenerateKeys",
+            record__pb2.GenerateKeysRequest.SerializeToString,
+            record__pb2.GenerateKeysResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )

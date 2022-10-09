@@ -1,17 +1,37 @@
 from cffi import FFI
 from typing import List
 import sys
+import os
+import platform
 
 ffi_builder = FFI()
 
-lib_dirs = "./bloock/_ffi/native/aarch64-apple-darwin"
-include_dir = "./bloock/_ffi/native"
+env = os.environ.get("BLOOCK_ENV", "DEVELOPMENT")
+
+if env == "CI":
+    lib_dirs = "./_ffi/native"
+else:
+    if sys.platform.startswith("linux"):
+        lib_dirs = "./_ffi/native/x86_64-unknown-linux-gnu"
+    elif sys.platform.startswith("win"):
+        lib_dirs = "./_ffi/native/x86_64-pc-windows-gnu"
+    elif platform.machine() == "x86_64" and sys.platform.startswith("darwin"):
+        lib_dirs = "./_ffi/native/x86_64-apple-darwin"
+    else:
+        lib_dirs = "./_ffi/native/aarch64-apple-darwin"
+
+
+include_dir = "./_ffi/native"
+
 libs: List[str] = []
 if sys.platform.startswith("win"):
     libs.extend(
         (
-            f"{lib_dirs}/polar.lib",
+            f"{lib_dirs}/libbloock_bridge.lib",
             "Ws2_32.lib",
+            "advapi32.lib",
+            "userenv.lib",
+            "bcrypt.lib",
         )
     )
 elif sys.platform.startswith("darwin"):
