@@ -46,7 +46,7 @@ setup(
         "License :: OSI Approved :: Apache Software License",
     ],
     packages=find_packages(exclude=["tests", "tests.*"]),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     setup_requires=["cffi>=1.0.0", "wheel"],
     cffi_modules=["_ffi/build.py:ffi_builder"],
     install_requires=install_requires,

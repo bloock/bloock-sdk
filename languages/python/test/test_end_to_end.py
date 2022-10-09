@@ -2,7 +2,6 @@ import os
 import unittest
 from bloock._bridge.proto.config_pb2 import Network
 from bloock.client.builder import RecordBuilder
-
 from bloock.client.client import Client
 from bloock.client.entity.signer import EcsdaSigner
 
@@ -90,7 +89,8 @@ class TestE2E(unittest.TestCase):
 
         root = self.client.verify_proof(proof)
 
-        timestamp_validate_root = self.client.validate_root(root, Network.BLOOCK_CHAIN)
+        timestamp_validate_root = self.client.validate_root(
+            root, Network.BLOOCK_CHAIN)
         self.assertGreater(timestamp_validate_root, 0)
 
         timestamp_verify_records = self.client.verify_records(
