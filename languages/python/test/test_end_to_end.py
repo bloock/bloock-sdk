@@ -89,8 +89,7 @@ class TestE2E(unittest.TestCase):
 
         root = self.client.verify_proof(proof)
 
-        timestamp_validate_root = self.client.validate_root(
-            root, Network.BLOOCK_CHAIN)
+        timestamp_validate_root = self.client.validate_root(root, Network.BLOOCK_CHAIN)
         self.assertGreater(timestamp_validate_root, 0)
 
         timestamp_verify_records = self.client.verify_records(
