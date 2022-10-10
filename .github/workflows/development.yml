@@ -87,7 +87,7 @@ jobs:
     uses: ./.github/workflows/test_python.yml
     with:
       os: ubuntu-latest
-      python-version: "3.10"
+      python-version: "3.7"
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
