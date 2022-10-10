@@ -17,11 +17,22 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: bloock_core_lib_static
-      - name: Copy static library.
+      - name: Copy library headers.
         run: |
           mkdir -p languages/python/bloock/native
-          cp -r bloock_core_lib_static/libbloock_bridge_x86_64-unknown-linux-musl.a languages/python/bloock/_ffi/native/libbloock_bridge.a
           cp -r bloock_core_lib_static/bloock_bridge.h languages/python/bloock/_ffi/native/bloock_bridge.h
+      - name: Copy static library.
+        if: ${{ inputs.os }} == 'ubuntu-latest'
+        run: |
+          cp -r bloock_core_lib_static/libbloock_bridge_x86_64-unknown-linux-musl.a languages/python/bloock/_ffi/native/libbloock_bridge.a
+      - name: Copy static library.
+        if: ${{ inputs.os }} == 'macos-latest'
+        run: |
+          cp -r bloock_core_lib_static/libbloock_bridge-fat.a languages/python/bloock/_ffi/native/libbloock_bridge.a
+      - name: Copy static library.
+        if: ${{ inputs.os }} == 'windows-latest'
+        run: |
+          cp -r bloock_core_lib_static/bloock_bridge_windows.lib languages/python/bloock/_ffi/native/libbloock_bridge.lib
       - name: Copy in readme
         run: |
           cp README.md languages/python/bloock/README.md
