@@ -1,11 +1,12 @@
 from __future__ import annotations
+from typing import List
 import bloock._bridge.proto.proof_pb2 as proto
 from bloock.client.entity.anchor import AnchorNetwork
 
 
 class ProofAnchor:
     def __init__(
-        self, anchor_id: int, networks: list[AnchorNetwork], root: str, status: str
+        self, anchor_id: int, networks: List[AnchorNetwork], root: str, status: str
     ) -> None:
         self.anchor_id = anchor_id
         self.networks = networks
@@ -33,8 +34,8 @@ class ProofAnchor:
 class Proof:
     def __init__(
         self,
-        leaves: list[str],
-        nodes: list[str],
+        leaves: List[str],
+        nodes: List[str],
         depth: str,
         bitmap: str,
         anchor: ProofAnchor,

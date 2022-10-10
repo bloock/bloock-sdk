@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 from bloock._bridge import bridge
 import bloock._bridge.proto.record_pb2 as proto
 from bloock._bridge.proto.shared_pb2 import Error
@@ -86,7 +87,7 @@ class Record:
         self,
         headers: RecordHeader,
         payload: bytes,
-        signatures: list[Signature],
+        signatures: List[Signature],
         encryption: Encryption,
         proof: Proof,
     ) -> None:

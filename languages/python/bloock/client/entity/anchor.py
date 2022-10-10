@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 import bloock._bridge.proto.anchor_pb2 as proto
 
 
@@ -6,8 +7,8 @@ class Anchor:
     def __init__(
         self,
         id: int,
-        block_roots: list[str],
-        networks: list[AnchorNetwork],
+        block_roots: List[str],
+        networks: List[AnchorNetwork],
         root: str,
         status: str,
     ) -> None:

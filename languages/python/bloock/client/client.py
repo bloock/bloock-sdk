@@ -1,3 +1,4 @@
+from typing import List
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
 from bloock._bridge.proto.config_pb2 import (
@@ -32,7 +33,7 @@ class Client:
     def set_network_config(self, network: Network.ValueType, config: NetworkConfig):
         self.config_data.networks_config[network].CopyFrom(config)
 
-    def send_records(self, records: list[str]) -> list[RecordReceipt]:
+    def send_records(self, records: List[str]) -> List[RecordReceipt]:
         res = self.bridge_client.record().SendRecords(
             SendRecordsRequest(config_data=self.config_data, records=records)
         )
@@ -63,7 +64,7 @@ class Client:
 
         return Anchor.from_proto(res.anchor)
 
-    def get_proof(self, records: list[str]) -> Proof:
+    def get_proof(self, records: List[str]) -> Proof:
         res = self.bridge_client.proof().GetProof(
             GetProofRequest(config_data=self.config_data, records=records)
         )
@@ -83,7 +84,7 @@ class Client:
 
         return res.record
 
-    def verify_records(self, records: list[str], network=Network.BLOOCK_CHAIN) -> int:
+    def verify_records(self, records: List[str], network=Network.BLOOCK_CHAIN) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
                 config_data=self.config_data, records=records, network=network
