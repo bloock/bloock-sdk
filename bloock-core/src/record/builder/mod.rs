@@ -13,6 +13,13 @@ use super::{document::types::PayloadType, entity::record::Record, RecordError};
 pub struct RecordBuilder {}
 
 impl RecordBuilder {
+    pub fn from_raw(record: String) -> Builder {
+        let bytes = record.as_bytes().to_vec();
+        match Document::deserialize(bytes.clone()) {
+            Ok(d) => Builder::from_document(d),
+            Err(_) => Self::from_file(bytes),
+        }
+    }
     pub fn from_record(record: Record) -> BloockResult<Builder> {
         match record.document {
             Some(d) => Ok(Builder::from_document(d)),
