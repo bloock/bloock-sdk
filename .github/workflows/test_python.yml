@@ -34,8 +34,8 @@ jobs:
           name: wheel
       - name: "test"
         run: |
-          pip install bloock_sdk==${{ steps.version.outputs.bloock_version }} -f ../../wheel --no-deps --no-index
-          pip install bloock_sdk==${{ steps.version.outputs.bloock_version }} -f ../../wheel
+          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../wheel --no-deps --no-index
+          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../wheel
           python3 -m unittest
         working-directory: languages/python
         env:
