@@ -34,7 +34,7 @@ def get_version(rel_path):
 
 
 setup(
-    name="bloock_sdk",
+    name="bloock",
     version=get_version("__init__.py"),
     description="Bloock library for Python",
     long_description=long_description,
