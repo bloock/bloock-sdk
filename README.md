@@ -23,6 +23,13 @@
 - Check our full documentation at [docs.bloock.com](https://docs.bloock.com).
 
 
+## Support
+
+If you need help, you can join our Discord server where our engineering team will be happy to help you:
+
+![Join Discord](https://invidget.switchblade.xyz/4SrHRtJZep)
+
+
 ## Language support
 
 |  Language  | Requirements                    | Source        | Link        | Support  |
