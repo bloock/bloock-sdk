@@ -15,15 +15,15 @@ class AnchorServiceStub(object):
             channel: A grpc.Channel.
         """
         self.GetAnchor = channel.unary_unary(
-            "/bloock.AnchorService/GetAnchor",
-            request_serializer=anchor__pb2.GetAnchorRequest.SerializeToString,
-            response_deserializer=anchor__pb2.GetAnchorResponse.FromString,
-        )
+                '/bloock.AnchorService/GetAnchor',
+                request_serializer=anchor__pb2.GetAnchorRequest.SerializeToString,
+                response_deserializer=anchor__pb2.GetAnchorResponse.FromString,
+                )
         self.WaitAnchor = channel.unary_unary(
-            "/bloock.AnchorService/WaitAnchor",
-            request_serializer=anchor__pb2.WaitAnchorRequest.SerializeToString,
-            response_deserializer=anchor__pb2.WaitAnchorResponse.FromString,
-        )
+                '/bloock.AnchorService/WaitAnchor',
+                request_serializer=anchor__pb2.WaitAnchorRequest.SerializeToString,
+                response_deserializer=anchor__pb2.WaitAnchorResponse.FromString,
+                )
 
 
 class AnchorServiceServicer(object):
@@ -32,93 +32,68 @@ class AnchorServiceServicer(object):
     def GetAnchor(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def WaitAnchor(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_AnchorServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "GetAnchor": grpc.unary_unary_rpc_method_handler(
-            servicer.GetAnchor,
-            request_deserializer=anchor__pb2.GetAnchorRequest.FromString,
-            response_serializer=anchor__pb2.GetAnchorResponse.SerializeToString,
-        ),
-        "WaitAnchor": grpc.unary_unary_rpc_method_handler(
-            servicer.WaitAnchor,
-            request_deserializer=anchor__pb2.WaitAnchorRequest.FromString,
-            response_serializer=anchor__pb2.WaitAnchorResponse.SerializeToString,
-        ),
+            'GetAnchor': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAnchor,
+                    request_deserializer=anchor__pb2.GetAnchorRequest.FromString,
+                    response_serializer=anchor__pb2.GetAnchorResponse.SerializeToString,
+            ),
+            'WaitAnchor': grpc.unary_unary_rpc_method_handler(
+                    servicer.WaitAnchor,
+                    request_deserializer=anchor__pb2.WaitAnchorRequest.FromString,
+                    response_serializer=anchor__pb2.WaitAnchorResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "bloock.AnchorService", rpc_method_handlers
-    )
+            'bloock.AnchorService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class AnchorService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetAnchor(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetAnchor(request,
             target,
-            "/bloock.AnchorService/GetAnchor",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.AnchorService/GetAnchor',
             anchor__pb2.GetAnchorRequest.SerializeToString,
             anchor__pb2.GetAnchorResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def WaitAnchor(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def WaitAnchor(request,
             target,
-            "/bloock.AnchorService/WaitAnchor",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.AnchorService/WaitAnchor',
             anchor__pb2.WaitAnchorRequest.SerializeToString,
             anchor__pb2.WaitAnchorResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
