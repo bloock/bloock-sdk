@@ -359,11 +359,16 @@ mod tests {
             document_type,
             "Unexpected type received"
         );
+
         assert_eq!(
-            payload.as_bytes(),
+            "Some string".as_bytes().to_vec(),
             document_payload,
             "Unexpected payload received"
         );
+
+        assert!(document.proof.is_some());
+        assert!(document.signatures.is_some());
+        assert!(document.encryption.is_some());
     }
 
     #[test]
