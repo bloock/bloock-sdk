@@ -10,9 +10,9 @@ build: copy_lib proto
 	echo "Building..."
 	rm -rf build
 	rm -f _bloock_lib.abi3.so
+	pip3 install -r requirements.txt
 	python3 setup.py build
 	pip3 install --editable .
-	pip3 install -r requirements.txt
 
 dev: copy_lib proto build
 	python3 main.py
