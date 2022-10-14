@@ -2,9 +2,9 @@ from typing import List
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
 from bloock._bridge.proto.config_pb2 import (
+    Network as NetworkProto,
     ConfigData,
     Configuration,
-    Network,
     NetworkConfig,
 )
 from bloock._bridge.proto.proof_pb2 import (
@@ -16,6 +16,7 @@ from bloock._bridge.proto.proof_pb2 import (
 from bloock._bridge.proto.record_pb2 import GenerateKeysRequest, SendRecordsRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.client.entity.anchor import Anchor
+from bloock.client.entity.network import Network
 from bloock.client.entity.proof import Proof
 from bloock.client.entity.record import Keys, RecordReceipt
 
@@ -30,8 +31,8 @@ class Client:
     def set_api_host(self, host: str):
         self.config_data.config.host = host
 
-    def set_network_config(self, network: Network.ValueType, config: NetworkConfig):
-        self.config_data.networks_config[network].CopyFrom(config)
+    def set_network_config(self, network: Network, config: NetworkConfig):
+        self.config_data.networks_config[int(network)].CopyFrom(config)
 
     def send_records(self, records: List[str]) -> List[RecordReceipt]:
         res = self.bridge_client.record().SendRecords(
@@ -87,7 +88,9 @@ class Client:
     def verify_records(self, records: List[str], network=Network.BLOOCK_CHAIN) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
-                config_data=self.config_data, records=records, network=network
+                config_data=self.config_data,
+                records=records,
+                network=NetworkProto.ValueType(int(network)),
             )
         )
 
@@ -96,10 +99,12 @@ class Client:
 
         return res.timestamp
 
-    def validate_root(self, root: str, network: Network.ValueType) -> int:
+    def validate_root(self, root: str, network: Network) -> int:
         res = self.bridge_client.proof().ValidateRoot(
             ValidateRootRequest(
-                config_data=self.config_data, root=root, network=network
+                config_data=self.config_data,
+                root=root,
+                network=NetworkProto.ValueType(int(network)),
             )
         )
 

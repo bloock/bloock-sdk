@@ -7,7 +7,12 @@ proto:
 	sed -i 's/^\(import.*_pb2\)/from . \1/' bloock/_bridge/proto/*.py
 
 build: copy_lib proto
-	$(MAKE) -C bloock build
+	echo "Building..."
+	rm -rf build
+	rm -f _bloock_lib.abi3.so
+	python3 setup.py build
+	pip3 install --editable .
+	pip3 install -r requirements.txt
 
 dev: copy_lib proto build
 	python3 main.py
