@@ -9,19 +9,19 @@ ffi_builder = FFI()
 env = os.environ.get("BLOOCK_ENV", "DEVELOPMENT")
 
 if env == "CI":
-    lib_dirs = "./_ffi/native"
+    lib_dirs = "bloock/_ffi/native"
 else:
     if sys.platform.startswith("linux"):
-        lib_dirs = "./_ffi/native/x86_64-unknown-linux-gnu"
+        lib_dirs = "bloock/_ffi/native/x86_64-unknown-linux-musl"
     elif sys.platform.startswith("win"):
-        lib_dirs = "./_ffi/native/x86_64-pc-windows-gnu"
+        lib_dirs = "bloock/_ffi/native/x86_64-pc-windows-gnu"
     elif platform.machine() == "x86_64" and sys.platform.startswith("darwin"):
-        lib_dirs = "./_ffi/native/x86_64-apple-darwin"
+        lib_dirs = "bloock/_ffi/native/x86_64-apple-darwin"
     else:
-        lib_dirs = "./_ffi/native/aarch64-apple-darwin"
+        lib_dirs = "bloock/_ffi/native/aarch64-apple-darwin"
 
 
-include_dir = "./_ffi/native"
+include_dir = "bloock/_ffi/native"
 
 libs: List[str] = []
 if sys.platform.startswith("win"):

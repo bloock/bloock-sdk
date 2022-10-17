@@ -7,7 +7,8 @@ import {
   RecordBuilderFromHexRequest,
   RecordBuilderFromBytesRequest,
   RecordBuilderFromFileRequest,
-  RecordBuilderFromRecordRequest
+  RecordBuilderFromRecordRequest,
+  RecordBuilderFromRawRequest
 } from "./bridge/proto/record";
 
 import { Record } from "./entity/record";
@@ -46,6 +47,10 @@ export class RecordBuilder {
 
   public static fromRecord(bytes: Record): RecordBuilder {
     return new RecordBuilder(bytes, RecordTypes.RECORD);
+  }
+
+  public static fromRaw(raw: string): RecordBuilder {
+    return new RecordBuilder(raw, RecordTypes.RAW);
   }
 
   public withSigner(signer: Signer): RecordBuilder {
@@ -141,6 +146,20 @@ export class RecordBuilder {
         return bridge
           .getRecord()
           .BuildRecordFromRecord(req)
+          .then(res => {
+            return Record.fromProto(res.record!);
+          });
+      }
+      case RecordTypes.RAW: {
+        const req = RecordBuilderFromRawRequest.fromPartial({
+          payload: this.payload,
+          signer: this.signer,
+          encrypter: this.encrypter
+        });
+
+        return bridge
+          .getRecord()
+          .BuildRecordFromRaw(req)
           .then(res => {
             return Record.fromProto(res.record!);
           });

@@ -247,6 +247,14 @@ impl RecordServiceHandler for RecordServer {
         };
         build_record(builder, req.signer, req.encrypter)
     }
+
+    async fn build_record_from_raw(
+        &self,
+        req: crate::items::RecordBuilderFromRawRequest,
+    ) -> RecordBuilderResponse {
+        let builder = RecordBuilder::from_raw(req.payload);
+        build_record(builder, req.signer, req.encrypter)
+    }
 }
 
 fn build_record(

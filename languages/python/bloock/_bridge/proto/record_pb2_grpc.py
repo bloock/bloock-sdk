@@ -49,6 +49,11 @@ class RecordServiceStub(object):
             request_serializer=record__pb2.RecordBuilderFromRecordRequest.SerializeToString,
             response_deserializer=record__pb2.RecordBuilderResponse.FromString,
         )
+        self.BuildRecordFromRaw = channel.unary_unary(
+            "/bloock.RecordService/BuildRecordFromRaw",
+            request_serializer=record__pb2.RecordBuilderFromRawRequest.SerializeToString,
+            response_deserializer=record__pb2.RecordBuilderResponse.FromString,
+        )
         self.GetHash = channel.unary_unary(
             "/bloock.RecordService/GetHash",
             request_serializer=record__pb2.Record.SerializeToString,
@@ -106,6 +111,12 @@ class RecordServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def BuildRecordFromRaw(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
     def GetHash(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -154,6 +165,11 @@ def add_RecordServiceServicer_to_server(servicer, server):
         "BuildRecordFromRecord": grpc.unary_unary_rpc_method_handler(
             servicer.BuildRecordFromRecord,
             request_deserializer=record__pb2.RecordBuilderFromRecordRequest.FromString,
+            response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
+        ),
+        "BuildRecordFromRaw": grpc.unary_unary_rpc_method_handler(
+            servicer.BuildRecordFromRaw,
+            request_deserializer=record__pb2.RecordBuilderFromRawRequest.FromString,
             response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
         ),
         "GetHash": grpc.unary_unary_rpc_method_handler(
@@ -369,6 +385,35 @@ class RecordService(object):
             target,
             "/bloock.RecordService/BuildRecordFromRecord",
             record__pb2.RecordBuilderFromRecordRequest.SerializeToString,
+            record__pb2.RecordBuilderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def BuildRecordFromRaw(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/bloock.RecordService/BuildRecordFromRaw",
+            record__pb2.RecordBuilderFromRawRequest.SerializeToString,
             record__pb2.RecordBuilderResponse.FromString,
             options,
             channel_credentials,

@@ -74,6 +74,15 @@ class RecordBuilder:
             encrypter=None,
         )
 
+    @staticmethod
+    def from_raw(b: bytes) -> RecordBuilder:
+        return RecordBuilder(
+            payload=b,
+            payload_type=proto.RecordTypes.RAW,
+            signer=None,
+            encrypter=None,
+        )
+
     def with_signer(self, signer: Signer) -> RecordBuilder:
         self.signer = signer.to_proto()
         return self
@@ -120,6 +129,12 @@ class RecordBuilder:
         elif self.payload_type == proto.RecordTypes.BYTES:
             res = client.record().BuildRecordFromBytes(
                 proto.RecordBuilderFromBytesRequest(
+                    payload=self.payload, signer=self.signer, encrypter=self.encrypter
+                )
+            )
+        elif self.payload_type == proto.RecordTypes.RAW:
+            res = client.record().BuildRecordFromRaw(
+                proto.RecordBuilderFromRawRequest(
                     payload=self.payload, signer=self.signer, encrypter=self.encrypter
                 )
             )

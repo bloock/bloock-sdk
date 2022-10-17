@@ -43,7 +43,7 @@ jobs:
           CIBW_ENVIRONMENT: BLOOCK_ENV=CI
           CIBW_ARCHS: "${{ inputs.os == 'macos-latest' && 'x86_64 arm64 universal2' || 'auto' }}"
         with:
-          package-dir: languages/python/bloock
+          package-dir: languages/python
       - uses: actions/upload-artifact@v2
         with:
           name: wheel

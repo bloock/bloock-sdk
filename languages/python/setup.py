@@ -1,6 +1,6 @@
 import codecs
 import os
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 from os import path
 
 here = path.abspath(path.dirname(__file__))
@@ -35,7 +35,7 @@ def get_version(rel_path):
 
 setup(
     name="bloock",
-    version=get_version("__init__.py"),
+    version=get_version("bloock/__init__.py"),
     description="Bloock library for Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -45,9 +45,9 @@ setup(
         "Programming Language :: Python :: 3.6",
         "License :: OSI Approved :: Apache Software License",
     ],
-    packages=find_packages(exclude=["tests", "tests.*"]),
+    packages=find_namespace_packages(exclude=["test", "test.*"]),
     python_requires=">=3.7",
     setup_requires=["cffi>=1.0.0", "wheel"],
-    cffi_modules=["_ffi/build.py:ffi_builder"],
+    cffi_modules=["bloock/_ffi/build.py:ffi_builder"],
     install_requires=install_requires,
 )

@@ -29,6 +29,7 @@ type RecordServiceClient interface {
 	BuildRecordFromFile(ctx context.Context, in *RecordBuilderFromFileRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromBytes(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	BuildRecordFromRaw(ctx context.Context, in *RecordBuilderFromRawRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
 	GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error)
 }
@@ -104,6 +105,15 @@ func (c *recordServiceClient) BuildRecordFromRecord(ctx context.Context, in *Rec
 	return out, nil
 }
 
+func (c *recordServiceClient) BuildRecordFromRaw(ctx context.Context, in *RecordBuilderFromRawRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
+	out := new(RecordBuilderResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromRaw", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *recordServiceClient) GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error) {
 	out := new(RecordHash)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetHash", in, out, opts...)
@@ -133,6 +143,7 @@ type RecordServiceServer interface {
 	BuildRecordFromFile(context.Context, *RecordBuilderFromFileRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromBytes(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error)
+	BuildRecordFromRaw(context.Context, *RecordBuilderFromRawRequest) (*RecordBuilderResponse, error)
 	GetHash(context.Context, *Record) (*RecordHash, error)
 	GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error)
 	mustEmbedUnimplementedRecordServiceServer()
@@ -162,6 +173,9 @@ func (UnimplementedRecordServiceServer) BuildRecordFromBytes(context.Context, *R
 }
 func (UnimplementedRecordServiceServer) BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromRecord not implemented")
+}
+func (UnimplementedRecordServiceServer) BuildRecordFromRaw(context.Context, *RecordBuilderFromRawRequest) (*RecordBuilderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromRaw not implemented")
 }
 func (UnimplementedRecordServiceServer) GetHash(context.Context, *Record) (*RecordHash, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
@@ -308,6 +322,24 @@ func _RecordService_BuildRecordFromRecord_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecordService_BuildRecordFromRaw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordBuilderFromRawRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).BuildRecordFromRaw(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/BuildRecordFromRaw",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).BuildRecordFromRaw(ctx, req.(*RecordBuilderFromRawRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Record)
 	if err := dec(in); err != nil {
@@ -378,6 +410,10 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BuildRecordFromRecord",
 			Handler:    _RecordService_BuildRecordFromRecord_Handler,
+		},
+		{
+			MethodName: "BuildRecordFromRaw",
+			Handler:    _RecordService_BuildRecordFromRaw_Handler,
 		},
 		{
 			MethodName: "GetHash",

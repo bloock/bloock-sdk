@@ -36,6 +36,7 @@ class _RecordTypesEnumTypeWrapper(
     BYTES: _RecordTypes.ValueType  # 3
     FILE: _RecordTypes.ValueType  # 4
     RECORD: _RecordTypes.ValueType  # 5
+    RAW: _RecordTypes.ValueType  # 6
 
 class RecordTypes(_RecordTypes, metaclass=_RecordTypesEnumTypeWrapper): ...
 
@@ -45,6 +46,7 @@ JSON: RecordTypes.ValueType  # 2
 BYTES: RecordTypes.ValueType  # 3
 FILE: RecordTypes.ValueType  # 4
 RECORD: RecordTypes.ValueType  # 5
+RAW: RecordTypes.ValueType  # 6
 global___RecordTypes = RecordTypes
 
 class _SignerAlg:
@@ -822,6 +824,63 @@ class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
     ) -> typing_extensions.Literal["signer"] | None: ...
 
 global___RecordBuilderFromRecordRequest = RecordBuilderFromRecordRequest
+
+class RecordBuilderFromRawRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PAYLOAD_FIELD_NUMBER: builtins.int
+    SIGNER_FIELD_NUMBER: builtins.int
+    ENCRYPTER_FIELD_NUMBER: builtins.int
+    payload: builtins.str
+    @property
+    def signer(self) -> global___Signer: ...
+    @property
+    def encrypter(self) -> global___Encrypter: ...
+    def __init__(
+        self,
+        *,
+        payload: builtins.str = ...,
+        signer: global___Signer | None = ...,
+        encrypter: global___Encrypter | None = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_encrypter",
+            b"_encrypter",
+            "_signer",
+            b"_signer",
+            "encrypter",
+            b"encrypter",
+            "signer",
+            b"signer",
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_encrypter",
+            b"_encrypter",
+            "_signer",
+            b"_signer",
+            "encrypter",
+            b"encrypter",
+            "payload",
+            b"payload",
+            "signer",
+            b"signer",
+        ],
+    ) -> None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]
+    ) -> typing_extensions.Literal["encrypter"] | None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]
+    ) -> typing_extensions.Literal["signer"] | None: ...
+
+global___RecordBuilderFromRawRequest = RecordBuilderFromRawRequest
 
 class RecordBuilderResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor

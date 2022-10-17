@@ -7,6 +7,7 @@ proto:
 	sed -i 's/^\(import.*_pb2\)/from . \1/' bloock/_bridge/proto/*.py
 
 build: copy_lib proto
+	echo "Building..."
 	rm -rf build
 	rm -f _bloock_lib.abi3.so
 	pip3 install -r requirements.txt
@@ -16,7 +17,7 @@ build: copy_lib proto
 dev: copy_lib proto build
 	python3 main.py
 
-test: copy_lib proto
+test: build
 	python3 -m unittest
 
 fmt:

@@ -1,6 +1,6 @@
 import grpc
 
-from _ffi.ffi import request as FfiRequest
+from .._ffi.ffi import request as FfiRequest
 
 
 class Channel(grpc.Channel):

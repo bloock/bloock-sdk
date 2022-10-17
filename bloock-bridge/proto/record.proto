@@ -16,6 +16,7 @@ enum RecordTypes {
 	BYTES = 3;
 	FILE = 4;
     RECORD = 5;
+    RAW = 6;
 }
 
 service RecordService {
@@ -26,6 +27,7 @@ service RecordService {
     rpc BuildRecordFromFile(RecordBuilderFromFileRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromBytes(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromRaw(RecordBuilderFromRawRequest) returns (RecordBuilderResponse);
     rpc GetHash(Record) returns (RecordHash);
     rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
 }
@@ -140,6 +142,12 @@ message RecordBuilderFromFileRequest {
 
 message RecordBuilderFromRecordRequest {
     Record payload = 1;
+    optional Signer signer = 2;
+    optional Encrypter encrypter = 3;
+}
+
+message RecordBuilderFromRawRequest {
+    string payload = 1;
     optional Signer signer = 2;
     optional Encrypter encrypter = 3;
 }
