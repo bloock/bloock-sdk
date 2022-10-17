@@ -17,7 +17,7 @@ pub struct Encryption {
 }
 
 pub trait Encrypter {
-    fn encrypt(&self, payload: &[u8], aad: &[u8]) -> Result<Encryption>;
+    fn encrypt(&self, payload: &[u8], associated_data: &[u8]) -> Result<Encryption>;
 }
 
 pub trait Decrypter {

@@ -11,8 +11,8 @@ use super::{Decrypter, Encrypter, Encryption};
 const AES_ALG: &str = "AES";
 
 const NONCE_LEN: usize = 12; // 96 bits
-const TAG_LEN: usize = 16;   // 128 bits
-const KEY_LEN: usize = 32;   // 256 bits
+const TAG_LEN: usize = 16; // 128 bits
+const KEY_LEN: usize = 32; // 256 bits
 
 pub struct AesEncrypterArgs {
     pub key: [u8; KEY_LEN],
@@ -186,9 +186,7 @@ mod tests {
         let cipher_text = encrypter.encrypt(payload_bytes, aad).unwrap();
 
         let decrypter = AesDecrypter {
-            args: AesDecrypterArgs {
-                key: [0; 32],
-            },
+            args: AesDecrypterArgs { key: [0; 32] },
         };
 
         let decrypted_payload_bytes = decrypter.decrypt(&cipher_text.protected, aad);
