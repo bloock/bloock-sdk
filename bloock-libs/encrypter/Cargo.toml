@@ -9,3 +9,6 @@ bench = false
 [dependencies]
 serde = { version = "1.0.123", features = ["std", "derive"] }
 thiserror = "1.0.31"
+aes-gcm = "0.10"
+rand = "0.6"
+base64 = "0.13"

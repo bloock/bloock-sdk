@@ -104,7 +104,7 @@ impl Builder {
             let payload = self.document.get_payload();
 
             let encryption = encrypter
-                .encrypt(payload)
+                .encrypt(payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
             self.document.set_encryption(encryption);
         }
