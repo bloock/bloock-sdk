@@ -10,6 +10,7 @@ bench = false
 serde = { version = "1.0.123", features = ["std", "derive"] }
 thiserror = "1.0.31"
 aes-gcm = "0.10"
-rand = "0.6"
+getrandom = {version = "0.2.7", features = ["js"]}
+rand = "0.8.5"
 base64 = "0.13"
 hex = "0.4.3"

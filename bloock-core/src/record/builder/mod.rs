@@ -75,6 +75,7 @@ impl Builder {
             encrypter: None,
         }
     }
+
     fn from_document(document: Document) -> Self {
         Self {
             document,
@@ -82,14 +83,17 @@ impl Builder {
             encrypter: None,
         }
     }
+
     pub fn with_signer<S: Signer + 'static>(mut self, signer: S) -> Self {
         self.signer = Some(Box::new(signer));
         self
     }
+
     pub fn with_encrypter<E: Encrypter + 'static>(mut self, encrypter: E) -> Self {
         self.encrypter = Some(Box::new(encrypter));
         self
     }
+
     pub fn build(mut self) -> BloockResult<Record> {
         if let Some(signer) = &self.signer {
             let payload = self.document.get_payload();
