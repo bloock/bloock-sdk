@@ -80,7 +80,7 @@ message Encrypter {
 }
 
 message EncrypterArgs {
-    optional string secret = 1;
+    optional string key = 1;
 }
 
 message Signature {

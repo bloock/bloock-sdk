@@ -8,7 +8,7 @@ use crate::{EncrypterError, Result};
 
 use super::{Decrypter, Encrypter, Encryption};
 
-const AES_ALG: &str = "AES";
+pub const AES_ALG: &str = "AES";
 
 const NONCE_LEN: usize = 12; // 96 bits
 const TAG_LEN: usize = 16; // 128 bits
@@ -18,8 +18,8 @@ pub struct AesEncrypterArgs {
     pub key: [u8; KEY_LEN],
 }
 impl AesEncrypterArgs {
-    pub fn new(secret: [u8; KEY_LEN]) -> Self {
-        Self { key: secret }
+    pub fn new(key: [u8; KEY_LEN]) -> Self {
+        Self { key }
     }
 }
 
@@ -99,9 +99,8 @@ impl Decrypter for AesDecrypter {
         };
 
         let aead = Aes256Gcm::new(GenericArray::from_slice(&self.args.key));
-        Ok(aead
-            .decrypt(GenericArray::from_slice(nonce), payload)
-            .map_err(|_| EncrypterError::BadSeal())?)
+        aead.decrypt(GenericArray::from_slice(nonce), payload)
+            .map_err(|_| EncrypterError::BadSeal())
     }
 }
 
