@@ -13,4 +13,8 @@ aes-gcm = "0.10"
 getrandom = {version = "0.2.7", features = ["js"]}
 rand = "0.8.5"
 base64 = "0.13"
+base64-url = "1.4.13"
 hex = "0.4.3"
+pbkdf2 = "0.11.0"
+hmac = "0.12.1"
+sha2 = "0.10.6"

@@ -2,24 +2,40 @@ use aes_gcm::{
     aead::{generic_array::GenericArray, Aead, Payload},
     AeadInPlace, Aes256Gcm, KeyInit,
 };
+use hmac::Hmac;
+use pbkdf2::pbkdf2;
 use rand::RngCore;
+use sha2::Sha256;
 
 use crate::{EncrypterError, Result};
 
 use super::{Decrypter, Encrypter, Encryption};
 
-pub const AES_ALG: &str = "AES";
+pub const AES_ALG: &str = "A256GCMKW";
+pub const AES_ENC: &str = "A256GCM";
 
 const NONCE_LEN: usize = 12; // 96 bits
 const TAG_LEN: usize = 16; // 128 bits
 const KEY_LEN: usize = 32; // 256 bits
+const SALT_LEN: usize = 16;
+const NUM_ITERATIONS: u32 = 10;
+const ITERATIONS_LEN: usize = 4; // 32 bits since it's u32
 
 pub struct AesEncrypterArgs {
-    pub key: [u8; KEY_LEN],
+    key: [u8; KEY_LEN],
+    salt: [u8; SALT_LEN],
 }
+
 impl AesEncrypterArgs {
-    pub fn new(key: [u8; KEY_LEN]) -> Self {
-        Self { key }
+    pub fn new(password: String) -> Self {
+        let mut key = [0u8; KEY_LEN];
+        let mut salt = [0u8; SALT_LEN];
+
+        rand::thread_rng().try_fill_bytes(&mut salt).unwrap(); // TODO Define error
+
+        pbkdf2::<Hmac<Sha256>>(password.as_bytes(), &salt, NUM_ITERATIONS, &mut key);
+
+        Self { key, salt }
     }
 }
 
@@ -34,13 +50,16 @@ impl AesEncrypter {
 }
 
 impl Encrypter for AesEncrypter {
-    fn encrypt(&self, payload: &[u8], associated_data: &[u8]) -> Result<Encryption> {
-        let mut data = vec![0; NONCE_LEN + payload.len() + TAG_LEN];
+    fn encrypt(&self, payload: &[u8], associated_data: &[u8], cty: String) -> Result<Encryption> {
+        // data = [ SALT | NUM_ITERATIONS | NONCE | ENCRYPTED_PAYLOAD | TAG ]
+        let mut data = vec![0; SALT_LEN + ITERATIONS_LEN + NONCE_LEN + payload.len() + TAG_LEN];
 
         // Split data into three: nonce, input/output, tag
-        let (nonce, in_out) = data.split_at_mut(NONCE_LEN);
+        let (metadata, in_out) = data.split_at_mut(NONCE_LEN);
+        let (salt, nonce) = metadata.split_at_mut(SALT_LEN);
         let (in_out, tag) = in_out.split_at_mut(payload.len());
 
+        salt.copy_from_slice(&self.args.salt);
         in_out.copy_from_slice(payload);
 
         // Fill nonce piece with random data.
@@ -58,20 +77,24 @@ impl Encrypter for AesEncrypter {
         tag.copy_from_slice(&aad_tag);
 
         Ok(Encryption {
-            protected: base64::encode(&data),
+            ciphertext: base64_url::encode(&data),
+            tag: base64_url::encode(&aad_tag),
+            protected: base64_url::encode("{}"),
             header: super::EncryptionHeader {
                 alg: AES_ALG.to_string(),
+                enc: AES_ENC.to_string(),
             },
+            cty,
         })
     }
 }
 
 pub struct AesDecrypterArgs {
-    pub key: [u8; KEY_LEN],
+    pub password: String,
 }
 impl AesDecrypterArgs {
-    pub fn new(key: [u8; KEY_LEN]) -> Self {
-        Self { key }
+    pub fn new(password: String) -> Self {
+        Self { password }
     }
 }
 
@@ -87,18 +110,26 @@ impl AesDecrypter {
 
 impl Decrypter for AesDecrypter {
     fn decrypt(&self, cipher_text: &str, associated_data: &[u8]) -> Result<Vec<u8>> {
-        let data = base64::decode(cipher_text).map_err(|_| EncrypterError::InvalidBase64())?;
-        if data.len() <= NONCE_LEN {
+        let data = base64_url::decode(cipher_text).map_err(|_| EncrypterError::InvalidBase64())?;
+        let metadata_len = NONCE_LEN + SALT_LEN + ITERATIONS_LEN;
+        if data.len() <= metadata_len {
             return Err(EncrypterError::InvalidPayloadLength());
         }
 
-        let (nonce, cipher) = data.split_at(NONCE_LEN);
+        let (metadata, cipher) = data.split_at(metadata_len);
+        let (key_metadata, nonce) = metadata.split_at(SALT_LEN);
+        let (salt, iterations) = key_metadata.split_at(SALT_LEN);
+
+        let mut key = [0u8; KEY_LEN];
+
+        pbkdf2::<Hmac<Sha256>>(self.args.password.as_bytes(), &salt, NUM_ITERATIONS, &mut key);
+
         let payload = Payload {
             msg: cipher,
             aad: associated_data,
         };
 
-        let aead = Aes256Gcm::new(GenericArray::from_slice(&self.args.key));
+        let aead = Aes256Gcm::new(GenericArray::from_slice(&key));
         aead.decrypt(GenericArray::from_slice(nonce), payload)
             .map_err(|_| EncrypterError::BadSeal())
     }
@@ -110,7 +141,7 @@ mod tests {
 
     use crate::{
         aes::{AesDecrypter, AesDecrypterArgs},
-        Decrypter, Encrypter,
+        Decrypter, Encrypter, EncrypterError,
     };
 
     use super::{AesEncrypter, AesEncrypterArgs};
@@ -121,6 +152,7 @@ mod tests {
         let encrypter = AesEncrypter {
             args: AesEncrypterArgs {
                 key: key.try_into().expect("Invalid key"),
+                salt: todo!(),
             },
         };
 
@@ -128,15 +160,17 @@ mod tests {
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let cipher_text = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let encryption = encrypter
+            .encrypt(payload_bytes, aad, "".to_string())
+            .unwrap();
 
         let decrypter = AesDecrypter {
             args: AesDecrypterArgs {
-                key: key.try_into().expect("Invalid key"),
+                password: key.try_into().expect("Invalid key"),
             },
         };
 
-        let decrypted_payload_bytes = decrypter.decrypt(&cipher_text.protected, aad).unwrap();
+        let decrypted_payload_bytes = decrypter.decrypt(&encryption.ciphertext, aad).unwrap();
         let decrypted_payload = std::str::from_utf8(&decrypted_payload_bytes).unwrap();
 
         assert_eq!(payload_bytes, decrypted_payload_bytes);
@@ -149,6 +183,8 @@ mod tests {
         let encrypter = AesEncrypter {
             args: AesEncrypterArgs {
                 key: key.try_into().expect("Invalid key"),
+                salt: todo!(),
+                iterations: todo!(),
             },
         };
 
@@ -156,17 +192,19 @@ mod tests {
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let cipher_text = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let encryption = encrypter
+            .encrypt(payload_bytes, aad, "".to_string())
+            .unwrap();
 
         let decrypter = AesDecrypter {
             args: AesDecrypterArgs {
-                key: key.try_into().expect("Invalid key"),
+                password: key.try_into().expect("Invalid key"),
             },
         };
 
         let invalid_aad = "different_user_id".as_bytes();
-        let decrypted_payload_bytes = decrypter.decrypt(&cipher_text.protected, invalid_aad);
-        assert!(decrypted_payload_bytes.is_err());
+        let decrypted_payload_bytes = decrypter.decrypt(&encryption.ciphertext, invalid_aad);
+        assert_eq!(decrypted_payload_bytes, Err(EncrypterError::BadSeal()));
     }
 
     #[test]
@@ -175,6 +213,8 @@ mod tests {
         let encrypter = AesEncrypter {
             args: AesEncrypterArgs {
                 key: key.try_into().expect("Invalid key"),
+                salt: todo!(),
+                iterations: todo!(),
             },
         };
 
@@ -182,13 +222,15 @@ mod tests {
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let cipher_text = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let encryption = encrypter
+            .encrypt(payload_bytes, aad, "".to_string())
+            .unwrap();
 
         let decrypter = AesDecrypter {
-            args: AesDecrypterArgs { key: [0; 32] },
+            args: AesDecrypterArgs { password: [0; 32] },
         };
 
-        let decrypted_payload_bytes = decrypter.decrypt(&cipher_text.protected, aad);
-        assert!(decrypted_payload_bytes.is_err());
+        let decrypted_payload_bytes = decrypter.decrypt(&encryption.ciphertext, aad);
+        assert_eq!(decrypted_payload_bytes, Err(EncrypterError::BadSeal()));
     }
 }
