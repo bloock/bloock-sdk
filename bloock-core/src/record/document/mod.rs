@@ -55,9 +55,13 @@ impl Document {
         self
     }
 
-    pub fn set_encryption(&mut self, encryption: Encryption) -> &mut Self {
+    pub fn set_encryption(&mut self, encryption: Encryption) -> BloockResult<()> {
+        self.payload = base64_url::decode(&encryption.ciphertext.clone())
+            .map_err(|err| RecordError::EncryptionError(err.to_string()))?;
+
         self.encryption = Some(encryption);
-        self
+
+        Ok(())
     }
 
     pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
@@ -262,9 +266,14 @@ mod tests {
         let encryption = Encryption {
             protected: "e0".to_string(),
             header: EncryptionHeader {
-                alg: "ECSDA".to_string(),
+                alg: "AES_ALG".to_string(),
+                enc: "AES_ENC".to_string(),
             },
+            ciphertext: "ciphertext".to_string(),
+            tag: "id".to_string(),
+            cty: "pdf".to_string(),
         };
+
         let document = Document::new(
             headers,
             payload.clone(),
@@ -293,13 +302,18 @@ mod tests {
         );
         let expected_encryption = base64_url::encode(
             &serde_json::to_vec(&json!({
+                "ciphertext": "ciphertext",
+                "cty": "pdf",
                 "header": {
-                    "alg": "ECSDA"
+                    "alg": "AES_ALG",
+                    "enc": "AES_ENC",
                 },
-                "protected": "e0"
+                "protected": "e0",
+                "tag": "id",
             }))
             .unwrap(),
         );
+
         let expected_output = format!(
             "{}.{}.{}.{}.",
             expected_headers, expected_payload, expected_signature, expected_encryption
@@ -324,11 +338,16 @@ mod tests {
             },
             signature: "1234567890abcdef1234567890abcdef".to_string(),
         };
+
         let encryption = Encryption {
             protected: "e0".to_string(),
             header: EncryptionHeader {
-                alg: "ECSDA".to_string(),
+                alg: "AES_ALG".to_string(),
+                enc: "AES_ENC".to_string(),
             },
+            ciphertext: "ciphertext".to_string(),
+            tag: "id".to_string(),
+            cty: "pdf".to_string(),
         };
 
         let proof = Proof {
@@ -377,10 +396,14 @@ mod tests {
         );
         let expected_encryption = base64_url::encode(
             &serde_json::to_vec(&json!({
+                "ciphertext": "ciphertext",
+                "cty": "pdf",
                 "header": {
-                    "alg": "ECSDA"
+                    "alg": "AES_ALG",
+                    "enc": "AES_ENC",
                 },
-                "protected": "e0"
+                "protected": "e0",
+                "tag": "id",
             }))
             .unwrap(),
         );

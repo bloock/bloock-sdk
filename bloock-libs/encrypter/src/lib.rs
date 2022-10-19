@@ -8,16 +8,20 @@ pub type Result<T> = std::result::Result<T, EncrypterError>;
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EncryptionHeader {
     pub alg: String,
+    pub enc: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Encryption {
+    pub ciphertext: String,
+    pub tag: String,
     pub header: EncryptionHeader,
     pub protected: String,
+    pub cty: String,
 }
 
 pub trait Encrypter {
-    fn encrypt(&self, payload: &[u8], associated_data: &[u8]) -> Result<Encryption>;
+    fn encrypt(&self, payload: &[u8], associated_data: &[u8], ty: String) -> Result<Encryption>;
 }
 
 pub trait Decrypter {

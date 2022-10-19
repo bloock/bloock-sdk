@@ -97,10 +97,14 @@ message SignatureHeader {
 message Encryption {
     EncryptionHeader header = 1;
     string protected = 2;
+    string ciphertext = 3;
+    string tag = 4;
+    string cty = 5;
 }
 
 message EncryptionHeader {
     string alg = 1;
+    string enc = 2;
 }
 
 message RecordReceipt {

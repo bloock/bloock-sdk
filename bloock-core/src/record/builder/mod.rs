@@ -108,9 +108,10 @@ impl Builder {
             let payload = self.document.get_payload();
 
             let encryption = encrypter
-                .encrypt(payload, &[/* TODO */])
+                .encrypt(payload, &[/* TODO */], self.document.headers.ty.clone())
                 .map_err(InfrastructureError::EncrypterError)?;
-            self.document.set_encryption(encryption);
+
+            self.document.set_encryption(encryption)?;
         }
 
         Ok(Record::new(self.document))
@@ -120,7 +121,7 @@ impl Builder {
 #[cfg(test)]
 mod tests {
 
-    use bloock_encrypter::{Encryption, EncryptionHeader};
+    use bloock_encrypter::{Encryption, EncryptionHeader, aes::{AES_ALG, AES_ENC}};
     use bloock_hasher::from_hex;
     use bloock_publisher::test::{TestLoader, TestLoaderArgs};
     use bloock_signer::{Signature, SignatureHeader};
@@ -202,8 +203,12 @@ mod tests {
         let encryption = Encryption {
             protected: "e0".to_string(),
             header: EncryptionHeader {
-                alg: "ECSDA".to_string(),
+                alg: AES_ALG.to_string(),
+                enc: AES_ENC.to_string(),
             },
+            ciphertext: "ciphertext".to_string(),
+            tag: "id".to_string(),
+            cty: "pdf".to_string(),
         };
         let proof = Proof {
             leaves: vec![from_hex(
