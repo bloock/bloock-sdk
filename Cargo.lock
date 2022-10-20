@@ -390,7 +390,6 @@ dependencies = [
  "convert_case",
  "diplomat",
  "diplomat-runtime",
- "hex",
  "js-sys",
  "prost",
  "prost-build",
