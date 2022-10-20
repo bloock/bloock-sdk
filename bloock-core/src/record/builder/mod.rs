@@ -121,7 +121,10 @@ impl Builder {
 #[cfg(test)]
 mod tests {
 
-    use bloock_encrypter::{Encryption, EncryptionHeader, aes::{AES_ALG, AES_ENC}};
+    use bloock_encrypter::{
+        aes::{AES_ALG, AES_ENC},
+        Encryption, EncryptionHeader,
+    };
     use bloock_hasher::from_hex;
     use bloock_publisher::test::{TestLoader, TestLoaderArgs};
     use bloock_signer::{Signature, SignatureHeader};

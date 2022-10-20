@@ -34,6 +34,8 @@ pub enum EncrypterError {
     FailedToEncryptInPlace(String),
     #[error("Couldn't random fill nonce: {0}")]
     FailedToFillNonce(String),
+    #[error("Couldn't generate random salt: {0}")]
+    FailedToGenerateSalt(String),
     #[error("Length of decoded data is <= NONCE_LEN")]
     InvalidPayloadLength(),
     #[error("Invalid Base64 data")]
