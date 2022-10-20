@@ -77,7 +77,7 @@ impl Encrypter for AesEncrypter {
 
         // Fill the buffer by pieces
         salt_piece.copy_from_slice(&salt);
-        iterations.copy_from_slice(&NUM_ITERATIONS.to_ne_bytes());
+        iterations.copy_from_slice(&NUM_ITERATIONS.to_le_bytes());
         in_out.copy_from_slice(payload);
 
         // Fill nonce piece with random data.
@@ -144,7 +144,7 @@ impl Decrypter for AesDecrypter {
 
         let mut iterations = [0u8; ITERATIONS_LEN];
         iterations.copy_from_slice(iter_slice);
-        let n_iterations = u32::from_ne_bytes(iterations);
+        let n_iterations = u32::from_le_bytes(iterations);
 
         let key = generate_key(&self.args.password, salt, n_iterations);
 
