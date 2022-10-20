@@ -64,6 +64,12 @@ impl Document {
         Ok(())
     }
 
+    pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
+        self.payload = decrypted_payload;
+        self.encryption = None;
+        Ok(())
+    }
+
     pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
         self.proof = Some(proof);
         self
@@ -264,7 +270,7 @@ mod tests {
             signature: "1234567890abcdef1234567890abcdef".to_string(),
         };
         let encryption = Encryption {
-            ciphertext: "ciphertext".to_string(),
+            ciphertext: "ciphertext".as_bytes().to_vec(),
             header: EncryptionHeader {
                 alg: "AES_ALG".to_string(),
                 enc: "AES_ENC".to_string(),
@@ -338,7 +344,7 @@ mod tests {
                 enc: "AES_ENC".to_string(),
                 cty: "pdf".to_string(),
             },
-            ciphertext: "ciphertext".to_string(),
+            ciphertext: "ciphertext".as_bytes().to_vec(),
             tag: "id".to_string(),
         };
 

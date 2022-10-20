@@ -14,7 +14,7 @@ pub struct EncryptionHeader {
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Encryption {
-    pub ciphertext: String,
+    pub ciphertext: Vec<u8>,
     pub tag: String,
     pub header: EncryptionHeader,
     pub protected: String,
@@ -25,7 +25,7 @@ pub trait Encrypter {
 }
 
 pub trait Decrypter {
-    fn decrypt(&self, cipher_text: &str, associated_data: &[u8]) -> Result<Vec<u8>>;
+    fn decrypt(&self, cipher_text: &[u8], associated_data: &[u8]) -> Result<Vec<u8>>;
 }
 
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]

@@ -1,4 +1,4 @@
-use bloock_encrypter::Encrypter;
+use bloock_encrypter::{Decrypter, Encrypter};
 use bloock_publisher::Loader;
 use bloock_signer::Signer;
 use serde_json::Value;
@@ -64,6 +64,7 @@ pub struct Builder {
     document: Document,
     signer: Option<Box<dyn Signer>>,
     encrypter: Option<Box<dyn Encrypter>>,
+    decrypter: Option<Box<dyn Decrypter>>,
 }
 
 impl Builder {
@@ -73,6 +74,7 @@ impl Builder {
             document,
             signer: None,
             encrypter: None,
+            decrypter: None,
         }
     }
 
@@ -81,6 +83,7 @@ impl Builder {
             document,
             signer: None,
             encrypter: None,
+            decrypter: None,
         }
     }
 
@@ -91,6 +94,11 @@ impl Builder {
 
     pub fn with_encrypter<E: Encrypter + 'static>(mut self, encrypter: E) -> Self {
         self.encrypter = Some(Box::new(encrypter));
+        self
+    }
+
+    pub fn with_decrypter<E: Decrypter + 'static>(mut self, decrypter: E) -> Self {
+        self.decrypter = Some(Box::new(decrypter));
         self
     }
 
@@ -112,6 +120,16 @@ impl Builder {
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document.set_encryption(encryption)?;
+        }
+
+        if let Some(decrypter) = &self.decrypter {
+            let payload = self.document.get_payload();
+
+            let decrypted_payload = decrypter
+                .decrypt(payload, &[/* TODO */])
+                .map_err(InfrastructureError::EncrypterError)?;
+
+            self.document.remove_encryption(decrypted_payload)?;
         }
 
         Ok(Record::new(self.document))
@@ -210,7 +228,7 @@ mod tests {
                 enc: AES_ENC.to_string(),
                 cty: "pdf".to_string(),
             },
-            ciphertext: "ciphertext".to_string(),
+            ciphertext: "ciphertext".as_bytes().to_vec(),
             tag: "id".to_string(),
         };
         let proof = Proof {
@@ -357,7 +375,8 @@ mod tests {
 
     #[test]
     fn test_from_raw() {
-        let payload = "eyJ0eSI6InN0cmluZyJ9.U29tZSBzdHJpbmc.W3siaGVhZGVyIjp7ImFsZyI6IkVDU0RBIiwia2lkIjoiMTIzNDU2Nzg5MGFiY2RlZiJ9LCJwcm90ZWN0ZWQiOiJlMCIsInNpZ25hdHVyZSI6IjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVmIn1d.eyJjaXBoZXJ0ZXh0IjoiY2lwaGVydGV4dCIsInRhZyI6ImlkIiwiaGVhZGVyIjp7ImFsZyI6IkFFU19BTEciLCJlbmMiOiJBRVNfRU5DIiwiY3R5IjoicGRmIn0sInByb3RlY3RlZCI6ImUwIn0.eyJhbmNob3IiOnsiYW5jaG9yX2lkIjoxLCJuZXR3b3JrcyI6W10sInJvb3QiOiIiLCJzdGF0dXMiOiJwZW5kaW5nIn0sImJpdG1hcCI6IjZkODAiLCJkZXB0aCI6IjAwMDUwMDA1MDAwNDAwMDQwMDA0MDAwNDAwMDQwMDAzMDAwMSIsImxlYXZlcyI6WyIxY2EwZTlkOWEyMDZmMDhkMzhhNGUyY2Y0ODUzNTE2NzRmZmM5YjBmMzE3NWUwY2I2ZGJkOGUwZTE5ODI5Yjk3Il0sIm5vZGVzIjpbIjFjYTBlOWQ5YTIwNmYwOGQzOGE0ZTJjZjQ4NTM1MTY3NGZmYzliMGYzMTc1ZTBjYjZkYmQ4ZTBlMTk4MjliOTciXX0";
+        // payload from test_with_payload_and_signature_and_encryption_and_proof
+        let payload = "eyJ0eSI6InN0cmluZyJ9.U29tZSBzdHJpbmc.W3siaGVhZGVyIjp7ImFsZyI6IkVDU0RBIiwia2lkIjoiMTIzNDU2Nzg5MGFiY2RlZiJ9LCJwcm90ZWN0ZWQiOiJlMCIsInNpZ25hdHVyZSI6IjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVmIn1d.eyJjaXBoZXJ0ZXh0IjpbOTksMTA1LDExMiwxMDQsMTAxLDExNCwxMTYsMTAxLDEyMCwxMTZdLCJ0YWciOiJpZCIsImhlYWRlciI6eyJhbGciOiJBRVNfQUxHIiwiZW5jIjoiQUVTX0VOQyIsImN0eSI6InBkZiJ9LCJwcm90ZWN0ZWQiOiJlMCJ9.eyJhbmNob3IiOnsiYW5jaG9yX2lkIjoxLCJuZXR3b3JrcyI6W10sInJvb3QiOiIiLCJzdGF0dXMiOiJwZW5kaW5nIn0sImJpdG1hcCI6IjZkODAiLCJkZXB0aCI6IjAwMDUwMDA1MDAwNDAwMDQwMDA0MDAwNDAwMDQwMDAzMDAwMSIsImxlYXZlcyI6WyIxY2EwZTlkOWEyMDZmMDhkMzhhNGUyY2Y0ODUzNTE2NzRmZmM5YjBmMzE3NWUwY2I2ZGJkOGUwZTE5ODI5Yjk3Il0sIm5vZGVzIjpbIjFjYTBlOWQ5YTIwNmYwOGQzOGE0ZTJjZjQ4NTM1MTY3NGZmYzliMGYzMTc1ZTBjYjZkYmQ4ZTBlMTk4MjliOTciXX0";
         let r = RecordBuilder::from_raw(payload.to_string())
             .build()
             .unwrap();
