@@ -101,8 +101,8 @@ impl Encrypter for AesEncrypter {
             header: super::EncryptionHeader {
                 alg: AES_ALG.to_string(),
                 enc: AES_ENC.to_string(),
+                cty,
             },
-            cty,
         })
     }
 }

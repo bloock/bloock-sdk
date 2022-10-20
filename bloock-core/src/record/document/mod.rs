@@ -264,21 +264,21 @@ mod tests {
             signature: "1234567890abcdef1234567890abcdef".to_string(),
         };
         let encryption = Encryption {
-            protected: "e0".to_string(),
+            ciphertext: "ciphertext".to_string(),
             header: EncryptionHeader {
                 alg: "AES_ALG".to_string(),
                 enc: "AES_ENC".to_string(),
+                cty: "pdf".to_string(),
             },
-            ciphertext: "ciphertext".to_string(),
+            protected: "e0".to_string(),
             tag: "id".to_string(),
-            cty: "pdf".to_string(),
         };
 
         let document = Document::new(
             headers,
             payload.clone(),
             Some(vec![signature]),
-            Some(encryption),
+            Some(encryption.clone()),
             None,
         );
 
@@ -300,17 +300,9 @@ mod tests {
             }]))
             .unwrap(),
         );
+
         let expected_encryption = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "ciphertext": "ciphertext",
-                "cty": "pdf",
-                "header": {
-                    "alg": "AES_ALG",
-                    "enc": "AES_ENC",
-                },
-                "protected": "e0",
-                "tag": "id",
-            }))
+            &serde_json::to_vec(&encryption)
             .unwrap(),
         );
 
@@ -344,10 +336,10 @@ mod tests {
             header: EncryptionHeader {
                 alg: "AES_ALG".to_string(),
                 enc: "AES_ENC".to_string(),
+                cty: "pdf".to_string(),
             },
             ciphertext: "ciphertext".to_string(),
             tag: "id".to_string(),
-            cty: "pdf".to_string(),
         };
 
         let proof = Proof {
@@ -372,7 +364,7 @@ mod tests {
             headers,
             payload.clone(),
             Some(vec![signature]),
-            Some(encryption),
+            Some(encryption.clone()),
             Some(proof),
         );
 
@@ -395,18 +387,10 @@ mod tests {
             .unwrap(),
         );
         let expected_encryption = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "ciphertext": "ciphertext",
-                "cty": "pdf",
-                "header": {
-                    "alg": "AES_ALG",
-                    "enc": "AES_ENC",
-                },
-                "protected": "e0",
-                "tag": "id",
-            }))
+            &serde_json::to_vec(&encryption)
             .unwrap(),
         );
+
         let expected_proof = base64_url::encode(
             &serde_json::to_vec(&json!({
                 "leaves": [

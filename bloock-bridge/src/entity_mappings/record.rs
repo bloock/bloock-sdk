@@ -82,6 +82,7 @@ impl From<EncryptionHeader> for EncryptionHeaderCore {
         Self {
             alg: s.alg,
             enc: s.enc,
+            cty: s.cty,
         }
     }
 }
@@ -91,6 +92,7 @@ impl From<EncryptionHeaderCore> for EncryptionHeader {
         Self {
             alg: e.alg,
             enc: e.enc,
+            cty: e.cty,
         }
     }
 }
@@ -111,7 +113,6 @@ impl TryFrom<Encryption> for EncryptionCore {
             protected: e.protected,
             ciphertext: e.ciphertext,
             tag: e.tag,
-            cty: e.cty,
         })
     }
 }
@@ -123,7 +124,6 @@ impl From<EncryptionCore> for Encryption {
             protected: e.protected,
             ciphertext: e.ciphertext,
             tag: e.tag,
-            cty: e.cty,
         }
     }
 }

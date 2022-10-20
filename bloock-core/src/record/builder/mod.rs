@@ -208,10 +208,10 @@ mod tests {
             header: EncryptionHeader {
                 alg: AES_ALG.to_string(),
                 enc: AES_ENC.to_string(),
+                cty: "pdf".to_string(),
             },
             ciphertext: "ciphertext".to_string(),
             tag: "id".to_string(),
-            cty: "pdf".to_string(),
         };
         let proof = Proof {
             leaves: vec![from_hex(

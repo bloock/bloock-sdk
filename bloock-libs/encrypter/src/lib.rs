@@ -9,6 +9,7 @@ pub type Result<T> = std::result::Result<T, EncrypterError>;
 pub struct EncryptionHeader {
     pub alg: String,
     pub enc: String,
+    pub cty: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -17,7 +18,6 @@ pub struct Encryption {
     pub tag: String,
     pub header: EncryptionHeader,
     pub protected: String,
-    pub cty: String,
 }
 
 pub trait Encrypter {
