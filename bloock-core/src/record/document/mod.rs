@@ -56,7 +56,7 @@ impl Document {
     }
 
     pub fn set_encryption(&mut self, encryption: Encryption) -> BloockResult<()> {
-        self.payload = base64_url::decode(&encryption.ciphertext.clone())
+        self.payload = base64_url::decode(&encryption.ciphertext)
             .map_err(|err| RecordError::EncryptionError(err.to_string()))?;
 
         self.encryption = Some(encryption);

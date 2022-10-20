@@ -28,7 +28,7 @@ const HEADER_LEN: usize = NONCE_LEN + SALT_LEN + ITERATIONS_LEN;
 
 fn generate_key(password: &str, salt: &[u8], n_iterations: u32) -> [u8; KEY_LEN] {
     let mut key = [0u8; KEY_LEN];
-    pbkdf2::<Hmac<Sha256>>(password.as_bytes(), &salt, n_iterations, &mut key);
+    pbkdf2::<Hmac<Sha256>>(password.as_bytes(), salt, n_iterations, &mut key);
     key
 }
 
