@@ -301,10 +301,7 @@ mod tests {
             .unwrap(),
         );
 
-        let expected_encryption = base64_url::encode(
-            &serde_json::to_vec(&encryption)
-            .unwrap(),
-        );
+        let expected_encryption = base64_url::encode(&serde_json::to_vec(&encryption).unwrap());
 
         let expected_output = format!(
             "{}.{}.{}.{}.",
@@ -386,10 +383,7 @@ mod tests {
             }]))
             .unwrap(),
         );
-        let expected_encryption = base64_url::encode(
-            &serde_json::to_vec(&encryption)
-            .unwrap(),
-        );
+        let expected_encryption = base64_url::encode(&serde_json::to_vec(&encryption).unwrap());
 
         let expected_proof = base64_url::encode(
             &serde_json::to_vec(&json!({
