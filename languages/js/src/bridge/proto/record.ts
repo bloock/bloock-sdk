@@ -95,28 +95,28 @@ export function signerAlgToJSON(object: SignerAlg): string {
   }
 }
 
-export enum EncrypterAlg {
+export enum EncryptionAlg {
   A256GCM = 0,
   UNRECOGNIZED = -1,
 }
 
-export function encrypterAlgFromJSON(object: any): EncrypterAlg {
+export function encryptionAlgFromJSON(object: any): EncryptionAlg {
   switch (object) {
     case 0:
     case "A256GCM":
-      return EncrypterAlg.A256GCM;
+      return EncryptionAlg.A256GCM;
     case -1:
     case "UNRECOGNIZED":
     default:
-      return EncrypterAlg.UNRECOGNIZED;
+      return EncryptionAlg.UNRECOGNIZED;
   }
 }
 
-export function encrypterAlgToJSON(object: EncrypterAlg): string {
+export function encryptionAlgToJSON(object: EncryptionAlg): string {
   switch (object) {
-    case EncrypterAlg.A256GCM:
+    case EncryptionAlg.A256GCM:
       return "A256GCM";
-    case EncrypterAlg.UNRECOGNIZED:
+    case EncryptionAlg.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
   }
@@ -158,12 +158,21 @@ export interface SignerArgs {
 }
 
 export interface Encrypter {
-  alg: EncrypterAlg;
+  alg: EncryptionAlg;
   args?: EncrypterArgs;
 }
 
 export interface EncrypterArgs {
-  secret?: string | undefined;
+  password: string;
+}
+
+export interface Decrypter {
+  alg: EncryptionAlg;
+  args?: DecrypterArgs;
+}
+
+export interface DecrypterArgs {
+  password: string;
 }
 
 export interface Signature {
@@ -180,9 +189,22 @@ export interface SignatureHeader {
 export interface Encryption {
   header?: EncryptionHeader;
   protected: string;
+  ciphertext: Uint8Array;
+  tag: string;
 }
 
 export interface EncryptionHeader {
+  alg: string;
+  enc: string;
+  cty: string;
+}
+
+export interface Decryption {
+  header?: DecryptionHeader;
+  protected: string;
+}
+
+export interface DecryptionHeader {
   alg: string;
 }
 
@@ -197,42 +219,49 @@ export interface RecordBuilderFromStringRequest {
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
+  decrypter?: Decrypter | undefined;
 }
 
 export interface RecordBuilderFromHexRequest {
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
+  decrypter?: Decrypter | undefined;
 }
 
 export interface RecordBuilderFromJSONRequest {
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
+  decrypter?: Decrypter | undefined;
 }
 
 export interface RecordBuilderFromBytesRequest {
   payload: Uint8Array;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
+  decrypter?: Decrypter | undefined;
 }
 
 export interface RecordBuilderFromFileRequest {
   payload: Uint8Array;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
+  decrypter?: Decrypter | undefined;
 }
 
 export interface RecordBuilderFromRecordRequest {
   payload?: Record;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
+  decrypter?: Decrypter | undefined;
 }
 
 export interface RecordBuilderFromRawRequest {
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
+  decrypter?: Decrypter | undefined;
 }
 
 export interface RecordBuilderResponse {
@@ -480,7 +509,7 @@ export const Record = {
       Encryption.encode(message.encryption, writer.uint32(34).fork()).ldelim();
     }
     if (message.proof !== undefined) {
-      Proof.encode(message.proof, writer.uint32(42).fork()).ldelim();
+      Proof.encode(message.proof, writer.uint32(50).fork()).ldelim();
     }
     return writer;
   },
@@ -504,7 +533,7 @@ export const Record = {
         case 4:
           message.encryption = Encryption.decode(reader, reader.uint32());
           break;
-        case 5:
+        case 6:
           message.proof = Proof.decode(reader, reader.uint32());
           break;
         default:
@@ -701,14 +730,14 @@ export const Encrypter = {
 
   fromJSON(object: any): Encrypter {
     return {
-      alg: isSet(object.alg) ? encrypterAlgFromJSON(object.alg) : 0,
+      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : 0,
       args: isSet(object.args) ? EncrypterArgs.fromJSON(object.args) : undefined,
     };
   },
 
   toJSON(message: Encrypter): unknown {
     const obj: any = {};
-    message.alg !== undefined && (obj.alg = encrypterAlgToJSON(message.alg));
+    message.alg !== undefined && (obj.alg = encryptionAlgToJSON(message.alg));
     message.args !== undefined && (obj.args = message.args ? EncrypterArgs.toJSON(message.args) : undefined);
     return obj;
   },
@@ -724,13 +753,13 @@ export const Encrypter = {
 };
 
 function createBaseEncrypterArgs(): EncrypterArgs {
-  return { secret: undefined };
+  return { password: "" };
 }
 
 export const EncrypterArgs = {
   encode(message: EncrypterArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.secret !== undefined) {
-      writer.uint32(10).string(message.secret);
+    if (message.password !== "") {
+      writer.uint32(10).string(message.password);
     }
     return writer;
   },
@@ -743,7 +772,7 @@ export const EncrypterArgs = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.secret = reader.string();
+          message.password = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -754,18 +783,125 @@ export const EncrypterArgs = {
   },
 
   fromJSON(object: any): EncrypterArgs {
-    return { secret: isSet(object.secret) ? String(object.secret) : undefined };
+    return { password: isSet(object.password) ? String(object.password) : "" };
   },
 
   toJSON(message: EncrypterArgs): unknown {
     const obj: any = {};
-    message.secret !== undefined && (obj.secret = message.secret);
+    message.password !== undefined && (obj.password = message.password);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<EncrypterArgs>, I>>(object: I): EncrypterArgs {
     const message = createBaseEncrypterArgs();
-    message.secret = object.secret ?? undefined;
+    message.password = object.password ?? "";
+    return message;
+  },
+};
+
+function createBaseDecrypter(): Decrypter {
+  return { alg: 0, args: undefined };
+}
+
+export const Decrypter = {
+  encode(message: Decrypter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.alg !== 0) {
+      writer.uint32(8).int32(message.alg);
+    }
+    if (message.args !== undefined) {
+      DecrypterArgs.encode(message.args, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Decrypter {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDecrypter();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.alg = reader.int32() as any;
+          break;
+        case 2:
+          message.args = DecrypterArgs.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Decrypter {
+    return {
+      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : 0,
+      args: isSet(object.args) ? DecrypterArgs.fromJSON(object.args) : undefined,
+    };
+  },
+
+  toJSON(message: Decrypter): unknown {
+    const obj: any = {};
+    message.alg !== undefined && (obj.alg = encryptionAlgToJSON(message.alg));
+    message.args !== undefined && (obj.args = message.args ? DecrypterArgs.toJSON(message.args) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Decrypter>, I>>(object: I): Decrypter {
+    const message = createBaseDecrypter();
+    message.alg = object.alg ?? 0;
+    message.args = (object.args !== undefined && object.args !== null)
+      ? DecrypterArgs.fromPartial(object.args)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseDecrypterArgs(): DecrypterArgs {
+  return { password: "" };
+}
+
+export const DecrypterArgs = {
+  encode(message: DecrypterArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.password !== "") {
+      writer.uint32(10).string(message.password);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DecrypterArgs {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDecrypterArgs();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.password = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DecrypterArgs {
+    return { password: isSet(object.password) ? String(object.password) : "" };
+  },
+
+  toJSON(message: DecrypterArgs): unknown {
+    const obj: any = {};
+    message.password !== undefined && (obj.password = message.password);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DecrypterArgs>, I>>(object: I): DecrypterArgs {
+    const message = createBaseDecrypterArgs();
+    message.password = object.password ?? "";
     return message;
   },
 };
@@ -895,7 +1031,7 @@ export const SignatureHeader = {
 };
 
 function createBaseEncryption(): Encryption {
-  return { header: undefined, protected: "" };
+  return { header: undefined, protected: "", ciphertext: new Uint8Array(), tag: "" };
 }
 
 export const Encryption = {
@@ -905,6 +1041,12 @@ export const Encryption = {
     }
     if (message.protected !== "") {
       writer.uint32(18).string(message.protected);
+    }
+    if (message.ciphertext.length !== 0) {
+      writer.uint32(26).bytes(message.ciphertext);
+    }
+    if (message.tag !== "") {
+      writer.uint32(34).string(message.tag);
     }
     return writer;
   },
@@ -922,6 +1064,12 @@ export const Encryption = {
         case 2:
           message.protected = reader.string();
           break;
+        case 3:
+          message.ciphertext = reader.bytes();
+          break;
+        case 4:
+          message.tag = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -934,6 +1082,8 @@ export const Encryption = {
     return {
       header: isSet(object.header) ? EncryptionHeader.fromJSON(object.header) : undefined,
       protected: isSet(object.protected) ? String(object.protected) : "",
+      ciphertext: isSet(object.ciphertext) ? bytesFromBase64(object.ciphertext) : new Uint8Array(),
+      tag: isSet(object.tag) ? String(object.tag) : "",
     };
   },
 
@@ -941,6 +1091,9 @@ export const Encryption = {
     const obj: any = {};
     message.header !== undefined && (obj.header = message.header ? EncryptionHeader.toJSON(message.header) : undefined);
     message.protected !== undefined && (obj.protected = message.protected);
+    message.ciphertext !== undefined &&
+      (obj.ciphertext = base64FromBytes(message.ciphertext !== undefined ? message.ciphertext : new Uint8Array()));
+    message.tag !== undefined && (obj.tag = message.tag);
     return obj;
   },
 
@@ -950,18 +1103,26 @@ export const Encryption = {
       ? EncryptionHeader.fromPartial(object.header)
       : undefined;
     message.protected = object.protected ?? "";
+    message.ciphertext = object.ciphertext ?? new Uint8Array();
+    message.tag = object.tag ?? "";
     return message;
   },
 };
 
 function createBaseEncryptionHeader(): EncryptionHeader {
-  return { alg: "" };
+  return { alg: "", enc: "", cty: "" };
 }
 
 export const EncryptionHeader = {
   encode(message: EncryptionHeader, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.alg !== "") {
       writer.uint32(10).string(message.alg);
+    }
+    if (message.enc !== "") {
+      writer.uint32(18).string(message.enc);
+    }
+    if (message.cty !== "") {
+      writer.uint32(26).string(message.cty);
     }
     return writer;
   },
@@ -976,6 +1137,12 @@ export const EncryptionHeader = {
         case 1:
           message.alg = reader.string();
           break;
+        case 2:
+          message.enc = reader.string();
+          break;
+        case 3:
+          message.cty = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -985,17 +1152,132 @@ export const EncryptionHeader = {
   },
 
   fromJSON(object: any): EncryptionHeader {
-    return { alg: isSet(object.alg) ? String(object.alg) : "" };
+    return {
+      alg: isSet(object.alg) ? String(object.alg) : "",
+      enc: isSet(object.enc) ? String(object.enc) : "",
+      cty: isSet(object.cty) ? String(object.cty) : "",
+    };
   },
 
   toJSON(message: EncryptionHeader): unknown {
     const obj: any = {};
     message.alg !== undefined && (obj.alg = message.alg);
+    message.enc !== undefined && (obj.enc = message.enc);
+    message.cty !== undefined && (obj.cty = message.cty);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<EncryptionHeader>, I>>(object: I): EncryptionHeader {
     const message = createBaseEncryptionHeader();
+    message.alg = object.alg ?? "";
+    message.enc = object.enc ?? "";
+    message.cty = object.cty ?? "";
+    return message;
+  },
+};
+
+function createBaseDecryption(): Decryption {
+  return { header: undefined, protected: "" };
+}
+
+export const Decryption = {
+  encode(message: Decryption, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.header !== undefined) {
+      DecryptionHeader.encode(message.header, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.protected !== "") {
+      writer.uint32(18).string(message.protected);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Decryption {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDecryption();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.header = DecryptionHeader.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.protected = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Decryption {
+    return {
+      header: isSet(object.header) ? DecryptionHeader.fromJSON(object.header) : undefined,
+      protected: isSet(object.protected) ? String(object.protected) : "",
+    };
+  },
+
+  toJSON(message: Decryption): unknown {
+    const obj: any = {};
+    message.header !== undefined && (obj.header = message.header ? DecryptionHeader.toJSON(message.header) : undefined);
+    message.protected !== undefined && (obj.protected = message.protected);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Decryption>, I>>(object: I): Decryption {
+    const message = createBaseDecryption();
+    message.header = (object.header !== undefined && object.header !== null)
+      ? DecryptionHeader.fromPartial(object.header)
+      : undefined;
+    message.protected = object.protected ?? "";
+    return message;
+  },
+};
+
+function createBaseDecryptionHeader(): DecryptionHeader {
+  return { alg: "" };
+}
+
+export const DecryptionHeader = {
+  encode(message: DecryptionHeader, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.alg !== "") {
+      writer.uint32(10).string(message.alg);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DecryptionHeader {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDecryptionHeader();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.alg = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DecryptionHeader {
+    return { alg: isSet(object.alg) ? String(object.alg) : "" };
+  },
+
+  toJSON(message: DecryptionHeader): unknown {
+    const obj: any = {};
+    message.alg !== undefined && (obj.alg = message.alg);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DecryptionHeader>, I>>(object: I): DecryptionHeader {
+    const message = createBaseDecryptionHeader();
     message.alg = object.alg ?? "";
     return message;
   },
@@ -1078,7 +1360,7 @@ export const RecordReceipt = {
 };
 
 function createBaseRecordBuilderFromStringRequest(): RecordBuilderFromStringRequest {
-  return { payload: "", signer: undefined, encrypter: undefined };
+  return { payload: "", signer: undefined, encrypter: undefined, decrypter: undefined };
 }
 
 export const RecordBuilderFromStringRequest = {
@@ -1091,6 +1373,9 @@ export const RecordBuilderFromStringRequest = {
     }
     if (message.encrypter !== undefined) {
       Encrypter.encode(message.encrypter, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.decrypter !== undefined) {
+      Decrypter.encode(message.decrypter, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -1111,6 +1396,9 @@ export const RecordBuilderFromStringRequest = {
         case 3:
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1124,6 +1412,7 @@ export const RecordBuilderFromStringRequest = {
       payload: isSet(object.payload) ? String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -1133,6 +1422,8 @@ export const RecordBuilderFromStringRequest = {
     message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    message.decrypter !== undefined &&
+      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -1147,12 +1438,15 @@ export const RecordBuilderFromStringRequest = {
     message.encrypter = (object.encrypter !== undefined && object.encrypter !== null)
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
+    message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
+      ? Decrypter.fromPartial(object.decrypter)
+      : undefined;
     return message;
   },
 };
 
 function createBaseRecordBuilderFromHexRequest(): RecordBuilderFromHexRequest {
-  return { payload: "", signer: undefined, encrypter: undefined };
+  return { payload: "", signer: undefined, encrypter: undefined, decrypter: undefined };
 }
 
 export const RecordBuilderFromHexRequest = {
@@ -1165,6 +1459,9 @@ export const RecordBuilderFromHexRequest = {
     }
     if (message.encrypter !== undefined) {
       Encrypter.encode(message.encrypter, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.decrypter !== undefined) {
+      Decrypter.encode(message.decrypter, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -1185,6 +1482,9 @@ export const RecordBuilderFromHexRequest = {
         case 3:
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1198,6 +1498,7 @@ export const RecordBuilderFromHexRequest = {
       payload: isSet(object.payload) ? String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -1207,6 +1508,8 @@ export const RecordBuilderFromHexRequest = {
     message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    message.decrypter !== undefined &&
+      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -1219,12 +1522,15 @@ export const RecordBuilderFromHexRequest = {
     message.encrypter = (object.encrypter !== undefined && object.encrypter !== null)
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
+    message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
+      ? Decrypter.fromPartial(object.decrypter)
+      : undefined;
     return message;
   },
 };
 
 function createBaseRecordBuilderFromJSONRequest(): RecordBuilderFromJSONRequest {
-  return { payload: "", signer: undefined, encrypter: undefined };
+  return { payload: "", signer: undefined, encrypter: undefined, decrypter: undefined };
 }
 
 export const RecordBuilderFromJSONRequest = {
@@ -1237,6 +1543,9 @@ export const RecordBuilderFromJSONRequest = {
     }
     if (message.encrypter !== undefined) {
       Encrypter.encode(message.encrypter, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.decrypter !== undefined) {
+      Decrypter.encode(message.decrypter, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -1257,6 +1566,9 @@ export const RecordBuilderFromJSONRequest = {
         case 3:
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1270,6 +1582,7 @@ export const RecordBuilderFromJSONRequest = {
       payload: isSet(object.payload) ? String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -1279,6 +1592,8 @@ export const RecordBuilderFromJSONRequest = {
     message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    message.decrypter !== undefined &&
+      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -1291,12 +1606,15 @@ export const RecordBuilderFromJSONRequest = {
     message.encrypter = (object.encrypter !== undefined && object.encrypter !== null)
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
+    message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
+      ? Decrypter.fromPartial(object.decrypter)
+      : undefined;
     return message;
   },
 };
 
 function createBaseRecordBuilderFromBytesRequest(): RecordBuilderFromBytesRequest {
-  return { payload: new Uint8Array(), signer: undefined, encrypter: undefined };
+  return { payload: new Uint8Array(), signer: undefined, encrypter: undefined, decrypter: undefined };
 }
 
 export const RecordBuilderFromBytesRequest = {
@@ -1309,6 +1627,9 @@ export const RecordBuilderFromBytesRequest = {
     }
     if (message.encrypter !== undefined) {
       Encrypter.encode(message.encrypter, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.decrypter !== undefined) {
+      Decrypter.encode(message.decrypter, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -1329,6 +1650,9 @@ export const RecordBuilderFromBytesRequest = {
         case 3:
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1342,6 +1666,7 @@ export const RecordBuilderFromBytesRequest = {
       payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -1352,6 +1677,8 @@ export const RecordBuilderFromBytesRequest = {
     message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    message.decrypter !== undefined &&
+      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -1366,12 +1693,15 @@ export const RecordBuilderFromBytesRequest = {
     message.encrypter = (object.encrypter !== undefined && object.encrypter !== null)
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
+    message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
+      ? Decrypter.fromPartial(object.decrypter)
+      : undefined;
     return message;
   },
 };
 
 function createBaseRecordBuilderFromFileRequest(): RecordBuilderFromFileRequest {
-  return { payload: new Uint8Array(), signer: undefined, encrypter: undefined };
+  return { payload: new Uint8Array(), signer: undefined, encrypter: undefined, decrypter: undefined };
 }
 
 export const RecordBuilderFromFileRequest = {
@@ -1384,6 +1714,9 @@ export const RecordBuilderFromFileRequest = {
     }
     if (message.encrypter !== undefined) {
       Encrypter.encode(message.encrypter, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.decrypter !== undefined) {
+      Decrypter.encode(message.decrypter, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -1404,6 +1737,9 @@ export const RecordBuilderFromFileRequest = {
         case 3:
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1417,6 +1753,7 @@ export const RecordBuilderFromFileRequest = {
       payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -1427,6 +1764,8 @@ export const RecordBuilderFromFileRequest = {
     message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    message.decrypter !== undefined &&
+      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -1439,12 +1778,15 @@ export const RecordBuilderFromFileRequest = {
     message.encrypter = (object.encrypter !== undefined && object.encrypter !== null)
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
+    message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
+      ? Decrypter.fromPartial(object.decrypter)
+      : undefined;
     return message;
   },
 };
 
 function createBaseRecordBuilderFromRecordRequest(): RecordBuilderFromRecordRequest {
-  return { payload: undefined, signer: undefined, encrypter: undefined };
+  return { payload: undefined, signer: undefined, encrypter: undefined, decrypter: undefined };
 }
 
 export const RecordBuilderFromRecordRequest = {
@@ -1457,6 +1799,9 @@ export const RecordBuilderFromRecordRequest = {
     }
     if (message.encrypter !== undefined) {
       Encrypter.encode(message.encrypter, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.decrypter !== undefined) {
+      Decrypter.encode(message.decrypter, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -1477,6 +1822,9 @@ export const RecordBuilderFromRecordRequest = {
         case 3:
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1490,6 +1838,7 @@ export const RecordBuilderFromRecordRequest = {
       payload: isSet(object.payload) ? Record.fromJSON(object.payload) : undefined,
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -1499,6 +1848,8 @@ export const RecordBuilderFromRecordRequest = {
     message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    message.decrypter !== undefined &&
+      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -1515,12 +1866,15 @@ export const RecordBuilderFromRecordRequest = {
     message.encrypter = (object.encrypter !== undefined && object.encrypter !== null)
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
+    message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
+      ? Decrypter.fromPartial(object.decrypter)
+      : undefined;
     return message;
   },
 };
 
 function createBaseRecordBuilderFromRawRequest(): RecordBuilderFromRawRequest {
-  return { payload: "", signer: undefined, encrypter: undefined };
+  return { payload: "", signer: undefined, encrypter: undefined, decrypter: undefined };
 }
 
 export const RecordBuilderFromRawRequest = {
@@ -1533,6 +1887,9 @@ export const RecordBuilderFromRawRequest = {
     }
     if (message.encrypter !== undefined) {
       Encrypter.encode(message.encrypter, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.decrypter !== undefined) {
+      Decrypter.encode(message.decrypter, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -1553,6 +1910,9 @@ export const RecordBuilderFromRawRequest = {
         case 3:
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1566,6 +1926,7 @@ export const RecordBuilderFromRawRequest = {
       payload: isSet(object.payload) ? String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -1575,6 +1936,8 @@ export const RecordBuilderFromRawRequest = {
     message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    message.decrypter !== undefined &&
+      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -1586,6 +1949,9 @@ export const RecordBuilderFromRawRequest = {
       : undefined;
     message.encrypter = (object.encrypter !== undefined && object.encrypter !== null)
       ? Encrypter.fromPartial(object.encrypter)
+      : undefined;
+    message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
+      ? Decrypter.fromPartial(object.decrypter)
       : undefined;
     return message;
   },

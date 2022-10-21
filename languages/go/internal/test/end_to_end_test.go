@@ -43,15 +43,19 @@ func TestEndToEnd(t *testing.T) {
 		assert.Equal(t, "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312", hash)
 		records = append(records, hash)
 
-        encrypted_record, err := builder.NewRecordBuilderFromString("Hello world 2").
+        payload := "Hello world 2"
+        encrypted_record, err := builder.NewRecordBuilderFromString(payload).
             WithEncrypter(entity.NewAesEncrypter("some_password")).
             Build()
 		require.NoError(t, err)
+        assert.NotEqual(t, payload, string(encrypted_record.Payload))
 
 		record, err = builder.NewRecordBuilderFromRecord(encrypted_record).
             WithDecrypter(entity.NewAesDecrypter("some_password")).
             Build()
 		require.NoError(t, err)
+        assert.Equal(t, payload, string(record.Payload))
+
 		hash, err = record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)

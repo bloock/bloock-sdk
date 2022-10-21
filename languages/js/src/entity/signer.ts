@@ -3,6 +3,7 @@ import * as proto from "../bridge/proto/record";
 export interface Signer {
   alg: proto.SignerAlg;
   args: SignerArgs;
+  toProto(): proto.Signer;
 }
 
 export class EcsdaSigner implements Signer {
