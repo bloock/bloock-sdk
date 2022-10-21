@@ -330,8 +330,8 @@ fn build_record(
 mod tests {
     use crate::{
         items::{
-            EncrypterArgs, EncryptionAlg, GenerateKeysRequest, RecordServiceHandler, SignerAlg,
-            SignerArgs, DecrypterArgs,
+            DecrypterArgs, EncrypterArgs, EncryptionAlg, GenerateKeysRequest, RecordServiceHandler,
+            SignerAlg, SignerArgs,
         },
         server::Server,
     };

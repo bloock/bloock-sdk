@@ -132,10 +132,9 @@ impl Builder {
                 .encrypt(payload, &[/* TODO */], self.document.headers.ty.clone())
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            record
-                .document
-                .as_mut()
-                .map(|doc| doc.set_encryption(encryption));
+            if let Some(doc) = record.document.as_mut() {
+                doc.set_encryption(encryption)
+            }
         }
 
         Ok(record)
