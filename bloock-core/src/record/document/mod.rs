@@ -56,7 +56,7 @@ impl Document {
     }
 
     pub fn set_encryption(&mut self, encryption: Encryption) -> BloockResult<()> {
-        self.payload = base64_url::decode(&encryption.ciphertext.clone())
+        self.payload = base64_url::decode(&encryption.ciphertext)
             .map_err(|err| RecordError::EncryptionError(err.to_string()))?;
 
         self.encryption = Some(encryption);
@@ -307,10 +307,7 @@ mod tests {
             .unwrap(),
         );
 
-        let expected_encryption = base64_url::encode(
-            &serde_json::to_vec(&encryption)
-            .unwrap(),
-        );
+        let expected_encryption = base64_url::encode(&serde_json::to_vec(&encryption).unwrap());
 
         let expected_output = format!(
             "{}.{}.{}.{}.",
@@ -392,10 +389,7 @@ mod tests {
             }]))
             .unwrap(),
         );
-        let expected_encryption = base64_url::encode(
-            &serde_json::to_vec(&encryption)
-            .unwrap(),
-        );
+        let expected_encryption = base64_url::encode(&serde_json::to_vec(&encryption).unwrap());
 
         let expected_proof = base64_url::encode(
             &serde_json::to_vec(&json!({
