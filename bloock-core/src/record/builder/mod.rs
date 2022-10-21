@@ -1,4 +1,5 @@
 use bloock_encrypter::{Decrypter, Encrypter};
+
 use bloock_publisher::Loader;
 use bloock_signer::Signer;
 use serde_json::Value;
@@ -112,16 +113,6 @@ impl Builder {
             self.document.add_signature(signature);
         }
 
-        if let Some(encrypter) = &self.encrypter {
-            let payload = self.document.get_payload();
-
-            let encryption = encrypter
-                .encrypt(payload, &[/* TODO */], self.document.headers.ty.clone())
-                .map_err(InfrastructureError::EncrypterError)?;
-
-            self.document.set_encryption(encryption)?;
-        }
-
         if let Some(decrypter) = &self.decrypter {
             let payload = self.document.get_payload();
 
@@ -129,10 +120,25 @@ impl Builder {
                 .decrypt(payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            self.document.remove_encryption(decrypted_payload)?;
+            self.document.remove_encryption(decrypted_payload);
         }
 
-        Ok(Record::new(self.document))
+        // We create the document before encryption since the hash has to be of the unencypted payload
+        let mut record = Record::new(self.document.clone());
+
+        if let Some(encrypter) = &self.encrypter {
+            let payload = self.document.get_payload();
+            let encryption = encrypter
+                .encrypt(payload, &[/* TODO */], self.document.headers.ty.clone())
+                .map_err(InfrastructureError::EncrypterError)?;
+
+            record
+                .document
+                .as_mut()
+                .map(|doc| doc.set_encryption(encryption));
+        }
+
+        Ok(record)
     }
 }
 

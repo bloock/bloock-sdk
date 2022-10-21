@@ -331,7 +331,7 @@ mod tests {
     use crate::{
         items::{
             EncrypterArgs, EncryptionAlg, GenerateKeysRequest, RecordServiceHandler, SignerAlg,
-            SignerArgs,
+            SignerArgs, DecrypterArgs,
         },
         server::Server,
     };
@@ -446,6 +446,47 @@ mod tests {
         assert_eq!(1, result_signature.len());
         assert_eq!(AES_ALG, result_encryption_alg);
         assert_eq!(None, result_error);
+        assert_ne!(content.as_bytes(), record.payload);
+    }
+
+    #[tokio::test]
+    async fn test_build_record_with_decrypter() {
+        let server = Server::new();
+        let password = "some_password";
+        let content = "hello world!";
+
+        let request = crate::items::RecordBuilderFromStringRequest {
+            payload: content.to_string(),
+            signer: None,
+            encrypter: Some(crate::items::Encrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(EncrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+            decrypter: None,
+        };
+
+        let response = server.record.build_record_from_string(request).await;
+        assert_eq!(None, response.error);
+        let record = response.record.unwrap();
+        assert_ne!(content.as_bytes(), record.payload);
+
+        let request = crate::items::RecordBuilderFromRecordRequest {
+            payload: Some(record),
+            signer: None,
+            encrypter: None,
+            decrypter: Some(crate::items::Decrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(DecrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+        };
+
+        let response = server.record.build_record_from_record(request).await;
+        let record = response.record.unwrap();
+        assert_eq!(content.as_bytes(), record.payload);
     }
 
     #[tokio::test]

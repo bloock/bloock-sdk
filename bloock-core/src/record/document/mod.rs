@@ -55,19 +55,14 @@ impl Document {
         self
     }
 
-    pub fn set_encryption(&mut self, encryption: Encryption) -> BloockResult<()> {
-        self.payload = base64_url::decode(&encryption.ciphertext)
-            .map_err(|err| RecordError::EncryptionError(err.to_string()))?;
-
+    pub fn set_encryption(&mut self, encryption: Encryption) {
+        self.payload = encryption.ciphertext.clone();
         self.encryption = Some(encryption);
-
-        Ok(())
     }
 
-    pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
+    pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) {
         self.payload = decrypted_payload;
         self.encryption = None;
-        Ok(())
     }
 
     pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
