@@ -7,15 +7,15 @@ type Encrypter interface {
 }
 
 type AesEncrypter struct {
-	Alg  proto.EncrypterAlg
+	Alg  proto.EncryptionAlg
 	Args EncrypterArgs
 }
 
-func NewAesEncrypter(secret string) AesEncrypter {
+func NewAesEncrypter(password string) AesEncrypter {
 	return AesEncrypter{
-		Alg: proto.EncrypterAlg_A256GCM,
+		Alg: proto.EncryptionAlg_A256GCM,
 		Args: EncrypterArgs{
-			Secret: secret,
+			Password: password,
 		},
 	}
 }
@@ -28,11 +28,11 @@ func (e AesEncrypter) ToProto() *proto.Encrypter {
 }
 
 type EncrypterArgs struct {
-	Secret string
+	Password string
 }
 
 func (e EncrypterArgs) ToProto() *proto.EncrypterArgs {
 	return &proto.EncrypterArgs{
-		Secret: &e.Secret,
+		Password: e.Password,
 	}
 }
