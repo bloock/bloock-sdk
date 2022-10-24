@@ -67,6 +67,12 @@ describe("E2E Tests", () => {
 
     expect(String.fromCharCode(...record.payload)).toEqual(payload);
 
+    await expect(
+      RecordBuilder.fromRecord(encrypted_record).withDecrypter(
+        new AesDecrypter("incorrect_password")
+      ).build
+    ).rejects.toThrow();
+
     hash = await record.getHash();
     expect(hash).toEqual(
       "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"

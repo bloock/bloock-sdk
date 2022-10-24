@@ -88,6 +88,9 @@ export class RecordBuilder {
           .getRecord()
           .BuildRecordFromString(req)
           .then(res => {
+            if (res.error) {
+              throw res.error;
+            }
             return Record.fromProto(res.record!);
           });
       }
@@ -103,6 +106,9 @@ export class RecordBuilder {
           .getRecord()
           .BuildRecordFromJson(req)
           .then(res => {
+            if (res.error) {
+              throw res.error;
+            }
             return Record.fromProto(res.record!);
           });
       }
@@ -118,6 +124,9 @@ export class RecordBuilder {
           .getRecord()
           .BuildRecordFromHex(req)
           .then(res => {
+            if (res.error) {
+              throw res.error;
+            }
             return Record.fromProto(res.record!);
           });
       }
@@ -133,6 +142,9 @@ export class RecordBuilder {
           .getRecord()
           .BuildRecordFromBytes(req)
           .then(res => {
+            if (res.error) {
+              throw res.error;
+            }
             return Record.fromProto(res.record!);
           });
       }
@@ -148,6 +160,9 @@ export class RecordBuilder {
           .getRecord()
           .BuildRecordFromFile(req)
           .then(res => {
+            if (res.error) {
+              throw res.error;
+            }
             return Record.fromProto(res.record!);
           });
       }
@@ -163,6 +178,9 @@ export class RecordBuilder {
           .getRecord()
           .BuildRecordFromRecord(req)
           .then(res => {
+            if (res.error) {
+              throw res.error;
+            }
             return Record.fromProto(res.record!);
           });
       }
@@ -178,6 +196,9 @@ export class RecordBuilder {
           .getRecord()
           .BuildRecordFromRaw(req)
           .then(res => {
+            if (res.error) {
+              throw res.error;
+            }
             return Record.fromProto(res.record!);
           });
       }
