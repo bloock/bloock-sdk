@@ -3,6 +3,7 @@ from bloock._bridge import bridge
 import bloock._bridge.proto.record_pb2 as proto
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.client.entity.encrypter import Encrypter
+from bloock.client.entity.decrypter import Decrypter
 from bloock.client.entity.record import Record
 from bloock.client.entity.signer import Signer
 
@@ -14,11 +15,13 @@ class RecordBuilder:
         payload_type: proto.RecordTypes.ValueType,
         signer: proto.Signer | None,
         encrypter: proto.Encrypter | None,
+        decrypter: proto.Decrypter | None,
     ) -> None:
         self.payload = payload
         self.payload_type = payload_type
         self.signer = signer
         self.encrypter = encrypter
+        self.decrypter = decrypter
 
     @staticmethod
     def from_record(record: Record) -> RecordBuilder:
@@ -27,6 +30,7 @@ class RecordBuilder:
             payload_type=proto.RecordTypes.RECORD,
             signer=None,
             encrypter=None,
+            decrypter=None,
         )
 
     @staticmethod
@@ -36,6 +40,7 @@ class RecordBuilder:
             payload_type=proto.RecordTypes.STRING,
             signer=None,
             encrypter=None,
+            decrypter=None,
         )
 
     @staticmethod
@@ -45,6 +50,7 @@ class RecordBuilder:
             payload_type=proto.RecordTypes.HEX,
             signer=None,
             encrypter=None,
+            decrypter=None,
         )
 
     @staticmethod
@@ -54,6 +60,7 @@ class RecordBuilder:
             payload_type=proto.RecordTypes.JSON,
             signer=None,
             encrypter=None,
+            decrypter=None,
         )
 
     @staticmethod
@@ -63,6 +70,7 @@ class RecordBuilder:
             payload_type=proto.RecordTypes.FILE,
             signer=None,
             encrypter=None,
+            decrypter=None,
         )
 
     @staticmethod
@@ -72,15 +80,17 @@ class RecordBuilder:
             payload_type=proto.RecordTypes.BYTES,
             signer=None,
             encrypter=None,
+            decrypter=None,
         )
 
     @staticmethod
-    def from_raw(b: bytes) -> RecordBuilder:
+    def from_raw(b: str) -> RecordBuilder:
         return RecordBuilder(
             payload=b,
             payload_type=proto.RecordTypes.RAW,
             signer=None,
             encrypter=None,
+            decrypter=None,
         )
 
     def with_signer(self, signer: Signer) -> RecordBuilder:
@@ -91,6 +101,10 @@ class RecordBuilder:
         self.encrypter = encrypter.to_proto()
         return self
 
+    def with_decrypter(self, decrypter: Decrypter) -> RecordBuilder:
+        self.decrypter = decrypter.to_proto()
+        return self
+
     def build(self) -> Record:
         client = bridge.BloockBridge()
 
@@ -99,43 +113,43 @@ class RecordBuilder:
         if self.payload_type == proto.RecordTypes.RECORD:
             res = client.record().BuildRecordFromRecord(
                 proto.RecordBuilderFromRecordRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter
+                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
                 )
             )
         elif self.payload_type == proto.RecordTypes.STRING:
             res = client.record().BuildRecordFromString(
                 proto.RecordBuilderFromStringRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter
+                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
                 )
             )
         elif self.payload_type == proto.RecordTypes.HEX:
             res = client.record().BuildRecordFromHex(
                 proto.RecordBuilderFromHexRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter
+                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
                 )
             )
         elif self.payload_type == proto.RecordTypes.JSON:
             res = client.record().BuildRecordFromJson(
                 proto.RecordBuilderFromJSONRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter
+                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
                 )
             )
         elif self.payload_type == proto.RecordTypes.FILE:
             res = client.record().BuildRecordFromFile(
                 proto.RecordBuilderFromFileRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter
+                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
                 )
             )
         elif self.payload_type == proto.RecordTypes.BYTES:
             res = client.record().BuildRecordFromBytes(
                 proto.RecordBuilderFromBytesRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter
+                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
                 )
             )
         elif self.payload_type == proto.RecordTypes.RAW:
             res = client.record().BuildRecordFromRaw(
                 proto.RecordBuilderFromRawRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter
+                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
                 )
             )
 

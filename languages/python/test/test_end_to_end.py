@@ -3,6 +3,8 @@ import unittest
 
 from bloock.client.builder import RecordBuilder
 from bloock.client.client import Client
+from bloock.client.entity.decrypter import AesDecrypter
+from bloock.client.entity.encrypter import AesEncrypter
 from bloock.client.entity.signer import EcsdaSigner
 from bloock.client.entity.network import Network
 
@@ -40,6 +42,28 @@ class TestE2E(unittest.TestCase):
             hash, "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"
         )
         records.append(hash)
+
+        payload = "Hello world 2"
+        encrypted_record = RecordBuilder.from_string(payload)\
+                .with_encrypter(AesEncrypter("some_password"))\
+                .build()
+
+        self.assertNotEqual(payload.encode(), encrypted_record.payload)
+
+        record = RecordBuilder.from_record(encrypted_record)\
+            .with_decrypter(AesDecrypter("some_password"))\
+            .build()
+
+        self.assertEqual(payload, record.payload.decode())
+
+        hash = record.get_hash()
+        self.assertEqual("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
+        records.append(hash)
+
+        with self.assertRaises(Exception) as _:
+            RecordBuilder.from_record(encrypted_record)\
+                .with_decrypter(AesDecrypter("incorrect_password"))\
+                .build()
 
         record = RecordBuilder.from_string("Hello world 2").build()
         record = RecordBuilder.from_record(record).build()
