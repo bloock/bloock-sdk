@@ -54,7 +54,7 @@ message Record {
     bytes payload = 2;
     repeated Signature signatures = 3;
     optional Encryption encryption = 4;
-    optional Proof proof = 6; 
+    optional Proof proof = 5; 
 }
 
 enum SignerAlg {
