@@ -20,6 +20,16 @@ use crate::{
     },
 };
 
+fn record_builder_response_error(message: String) -> RecordBuilderResponse {
+    RecordBuilderResponse {
+        record: None,
+        error: Some(Error {
+            kind: BridgeError::RecordError.to_string(),
+            message,
+        }),
+    }
+}
+
 impl From<SendRecordsResponse> for ResponseType {
     fn from(res: SendRecordsResponse) -> Self {
         ResponseType::SendRecords(res)
@@ -158,15 +168,7 @@ impl RecordServiceHandler for RecordServer {
     ) -> RecordBuilderResponse {
         let builder = match RecordBuilder::from_hex(req.payload) {
             Ok(builder) => builder,
-            Err(e) => {
-                return RecordBuilderResponse {
-                    record: None,
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: e.to_string(),
-                    }),
-                }
-            }
+            Err(e) => return record_builder_response_error(e.to_string()),
         };
         build_record(builder, req.signer, req.encrypter)
     }
@@ -177,15 +179,7 @@ impl RecordServiceHandler for RecordServer {
     ) -> RecordBuilderResponse {
         let builder = match RecordBuilder::from_json(req.payload) {
             Ok(builder) => builder,
-            Err(e) => {
-                return RecordBuilderResponse {
-                    record: None,
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: e.to_string(),
-                    }),
-                }
-            }
+            Err(e) => return record_builder_response_error(e.to_string()),
         };
         build_record(builder, req.signer, req.encrypter)
     }
@@ -235,15 +229,7 @@ impl RecordServiceHandler for RecordServer {
         };
         let builder = match RecordBuilder::from_record(payload) {
             Ok(builder) => builder,
-            Err(e) => {
-                return RecordBuilderResponse {
-                    record: None,
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: e.to_string(),
-                    }),
-                }
-            }
+            Err(e) => return record_builder_response_error(e.to_string()),
         };
         build_record(builder, req.signer, req.encrypter)
     }
@@ -268,37 +254,19 @@ fn build_record(
                 let signer_arguments = match signer.args {
                     Some(signer_arguments) => signer_arguments,
                     None => {
-                        return RecordBuilderResponse {
-                            record: None,
-                            error: Some(Error {
-                                kind: BridgeError::RecordError.to_string(),
-                                message: "no arguments provided".to_string(),
-                            }),
-                        }
+                        return record_builder_response_error("no arguments provided".to_string())
                     }
                 };
                 let private_key = match signer_arguments.private_key {
                     Some(private_key) => private_key,
                     None => {
-                        return RecordBuilderResponse {
-                            record: None,
-                            error: Some(Error {
-                                kind: BridgeError::RecordError.to_string(),
-                                message: "no private key provided".to_string(),
-                            }),
-                        }
+                        return record_builder_response_error("no private key provided".to_string())
                     }
                 };
                 EcsdaSigner::new(EcsdaSignerArgs::new(&private_key))
             }
             None => {
-                return RecordBuilderResponse {
-                    record: None,
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: "invalid signer provided".to_string(),
-                    }),
-                }
+                return record_builder_response_error("invalid signer provided".to_string());
             }
         };
         builder = builder.with_signer(signer);
@@ -310,37 +278,14 @@ fn build_record(
                 let encrypter_arguments = match encrypt.args {
                     Some(encrypter_arguments) => encrypter_arguments,
                     None => {
-                        return RecordBuilderResponse {
-                            record: None,
-                            error: Some(Error {
-                                kind: BridgeError::RecordError.to_string(),
-                                message: "no arguments provided".to_string(),
-                            }),
-                        }
+                        return record_builder_response_error("no arguments provided".to_string())
                     }
                 };
-                let secret = match encrypter_arguments.secret {
-                    Some(secret) => secret,
-                    None => {
-                        return RecordBuilderResponse {
-                            record: None,
-                            error: Some(Error {
-                                kind: BridgeError::RecordError.to_string(),
-                                message: "no secret provided".to_string(),
-                            }),
-                        }
-                    }
-                };
-                AesEncrypter::new(AesEncrypterArgs::new(&secret))
+
+                AesEncrypter::new(AesEncrypterArgs::new(&encrypter_arguments.password))
             }
             None => {
-                return RecordBuilderResponse {
-                    record: None,
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: "invalid encrypter provided".to_string(),
-                    }),
-                }
+                return record_builder_response_error("invalid encrypter provided".to_string());
             }
         };
         builder = builder.with_encrypter(encrypter);
@@ -349,25 +294,9 @@ fn build_record(
     let record: Record = match builder.build() {
         Ok(record) => match record.try_into() {
             Ok(record) => record,
-            Err(e) => {
-                return RecordBuilderResponse {
-                    record: None,
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: e.to_string(),
-                    }),
-                }
-            }
+            Err(e) => return record_builder_response_error(e.to_string()),
         },
-        Err(e) => {
-            return RecordBuilderResponse {
-                record: None,
-                error: Some(Error {
-                    kind: BridgeError::RecordError.to_string(),
-                    message: e.to_string(),
-                }),
-            }
-        }
+        Err(e) => return record_builder_response_error(e.to_string()),
     };
 
     RecordBuilderResponse {
@@ -385,6 +314,8 @@ mod tests {
         },
         server::Server,
     };
+
+    use bloock_core::AES_ALG;
 
     #[tokio::test]
     async fn test_build_record_from_string_no_signature_nor_encryption() {
@@ -460,7 +391,7 @@ mod tests {
     #[tokio::test]
     async fn test_build_record_from_string_set_signature_and_encryption() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let secret = "secret";
+        let password = "some_password";
         let content = "hello world!";
 
         let request = crate::items::RecordBuilderFromStringRequest {
@@ -474,7 +405,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncrypterAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    secret: Some(secret.to_string()),
+                    password: password.to_string(),
                 }),
             }),
         };
@@ -489,7 +420,7 @@ mod tests {
 
         assert_eq!("string", result_ty);
         assert_eq!(1, result_signature.len());
-        assert_eq!("alg", result_encryption_alg);
+        assert_eq!(AES_ALG, result_encryption_alg);
         assert_eq!(None, result_error);
     }
 

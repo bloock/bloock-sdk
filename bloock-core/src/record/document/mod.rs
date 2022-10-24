@@ -55,9 +55,13 @@ impl Document {
         self
     }
 
-    pub fn set_encryption(&mut self, encryption: Encryption) -> &mut Self {
+    pub fn set_encryption(&mut self, encryption: Encryption) -> BloockResult<()> {
+        self.payload = base64_url::decode(&encryption.ciphertext)
+            .map_err(|err| RecordError::EncryptionError(err.to_string()))?;
+
         self.encryption = Some(encryption);
-        self
+
+        Ok(())
     }
 
     pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
@@ -260,16 +264,21 @@ mod tests {
             signature: "1234567890abcdef1234567890abcdef".to_string(),
         };
         let encryption = Encryption {
-            protected: "e0".to_string(),
+            ciphertext: "ciphertext".to_string(),
             header: EncryptionHeader {
-                alg: "ECSDA".to_string(),
+                alg: "AES_ALG".to_string(),
+                enc: "AES_ENC".to_string(),
+                cty: "pdf".to_string(),
             },
+            protected: "e0".to_string(),
+            tag: "id".to_string(),
         };
+
         let document = Document::new(
             headers,
             payload.clone(),
             Some(vec![signature]),
-            Some(encryption),
+            Some(encryption.clone()),
             None,
         );
 
@@ -291,15 +300,9 @@ mod tests {
             }]))
             .unwrap(),
         );
-        let expected_encryption = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "header": {
-                    "alg": "ECSDA"
-                },
-                "protected": "e0"
-            }))
-            .unwrap(),
-        );
+
+        let expected_encryption = base64_url::encode(&serde_json::to_vec(&encryption).unwrap());
+
         let expected_output = format!(
             "{}.{}.{}.{}.",
             expected_headers, expected_payload, expected_signature, expected_encryption
@@ -324,11 +327,16 @@ mod tests {
             },
             signature: "1234567890abcdef1234567890abcdef".to_string(),
         };
+
         let encryption = Encryption {
             protected: "e0".to_string(),
             header: EncryptionHeader {
-                alg: "ECSDA".to_string(),
+                alg: "AES_ALG".to_string(),
+                enc: "AES_ENC".to_string(),
+                cty: "pdf".to_string(),
             },
+            ciphertext: "ciphertext".to_string(),
+            tag: "id".to_string(),
         };
 
         let proof = Proof {
@@ -353,7 +361,7 @@ mod tests {
             headers,
             payload.clone(),
             Some(vec![signature]),
-            Some(encryption),
+            Some(encryption.clone()),
             Some(proof),
         );
 
@@ -375,15 +383,8 @@ mod tests {
             }]))
             .unwrap(),
         );
-        let expected_encryption = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "header": {
-                    "alg": "ECSDA"
-                },
-                "protected": "e0"
-            }))
-            .unwrap(),
-        );
+        let expected_encryption = base64_url::encode(&serde_json::to_vec(&encryption).unwrap());
+
         let expected_proof = base64_url::encode(
             &serde_json::to_vec(&json!({
                 "leaves": [

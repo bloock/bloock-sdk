@@ -75,6 +75,7 @@ impl Builder {
             encrypter: None,
         }
     }
+
     fn from_document(document: Document) -> Self {
         Self {
             document,
@@ -82,14 +83,17 @@ impl Builder {
             encrypter: None,
         }
     }
+
     pub fn with_signer<S: Signer + 'static>(mut self, signer: S) -> Self {
         self.signer = Some(Box::new(signer));
         self
     }
+
     pub fn with_encrypter<E: Encrypter + 'static>(mut self, encrypter: E) -> Self {
         self.encrypter = Some(Box::new(encrypter));
         self
     }
+
     pub fn build(mut self) -> BloockResult<Record> {
         if let Some(signer) = &self.signer {
             let payload = self.document.get_payload();
@@ -104,9 +108,10 @@ impl Builder {
             let payload = self.document.get_payload();
 
             let encryption = encrypter
-                .encrypt(payload)
+                .encrypt(payload, &[/* TODO */], self.document.headers.ty.clone())
                 .map_err(InfrastructureError::EncrypterError)?;
-            self.document.set_encryption(encryption);
+
+            self.document.set_encryption(encryption)?;
         }
 
         Ok(Record::new(self.document))
@@ -116,7 +121,10 @@ impl Builder {
 #[cfg(test)]
 mod tests {
 
-    use bloock_encrypter::{Encryption, EncryptionHeader};
+    use bloock_encrypter::{
+        aes::{AES_ALG, AES_ENC},
+        Encryption, EncryptionHeader,
+    };
     use bloock_hasher::from_hex;
     use bloock_publisher::test::{TestLoader, TestLoaderArgs};
     use bloock_signer::{Signature, SignatureHeader};
@@ -198,8 +206,12 @@ mod tests {
         let encryption = Encryption {
             protected: "e0".to_string(),
             header: EncryptionHeader {
-                alg: "ECSDA".to_string(),
+                alg: AES_ALG.to_string(),
+                enc: AES_ENC.to_string(),
+                cty: "pdf".to_string(),
             },
+            ciphertext: "ciphertext".to_string(),
+            tag: "id".to_string(),
         };
         let proof = Proof {
             leaves: vec![from_hex(
@@ -345,7 +357,7 @@ mod tests {
 
     #[test]
     fn test_from_raw() {
-        let payload = "eyJ0eSI6InN0cmluZyJ9.U29tZSBzdHJpbmc.W3siaGVhZGVyIjp7ImFsZyI6IkVDU0RBIiwia2lkIjoiMTIzNDU2Nzg5MGFiY2RlZiJ9LCJwcm90ZWN0ZWQiOiJlMCIsInNpZ25hdHVyZSI6IjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVmIn1d.eyJoZWFkZXIiOnsiYWxnIjoiRUNTREEifSwicHJvdGVjdGVkIjoiZTAifQ.eyJhbmNob3IiOnsiYW5jaG9yX2lkIjoxLCJuZXR3b3JrcyI6W10sInJvb3QiOiIiLCJzdGF0dXMiOiJwZW5kaW5nIn0sImJpdG1hcCI6IjZkODAiLCJkZXB0aCI6IjAwMDUwMDA1MDAwNDAwMDQwMDA0MDAwNDAwMDQwMDAzMDAwMSIsImxlYXZlcyI6WyIxY2EwZTlkOWEyMDZmMDhkMzhhNGUyY2Y0ODUzNTE2NzRmZmM5YjBmMzE3NWUwY2I2ZGJkOGUwZTE5ODI5Yjk3Il0sIm5vZGVzIjpbIjFjYTBlOWQ5YTIwNmYwOGQzOGE0ZTJjZjQ4NTM1MTY3NGZmYzliMGYzMTc1ZTBjYjZkYmQ4ZTBlMTk4MjliOTciXX0";
+        let payload = "eyJ0eSI6InN0cmluZyJ9.U29tZSBzdHJpbmc.W3siaGVhZGVyIjp7ImFsZyI6IkVDU0RBIiwia2lkIjoiMTIzNDU2Nzg5MGFiY2RlZiJ9LCJwcm90ZWN0ZWQiOiJlMCIsInNpZ25hdHVyZSI6IjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVmIn1d.eyJjaXBoZXJ0ZXh0IjoiY2lwaGVydGV4dCIsInRhZyI6ImlkIiwiaGVhZGVyIjp7ImFsZyI6IkFFU19BTEciLCJlbmMiOiJBRVNfRU5DIiwiY3R5IjoicGRmIn0sInByb3RlY3RlZCI6ImUwIn0.eyJhbmNob3IiOnsiYW5jaG9yX2lkIjoxLCJuZXR3b3JrcyI6W10sInJvb3QiOiIiLCJzdGF0dXMiOiJwZW5kaW5nIn0sImJpdG1hcCI6IjZkODAiLCJkZXB0aCI6IjAwMDUwMDA1MDAwNDAwMDQwMDA0MDAwNDAwMDQwMDAzMDAwMSIsImxlYXZlcyI6WyIxY2EwZTlkOWEyMDZmMDhkMzhhNGUyY2Y0ODUzNTE2NzRmZmM5YjBmMzE3NWUwY2I2ZGJkOGUwZTE5ODI5Yjk3Il0sIm5vZGVzIjpbIjFjYTBlOWQ5YTIwNmYwOGQzOGE0ZTJjZjQ4NTM1MTY3NGZmYzliMGYzMTc1ZTBjYjZkYmQ4ZTBlMTk4MjliOTciXX0";
         let r = RecordBuilder::from_raw(payload.to_string())
             .build()
             .unwrap();

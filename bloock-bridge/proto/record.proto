@@ -80,7 +80,7 @@ message Encrypter {
 }
 
 message EncrypterArgs {
-    optional string secret = 1;
+    string password = 1;
 }
 
 message Signature {
@@ -97,10 +97,14 @@ message SignatureHeader {
 message Encryption {
     EncryptionHeader header = 1;
     string protected = 2;
+    string ciphertext = 3;
+    string tag = 4;
 }
 
 message EncryptionHeader {
     string alg = 1;
+    string enc = 2;
+    string cty = 3;
 }
 
 message RecordReceipt {

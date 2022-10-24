@@ -29,6 +29,8 @@ pub enum RecordError {
     DocumentSerializationError(String),
     #[error("Couldn't deserialize document: {0}")]
     DocumentDeserializationError(String),
+    #[error("Error encrypting record: {0}")]
+    EncryptionError(String),
 }
 
 impl From<RecordError> for BloockError {

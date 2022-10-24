@@ -79,13 +79,21 @@ impl From<SignatureCore> for Signature {
 
 impl From<EncryptionHeader> for EncryptionHeaderCore {
     fn from(s: EncryptionHeader) -> Self {
-        Self { alg: s.alg }
+        Self {
+            alg: s.alg,
+            enc: s.enc,
+            cty: s.cty,
+        }
     }
 }
 
 impl From<EncryptionHeaderCore> for EncryptionHeader {
     fn from(e: EncryptionHeaderCore) -> Self {
-        Self { alg: e.alg }
+        Self {
+            alg: e.alg,
+            enc: e.enc,
+            cty: e.cty,
+        }
     }
 }
 
@@ -103,6 +111,8 @@ impl TryFrom<Encryption> for EncryptionCore {
         Ok(Self {
             header: encryption_header,
             protected: e.protected,
+            ciphertext: e.ciphertext,
+            tag: e.tag,
         })
     }
 }
@@ -112,6 +122,8 @@ impl From<EncryptionCore> for Encryption {
         Self {
             header: Some(e.header.into()),
             protected: e.protected,
+            ciphertext: e.ciphertext,
+            tag: e.tag,
         }
     }
 }
