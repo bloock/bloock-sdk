@@ -32,7 +32,7 @@ class Client:
         self.config_data.config.host = host
 
     def set_network_config(self, network: Network, config: NetworkConfig):
-        self.config_data.networks_config[int(network)].CopyFrom(config)
+        self.config_data.networks_config[Network.to_proto(network)].CopyFrom(config)
 
     def send_records(self, records: List[str]) -> List[RecordReceipt]:
         res = self.bridge_client.record().SendRecords(
@@ -85,12 +85,14 @@ class Client:
 
         return res.record
 
-    def verify_records(self, records: List[str], network=Network.BLOOCK_CHAIN) -> int:
+    def verify_records(
+        self, records: List[str], network: Network = Network.BLOOCK_CHAIN
+    ) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
                 config_data=self.config_data,
                 records=records,
-                network=NetworkProto.ValueType(int(network)),
+                network=Network.to_proto(network),
             )
         )
 
@@ -104,7 +106,7 @@ class Client:
             ValidateRootRequest(
                 config_data=self.config_data,
                 root=root,
-                network=NetworkProto.ValueType(int(network)),
+                network=Network.to_proto(network),
             )
         )
 
