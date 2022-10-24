@@ -57,13 +57,18 @@ impl Document {
         self
     }
 
-    pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
-        self.proof = Some(proof);
-        self
+    pub fn set_encryption(&mut self, encryption: Encryption) {
+        self.payload = encryption.ciphertext.clone();
+        self.encryption = Some(encryption);
     }
 
-    pub fn set_encryption(&mut self, encryption: Encryption) -> &mut Self {
-        self.encryption = Some(encryption);
+    pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) {
+        self.payload = decrypted_payload;
+        self.encryption = None;
+    }
+
+    pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
+        self.proof = Some(proof);
         self
     }
 

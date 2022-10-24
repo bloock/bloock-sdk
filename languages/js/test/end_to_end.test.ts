@@ -2,7 +2,9 @@ import {
   RecordBuilder,
   Network,
   EcsdaSigner,
-  BloockClient
+  BloockClient,
+  AesEncrypter,
+  AesDecrypter
 } from "../dist/index";
 import { describe, expect, test } from '@jest/globals';
 
@@ -51,13 +53,32 @@ describe("E2E Tests", () => {
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromString("Hello world 2").build();
-    record = await RecordBuilder.fromRecord(record).build();
+    let payload = "Hello world 2";
+    let encrypted_record = await RecordBuilder.fromString(payload)
+      .withEncrypter(new AesEncrypter("some_password"))
+      .build();
+
+    expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
+      payload
+    );
+
+    record = await RecordBuilder.fromRecord(encrypted_record)
+      .withDecrypter(new AesDecrypter("some_password"))
+      .build();
+
+    expect(String.fromCharCode(...record.payload)).toEqual(payload);
+
     hash = await record.getHash();
     expect(hash).toEqual(
       "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
     );
     records.push(hash);
+
+    await expect(
+      RecordBuilder.fromRecord(encrypted_record).withDecrypter(
+        new AesDecrypter("incorrect_password")
+      ).build
+    ).rejects.toThrow();
 
     record = await RecordBuilder.fromFile(
       Uint8Array.from([2, 3, 4, 5, 6])

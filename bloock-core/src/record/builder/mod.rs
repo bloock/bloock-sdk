@@ -3,7 +3,7 @@ use crate::{
     error::{BloockResult, InfrastructureError},
     record::document::Document,
 };
-use bloock_encrypter::Encrypter;
+use bloock_encrypter::{Decrypter, Encrypter};
 use bloock_publisher::Loader;
 use bloock_signer::Signer;
 use serde_json::Value;
@@ -51,6 +51,7 @@ pub struct Builder {
     document: Document,
     signer: Option<Box<dyn Signer>>,
     encrypter: Option<Box<dyn Encrypter>>,
+    decrypter: Option<Box<dyn Decrypter>>,
 }
 
 impl Builder {
@@ -60,23 +61,34 @@ impl Builder {
             document,
             signer: None,
             encrypter: None,
+            decrypter: None,
         })
     }
+
     fn from_document(document: Document) -> Self {
         Self {
             document,
             signer: None,
             encrypter: None,
+            decrypter: None,
         }
     }
+
     pub fn with_signer<S: Signer + 'static>(mut self, signer: S) -> Self {
         self.signer = Some(Box::new(signer));
         self
     }
+
     pub fn with_encrypter<E: Encrypter + 'static>(mut self, encrypter: E) -> Self {
         self.encrypter = Some(Box::new(encrypter));
         self
     }
+
+    pub fn with_decrypter<E: Decrypter + 'static>(mut self, decrypter: E) -> Self {
+        self.decrypter = Some(Box::new(decrypter));
+        self
+    }
+
     pub fn build(mut self) -> BloockResult<Record> {
         if let Some(signer) = &self.signer {
             let payload = self.document.get_payload();
@@ -87,23 +99,46 @@ impl Builder {
             self.document.add_signature(signature);
         }
 
-        if let Some(encrypter) = &self.encrypter {
+        if let Some(decrypter) = &self.decrypter {
             let payload = self.document.get_payload();
 
-            let encryption = encrypter
-                .encrypt(&payload)
+            let decrypted_payload = decrypter
+                .decrypt(&payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
-            self.document.set_encryption(encryption);
+
+            self.document.remove_encryption(decrypted_payload);
         }
 
-        Ok(Record::new(self.document))
+        // We create the document before encryption since the hash has to be of the unencypted payload
+        let mut record = Record::new(self.document.clone());
+
+        if let Some(encrypter) = &self.encrypter {
+            let payload = self.document.get_payload();
+            let encryption = encrypter
+                .encrypt(&payload, &[/* TODO */])
+                .map_err(InfrastructureError::EncrypterError)?;
+
+            if let Some(doc) = record.document.as_mut() {
+                doc.set_encryption(encryption)
+            }
+        }
+
+        Ok(record)
     }
 }
 
 #[cfg(test)]
 mod tests {
 
+    use bloock_encrypter::{
+        aes::{AES_ALG, AES_ENC},
+        Encryption, EncryptionHeader,
+    };
+    use bloock_hasher::from_hex;
     use bloock_publisher::test::{TestLoader, TestLoaderArgs};
+    use bloock_signer::{Signature, SignatureHeader};
+
+    use crate::proof::entity::{anchor::ProofAnchor, proof::Proof};
 
     use super::*;
 
@@ -162,9 +197,44 @@ mod tests {
     #[test]
     fn test_from_loader() {
         let payload = vec![1, 2, 3, 4, 5];
-        let mut document = Document::new(&payload.clone()).unwrap();
+        let signatures = vec![Signature {
+            protected: "e0".to_string(),
+            header: SignatureHeader {
+                alg: "ECSDA".to_string(),
+                kid: "1234567890abcdef".to_string(),
+            },
+            signature: "1234567890abcdef1234567890abcdef".to_string(),
+        }];
+        let encryption = Encryption {
+            protected: "e0".to_string(),
+            header: EncryptionHeader {
+                alg: AES_ALG.to_string(),
+                enc: AES_ENC.to_string(),
+            },
+            ciphertext: "ciphertext".as_bytes().to_vec(),
+            tag: "id".to_string(),
+        };
+        let proof = Proof {
+            leaves: vec![from_hex(
+                "1ca0e9d9a206f08d38a4e2cf485351674ffc9b0f3175e0cb6dbd8e0e19829b97",
+            )
+            .unwrap()],
+            nodes: vec![from_hex(
+                "1ca0e9d9a206f08d38a4e2cf485351674ffc9b0f3175e0cb6dbd8e0e19829b97",
+            )
+            .unwrap()],
+            depth: "000500050004000400040004000400030001".to_string(),
+            bitmap: "6d80".to_string(),
+            anchor: ProofAnchor {
+                anchor_id: 1,
+                networks: vec![],
+                root: "".to_string(),
+                status: "pending".to_string(),
+            },
+        };
+        let document = Document::new(&payload);
         let r = RecordBuilder::from_loader(TestLoader::new(TestLoaderArgs {
-            document: document.build().unwrap(),
+            document: document.unwrap().build().unwrap(),
         }))
         .unwrap()
         .build()
@@ -239,11 +309,8 @@ mod tests {
             .unwrap();
 
         let document = r.document.unwrap();
+        let document_payload = document.get_payload();
 
-        assert_eq!(
-            payload,
-            document.get_payload(),
-            "Unexpected payload received"
-        );
+        assert_eq!(payload, document_payload, "Unexpected payload received");
     }
 }
