@@ -21,8 +21,8 @@ class Decrypter:
 
 
 class AesDecrypter(Decrypter):
-    def __init__(self, secret: str) -> None:
-        super().__init__(alg=proto.A256GCM, args=DecrypterArgs(secret))
+    def __init__(self, password: str) -> None:
+        super().__init__(alg=proto.A256GCM, args=DecrypterArgs(password))
 
     def to_proto(self) -> proto.Decrypter:
         return proto.Decrypter(alg=self.alg, args=self.args.to_proto())

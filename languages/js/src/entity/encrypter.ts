@@ -10,9 +10,9 @@ export class AesEncrypter implements Encrypter {
   alg: proto.EncryptionAlg;
   args: EncrypterArgs;
 
-  constructor(privateKey: string) {
+  constructor(password: string) {
     this.alg = proto.EncryptionAlg.A256GCM;
-    this.args = new EncrypterArgs(privateKey);
+    this.args = new EncrypterArgs(password);
   }
 
   public toProto(): proto.Encrypter {
