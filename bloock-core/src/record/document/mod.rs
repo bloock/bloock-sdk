@@ -55,13 +55,14 @@ impl Document {
         self
     }
 
-    pub fn set_encryption(&mut self, encryption: Encryption) -> BloockResult<()> {
-        self.payload = base64_url::decode(&encryption.ciphertext)
-            .map_err(|err| RecordError::EncryptionError(err.to_string()))?;
-
+    pub fn set_encryption(&mut self, encryption: Encryption) {
+        self.payload = encryption.ciphertext.clone();
         self.encryption = Some(encryption);
+    }
 
-        Ok(())
+    pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) {
+        self.payload = decrypted_payload;
+        self.encryption = None;
     }
 
     pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
@@ -264,7 +265,7 @@ mod tests {
             signature: "1234567890abcdef1234567890abcdef".to_string(),
         };
         let encryption = Encryption {
-            ciphertext: "ciphertext".to_string(),
+            ciphertext: "ciphertext".as_bytes().to_vec(),
             header: EncryptionHeader {
                 alg: "AES_ALG".to_string(),
                 enc: "AES_ENC".to_string(),
@@ -335,7 +336,7 @@ mod tests {
                 enc: "AES_ENC".to_string(),
                 cty: "pdf".to_string(),
             },
-            ciphertext: "ciphertext".to_string(),
+            ciphertext: "ciphertext".as_bytes().to_vec(),
             tag: "id".to_string(),
         };
 

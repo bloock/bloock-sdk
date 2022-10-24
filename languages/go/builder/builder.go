@@ -1,4 +1,4 @@
-package builder
+package client
 
 import (
 	"context"
@@ -14,6 +14,7 @@ type RecordBuilder struct {
 	payloadType proto.RecordTypes
 	signer      *proto.Signer
 	encrypter   *proto.Encrypter
+	decrypter   *proto.Decrypter
 }
 
 func (b RecordBuilder) WithSigner(signer entity.Signer) RecordBuilder {
@@ -23,6 +24,11 @@ func (b RecordBuilder) WithSigner(signer entity.Signer) RecordBuilder {
 
 func (b RecordBuilder) WithEncrypter(encrypter entity.Encrypter) RecordBuilder {
 	b.encrypter = encrypter.ToProto()
+	return b
+}
+
+func (b RecordBuilder) WithDecrypter(decrypter entity.Decrypter) RecordBuilder {
+	b.decrypter = decrypter.ToProto()
 	return b
 }
 
@@ -38,42 +44,49 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
+			Decrypter: b.decrypter,
 		})
 	case proto.RecordTypes_BYTES:
 		res, err = bridgeClient.Record().BuildRecordFromBytes(context.Background(), &proto.RecordBuilderFromBytesRequest{
 			Payload:   b.payload.([]byte),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
+			Decrypter: b.decrypter,
 		})
 	case proto.RecordTypes_FILE:
 		res, err = bridgeClient.Record().BuildRecordFromFile(context.Background(), &proto.RecordBuilderFromFileRequest{
 			Payload:   b.payload.([]byte),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
+			Decrypter: b.decrypter,
 		})
 	case proto.RecordTypes_JSON:
 		res, err = bridgeClient.Record().BuildRecordFromJson(context.Background(), &proto.RecordBuilderFromJSONRequest{
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
+			Decrypter: b.decrypter,
 		})
 	case proto.RecordTypes_HEX:
 		res, err = bridgeClient.Record().BuildRecordFromHex(context.Background(), &proto.RecordBuilderFromHexRequest{
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
+			Decrypter: b.decrypter,
 		})
 	case proto.RecordTypes_RECORD:
 		res, err = bridgeClient.Record().BuildRecordFromRecord(context.Background(), &proto.RecordBuilderFromRecordRequest{
 			Payload:   b.payload.(*proto.Record),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
+			Decrypter: b.decrypter,
 		})
 	case proto.RecordTypes_RAW:
 		res, err = bridgeClient.Record().BuildRecordFromRaw(context.Background(), &proto.RecordBuilderFromRawRequest{
 			Payload:   b.payload.(string),
 			Signer:    b.signer,
 			Encrypter: b.encrypter,
+			Decrypter: b.decrypter,
 		})
 	}
 

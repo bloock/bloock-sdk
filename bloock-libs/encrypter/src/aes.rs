@@ -95,7 +95,7 @@ impl Encrypter for AesEncrypter {
         tag.copy_from_slice(&aad_tag);
 
         Ok(Encryption {
-            ciphertext: base64_url::encode(&data),
+            ciphertext: data,
             tag: base64_url::encode(&aad_tag),
             protected: base64_url::encode("{}"),
             header: super::EncryptionHeader {
@@ -129,8 +129,7 @@ impl AesDecrypter {
 }
 
 impl Decrypter for AesDecrypter {
-    fn decrypt(&self, cipher_text: &str, associated_data: &[u8]) -> Result<Vec<u8>> {
-        let data = base64_url::decode(cipher_text).map_err(|_| EncrypterError::InvalidBase64())?;
+    fn decrypt(&self, data: &[u8], associated_data: &[u8]) -> Result<Vec<u8>> {
         if data.len() <= HEADER_LEN {
             return Err(EncrypterError::InvalidPayloadLength());
         }

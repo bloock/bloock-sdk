@@ -61,7 +61,7 @@ enum SignerAlg {
     ES256K = 0;
 }
 
-enum EncrypterAlg {
+enum EncryptionAlg {
     A256GCM = 0;
 }
 
@@ -75,11 +75,20 @@ message SignerArgs {
 }
 
 message Encrypter {
-    EncrypterAlg alg = 1;
+    EncryptionAlg alg = 1;
     EncrypterArgs args = 2;
 }
 
 message EncrypterArgs {
+    string password = 1;
+}
+
+message Decrypter {
+    EncryptionAlg alg = 1;
+    DecrypterArgs args = 2;
+}
+
+message DecrypterArgs {
     string password = 1;
 }
 
@@ -97,7 +106,7 @@ message SignatureHeader {
 message Encryption {
     EncryptionHeader header = 1;
     string protected = 2;
-    string ciphertext = 3;
+    bytes ciphertext = 3;
     string tag = 4;
 }
 
@@ -105,6 +114,15 @@ message EncryptionHeader {
     string alg = 1;
     string enc = 2;
     string cty = 3;
+}
+
+message Decryption {
+    DecryptionHeader header = 1;
+    string protected = 2;
+}
+
+message DecryptionHeader {
+    string alg = 1;
 }
 
 message RecordReceipt {
@@ -118,42 +136,49 @@ message RecordBuilderFromStringRequest {
     string payload = 1;
     optional Signer signer = 2;
     optional Encrypter encrypter = 3;
+    optional Decrypter decrypter = 4;
 }
 
 message RecordBuilderFromHexRequest {
     string payload = 1;
     optional Signer signer = 2;
     optional Encrypter encrypter = 3;
+    optional Decrypter decrypter = 4;
 }
 
 message RecordBuilderFromJSONRequest {
     string payload = 1;
     optional Signer signer = 2;
     optional Encrypter encrypter = 3;
+    optional Decrypter decrypter = 4;
 }
 
 message RecordBuilderFromBytesRequest {
     bytes payload = 1;
     optional Signer signer = 2;
     optional Encrypter encrypter = 3;
+    optional Decrypter decrypter = 4;
 }
 
 message RecordBuilderFromFileRequest {
     bytes payload = 1;
     optional Signer signer = 2;
     optional Encrypter encrypter = 3;
+    optional Decrypter decrypter = 4;
 }
 
 message RecordBuilderFromRecordRequest {
     Record payload = 1;
     optional Signer signer = 2;
     optional Encrypter encrypter = 3;
+    optional Decrypter decrypter = 4;
 }
 
 message RecordBuilderFromRawRequest {
     string payload = 1;
     optional Signer signer = 2;
     optional Encrypter encrypter = 3;
+    optional Decrypter decrypter = 4;
 }
 
 message RecordBuilderResponse {
