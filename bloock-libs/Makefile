@@ -12,6 +12,9 @@ http-build:
 web3-build:
 	cd web3 && cargo build --release
 
+metadata-build:
+	cd metadata && cargo build --release
+
 test: hasher-test signer-test encrypter-test publisher-test executor-test http-test web3-test
 
 hasher-test:
@@ -34,6 +37,9 @@ http-test:
 
 web3-test:
 	cd web3 && cargo test --release
+
+metadata-test:
+	cd metadata && cargo test --release
 
 wasm-test: hasher-wasm-test signer-wasm-test encrypter-wasm-test publisher-wasm-test http-wasm-test web3-wasm-test
 
@@ -66,3 +72,8 @@ web3-wasm-test:
 	cd web3 && wasm-pack test --firefox --headless --release
 	cd web3 && wasm-pack test --chrome --headless --release
 	cd web3 && wasm-pack test --node  --release
+
+metadata-wasm-test:
+	cd metadata && wasm-pack test --firefox --headless --release
+	cd metadata && wasm-pack test --chrome --headless --release
+	cd metadata && wasm-pack test --node  --release

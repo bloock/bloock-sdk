@@ -89,6 +89,7 @@ mod tests {
         let record_service = configure_test(Arc::new(http));
         let result = record_service
             .send_records(Vec::from([RecordBuilder::from_string("Some String")
+                .unwrap()
                 .build()
                 .unwrap()]))
             .await

@@ -1,15 +1,10 @@
-use std::convert::{TryFrom, TryInto};
-
 use crate::{
     error::{BridgeError, BridgeResult},
-    items::{
-        Encryption, EncryptionHeader, Proof, Record, RecordHeader, RecordReceipt, Signature,
-        SignatureHeader,
-    },
+    items::{Encryption, EncryptionHeader, Record, RecordReceipt, Signature, SignatureHeader},
 };
 use bloock_core::{
     record::{
-        document::{Document, Headers},
+        document::Document,
         entity::{
             record::Record as RecordCore, record_receipt::RecordReceipt as RecordReceiptCore,
         },
@@ -17,18 +12,7 @@ use bloock_core::{
     Encryption as EncryptionCore, EncryptionHeader as EncryptionHeaderCore,
     Signature as SignatureCore, SignatureHeader as SignatureHeaderCore,
 };
-
-impl From<RecordHeader> for Headers {
-    fn from(r: RecordHeader) -> Self {
-        Self { ty: r.ty }
-    }
-}
-
-impl From<Headers> for RecordHeader {
-    fn from(h: Headers) -> Self {
-        Self { ty: h.ty }
-    }
-}
+use std::convert::TryFrom;
 
 impl From<SignatureHeader> for SignatureHeaderCore {
     fn from(s: SignatureHeader) -> Self {
@@ -119,38 +103,7 @@ impl From<EncryptionCore> for Encryption {
 impl TryFrom<Record> for RecordCore {
     type Error = BridgeError;
     fn try_from(r: Record) -> BridgeResult<RecordCore> {
-        let record_header = match r.headers {
-            Some(h) => h.into(),
-            None => {
-                return Err(BridgeError::RequestDeserialization(
-                    "couldn't find headers".to_string(),
-                ))
-            }
-        };
-        let record_signature = match !r.signatures.is_empty() {
-            true => Some(
-                r.signatures
-                    .iter()
-                    .map(|s| s.clone().try_into())
-                    .collect::<BridgeResult<Vec<SignatureCore>>>()?,
-            ),
-            false => None,
-        };
-        let record_encryption = match r.encryption {
-            Some(e) => Some(e.try_into()?),
-            None => None,
-        };
-        let record_proof = match r.proof {
-            Some(p) => Some(p.try_into()?),
-            None => None,
-        };
-        let document = Document::new(
-            record_header,
-            r.payload,
-            record_signature,
-            record_encryption,
-            record_proof,
-        );
+        let document = Document::new(&r.payload)?;
         Ok(RecordCore::new(document))
     }
 }
@@ -158,32 +111,9 @@ impl TryFrom<Record> for RecordCore {
 impl TryFrom<RecordCore> for Record {
     type Error = BridgeError;
     fn try_from(r: RecordCore) -> BridgeResult<Record> {
-        let record_serialize = match r.serialize() {
-            Ok(record_serialize) => record_serialize,
-            Err(_e) => BridgeError::RecordError.to_string(),
-        };
+        let payload = r.serialize()?;
 
-        let document = match Document::deserialize(record_serialize.as_bytes().to_vec()) {
-            Ok(document) => document,
-            Err(e) => return Err(BridgeError::BloockError(e)),
-        };
-
-        let signatures: Vec<Signature> = match document.signatures {
-            Some(signatures) => signatures.iter().map(|s| s.clone().into()).collect(),
-            None => vec![],
-        };
-
-        let encryption: Option<Encryption> = document.encryption.map(|e| e.into());
-
-        let proof: Option<Proof> = document.proof.map(|e| e.into());
-
-        Ok(Record {
-            headers: Some(document.headers.into()),
-            payload: document.payload,
-            signatures,
-            encryption,
-            proof,
-        })
+        Ok(Record { payload })
     }
 }
 

@@ -23,6 +23,24 @@ export class BloockClient {
   constructor(apiKey: string) {
     this.bridge = new BloockBridge();
     this.configData = NewConfigData(apiKey);
+
+    // if (document !== undefined) {
+    //   fetch("https://api.bloock.dev/events/v1/script/", {
+    //     headers: {
+    //       'X-API-KEY': apiKey
+    //     }
+    //   }).then(r => {
+    //     console.log(r)
+    //     r.text().then(s => {
+    //       console.log(s)
+    //       let script = document.createElement('script');
+    //       script.type = 'text/javascript';
+    //       script.text = s
+
+    //       document.head.appendChild(script);
+    //     })
+    //   })
+    // }
   }
 
   /**

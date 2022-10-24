@@ -1,47 +1,24 @@
 import { BloockBridge } from "../bridge/bridge";
 import * as proto from "../bridge/proto/record";
-import { Proof } from "./proof";
 
 export class Record {
-  headers?: RecordHeader;
   payload: Uint8Array;
-  signatures: Signature[];
-  encryption?: Encryption | undefined;
-  proof?: Proof | undefined;
 
   constructor(
-    headers: RecordHeader | undefined,
     payload: Uint8Array,
-    signatures: Signature[],
-    encryption: Encryption | undefined,
-    proof: Proof | undefined
   ) {
-    this.headers = headers;
     this.payload = payload;
-    this.signatures = signatures;
-    this.encryption = encryption;
-    this.proof = proof;
   }
 
   static fromProto(r: proto.Record) {
     return new Record(
-      r.headers === undefined ? undefined : RecordHeader.fromProto(r.headers),
-      r.payload,
-      r.signatures.map(x => Signature.fromProto(x)),
-      r.encryption === undefined
-        ? undefined
-        : Encryption.fromProto(r.encryption),
-      r.proof === undefined ? undefined : Proof.fromProto(r.proof)
+      r.payload
     );
   }
 
   toProto(): proto.Record {
     return proto.Record.fromPartial({
-      headers: this.headers,
-      payload: this.payload,
-      signatures: this.signatures.map(s => s.toProto()),
-      encryption: this.encryption,
-      proof: this.proof
+      payload: this.payload
     });
   }
 

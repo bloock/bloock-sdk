@@ -1,10 +1,12 @@
 use crate::anchor::AnchorError;
 use crate::config::ConfigError;
+use crate::event::EventError;
 use crate::proof::ProofError;
 use crate::record::RecordError;
 use bloock_encrypter::EncrypterError;
 use bloock_hasher::HasherError;
 use bloock_http::HttpError;
+use bloock_metadata::MetadataError;
 use bloock_publisher::PublisherError;
 use bloock_signer::SignerError;
 use std::fmt;
@@ -24,6 +26,8 @@ pub enum ErrorKind {
     Record(#[from] RecordError),
     #[error("Proof error: {0}")]
     Proof(#[from] ProofError),
+    #[error("Event error: {0}")]
+    Event(#[from] EventError),
     #[error("Infrastructure error: {0}")]
     Infrastructure(#[from] InfrastructureError),
     #[error("Operational error: {0}")]
@@ -65,6 +69,8 @@ pub enum InfrastructureError {
     EncrypterError(#[from] EncrypterError),
     #[error("{0}")]
     PublisherError(#[from] PublisherError),
+    #[error("{0}")]
+    MetadataError(#[from] MetadataError),
 }
 
 impl From<InfrastructureError> for BloockError {

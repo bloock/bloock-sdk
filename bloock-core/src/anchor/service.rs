@@ -121,8 +121,8 @@ mod test {
     }
 
     #[tokio::test]
-    async fn test_wait_anchor_after_3_retries() {
-        test_wait_anchor(3).await;
+    async fn test_wait_anchor_after_1_retries() {
+        test_wait_anchor(1).await;
     }
 
     #[tokio::test]

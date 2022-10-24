@@ -25,18 +25,10 @@ extern "C" {
     
 }
 
-pub struct HttpClientImpl {
-    api_key: String,
-}
+pub struct SimpleHttpClient {}
 
 #[async_trait(?Send)]
-impl Client for HttpClientImpl {
-    fn new(api_key: String) -> Self {
-        Self { api_key: api_key }
-    }
-    fn get_api_key(&self) -> String {
-        return self.api_key.clone();
-    }
+impl Client for SimpleHttpClient {
     async fn get<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
@@ -74,15 +66,16 @@ impl Client for HttpClientImpl {
     }
 }
 
-impl HttpClientImpl {
+impl SimpleHttpClient {
+    pub fn new() -> Self {
+        Self { }
+    }
+
     async fn request<T: DeserializeOwned + 'static>(
         &self,
         req: Request,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        if self.api_key != "" {
-            req.headers().set("X-Api-Key", &self.api_key).map_err(|e| HttpError::JsError(e.into()))?;
-        }
         if headers.is_some() {
             for header in headers.unwrap() {
                 req.headers().set(&header.0, &header.1).map_err(|e| HttpError::JsError(e.into()))?;

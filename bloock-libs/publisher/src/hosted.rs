@@ -1,7 +1,9 @@
 use super::{Loader, Publisher};
 
 #[derive(Default)]
-pub struct HostedPublisherArgs {}
+pub struct HostedPublisherArgs {
+    key: String,
+}
 
 pub struct HostedPublisher {
     _args: HostedPublisherArgs,

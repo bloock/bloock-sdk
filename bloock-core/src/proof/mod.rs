@@ -1,4 +1,4 @@
-use bloock_http::HttpClient;
+use bloock_http::BloockHttpClient;
 #[cfg(test)]
 use bloock_http::MockClient;
 use bloock_web3::blockchain::Blockchain;
@@ -43,9 +43,9 @@ impl From<ProofError> for BloockError {
 }
 
 pub fn configure(
-    http: Arc<HttpClient>,
+    http: Arc<BloockHttpClient>,
     config_data: Arc<ConfigData>,
-) -> service::ProofService<HttpClient> {
+) -> service::ProofService<BloockHttpClient> {
     service::ProofService {
         http: Arc::clone(&http),
         config_service: config::configure(Arc::clone(&config_data)),

@@ -285,6 +285,7 @@ mod tests {
         let service = configure_test(Arc::new(http));
         let final_response = service
             .get_proof(vec![RecordBuilder::from_string("Some String")
+                .unwrap()
                 .build()
                 .unwrap()])
             .await

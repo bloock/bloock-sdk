@@ -20,6 +20,7 @@ impl ConfigData {
                 key_type_algorithm: String::from("EC"),
                 elliptic_curve_key: String::from("secp256k1"),
                 signature_algorithm: String::from("'ES256K'"),
+                analytics_key: String::from("mVmPsQNQxbhZaZKxcLGF1mxB1kZ67LFU"),
             },
             networks_config: HashMap::from([
                 (

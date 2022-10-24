@@ -8,15 +8,18 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
 
+mod bloock_http;
+pub use crate::bloock_http::BloockHttpClient;
+
 cfg_default! {
     mod hyper_http;
-    pub use hyper_http::HttpClientImpl as HttpClient;
+    pub use hyper_http::SimpleHttpClient;
 }
 
 cfg_wasm! {
     mod wasm_http;
-    pub use wasm_http::HttpClientImpl as HttpClient;
     use wasm_http::JsError;
+    pub use wasm_http::SimpleHttpClient;
 }
 
 pub type Result<T> = std::result::Result<T, HttpError>;
@@ -24,8 +27,6 @@ pub type Result<T> = std::result::Result<T, HttpError>;
 #[cfg_attr(any(test, feature = "testing"), automock)]
 #[async_trait(?Send)]
 pub trait Client {
-    fn new(api_key: String) -> Self;
-    fn get_api_key(&self) -> String;
     async fn get<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,

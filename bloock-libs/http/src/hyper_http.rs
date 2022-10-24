@@ -6,18 +6,10 @@ use async_trait::async_trait;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-pub struct HttpClientImpl {
-    api_key: String,
-}
+pub struct SimpleHttpClient {}
 
 #[async_trait(?Send)]
-impl Client for HttpClientImpl {
-    fn new(api_key: String) -> Self {
-        Self { api_key }
-    }
-    fn get_api_key(&self) -> String {
-        self.api_key.clone()
-    }
+impl Client for SimpleHttpClient {
     async fn get<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
@@ -40,22 +32,26 @@ impl Client for HttpClientImpl {
     }
 }
 
-impl HttpClientImpl {
+impl SimpleHttpClient {
+    pub fn new() -> Self {
+        Self {}
+    }
+
     async fn request<T: DeserializeOwned + 'static>(
         &self,
         mut req: ureq::Request,
         body: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        if !self.api_key.is_empty() {
-            req = req.set("X-Api-Key", &self.api_key);
-        }
+        println!("{:?}", headers.clone());
+
         if headers.is_some() {
             for header in headers.unwrap() {
                 req = req.set(&header.0, &header.1);
             }
         }
 
+        println!("{:?}", body);
         let res = match body {
             Some(b) => req.send_string(&b),
             None => req.call(),
@@ -69,6 +65,7 @@ impl HttpClientImpl {
             .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
 
         if (200..300).contains(&status) {
+            println!("{}", res_str);
             serde_json::from_str(&res_str).map_err(|e| HttpError::DeserializeError(e.to_string()))
         } else {
             let response: ApiError = serde_json::from_str(&res_str)

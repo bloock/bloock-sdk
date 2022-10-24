@@ -9,6 +9,7 @@ pub struct Configuration {
     pub key_type_algorithm: String,
     pub elliptic_curve_key: String,
     pub signature_algorithm: String,
+    pub analytics_key: String,
 }
 
 impl Default for Configuration {
@@ -21,6 +22,7 @@ impl Default for Configuration {
             key_type_algorithm: String::from("EC"),
             elliptic_curve_key: String::from("secp256k1"),
             signature_algorithm: String::from("ES256K"),
+            analytics_key: String::from(""),
         }
     }
 }

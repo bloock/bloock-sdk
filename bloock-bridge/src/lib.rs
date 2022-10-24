@@ -21,6 +21,13 @@ pub mod wasm {
         future_to_promise(_request(request_type, payload)).into()
     }
 
+    #[wasm_bindgen]
+    extern "C" {
+        pub fn gtag(cmd: &str, id: &str);
+        #[wasm_bindgen(js_name = gtag)]
+        pub fn gtag_with_parameters(cmd: &str, id: &str, params: &JsValue);
+    }
+
     fn future_to_promise<F>(future: F) -> Promise
     where
         F: Future<Output = Result<JsValue, JsValue>> + 'static,
