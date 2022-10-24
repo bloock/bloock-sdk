@@ -1,9 +1,10 @@
 import os
 import unittest
-from bloock._bridge.proto.config_pb2 import Network
+
 from bloock.client.builder import RecordBuilder
 from bloock.client.client import Client
 from bloock.client.entity.signer import EcsdaSigner
+from bloock.client.entity.network import Network
 
 
 class TestE2E(unittest.TestCase):
