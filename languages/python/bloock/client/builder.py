@@ -113,43 +113,64 @@ class RecordBuilder:
         if self.payload_type == proto.RecordTypes.RECORD:
             res = client.record().BuildRecordFromRecord(
                 proto.RecordBuilderFromRecordRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
+                    payload=self.payload,
+                    signer=self.signer,
+                    encrypter=self.encrypter,
+                    decrypter=self.decrypter,
                 )
             )
         elif self.payload_type == proto.RecordTypes.STRING:
             res = client.record().BuildRecordFromString(
                 proto.RecordBuilderFromStringRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
+                    payload=self.payload,
+                    signer=self.signer,
+                    encrypter=self.encrypter,
+                    decrypter=self.decrypter,
                 )
             )
         elif self.payload_type == proto.RecordTypes.HEX:
             res = client.record().BuildRecordFromHex(
                 proto.RecordBuilderFromHexRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
+                    payload=self.payload,
+                    signer=self.signer,
+                    encrypter=self.encrypter,
+                    decrypter=self.decrypter,
                 )
             )
         elif self.payload_type == proto.RecordTypes.JSON:
             res = client.record().BuildRecordFromJson(
                 proto.RecordBuilderFromJSONRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
+                    payload=self.payload,
+                    signer=self.signer,
+                    encrypter=self.encrypter,
+                    decrypter=self.decrypter,
                 )
             )
         elif self.payload_type == proto.RecordTypes.FILE:
             res = client.record().BuildRecordFromFile(
                 proto.RecordBuilderFromFileRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
+                    payload=self.payload,
+                    signer=self.signer,
+                    encrypter=self.encrypter,
+                    decrypter=self.decrypter,
                 )
             )
         elif self.payload_type == proto.RecordTypes.BYTES:
             res = client.record().BuildRecordFromBytes(
                 proto.RecordBuilderFromBytesRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
+                    payload=self.payload,
+                    signer=self.signer,
+                    encrypter=self.encrypter,
+                    decrypter=self.decrypter,
                 )
             )
         elif self.payload_type == proto.RecordTypes.RAW:
             res = client.record().BuildRecordFromRaw(
                 proto.RecordBuilderFromRawRequest(
-                    payload=self.payload, signer=self.signer, encrypter=self.encrypter, decrypter=self.decrypter
+                    payload=self.payload,
+                    signer=self.signer,
+                    encrypter=self.encrypter,
+                    decrypter=self.decrypter,
                 )
             )
 

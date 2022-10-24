@@ -43,18 +43,18 @@ func TestEndToEnd(t *testing.T) {
 		assert.Equal(t, "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312", hash)
 		records = append(records, hash)
 
-        payload := "Hello world 2"
-        encrypted_record, err := client.NewRecordBuilderFromString(payload).
-            WithEncrypter(entity.NewAesEncrypter("some_password")).
-            Build()
+		payload := "Hello world 2"
+		encrypted_record, err := client.NewRecordBuilderFromString(payload).
+			WithEncrypter(entity.NewAesEncrypter("some_password")).
+			Build()
 		require.NoError(t, err)
-        assert.NotEqual(t, payload, string(encrypted_record.Payload))
+		assert.NotEqual(t, payload, string(encrypted_record.Payload))
 
 		record, err = client.NewRecordBuilderFromRecord(encrypted_record).
-            WithDecrypter(entity.NewAesDecrypter("some_password")).
-            Build()
+			WithDecrypter(entity.NewAesDecrypter("some_password")).
+			Build()
 		require.NoError(t, err)
-        assert.Equal(t, payload, string(record.Payload))
+		assert.Equal(t, payload, string(record.Payload))
 
 		hash, err = record.GetHash()
 		require.NoError(t, err)
@@ -62,8 +62,8 @@ func TestEndToEnd(t *testing.T) {
 		records = append(records, hash)
 
 		_, err = client.NewRecordBuilderFromRecord(encrypted_record).
-            WithDecrypter(entity.NewAesDecrypter("incorrect_password")).
-            Build()
+			WithDecrypter(entity.NewAesDecrypter("incorrect_password")).
+			Build()
 		require.Error(t, err)
 
 		record, err = client.NewRecordBuilderFromFile([]byte{2, 3, 4, 5, 6}).Build()
