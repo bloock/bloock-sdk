@@ -65,14 +65,6 @@ class TestE2E(unittest.TestCase):
                 .with_decrypter(AesDecrypter("incorrect_password"))\
                 .build()
 
-        record = RecordBuilder.from_string("Hello world 2").build()
-        record = RecordBuilder.from_record(record).build()
-        hash = record.get_hash()
-        self.assertEqual(
-            hash, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
-        )
-        records.append(hash)
-
         record = RecordBuilder.from_file(bytes([2, 3, 4, 5, 6])).build()
         hash = record.get_hash()
         self.assertEqual(
