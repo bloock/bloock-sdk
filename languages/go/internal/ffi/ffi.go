@@ -11,6 +11,8 @@ package ffi
 import "C"
 import (
 	"encoding/base64"
+
+	_ "github.com/bloock/bloock-sdk-go/v2/internal/ffi/native"
 )
 
 func Request(requestType string, payload []byte) ([]byte, error) {
