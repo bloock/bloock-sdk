@@ -38,6 +38,12 @@ pub trait Client {
         body: B,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T>;
+    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+        &self,
+        url: U,
+        body: &[u8],
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<T>;
 }
 
 #[derive(Deserialize)]

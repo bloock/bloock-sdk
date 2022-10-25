@@ -29,3 +29,24 @@ pub async fn simple_http_client_post() {
         "HTTP Post not returning valid body."
     );
 }
+
+pub async fn simple_http_client_post_file() {
+    let client = SimpleHttpClient::new();
+
+    let file: Vec<u8> = vec![1, 2, 3, 4, 5];
+    let res: serde_json::Value = client
+        .post_file("https://httpbin.org/post", &file, None)
+        .await
+        .unwrap();
+
+    assert_eq!(
+        res.get("json")
+            .unwrap()
+            .get("hello")
+            .unwrap()
+            .as_str()
+            .unwrap(),
+        "world",
+        "HTTP Post not returning valid body."
+    );
+}

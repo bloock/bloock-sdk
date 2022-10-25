@@ -52,6 +52,24 @@ impl Client for BloockHttpClient {
         let client = SimpleHttpClient {};
         client.post(url, body, Some(headers)).await
     }
+
+    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+        &self,
+        url: U,
+        body: &[u8],
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<T> {
+        let headers = match headers {
+            Some(mut h) => {
+                h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h
+            }
+            None => vec![("X-Api-Key".to_string(), self.get_api_key())],
+        };
+
+        let client = SimpleHttpClient {};
+        client.post_file(url, body, Some(headers)).await
+    }
 }
 
 impl BloockHttpClient {

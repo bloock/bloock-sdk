@@ -64,6 +64,24 @@ impl Client for SimpleHttpClient {
 
         self.request(request, headers).await
     }
+
+    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+        &self,
+        url: U,
+        body: &[u8],
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<T> {
+        let mut opts = RequestInit::new();
+        opts.method("POST");
+        opts.mode(RequestMode::Cors);
+        let body_array: js_sys::Uint8Array = body.into();
+        let js_value: &JsValue = body_array.as_ref();
+        opts.body(Some(js_value));
+
+        let request = Request::new_with_str_and_init(&url.to_string(), &opts).map_err(|e| HttpError::JsError(e.into()))?;
+
+        self.request(request, headers).await
+    }
 }
 
 impl SimpleHttpClient {

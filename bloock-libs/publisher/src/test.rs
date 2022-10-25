@@ -1,21 +1,42 @@
-use super::Loader;
+use super::{Loader, Publisher};
+use async_trait::async_trait;
 
-pub struct TestLoaderArgs {
-    pub document: Vec<u8>,
+#[derive(Default)]
+pub struct TestPublisherArgs {}
+
+pub struct TestPublisher {
+    _args: TestPublisherArgs,
 }
 
+impl TestPublisher {
+    pub fn new(args: TestPublisherArgs) -> Self {
+        Self { _args: args }
+    }
+}
+
+#[async_trait(?Send)]
+impl Publisher for TestPublisher {
+    async fn publish(&self, _payload: &[u8]) -> crate::Result<String> {
+        Ok("https://google.com".to_owned())
+    }
+}
+
+#[derive(Default)]
+pub struct TestLoaderArgs {}
+
 pub struct TestLoader {
-    args: TestLoaderArgs,
+    _args: TestLoaderArgs,
 }
 
 impl TestLoader {
     pub fn new(args: TestLoaderArgs) -> Self {
-        Self { args }
+        Self { _args: args }
     }
 }
 
+#[async_trait(?Send)]
 impl Loader for TestLoader {
-    fn retrieve(&self) -> crate::Result<Vec<u8>> {
-        Ok(self.args.document.clone())
+    async fn retrieve(&self) -> crate::Result<Vec<u8>> {
+        todo!()
     }
 }

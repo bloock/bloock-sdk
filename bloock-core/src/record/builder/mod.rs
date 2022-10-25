@@ -17,9 +17,10 @@ impl RecordBuilder {
             None => Err(RecordError::DocumentNotFound.into()),
         }
     }
-    pub fn from_loader<L: Loader>(loader: L) -> BloockResult<Builder> {
+    pub async fn from_loader<L: Loader>(loader: L) -> BloockResult<Builder> {
         let bytes = loader
             .retrieve()
+            .await
             .map_err(InfrastructureError::PublisherError)?;
         let document = Document::new(&bytes)?;
         Ok(Builder::from_document(document))
@@ -130,15 +131,7 @@ impl Builder {
 #[cfg(test)]
 mod tests {
 
-    use bloock_encrypter::{
-        aes::{AES_ALG, AES_ENC},
-        Encryption, EncryptionHeader,
-    };
-    use bloock_hasher::from_hex;
     use bloock_publisher::test::{TestLoader, TestLoaderArgs};
-    use bloock_signer::{Signature, SignatureHeader};
-
-    use crate::proof::entity::{anchor::ProofAnchor, proof::Proof};
 
     use super::*;
 
@@ -194,51 +187,14 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_from_loader() {
+    #[tokio::test]
+    async fn test_from_loader() {
         let payload = vec![1, 2, 3, 4, 5];
-        let signatures = vec![Signature {
-            protected: "e0".to_string(),
-            header: SignatureHeader {
-                alg: "ECSDA".to_string(),
-                kid: "1234567890abcdef".to_string(),
-            },
-            signature: "1234567890abcdef1234567890abcdef".to_string(),
-        }];
-        let encryption = Encryption {
-            protected: "e0".to_string(),
-            header: EncryptionHeader {
-                alg: AES_ALG.to_string(),
-                enc: AES_ENC.to_string(),
-            },
-            ciphertext: "ciphertext".as_bytes().to_vec(),
-            tag: "id".to_string(),
-        };
-        let proof = Proof {
-            leaves: vec![from_hex(
-                "1ca0e9d9a206f08d38a4e2cf485351674ffc9b0f3175e0cb6dbd8e0e19829b97",
-            )
-            .unwrap()],
-            nodes: vec![from_hex(
-                "1ca0e9d9a206f08d38a4e2cf485351674ffc9b0f3175e0cb6dbd8e0e19829b97",
-            )
-            .unwrap()],
-            depth: "000500050004000400040004000400030001".to_string(),
-            bitmap: "6d80".to_string(),
-            anchor: ProofAnchor {
-                anchor_id: 1,
-                networks: vec![],
-                root: "".to_string(),
-                status: "pending".to_string(),
-            },
-        };
-        let document = Document::new(&payload);
-        let r = RecordBuilder::from_loader(TestLoader::new(TestLoaderArgs {
-            document: document.unwrap().build().unwrap(),
-        }))
-        .unwrap()
-        .build()
-        .unwrap();
+        let r = RecordBuilder::from_loader(TestLoader::new(TestLoaderArgs {}))
+            .await
+            .unwrap()
+            .build()
+            .unwrap();
 
         assert_eq!(
             payload,

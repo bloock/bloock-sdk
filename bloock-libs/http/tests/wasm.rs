@@ -22,6 +22,11 @@ async fn test_bloock_http_client_post() {
 }
 
 #[wasm_bindgen_test]
+async fn test_bloock_http_client_post_file() {
+    bloock_http_client_post_file().await;
+}
+
+#[wasm_bindgen_test]
 async fn test_simple_http_client_get() {
     simple_http_client_get().await;
 }
@@ -29,4 +34,9 @@ async fn test_simple_http_client_get() {
 #[wasm_bindgen_test]
 async fn test_simple_http_client_post() {
     simple_http_client_post().await;
+}
+
+#[wasm_bindgen_test]
+async fn test_simple_http_client_post_file() {
+    simple_http_client_post_file().await;
 }

@@ -1,4 +1,19 @@
+use crate::PublisherError;
+
 use super::{Loader, Publisher};
+use async_trait::async_trait;
+use bloock_http::{BloockHttpClient, Client};
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Serialize)]
+struct HostedPublisherRequest {
+    pub data: Vec<u8>,
+}
+
+#[derive(Clone, Deserialize)]
+struct HostedPublisherResponse {
+    pub url: String,
+}
 
 #[derive(Default)]
 pub struct HostedPublisherArgs {
@@ -6,18 +21,31 @@ pub struct HostedPublisherArgs {
 }
 
 pub struct HostedPublisher {
-    _args: HostedPublisherArgs,
+    args: HostedPublisherArgs,
 }
 
 impl HostedPublisher {
     pub fn new(args: HostedPublisherArgs) -> Self {
-        Self { _args: args }
+        Self { args: args }
     }
 }
 
+#[async_trait(?Send)]
 impl Publisher for HostedPublisher {
-    fn publish(&self, _payload: &Option<Vec<u8>>) -> crate::Result<String> {
-        Ok("https://google.com".to_string())
+    async fn publish(&self, payload: &[u8]) -> crate::Result<String> {
+        let mime = match infer::get(payload) {
+            Some(t) => t.mime_type(),
+            None => "octet-stream",
+        };
+        let client = BloockHttpClient::new(self.args.key.clone());
+        let request = HostedPublisherRequest {
+            data: payload.to_vec(),
+        };
+        let response: HostedPublisherResponse = client
+            .post("https://api.bloock.dev/hosting/v1/upload", request, None)
+            .await
+            .map_err(|e| PublisherError::PublishError(e.to_string()))?;
+        Ok(response.url)
     }
 }
 
@@ -36,8 +64,9 @@ impl HostedLoader {
     }
 }
 
+#[async_trait(?Send)]
 impl Loader for HostedLoader {
-    fn retrieve(&self) -> crate::Result<Vec<u8>> {
+    async fn retrieve(&self) -> crate::Result<Vec<u8>> {
         todo!()
     }
 }

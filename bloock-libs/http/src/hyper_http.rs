@@ -26,9 +26,19 @@ impl Client for SimpleHttpClient {
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
         let bytes =
-            serde_json::to_string(&body).map_err(|e| HttpError::SerializeError(e.to_string()))?;
+            serde_json::to_vec(&body).map_err(|e| HttpError::SerializeError(e.to_string()))?;
         let req = ureq::post(&url.to_string());
-        self.request(req, Some(bytes), headers).await
+        self.request(req, Some(&bytes), headers).await
+    }
+
+    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+        &self,
+        url: U,
+        body: &[u8],
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<T> {
+        let req = ureq::post(&url.to_string());
+        self.request(req, Some(body), headers).await
     }
 }
 
@@ -40,20 +50,17 @@ impl SimpleHttpClient {
     async fn request<T: DeserializeOwned + 'static>(
         &self,
         mut req: ureq::Request,
-        body: Option<String>,
+        body: Option<&[u8]>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        println!("{:?}", headers.clone());
-
         if headers.is_some() {
             for header in headers.unwrap() {
                 req = req.set(&header.0, &header.1);
             }
         }
 
-        println!("{:?}", body);
         let res = match body {
-            Some(b) => req.send_string(&b),
+            Some(b) => req.send_bytes(&b),
             None => req.call(),
         }
         .map_err(|e| HttpError::RequestError(e.to_string()))?;
@@ -65,7 +72,6 @@ impl SimpleHttpClient {
             .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
 
         if (200..300).contains(&status) {
-            println!("{}", res_str);
             serde_json::from_str(&res_str).map_err(|e| HttpError::DeserializeError(e.to_string()))
         } else {
             let response: ApiError = serde_json::from_str(&res_str)

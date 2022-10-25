@@ -73,16 +73,12 @@ pub mod default {
         )) {
             Ok(r) => r,
             Err(e) => {
-                println!("{}", e);
                 return FfiStr::from_string(e.to_string()).unwrap();
             }
         };
         let response = match result {
             Ok(r) => r,
-            Err(e) => {
-                println!("{}", e);
-                e.to_string()
-            }
+            Err(e) => e.to_string(),
         };
 
         FfiStr::from_string(response).unwrap()

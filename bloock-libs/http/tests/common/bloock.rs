@@ -60,3 +60,37 @@ pub async fn bloock_http_client_post() {
         "HTTP Post not returning valid body."
     );
 }
+
+pub async fn bloock_http_client_post_file() {
+    let client = BloockHttpClient::new(String::from("my-api-key"));
+
+    let file: Vec<u8> = vec![1, 2, 3, 4, 5];
+    let res: serde_json::Value = client
+        .post_file("https://httpbin.org/post", &file, None)
+        .await
+        .unwrap();
+
+    assert_eq!(
+        res.get("headers")
+            .unwrap()
+            .get("X-Api-Key")
+            .unwrap()
+            .as_str()
+            .unwrap(),
+        "my-api-key",
+        "HTTP Get not returning valid auth header."
+    );
+
+    println!("{}", res);
+
+    assert_eq!(
+        res.get("json")
+            .unwrap()
+            .get("hello")
+            .unwrap()
+            .as_str()
+            .unwrap(),
+        "world",
+        "HTTP Post not returning valid body."
+    );
+}
