@@ -452,11 +452,10 @@ dependencies = [
 
 [[package]]
 name = "bloock_bridge"
-version = "2.0.0-beta.16"
+version = "2.0.0-beta.17"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
- "base64-url",
  "bloock-core",
  "bloock-executor",
  "cbindgen",
