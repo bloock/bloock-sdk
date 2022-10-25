@@ -29,17 +29,9 @@ class Anchor(google.protobuf.message.Message):
     STATUS_FIELD_NUMBER: builtins.int
     id: builtins.int
     @property
-    def block_roots(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
-    ]: ...
+    def block_roots(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     @property
-    def networks(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___AnchorNetwork
-    ]: ...
+    def networks(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___AnchorNetwork]: ...
     root: builtins.str
     status: builtins.str
     def __init__(
@@ -51,21 +43,7 @@ class Anchor(google.protobuf.message.Message):
         root: builtins.str = ...,
         status: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "block_roots",
-            b"block_roots",
-            "id",
-            b"id",
-            "networks",
-            b"networks",
-            "root",
-            b"root",
-            "status",
-            b"status",
-        ],
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["block_roots", b"block_roots", "id", b"id", "networks", b"networks", "root", b"root", "status", b"status"]) -> None: ...
 
 global___Anchor = Anchor
 
@@ -85,12 +63,7 @@ class AnchorNetwork(google.protobuf.message.Message):
         state: builtins.str = ...,
         tx_hash: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "name", b"name", "state", b"state", "tx_hash", b"tx_hash"
-        ],
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["name", b"name", "state", b"state", "tx_hash", b"tx_hash"]) -> None: ...
 
 global___AnchorNetwork = AnchorNetwork
 
@@ -108,15 +81,8 @@ class GetAnchorRequest(google.protobuf.message.Message):
         config_data: config_pb2.ConfigData | None = ...,
         anchor_id: builtins.int = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "anchor_id", b"anchor_id", "config_data", b"config_data"
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["anchor_id", b"anchor_id", "config_data", b"config_data"]) -> None: ...
 
 global___GetAnchorRequest = GetAnchorRequest
 
@@ -135,40 +101,12 @@ class GetAnchorResponse(google.protobuf.message.Message):
         anchor: global___Anchor | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_anchor",
-            b"_anchor",
-            "_error",
-            b"_error",
-            "anchor",
-            b"anchor",
-            "error",
-            b"error",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_anchor",
-            b"_anchor",
-            "_error",
-            b"_error",
-            "anchor",
-            b"anchor",
-            "error",
-            b"error",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_anchor", b"_anchor", "_error", b"_error", "anchor", b"anchor", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_anchor", b"_anchor", "_error", b"_error", "anchor", b"anchor", "error", b"error"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_anchor", b"_anchor"]
-    ) -> typing_extensions.Literal["anchor"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_anchor", b"_anchor"]) -> typing_extensions.Literal["anchor"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___GetAnchorResponse = GetAnchorResponse
 
@@ -189,20 +127,8 @@ class WaitAnchorRequest(google.protobuf.message.Message):
         anchor_id: builtins.int = ...,
         timeout: builtins.int = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "anchor_id",
-            b"anchor_id",
-            "config_data",
-            b"config_data",
-            "timeout",
-            b"timeout",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["anchor_id", b"anchor_id", "config_data", b"config_data", "timeout", b"timeout"]) -> None: ...
 
 global___WaitAnchorRequest = WaitAnchorRequest
 
@@ -221,39 +147,11 @@ class WaitAnchorResponse(google.protobuf.message.Message):
         anchor: global___Anchor | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_anchor",
-            b"_anchor",
-            "_error",
-            b"_error",
-            "anchor",
-            b"anchor",
-            "error",
-            b"error",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_anchor",
-            b"_anchor",
-            "_error",
-            b"_error",
-            "anchor",
-            b"anchor",
-            "error",
-            b"error",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_anchor", b"_anchor", "_error", b"_error", "anchor", b"anchor", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_anchor", b"_anchor", "_error", b"_error", "anchor", b"anchor", "error", b"error"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_anchor", b"_anchor"]
-    ) -> typing_extensions.Literal["anchor"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_anchor", b"_anchor"]) -> typing_extensions.Literal["anchor"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___WaitAnchorResponse = WaitAnchorResponse

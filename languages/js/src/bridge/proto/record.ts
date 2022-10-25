@@ -2159,9 +2159,7 @@ export interface RecordService {
 
 export class RecordServiceClientImpl implements RecordService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "bloock.RecordService";
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.SendRecords = this.SendRecords.bind(this);
     this.BuildRecordFromString = this.BuildRecordFromString.bind(this);
@@ -2176,61 +2174,61 @@ export class RecordServiceClientImpl implements RecordService {
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
     const data = SendRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SendRecords", data);
+    const promise = this.rpc.request("bloock.RecordService", "SendRecords", data);
     return promise.then((data) => SendRecordsResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromStringRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromString", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromString", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromHex(request: RecordBuilderFromHexRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromHexRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromHex", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromHex", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromJson(request: RecordBuilderFromJSONRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromJSONRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromJson", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromJson", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromFile(request: RecordBuilderFromFileRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromFileRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromFile", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromFile", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromBytesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromBytes", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromBytes", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromRecordRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromRecord", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromRecord", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromRaw(request: RecordBuilderFromRawRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromRawRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromRaw", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromRaw", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   GetHash(request: Record): Promise<RecordHash> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetHash", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetHash", data);
     return promise.then((data) => RecordHash.decode(new _m0.Reader(data)));
   }
 
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse> {
     const data = GenerateKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateKeys", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateKeys", data);
     return promise.then((data) => GenerateKeysResponse.decode(new _m0.Reader(data)));
   }
 }
