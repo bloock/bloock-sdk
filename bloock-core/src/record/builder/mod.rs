@@ -101,26 +101,29 @@ impl Builder {
         }
 
         if let Some(decrypter) = &self.decrypter {
+            // if !self.document.is_encrypted() {
+            //     todo!()
+            // }
             let payload = self.document.get_payload();
 
             let decrypted_payload = decrypter
                 .decrypt(&payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            self.document.remove_encryption(decrypted_payload);
+            self.document.remove_encryption(decrypted_payload)?;
         }
 
         // We create the document before encryption since the hash has to be of the unencypted payload
         let mut record = Record::new(self.document.clone());
 
         if let Some(encrypter) = &self.encrypter {
-            let payload = self.document.get_payload();
-            let encryption = encrypter
+            let payload = self.document.build()?;
+            let ciphertext = encrypter
                 .encrypt(&payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
 
             if let Some(doc) = record.document.as_mut() {
-                doc.set_encryption(encryption)
+                doc.set_encryption(ciphertext)?;
             }
         }
 
@@ -157,11 +160,6 @@ mod tests {
             r.document.clone().unwrap().get_signatures(),
             r2.document.clone().unwrap().get_signatures(),
             "Unexpected signatures received"
-        );
-        assert_eq!(
-            r.document.clone().unwrap().get_encryption(),
-            r2.document.clone().unwrap().get_encryption(),
-            "Unexpected encryption received"
         );
         assert_eq!(
             r.document.unwrap().get_proof(),

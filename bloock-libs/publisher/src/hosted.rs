@@ -26,7 +26,7 @@ pub struct HostedPublisher {
 
 impl HostedPublisher {
     pub fn new(args: HostedPublisherArgs) -> Self {
-        Self { args: args }
+        Self { args }
     }
 }
 

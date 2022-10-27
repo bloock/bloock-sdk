@@ -8,7 +8,7 @@ pub mod pdf;
 
 pub type Result<T> = std::result::Result<T, MetadataError>;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum FileParser {
     Default(DefaultParser),
     Pdf(PdfParser),
@@ -47,6 +47,13 @@ impl MetadataParser for FileParser {
         }
     }
 
+    fn remove_metadata(&mut self) {
+        match self {
+            FileParser::Default(p) => p.remove_metadata(),
+            FileParser::Pdf(p) => p.remove_metadata(),
+        }
+    }
+
     fn build(&mut self) -> Result<Vec<u8>> {
         match self {
             FileParser::Pdf(p) => p.build(),
@@ -63,6 +70,7 @@ where
     fn get<T: DeserializeOwned>(&self, key: &str) -> Option<T>;
     fn set<T: Serialize>(&mut self, key: &str, value: &T) -> Result<()>;
     fn del(&mut self, key: &str) -> Result<()>;
+    fn remove_metadata(&mut self);
     fn build(&mut self) -> Result<Vec<u8>>;
 }
 

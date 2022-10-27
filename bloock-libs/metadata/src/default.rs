@@ -4,10 +4,10 @@ use crate::{MetadataError, MetadataParser, Result};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DefaultParser {
-    _data_: Vec<u8>,
-    _metadata_: HashMap<String, Value>,
+    pub _data_: Vec<u8>,
+    pub _metadata_: HashMap<String, Value>,
 }
 
 impl MetadataParser for DefaultParser {
@@ -41,10 +41,86 @@ impl MetadataParser for DefaultParser {
         Ok(())
     }
 
+    fn remove_metadata(&mut self) {
+        self._metadata_ = HashMap::new();
+    }
+
     fn build(&mut self) -> Result<Vec<u8>> {
         match self._metadata_.is_empty() {
             true => return Ok(self._data_.clone()),
             false => serde_json::to_vec(self).map_err(|_| MetadataError::SerializeError),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use crate::MetadataParser;
+
+    use super::DefaultParser;
+
+    #[test]
+    fn test_load_default_parser_with_metadata() {
+        let mut parser = DefaultParser {
+            _data_: "some string".as_bytes().to_vec(),
+            _metadata_: HashMap::from([
+                ("0".to_string(), serde_json::to_value(0).unwrap()),
+                ("1".to_string(), serde_json::to_value(1).unwrap()),
+                ("2".to_string(), serde_json::to_value(2).unwrap()),
+            ]),
+        };
+
+        let built_parser = parser.build().unwrap();
+
+        let result = DefaultParser::load(&built_parser).unwrap();
+
+        assert_eq!(parser, result);
+    }
+
+    #[test]
+    fn test_load_default_parser_without_metadata() {
+        let mut parser = DefaultParser {
+            _data_: "some string".as_bytes().to_vec(),
+            _metadata_: HashMap::new(),
+        };
+
+        let built_parser = parser.build().unwrap();
+
+        let result = DefaultParser::load(&built_parser).unwrap();
+
+        assert_eq!(parser, result);
+    }
+
+    #[test]
+    fn test_default_parser_get_set_del_metadata() {
+        let data = "some string".as_bytes().to_vec();
+        let mut parser = DefaultParser {
+            _data_: data.clone(),
+            _metadata_: HashMap::new(),
+        };
+
+        parser.set("1", &serde_json::to_value(1).unwrap()).unwrap();
+        assert_eq!(
+            parser,
+            DefaultParser {
+                _data_: "some string".as_bytes().to_vec(),
+                _metadata_: HashMap::from([("1".to_string(), serde_json::to_value(1).unwrap())]),
+            }
+        );
+
+        let get_res: i32 = parser.get("1").unwrap();
+        assert_eq!(get_res, 1);
+
+        parser.del("1").unwrap();
+
+        assert_eq!(
+            parser,
+            DefaultParser {
+                _data_: data.clone(),
+                _metadata_: HashMap::new(),
+            }
+        );
     }
 }

@@ -2,7 +2,7 @@ use crate::{MetadataError, MetadataParser, Result};
 use lopdf::{Dictionary, Document, Object};
 use serde::{de::DeserializeOwned, Serialize};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PdfParser {
     document: Document,
 }
@@ -50,6 +50,20 @@ impl MetadataParser for PdfParser {
         dictionary.remove(object_key);
 
         Ok(())
+    }
+
+    fn remove_metadata(&mut self) {
+        self.document
+            .remove_object(
+                &self
+                    .document
+                    .trailer
+                    .get(b"Info")
+                    .and_then(Object::as_reference)
+                    .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
+                    .unwrap(),
+            )
+            .unwrap();
     }
 
     fn build(&mut self) -> Result<Vec<u8>> {

@@ -11,10 +11,7 @@ use sha2::Sha256;
 
 use crate::{EncrypterError, Result};
 
-use super::{Decrypter, Encrypter, Encryption};
-
-pub const AES_ALG: &str = "A256GCMKW";
-pub const AES_ENC: &str = "A256GCM";
+use super::{Decrypter, Encrypter};
 
 const NONCE_LEN: usize = 12; // 96 bits
 const TAG_LEN: usize = 16; // 128 bits
@@ -55,7 +52,7 @@ impl AesEncrypter {
 }
 
 impl Encrypter for AesEncrypter {
-    fn encrypt(&self, payload: &[u8], associated_data: &[u8]) -> Result<Encryption> {
+    fn encrypt(&self, payload: &[u8], associated_data: &[u8]) -> Result<Vec<u8>> {
         // [ SALT | NUM_ITERATIONS | NONCE | ENCRYPTED_PAYLOAD | TAG ]
         //  |---------- HEADER -----------| |------- CIPHER --------|
 
@@ -94,15 +91,7 @@ impl Encrypter for AesEncrypter {
         // Copy the tag into the tag piece.
         tag.copy_from_slice(&aad_tag);
 
-        Ok(Encryption {
-            ciphertext: data,
-            tag: base64_url::encode(&aad_tag),
-            protected: base64_url::encode("{}"),
-            header: super::EncryptionHeader {
-                alg: AES_ALG.to_string(),
-                enc: AES_ENC.to_string(),
-            },
-        })
+        Ok(data)
     }
 }
 
@@ -174,11 +163,11 @@ mod tests {
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let encryption = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let ciphertext = encrypter.encrypt(payload_bytes, aad).unwrap();
 
         let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
 
-        let decrypted_payload_bytes = decrypter.decrypt(&encryption.ciphertext, aad).unwrap();
+        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext, aad).unwrap();
         let decrypted_payload = std::str::from_utf8(&decrypted_payload_bytes).unwrap();
 
         assert_eq!(payload_bytes, decrypted_payload_bytes);
@@ -193,12 +182,12 @@ mod tests {
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let encryption = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let ciphertext = encrypter.encrypt(payload_bytes, aad).unwrap();
 
         let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
 
         let invalid_aad = "different_user_id".as_bytes();
-        let decrypted_payload_bytes = decrypter.decrypt(&encryption.ciphertext, invalid_aad);
+        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext, invalid_aad);
         assert_eq!(decrypted_payload_bytes, Err(EncrypterError::BadSeal()));
     }
 
@@ -210,11 +199,11 @@ mod tests {
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let encryption = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let ciphertext = encrypter.encrypt(payload_bytes, aad).unwrap();
 
         let decrypter = AesDecrypter::new(AesDecrypterArgs::new("incorrect_password"));
 
-        let decrypted_payload_bytes = decrypter.decrypt(&encryption.ciphertext, aad);
+        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext, aad);
         assert_eq!(decrypted_payload_bytes, Err(EncrypterError::BadSeal()));
     }
 }
