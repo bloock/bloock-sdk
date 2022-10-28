@@ -29,4 +29,6 @@ pub enum EncrypterError {
     BadSeal(),
     #[error("Document is not encrypted")]
     NotEncrypted(),
+    #[error("Document is encrypted. Metadata cannot be modified")]
+    Encrypted(),
 }

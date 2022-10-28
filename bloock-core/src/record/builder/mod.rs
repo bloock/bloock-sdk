@@ -91,13 +91,18 @@ impl Builder {
     }
 
     pub fn build(mut self) -> BloockResult<Record> {
+        let mut record = Record::new(self.document.clone());
+
         if let Some(signer) = &self.signer {
             let payload = self.document.get_payload();
 
             let signature = signer
                 .sign(&payload)
                 .map_err(InfrastructureError::SignerError)?;
-            self.document.add_signature(signature)?;
+
+            if let Some(doc) = record.document.as_mut() {
+                doc.add_signature(signature)?;
+            }
         }
 
         if let Some(decrypter) = &self.decrypter {
@@ -105,32 +110,27 @@ impl Builder {
                 Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
             }
             let payload = self.document.get_payload();
-            println!("DECRYPTING DOCUMENT: {:#?}", self.document);
 
             let decrypted_payload = decrypter
-                .decrypt(&payload, &[])
+                .decrypt(&payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            self.document.remove_encryption(decrypted_payload)?;
+            if let Some(doc) = record.document.as_mut() {
+                doc.remove_encryption(decrypted_payload)?;
+                self.document = doc.clone();
+                record = Record::new(doc.clone());
+            }
         }
-
-        // We create the document before encryption since the hash has to be of the unencypted payload
-        let mut record = Record::new(self.document.clone());
 
         if let Some(encrypter) = &self.encrypter {
             let payload = self.document.build()?;
-            println!("BUILT DOCUMENT BEFORE ENCRYPTION: {:#?}", payload);
             let ciphertext = encrypter
                 .encrypt(&payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            println!("ENCRYPTED DOCUMENT: {:#?}", ciphertext);
-            println!("DOCUMENT BEFORE SET ENCRYPTION: {:#?}", record.document);
-
             if let Some(doc) = record.document.as_mut() {
                 doc.set_encryption(ciphertext)?;
             }
-            println!("DOCUMENT AFTER SET ENCRYPTION: {:#?}", record.document);
         }
 
         Ok(record)

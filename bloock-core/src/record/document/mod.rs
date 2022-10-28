@@ -44,14 +44,12 @@ impl Document {
             is_encrypted,
         };
 
-        println!("NEW DOCUMENT CREATED: {:#?}", doc);
-
         Ok(doc)
     }
 
     pub fn add_signature(&mut self, signature: Signature) -> BloockResult<&mut Self> {
         if self.is_encrypted {
-            return Err(InfrastructureError::EncrypterError(EncrypterError::NotEncrypted()).into());
+            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
         let signatures = match self.signatures.clone() {
             Some(mut s) => {
@@ -92,7 +90,7 @@ impl Document {
 
     pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
         if self.is_encrypted {
-            return Err(InfrastructureError::EncrypterError(EncrypterError::NotEncrypted()).into());
+            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
         self.proof = Some(proof);
         Ok(())
@@ -152,14 +150,6 @@ impl Document {
                 .map_err(InfrastructureError::MetadataError)?;
         }
 
-        println!("==> BUILDING FILE");
-        println!("==> IS_ENCRYPTED: {:?}", parser.get::<bool>("is_encrypted"));
-        println!(
-            "==> SIGNATURES: {:?}",
-            parser.get::<Vec<Signature>>("signatures")
-        );
-        println!("==> PROOF: {:?}", parser.get::<Proof>("proof"));
-
         let result = parser.build().map_err(InfrastructureError::MetadataError)?;
         Ok(result)
     }
@@ -189,19 +179,6 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    async fn test_load_pdf() {
-        let payload = include_bytes!("./assets/dummy.pdf");
-        let signer = EcsdaSigner::new(EcsdaSignerArgs::new(
-            "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457",
-        ));
-
-        let mut document = Document::new(payload).unwrap();
-        document
-            .add_signature(signer.sign(payload).unwrap())
-            .unwrap();
-    }
-
-    #[tokio::test]
     async fn test_signed_pdf() {
         let payload = include_bytes!("./assets/dummy.pdf");
         let signer = EcsdaSigner::new(EcsdaSignerArgs::new(
@@ -222,7 +199,7 @@ mod tests {
         let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
 
         let mut document = Document::new(payload).unwrap();
-        let ciphertext = encrypter.encrypt(&document.get_payload(), &[]).unwrap();
+        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
         document.set_encryption(ciphertext).unwrap();
 
         let built_doc = document.build().unwrap();
