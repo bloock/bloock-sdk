@@ -16,7 +16,7 @@ impl<H: Client> AnchorService<H> {
     pub async fn get_anchor(&self, anchor_id: i64) -> BloockResult<Anchor> {
         let base_url = self.config_service.get_api_base_url();
         let url = format!("{}/core/anchor/{}", base_url, anchor_id);
-        match self.http.get::<String, Anchor>(url, None).await {
+        match self.http.get_json::<String, Anchor>(url, None).await {
             Ok(res) => Ok(res),
             Err(e) => Err(e).map_err(|e| InfrastructureError::Http(e).into()),
         }
@@ -104,7 +104,7 @@ mod test {
         let expected_anchor = anchor.clone();
 
         let mut http = MockClient::default();
-        http.expect_get::<String, Anchor>()
+        http.expect_get_json::<String, Anchor>()
             .return_once(|_, _| Ok(anchor));
 
         let anchor_service = anchor::configure_test(Arc::new(http));
@@ -140,15 +140,16 @@ mod test {
         let max_retries = 3;
 
         let mut http = MockClient::default();
-        http.expect_get::<String, Anchor>().returning(move |_, _| {
-            if retry_counter < max_retries {
-                retry_counter += 1;
-                return Err(HttpError::RequestError(String::from(
-                    "Anchor not ready yet",
-                )));
-            }
-            Ok(anchor.clone())
-        });
+        http.expect_get_json::<String, Anchor>()
+            .returning(move |_, _| {
+                if retry_counter < max_retries {
+                    retry_counter += 1;
+                    return Err(HttpError::RequestError(String::from(
+                        "Anchor not ready yet",
+                    )));
+                }
+                Ok(anchor.clone())
+            });
 
         let anchor_service = anchor::configure_test(Arc::new(http));
 
@@ -176,7 +177,7 @@ mod test {
         let mut retry_counter = 0;
 
         let mut http = MockClient::default();
-        http.expect_get::<String, Anchor>()
+        http.expect_get_json::<String, Anchor>()
             .times(max_retries + 1)
             .returning(move |_, _| {
                 if retry_counter < max_retries {

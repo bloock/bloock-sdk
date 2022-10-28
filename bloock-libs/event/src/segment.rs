@@ -54,7 +54,7 @@ impl EventLayer for SegmentLayer {
         };
 
         let _: EventResponse = client
-            .post(
+            .post_json(
                 "https://api.segment.io/v1/track".to_owned(),
                 body,
                 Some(headers),

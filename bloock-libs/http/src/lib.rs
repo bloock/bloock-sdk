@@ -27,12 +27,27 @@ pub type Result<T> = std::result::Result<T, HttpError>;
 #[cfg_attr(any(test, feature = "testing"), automock)]
 #[async_trait(?Send)]
 pub trait Client {
-    async fn get<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn get<U: ToString + 'static>(
+        &self,
+        url: U,
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<Vec<u8>>;
+    async fn get_json<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T>;
-    async fn post<U: ToString + 'static, B: Serialize + 'static, T: DeserializeOwned + 'static>(
+    async fn post<U: ToString + 'static, T: DeserializeOwned + 'static>(
+        &self,
+        url: U,
+        body: &[u8],
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<T>;
+    async fn post_json<
+        U: ToString + 'static,
+        B: Serialize + 'static,
+        T: DeserializeOwned + 'static,
+    >(
         &self,
         url: U,
         body: B,
@@ -41,7 +56,7 @@ pub trait Client {
     async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
-        body: &[u8],
+        files: Vec<(String, Vec<u8>)>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T>;
 }
@@ -61,6 +76,8 @@ pub enum HttpError {
     DeserializeError(String),
     #[error("Request error - {0}")]
     RequestError(String),
+    #[error("Couldn't write form data to request")]
+    WriteFormDataError(),
     #[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
     #[error("Javascript error - {0}")]
     JsError(JsError),

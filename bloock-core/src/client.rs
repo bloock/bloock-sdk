@@ -6,12 +6,13 @@ use crate::error::BloockResult;
 use crate::event::entity::event::Event;
 use crate::proof::entity::proof::Proof;
 use crate::proof::service::ProofService;
-use crate::record;
+use crate::publish::service::PublishService;
 use crate::record::entity::record::Record;
 use crate::record::entity::record_receipt::RecordReceipt;
 use crate::record::service::RecordService;
 use crate::{anchor, event::service::EventService};
 use crate::{event, proof};
+use crate::{publish, record};
 use bloock_http::{BloockHttpClient, SimpleHttpClient};
 use std::sync::Arc;
 
@@ -19,6 +20,7 @@ pub struct BloockClient {
     anchor_service: AnchorService<BloockHttpClient>,
     record_service: RecordService<BloockHttpClient>,
     proof_service: ProofService<BloockHttpClient>,
+    publish_service: PublishService<BloockHttpClient>,
     event_service: EventService<SimpleHttpClient>,
 }
 
@@ -55,6 +57,11 @@ impl BloockClient {
         self.proof_service.verify_records(records, network).await
     }
 
+    pub async fn publish_hosted(&self, record: Record) -> BloockResult<String> {
+        let payload = record.serialize()?;
+        self.publish_service.publish_hosted(&payload).await
+    }
+
     pub async fn send_event(&self, event: Event) -> BloockResult<()> {
         self.event_service.send_event(event).await
     }
@@ -75,6 +82,10 @@ pub fn configure(config_data: ConfigData) -> BloockClient {
             Arc::clone(&config_data),
         ),
         proof_service: proof::configure(Arc::clone(&bloock_http_client), Arc::clone(&config_data)),
+        publish_service: publish::configure(
+            Arc::clone(&bloock_http_client),
+            Arc::clone(&config_data),
+        ),
         event_service: event::configure(Arc::clone(&simple_http_client), Arc::clone(&config_data)),
     }
 }

@@ -4,6 +4,7 @@ pub mod config;
 pub mod error;
 pub mod event;
 pub mod proof;
+pub mod publish;
 pub mod record;
 pub mod shared;
 

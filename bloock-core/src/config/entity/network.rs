@@ -1,6 +1,6 @@
 use crate::anchor::entity::anchor::AnchorNetwork;
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, Clone)]
 pub enum Network {
     EthereumMainnet,
     EthereumRinkeby,

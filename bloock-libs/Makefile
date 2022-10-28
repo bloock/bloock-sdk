@@ -15,7 +15,7 @@ web3-build:
 metadata-build:
 	cd metadata && cargo build --release
 
-test: hasher-test signer-test encrypter-test publisher-test executor-test http-test web3-test
+test: hasher-test signer-test encrypter-test executor-test http-test web3-test
 
 hasher-test:
 	cd hasher && cargo test --release
@@ -25,9 +25,6 @@ signer-test:
 
 encrypter-test:
 	cd encrypter && cargo test --release
-
-publisher-test:
-	cd publisher && cargo test --release
 
 executor-test:
 	cd executor && cargo test --release
@@ -41,7 +38,7 @@ web3-test:
 metadata-test:
 	cd metadata && cargo test --release
 
-wasm-test: hasher-wasm-test signer-wasm-test encrypter-wasm-test publisher-wasm-test http-wasm-test web3-wasm-test
+wasm-test: hasher-wasm-test signer-wasm-test encrypter-wasm-test http-wasm-test web3-wasm-test
 
 hasher-wasm-test:
 	cd hasher && wasm-pack test --firefox --headless --release
@@ -57,11 +54,6 @@ encrypter-wasm-test:
 	cd encrypter && wasm-pack test --firefox --headless --release
 	cd encrypter && wasm-pack test --chrome --headless --release
 	cd encrypter && wasm-pack test --node --release
-
-publisher-wasm-test:
-	cd publisher && wasm-pack test --firefox --headless --release
-	cd publisher && wasm-pack test --chrome --headless --release
-	cd publisher && wasm-pack test --node  --release
 
 http-wasm-test:
 	cd http && wasm-pack test --firefox --headless --release

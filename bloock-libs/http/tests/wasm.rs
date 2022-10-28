@@ -17,8 +17,18 @@ async fn test_bloock_http_client_get() {
 }
 
 #[wasm_bindgen_test]
+async fn test_bloock_http_client_get_json() {
+    bloock_http_client_get_json().await;
+}
+
+#[wasm_bindgen_test]
 async fn test_bloock_http_client_post() {
     bloock_http_client_post().await;
+}
+
+#[wasm_bindgen_test]
+async fn test_bloock_http_client_post_json() {
+    bloock_http_client_post_json().await;
 }
 
 #[wasm_bindgen_test]
@@ -32,8 +42,18 @@ async fn test_simple_http_client_get() {
 }
 
 #[wasm_bindgen_test]
+async fn test_simple_http_client_get_json() {
+    simple_http_client_get_json().await;
+}
+
+#[wasm_bindgen_test]
 async fn test_simple_http_client_post() {
     simple_http_client_post().await;
+}
+
+#[wasm_bindgen_test]
+async fn test_simple_http_client_post_json() {
+    simple_http_client_post_json().await;
 }
 
 #[wasm_bindgen_test]
