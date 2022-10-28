@@ -7,7 +7,6 @@ option java_package = "bloock.sdk.java.bridge.proto";
 
 import "shared.proto";
 import "config.proto";
-import "proof.proto";
 
 enum RecordTypes {
 	STRING = 0;
