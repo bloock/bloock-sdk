@@ -3,7 +3,7 @@ use crate::{
     error::{BloockResult, InfrastructureError},
     record::document::Document,
 };
-use bloock_encrypter::{Decrypter, Encrypter};
+use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
 use bloock_publisher::Loader;
 use bloock_signer::Signer;
 use serde_json::Value;
@@ -97,17 +97,18 @@ impl Builder {
             let signature = signer
                 .sign(&payload)
                 .map_err(InfrastructureError::SignerError)?;
-            self.document.add_signature(signature);
+            self.document.add_signature(signature)?;
         }
 
         if let Some(decrypter) = &self.decrypter {
-            // if !self.document.is_encrypted() {
-            //     todo!()
-            // }
+            if !self.document.is_encrypted() {
+                Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
+            }
             let payload = self.document.get_payload();
+            println!("DECRYPTING DOCUMENT: {:#?}", self.document);
 
             let decrypted_payload = decrypter
-                .decrypt(&payload, &[/* TODO */])
+                .decrypt(&payload, &[])
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document.remove_encryption(decrypted_payload)?;
@@ -118,13 +119,18 @@ impl Builder {
 
         if let Some(encrypter) = &self.encrypter {
             let payload = self.document.build()?;
+            println!("BUILT DOCUMENT BEFORE ENCRYPTION: {:#?}", payload);
             let ciphertext = encrypter
                 .encrypt(&payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
 
+            println!("ENCRYPTED DOCUMENT: {:#?}", ciphertext);
+            println!("DOCUMENT BEFORE SET ENCRYPTION: {:#?}", record.document);
+
             if let Some(doc) = record.document.as_mut() {
                 doc.set_encryption(ciphertext)?;
             }
+            println!("DOCUMENT AFTER SET ENCRYPTION: {:#?}", record.document);
         }
 
         Ok(record)

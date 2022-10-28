@@ -27,4 +27,6 @@ pub enum EncrypterError {
     InvalidBase64(),
     #[error("Invalid key/nonce/value/aad")]
     BadSeal(),
+    #[error("Document is not encrypted")]
+    NotEncrypted(),
 }

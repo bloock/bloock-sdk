@@ -52,18 +52,11 @@ impl MetadataParser for PdfParser {
         Ok(())
     }
 
-    fn remove_metadata(&mut self) {
-        self.document
-            .remove_object(
-                &self
-                    .document
-                    .trailer
-                    .get(b"Info")
-                    .and_then(Object::as_reference)
-                    .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
-                    .unwrap(),
-            )
-            .unwrap();
+    fn get_data(&mut self) -> Result<Vec<u8>> {
+        let mut doc = self.clone();
+        doc.del("proof")?;
+        doc.del("signatures")?;
+        doc.build()
     }
 
     fn build(&mut self) -> Result<Vec<u8>> {

@@ -2,6 +2,7 @@ use crate::{
     error::{BloockResult, InfrastructureError},
     proof::entity::proof::Proof,
 };
+use bloock_encrypter::EncrypterError;
 use bloock_metadata::{FileParser, MetadataParser};
 use bloock_signer::Signature;
 use serde::{Deserialize, Serialize};
@@ -10,6 +11,7 @@ use serde::{Deserialize, Serialize};
 pub struct Metadata {
     pub signatures: Option<Vec<Signature>>,
     pub proof: Option<Proof>,
+    pub is_encrypted: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -25,33 +27,31 @@ pub struct Document {
 impl Document {
     pub fn new(payload: &[u8]) -> BloockResult<Self> {
         let mut parser = FileParser::load(payload).map_err(InfrastructureError::MetadataError)?;
-        println!("PARSER: {:#?}", parser);
 
         let is_encrypted = parser.get("is_encrypted").unwrap_or(false);
         let proof = parser.get("proof");
         let signatures = parser.get("signatures");
 
-        let payload = if is_encrypted {
-            parser
-                .del("is_encrypted")
-                .map_err(InfrastructureError::MetadataError)?;
-            parser.build().map_err(InfrastructureError::MetadataError)?
-        } else {
-            Self::fetch_payload(&mut parser, signatures.clone(), is_encrypted)?
-        };
+        let payload = parser
+            .get_data()
+            .map_err(InfrastructureError::MetadataError)?;
 
-        Ok(Document {
+        let doc = Document {
             parser,
             payload,
             proof,
             signatures,
             is_encrypted,
-        })
+        };
+
+        println!("NEW DOCUMENT CREATED: {:#?}", doc);
+
+        Ok(doc)
     }
 
-    pub fn add_signature(&mut self, signature: Signature) -> &mut Self {
+    pub fn add_signature(&mut self, signature: Signature) -> BloockResult<&mut Self> {
         if self.is_encrypted {
-            return self; // TODO return error
+            return Err(InfrastructureError::EncrypterError(EncrypterError::NotEncrypted()).into());
         }
         let signatures = match self.signatures.clone() {
             Some(mut s) => {
@@ -62,27 +62,40 @@ impl Document {
         };
 
         self.signatures = Some(signatures);
-        self
+        Ok(self)
     }
 
     pub fn set_encryption(&mut self, ciphertext: Vec<u8>) -> BloockResult<()> {
-        self.is_encrypted = true;
+        self.update_parser(ciphertext)?;
+        self.update_payload()?;
+
         self.signatures = None;
-        self.set_payload(ciphertext)?;
+        self.proof = None;
+        self.is_encrypted = true;
+
         Ok(())
     }
 
     pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
+        self.update_parser(decrypted_payload)?;
+        self.update_payload()?;
+
         self.is_encrypted = false;
-        self.set_payload(decrypted_payload)
+        self.proof = self.parser.get("proof");
+        self.signatures = self.parser.get("signatures");
+        Ok(())
     }
 
-    pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
+    pub fn is_encrypted(&self) -> bool {
+        self.is_encrypted
+    }
+
+    pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
         if self.is_encrypted {
-            return self; // TODO return error
+            return Err(InfrastructureError::EncrypterError(EncrypterError::NotEncrypted()).into());
         }
         self.proof = Some(proof);
-        self
+        Ok(())
     }
 
     pub fn get_signatures(&self) -> Option<Vec<Signature>> {
@@ -97,47 +110,33 @@ impl Document {
         self.payload.clone()
     }
 
-    fn set_payload(&mut self, payload: Vec<u8>) -> BloockResult<()> {
+    fn update_parser(&mut self, payload: Vec<u8>) -> BloockResult<()> {
         self.parser = FileParser::load(&payload).map_err(InfrastructureError::MetadataError)?;
-        let mut clean_parser = self.parser.clone();
-        clean_parser.remove_metadata();
-        println!("CLEAN {:#?}", clean_parser);
-        self.payload = clean_parser.build().unwrap();
-        self.proof = self.parser.get("proof");
-        self.signatures = self.parser.get("signatures");
         Ok(())
     }
 
-    fn fetch_payload(
-        parser: &mut FileParser,
-        signatures: Option<Vec<Signature>>,
-        is_encrypted: bool,
-    ) -> BloockResult<Vec<u8>> {
-        let metadata = Metadata {
-            signatures,
-            proof: None,
-        };
-
-        Self::build_file(parser, metadata, is_encrypted)
+    fn update_payload(&mut self) -> BloockResult<()> {
+        self.payload = self
+            .parser
+            .get_data()
+            .map_err(InfrastructureError::MetadataError)?;
+        Ok(())
     }
 
     pub fn build(&mut self) -> BloockResult<Vec<u8>> {
         let metadata = Metadata {
             signatures: self.get_signatures(),
             proof: self.get_proof(),
+            is_encrypted: self.is_encrypted,
         };
 
-        Self::build_file(&mut self.parser, metadata, self.is_encrypted)
+        Self::build_file(&mut self.parser, metadata)
     }
 
-    fn build_file(
-        parser: &mut FileParser,
-        metadata: Metadata,
-        is_encrypted: bool,
-    ) -> BloockResult<Vec<u8>> {
-        if is_encrypted {
+    fn build_file(parser: &mut FileParser, metadata: Metadata) -> BloockResult<Vec<u8>> {
+        if metadata.is_encrypted {
             parser
-                .set("is_encrypted", &is_encrypted)
+                .set("is_encrypted", &true)
                 .map_err(InfrastructureError::MetadataError)?;
         }
 
@@ -152,6 +151,14 @@ impl Document {
                 .set("signatures", &signatures)
                 .map_err(InfrastructureError::MetadataError)?;
         }
+
+        println!("==> BUILDING FILE");
+        println!("==> IS_ENCRYPTED: {:?}", parser.get::<bool>("is_encrypted"));
+        println!(
+            "==> SIGNATURES: {:?}",
+            parser.get::<Vec<Signature>>("signatures")
+        );
+        println!("==> PROOF: {:?}", parser.get::<Proof>("proof"));
 
         let result = parser.build().map_err(InfrastructureError::MetadataError)?;
         Ok(result)
@@ -189,7 +196,9 @@ mod tests {
         ));
 
         let mut document = Document::new(payload).unwrap();
-        document.add_signature(signer.sign(payload).unwrap());
+        document
+            .add_signature(signer.sign(payload).unwrap())
+            .unwrap();
     }
 
     #[tokio::test]
@@ -201,7 +210,7 @@ mod tests {
 
         let mut document = Document::new(payload).unwrap();
         let signature = signer.sign(payload).unwrap();
-        document.add_signature(signature.clone());
+        document.add_signature(signature.clone()).unwrap();
         let built_doc = document.build().unwrap();
         let signed_doc = Document::new(&built_doc).unwrap();
         assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);

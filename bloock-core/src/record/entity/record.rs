@@ -60,6 +60,13 @@ impl Record {
         }
     }
 
+    pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
+        match self.document.as_mut() {
+            Some(d) => d.set_proof(proof),
+            None => Err(RecordError::DocumentNotFound.into()),
+        }
+    }
+
     pub fn serialize(self) -> BloockResult<Vec<u8>> {
         match self.document {
             Some(mut d) => d.build(),

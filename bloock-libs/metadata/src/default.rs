@@ -41,8 +41,8 @@ impl MetadataParser for DefaultParser {
         Ok(())
     }
 
-    fn remove_metadata(&mut self) {
-        self._metadata_ = HashMap::new();
+    fn get_data(&mut self) -> Result<Vec<u8>> {
+        Ok(self._data_.clone())
     }
 
     fn build(&mut self) -> Result<Vec<u8>> {
