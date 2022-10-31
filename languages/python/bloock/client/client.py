@@ -1,8 +1,8 @@
 from typing import List
+import bloock
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
 from bloock._bridge.proto.config_pb2 import (
-    Network as NetworkProto,
     ConfigData,
     Configuration,
     NetworkConfig,
@@ -22,10 +22,10 @@ from bloock.client.entity.record import Keys, RecordReceipt
 
 
 class Client:
-    def __init__(self, api_key: str) -> None:
+    def __init__(self) -> None:
         self.bridge_client = bridge.BloockBridge()
         self.config_data = ConfigData(
-            config=Configuration(api_key=api_key),
+            config=Configuration(api_key=bloock.api_key),
         )
 
     def set_api_host(self, host: str):
@@ -35,6 +35,8 @@ class Client:
         self.config_data.networks_config[Network.to_proto(network)].CopyFrom(config)
 
     def send_records(self, records: List[str]) -> List[RecordReceipt]:
+        self.config_data.config.api_key = bloock.api_key
+
         res = self.bridge_client.record().SendRecords(
             SendRecordsRequest(config_data=self.config_data, records=records)
         )
@@ -44,6 +46,8 @@ class Client:
         return list(map(lambda x: RecordReceipt.from_proto(x), res.records))
 
     def get_anchor(self, anchor_id: int) -> Anchor:
+        self.config_data.config.api_key = bloock.api_key
+
         res = self.bridge_client.anchor().GetAnchor(
             GetAnchorRequest(config_data=self.config_data, anchor_id=anchor_id)
         )
@@ -54,6 +58,8 @@ class Client:
         return Anchor.from_proto(res.anchor)
 
     def wait_anchor(self, anchor_id: int, timeout=120000) -> Anchor:
+        self.config_data.config.api_key = bloock.api_key
+
         res = self.bridge_client.anchor().WaitAnchor(
             WaitAnchorRequest(
                 config_data=self.config_data, anchor_id=anchor_id, timeout=timeout
@@ -66,6 +72,8 @@ class Client:
         return Anchor.from_proto(res.anchor)
 
     def get_proof(self, records: List[str]) -> Proof:
+        self.config_data.config.api_key = bloock.api_key
+
         res = self.bridge_client.proof().GetProof(
             GetProofRequest(config_data=self.config_data, records=records)
         )
@@ -76,6 +84,8 @@ class Client:
         return Proof.from_proto(res.proof)
 
     def verify_proof(self, proof: Proof) -> str:
+        self.config_data.config.api_key = bloock.api_key
+
         res = self.bridge_client.proof().VerifyProof(
             VerifyProofRequest(config_data=self.config_data, proof=proof.to_proto())
         )
@@ -88,6 +98,8 @@ class Client:
     def verify_records(
         self, records: List[str], network: Network = Network.BLOOCK_CHAIN
     ) -> int:
+        self.config_data.config.api_key = bloock.api_key
+
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
                 config_data=self.config_data,
@@ -102,6 +114,8 @@ class Client:
         return res.timestamp
 
     def validate_root(self, root: str, network: Network) -> int:
+        self.config_data.config.api_key = bloock.api_key
+
         res = self.bridge_client.proof().ValidateRoot(
             ValidateRootRequest(
                 config_data=self.config_data,
