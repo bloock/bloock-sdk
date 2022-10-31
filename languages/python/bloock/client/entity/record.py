@@ -1,10 +1,7 @@
 from __future__ import annotations
-from typing import List
 from bloock._bridge import bridge
 import bloock._bridge.proto.record_pb2 as proto
 from bloock._bridge.proto.shared_pb2 import Error
-
-from bloock.client.entity.proof import Proof
 
 
 class RecordHeader:
@@ -53,67 +50,20 @@ class SignatureHeader:
     def to_proto(self) -> proto.SignatureHeader:
         return proto.SignatureHeader(alg=self.alg, kid=self.kid)
 
-
-class EncryptionHeader:
-    def __init__(self, alg: str) -> None:
-        self.alg = alg
-
-    @staticmethod
-    def from_proto(header: proto.EncryptionHeader) -> EncryptionHeader:
-        return EncryptionHeader(alg=header.alg)
-
-    def to_proto(self) -> proto.EncryptionHeader:
-        return proto.EncryptionHeader(alg=self.alg)
-
-
-class Encryption:
-    def __init__(self, header: EncryptionHeader, protected: str) -> None:
-        self.header = header
-        self.protected = protected
-
-    @staticmethod
-    def from_proto(encryption: proto.Encryption) -> Encryption:
-        return Encryption(
-            header=EncryptionHeader.from_proto(encryption.header),
-            protected=encryption.protected,
-        )
-
-    def to_proto(self) -> proto.Encryption:
-        return proto.Encryption(header=self.header.to_proto(), protected=self.protected)
-
-
 class Record:
     def __init__(
         self,
-        headers: RecordHeader,
         payload: bytes,
-        signatures: List[Signature],
-        encryption: Encryption,
-        proof: Proof,
     ) -> None:
-        self.headers = headers
         self.payload = payload
-        self.signatures = signatures
-        self.encryption = encryption
-        self.proof = proof
 
     @staticmethod
     def from_proto(record: proto.Record) -> Record:
-        return Record(
-            headers=RecordHeader.from_proto(record.headers),
-            payload=record.payload,
-            signatures=list(map(lambda x: Signature.from_proto(x), record.signatures)),
-            encryption=Encryption.from_proto(record.encryption),
-            proof=Proof.from_proto(record.proof),
-        )
+        return Record(payload=record.payload)
 
     def to_proto(self) -> proto.Record:
         return proto.Record(
-            headers=self.headers.to_proto(),
             payload=self.payload,
-            signatures=list(map(lambda x: x.to_proto(), self.signatures)),
-            encryption=self.encryption.to_proto(),
-            proof=self.proof.to_proto(),
         )
 
     def get_hash(self) -> str:

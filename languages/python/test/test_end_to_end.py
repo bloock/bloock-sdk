@@ -1,5 +1,6 @@
 import os
 import unittest
+import bloock
 
 from bloock.client.builder import RecordBuilder
 from bloock.client.client import Client
@@ -11,7 +12,8 @@ from bloock.client.entity.network import Network
 
 class TestE2E(unittest.TestCase):
     def setUp(self):
-        self.client = Client(api_key=os.environ["API_KEY"])
+        bloock.api_key = os.environ["API_KEY"]
+        self.client = Client()
 
     def test_e2e_with_all_builders(self):
         records = []
@@ -78,15 +80,6 @@ class TestE2E(unittest.TestCase):
         )
         records.append(hash)
 
-        record = RecordBuilder.from_raw(
-            "eyJ0eSI6InN0cmluZyJ9.U29tZSBzdHJpbmc.W3siaGVhZGVyIjp7ImFsZyI6IkVDU0RBIiwia2lkIjoiMTIzNDU2Nzg5MGFiY2RlZiJ9LCJwcm90ZWN0ZWQiOiJlMCIsInNpZ25hdHVyZSI6IjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVmIn1d.eyJoZWFkZXIiOnsiYWxnIjoiRUNTREEifSwicHJvdGVjdGVkIjoiZTAifQ.eyJhbmNob3IiOnsiYW5jaG9yX2lkIjoxLCJuZXR3b3JrcyI6W10sInJvb3QiOiIiLCJzdGF0dXMiOiJwZW5kaW5nIn0sImJpdG1hcCI6IjZkODAiLCJkZXB0aCI6IjAwMDUwMDA1MDAwNDAwMDQwMDA0MDAwNDAwMDQwMDAzMDAwMSIsImxlYXZlcyI6WyIxY2EwZTlkOWEyMDZmMDhkMzhhNGUyY2Y0ODUzNTE2NzRmZmM5YjBmMzE3NWUwY2I2ZGJkOGUwZTE5ODI5Yjk3Il0sIm5vZGVzIjpbIjFjYTBlOWQ5YTIwNmYwOGQzOGE0ZTJjZjQ4NTM1MTY3NGZmYzliMGYzMTc1ZTBjYjZkYmQ4ZTBlMTk4MjliOTciXX0"
-        ).build()
-        hash = record.get_hash()
-        self.assertEqual(
-            hash, "fc7eed1db0c14d70f875460a53c315d0df86a087ba9e921e9fe2923577c327f9"
-        )
-        records.append(hash)
-
         keys = self.client.generate_keys()
 
         record = (
@@ -102,8 +95,6 @@ class TestE2E(unittest.TestCase):
             .with_signer(EcsdaSigner(keys.private_key))
             .build()
         )
-
-        self.assertEqual(len(record_with_multiple_signatures.signatures), 2)
 
         hash = record_with_multiple_signatures.get_hash()
         self.assertEqual(
