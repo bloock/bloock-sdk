@@ -91,8 +91,6 @@ impl Builder {
     }
 
     pub fn build(mut self) -> BloockResult<Record> {
-        let mut record = Record::new(self.document.clone());
-
         if let Some(signer) = &self.signer {
             let payload = self.document.get_payload();
 
@@ -100,9 +98,7 @@ impl Builder {
                 .sign(&payload)
                 .map_err(InfrastructureError::SignerError)?;
 
-            if let Some(doc) = record.document.as_mut() {
-                doc.add_signature(signature)?;
-            }
+            self.document.add_signature(signature)?;
         }
 
         if let Some(decrypter) = &self.decrypter {
@@ -115,12 +111,10 @@ impl Builder {
                 .decrypt(&payload, &[/* TODO */])
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            if let Some(doc) = record.document.as_mut() {
-                doc.remove_encryption(decrypted_payload)?;
-                self.document = doc.clone();
-                record = Record::new(doc.clone());
-            }
+            self.document.remove_encryption(decrypted_payload)?;
         }
+
+        let mut record = Record::new(self.document.clone());
 
         if let Some(encrypter) = &self.encrypter {
             let payload = self.document.build()?;
@@ -130,6 +124,7 @@ impl Builder {
 
             if let Some(doc) = record.document.as_mut() {
                 doc.set_encryption(ciphertext)?;
+                self.document = doc.clone();
             }
         }
 

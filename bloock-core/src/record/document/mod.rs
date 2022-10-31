@@ -173,7 +173,12 @@ mod tests {
 
     use bloock_signer::{
         ecsda::{EcsdaSigner, EcsdaSignerArgs},
-        Signer,
+        SignatureHeader, Signer,
+    };
+
+    use crate::{
+        anchor::entity::anchor::AnchorNetwork, proof::entity::anchor::ProofAnchor,
+        record::entity::record::Record,
     };
 
     use super::*;
@@ -199,16 +204,137 @@ mod tests {
         let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
 
         let mut document = Document::new(payload).unwrap();
+        let expected_payload = document.build().unwrap();
+
+        let original_record = Record::new(document.clone());
+
         let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
         document.set_encryption(ciphertext).unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
-        // let encrypted_doc = DefaultParser::load(&encrypted_doc.get_payload()).unwrap();
+
         let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
         let decrypted_payload = decrypter
             .decrypt(&encrypted_doc.get_payload(), &[])
             .unwrap();
-        assert_eq!(decrypted_payload, payload);
+
+        assert_eq!(decrypted_payload, expected_payload);
+
+        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_record = Record::new(decrypted_doc);
+
+        assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
+    }
+    #[tokio::test]
+    async fn test_encrypted_pdf_with_proof() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
+
+        let mut document = Document::new(payload).unwrap();
+
+        let proof = Proof {
+            anchor: ProofAnchor {
+                anchor_id: 1,
+                networks: vec![AnchorNetwork {
+                    name: "net".to_string(),
+                    state: "state".to_string(),
+                    tx_hash: "tx_hash".to_string(),
+                }],
+                root: "root".to_string(),
+                status: "status".to_string(),
+            },
+            bitmap: "111".to_string(),
+            depth: "111".to_string(),
+            leaves: vec![[0u8; 32]],
+            nodes: vec![[0u8; 32]],
+        };
+
+        document.set_proof(proof.clone()).unwrap();
+
+        let expected_payload = document.build().unwrap();
+
+        let original_record = Record::new(document.clone());
+
+        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
+        document.set_encryption(ciphertext).unwrap();
+
+        let built_doc = document.build().unwrap();
+        let encrypted_doc = Document::new(&built_doc).unwrap();
+
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
+        let decrypted_payload = decrypter
+            .decrypt(&encrypted_doc.get_payload(), &[])
+            .unwrap();
+
+        assert_eq!(decrypted_payload, expected_payload);
+
+        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_record = Record::new(decrypted_doc);
+
+        assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
+        assert_eq!(decrypted_record.get_proof().unwrap(), proof);
+    }
+
+    #[tokio::test]
+    async fn test_encrypted_pdf_with_and_signatures() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
+
+        let mut document = Document::new(payload).unwrap();
+
+        let proof = Proof {
+            anchor: ProofAnchor {
+                anchor_id: 1,
+                networks: vec![AnchorNetwork {
+                    name: "net".to_string(),
+                    state: "state".to_string(),
+                    tx_hash: "tx_hash".to_string(),
+                }],
+                root: "root".to_string(),
+                status: "status".to_string(),
+            },
+            bitmap: "111".to_string(),
+            depth: "111".to_string(),
+            leaves: vec![[0u8; 32]],
+            nodes: vec![[0u8; 32]],
+        };
+
+        let signature = Signature {
+            header: SignatureHeader {
+                alg: "ES256K".to_string(),
+                kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
+            },
+            protected: "e30".to_string(),
+            signature: "945efccb10955499e50bd4e1eeadb51aac9136f3e91b8d29c1b817cb42284268500b5f191693a0d927601df5f282804a6eacf5ff8a1522bda5c2ec4dc681750b".to_string(),
+        };
+
+        document.set_proof(proof.clone()).unwrap();
+
+        document.add_signature(signature.clone()).unwrap();
+
+        let expected_payload = document.build().unwrap();
+
+        let original_record = Record::new(document.clone());
+
+        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
+        document.set_encryption(ciphertext).unwrap();
+
+        let built_doc = document.build().unwrap();
+        let encrypted_doc = Document::new(&built_doc).unwrap();
+
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
+        let decrypted_payload = decrypter
+            .decrypt(&encrypted_doc.get_payload(), &[])
+            .unwrap();
+
+        assert_eq!(decrypted_payload, expected_payload);
+
+        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_record = Record::new(decrypted_doc);
+
+        assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
+        assert_eq!(decrypted_record.get_proof().unwrap(), proof);
+        assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
     }
 }

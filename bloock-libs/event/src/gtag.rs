@@ -1,4 +1,4 @@
-use crate::EventError;
+
 use crate::{EventLayer, Result};
 use async_trait::async_trait;
 
@@ -23,7 +23,7 @@ impl GtagLayer {
 
 #[async_trait(?Send)]
 impl EventLayer for GtagLayer {
-    async fn push(&self, id: &str, params: Value) -> Result<()> {
+    async fn push(&self, _id: &str, _params: Value) -> Result<()> {
         #[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
         gtag_with_parameters(
             "event",

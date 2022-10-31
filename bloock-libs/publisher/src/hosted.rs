@@ -33,7 +33,7 @@ impl HostedPublisher {
 #[async_trait(?Send)]
 impl Publisher for HostedPublisher {
     async fn publish(&self, payload: &[u8]) -> crate::Result<String> {
-        let mime = match infer::get(payload) {
+        let _mime = match infer::get(payload) {
             Some(t) => t.mime_type(),
             None => "octet-stream",
         };

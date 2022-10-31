@@ -146,7 +146,7 @@ impl Server {
         T::decode(payload).map_err(|e| BridgeError::RequestDeserialization(e.to_string()))
     }
 
-    fn register_event(name: &str, success: bool, args: Vec<&str>) {
+    fn register_event(name: &str, success: bool, _args: Vec<&str>) {
         let client = client::configure(ConfigData::new("".to_owned()));
         let _ = client.send_event(Event::new(name.to_owned(), success));
     }
