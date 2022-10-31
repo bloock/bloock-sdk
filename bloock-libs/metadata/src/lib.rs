@@ -18,7 +18,7 @@ impl MetadataParser for FileParser {
     fn load(payload: &[u8]) -> Result<Self> {
         let file_type = infer::get(payload);
 
-        let parser = match file_type.and_then(|t| Some(t.mime_type())) {
+        let parser = match file_type.map(|t| t.mime_type()) {
             Some("application/pdf") => FileParser::Pdf(PdfParser::load(payload)?),
             _ => FileParser::Default(DefaultParser::load(payload)?),
         };

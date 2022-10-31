@@ -1,4 +1,3 @@
-
 use crate::{EventLayer, Result};
 use async_trait::async_trait;
 
@@ -18,6 +17,12 @@ pub struct GtagLayer {}
 impl GtagLayer {
     pub fn new() -> Self {
         GtagLayer {}
+    }
+}
+
+impl Default for GtagLayer {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

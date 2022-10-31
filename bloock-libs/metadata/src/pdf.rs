@@ -10,7 +10,7 @@ pub struct PdfParser {
 impl MetadataParser for PdfParser {
     fn load(payload: &[u8]) -> Result<Self> {
         let document =
-            Document::load_mem(&payload).map_err(|e| MetadataError::LoadError(e.to_string()))?;
+            Document::load_mem(payload).map_err(|e| MetadataError::LoadError(e.to_string()))?;
 
         Ok(PdfParser { document })
     }
@@ -75,7 +75,7 @@ impl PdfParser {
             .get(b"Info")
             .and_then(Object::as_reference)
             .and_then(|id| self.document.get_object(id))
-            .and_then(|o| Object::as_dict(o))
+            .and_then(Object::as_dict)
             .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
     }
 
@@ -85,7 +85,7 @@ impl PdfParser {
             .get(b"Info")
             .and_then(Object::as_reference)
             .and_then(|id| self.document.get_object_mut(id))
-            .and_then(|o| Object::as_dict_mut(o))
+            .and_then(Object::as_dict_mut)
             .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
     }
 }

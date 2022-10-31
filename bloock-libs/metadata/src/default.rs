@@ -4,7 +4,7 @@ use crate::{MetadataError, MetadataParser, Result};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DefaultParser {
     pub _data_: Vec<u8>,
     pub _metadata_: HashMap<String, Value>,
@@ -47,7 +47,7 @@ impl MetadataParser for DefaultParser {
 
     fn build(&mut self) -> Result<Vec<u8>> {
         match self._metadata_.is_empty() {
-            true => return Ok(self._data_.clone()),
+            true => Ok(self._data_.clone()),
             false => serde_json::to_vec(self).map_err(|_| MetadataError::SerializeError),
         }
     }

@@ -57,7 +57,7 @@ impl Server {
         payload: &[u8],
     ) -> Result<ResponseType, BridgeError> {
         let request: BloockServer = BloockServer::from_str(request_type);
-        let response = match request {
+        match request {
             BloockServer::AnchorServiceGetAnchor => Ok(self
                 .anchor
                 .get_anchor(self.serialize_request(payload)?)
@@ -134,9 +134,7 @@ impl Server {
                 .await
                 .into()),
             _ => Err(BridgeError::ServiceNotFound),
-        };
-
-        response
+        }
     }
 
     fn serialize_request<T: prost::Message + Default>(
