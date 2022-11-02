@@ -32,7 +32,22 @@ pub struct SimpleHttpClient {}
 
 #[async_trait(?Send)]
 impl Client for SimpleHttpClient {
-    async fn get<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn get<U: ToString + 'static>(
+        &self,
+        url: U,
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<Vec<u8>> {
+        let mut opts = RequestInit::new();
+        opts.method("GET");
+        opts.mode(RequestMode::Cors);
+
+        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
+            .map_err(|e| HttpError::JsError(e.into()))?;
+
+        self.request(request, headers).await
+    }
+
+    async fn get_json<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
@@ -44,7 +59,8 @@ impl Client for SimpleHttpClient {
         let request = Request::new_with_str_and_init(&url.to_string(), &opts)
             .map_err(|e| HttpError::JsError(e.into()))?;
 
-        self.request(request, headers).await
+        let res = self.request(request, headers).await?;
+        serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 
     async fn post<U: ToString + 'static, T: DeserializeOwned + 'static>(
@@ -63,7 +79,8 @@ impl Client for SimpleHttpClient {
         let request = Request::new_with_str_and_init(&url.to_string(), &opts)
             .map_err(|e| HttpError::JsError(e.into()))?;
 
-        self.request(request, headers).await
+        let res = self.request(request, headers).await?;
+        serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 
     async fn post_json<
@@ -89,7 +106,8 @@ impl Client for SimpleHttpClient {
         let request = Request::new_with_str_and_init(&url.to_string(), &opts)
             .map_err(|e| HttpError::JsError(e.into()))?;
 
-        self.request(request, headers).await
+        let res = self.request(request, headers).await?;
+        serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 
     async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
@@ -145,7 +163,8 @@ impl Client for SimpleHttpClient {
         let request = Request::new_with_str_and_init(&url.to_string(), &opts)
             .map_err(|e| HttpError::JsError(e.into()))?;
 
-        self.request(request, Some(headers)).await
+        let res = self.request(request, Some(headers)).await?;
+        serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 }
 
@@ -154,11 +173,11 @@ impl SimpleHttpClient {
         Self {}
     }
 
-    async fn request<T: DeserializeOwned + 'static>(
+    async fn request(
         &self,
         req: Request,
         headers: Option<Vec<(String, String)>>,
-    ) -> Result<T> {
+    ) -> Result<Vec<u8>> {
         if headers.is_some() {
             for header in headers.unwrap() {
                 req.headers()
@@ -178,16 +197,17 @@ impl SimpleHttpClient {
             .map_err(|e| HttpError::JsError(e.into()))?;
 
         let status = resp.status();
-        let json = JsFuture::from(resp.json().map_err(|e| HttpError::JsError(e.into()))?)
+        let response_text = JsFuture::from(resp.text().map_err(|e| HttpError::JsError(e.into()))?)
             .await
             .map_err(|e| HttpError::JsError(e.into()))?;
 
         if (200..300).contains(&status) {
-            json.into_serde()
-                .map_err(|e| HttpError::DeserializeError(e.to_string()))
+            match response_text.as_string() {
+                Some(s) => Ok(s.as_bytes().to_vec()),
+                None => Ok(vec![]),
+            }
         } else {
-            let response: ApiError = json
-                .into_serde()
+            let response: ApiError = serde_wasm_bindgen::from_value(response_text)
                 .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
             return Err(HttpError::HttpClientError(response.message));
         }
@@ -198,7 +218,7 @@ impl SimpleHttpClient {
 pub struct JsError(JsValue);
 impl JsError {
     pub fn to_string(&self) -> String {
-        match self.0.into_serde() {
+        match serde_wasm_bindgen::from_value(self.0.clone()) {
             Ok(s) => s,
             Err(_) => "Unknown error".to_string(),
         }
