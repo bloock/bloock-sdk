@@ -459,13 +459,35 @@ mod tests {
         let response = server.record.build_record_from_string(request).await;
         let record = response.record.unwrap();
 
-        let document = Document::new(&record.payload).unwrap();
-        let result_signature = document.get_signatures().clone().unwrap();
         let result_error = response.error;
 
-        assert_eq!(1, result_signature.len());
         assert_eq!(None, result_error);
         assert_ne!(content.as_bytes(), record.payload);
+
+        let request = crate::items::RecordBuilderFromRecordRequest {
+            payload: Some(record.clone().try_into().unwrap()),
+            signer: None,
+            encrypter: None,
+            decrypter: Some(crate::items::Decrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(DecrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+        };
+
+        let unencrypted_record: Record = server
+            .record
+            .build_record_from_record(request)
+            .await
+            .record
+            .unwrap()
+            .try_into()
+            .unwrap();
+
+        let result_signature = unencrypted_record.get_signatures().clone().unwrap();
+        assert_eq!(1, result_signature.len());
+        assert_eq!(content.as_bytes(), unencrypted_record.get_payload().unwrap());
     }
 
     #[tokio::test]
