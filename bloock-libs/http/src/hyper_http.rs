@@ -131,7 +131,7 @@ impl SimpleHttpClient {
         }
 
         let res = match body {
-            Some(b) => req.send_bytes(&b),
+            Some(b) => req.send_bytes(b),
             None => req.call(),
         }
         .map_err(|e| HttpError::RequestError(e.to_string()))?;
@@ -151,5 +151,11 @@ impl SimpleHttpClient {
                 .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
             Err(HttpError::HttpClientError(response.message))
         }
+    }
+}
+
+impl Default for SimpleHttpClient {
+    fn default() -> Self {
+        Self::new()
     }
 }

@@ -1,6 +1,5 @@
 use std::cmp::Ordering;
 
-use bloock_encrypter::Encryption;
 use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
 use bloock_signer::Signature;
 
@@ -10,7 +9,7 @@ use crate::{
     record::{document::Document, RecordError},
 };
 
-#[derive(Clone, Eq)]
+#[derive(Debug, Clone, Eq)]
 pub struct Record {
     pub(crate) document: Option<Document>,
     hash: H256,
@@ -54,17 +53,17 @@ impl Record {
         }
     }
 
-    pub fn get_encryption(&self) -> Option<Encryption> {
-        match &self.document {
-            Some(d) => d.get_encryption(),
-            None => None,
-        }
-    }
-
     pub fn get_proof(&self) -> Option<Proof> {
         match &self.document {
             Some(d) => d.get_proof(),
             None => None,
+        }
+    }
+
+    pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
+        match self.document.as_mut() {
+            Some(d) => d.set_proof(proof),
+            None => Err(RecordError::DocumentNotFound.into()),
         }
     }
 
@@ -110,7 +109,7 @@ mod tests {
 
     #[test]
     fn test_new_record() {
-        let document = Document::new(&"Some String".as_bytes().to_vec()).unwrap();
+        let document = Document::new("Some String".as_bytes()).unwrap();
         let record = Record::new(document);
 
         assert_eq!(

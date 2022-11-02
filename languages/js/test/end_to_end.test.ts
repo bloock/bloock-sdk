@@ -4,14 +4,16 @@ import {
   EcsdaSigner,
   BloockClient,
   AesEncrypter,
-  AesDecrypter
+  AesDecrypter,
+  Bloock
 } from "../dist/index";
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from "@jest/globals";
 
 function getSdk() {
   const apiKey = process.env["API_KEY"] || "";
   const apiHost = process.env["API_HOST"] || "";
-  const client = new BloockClient(apiKey);
+  Bloock.setApiKey(apiKey);
+  const client = new BloockClient();
   if (apiHost) {
     client.setApiHost(apiHost);
   }
@@ -46,7 +48,7 @@ describe("E2E Tests", () => {
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromJson('{"hello":"world"}').build();
+    record = await RecordBuilder.fromJson({"hello":"world"}).build();
     hash = await record.getHash();
     expect(hash).toEqual(
       "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"

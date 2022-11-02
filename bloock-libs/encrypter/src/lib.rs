@@ -1,26 +1,12 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use thiserror::Error as ThisError;
 
 pub mod aes;
 
 pub type Result<T> = std::result::Result<T, EncrypterError>;
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct EncryptionHeader {
-    pub alg: String,
-    pub enc: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Encryption {
-    pub ciphertext: Vec<u8>,
-    pub tag: String,
-    pub header: EncryptionHeader,
-    pub protected: String,
-}
-
 pub trait Encrypter {
-    fn encrypt(&self, payload: &[u8], associated_data: &[u8]) -> Result<Encryption>;
+    fn encrypt(&self, payload: &[u8], associated_data: &[u8]) -> Result<Vec<u8>>;
 }
 
 pub trait Decrypter {
@@ -41,4 +27,8 @@ pub enum EncrypterError {
     InvalidBase64(),
     #[error("Invalid key/nonce/value/aad")]
     BadSeal(),
+    #[error("Document is not encrypted")]
+    NotEncrypted(),
+    #[error("Document is encrypted. Metadata cannot be modified")]
+    Encrypted(),
 }

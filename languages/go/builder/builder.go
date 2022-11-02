@@ -81,13 +81,6 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 			Encrypter: b.encrypter,
 			Decrypter: b.decrypter,
 		})
-	case proto.RecordTypes_RAW:
-		res, err = bridgeClient.Record().BuildRecordFromRaw(context.Background(), &proto.RecordBuilderFromRawRequest{
-			Payload:   b.payload.(string),
-			Signer:    b.signer,
-			Encrypter: b.encrypter,
-			Decrypter: b.decrypter,
-		})
 	}
 
 	if err != nil {
@@ -140,12 +133,5 @@ func NewRecordBuilderFromBytes(bytes []byte) RecordBuilder {
 	return RecordBuilder{
 		payload:     bytes,
 		payloadType: proto.RecordTypes_BYTES,
-	}
-}
-
-func NewRecordBuilderFromRaw(raw string) RecordBuilder {
-	return RecordBuilder{
-		payload:     raw,
-		payloadType: proto.RecordTypes_RAW,
 	}
 }

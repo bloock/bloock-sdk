@@ -33,8 +33,8 @@ export class RecordBuilder {
     return new RecordBuilder(str, RecordTypes.STRING);
   }
 
-  public static fromJson(json: string): RecordBuilder {
-    return new RecordBuilder(json, RecordTypes.JSON);
+  public static fromJson(json: any): RecordBuilder {
+    return new RecordBuilder(JSON.stringify(json), RecordTypes.JSON);
   }
 
   public static fromHex(hex: string): RecordBuilder {

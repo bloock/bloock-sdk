@@ -7,7 +7,6 @@ option java_package = "bloock.sdk.java.bridge.proto";
 
 import "shared.proto";
 import "config.proto";
-import "proof.proto";
 
 enum RecordTypes {
 	STRING = 0;
@@ -95,27 +94,6 @@ message Signature {
 message SignatureHeader {
     string alg = 1;
     string kid = 2;
-}
-
-message Encryption {
-    EncryptionHeader header = 1;
-    string protected = 2;
-    bytes ciphertext = 3;
-    string tag = 4;
-}
-
-message EncryptionHeader {
-    string alg = 1;
-    string enc = 2;
-}
-
-message Decryption {
-    DecryptionHeader header = 1;
-    string protected = 2;
-}
-
-message DecryptionHeader {
-    string alg = 1;
 }
 
 message RecordReceipt {

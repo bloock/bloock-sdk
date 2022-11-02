@@ -39,61 +39,55 @@ impl<H: Client> PublishService<H> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        publish::configure_test, publish::entity::publish_hosted_response::PublishHostedResponse,
-    };
-    use bloock_http::MockClient;
-    use mockall::predicate::eq;
-    use std::sync::Arc;
 
-    #[tokio::test]
-    async fn hosted_publish_file() {
-        let payload: Vec<u8> = vec![1, 2, 3, 4, 5];
-        let response = PublishHostedResponse {
-            hash: "a hash".to_owned(),
-        };
+    // #[tokio::test]
+    // async fn hosted_publish_file() {
+    //     let payload: Vec<u8> = vec![1, 2, 3, 4, 5];
+    //     let response = PublishHostedResponse {
+    //         hash: "a hash".to_owned(),
+    //     };
 
-        let mut http = MockClient::default();
-        http.expect_post_file::<String, PublishHostedResponse>()
-            .with(
-                eq("https://api.bloock.com/hosting/v1/upload".to_owned()),
-                eq(vec![("payload".to_owned(), payload.to_vec())]),
-                eq(None),
-            )
-            .return_once(|_, _, _| Ok(response));
+    //     let mut http = MockClient::default();
+    //     http.expect_post_file::<String, PublishHostedResponse>()
+    //         .with(
+    //             eq("https://api.bloock.com/hosting/v1/upload".to_owned()),
+    //             eq(vec![("payload".to_owned(), payload.to_vec())]),
+    //             eq(None),
+    //         )
+    //         .return_once(|_, _, _| Ok(response));
 
-        let service = configure_test(Arc::new(http));
-        let result = service.publish_hosted(&payload).await.unwrap();
+    //     let service = configure_test(Arc::new(http));
+    //     let result = service.publish_hosted(&payload).await.unwrap();
 
-        assert_eq!(
-            &result, "c5a2180e2f97506550f1bba5d863bc6ed05ad8b51daf6fca1ac7d396ef3183c5",
-            "Should not return an empty result"
-        )
-    }
+    //     assert_eq!(
+    //         &result, "c5a2180e2f97506550f1bba5d863bc6ed05ad8b51daf6fca1ac7d396ef3183c5",
+    //         "Should not return an empty result"
+    //     )
+    // }
 
-    #[tokio::test]
-    async fn hosted_retrieve_file() {
-        let payload = [1, 2, 3, 4, 5];
-        let hash = "c5a2180e2f97506550f1bba5d863bc6ed05ad8b51daf6fca1ac7d396ef3183c5";
+    // #[tokio::test]
+    // async fn hosted_retrieve_file() {
+    //     let payload = [1, 2, 3, 4, 5];
+    //     let hash = "c5a2180e2f97506550f1bba5d863bc6ed05ad8b51daf6fca1ac7d396ef3183c5";
 
-        let mut http = MockClient::default();
-        http.expect_get::<String>()
-            .with(
-                eq(format!("https://api.bloock.com/hosting/v1/{}", hash)),
-                eq(None),
-            )
-            .return_once(|_, _| Ok(payload.to_vec()));
+    //     let mut http = MockClient::default();
+    //     http.expect_get::<String>()
+    //         .with(
+    //             eq(format!("https://api.bloock.com/hosting/v1/{}", hash)),
+    //             eq(None),
+    //         )
+    //         .return_once(|_, _| Ok(payload.to_vec()));
 
-        let service = configure_test(Arc::new(http));
-        let result = service
-            .retrieve("c5a2180e2f97506550f1bba5d863bc6ed05ad8b51daf6fca1ac7d396ef3183c5".to_owned())
-            .await
-            .unwrap();
+    //     let service = configure_test(Arc::new(http));
+    //     let result = service
+    //         .retrieve("c5a2180e2f97506550f1bba5d863bc6ed05ad8b51daf6fca1ac7d396ef3183c5".to_owned())
+    //         .await
+    //         .unwrap();
 
-        assert_eq!(
-            payload,
-            result.as_slice(),
-            "Retrieved payload should match expected"
-        )
-    }
+    //     assert_eq!(
+    //         payload,
+    //         result.as_slice(),
+    //         "Retrieved payload should match expected"
+    //     )
+    // }
 }

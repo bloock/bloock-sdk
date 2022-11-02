@@ -175,27 +175,6 @@ export interface SignatureHeader {
   kid: string;
 }
 
-export interface Encryption {
-  header?: EncryptionHeader;
-  protected: string;
-  ciphertext: Uint8Array;
-  tag: string;
-}
-
-export interface EncryptionHeader {
-  alg: string;
-  enc: string;
-}
-
-export interface Decryption {
-  header?: DecryptionHeader;
-  protected: string;
-}
-
-export interface DecryptionHeader {
-  alg: string;
-}
-
 export interface RecordReceipt {
   anchor: number;
   client: string;
@@ -960,247 +939,6 @@ export const SignatureHeader = {
     const message = createBaseSignatureHeader();
     message.alg = object.alg ?? "";
     message.kid = object.kid ?? "";
-    return message;
-  },
-};
-
-function createBaseEncryption(): Encryption {
-  return { header: undefined, protected: "", ciphertext: new Uint8Array(), tag: "" };
-}
-
-export const Encryption = {
-  encode(message: Encryption, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.header !== undefined) {
-      EncryptionHeader.encode(message.header, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.protected !== "") {
-      writer.uint32(18).string(message.protected);
-    }
-    if (message.ciphertext.length !== 0) {
-      writer.uint32(26).bytes(message.ciphertext);
-    }
-    if (message.tag !== "") {
-      writer.uint32(34).string(message.tag);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Encryption {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseEncryption();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.header = EncryptionHeader.decode(reader, reader.uint32());
-          break;
-        case 2:
-          message.protected = reader.string();
-          break;
-        case 3:
-          message.ciphertext = reader.bytes();
-          break;
-        case 4:
-          message.tag = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Encryption {
-    return {
-      header: isSet(object.header) ? EncryptionHeader.fromJSON(object.header) : undefined,
-      protected: isSet(object.protected) ? String(object.protected) : "",
-      ciphertext: isSet(object.ciphertext) ? bytesFromBase64(object.ciphertext) : new Uint8Array(),
-      tag: isSet(object.tag) ? String(object.tag) : "",
-    };
-  },
-
-  toJSON(message: Encryption): unknown {
-    const obj: any = {};
-    message.header !== undefined && (obj.header = message.header ? EncryptionHeader.toJSON(message.header) : undefined);
-    message.protected !== undefined && (obj.protected = message.protected);
-    message.ciphertext !== undefined &&
-      (obj.ciphertext = base64FromBytes(message.ciphertext !== undefined ? message.ciphertext : new Uint8Array()));
-    message.tag !== undefined && (obj.tag = message.tag);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<Encryption>, I>>(object: I): Encryption {
-    const message = createBaseEncryption();
-    message.header = (object.header !== undefined && object.header !== null)
-      ? EncryptionHeader.fromPartial(object.header)
-      : undefined;
-    message.protected = object.protected ?? "";
-    message.ciphertext = object.ciphertext ?? new Uint8Array();
-    message.tag = object.tag ?? "";
-    return message;
-  },
-};
-
-function createBaseEncryptionHeader(): EncryptionHeader {
-  return { alg: "", enc: "" };
-}
-
-export const EncryptionHeader = {
-  encode(message: EncryptionHeader, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.alg !== "") {
-      writer.uint32(10).string(message.alg);
-    }
-    if (message.enc !== "") {
-      writer.uint32(18).string(message.enc);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): EncryptionHeader {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseEncryptionHeader();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.alg = reader.string();
-          break;
-        case 2:
-          message.enc = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): EncryptionHeader {
-    return { alg: isSet(object.alg) ? String(object.alg) : "", enc: isSet(object.enc) ? String(object.enc) : "" };
-  },
-
-  toJSON(message: EncryptionHeader): unknown {
-    const obj: any = {};
-    message.alg !== undefined && (obj.alg = message.alg);
-    message.enc !== undefined && (obj.enc = message.enc);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<EncryptionHeader>, I>>(object: I): EncryptionHeader {
-    const message = createBaseEncryptionHeader();
-    message.alg = object.alg ?? "";
-    message.enc = object.enc ?? "";
-    return message;
-  },
-};
-
-function createBaseDecryption(): Decryption {
-  return { header: undefined, protected: "" };
-}
-
-export const Decryption = {
-  encode(message: Decryption, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.header !== undefined) {
-      DecryptionHeader.encode(message.header, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.protected !== "") {
-      writer.uint32(18).string(message.protected);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Decryption {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDecryption();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.header = DecryptionHeader.decode(reader, reader.uint32());
-          break;
-        case 2:
-          message.protected = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Decryption {
-    return {
-      header: isSet(object.header) ? DecryptionHeader.fromJSON(object.header) : undefined,
-      protected: isSet(object.protected) ? String(object.protected) : "",
-    };
-  },
-
-  toJSON(message: Decryption): unknown {
-    const obj: any = {};
-    message.header !== undefined && (obj.header = message.header ? DecryptionHeader.toJSON(message.header) : undefined);
-    message.protected !== undefined && (obj.protected = message.protected);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<Decryption>, I>>(object: I): Decryption {
-    const message = createBaseDecryption();
-    message.header = (object.header !== undefined && object.header !== null)
-      ? DecryptionHeader.fromPartial(object.header)
-      : undefined;
-    message.protected = object.protected ?? "";
-    return message;
-  },
-};
-
-function createBaseDecryptionHeader(): DecryptionHeader {
-  return { alg: "" };
-}
-
-export const DecryptionHeader = {
-  encode(message: DecryptionHeader, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.alg !== "") {
-      writer.uint32(10).string(message.alg);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): DecryptionHeader {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDecryptionHeader();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.alg = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DecryptionHeader {
-    return { alg: isSet(object.alg) ? String(object.alg) : "" };
-  },
-
-  toJSON(message: DecryptionHeader): unknown {
-    const obj: any = {};
-    message.alg !== undefined && (obj.alg = message.alg);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<DecryptionHeader>, I>>(object: I): DecryptionHeader {
-    const message = createBaseDecryptionHeader();
-    message.alg = object.alg ?? "";
     return message;
   },
 };
@@ -1996,7 +1734,9 @@ export interface RecordService {
 
 export class RecordServiceClientImpl implements RecordService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || "bloock.RecordService";
     this.rpc = rpc;
     this.SendRecords = this.SendRecords.bind(this);
     this.BuildRecordFromString = this.BuildRecordFromString.bind(this);
@@ -2010,55 +1750,55 @@ export class RecordServiceClientImpl implements RecordService {
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
     const data = SendRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "SendRecords", data);
+    const promise = this.rpc.request(this.service, "SendRecords", data);
     return promise.then((data) => SendRecordsResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromStringRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromString", data);
+    const promise = this.rpc.request(this.service, "BuildRecordFromString", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromHex(request: RecordBuilderFromHexRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromHexRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromHex", data);
+    const promise = this.rpc.request(this.service, "BuildRecordFromHex", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromJson(request: RecordBuilderFromJSONRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromJSONRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromJson", data);
+    const promise = this.rpc.request(this.service, "BuildRecordFromJson", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromFile(request: RecordBuilderFromFileRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromFileRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromFile", data);
+    const promise = this.rpc.request(this.service, "BuildRecordFromFile", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromBytesRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromBytes", data);
+    const promise = this.rpc.request(this.service, "BuildRecordFromBytes", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromRecordRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromRecord", data);
+    const promise = this.rpc.request(this.service, "BuildRecordFromRecord", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   GetHash(request: Record): Promise<RecordHash> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "GetHash", data);
+    const promise = this.rpc.request(this.service, "GetHash", data);
     return promise.then((data) => RecordHash.decode(new _m0.Reader(data)));
   }
 
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse> {
     const data = GenerateKeysRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "GenerateKeys", data);
+    const promise = this.rpc.request(this.service, "GenerateKeys", data);
     return promise.then((data) => GenerateKeysResponse.decode(new _m0.Reader(data)));
   }
 }

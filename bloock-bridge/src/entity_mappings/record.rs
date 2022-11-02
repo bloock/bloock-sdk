@@ -1,6 +1,6 @@
 use crate::{
     error::{BridgeError, BridgeResult},
-    items::{Encryption, EncryptionHeader, Record, RecordReceipt, Signature, SignatureHeader},
+    items::{Record, RecordReceipt, Signature, SignatureHeader},
 };
 use bloock_core::{
     record::{
@@ -9,7 +9,6 @@ use bloock_core::{
             record::Record as RecordCore, record_receipt::RecordReceipt as RecordReceiptCore,
         },
     },
-    Encryption as EncryptionCore, EncryptionHeader as EncryptionHeaderCore,
     Signature as SignatureCore, SignatureHeader as SignatureHeaderCore,
 };
 use std::convert::TryFrom;
@@ -57,55 +56,6 @@ impl From<SignatureCore> for Signature {
             signature: s.signature,
             protected: s.protected,
             header: Some(s.header.into()),
-        }
-    }
-}
-
-impl From<EncryptionHeader> for EncryptionHeaderCore {
-    fn from(s: EncryptionHeader) -> Self {
-        Self {
-            alg: s.alg,
-            enc: s.enc,
-        }
-    }
-}
-
-impl From<EncryptionHeaderCore> for EncryptionHeader {
-    fn from(e: EncryptionHeaderCore) -> Self {
-        Self {
-            alg: e.alg,
-            enc: e.enc,
-        }
-    }
-}
-
-impl TryFrom<Encryption> for EncryptionCore {
-    type Error = BridgeError;
-    fn try_from(e: Encryption) -> BridgeResult<EncryptionCore> {
-        let encryption_header = match e.header {
-            Some(e) => e.into(),
-            None => {
-                return Err(BridgeError::RequestDeserialization(
-                    "couldn't get signature header".to_string(),
-                ))
-            }
-        };
-        Ok(Self {
-            header: encryption_header,
-            protected: e.protected,
-            ciphertext: e.ciphertext,
-            tag: e.tag,
-        })
-    }
-}
-
-impl From<EncryptionCore> for Encryption {
-    fn from(e: EncryptionCore) -> Self {
-        Self {
-            header: Some(e.header.into()),
-            protected: e.protected,
-            ciphertext: e.ciphertext,
-            tag: e.tag,
         }
     }
 }

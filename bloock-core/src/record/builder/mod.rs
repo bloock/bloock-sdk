@@ -3,7 +3,7 @@ use crate::{
     error::{BloockResult, InfrastructureError},
     record::document::Document,
 };
-use bloock_encrypter::{Decrypter, Encrypter};
+use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
 use bloock_signer::Signer;
 use serde_json::Value;
 
@@ -16,14 +16,14 @@ impl RecordBuilder {
             None => Err(RecordError::DocumentNotFound.into()),
         }
     }
-    pub async fn from_loader<L: Loader>(loader: L) -> BloockResult<Builder> {
-        let bytes = loader
-            .retrieve()
-            .await
-            .map_err(InfrastructureError::PublisherError)?;
-        let document = Document::new(&bytes)?;
-        Ok(Builder::from_document(document))
-    }
+    // pub async fn from_loader<L: Loader>(loader: L) -> BloockResult<Builder> {
+    //     let bytes = loader
+    //         .retrieve()
+    //         .await
+    //         .map_err(InfrastructureError::PublisherError)?;
+    //     let document = Document::new(&bytes)?;
+    //     Ok(Builder::from_document(document))
+    // }
     pub fn from_string<S: ToString>(s: S) -> BloockResult<Builder> {
         let string = s.to_string();
         let payload = string.as_bytes();
@@ -96,30 +96,34 @@ impl Builder {
             let signature = signer
                 .sign(&payload)
                 .map_err(InfrastructureError::SignerError)?;
-            self.document.add_signature(signature);
+
+            self.document.add_signature(signature)?;
         }
 
         if let Some(decrypter) = &self.decrypter {
+            if !self.document.is_encrypted() {
+                Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
+            }
             let payload = self.document.get_payload();
 
             let decrypted_payload = decrypter
-                .decrypt(&payload, &[/* TODO */])
+                .decrypt(&payload, &[])
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            self.document.remove_encryption(decrypted_payload);
+            self.document.remove_encryption(decrypted_payload)?;
         }
 
-        // We create the document before encryption since the hash has to be of the unencypted payload
         let mut record = Record::new(self.document.clone());
 
         if let Some(encrypter) = &self.encrypter {
-            let payload = self.document.get_payload();
-            let encryption = encrypter
-                .encrypt(&payload, &[/* TODO */])
+            let payload = self.document.build()?;
+            let ciphertext = encrypter
+                .encrypt(&payload, &[])
                 .map_err(InfrastructureError::EncrypterError)?;
 
             if let Some(doc) = record.document.as_mut() {
-                doc.set_encryption(encryption)
+                doc.set_encryption(ciphertext)?;
+                self.document = doc.clone();
             }
         }
 
@@ -129,8 +133,6 @@ impl Builder {
 
 #[cfg(test)]
 mod tests {
-
-    use bloock_publisher::test::{TestLoader, TestLoaderArgs};
 
     use super::*;
 
@@ -158,11 +160,6 @@ mod tests {
             "Unexpected signatures received"
         );
         assert_eq!(
-            r.document.clone().unwrap().get_encryption(),
-            r2.document.clone().unwrap().get_encryption(),
-            "Unexpected encryption received"
-        );
-        assert_eq!(
             r.document.unwrap().get_proof(),
             r2.document.unwrap().get_proof(),
             "Unexpected proof received"
@@ -186,21 +183,22 @@ mod tests {
         );
     }
 
-    #[tokio::test]
-    async fn test_from_loader() {
-        let payload = vec![1, 2, 3, 4, 5];
-        let r = RecordBuilder::from_loader(TestLoader::new(TestLoaderArgs {}))
-            .await
-            .unwrap()
-            .build()
-            .unwrap();
+    // TODO
+    // #[tokio::test]
+    // async fn test_from_loader() {
+    //     let payload = vec![1, 2, 3, 4, 5];
+    //     let r = RecordBuilder::from_loader(TestLoader::new(TestLoaderArgs {}))
+    //         .await
+    //         .unwrap()
+    //         .build()
+    //         .unwrap();
 
-        assert_eq!(
-            payload,
-            r.document.clone().unwrap().get_payload(),
-            "Unexpected payload received"
-        );
-    }
+    //     assert_eq!(
+    //         payload,
+    //         r.document.clone().unwrap().get_payload(),
+    //         "Unexpected payload received"
+    //     );
+    // }
 
     #[test]
     fn test_from_hex() {

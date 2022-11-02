@@ -6,6 +6,7 @@ from google.protobuf.internal import builder as _builder
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database
+
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -16,34 +17,36 @@ from . import config_pb2 as config__pb2
 from . import anchor_pb2 as anchor__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bproof.proto\x12\x06\x62loock\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\x1a\x0c\x61nchor.proto\"j\n\x05Proof\x12\x0e\n\x06leaves\x18\x01 \x03(\t\x12\r\n\x05nodes\x18\x02 \x03(\t\x12\r\n\x05\x64\x65pth\x18\x03 \x01(\t\x12\x0e\n\x06\x62itmap\x18\x04 \x01(\t\x12#\n\x06\x61nchor\x18\x05 \x01(\x0b\x32\x13.bloock.ProofAnchor\"g\n\x0bProofAnchor\x12\x11\n\tanchor_id\x18\x01 \x01(\x03\x12\'\n\x08networks\x18\x02 \x03(\x0b\x32\x15.bloock.AnchorNetwork\x12\x0c\n\x04root\x18\x03 \x01(\t\x12\x0e\n\x06status\x18\x04 \x01(\t\"K\n\x0fGetProofRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07records\x18\x02 \x03(\t\"]\n\x10GetProofResponse\x12\x1c\n\x05proof\x18\x01 \x01(\x0b\x32\r.bloock.Proof\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"n\n\x13ValidateRootRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0c\n\x04root\x18\x02 \x01(\t\x12 \n\x07network\x18\x03 \x01(\x0e\x32\x0f.bloock.Network\"V\n\x14ValidateRootResponse\x12\x11\n\ttimestamp\x18\x01 \x01(\x04\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"[\n\x12VerifyProofRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1c\n\x05proof\x18\x02 \x01(\x0b\x32\r.bloock.Proof\"b\n\x13VerifyProofResponse\x12\x13\n\x06record\x18\x01 \x01(\tH\x00\x88\x01\x01\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x01\x88\x01\x01\x42\t\n\x07_recordB\x08\n\x06_error\"\x83\x01\n\x14VerifyRecordsRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07records\x18\x02 \x03(\t\x12%\n\x07network\x18\x03 \x01(\x0e\x32\x0f.bloock.NetworkH\x00\x88\x01\x01\x42\n\n\x08_network\"W\n\x15VerifyRecordsResponse\x12\x11\n\ttimestamp\x18\x01 \x01(\x04\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xae\x02\n\x0cProofService\x12=\n\x08GetProof\x12\x17.bloock.GetProofRequest\x1a\x18.bloock.GetProofResponse\x12I\n\x0cValidateRoot\x12\x1b.bloock.ValidateRootRequest\x1a\x1c.bloock.ValidateRootResponse\x12\x46\n\x0bVerifyProof\x12\x1a.bloock.VerifyProofRequest\x1a\x1b.bloock.VerifyProofResponse\x12L\n\rVerifyRecords\x12\x1c.bloock.VerifyRecordsRequest\x1a\x1d.bloock.VerifyRecordsResponseBX\n\x1c\x62loock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
+    b'\n\x0bproof.proto\x12\x06\x62loock\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\x1a\x0c\x61nchor.proto"j\n\x05Proof\x12\x0e\n\x06leaves\x18\x01 \x03(\t\x12\r\n\x05nodes\x18\x02 \x03(\t\x12\r\n\x05\x64\x65pth\x18\x03 \x01(\t\x12\x0e\n\x06\x62itmap\x18\x04 \x01(\t\x12#\n\x06\x61nchor\x18\x05 \x01(\x0b\x32\x13.bloock.ProofAnchor"g\n\x0bProofAnchor\x12\x11\n\tanchor_id\x18\x01 \x01(\x03\x12\'\n\x08networks\x18\x02 \x03(\x0b\x32\x15.bloock.AnchorNetwork\x12\x0c\n\x04root\x18\x03 \x01(\t\x12\x0e\n\x06status\x18\x04 \x01(\t"K\n\x0fGetProofRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07records\x18\x02 \x03(\t"]\n\x10GetProofResponse\x12\x1c\n\x05proof\x18\x01 \x01(\x0b\x32\r.bloock.Proof\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"n\n\x13ValidateRootRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0c\n\x04root\x18\x02 \x01(\t\x12 \n\x07network\x18\x03 \x01(\x0e\x32\x0f.bloock.Network"V\n\x14ValidateRootResponse\x12\x11\n\ttimestamp\x18\x01 \x01(\x04\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"[\n\x12VerifyProofRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1c\n\x05proof\x18\x02 \x01(\x0b\x32\r.bloock.Proof"b\n\x13VerifyProofResponse\x12\x13\n\x06record\x18\x01 \x01(\tH\x00\x88\x01\x01\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x01\x88\x01\x01\x42\t\n\x07_recordB\x08\n\x06_error"\x83\x01\n\x14VerifyRecordsRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07records\x18\x02 \x03(\t\x12%\n\x07network\x18\x03 \x01(\x0e\x32\x0f.bloock.NetworkH\x00\x88\x01\x01\x42\n\n\x08_network"W\n\x15VerifyRecordsResponse\x12\x11\n\ttimestamp\x18\x01 \x01(\x04\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xae\x02\n\x0cProofService\x12=\n\x08GetProof\x12\x17.bloock.GetProofRequest\x1a\x18.bloock.GetProofResponse\x12I\n\x0cValidateRoot\x12\x1b.bloock.ValidateRootRequest\x1a\x1c.bloock.ValidateRootResponse\x12\x46\n\x0bVerifyProof\x12\x1a.bloock.VerifyProofRequest\x1a\x1b.bloock.VerifyProofResponse\x12L\n\rVerifyRecords\x12\x1c.bloock.VerifyRecordsRequest\x1a\x1d.bloock.VerifyRecordsResponseBX\n\x1c\x62loock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3'
+)
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'proof_pb2', globals())
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "proof_pb2", globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
-  DESCRIPTOR._options = None
-  DESCRIPTOR._serialized_options = b'\n\034bloock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
-  _PROOF._serialized_start=65
-  _PROOF._serialized_end=171
-  _PROOFANCHOR._serialized_start=173
-  _PROOFANCHOR._serialized_end=276
-  _GETPROOFREQUEST._serialized_start=278
-  _GETPROOFREQUEST._serialized_end=353
-  _GETPROOFRESPONSE._serialized_start=355
-  _GETPROOFRESPONSE._serialized_end=448
-  _VALIDATEROOTREQUEST._serialized_start=450
-  _VALIDATEROOTREQUEST._serialized_end=560
-  _VALIDATEROOTRESPONSE._serialized_start=562
-  _VALIDATEROOTRESPONSE._serialized_end=648
-  _VERIFYPROOFREQUEST._serialized_start=650
-  _VERIFYPROOFREQUEST._serialized_end=741
-  _VERIFYPROOFRESPONSE._serialized_start=743
-  _VERIFYPROOFRESPONSE._serialized_end=841
-  _VERIFYRECORDSREQUEST._serialized_start=844
-  _VERIFYRECORDSREQUEST._serialized_end=975
-  _VERIFYRECORDSRESPONSE._serialized_start=977
-  _VERIFYRECORDSRESPONSE._serialized_end=1064
-  _PROOFSERVICE._serialized_start=1067
-  _PROOFSERVICE._serialized_end=1369
+    DESCRIPTOR._options = None
+    DESCRIPTOR._serialized_options = b"\n\034bloock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+    _PROOF._serialized_start = 65
+    _PROOF._serialized_end = 171
+    _PROOFANCHOR._serialized_start = 173
+    _PROOFANCHOR._serialized_end = 276
+    _GETPROOFREQUEST._serialized_start = 278
+    _GETPROOFREQUEST._serialized_end = 353
+    _GETPROOFRESPONSE._serialized_start = 355
+    _GETPROOFRESPONSE._serialized_end = 448
+    _VALIDATEROOTREQUEST._serialized_start = 450
+    _VALIDATEROOTREQUEST._serialized_end = 560
+    _VALIDATEROOTRESPONSE._serialized_start = 562
+    _VALIDATEROOTRESPONSE._serialized_end = 648
+    _VERIFYPROOFREQUEST._serialized_start = 650
+    _VERIFYPROOFREQUEST._serialized_end = 741
+    _VERIFYPROOFRESPONSE._serialized_start = 743
+    _VERIFYPROOFRESPONSE._serialized_end = 841
+    _VERIFYRECORDSREQUEST._serialized_start = 844
+    _VERIFYRECORDSREQUEST._serialized_end = 975
+    _VERIFYRECORDSRESPONSE._serialized_start = 977
+    _VERIFYRECORDSRESPONSE._serialized_end = 1064
+    _PROOFSERVICE._serialized_start = 1067
+    _PROOFSERVICE._serialized_end = 1369
 # @@protoc_insertion_point(module_scope)

@@ -4,16 +4,12 @@ import * as proto from "../bridge/proto/record";
 export class Record {
   payload: Uint8Array;
 
-  constructor(
-    payload: Uint8Array,
-  ) {
+  constructor(payload: Uint8Array) {
     this.payload = payload;
   }
 
   static fromProto(r: proto.Record) {
-    return new Record(
-      r.payload
-    );
+    return new Record(r.payload);
   }
 
   toProto(): proto.Record {
@@ -90,43 +86,6 @@ export class SignatureHeader {
 
   toProto(): proto.SignatureHeader {
     return proto.SignatureHeader.fromPartial({ alg: this.alg, kid: this.kid });
-  }
-}
-
-export class Encryption {
-  header: EncryptionHeader;
-  protected: string;
-
-  constructor(header: EncryptionHeader, prot: string) {
-    this.header = header;
-    this.protected = prot;
-  }
-
-  static fromProto(e: proto.Encryption): Encryption {
-    return new Encryption(EncryptionHeader.fromProto(e.header!), e.protected);
-  }
-
-  toProto(): proto.Encryption {
-    return proto.Encryption.fromPartial({
-      header: this.header.toProto(),
-      protected: this.protected
-    });
-  }
-}
-
-export class EncryptionHeader {
-  alg: string;
-
-  constructor(alg: string) {
-    this.alg = alg;
-  }
-
-  static fromProto(e: proto.EncryptionHeader): EncryptionHeader {
-    return new EncryptionHeader(e.alg);
-  }
-
-  toProto(): proto.EncryptionHeader {
-    return proto.EncryptionHeader.fromPartial({ alg: this.alg });
   }
 }
 

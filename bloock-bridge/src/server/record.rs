@@ -353,7 +353,12 @@ fn build_record(
 
 #[cfg(test)]
 mod tests {
-    use bloock_core::record::document::Document;
+    use bloock_core::{
+        anchor::entity::anchor::AnchorNetwork,
+        proof::entity::{anchor::ProofAnchor, proof::Proof},
+        record::{document::Document, entity::record::Record},
+        Signature, SignatureHeader,
+    };
 
     use crate::{
         items::{
@@ -362,8 +367,6 @@ mod tests {
         },
         server::Server,
     };
-
-    use bloock_core::AES_ALG;
 
     #[tokio::test]
     async fn test_build_record_from_string_no_signature_nor_encryption() {
@@ -414,7 +417,6 @@ mod tests {
         let result_algorithm = result_signature[0].clone().header.alg;
         let result_public_key = result_signature[0].clone().header.kid;
         let result_payload = String::from_utf8(record.payload).unwrap();
-        let result_encryption = document.get_encryption();
         let result_proof = document.get_proof();
         let result_error = response.error;
 
@@ -426,7 +428,6 @@ mod tests {
             result_public_key
         );
         assert_ne!(content, result_payload);
-        assert_eq!(None, result_encryption);
         assert_eq!(None, result_proof);
         assert_eq!(None, result_error);
     }
@@ -458,19 +459,137 @@ mod tests {
         let response = server.record.build_record_from_string(request).await;
         let record = response.record.unwrap();
 
-        let document = Document::new(&record.payload).unwrap();
-        let result_signature = document.get_signatures().clone().unwrap();
-        let result_encryption_alg = document.get_encryption().unwrap().header.alg;
         let result_error = response.error;
 
-        assert_eq!(1, result_signature.len());
-        assert_eq!(AES_ALG, result_encryption_alg);
         assert_eq!(None, result_error);
         assert_ne!(content.as_bytes(), record.payload);
+
+        let request = crate::items::RecordBuilderFromRecordRequest {
+            payload: Some(record.clone()),
+            signer: None,
+            encrypter: None,
+            decrypter: Some(crate::items::Decrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(DecrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+        };
+
+        let unencrypted_record: Record = server
+            .record
+            .build_record_from_record(request)
+            .await
+            .record
+            .unwrap()
+            .try_into()
+            .unwrap();
+
+        let result_signature = unencrypted_record.get_signatures().unwrap();
+        assert_eq!(1, result_signature.len());
+        assert_eq!(
+            content.as_bytes(),
+            unencrypted_record.get_payload().unwrap()
+        );
     }
 
     #[tokio::test]
-    async fn test_build_record_with_decrypter() {
+    async fn test_build_record_from_pdf_set_encryption() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "some_password";
+        let payload = include_bytes!("../../assets/dummy.pdf");
+        let server = Server::new();
+
+        let request = crate::items::RecordBuilderFromFileRequest {
+            payload: payload.to_vec(),
+            signer: Some(crate::items::Signer {
+                alg: SignerAlg::Es256k.into(),
+                args: Some(SignerArgs {
+                    private_key: Some(private.to_string()),
+                }),
+            }),
+            encrypter: None,
+            decrypter: None,
+        };
+
+        let default_record: Record = server
+            .record
+            .build_record_from_file(request)
+            .await
+            .record
+            .unwrap()
+            .try_into()
+            .unwrap();
+
+        let request = crate::items::RecordBuilderFromFileRequest {
+            payload: payload.to_vec(),
+            signer: Some(crate::items::Signer {
+                alg: SignerAlg::Es256k.into(),
+                args: Some(SignerArgs {
+                    private_key: Some(private.to_string()),
+                }),
+            }),
+            encrypter: Some(crate::items::Encrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(EncrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+            decrypter: None,
+        };
+
+        let encrypted_record: Record = server
+            .record
+            .build_record_from_file(request)
+            .await
+            .record
+            .unwrap()
+            .try_into()
+            .unwrap();
+
+        assert_ne!(default_record.get_hash(), encrypted_record.get_hash());
+
+        let request = crate::items::RecordBuilderFromRecordRequest {
+            payload: Some(encrypted_record.try_into().unwrap()),
+            signer: None,
+            encrypter: None,
+            decrypter: Some(crate::items::Decrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(DecrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+        };
+
+        let unencrypted_record: Record = server
+            .record
+            .build_record_from_record(request)
+            .await
+            .record
+            .unwrap()
+            .try_into()
+            .unwrap();
+
+        let expected_signatures = vec![
+            Signature {
+                header: SignatureHeader {
+                    alg: "ES256K".to_string(),
+                    kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
+                },
+                protected: "e30".to_string(),
+                signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e611416".to_string(),
+            }
+        ];
+
+        assert_eq!(
+            unencrypted_record.get_signatures().unwrap(),
+            expected_signatures
+        );
+        assert_eq!(default_record.get_hash(), unencrypted_record.get_hash());
+    }
+
+    #[tokio::test]
+    async fn test_build_record_with_encryption_and_decryption() {
         let server = Server::new();
         let password = "some_password";
         let content = "hello world!";
@@ -489,11 +608,11 @@ mod tests {
 
         let response = server.record.build_record_from_string(request).await;
         assert_eq!(None, response.error);
-        let record = response.record.unwrap();
-        assert_ne!(content.as_bytes(), record.payload);
+        let encrypted_record = response.record.unwrap();
+        assert_ne!(content.as_bytes(), encrypted_record.payload);
 
         let request = crate::items::RecordBuilderFromRecordRequest {
-            payload: Some(record),
+            payload: Some(encrypted_record.clone()),
             signer: None,
             encrypter: None,
             decrypter: Some(crate::items::Decrypter {
@@ -505,8 +624,122 @@ mod tests {
         };
 
         let response = server.record.build_record_from_record(request).await;
-        let record = response.record.unwrap();
-        assert_eq!(content.as_bytes(), record.payload);
+        let record: Record = response.record.unwrap().try_into().unwrap();
+        assert_eq!(content.as_bytes(), record.get_payload().unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_build_record_set_signature_encryption_and_decryption() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "some_password";
+        let content = "hello world!";
+
+        let request = crate::items::RecordBuilderFromStringRequest {
+            payload: content.to_string(),
+            signer: Some(crate::items::Signer {
+                alg: SignerAlg::Es256k.into(),
+                args: Some(SignerArgs {
+                    private_key: Some(private.to_string()),
+                }),
+            }),
+            encrypter: Some(crate::items::Encrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(EncrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+            decrypter: None,
+        };
+
+        let server = Server::new();
+        let response = server.record.build_record_from_string(request).await;
+        let record: Record = response.record.unwrap().try_into().unwrap();
+
+        let request = crate::items::RecordBuilderFromRecordRequest {
+            payload: Some(record.try_into().unwrap()),
+            signer: None,
+            encrypter: None,
+            decrypter: Some(crate::items::Decrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(DecrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+        };
+
+        let response = server.record.build_record_from_record(request).await;
+        let record: Record = response.record.unwrap().try_into().unwrap();
+        assert_eq!(content.as_bytes(), record.get_payload().unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_build_record_set_proof_encryption_and_decryption() {
+        let password = "some_password";
+        let content = "hello world!";
+
+        let request = crate::items::RecordBuilderFromStringRequest {
+            payload: content.to_string(),
+            signer: None,
+            encrypter: None,
+            decrypter: None,
+        };
+
+        let server = Server::new();
+        let response = server.record.build_record_from_string(request).await;
+        let mut record: Record = response.record.unwrap().try_into().unwrap();
+
+        record
+            .set_proof(Proof {
+                anchor: ProofAnchor {
+                    anchor_id: 1,
+                    networks: vec![AnchorNetwork {
+                        name: "net".to_string(),
+                        state: "state".to_string(),
+                        tx_hash: "tx_hash".to_string(),
+                    }],
+                    root: "root".to_string(),
+                    status: "status".to_string(),
+                },
+                bitmap: "111".to_string(),
+                depth: "111".to_string(),
+                leaves: vec![[0u8; 32]],
+                nodes: vec![[0u8; 32]],
+            })
+            .unwrap();
+
+        let request = crate::items::RecordBuilderFromRecordRequest {
+            payload: Some(record.clone().try_into().unwrap()),
+            signer: None,
+            encrypter: Some(crate::items::Encrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(EncrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+            decrypter: None,
+        };
+
+        let response = server.record.build_record_from_record(request).await;
+        let encrypted_record: Record = response.record.unwrap().try_into().unwrap();
+
+        assert_eq!(encrypted_record.get_proof(), None);
+        assert_ne!(encrypted_record.get_payload(), record.get_payload());
+
+        let request = crate::items::RecordBuilderFromRecordRequest {
+            payload: Some(encrypted_record.try_into().unwrap()),
+            signer: None,
+            encrypter: None,
+            decrypter: Some(crate::items::Decrypter {
+                alg: EncryptionAlg::A256gcm.into(),
+                args: Some(DecrypterArgs {
+                    password: password.to_string(),
+                }),
+            }),
+        };
+
+        let response = server.record.build_record_from_record(request).await;
+        let record: Record = response.record.unwrap().try_into().unwrap();
+        assert_eq!(content.as_bytes(), record.get_payload().unwrap());
     }
 
     #[tokio::test]
