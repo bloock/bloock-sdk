@@ -1,4 +1,5 @@
 import "./pollyfills";
+import { Bloock } from "./bloock";
 import { BloockClient } from "./client";
 import { Anchor } from "./bridge/proto/anchor";
 import { Network } from "./bridge/proto/config";
@@ -9,6 +10,7 @@ import { AesEncrypter } from "./entity/encrypter";
 import { AesDecrypter } from "./entity/decrypter";
 
 export {
+  Bloock,
   BloockClient,
   Anchor,
   Network,

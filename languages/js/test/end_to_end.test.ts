@@ -4,14 +4,16 @@ import {
   EcsdaSigner,
   BloockClient,
   AesEncrypter,
-  AesDecrypter
+  AesDecrypter,
+  Bloock
 } from "../dist/index";
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from "@jest/globals";
 
 function getSdk() {
   const apiKey = process.env["API_KEY"] || "";
   const apiHost = process.env["API_HOST"] || "";
-  const client = new BloockClient(apiKey);
+  Bloock.setApiKey(apiKey);
+  const client = new BloockClient();
   if (apiHost) {
     client.setApiHost(apiHost);
   }

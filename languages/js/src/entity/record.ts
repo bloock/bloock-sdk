@@ -4,16 +4,12 @@ import * as proto from "../bridge/proto/record";
 export class Record {
   payload: Uint8Array;
 
-  constructor(
-    payload: Uint8Array,
-  ) {
+  constructor(payload: Uint8Array) {
     this.payload = payload;
   }
 
   static fromProto(r: proto.Record) {
-    return new Record(
-      r.payload
-    );
+    return new Record(r.payload);
   }
 
   toProto(): proto.Record {

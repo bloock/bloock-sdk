@@ -15,14 +15,15 @@ import { Anchor } from "./entity/anchor";
 import { Keys, RecordReceipt } from "./entity/record";
 
 import { NewConfigData } from "./config/config";
+import { Bloock } from "./bloock";
 
 export class BloockClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
-  constructor(apiKey: string) {
+  constructor() {
     this.bridge = new BloockBridge();
-    this.configData = NewConfigData(apiKey);
+    this.configData = NewConfigData(Bloock.getApiKey());
 
     // if (document !== undefined) {
     //   fetch("https://api.bloock.dev/events/v1/script/", {
@@ -66,6 +67,7 @@ export class BloockClient {
    * @returns {Promise<RecordReceipt[]>} List of RecordReceipt of each Record sent or error.
    */
   public async sendRecords(records: string[]): Promise<RecordReceipt[]> {
+    this.configData.config!.apiKey = Bloock.getApiKey();
     const request = SendRecordsRequest.fromPartial({
       configData: this.configData,
       records: records
@@ -85,6 +87,7 @@ export class BloockClient {
    * @returns {Promise<Anchor>} Anchor object matching the id or error
    */
   public async getAnchor(anchorId: number): Promise<Anchor> {
+    this.configData.config!.apiKey = Bloock.getApiKey();
     const request = GetAnchorRequest.fromPartial({
       configData: this.configData,
       anchorId: anchorId
@@ -105,6 +108,7 @@ export class BloockClient {
    * @returns {Promise<Anchor>} Anchor object matching the id.
    */
   public async waitAnchor(anchorId: number, timeout?: number): Promise<Anchor> {
+    this.configData.config!.apiKey = Bloock.getApiKey();
     const request = WaitAnchorRequest.fromPartial({
       configData: this.configData,
       anchorId: anchorId,
@@ -126,6 +130,7 @@ export class BloockClient {
    * the integrity of the records in the input list. If no record was requested, then returns None.
    */
   public async getProof(records: string[]): Promise<Proof> {
+    this.configData.config!.apiKey = Bloock.getApiKey();
     const request = GetProofRequest.fromPartial({
       configData: this.configData,
       records: records
@@ -146,6 +151,7 @@ export class BloockClient {
    * @returns {Promise<number>} A number representing the timestamp in milliseconds when the anchor was registered in Blockchain
    */
   public async validateRoot(root: string, network: Network): Promise<number> {
+    this.configData.config!.apiKey = Bloock.getApiKey();
     const request = ValidateRootRequest.fromPartial({
       configData: this.configData,
       root: root,
@@ -167,6 +173,7 @@ export class BloockClient {
    * @throws {ProofException} Error when verifying the proof
    */
   public async verifyProof(proof: Proof): Promise<string> {
+    this.configData.config!.apiKey = Bloock.getApiKey();
     const request = VerifyProofRequest.fromPartial({
       configData: this.configData,
       proof: proof.toProto()
@@ -190,6 +197,7 @@ export class BloockClient {
     records: string[],
     network?: Network
   ): Promise<number> {
+    this.configData.config!.apiKey = Bloock.getApiKey();
     const request = VerifyRecordsRequest.fromPartial({
       configData: this.configData,
       records: records,
