@@ -50,6 +50,7 @@ class SignatureHeader:
     def to_proto(self) -> proto.SignatureHeader:
         return proto.SignatureHeader(alg=self.alg, kid=self.kid)
 
+
 class Record:
     def __init__(
         self,
