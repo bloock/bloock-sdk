@@ -487,7 +487,10 @@ mod tests {
 
         let result_signature = unencrypted_record.get_signatures().clone().unwrap();
         assert_eq!(1, result_signature.len());
-        assert_eq!(content.as_bytes(), unencrypted_record.get_payload().unwrap());
+        assert_eq!(
+            content.as_bytes(),
+            unencrypted_record.get_payload().unwrap()
+        );
     }
 
     #[tokio::test]
