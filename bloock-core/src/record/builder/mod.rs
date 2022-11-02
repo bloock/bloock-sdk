@@ -16,14 +16,14 @@ impl RecordBuilder {
             None => Err(RecordError::DocumentNotFound.into()),
         }
     }
-    pub async fn from_loader<L: Loader>(loader: L) -> BloockResult<Builder> {
-        let bytes = loader
-            .retrieve()
-            .await
-            .map_err(InfrastructureError::PublisherError)?;
-        let document = Document::new(&bytes)?;
-        Ok(Builder::from_document(document))
-    }
+    // pub async fn from_loader<L: Loader>(loader: L) -> BloockResult<Builder> {
+    //     let bytes = loader
+    //         .retrieve()
+    //         .await
+    //         .map_err(InfrastructureError::PublisherError)?;
+    //     let document = Document::new(&bytes)?;
+    //     Ok(Builder::from_document(document))
+    // }
     pub fn from_string<S: ToString>(s: S) -> BloockResult<Builder> {
         let string = s.to_string();
         let payload = string.as_bytes();
