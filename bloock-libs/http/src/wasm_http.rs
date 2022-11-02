@@ -1,28 +1,31 @@
 use super::Result;
+use crate::ApiError;
 use crate::Client;
 use crate::HttpError;
 use async_trait::async_trait;
-use crate::ApiError;
+use js_sys::Promise;
+use multipart::client::lazy::Multipart;
 use serde::de::DeserializeOwned;
-use serde::Serializer;
 use serde::Serialize;
+use serde::Serializer;
+use std::fmt;
+use std::io::BufReader;
+use std::io::Read;
+use std::str::FromStr;
+use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::JsFuture;
-use std::fmt;
 use web_sys::Request;
 use web_sys::RequestInit;
 use web_sys::RequestMode;
 use web_sys::Response;
-use js_sys::Promise;
-use wasm_bindgen::prelude::wasm_bindgen;
-
 
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_name = fetch)]
     fn fetch(input: web_sys::Request) -> Promise;
-    
+
 }
 
 pub struct SimpleHttpClient {}
@@ -44,7 +47,30 @@ impl Client for SimpleHttpClient {
         self.request(request, headers).await
     }
 
-    async fn post<U: ToString + 'static, B: Serialize + 'static, T: DeserializeOwned + 'static>(
+    async fn post<U: ToString + 'static, T: DeserializeOwned + 'static>(
+        &self,
+        url: U,
+        body: &[u8],
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<T> {
+        let mut opts = RequestInit::new();
+        opts.method("POST");
+        opts.mode(RequestMode::Cors);
+        let body_array: js_sys::Uint8Array = body.into();
+        let js_value: &JsValue = body_array.as_ref();
+        opts.body(Some(js_value));
+
+        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
+            .map_err(|e| HttpError::JsError(e.into()))?;
+
+        self.request(request, headers).await
+    }
+
+    async fn post_json<
+        U: ToString + 'static,
+        B: Serialize + 'static,
+        T: DeserializeOwned + 'static,
+    >(
         &self,
         url: U,
         body: B,
@@ -60,7 +86,8 @@ impl Client for SimpleHttpClient {
         let js_value: &JsValue = body_array.as_ref();
         opts.body(Some(js_value));
 
-        let request = Request::new_with_str_and_init(&url.to_string(), &opts).map_err(|e| HttpError::JsError(e.into()))?;
+        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
+            .map_err(|e| HttpError::JsError(e.into()))?;
 
         self.request(request, headers).await
     }
@@ -68,25 +95,63 @@ impl Client for SimpleHttpClient {
     async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
-        body: &[u8],
+        files: Vec<(String, Vec<u8>)>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
+        let mut m = Multipart::new();
+
+        for file in files.iter() {
+            let content_type = match infer::get(&file.1) {
+                Some(t) => t.mime_type(),
+                None => "application/octet-stream",
+            };
+
+            let mime = match mime::Mime::from_str(content_type) {
+                Ok(m) => m,
+                Err(_) => mime::APPLICATION_OCTET_STREAM,
+            };
+            m.add_stream(file.0.clone(), file.1.as_slice(), Some("blob"), Some(mime));
+        }
+
+        let mdata = m.prepare().unwrap();
+
+        let headers = match headers {
+            Some(mut h) => {
+                h.push((
+                    "Content-Type".to_owned(),
+                    format!("multipart/form-data; boundary={}", mdata.boundary()),
+                ));
+                h
+            }
+            None => vec![(
+                "Content-Type".to_owned(),
+                format!("multipart/form-data; boundary={}", mdata.boundary()),
+            )],
+        };
+
+        let mut reader = BufReader::new(mdata);
+        let mut buffer = Vec::new();
+        reader
+            .read_to_end(&mut buffer)
+            .map_err(|_| HttpError::WriteFormDataError())?;
+
         let mut opts = RequestInit::new();
         opts.method("POST");
         opts.mode(RequestMode::Cors);
-        let body_array: js_sys::Uint8Array = body.into();
+        let body_array: js_sys::Uint8Array = buffer.as_slice().into();
         let js_value: &JsValue = body_array.as_ref();
         opts.body(Some(js_value));
 
-        let request = Request::new_with_str_and_init(&url.to_string(), &opts).map_err(|e| HttpError::JsError(e.into()))?;
+        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
+            .map_err(|e| HttpError::JsError(e.into()))?;
 
-        self.request(request, headers).await
+        self.request(request, Some(headers)).await
     }
 }
 
 impl SimpleHttpClient {
     pub fn new() -> Self {
-        Self { }
+        Self {}
     }
 
     async fn request<T: DeserializeOwned + 'static>(
@@ -96,7 +161,9 @@ impl SimpleHttpClient {
     ) -> Result<T> {
         if headers.is_some() {
             for header in headers.unwrap() {
-                req.headers().set(&header.0, &header.1).map_err(|e| HttpError::JsError(e.into()))?;
+                req.headers()
+                    .set(&header.0, &header.1)
+                    .map_err(|e| HttpError::JsError(e.into()))?;
             }
         }
 
@@ -106,20 +173,18 @@ impl SimpleHttpClient {
 
         assert!(resp_value.is_instance_of::<Response>());
 
-        let resp: Response = resp_value.dyn_into().map_err(|e| HttpError::JsError(e.into()))?;
+        let resp: Response = resp_value
+            .dyn_into()
+            .map_err(|e| HttpError::JsError(e.into()))?;
 
         let status = resp.status();
-        let json = JsFuture::from(
-                resp
-                .json()
-                .map_err(|e| HttpError::JsError(e.into()))?
-            )
+        let json = JsFuture::from(resp.json().map_err(|e| HttpError::JsError(e.into()))?)
             .await
             .map_err(|e| HttpError::JsError(e.into()))?;
 
         if (200..300).contains(&status) {
             json.into_serde()
-            .map_err(|e| HttpError::DeserializeError(e.to_string()))
+                .map_err(|e| HttpError::DeserializeError(e.to_string()))
         } else {
             let response: ApiError = json
                 .into_serde()

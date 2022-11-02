@@ -20,6 +20,8 @@ pub enum BridgeError {
     RecordError,
     #[error("Proof error")]
     ProofError,
+    #[error("Publish error")]
+    PublishError,
     #[error("Anchor missing from request")]
     MissingAnchor,
     #[error("{0}")]

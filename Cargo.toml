@@ -10,7 +10,6 @@ members = [
     "bloock-libs/web3",
     "bloock-libs/encrypter",
     "bloock-libs/hasher",
-    "bloock-libs/publisher",
     "bloock-libs/signer"
 ]
 

@@ -4,7 +4,6 @@ use crate::{
     record::document::Document,
 };
 use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
-use bloock_publisher::Loader;
 use bloock_signer::Signer;
 use serde_json::Value;
 
@@ -108,7 +107,7 @@ impl Builder {
             let payload = self.document.get_payload();
 
             let decrypted_payload = decrypter
-                .decrypt(&payload, &[/* TODO */])
+                .decrypt(&payload, &[])
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document.remove_encryption(decrypted_payload)?;
@@ -119,7 +118,7 @@ impl Builder {
         if let Some(encrypter) = &self.encrypter {
             let payload = self.document.build()?;
             let ciphertext = encrypter
-                .encrypt(&payload, &[/* TODO */])
+                .encrypt(&payload, &[])
                 .map_err(InfrastructureError::EncrypterError)?;
 
             if let Some(doc) = record.document.as_mut() {

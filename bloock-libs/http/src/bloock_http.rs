@@ -18,11 +18,11 @@ pub struct BloockHttpClient {
 
 #[async_trait(?Send)]
 impl Client for BloockHttpClient {
-    async fn get<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn get<U: ToString + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
-    ) -> Result<T> {
+    ) -> Result<Vec<u8>> {
         let headers = match headers {
             Some(mut h) => {
                 h.push(("X-Api-Key".to_string(), self.get_api_key()));
@@ -35,10 +35,9 @@ impl Client for BloockHttpClient {
         client.get(url, Some(headers)).await
     }
 
-    async fn post<U: ToString + 'static, B: Serialize + 'static, T: DeserializeOwned + 'static>(
+    async fn get_json<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
-        body: B,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
         let headers = match headers {
@@ -50,10 +49,10 @@ impl Client for BloockHttpClient {
         };
 
         let client = SimpleHttpClient {};
-        client.post(url, body, Some(headers)).await
+        client.get_json(url, Some(headers)).await
     }
 
-    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post<U: ToString + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         body: &[u8],
@@ -68,7 +67,47 @@ impl Client for BloockHttpClient {
         };
 
         let client = SimpleHttpClient {};
-        client.post_file(url, body, Some(headers)).await
+        client.post(url, body, Some(headers)).await
+    }
+
+    async fn post_json<
+        U: ToString + 'static,
+        B: Serialize + 'static,
+        T: DeserializeOwned + 'static,
+    >(
+        &self,
+        url: U,
+        body: B,
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<T> {
+        let headers = match headers {
+            Some(mut h) => {
+                h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h
+            }
+            None => vec![("X-Api-Key".to_string(), self.get_api_key())],
+        };
+
+        let client = SimpleHttpClient {};
+        client.post_json(url, body, Some(headers)).await
+    }
+
+    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+        &self,
+        url: U,
+        files: Vec<(String, Vec<u8>)>,
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<T> {
+        let headers = match headers {
+            Some(mut h) => {
+                h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h
+            }
+            None => vec![("X-Api-Key".to_string(), self.get_api_key())],
+        };
+
+        let client = SimpleHttpClient {};
+        client.post_file(url, files, Some(headers)).await
     }
 }
 

@@ -1,6 +1,7 @@
 use crate::items::GenerateKeysResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetProofResponse;
+use crate::items::PublishResponse;
 use crate::items::Record;
 use crate::items::RecordBuilderResponse;
 use crate::items::RecordHash;
@@ -24,6 +25,7 @@ pub enum ResponseType {
     BuildRecord(RecordBuilderResponse),
     GetHash(RecordHash),
     GenerateKeys(GenerateKeysResponse),
+    Publish(PublishResponse),
 }
 
 impl ResponseType {
@@ -43,6 +45,7 @@ impl ResponseType {
             ResponseType::BuildRecord(r) => r.encode(&mut result_vec),
             ResponseType::GetHash(r) => r.encode(&mut result_vec),
             ResponseType::GenerateKeys(r) => r.encode(&mut result_vec),
+            ResponseType::Publish(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -62,6 +65,7 @@ impl ResponseType {
             ResponseType::BuildRecord(r) => r.encoded_len(),
             ResponseType::GetHash(r) => r.encoded_len(),
             ResponseType::GenerateKeys(r) => r.encoded_len(),
+            ResponseType::Publish(r) => r.encoded_len(),
         }
     }
 }
