@@ -78,7 +78,11 @@ class Record:
 
     def publish(self, publisher: Publisher) -> str:
         client = bridge.BloockBridge()
-        req = proto.PublishRequest(config_data=Config.new(), publisher=publisher.to_proto(), record=self.to_proto())
+        req = proto.PublishRequest(
+            config_data=Config.new(),
+            publisher=publisher.to_proto(),
+            record=self.to_proto(),
+        )
         res = client.record().Publish(req)
         if res.error != Error():
             raise Exception(res.error.message)

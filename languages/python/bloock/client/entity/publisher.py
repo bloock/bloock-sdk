@@ -8,7 +8,9 @@ class PublisherArgs:
 
 
 class Publisher:
-    def __init__(self, type: proto.DataAvailabilityType.ValueType, args: PublisherArgs) -> None:
+    def __init__(
+        self, type: proto.DataAvailabilityType.ValueType, args: PublisherArgs
+    ) -> None:
         self.type = type
         self.args = args
 

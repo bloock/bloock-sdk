@@ -33,7 +33,7 @@ describe("E2E Tests", () => {
       "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
     );
 
-    let result = await record.publish(new HostedPublisher())
+    let result = await record.publish(new HostedPublisher());
     expect(result).toEqual(hash);
 
     record = await RecordBuilder.fromLoader(new HostedLoader(result)).build();
@@ -57,7 +57,7 @@ describe("E2E Tests", () => {
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromJson({ "hello": "world" }).build();
+    record = await RecordBuilder.fromJson({ hello: "world" }).build();
     hash = await record.getHash();
     expect(hash).toEqual(
       "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"

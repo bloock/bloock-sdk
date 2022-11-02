@@ -27,15 +27,11 @@ class TestE2E(unittest.TestCase):
         )
 
         result = record.publish(HostedPublisher())
-        self.assertEqual(
-            hash, result
-        )
+        self.assertEqual(hash, result)
 
         record = RecordBuilder.from_loader(HostedLoader(hash=result)).build()
         hash = record.get_hash()
-        self.assertEqual(
-            hash, result
-        )
+        self.assertEqual(hash, result)
         records.append(hash)
 
         record = RecordBuilder.from_bytes(bytes([1, 2, 3, 4, 5])).build()

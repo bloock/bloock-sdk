@@ -11,7 +11,9 @@ class LoaderArgs:
 
 
 class Loader:
-    def __init__(self, type: proto.DataAvailabilityType.ValueType, args: LoaderArgs) -> None:
+    def __init__(
+        self, type: proto.DataAvailabilityType.ValueType, args: LoaderArgs
+    ) -> None:
         self.type = type
         self.args = args
 

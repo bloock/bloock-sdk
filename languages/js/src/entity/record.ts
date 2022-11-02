@@ -35,8 +35,8 @@ export class Record {
     const request = proto.PublishRequest.fromPartial({
       configData: NewConfigData(),
       publisher: publisher.toProto(),
-      record: this.toProto(),
-    })
+      record: this.toProto()
+    });
     return bridge
       .getRecord()
       .Publish(request)

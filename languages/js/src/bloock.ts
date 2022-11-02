@@ -4,9 +4,11 @@ export class Bloock {
   private static instance: Bloock;
   private apiKey?: string;
   private apiHost?: string;
-  private networksConfig?: { [key: number]: NetworkConfig };
+  private networksConfig?: {
+    [key: number]: NetworkConfig;
+  };
 
-  private constructor() { }
+  private constructor() {}
 
   public static getApiKey(): string | undefined {
     if (!Bloock.instance) {
@@ -36,14 +38,19 @@ export class Bloock {
     Bloock.instance.apiHost = host;
   }
 
-  public static getNetworkConfiguration(): { [key: number]: NetworkConfig } | undefined {
+  public static getNetworkConfiguration():
+    | { [key: number]: NetworkConfig }
+    | undefined {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
     }
     return Bloock.instance.networksConfig;
   }
 
-  public static setNetworkConfiguration(network: Network, config: NetworkConfig) {
+  public static setNetworkConfiguration(
+    network: Network,
+    config: NetworkConfig
+  ) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
     }

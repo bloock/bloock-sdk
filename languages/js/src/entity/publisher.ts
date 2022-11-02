@@ -24,9 +24,6 @@ export class HostedPublisher implements Publisher {
 }
 
 export class PublisherArgs {
-  constructor() {
-  }
-
   public toProto(): proto.PublisherArgs {
     return proto.PublisherArgs.fromPartial({});
   }

@@ -22,7 +22,7 @@
     "start": "tsdx watch",
     "build": "tsdx build --format cjs,esm --name index",
     "test": "jest ./test --testTimeout=60000",
-    "lint": "tsdx lint",
+    "lint": "tsdx lint src test",
     "fix": "tsdx lint --fix",
     "size": "npm run build && size-limit"
   },

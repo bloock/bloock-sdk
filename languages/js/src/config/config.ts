@@ -5,7 +5,7 @@ export function NewConfigData(): ConfigData {
   return ConfigData.fromPartial({
     config: Configuration.fromPartial({
       apiKey: Bloock.getApiKey(),
-      host: Bloock.getApiHost(),
+      host: Bloock.getApiHost()
     })
   });
 }
