@@ -6,6 +6,7 @@ import (
 
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
 type Record struct {
@@ -31,6 +32,26 @@ func (r Record) ToProto() *proto.Record {
 func (r Record) GetHash() (string, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().GetHash(context.Background(), r.ToProto())
+
+	if err != nil {
+		return "", err
+	}
+
+	if res.Error != nil {
+		return "", errors.New(res.Error.Message)
+	}
+
+	return res.Hash, nil
+}
+
+func (r Record) Publish(p Publisher) (string, error) {
+	bridgeClient := bridge.NewBloockBridge()
+	req := proto.PublishRequest{
+		ConfigData: config.NewConfigData(),
+		Publisher:  p.ToProto(),
+		Record:     r.ToProto(),
+	}
+	res, err := bridgeClient.Record().Publish(context.Background(), &req)
 
 	if err != nil {
 		return "", err

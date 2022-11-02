@@ -2,6 +2,8 @@ from __future__ import annotations
 from bloock._bridge import bridge
 import bloock._bridge.proto.record_pb2 as proto
 from bloock._bridge.proto.shared_pb2 import Error
+from bloock.client.entity.publisher import Publisher
+from bloock._config.config import Config
 
 
 class RecordHeader:
@@ -70,6 +72,14 @@ class Record:
     def get_hash(self) -> str:
         client = bridge.BloockBridge()
         res = client.record().GetHash(self.to_proto())
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.hash
+
+    def publish(self, publisher: Publisher) -> str:
+        client = bridge.BloockBridge()
+        req = proto.PublishRequest(config_data=Config.new(), publisher=publisher.to_proto(), record=self.to_proto())
+        res = client.record().Publish(req)
         if res.error != Error():
             raise Exception(res.error.message)
         return res.hash

@@ -11,6 +11,7 @@ export enum RecordTypes {
   BYTES = 3,
   FILE = 4,
   RECORD = 5,
+  LOADER = 6,
   UNRECOGNIZED = -1,
 }
 
@@ -34,6 +35,9 @@ export function recordTypesFromJSON(object: any): RecordTypes {
     case 5:
     case "RECORD":
       return RecordTypes.RECORD;
+    case 6:
+    case "LOADER":
+      return RecordTypes.LOADER;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -55,6 +59,8 @@ export function recordTypesToJSON(object: RecordTypes): string {
       return "FILE";
     case RecordTypes.RECORD:
       return "RECORD";
+    case RecordTypes.LOADER:
+      return "LOADER";
     case RecordTypes.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -110,6 +116,33 @@ export function encryptionAlgToJSON(object: EncryptionAlg): string {
     case EncryptionAlg.A256GCM:
       return "A256GCM";
     case EncryptionAlg.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
+export enum DataAvailabilityType {
+  HOSTED = 0,
+  UNRECOGNIZED = -1,
+}
+
+export function dataAvailabilityTypeFromJSON(object: any): DataAvailabilityType {
+  switch (object) {
+    case 0:
+    case "HOSTED":
+      return DataAvailabilityType.HOSTED;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return DataAvailabilityType.UNRECOGNIZED;
+  }
+}
+
+export function dataAvailabilityTypeToJSON(object: DataAvailabilityType): string {
+  switch (object) {
+    case DataAvailabilityType.HOSTED:
+      return "HOSTED";
+    case DataAvailabilityType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
   }
@@ -236,6 +269,42 @@ export interface SendRecordsRequest {
 
 export interface SendRecordsResponse {
   records: RecordReceipt[];
+  error?: Error | undefined;
+}
+
+export interface Loader {
+  type: DataAvailabilityType;
+  args?: LoaderArgs;
+}
+
+export interface LoaderArgs {
+  hash: string;
+}
+
+export interface RecordBuilderFromLoaderRequest {
+  configData?: ConfigData;
+  loader?: Loader;
+  signer?: Signer | undefined;
+  encrypter?: Encrypter | undefined;
+  decrypter?: Decrypter | undefined;
+}
+
+export interface Publisher {
+  type: DataAvailabilityType;
+  args?: PublisherArgs;
+}
+
+export interface PublisherArgs {
+}
+
+export interface PublishRequest {
+  configData?: ConfigData;
+  publisher?: Publisher;
+  record?: Record;
+}
+
+export interface PublishResponse {
+  hash: string;
   error?: Error | undefined;
 }
 
@@ -1720,6 +1789,445 @@ export const SendRecordsResponse = {
   },
 };
 
+function createBaseLoader(): Loader {
+  return { type: 0, args: undefined };
+}
+
+export const Loader = {
+  encode(message: Loader, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.type !== 0) {
+      writer.uint32(8).int32(message.type);
+    }
+    if (message.args !== undefined) {
+      LoaderArgs.encode(message.args, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Loader {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLoader();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.type = reader.int32() as any;
+          break;
+        case 2:
+          message.args = LoaderArgs.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Loader {
+    return {
+      type: isSet(object.type) ? dataAvailabilityTypeFromJSON(object.type) : 0,
+      args: isSet(object.args) ? LoaderArgs.fromJSON(object.args) : undefined,
+    };
+  },
+
+  toJSON(message: Loader): unknown {
+    const obj: any = {};
+    message.type !== undefined && (obj.type = dataAvailabilityTypeToJSON(message.type));
+    message.args !== undefined && (obj.args = message.args ? LoaderArgs.toJSON(message.args) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Loader>, I>>(object: I): Loader {
+    const message = createBaseLoader();
+    message.type = object.type ?? 0;
+    message.args = (object.args !== undefined && object.args !== null)
+      ? LoaderArgs.fromPartial(object.args)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseLoaderArgs(): LoaderArgs {
+  return { hash: "" };
+}
+
+export const LoaderArgs = {
+  encode(message: LoaderArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.hash !== "") {
+      writer.uint32(10).string(message.hash);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): LoaderArgs {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLoaderArgs();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.hash = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LoaderArgs {
+    return { hash: isSet(object.hash) ? String(object.hash) : "" };
+  },
+
+  toJSON(message: LoaderArgs): unknown {
+    const obj: any = {};
+    message.hash !== undefined && (obj.hash = message.hash);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<LoaderArgs>, I>>(object: I): LoaderArgs {
+    const message = createBaseLoaderArgs();
+    message.hash = object.hash ?? "";
+    return message;
+  },
+};
+
+function createBaseRecordBuilderFromLoaderRequest(): RecordBuilderFromLoaderRequest {
+  return { configData: undefined, loader: undefined, signer: undefined, encrypter: undefined, decrypter: undefined };
+}
+
+export const RecordBuilderFromLoaderRequest = {
+  encode(message: RecordBuilderFromLoaderRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.loader !== undefined) {
+      Loader.encode(message.loader, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.signer !== undefined) {
+      Signer.encode(message.signer, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.encrypter !== undefined) {
+      Encrypter.encode(message.encrypter, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.decrypter !== undefined) {
+      Decrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderFromLoaderRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRecordBuilderFromLoaderRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.loader = Loader.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.signer = Signer.decode(reader, reader.uint32());
+          break;
+        case 4:
+          message.encrypter = Encrypter.decode(reader, reader.uint32());
+          break;
+        case 5:
+          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RecordBuilderFromLoaderRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      loader: isSet(object.loader) ? Loader.fromJSON(object.loader) : undefined,
+      signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
+      encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+    };
+  },
+
+  toJSON(message: RecordBuilderFromLoaderRequest): unknown {
+    const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.loader !== undefined && (obj.loader = message.loader ? Loader.toJSON(message.loader) : undefined);
+    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
+    message.encrypter !== undefined &&
+      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    message.decrypter !== undefined &&
+      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<RecordBuilderFromLoaderRequest>, I>>(
+    object: I,
+  ): RecordBuilderFromLoaderRequest {
+    const message = createBaseRecordBuilderFromLoaderRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.loader = (object.loader !== undefined && object.loader !== null)
+      ? Loader.fromPartial(object.loader)
+      : undefined;
+    message.signer = (object.signer !== undefined && object.signer !== null)
+      ? Signer.fromPartial(object.signer)
+      : undefined;
+    message.encrypter = (object.encrypter !== undefined && object.encrypter !== null)
+      ? Encrypter.fromPartial(object.encrypter)
+      : undefined;
+    message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
+      ? Decrypter.fromPartial(object.decrypter)
+      : undefined;
+    return message;
+  },
+};
+
+function createBasePublisher(): Publisher {
+  return { type: 0, args: undefined };
+}
+
+export const Publisher = {
+  encode(message: Publisher, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.type !== 0) {
+      writer.uint32(8).int32(message.type);
+    }
+    if (message.args !== undefined) {
+      PublisherArgs.encode(message.args, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Publisher {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePublisher();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.type = reader.int32() as any;
+          break;
+        case 2:
+          message.args = PublisherArgs.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Publisher {
+    return {
+      type: isSet(object.type) ? dataAvailabilityTypeFromJSON(object.type) : 0,
+      args: isSet(object.args) ? PublisherArgs.fromJSON(object.args) : undefined,
+    };
+  },
+
+  toJSON(message: Publisher): unknown {
+    const obj: any = {};
+    message.type !== undefined && (obj.type = dataAvailabilityTypeToJSON(message.type));
+    message.args !== undefined && (obj.args = message.args ? PublisherArgs.toJSON(message.args) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Publisher>, I>>(object: I): Publisher {
+    const message = createBasePublisher();
+    message.type = object.type ?? 0;
+    message.args = (object.args !== undefined && object.args !== null)
+      ? PublisherArgs.fromPartial(object.args)
+      : undefined;
+    return message;
+  },
+};
+
+function createBasePublisherArgs(): PublisherArgs {
+  return {};
+}
+
+export const PublisherArgs = {
+  encode(_: PublisherArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PublisherArgs {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePublisherArgs();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): PublisherArgs {
+    return {};
+  },
+
+  toJSON(_: PublisherArgs): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PublisherArgs>, I>>(_: I): PublisherArgs {
+    const message = createBasePublisherArgs();
+    return message;
+  },
+};
+
+function createBasePublishRequest(): PublishRequest {
+  return { configData: undefined, publisher: undefined, record: undefined };
+}
+
+export const PublishRequest = {
+  encode(message: PublishRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.publisher !== undefined) {
+      Publisher.encode(message.publisher, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.record !== undefined) {
+      Record.encode(message.record, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PublishRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePublishRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.publisher = Publisher.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.record = Record.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PublishRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      publisher: isSet(object.publisher) ? Publisher.fromJSON(object.publisher) : undefined,
+      record: isSet(object.record) ? Record.fromJSON(object.record) : undefined,
+    };
+  },
+
+  toJSON(message: PublishRequest): unknown {
+    const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.publisher !== undefined &&
+      (obj.publisher = message.publisher ? Publisher.toJSON(message.publisher) : undefined);
+    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PublishRequest>, I>>(object: I): PublishRequest {
+    const message = createBasePublishRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.publisher = (object.publisher !== undefined && object.publisher !== null)
+      ? Publisher.fromPartial(object.publisher)
+      : undefined;
+    message.record = (object.record !== undefined && object.record !== null)
+      ? Record.fromPartial(object.record)
+      : undefined;
+    return message;
+  },
+};
+
+function createBasePublishResponse(): PublishResponse {
+  return { hash: "", error: undefined };
+}
+
+export const PublishResponse = {
+  encode(message: PublishResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.hash !== "") {
+      writer.uint32(10).string(message.hash);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PublishResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePublishResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.hash = reader.string();
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PublishResponse {
+    return {
+      hash: isSet(object.hash) ? String(object.hash) : "",
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: PublishResponse): unknown {
+    const obj: any = {};
+    message.hash !== undefined && (obj.hash = message.hash);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PublishResponse>, I>>(object: I): PublishResponse {
+    const message = createBasePublishResponse();
+    message.hash = object.hash ?? "";
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
 export interface RecordService {
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse>;
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse>;
@@ -1728,15 +2236,15 @@ export interface RecordService {
   BuildRecordFromFile(request: RecordBuilderFromFileRequest): Promise<RecordBuilderResponse>;
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse>;
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse>;
+  BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse>;
   GetHash(request: Record): Promise<RecordHash>;
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse>;
+  Publish(request: PublishRequest): Promise<PublishResponse>;
 }
 
 export class RecordServiceClientImpl implements RecordService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "bloock.RecordService";
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.SendRecords = this.SendRecords.bind(this);
     this.BuildRecordFromString = this.BuildRecordFromString.bind(this);
@@ -1745,61 +2253,75 @@ export class RecordServiceClientImpl implements RecordService {
     this.BuildRecordFromFile = this.BuildRecordFromFile.bind(this);
     this.BuildRecordFromBytes = this.BuildRecordFromBytes.bind(this);
     this.BuildRecordFromRecord = this.BuildRecordFromRecord.bind(this);
+    this.BuildRecordFromLoader = this.BuildRecordFromLoader.bind(this);
     this.GetHash = this.GetHash.bind(this);
     this.GenerateKeys = this.GenerateKeys.bind(this);
+    this.Publish = this.Publish.bind(this);
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
     const data = SendRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SendRecords", data);
+    const promise = this.rpc.request("bloock.RecordService", "SendRecords", data);
     return promise.then((data) => SendRecordsResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromStringRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromString", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromString", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromHex(request: RecordBuilderFromHexRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromHexRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromHex", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromHex", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromJson(request: RecordBuilderFromJSONRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromJSONRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromJson", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromJson", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromFile(request: RecordBuilderFromFileRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromFileRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromFile", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromFile", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromBytesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromBytes", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromBytes", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromRecordRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromRecord", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromRecord", data);
+    return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
+  }
+
+  BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse> {
+    const data = RecordBuilderFromLoaderRequest.encode(request).finish();
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromLoader", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   GetHash(request: Record): Promise<RecordHash> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetHash", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetHash", data);
     return promise.then((data) => RecordHash.decode(new _m0.Reader(data)));
   }
 
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse> {
     const data = GenerateKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateKeys", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateKeys", data);
     return promise.then((data) => GenerateKeysResponse.decode(new _m0.Reader(data)));
+  }
+
+  Publish(request: PublishRequest): Promise<PublishResponse> {
+    const data = PublishRequest.encode(request).finish();
+    const promise = this.rpc.request("bloock.RecordService", "Publish", data);
+    return promise.then((data) => PublishResponse.decode(new _m0.Reader(data)));
   }
 }
 
@@ -1864,6 +2386,14 @@ export const RecordServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    buildRecordFromLoader: {
+      name: "BuildRecordFromLoader",
+      requestType: RecordBuilderFromLoaderRequest,
+      requestStream: false,
+      responseType: RecordBuilderResponse,
+      responseStream: false,
+      options: {},
+    },
     getHash: {
       name: "GetHash",
       requestType: Record,
@@ -1877,6 +2407,14 @@ export const RecordServiceDefinition = {
       requestType: GenerateKeysRequest,
       requestStream: false,
       responseType: GenerateKeysResponse,
+      responseStream: false,
+      options: {},
+    },
+    publish: {
+      name: "Publish",
+      requestType: PublishRequest,
+      requestStream: false,
+      responseType: PublishResponse,
       responseStream: false,
       options: {},
     },

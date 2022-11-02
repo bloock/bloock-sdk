@@ -8,6 +8,8 @@ import { RecordBuilder } from "./builder";
 import { EcsdaSigner } from "./entity/signer";
 import { AesEncrypter } from "./entity/encrypter";
 import { AesDecrypter } from "./entity/decrypter";
+import { HostedPublisher } from "./entity/publisher";
+import { HostedLoader } from "./entity/loader";
 
 export {
   Bloock,
@@ -18,5 +20,7 @@ export {
   RecordBuilder,
   EcsdaSigner,
   AesEncrypter,
-  AesDecrypter
+  AesDecrypter,
+  HostedLoader,
+  HostedPublisher
 };

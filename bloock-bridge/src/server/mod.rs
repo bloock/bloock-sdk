@@ -1,18 +1,15 @@
 mod anchor;
 mod proof;
-mod publish;
 mod record;
 mod response_types;
 
 use self::anchor::AnchorServer;
 use self::proof::ProofServer;
-use self::publish::PublishServer;
 use self::record::RecordServer;
 use crate::error::BridgeError;
 use crate::items::AnchorServiceHandler;
 use crate::items::BloockServer;
 use crate::items::ProofServiceHandler;
-use crate::items::PublisherServiceHandler;
 use crate::items::RecordServiceHandler;
 use crate::server::response_types::ResponseType;
 use bloock_core::client;
@@ -23,7 +20,6 @@ pub struct Server {
     anchor: AnchorServer,
     record: RecordServer,
     proof: ProofServer,
-    publish: PublishServer,
 }
 
 impl Server {
@@ -32,7 +28,6 @@ impl Server {
             anchor: AnchorServer {},
             record: RecordServer {},
             proof: ProofServer {},
-            publish: PublishServer {},
         }
     }
 
@@ -128,6 +123,11 @@ impl Server {
                 .build_record_from_record(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceBuildRecordFromLoader => Ok(self
+                .record
+                .build_record_from_loader(self.serialize_request(payload)?)
+                .await
+                .into()),
             BloockServer::RecordServiceGetHash => Ok(self
                 .record
                 .get_hash(self.serialize_request(payload)?)
@@ -138,8 +138,8 @@ impl Server {
                 .generate_keys(self.serialize_request(payload)?)
                 .await
                 .into()),
-            BloockServer::PublisherServicePublish => Ok(self
-                .publish
+            BloockServer::RecordServicePublish => Ok(self
+                .record
                 .publish(self.serialize_request(payload)?)
                 .await
                 .into()),

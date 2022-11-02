@@ -1,5 +1,5 @@
 use super::{entity::publish_hosted_response::PublishHostedResponse, PublishError};
-use crate::{config::service::ConfigService, error::BloockResult};
+use crate::{config::service::ConfigService, error::BloockResult, record::entity::record::Record};
 use bloock_http::Client;
 use std::sync::Arc;
 
@@ -9,7 +9,7 @@ pub struct PublishService<H: Client> {
 }
 
 impl<H: Client> PublishService<H> {
-    pub async fn publish_hosted(&self, payload: &[u8]) -> BloockResult<String> {
+    pub async fn publish_hosted(&self, record: Record) -> BloockResult<String> {
         let url = format!(
             "{}/hosting/v1/upload",
             self.config_service.get_api_base_url()
@@ -17,15 +17,19 @@ impl<H: Client> PublishService<H> {
 
         let response: PublishHostedResponse = self
             .http
-            .post_file(url, vec![("payload".to_owned(), payload.to_vec())], None)
+            .post_file(
+                url,
+                vec![("payload".to_owned(), record.serialize()?.to_vec())],
+                None,
+            )
             .await
             .map_err(|e| PublishError::PublishError(e.to_string()))?;
         Ok(response.hash)
     }
 
-    pub async fn retrieve(&self, hash: String) -> BloockResult<Vec<u8>> {
+    pub async fn retrieve_hosted(&self, hash: String) -> BloockResult<Vec<u8>> {
         let url = format!(
-            "{}/hosting/v1/hosting/v1/{}",
+            "{}/hosting/v1/{}",
             self.config_service.get_api_base_url(),
             hash
         );

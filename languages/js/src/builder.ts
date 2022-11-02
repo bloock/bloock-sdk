@@ -9,13 +9,16 @@ import {
   RecordBuilderFromRecordRequest,
   Signer as SignerProto,
   Encrypter as EncrypterProto,
-  Decrypter as DecrypterProto
+  Decrypter as DecrypterProto,
+  RecordBuilderFromLoaderRequest
 } from "./bridge/proto/record";
 
 import { Record } from "./entity/record";
 import { Signer } from "./entity/signer";
 import { Encrypter } from "./entity/encrypter";
 import { Decrypter } from "./entity/decrypter";
+import { Loader } from "./entity/loader";
+import { NewConfigData } from "./config/config";
 
 export class RecordBuilder {
   payload: any;
@@ -51,6 +54,10 @@ export class RecordBuilder {
 
   public static fromRecord(bytes: Record): RecordBuilder {
     return new RecordBuilder(bytes, RecordTypes.RECORD);
+  }
+
+  public static fromLoader(loader: Loader): RecordBuilder {
+    return new RecordBuilder(loader, RecordTypes.LOADER);
   }
 
   public withSigner(signer: Signer): RecordBuilder {
@@ -172,6 +179,25 @@ export class RecordBuilder {
         return bridge
           .getRecord()
           .BuildRecordFromRecord(req)
+          .then(res => {
+            if (res.error) {
+              throw res.error;
+            }
+            return Record.fromProto(res.record!);
+          });
+      }
+      case RecordTypes.LOADER: {
+        const req = RecordBuilderFromLoaderRequest.fromPartial({
+          configData: NewConfigData(),
+          loader: this.payload,
+          signer: this.signer,
+          encrypter: this.encrypter,
+          decrypter: this.decrypter
+        });
+
+        return bridge
+          .getRecord()
+          .BuildRecordFromLoader(req)
           .then(res => {
             if (res.error) {
               throw res.error;

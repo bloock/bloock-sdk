@@ -8,11 +8,14 @@ from bloock.client.entity.decrypter import AesDecrypter
 from bloock.client.entity.encrypter import AesEncrypter
 from bloock.client.entity.signer import EcsdaSigner
 from bloock.client.entity.network import Network
+from bloock.client.entity.publisher import HostedPublisher
+from bloock.client.entity.loader import HostedLoader
 
 
 class TestE2E(unittest.TestCase):
     def setUp(self):
         bloock.api_key = os.environ["API_KEY"]
+        bloock.api_host = os.environ["API_HOST"]
         self.client = Client()
 
     def test_e2e_with_all_builders(self):
@@ -21,6 +24,17 @@ class TestE2E(unittest.TestCase):
         hash = record.get_hash()
         self.assertEqual(
             hash, "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
+        )
+
+        result = record.publish(HostedPublisher())
+        self.assertEqual(
+            hash, result
+        )
+
+        record = RecordBuilder.from_loader(HostedLoader(hash=result)).build()
+        hash = record.get_hash()
+        self.assertEqual(
+            hash, result
         )
         records.append(hash)
 

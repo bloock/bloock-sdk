@@ -1,4 +1,4 @@
-use std::convert::TryInto;
+use std::{convert::TryInto, sync::Arc};
 
 use async_trait::async_trait;
 use bloock_core::{
@@ -6,7 +6,8 @@ use bloock_core::{
     error::BloockError,
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
-    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, EcsdaSigner, EcsdaSignerArgs,
+    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient, EcsdaSigner,
+    EcsdaSignerArgs,
 };
 
 use super::response_types::ResponseType;
@@ -14,7 +15,8 @@ use crate::{
     entity_mappings::config::map_config,
     error::{config_data_error, BridgeError},
     items::{
-        Decrypter, Encrypter, EncryptionAlg, Error, GenerateKeysRequest, GenerateKeysResponse,
+        DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error, GenerateKeysRequest,
+        GenerateKeysResponse, Loader, LoaderArgs, PublishRequest, PublishResponse, Publisher,
         Record, RecordBuilderResponse, RecordHash, RecordServiceHandler, SendRecordsResponse,
         Signer, SignerAlg,
     },
@@ -57,6 +59,12 @@ impl From<RecordHash> for ResponseType {
 impl From<GenerateKeysResponse> for ResponseType {
     fn from(res: GenerateKeysResponse) -> Self {
         ResponseType::GenerateKeys(res)
+    }
+}
+
+impl From<PublishResponse> for ResponseType {
+    fn from(res: PublishResponse) -> Self {
+        ResponseType::Publish(res)
     }
 }
 
@@ -229,6 +237,84 @@ impl RecordServiceHandler for RecordServer {
         build_record(builder, req.signer, req.encrypter, req.decrypter)
     }
 
+    async fn build_record_from_loader(
+        &self,
+        req: crate::items::RecordBuilderFromLoaderRequest,
+    ) -> RecordBuilderResponse {
+        let config_data = match map_config(req.config_data) {
+            Ok(config) => config,
+            Err(_) => {
+                return RecordBuilderResponse {
+                    record: None,
+                    error: Some(config_data_error()),
+                }
+            }
+        };
+
+        let req_loader: Loader = match req.loader {
+            Some(p) => p,
+            None => {
+                return RecordBuilderResponse {
+                    record: None,
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: "invalid loader provided".to_string(),
+                    }),
+                }
+            }
+        };
+
+        let req_loader_args: LoaderArgs = match req_loader.args {
+            Some(p) => p,
+            None => {
+                return RecordBuilderResponse {
+                    record: None,
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: "invalid loader provided".to_string(),
+                    }),
+                }
+            }
+        };
+
+        let result = match DataAvailabilityType::from_i32(req_loader.r#type) {
+            Some(DataAvailabilityType::Hosted) => {
+                let http = BloockHttpClient::new(config_data.get_config().api_key);
+                let service =
+                    bloock_core::publish::configure(Arc::new(http), Arc::new(config_data));
+                service.retrieve_hosted(req_loader_args.hash).await
+            }
+            None => {
+                return RecordBuilderResponse {
+                    record: None,
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: "invalid loader provided".to_string(),
+                    }),
+                }
+            }
+        };
+
+        let payload = match result {
+            Ok(p) => p,
+            Err(e) => {
+                return RecordBuilderResponse {
+                    record: None,
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
+
+        let builder = match RecordBuilder::from_file(payload) {
+            Ok(builder) => builder,
+            Err(e) => return record_builder_response_error(e.to_string()),
+        };
+        build_record(builder, req.signer, req.encrypter, req.decrypter)
+    }
+
     async fn get_hash(&self, _req: Record) -> RecordHash {
         let record: RecordCore = match _req.try_into() {
             Ok(record) => record,
@@ -265,6 +351,49 @@ impl RecordServiceHandler for RecordServer {
             public_key,
             error: None,
         };
+    }
+
+    async fn publish(&self, req: PublishRequest) -> PublishResponse {
+        let config_data = match map_config(req.config_data) {
+            Ok(config) => config,
+            Err(_) => {
+                return PublishResponse {
+                    hash: "".to_string(),
+                    error: Some(config_data_error()),
+                }
+            }
+        };
+
+        let req_record = match req.record {
+            Some(p) => p,
+            None => return PublishResponse::new_error("no record provided".to_string()),
+        };
+        let record: RecordCore = match req_record.try_into() {
+            Ok(r) => r,
+            Err(e) => return PublishResponse::new_error(e.to_string()),
+        };
+
+        let req_publisher: Publisher = match req.publisher {
+            Some(p) => p,
+            None => return PublishResponse::new_error("invalid publisher provided".to_string()),
+        };
+
+        let result = match DataAvailabilityType::from_i32(req_publisher.r#type) {
+            Some(DataAvailabilityType::Hosted) => {
+                let http = BloockHttpClient::new(config_data.get_config().api_key);
+                let service =
+                    bloock_core::publish::configure(Arc::new(http), Arc::new(config_data));
+                service.publish_hosted(record).await
+            }
+            None => return PublishResponse::new_error("invalid publisher provided".to_string()),
+        };
+
+        let hash = match result {
+            Ok(h) => h,
+            Err(e) => return PublishResponse::new_error(e.to_string()),
+        };
+
+        PublishResponse { hash, error: None }
     }
 }
 
@@ -348,6 +477,18 @@ fn build_record(
     RecordBuilderResponse {
         record: Some(record),
         error: None,
+    }
+}
+
+impl PublishResponse {
+    fn new_error(err: String) -> PublishResponse {
+        PublishResponse {
+            hash: "".to_string(),
+            error: Some(Error {
+                kind: BridgeError::PublishError.to_string(),
+                message: err,
+            }),
+        }
     }
 }
 

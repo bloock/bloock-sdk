@@ -16,14 +16,6 @@ impl RecordBuilder {
             None => Err(RecordError::DocumentNotFound.into()),
         }
     }
-    // pub async fn from_loader<L: Loader>(loader: L) -> BloockResult<Builder> {
-    //     let bytes = loader
-    //         .retrieve()
-    //         .await
-    //         .map_err(InfrastructureError::PublisherError)?;
-    //     let document = Document::new(&bytes)?;
-    //     Ok(Builder::from_document(document))
-    // }
     pub fn from_string<S: ToString>(s: S) -> BloockResult<Builder> {
         let string = s.to_string();
         let payload = string.as_bytes();
@@ -182,23 +174,6 @@ mod tests {
             "Unexpected payload received"
         );
     }
-
-    // TODO
-    // #[tokio::test]
-    // async fn test_from_loader() {
-    //     let payload = vec![1, 2, 3, 4, 5];
-    //     let r = RecordBuilder::from_loader(TestLoader::new(TestLoaderArgs {}))
-    //         .await
-    //         .unwrap()
-    //         .build()
-    //         .unwrap();
-
-    //     assert_eq!(
-    //         payload,
-    //         r.document.clone().unwrap().get_payload(),
-    //         "Unexpected payload received"
-    //     );
-    // }
 
     #[test]
     fn test_from_hex() {

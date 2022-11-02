@@ -1,5 +1,7 @@
 import { BloockBridge } from "../bridge/bridge";
 import * as proto from "../bridge/proto/record";
+import { NewConfigData } from "../config/config";
+import { Publisher } from "./publisher";
 
 export class Record {
   payload: Uint8Array;
@@ -23,6 +25,21 @@ export class Record {
     return bridge
       .getRecord()
       .GetHash(this.toProto())
+      .then(res => {
+        return res.hash;
+      });
+  }
+
+  async publish(publisher: Publisher): Promise<string> {
+    const bridge = new BloockBridge();
+    const request = proto.PublishRequest.fromPartial({
+      configData: NewConfigData(),
+      publisher: publisher.toProto(),
+      record: this.toProto(),
+    })
+    return bridge
+      .getRecord()
+      .Publish(request)
       .then(res => {
         return res.hash;
       });

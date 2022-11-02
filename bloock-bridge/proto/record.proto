@@ -15,6 +15,7 @@ enum RecordTypes {
 	BYTES = 3;
 	FILE = 4;
     RECORD = 5;
+    LOADER = 6;
 }
 
 service RecordService {
@@ -25,8 +26,10 @@ service RecordService {
     rpc BuildRecordFromFile(RecordBuilderFromFileRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromBytes(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);
+    rpc BuildRecordFromLoader(RecordBuilderFromLoaderRequest) returns (RecordBuilderResponse);
     rpc GetHash(Record) returns (RecordHash);
     rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
+    rpc Publish(PublishRequest) returns (PublishResponse);
 }
 
 message GenerateKeysRequest {}
@@ -157,5 +160,44 @@ message SendRecordsRequest {
 
 message SendRecordsResponse {
     repeated RecordReceipt records = 1;
+    optional Error error = 2;
+}
+
+enum DataAvailabilityType {
+    HOSTED = 0;
+}
+
+message Loader {
+    DataAvailabilityType type = 1;
+    LoaderArgs args = 2;
+}
+
+message LoaderArgs {
+    string hash = 1;
+}
+
+message RecordBuilderFromLoaderRequest {
+    ConfigData config_data = 1;
+    Loader loader = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+    optional Decrypter decrypter = 5;
+}
+
+message Publisher {
+    DataAvailabilityType type = 1;
+    PublisherArgs args = 2;
+}
+
+message PublisherArgs {}
+
+message PublishRequest {
+    ConfigData config_data = 1;
+    Publisher publisher = 2;
+    Record record = 3;
+}
+
+message PublishResponse {
+    string hash = 1;
     optional Error error = 2;
 }

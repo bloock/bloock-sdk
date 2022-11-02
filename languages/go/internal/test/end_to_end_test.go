@@ -20,6 +20,17 @@ func TestEndToEnd(t *testing.T) {
 		hash, err := record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd", hash)
+
+		result, err := record.Publish(entity.NewHostedPublisher())
+		require.NoError(t, err)
+		assert.Equal(t, hash, result)
+
+		record, err = builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
+		require.NoError(t, err)
+		hash, err = record.GetHash()
+		require.NoError(t, err)
+		assert.Equal(t, result, hash)
+
 		records = append(records, hash)
 
 		record, err = builder.NewRecordBuilderFromBytes([]byte{1, 2, 3, 4, 5}).Build()

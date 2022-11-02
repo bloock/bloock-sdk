@@ -1,13 +1,15 @@
 import {
   RecordBuilder,
-  Network,
-  EcsdaSigner,
   BloockClient,
+  Bloock,
+  HostedPublisher,
+  HostedLoader,
   AesEncrypter,
   AesDecrypter,
-  Bloock
+  EcsdaSigner,
+  Network
 } from "../dist/index";
-import { describe, expect, test } from "@jest/globals";
+import { describe, test, expect } from "@jest/globals";
 
 function getSdk() {
   const apiKey = process.env["API_KEY"] || "";
@@ -15,14 +17,14 @@ function getSdk() {
   Bloock.setApiKey(apiKey);
   const client = new BloockClient();
   if (apiHost) {
-    client.setApiHost(apiHost);
+    Bloock.setApiHost(apiHost);
   }
   return client;
 }
 
 describe("E2E Tests", () => {
   test("test_basic_e2e", async () => {
-    const sdk = getSdk();
+    let sdk = getSdk();
 
     const records: string[] = [];
     let record = await RecordBuilder.fromString("Hello world").build();
@@ -30,6 +32,13 @@ describe("E2E Tests", () => {
     expect(hash).toEqual(
       "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
     );
+
+    let result = await record.publish(new HostedPublisher())
+    expect(result).toEqual(hash);
+
+    record = await RecordBuilder.fromLoader(new HostedLoader(result)).build();
+    hash = await record.getHash();
+    expect(hash).toEqual(result);
     records.push(hash);
 
     record = await RecordBuilder.fromBytes(
@@ -48,7 +57,7 @@ describe("E2E Tests", () => {
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromJson({"hello":"world"}).build();
+    record = await RecordBuilder.fromJson({ "hello": "world" }).build();
     hash = await record.getHash();
     expect(hash).toEqual(
       "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"

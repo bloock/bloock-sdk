@@ -8,12 +8,12 @@ import (
 )
 
 func GetSdk() client.Client {
-	bloock.Key = os.Getenv("API_KEY")
+	bloock.ApiKey = os.Getenv("API_KEY")
 	apiHost := os.Getenv("API_HOST")
 	client := client.NewClient()
 
 	if apiHost != "" {
-		client.SetApiHost(apiHost)
+		bloock.ApiHost = apiHost
 	}
 	return client
 }

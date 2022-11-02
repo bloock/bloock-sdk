@@ -1,9 +1,11 @@
+import { Bloock } from "../bloock";
 import { ConfigData, Configuration } from "../bridge/proto/config";
 
-export function NewConfigData(apiKey: string): ConfigData {
+export function NewConfigData(): ConfigData {
   return ConfigData.fromPartial({
     config: Configuration.fromPartial({
-      apiKey
+      apiKey: Bloock.getApiKey(),
+      host: Bloock.getApiHost(),
     })
   });
 }
