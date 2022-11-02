@@ -118,7 +118,7 @@ mod tests {
         assert_eq!(
             parser,
             DefaultParser {
-                _data_: data.clone(),
+                _data_: data,
                 _metadata_: HashMap::new(),
             }
         );

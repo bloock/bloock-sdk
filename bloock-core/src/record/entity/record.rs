@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn test_new_record() {
-        let document = Document::new(&"Some String".as_bytes().to_vec()).unwrap();
+        let document = Document::new("Some String".as_bytes()).unwrap();
         let record = Record::new(document);
 
         assert_eq!(

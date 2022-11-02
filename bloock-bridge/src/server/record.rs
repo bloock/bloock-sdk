@@ -465,7 +465,7 @@ mod tests {
         assert_ne!(content.as_bytes(), record.payload);
 
         let request = crate::items::RecordBuilderFromRecordRequest {
-            payload: Some(record.clone().try_into().unwrap()),
+            payload: Some(record.clone()),
             signer: None,
             encrypter: None,
             decrypter: Some(crate::items::Decrypter {
@@ -485,7 +485,7 @@ mod tests {
             .try_into()
             .unwrap();
 
-        let result_signature = unencrypted_record.get_signatures().clone().unwrap();
+        let result_signature = unencrypted_record.get_signatures().unwrap();
         assert_eq!(1, result_signature.len());
         assert_eq!(
             content.as_bytes(),
@@ -577,7 +577,7 @@ mod tests {
                     kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
                 },
                 protected: "e30".to_string(),
-                signature: "945efccb10955499e50bd4e1eeadb51aac9136f3e91b8d29c1b817cb42284268500b5f191693a0d927601df5f282804a6eacf5ff8a1522bda5c2ec4dc681750b".to_string(),
+                signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e611416".to_string(),
             }
         ];
 
