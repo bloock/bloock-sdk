@@ -48,7 +48,7 @@ describe("E2E Tests", () => {
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromJson('{"hello":"world"}').build();
+    record = await RecordBuilder.fromJson({"hello":"world"}).build();
     hash = await record.getHash();
     expect(hash).toEqual(
       "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"
