@@ -8,9 +8,14 @@ import bloock.sdk.java.bridge.proto.Config;
 import bloock.sdk.java.bridge.proto.AnchorOuterClass.GetAnchorRequest;
 import bloock.sdk.java.bridge.proto.Config.ConfigData;
 import bloock.sdk.java.bridge.proto.Config.Configuration;
+import bloock.sdk.java.entity.Anchor;
 
-public class App {
-    private static final Logger logger = Logger.getLogger(App.class.getName());
+public class Client {
+    private Bridge bridge;
+    public Client() {
+
+    }
+    private static final Logger logger = Logger.getLogger(Client.class.getName());
 
     public static void main(String[] args) {
         Bridge client = new Bridge();
@@ -33,9 +38,11 @@ public class App {
                 .setAnchorId(500)
                 .build();
 
-        System.out.println("ANCHOR REQUEST :: =>" + anchorRequest);
-
         AnchorOuterClass.GetAnchorResponse anchorResponse = client.getAnchor().getAnchor(anchorRequest);
+
+        Anchor anchor = Anchor.fromProto(anchorResponse.getAnchor());
+        System.out.println("ANCHOR ==> " + anchor);
+        
         logger.info("Got response from get anchor");
         logger.info(anchorResponse.toString());
     }
