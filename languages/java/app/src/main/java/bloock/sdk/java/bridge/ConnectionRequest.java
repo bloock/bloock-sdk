@@ -1,15 +1,12 @@
 package bloock.sdk.java.bridge;
 
-import bloock.sdk.java.App;
-import bloock.sdk.java.bridge.proto.Bloock;
 import bloock.sdk.java.ffi.Ffi;
 import io.grpc.*;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
-import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 
 public class ConnectionRequest<ReqT, RespT> extends ClientCall<ReqT, RespT> {
@@ -43,9 +40,15 @@ public class ConnectionRequest<ReqT, RespT> extends ClientCall<ReqT, RespT> {
 
     @Override
     public void sendMessage(ReqT message) {
-        Scanner s = new Scanner(method.streamRequest(message)).useDelimiter("\\A");
-        String payload = s.hasNext() ? s.next() : "";
         String requestType = "/" + method.getFullMethodName();
+
+        byte[] payload;
+        try {
+            payload = method.streamRequest(message).readAllBytes();
+        } catch (IOException e) {
+            logger.severe(e.toString());
+            return;
+        }
 
         byte[] response = Ffi.get().request(requestType, payload);
 

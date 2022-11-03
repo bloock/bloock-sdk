@@ -9,7 +9,6 @@ import java.util.Base64;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import sun.security.action.GetPropertyAction;
 
 public class Ffi {
     private static Ffi ffi = null;
@@ -36,7 +35,7 @@ public class Ffi {
             prefix = "libbloock_bridge";
             suffix = ".dylib";
         } else {
-            path = "linux/libpolar.so";
+            path = "x86_64-unknown-linux-gnu/libbloock_bridge.so";
             prefix = "libbloock_bridge";
             suffix = ".so";
         }
@@ -59,8 +58,8 @@ public class Ffi {
         }
     }
 
-    public byte[] request(String requestType, String payload) {
-        String encodedPayload = Base64.getEncoder().encodeToString(payload.getBytes());
+    public byte[] request(String requestType, byte[] payload) {
+        String encodedPayload = Base64.getEncoder().encodeToString(payload);
         String encodedResponse = bloockLib.request(requestType, encodedPayload);
         return Base64.getDecoder().decode(encodedResponse.getBytes());
     }
