@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'bloock-sdk-java'
-include('app')
+include('lib')

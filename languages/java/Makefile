@@ -2,13 +2,13 @@ UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 
 copy_lib:
-	rm -rfv app/src/main/resources/*
-	cp -r ../../bloock-bridge/build/native/* app/src/main/resources/
+	rm -rfv lib/src/main/resources/*
+	cp -r ../../bloock-bridge/build/native/* lib/src/main/resources/
 
 dev: copy_lib
 	./gradlew run
 
-test: copy_lib
+build: copy_lib
 	./gradlew build
 
 test: copy_lib
