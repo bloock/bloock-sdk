@@ -14,4 +14,12 @@ public class Keys {
     public static Keys fromProto(GenerateKeysResponse keys) {
         return new Keys(keys.getPublicKey(), keys.getPrivateKey());
     }
+
+	public String getPublicKey() {
+		return publicKey;
+	}
+
+	public String getPrivateKey() {
+		return privateKey;
+	}
 }

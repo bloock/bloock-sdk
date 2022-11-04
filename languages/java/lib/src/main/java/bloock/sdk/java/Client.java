@@ -14,6 +14,8 @@ import bloock.sdk.java.bridge.proto.ProofOuterClass.ValidateRootRequest;
 import bloock.sdk.java.bridge.proto.ProofOuterClass.ValidateRootResponse;
 import bloock.sdk.java.bridge.proto.ProofOuterClass.VerifyProofRequest;
 import bloock.sdk.java.bridge.proto.ProofOuterClass.VerifyProofResponse;
+import bloock.sdk.java.bridge.proto.ProofOuterClass.VerifyRecordsRequest;
+import bloock.sdk.java.bridge.proto.ProofOuterClass.VerifyRecordsResponse;
 import bloock.sdk.java.bridge.proto.RecordOuterClass.GenerateKeysRequest;
 import bloock.sdk.java.bridge.proto.RecordOuterClass.GenerateKeysResponse;
 import bloock.sdk.java.bridge.proto.RecordOuterClass.SendRecordsRequest;
@@ -37,6 +39,7 @@ public class Client {
         SendRecordsRequest request = SendRecordsRequest
                 .newBuilder()
                 .setConfigData(Config.newConfigData())
+                .addAllRecords(records)
                 .build();
 
         SendRecordsResponse response = bridge.getRecord().sendRecords(request);
@@ -119,6 +122,27 @@ public class Client {
         }
 
         return response.getRecord();
+    }
+
+    public long verifyRecords(List<String> records) throws Exception {
+        return verifyRecords(records, Network.BLOOCK_CHAIN);
+    }
+
+    public long verifyRecords(List<String> records, Network network) throws Exception {
+        VerifyRecordsRequest request = VerifyRecordsRequest
+                .newBuilder()
+                .setConfigData(Config.newConfigData())
+                .addAllRecords(records)
+                .setNetwork(network.toProto())
+                .build();
+
+        VerifyRecordsResponse response = bridge.getProof().verifyRecords(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return response.getTimestamp();
     }
 
     public long validateRoot(String root, Network network) throws Exception {

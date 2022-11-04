@@ -47,6 +47,26 @@ public class Anchor {
     public String toString() {
         return "{" + "id: " + id + ", blockRoots: " + blockRoots + ", root: " + root + ", status: " + status + ", networks: " + networks + "}";
     }
+
+	public long getId() {
+		return id;
+	}
+
+	public List<String> getBlockRoots() {
+		return blockRoots;
+	}
+
+	public List<AnchorNetwork> getNetworks() {
+		return networks;
+	}
+
+	public String getRoot() {
+		return root;
+	}
+
+	public String getStatus() {
+		return status;
+	}
 }
 
 class AnchorNetwork {

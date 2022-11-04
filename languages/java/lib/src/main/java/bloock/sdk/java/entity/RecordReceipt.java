@@ -32,4 +32,20 @@ public class RecordReceipt {
                 .setStatus(status)
                 .build();
     }
+
+	public long getAnchor() {
+		return anchor;
+	}
+
+	public String getClient() {
+		return client;
+	}
+
+	public String getRecord() {
+		return record;
+	}
+
+	public String getStatus() {
+		return status;
+	}
 }

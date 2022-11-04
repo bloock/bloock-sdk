@@ -39,6 +39,26 @@ public class Proof {
                 .setAnchor(anchor.toProto())
                 .build();
     }
+
+	public List<String> getLeaves() {
+		return leaves;
+	}
+
+	public List<String> getNodes() {
+		return nodes;
+	}
+
+	public String getDepth() {
+		return depth;
+	}
+
+	public String getBitmap() {
+		return bitmap;
+	}
+
+	public ProofAnchor getAnchor() {
+		return anchor;
+	}
 }
 
 class ProofAnchor {

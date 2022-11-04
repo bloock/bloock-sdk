@@ -3,8 +3,15 @@ package bloock.sdk.java;
 import org.junit.jupiter.api.Test;
 
 import bloock.sdk.java.entity.Anchor;
+import bloock.sdk.java.entity.Network;
+import bloock.sdk.java.entity.Proof;
+import bloock.sdk.java.entity.RecordReceipt;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 class ClientTest {
     Client getSdk() {
@@ -16,11 +23,47 @@ class ClientTest {
         return new Client();
     }
 
-    @Test 
-    void endToEnd() throws Exception {
+    @Test
+    void endToEnd() {
         Client sdk = getSdk();
-        System.out.println(5);
-        Anchor anchor = sdk.waitAnchor(700);
-        System.out.println("ANCHOR ==> " + anchor);
+        ArrayList<String> records = new ArrayList<>(
+                Arrays.asList("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"));
+
+        List<RecordReceipt> receipts = assertDoesNotThrow(() -> {
+            return sdk.sendRecords(records);
+        });
+
+        assertTrue(receipts.size() > 0);
+        assertEquals(receipts.get(0).getRecord(), records.get(0));
+
+        Anchor anchor = assertDoesNotThrow(() -> {
+            return sdk.waitAnchor(receipts.get(0).getAnchor());
+        });
+
+        assertEquals(receipts.get(0).getAnchor(), anchor.getId());
+
+        Proof proof = assertDoesNotThrow(() -> {
+            return sdk.getProof(records);
+        });
+
+        String root = assertDoesNotThrow(() -> {
+            return sdk.verifyProof(proof);
+        });
+        assertNotEquals(root, "");
+        assertNotEquals(root, null);
+
+        long timestampValidateRoot = assertDoesNotThrow(() -> {
+            return sdk.validateRoot(root, Network.BLOOCK_CHAIN);
+        });
+
+        assertTrue(timestampValidateRoot > 0);
+
+        long timestampVerifyRecords = assertDoesNotThrow(() -> {
+            return sdk.verifyRecords(records);
+        });
+
+        assertTrue(timestampVerifyRecords > 0);
+
+        assertEquals(timestampValidateRoot, timestampVerifyRecords);
     }
 }
