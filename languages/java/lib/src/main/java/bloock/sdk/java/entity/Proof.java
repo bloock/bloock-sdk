@@ -20,7 +20,7 @@ public class Proof {
         this.anchor = anchor;
     }
 
-    Proof fromProto(ProofOuterClass.Proof proof) {
+    public static Proof fromProto(ProofOuterClass.Proof proof) {
         return new Proof(
                 proof.getLeavesList(),
                 proof.getNodesList(),
@@ -29,7 +29,7 @@ public class Proof {
                 ProofAnchor.fromProto(proof.getAnchor()));
     }
 
-    ProofOuterClass.Proof toProto() {
+    public ProofOuterClass.Proof toProto() {
         return ProofOuterClass.Proof
                 .newBuilder()
                 .addAllLeaves(leaves)

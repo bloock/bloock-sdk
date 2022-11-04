@@ -1,49 +1,152 @@
 package bloock.sdk.java;
 
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import bloock.sdk.java.bridge.Bridge;
-import bloock.sdk.java.bridge.proto.AnchorOuterClass;
-import bloock.sdk.java.bridge.proto.Config;
 import bloock.sdk.java.bridge.proto.AnchorOuterClass.GetAnchorRequest;
-import bloock.sdk.java.bridge.proto.Config.ConfigData;
-import bloock.sdk.java.bridge.proto.Config.Configuration;
+import bloock.sdk.java.bridge.proto.AnchorOuterClass.GetAnchorResponse;
+import bloock.sdk.java.bridge.proto.AnchorOuterClass.WaitAnchorRequest;
+import bloock.sdk.java.bridge.proto.AnchorOuterClass.WaitAnchorResponse;
+import bloock.sdk.java.bridge.proto.ProofOuterClass.GetProofRequest;
+import bloock.sdk.java.bridge.proto.ProofOuterClass.GetProofResponse;
+import bloock.sdk.java.bridge.proto.ProofOuterClass.ValidateRootRequest;
+import bloock.sdk.java.bridge.proto.ProofOuterClass.ValidateRootResponse;
+import bloock.sdk.java.bridge.proto.ProofOuterClass.VerifyProofRequest;
+import bloock.sdk.java.bridge.proto.ProofOuterClass.VerifyProofResponse;
+import bloock.sdk.java.bridge.proto.RecordOuterClass.GenerateKeysRequest;
+import bloock.sdk.java.bridge.proto.RecordOuterClass.GenerateKeysResponse;
+import bloock.sdk.java.bridge.proto.RecordOuterClass.SendRecordsRequest;
+import bloock.sdk.java.bridge.proto.RecordOuterClass.SendRecordsResponse;
+import bloock.sdk.java.bridge.proto.Shared.Error;
+import bloock.sdk.java.config.Config;
 import bloock.sdk.java.entity.Anchor;
+import bloock.sdk.java.entity.Keys;
+import bloock.sdk.java.entity.Network;
+import bloock.sdk.java.entity.Proof;
+import bloock.sdk.java.entity.RecordReceipt;
 
 public class Client {
     private Bridge bridge;
+
     public Client() {
-
+        this.bridge = new Bridge();
     }
-    private static final Logger logger = Logger.getLogger(Client.class.getName());
 
-    public static void main(String[] args) {
-        Bridge client = new Bridge();
-
-        logger.info("Starting request get anchor");
-
-        Configuration config = Config.Configuration.newBuilder()
-                .setHost("https://api.bloock.com")
-                .setApiKey(System.getenv("API_KEY"))
-                .build();
-
-        ConfigData configData = Config.ConfigData
+    public List<RecordReceipt> sendRecords(List<String> records) throws Exception {
+        SendRecordsRequest request = SendRecordsRequest
                 .newBuilder()
-                .setConfig(config)
+                .setConfigData(Config.newConfigData())
                 .build();
 
-        GetAnchorRequest anchorRequest = AnchorOuterClass.GetAnchorRequest
+        SendRecordsResponse response = bridge.getRecord().sendRecords(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return response
+                .getRecordsList()
+                .stream()
+                .map(x -> RecordReceipt.fromProto(x))
+                .collect(Collectors.toList());
+    }
+
+    public Anchor getAnchor(long id) throws Exception {
+        GetAnchorRequest request = GetAnchorRequest
                 .newBuilder()
-                .setConfigData(configData)
-                .setAnchorId(500)
+                .setConfigData(Config.newConfigData())
+                .setAnchorId(id)
                 .build();
 
-        AnchorOuterClass.GetAnchorResponse anchorResponse = client.getAnchor().getAnchor(anchorRequest);
+        GetAnchorResponse response = bridge.getAnchor().getAnchor(request);
 
-        Anchor anchor = Anchor.fromProto(anchorResponse.getAnchor());
-        System.out.println("ANCHOR ==> " + anchor);
-        
-        logger.info("Got response from get anchor");
-        logger.info(anchorResponse.toString());
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return Anchor.fromProto(response.getAnchor());
+    }
+
+    public Anchor waitAnchor(long id) throws Exception {
+        return waitAnchor(id, 120000);
+    }
+
+    public Anchor waitAnchor(long id, long timeout) throws Exception {
+        WaitAnchorRequest request = WaitAnchorRequest
+                .newBuilder()
+                .setConfigData(Config.newConfigData())
+                .setAnchorId(id)
+                .setTimeout(timeout)
+                .build();
+
+        WaitAnchorResponse response = bridge.getAnchor().waitAnchor(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return Anchor.fromProto(response.getAnchor());
+    }
+
+    public Proof getProof(List<String> records) throws Exception {
+        GetProofRequest request = GetProofRequest
+                .newBuilder()
+                .setConfigData(Config.newConfigData())
+                .addAllRecords(records)
+                .build();
+
+        GetProofResponse response = bridge.getProof().getProof(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return Proof.fromProto(response.getProof());
+    }
+
+    public String verifyProof(Proof proof) throws Exception {
+        VerifyProofRequest request = VerifyProofRequest
+                .newBuilder()
+                .setConfigData(Config.newConfigData())
+                .setProof(proof.toProto())
+                .build();
+
+        VerifyProofResponse response = bridge.getProof().verifyProof(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return response.getRecord();
+    }
+
+    public long validateRoot(String root, Network network) throws Exception {
+        ValidateRootRequest request = ValidateRootRequest
+                .newBuilder()
+                .setConfigData(Config.newConfigData())
+                .setRoot(root)
+                .setNetwork(network.toProto())
+                .build();
+
+        ValidateRootResponse response = bridge.getProof().validateRoot(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return response.getTimestamp();
+    }
+
+    public Keys generateKeys() throws Exception {
+        GenerateKeysRequest request = GenerateKeysRequest.newBuilder().build();
+
+        GenerateKeysResponse response = bridge.getRecord().generateKeys(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return Keys.fromProto(response);
     }
 }
