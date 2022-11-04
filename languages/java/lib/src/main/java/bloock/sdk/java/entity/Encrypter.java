@@ -3,7 +3,7 @@ package bloock.sdk.java.entity;
 import bloock.sdk.java.bridge.proto.RecordOuterClass;
 import bloock.sdk.java.bridge.proto.RecordOuterClass.EncryptionAlg;
 
-interface Encrypter {
+public interface Encrypter {
     RecordOuterClass.Encrypter toProto();
 }
 

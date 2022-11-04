@@ -1,4 +1,4 @@
-package bloock.sdk.java;
+package bloock.sdk.java.client;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -2,6 +2,7 @@ package bloock.sdk.java;
 
 import org.junit.jupiter.api.Test;
 
+import bloock.sdk.java.client.Client;
 import bloock.sdk.java.entity.Anchor;
 import bloock.sdk.java.entity.Network;
 import bloock.sdk.java.entity.Proof;
