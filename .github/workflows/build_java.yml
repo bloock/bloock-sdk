@@ -1,0 +1,43 @@
+name: Build Java
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+
+jobs:
+  build_java:
+    name: Build wheel
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set version env
+        id: version
+        run: echo "::set-output name=bloock_version::$(cat VERSION)"
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "10"
+      - name: Download dylibs
+        uses: actions/download-artifact@v1
+        with:
+          name: bloock_core_lib_dynamic
+      - name: Copy libraries into resources.
+        run: |
+          mkdir -p languages/java/lib/src/main/resources
+          cp -r bloock_core_lib_static/bloock_bridge.h languages/java/lib/src/main/resources/bloock_bridge.h
+          mkdir -p languages/java/lib/src/main/resources/linux
+          cp -r bloock_core_lib_dynamic/libbloock_bridge.so languages/java/lib/src/main/resources/linux/
+          mkdir -p languages/java/lib/src/main/resources/macos
+          cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/libpolar.dylib
+          mkdir -p languages/java/lib/src/main/resources/win
+          cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/lib/src/main/resources/win/
+      - name: Build
+        run: |
+          ./gradlew assemble
+        working-directory: languages/java
+      - uses: actions/upload-artifact@v2
+        with:
+          name: jar
+          path: languages/java/lib/build/libs/lib-${{ steps.version.outputs.bloock_version }}.jar

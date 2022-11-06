@@ -1,17 +1,19 @@
 plugins {
-    // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
-    // ASSUMES GRADLE 5.6 OR HIGHER. Use plugin version 0.8.10 with earlier gradle versions
     id 'com.google.protobuf' version '0.8.18'
-    // Generate IntelliJ IDEA's .idea & .iml project files
     id 'idea'
 }
 
 repositories {
-    maven { // The google mirror is less flaky than mavenCentral()
-        url "https://maven-central.storage-download.googleapis.com/maven2/" }
+    maven {
+        url "https://maven-central.storage-download.googleapis.com/maven2/" 
+    }
     mavenCentral()
     mavenLocal()
+}
+
+java {
+    withSourcesJar()
 }
 
 version = '0.1.0'
@@ -24,15 +26,9 @@ def protobufVersion = '3.21.1'
 def protocVersion = protobufVersion
 
 dependencies {
-    // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
-
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:31.0.1-jre'
-
     compileOnly "org.apache.tomcat:annotations-api:6.0.53"
 
     // Protobuf + GRPC
@@ -61,7 +57,6 @@ protobuf {
     }
 }
 
-// Inform IDEs like IntelliJ IDEA, Eclipse or NetBeans about the generated code.
 sourceSets {
     main {
         proto {
@@ -75,6 +70,5 @@ sourceSets {
 }
 
 tasks.named('test') {
-    // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
