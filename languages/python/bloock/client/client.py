@@ -1,12 +1,6 @@
 from typing import List
-import bloock
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
-from bloock._bridge.proto.config_pb2 import (
-    ConfigData,
-    Configuration,
-    NetworkConfig,
-)
 from bloock._bridge.proto.proof_pb2 import (
     GetProofRequest,
     ValidateRootRequest,
