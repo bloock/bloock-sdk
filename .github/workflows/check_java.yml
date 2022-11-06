@@ -14,3 +14,4 @@ jobs:
           java-version: "10"
       - name: Check Java
         run: make lint
+        working-directory: languages/java
