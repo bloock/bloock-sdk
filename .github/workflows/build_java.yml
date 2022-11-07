@@ -26,11 +26,12 @@ jobs:
       - name: Copy libraries into resources.
         run: |
           mkdir -p languages/java/lib/src/main/resources/linux
-          cp -r bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so languages/java/lib/src/main/resources/linux/libbloock_bridge.so
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so languages/java/lib/src/main/resources/linux/libbloock_bridge.so
           mkdir -p languages/java/lib/src/main/resources/macos
-          cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/libbloock_bridge.dylib
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge-fat.dylib ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/libbloock_bridge.dylib
           mkdir -p languages/java/lib/src/main/resources/win
-          cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/lib/src/main/resources/win/bloock_bridge.dll
+          [[ -e bloock_core_lib_dynamic/bloock_bridge_windows.dll ]] && cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/lib/src/main/resources/win/bloock_bridge.dll
+          rm languages/java/Makefile
       - name: Build
         run: |
           ./gradlew assemble
