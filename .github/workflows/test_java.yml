@@ -26,7 +26,7 @@ jobs:
         run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
       - uses: actions/setup-java@v1
         with:
-          java-version: ${{ input.java-version }}
+          java-version: ${{ inputs.java-version }}
       - name: Test
         run: |
           make test
