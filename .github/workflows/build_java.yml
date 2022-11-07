@@ -9,7 +9,7 @@ on:
 
 jobs:
   build_java:
-    name: Build wheel
+    name: Build Java
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v2
@@ -28,9 +28,9 @@ jobs:
           mkdir -p languages/java/lib/src/main/resources
           [[ -e bloock_core_lib_dynamic/bloock_bridge.h ]] && cp -r bloock_core_lib_dynamic/bloock_bridge.h languages/java/lib/src/main/resources/bloock_bridge.h
           mkdir -p languages/java/lib/src/main/resources/linux
-          [[ -e bloock_core_lib_dynamic/libbloock_bridge.so ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge.so languages/java/lib/src/main/resources/linux/
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-gnu.so ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-gnu.so languages/java/lib/src/main/resources/linux/
           mkdir -p languages/java/lib/src/main/resources/macos
-          [[ -e bloock_core_lib_dynamic/libbloock_bridge-fat.dylib ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/libpolar.dylib
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge-fat.dylib ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/
           mkdir -p languages/java/lib/src/main/resources/win
           [[ -e bloock_core_lib_dynamic/bloock_bridge_windows.dll ]] && cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/lib/src/main/resources/win/
       - name: Build
