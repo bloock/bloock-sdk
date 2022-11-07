@@ -22,11 +22,16 @@ build: copy_lib
 test: copy_lib
 	./gradlew test
 
-fmt:
-	echo "Unimplemented"
+fmt.jar:
+	$(eval URL := $(shell curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/google/google-java-format/releases/latest | jq '.assets[] | select(.name | test("all-deps.jar")) | .browser_download_url'))
+	curl -L $(URL) > fmt.jar
 
-lint:
-	echo "Unimplemented"
+fmt: fmt.jar
+	$(eval FILES := $(shell git ls-files '*.java'))
+	$(eval OPENS := $(shell echo "--add-opens jdk.compiler/com.sun.tools.javac."{api,tree,file,util,parser}"=ALL-UNNAMED"))
+	java $(OPENS) -jar fmt.jar --replace $(FILES)
+
+lint: fmt
 
 clean:
 	./gradlew clean

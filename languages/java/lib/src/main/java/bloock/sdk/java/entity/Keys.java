@@ -3,23 +3,23 @@ package bloock.sdk.java.entity;
 import bloock.sdk.java.bridge.proto.RecordOuterClass.GenerateKeysResponse;
 
 public class Keys {
-    String publicKey;
-    String privateKey;
+  String publicKey;
+  String privateKey;
 
-    Keys(String publicKey, String privateKey) {
-        this.publicKey = publicKey;
-        this.privateKey = privateKey;
-    }
+  Keys(String publicKey, String privateKey) {
+    this.publicKey = publicKey;
+    this.privateKey = privateKey;
+  }
 
-    public static Keys fromProto(GenerateKeysResponse keys) {
-        return new Keys(keys.getPublicKey(), keys.getPrivateKey());
-    }
+  public static Keys fromProto(GenerateKeysResponse keys) {
+    return new Keys(keys.getPublicKey(), keys.getPrivateKey());
+  }
 
-	public String getPublicKey() {
-		return publicKey;
-	}
+  public String getPublicKey() {
+    return publicKey;
+  }
 
-	public String getPrivateKey() {
-		return privateKey;
-	}
+  public String getPrivateKey() {
+    return privateKey;
+  }
 }
