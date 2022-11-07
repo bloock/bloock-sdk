@@ -1,4 +1,4 @@
-name: Test Python
+name: Test Java
 
 on:
   workflow_call:
@@ -17,7 +17,7 @@ on:
 
 jobs:
   test_java:
-    name: Test python ${{ inputs.python-version }} on ${{ inputs.os }}
+    name: Test java ${{ inputs.java-version }} on ${{ inputs.os }}
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v3
@@ -26,7 +26,7 @@ jobs:
         run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
       - uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java-version }}
+          java-version: ${{ input.java-version }}
       - name: Test
         run: |
           make test
