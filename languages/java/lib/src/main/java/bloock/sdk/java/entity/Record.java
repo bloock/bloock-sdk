@@ -19,7 +19,7 @@ public class Record {
     return new Record(record.getPayload().toByteArray());
   }
 
-    RecordOuterClass.Record toProto() {
+    public RecordOuterClass.Record toProto() {
         return RecordOuterClass.Record
                 .newBuilder()
                 .setPayload(ByteString.copyFrom(payload))
