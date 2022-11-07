@@ -26,13 +26,13 @@ jobs:
       - name: Copy libraries into resources.
         run: |
           mkdir -p languages/java/lib/src/main/resources
-          cp -r bloock_core_lib_static/bloock_bridge.h languages/java/lib/src/main/resources/bloock_bridge.h
+          [[ -e bloock_core_lib_dynamic/bloock_bridge.h ]] && cp -r bloock_core_lib_dynamic/bloock_bridge.h languages/java/lib/src/main/resources/bloock_bridge.h
           mkdir -p languages/java/lib/src/main/resources/linux
-          cp -r bloock_core_lib_dynamic/libbloock_bridge.so languages/java/lib/src/main/resources/linux/
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge.so ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge.so languages/java/lib/src/main/resources/linux/
           mkdir -p languages/java/lib/src/main/resources/macos
-          cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/libpolar.dylib
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge-fat.dylib ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/libpolar.dylib
           mkdir -p languages/java/lib/src/main/resources/win
-          cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/lib/src/main/resources/win/
+          [[ -e bloock_core_lib_dynamic/bloock_bridge_windows.dll ]] && cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/lib/src/main/resources/win/
       - name: Build
         run: |
           ./gradlew assemble
