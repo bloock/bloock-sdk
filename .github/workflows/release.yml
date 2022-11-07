@@ -11,7 +11,7 @@ jobs:
     name: Compute and verify the version number
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/check_version
       - name: Set version env
         run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_ENV
@@ -119,7 +119,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       release_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set version env
         id: version
         env:
