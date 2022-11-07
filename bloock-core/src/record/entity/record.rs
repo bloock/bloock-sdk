@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 
 use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
+use bloock_signer::Signature;
 
 use crate::{
     error::{BloockError, BloockResult, InfrastructureError},
@@ -8,7 +9,7 @@ use crate::{
     record::{document::Document, RecordError},
 };
 
-#[derive(Clone, Eq)]
+#[derive(Debug, Clone, Eq)]
 pub struct Record {
     pub(crate) document: Option<Document>,
     hash: H256,
@@ -16,7 +17,7 @@ pub struct Record {
 
 impl Record {
     pub fn new(document: Document) -> Self {
-        let hash = Keccak256::generate_hash(document.get_payload());
+        let hash = Keccak256::generate_hash(&document.get_payload());
         Self {
             document: Some(document),
             hash,
@@ -45,16 +46,30 @@ impl Record {
         }
     }
 
-    pub fn get_proof(&self) -> Option<&Proof> {
+    pub fn get_signatures(&self) -> Option<Vec<Signature>> {
         match &self.document {
-            Some(d) => d.proof.as_ref(),
+            Some(d) => d.get_signatures(),
             None => None,
         }
     }
 
-    pub fn serialize(self) -> BloockResult<String> {
+    pub fn get_proof(&self) -> Option<Proof> {
+        match &self.document {
+            Some(d) => d.get_proof(),
+            None => None,
+        }
+    }
+
+    pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
+        match self.document.as_mut() {
+            Some(d) => d.set_proof(proof),
+            None => Err(RecordError::DocumentNotFound.into()),
+        }
+    }
+
+    pub fn serialize(self) -> BloockResult<Vec<u8>> {
         match self.document {
-            Some(d) => d.serialize(),
+            Some(mut d) => d.build(),
             None => Err(RecordError::DocumentNotFound.into()),
         }
     }
@@ -90,19 +105,11 @@ impl TryFrom<&String> for Record {
 #[cfg(test)]
 mod tests {
 
-    use crate::record::document::types::PayloadType;
-
     use super::*;
 
     #[test]
     fn test_new_record() {
-        let document = Document::new(
-            PayloadType::String.to_header(),
-            "Some String".as_bytes().to_vec(),
-            None,
-            None,
-            None,
-        );
+        let document = Document::new("Some String".as_bytes()).unwrap();
         let record = Record::new(document);
 
         assert_eq!(
@@ -110,29 +117,5 @@ mod tests {
             record.get_hash(),
             "Wrong record hash received"
         );
-    }
-
-    #[test]
-    fn test_record_serialize() {
-        let payload = "Test Data".as_bytes().to_vec();
-        let document = Document::new(
-            PayloadType::String.to_header(),
-            payload.clone(),
-            None,
-            None,
-            None,
-        );
-        let record = Record::new(document);
-
-        let expected_headers =
-            base64_url::encode(&serde_json::to_vec(&PayloadType::String.to_header()).unwrap());
-        let expected_payload = base64_url::encode(&payload);
-        let expected_output = format!("{}.{}...", expected_headers, expected_payload);
-
-        assert_eq!(
-            expected_output,
-            record.serialize().unwrap(),
-            "Wrong record hash received"
-        )
     }
 }

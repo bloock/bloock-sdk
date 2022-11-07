@@ -29,9 +29,10 @@ type RecordServiceClient interface {
 	BuildRecordFromFile(ctx context.Context, in *RecordBuilderFromFileRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromBytes(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
-	BuildRecordFromRaw(ctx context.Context, in *RecordBuilderFromRawRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	BuildRecordFromLoader(ctx context.Context, in *RecordBuilderFromLoaderRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
 	GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error)
+	Publish(ctx context.Context, in *PublishRequest, opts ...grpc.CallOption) (*PublishResponse, error)
 }
 
 type recordServiceClient struct {
@@ -105,9 +106,9 @@ func (c *recordServiceClient) BuildRecordFromRecord(ctx context.Context, in *Rec
 	return out, nil
 }
 
-func (c *recordServiceClient) BuildRecordFromRaw(ctx context.Context, in *RecordBuilderFromRawRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
+func (c *recordServiceClient) BuildRecordFromLoader(ctx context.Context, in *RecordBuilderFromLoaderRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
 	out := new(RecordBuilderResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromRaw", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/BuildRecordFromLoader", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -132,6 +133,15 @@ func (c *recordServiceClient) GenerateKeys(ctx context.Context, in *GenerateKeys
 	return out, nil
 }
 
+func (c *recordServiceClient) Publish(ctx context.Context, in *PublishRequest, opts ...grpc.CallOption) (*PublishResponse, error) {
+	out := new(PublishResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/Publish", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RecordServiceServer is the server API for RecordService service.
 // All implementations must embed UnimplementedRecordServiceServer
 // for forward compatibility
@@ -143,9 +153,10 @@ type RecordServiceServer interface {
 	BuildRecordFromFile(context.Context, *RecordBuilderFromFileRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromBytes(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error)
-	BuildRecordFromRaw(context.Context, *RecordBuilderFromRawRequest) (*RecordBuilderResponse, error)
+	BuildRecordFromLoader(context.Context, *RecordBuilderFromLoaderRequest) (*RecordBuilderResponse, error)
 	GetHash(context.Context, *Record) (*RecordHash, error)
 	GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error)
+	Publish(context.Context, *PublishRequest) (*PublishResponse, error)
 	mustEmbedUnimplementedRecordServiceServer()
 }
 
@@ -174,14 +185,17 @@ func (UnimplementedRecordServiceServer) BuildRecordFromBytes(context.Context, *R
 func (UnimplementedRecordServiceServer) BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromRecord not implemented")
 }
-func (UnimplementedRecordServiceServer) BuildRecordFromRaw(context.Context, *RecordBuilderFromRawRequest) (*RecordBuilderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromRaw not implemented")
+func (UnimplementedRecordServiceServer) BuildRecordFromLoader(context.Context, *RecordBuilderFromLoaderRequest) (*RecordBuilderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromLoader not implemented")
 }
 func (UnimplementedRecordServiceServer) GetHash(context.Context, *Record) (*RecordHash, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
 }
 func (UnimplementedRecordServiceServer) GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateKeys not implemented")
+}
+func (UnimplementedRecordServiceServer) Publish(context.Context, *PublishRequest) (*PublishResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Publish not implemented")
 }
 func (UnimplementedRecordServiceServer) mustEmbedUnimplementedRecordServiceServer() {}
 
@@ -322,20 +336,20 @@ func _RecordService_BuildRecordFromRecord_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RecordService_BuildRecordFromRaw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecordBuilderFromRawRequest)
+func _RecordService_BuildRecordFromLoader_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordBuilderFromLoaderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecordServiceServer).BuildRecordFromRaw(ctx, in)
+		return srv.(RecordServiceServer).BuildRecordFromLoader(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bloock.RecordService/BuildRecordFromRaw",
+		FullMethod: "/bloock.RecordService/BuildRecordFromLoader",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).BuildRecordFromRaw(ctx, req.(*RecordBuilderFromRawRequest))
+		return srv.(RecordServiceServer).BuildRecordFromLoader(ctx, req.(*RecordBuilderFromLoaderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -376,6 +390,24 @@ func _RecordService_GenerateKeys_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecordService_Publish_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PublishRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).Publish(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/Publish",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).Publish(ctx, req.(*PublishRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RecordService_ServiceDesc is the grpc.ServiceDesc for RecordService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -412,8 +444,8 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RecordService_BuildRecordFromRecord_Handler,
 		},
 		{
-			MethodName: "BuildRecordFromRaw",
-			Handler:    _RecordService_BuildRecordFromRaw_Handler,
+			MethodName: "BuildRecordFromLoader",
+			Handler:    _RecordService_BuildRecordFromLoader_Handler,
 		},
 		{
 			MethodName: "GetHash",
@@ -422,6 +454,10 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateKeys",
 			Handler:    _RecordService_GenerateKeys_Handler,
+		},
+		{
+			MethodName: "Publish",
+			Handler:    _RecordService_Publish_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

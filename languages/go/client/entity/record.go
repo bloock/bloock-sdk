@@ -6,14 +6,11 @@ import (
 
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
 type Record struct {
-	Headers    RecordHeader
-	Payload    []byte
-	Signatures []Signature
-	Encryption Encryption
-	Proof      Proof
+	Payload []byte
 }
 
 func NewRecordFromProto(r *proto.Record) Record {
@@ -21,38 +18,40 @@ func NewRecordFromProto(r *proto.Record) Record {
 		return Record{}
 	}
 
-	signatures := make([]Signature, len(r.Signatures))
-	for i, signature := range r.Signatures {
-		signatures[i] = NewSignatureFromProto(signature)
-	}
-
 	return Record{
-		Headers:    NewRecordHeaderFromProto(r.Headers),
-		Payload:    r.Payload,
-		Signatures: signatures,
-		Encryption: NewEncryptionFromProto(r.Encryption),
-		Proof:      NewProofFromProto(r.Proof),
+		Payload: r.Payload,
 	}
 }
 
 func (r Record) ToProto() *proto.Record {
-	signatures := make([]*proto.Signature, len(r.Signatures))
-	for i, signature := range r.Signatures {
-		signatures[i] = signature.ToProto()
-	}
-
 	return &proto.Record{
-		Headers:    r.Headers.ToProto(),
-		Payload:    r.Payload,
-		Signatures: signatures,
-		Encryption: r.Encryption.ToProto(),
-		Proof:      r.Proof.ToProto(),
+		Payload: r.Payload,
 	}
 }
 
 func (r Record) GetHash() (string, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().GetHash(context.Background(), r.ToProto())
+
+	if err != nil {
+		return "", err
+	}
+
+	if res.Error != nil {
+		return "", errors.New(res.Error.Message)
+	}
+
+	return res.Hash, nil
+}
+
+func (r Record) Publish(p Publisher) (string, error) {
+	bridgeClient := bridge.NewBloockBridge()
+	req := proto.PublishRequest{
+		ConfigData: config.NewConfigData(),
+		Publisher:  p.ToProto(),
+		Record:     r.ToProto(),
+	}
+	res, err := bridgeClient.Record().Publish(context.Background(), &req)
 
 	if err != nil {
 		return "", err
@@ -136,47 +135,6 @@ func (s SignatureHeader) ToProto() *proto.SignatureHeader {
 	return &proto.SignatureHeader{
 		Alg: s.Alg,
 		Kid: s.Kid,
-	}
-}
-
-type Encryption struct {
-	Header    EncryptionHeader
-	Protected string
-}
-
-func NewEncryptionFromProto(e *proto.Encryption) Encryption {
-	if e == nil {
-		return Encryption{}
-	}
-	return Encryption{
-		Header:    NewEncryptionHeaderFromProto(e.Header),
-		Protected: e.Protected,
-	}
-}
-
-func (e Encryption) ToProto() *proto.Encryption {
-	return &proto.Encryption{
-		Header:    e.Header.ToProto(),
-		Protected: e.Protected,
-	}
-}
-
-type EncryptionHeader struct {
-	Alg string
-}
-
-func NewEncryptionHeaderFromProto(e *proto.EncryptionHeader) EncryptionHeader {
-	if e == nil {
-		return EncryptionHeader{}
-	}
-	return EncryptionHeader{
-		Alg: e.Alg,
-	}
-}
-
-func (e EncryptionHeader) ToProto() *proto.EncryptionHeader {
-	return &proto.EncryptionHeader{
-		Alg: e.Alg,
 	}
 }
 

@@ -20,6 +20,17 @@ func TestEndToEnd(t *testing.T) {
 		hash, err := record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd", hash)
+
+		result, err := record.Publish(entity.NewHostedPublisher())
+		require.NoError(t, err)
+		assert.Equal(t, hash, result)
+
+		record, err = builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
+		require.NoError(t, err)
+		hash, err = record.GetHash()
+		require.NoError(t, err)
+		assert.Equal(t, result, hash)
+
 		records = append(records, hash)
 
 		record, err = builder.NewRecordBuilderFromBytes([]byte{1, 2, 3, 4, 5}).Build()
@@ -73,15 +84,6 @@ func TestEndToEnd(t *testing.T) {
 		assert.Equal(t, "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446", hash)
 		records = append(records, hash)
 
-		record, err = builder.NewRecordBuilderFromRaw(
-			"eyJ0eSI6InN0cmluZyJ9.U29tZSBzdHJpbmc.W3siaGVhZGVyIjp7ImFsZyI6IkVDU0RBIiwia2lkIjoiMTIzNDU2Nzg5MGFiY2RlZiJ9LCJwcm90ZWN0ZWQiOiJlMCIsInNpZ25hdHVyZSI6IjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVmIn1d.eyJoZWFkZXIiOnsiYWxnIjoiRUNTREEifSwicHJvdGVjdGVkIjoiZTAifQ.eyJhbmNob3IiOnsiYW5jaG9yX2lkIjoxLCJuZXR3b3JrcyI6W10sInJvb3QiOiIiLCJzdGF0dXMiOiJwZW5kaW5nIn0sImJpdG1hcCI6IjZkODAiLCJkZXB0aCI6IjAwMDUwMDA1MDAwNDAwMDQwMDA0MDAwNDAwMDQwMDAzMDAwMSIsImxlYXZlcyI6WyIxY2EwZTlkOWEyMDZmMDhkMzhhNGUyY2Y0ODUzNTE2NzRmZmM5YjBmMzE3NWUwY2I2ZGJkOGUwZTE5ODI5Yjk3Il0sIm5vZGVzIjpbIjFjYTBlOWQ5YTIwNmYwOGQzOGE0ZTJjZjQ4NTM1MTY3NGZmYzliMGYzMTc1ZTBjYjZkYmQ4ZTBlMTk4MjliOTciXX0",
-		).Build()
-		require.NoError(t, err)
-		hash, err = record.GetHash()
-		require.NoError(t, err)
-		assert.Equal(t, "fc7eed1db0c14d70f875460a53c315d0df86a087ba9e921e9fe2923577c327f9", hash)
-		records = append(records, hash)
-
 		keys, err := sdk.GenerateKeys()
 		require.NoError(t, err)
 
@@ -99,7 +101,6 @@ func TestEndToEnd(t *testing.T) {
 			WithSigner(entity.NewEcsdaSigner(keys.PrivateKey)).
 			Build()
 
-		assert.Equal(t, len(recordWithMultipleSignatures.Signatures), 2)
 		require.NoError(t, err)
 		hash, err = recordWithMultipleSignatures.GetHash()
 		require.NoError(t, err)

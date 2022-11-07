@@ -1,5 +1,0 @@
-FROM ghcr.io/cross-rs/i686-pc-windows-gnu:latest
-
-RUN curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v21.5/protoc-21.5-osx-aarch_64.zip 
-RUN unzip protoc-3.15.8-linux-x86_64.zip -d $HOME/.local 
-RUN export PATH="$PATH:$HOME/.local/bin"

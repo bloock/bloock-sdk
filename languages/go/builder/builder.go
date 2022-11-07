@@ -7,6 +7,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/client/entity"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
 type RecordBuilder struct {
@@ -81,12 +82,14 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 			Encrypter: b.encrypter,
 			Decrypter: b.decrypter,
 		})
-	case proto.RecordTypes_RAW:
-		res, err = bridgeClient.Record().BuildRecordFromRaw(context.Background(), &proto.RecordBuilderFromRawRequest{
-			Payload:   b.payload.(string),
-			Signer:    b.signer,
-			Encrypter: b.encrypter,
-			Decrypter: b.decrypter,
+
+	case proto.RecordTypes_LOADER:
+		res, err = bridgeClient.Record().BuildRecordFromLoader(context.Background(), &proto.RecordBuilderFromLoaderRequest{
+			ConfigData: config.NewConfigData(),
+			Loader:     b.payload.(*proto.Loader),
+			Signer:     b.signer,
+			Encrypter:  b.encrypter,
+			Decrypter:  b.decrypter,
 		})
 	}
 
@@ -105,6 +108,13 @@ func NewRecordBuilderFromRecord(record entity.Record) RecordBuilder {
 	return RecordBuilder{
 		payload:     record.ToProto(),
 		payloadType: proto.RecordTypes_RECORD,
+	}
+}
+
+func NewRecordBuilderFromLoader(loader entity.Loader) RecordBuilder {
+	return RecordBuilder{
+		payload:     loader.ToProto(),
+		payloadType: proto.RecordTypes_LOADER,
 	}
 }
 
@@ -140,12 +150,5 @@ func NewRecordBuilderFromBytes(bytes []byte) RecordBuilder {
 	return RecordBuilder{
 		payload:     bytes,
 		payloadType: proto.RecordTypes_BYTES,
-	}
-}
-
-func NewRecordBuilderFromRaw(raw string) RecordBuilder {
-	return RecordBuilder{
-		payload:     raw,
-		payloadType: proto.RecordTypes_RAW,
 	}
 }

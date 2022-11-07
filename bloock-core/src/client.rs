@@ -1,23 +1,25 @@
-use crate::anchor;
 use crate::anchor::entity::anchor::Anchor;
 use crate::anchor::service::AnchorService;
 use crate::config::config_data::ConfigData;
 use crate::config::entity::network::Network;
 use crate::error::BloockResult;
-use crate::proof;
+use crate::event::entity::event::Event;
 use crate::proof::entity::proof::Proof;
 use crate::proof::service::ProofService;
 use crate::record;
 use crate::record::entity::record::Record;
 use crate::record::entity::record_receipt::RecordReceipt;
 use crate::record::service::RecordService;
-use bloock_http::{Client, HttpClient};
+use crate::{anchor, event::service::EventService};
+use crate::{event, proof};
+use bloock_http::{BloockHttpClient, SimpleHttpClient};
 use std::sync::Arc;
 
 pub struct BloockClient {
-    anchor_service: AnchorService<HttpClient>,
-    record_service: RecordService<HttpClient>,
-    proof_service: ProofService<HttpClient>,
+    anchor_service: AnchorService<BloockHttpClient>,
+    record_service: RecordService<BloockHttpClient>,
+    proof_service: ProofService<BloockHttpClient>,
+    event_service: EventService<SimpleHttpClient>,
 }
 
 impl BloockClient {
@@ -52,15 +54,27 @@ impl BloockClient {
     ) -> BloockResult<u128> {
         self.proof_service.verify_records(records, network).await
     }
+
+    pub async fn send_event(&self, event: Event) -> BloockResult<()> {
+        self.event_service.send_event(event).await
+    }
 }
 
 pub fn configure(config_data: ConfigData) -> BloockClient {
-    let http_client = Arc::new(HttpClient::new(config_data.get_config().api_key));
+    let bloock_http_client = Arc::new(BloockHttpClient::new(config_data.get_config().api_key));
+    let simple_http_client = Arc::new(SimpleHttpClient::new());
     let config_data = Arc::new(config_data);
 
     BloockClient {
-        anchor_service: anchor::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
-        record_service: record::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
-        proof_service: proof::configure(Arc::clone(&http_client), Arc::clone(&config_data)),
+        anchor_service: anchor::configure(
+            Arc::clone(&bloock_http_client),
+            Arc::clone(&config_data),
+        ),
+        record_service: record::configure(
+            Arc::clone(&bloock_http_client),
+            Arc::clone(&config_data),
+        ),
+        proof_service: proof::configure(Arc::clone(&bloock_http_client), Arc::clone(&config_data)),
+        event_service: event::configure(Arc::clone(&simple_http_client), Arc::clone(&config_data)),
     }
 }

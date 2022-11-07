@@ -7,33 +7,23 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/client/entity"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
 type Client struct {
 	bridgeClient bridge.BloockBridge
-	configData   *proto.ConfigData
 }
 
-func NewClient(apiKey string) Client {
+func NewClient() Client {
 	return Client{
 		bridgeClient: bridge.NewBloockBridge(),
-		configData: &proto.ConfigData{
-			Config: &proto.Configuration{ApiKey: apiKey},
-		},
 	}
 }
 
-func (c *Client) SetApiHost(host string) {
-	c.configData.Config.Host = host
-}
-
-func (c *Client) SetNetworkConfig(network entity.Network, config *entity.NetworkConfig) {
-	c.configData.NetworksConfig[int32(network)] = config
-}
-
 func (c *Client) SendRecords(records []string) ([]entity.RecordReceipt, error) {
+
 	res, err := c.bridgeClient.Record().SendRecords(context.Background(), &proto.SendRecordsRequest{
-		ConfigData: c.configData,
+		ConfigData: config.NewConfigData(),
 		Records:    records,
 	})
 
@@ -55,7 +45,7 @@ func (c *Client) SendRecords(records []string) ([]entity.RecordReceipt, error) {
 
 func (c *Client) GetAnchor(anchorID int64) (entity.Anchor, error) {
 	res, err := c.bridgeClient.Anchor().GetAnchor(context.Background(), &proto.GetAnchorRequest{
-		ConfigData: c.configData,
+		ConfigData: config.NewConfigData(),
 		AnchorId:   anchorID,
 	})
 
@@ -76,7 +66,7 @@ func (c *Client) WaitAnchor(anchorID int64, params entity.AnchorParams) (entity.
 	}
 
 	res, err := c.bridgeClient.Anchor().WaitAnchor(context.Background(), &proto.WaitAnchorRequest{
-		ConfigData: c.configData,
+		ConfigData: config.NewConfigData(),
 		AnchorId:   anchorID,
 		Timeout:    params.Timeout,
 	})
@@ -94,7 +84,7 @@ func (c *Client) WaitAnchor(anchorID int64, params entity.AnchorParams) (entity.
 
 func (c *Client) GetProof(records []string) (entity.Proof, error) {
 	res, err := c.bridgeClient.Proof().GetProof(context.Background(), &proto.GetProofRequest{
-		ConfigData: c.configData,
+		ConfigData: config.NewConfigData(),
 		Records:    records,
 	})
 
@@ -111,7 +101,7 @@ func (c *Client) GetProof(records []string) (entity.Proof, error) {
 
 func (c *Client) VerifyProof(proof entity.Proof) (string, error) {
 	res, err := c.bridgeClient.Proof().VerifyProof(context.Background(), &proto.VerifyProofRequest{
-		ConfigData: c.configData,
+		ConfigData: config.NewConfigData(),
 		Proof:      proof.ToProto(),
 	})
 
@@ -128,7 +118,7 @@ func (c *Client) VerifyProof(proof entity.Proof) (string, error) {
 
 func (c *Client) VerifyRecords(records []string, params entity.NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Proof().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
-		ConfigData: c.configData,
+		ConfigData: config.NewConfigData(),
 		Records:    records,
 		Network:    params.Network.Enum(),
 	})
@@ -146,7 +136,7 @@ func (c *Client) VerifyRecords(records []string, params entity.NetworkParams) (u
 
 func (c *Client) ValidateRoot(root string, network entity.Network) (uint64, error) {
 	res, err := c.bridgeClient.Proof().ValidateRoot(context.Background(), &proto.ValidateRootRequest{
-		ConfigData: c.configData,
+		ConfigData: config.NewConfigData(),
 		Root:       root,
 		Network:    network,
 	})

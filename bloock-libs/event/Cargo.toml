@@ -1,0 +1,19 @@
+[package]
+name = "bloock-event"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+bench = false
+
+[dependencies]
+serde = { version = "1.0.139", features = ["std", "derive"] }
+async-trait = "0.1.57"
+thiserror = "1.0.31"
+serde_json = "1.0.82"
+base64 = "0.13.0"
+uuid = { version = "1.2.1", features = ["v4", "js"]}
+bloock-http = { path = "../http" }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2.82"

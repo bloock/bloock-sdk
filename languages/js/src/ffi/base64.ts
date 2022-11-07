@@ -33,12 +33,13 @@ export const base64ToBytes = (base64: string): Uint8Array => {
 export const bytesToBase64 = (bytes: Uint8Array): string => {
   //	summary
   //	Encode an array of bytes as a base64-encoded string
+  var t;
   var s = [],
     l = bytes.length;
   var rm = l % 3;
   var x = l - rm;
   for (var i = 0; i < x; ) {
-    var t = (bytes[i++] << 16) | (bytes[i++] << 8) | bytes[i++];
+    t = (bytes[i++] << 16) | (bytes[i++] << 8) | bytes[i++];
     s.push(tab.charAt((t >>> 18) & 0x3f));
     s.push(tab.charAt((t >>> 12) & 0x3f));
     s.push(tab.charAt((t >>> 6) & 0x3f));
@@ -47,7 +48,7 @@ export const bytesToBase64 = (bytes: Uint8Array): string => {
   //	deal with trailers, based on patch from Peter Wood.
   switch (rm) {
     case 2: {
-      var t = (bytes[i++] << 16) | (bytes[i++] << 8);
+      t = (bytes[i++] << 16) | (bytes[i++] << 8);
       s.push(tab.charAt((t >>> 18) & 0x3f));
       s.push(tab.charAt((t >>> 12) & 0x3f));
       s.push(tab.charAt((t >>> 6) & 0x3f));
@@ -55,7 +56,7 @@ export const bytesToBase64 = (bytes: Uint8Array): string => {
       break;
     }
     case 1: {
-      var t = bytes[i++] << 16;
+      t = bytes[i++] << 16;
       s.push(tab.charAt((t >>> 18) & 0x3f));
       s.push(tab.charAt((t >>> 12) & 0x3f));
       s.push(p);

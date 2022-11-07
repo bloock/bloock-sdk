@@ -8,9 +8,9 @@ impl Transport {
         provider: String,
         req: Request,
     ) -> Result<T, BlockchainError> {
-        let client = bloock_http::HttpClient::new("".to_string());
+        let client = bloock_http::SimpleHttpClient::new();
         let res: Response = client
-            .post(provider, req, None)
+            .post_json(provider, req, None)
             .await
             .map_err(|e| BlockchainError::Web3Error(e.to_string()))?;
 
