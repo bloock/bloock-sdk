@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set version env
         id: version
-        run: echo "::set-output name=bloock_version::$(cat VERSION)"
+        run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
       - uses: actions/setup-java@v1
         with:
           java-version: "10"
@@ -26,13 +26,13 @@ jobs:
       - name: Copy libraries into resources.
         run: |
           mkdir -p languages/java/lib/src/main/resources
-          [[ -e bloock_core_lib_dynamic/bloock_bridge.h ]] && cp -r bloock_core_lib_dynamic/bloock_bridge.h languages/java/lib/src/main/resources/bloock_bridge.h
+          cp -r bloock_core_lib_dynamic/bloock_bridge.h languages/java/lib/src/main/resources/bloock_bridge.h
           mkdir -p languages/java/lib/src/main/resources/linux
-          [[ -e bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-gnu.so ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-gnu.so languages/java/lib/src/main/resources/linux/
+          cp -r bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-gnu.so languages/java/lib/src/main/resources/linux/
           mkdir -p languages/java/lib/src/main/resources/macos
-          [[ -e bloock_core_lib_dynamic/libbloock_bridge-fat.dylib ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/
+          cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/lib/src/main/resources/macos/
           mkdir -p languages/java/lib/src/main/resources/win
-          [[ -e bloock_core_lib_dynamic/bloock_bridge_windows.dll ]] && cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/lib/src/main/resources/win/
+          cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/lib/src/main/resources/win/
       - name: Build
         run: |
           ./gradlew assemble
