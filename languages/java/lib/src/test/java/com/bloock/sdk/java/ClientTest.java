@@ -12,7 +12,10 @@ import com.bloock.sdk.java.entity.Proof;
 import com.bloock.sdk.java.entity.Record;
 import com.bloock.sdk.java.entity.RecordReceipt;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 class ClientTest {
     static Client getSdk() {
@@ -24,34 +27,33 @@ class ClientTest {
         return new Client();
     }
 
-
-    public static void main(String[] args) throws Exception {
+    @Test void e2e() throws Exception {
         Client sdk = getSdk();
         ArrayList<String> records = new ArrayList<>();
 
         Record record = Builder.fromString("Hello world").build();
         String hash = record.getHash();
-        assert "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd" == hash;
+        assert hash.equals("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd");
         records.add(hash);
 
         record = Builder.fromBytes(new byte[] { 1, 2, 3, 4, 5 }).build();
         hash = record.getHash();
-        assert "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4" == hash;
+        assert hash.equals("7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4");
         records.add(hash);
 
         record = Builder.fromHex("1234567890abcdef").build();
         hash = record.getHash();
-        assert "ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f" == hash;
+        assert hash.equals("ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f");
         records.add(hash);
 
         record = Builder.fromJson("{\"hello\":\"world\"}").build();
         hash = record.getHash();
-        assert "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312" == hash;
+        assert hash.equals("586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312");
         records.add(hash);
 
         record = Builder.fromFile(new byte[] { 2, 3, 4, 5, 6 }).build();
         hash = record.getHash();
-        assert "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446" == hash;
+        assert hash.equals("507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446");
         records.add(hash);
 
         String payload = "Hello world 2";
@@ -64,10 +66,10 @@ class ClientTest {
                 .withDecrypter(new AesDecrypter("some_password"))
                 .build();
 
-        assert payload.getBytes() == decryptedRecord.getPayload();
+        assert Arrays.equals(decryptedRecord.getPayload(), payload.getBytes());
 
         hash = decryptedRecord.getHash();
-        assert "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6" == hash;
+        assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
         records.add(hash);
 
         boolean throwsException = false;
@@ -92,13 +94,13 @@ class ClientTest {
                 .build();
 
         hash = recordWithMultipleSignatures.getHash();
-        assert "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f" == hash;
+        assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");
         records.add(hash);
 
         List<RecordReceipt> receipts = sdk.sendRecords(records);
 
         assert receipts.size() > 0;
-        assert receipts.get(0).getRecord() == records.get(0);
+        assert receipts.get(0).getRecord().equals(records.get(0));
 
         Anchor anchor = sdk.waitAnchor(receipts.get(0).getAnchor());
 
