@@ -6,13 +6,16 @@ import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordBuilderFromBytesR
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordBuilderFromFileRequest;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordBuilderFromHexRequest;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordBuilderFromJSONRequest;
+import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordBuilderFromLoaderRequest;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordBuilderFromRecordRequest;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordBuilderFromStringRequest;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordBuilderResponse;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordTypes;
 import com.bloock.sdk.java.bridge.proto.Shared.Error;
+import com.bloock.sdk.java.config.Config;
 import com.bloock.sdk.java.entity.Decrypter;
 import com.bloock.sdk.java.entity.Encrypter;
+import com.bloock.sdk.java.entity.Loader;
 import com.bloock.sdk.java.entity.Record;
 import com.bloock.sdk.java.entity.Signer;
 import com.google.protobuf.ByteString;
@@ -51,6 +54,10 @@ public class Builder {
 
   public static Builder fromBytes(byte[] bytes) {
     return new Builder(bytes, RecordTypes.BYTES);
+  }
+
+  public static Builder fromLoader(Loader loader) {
+    return new Builder(loader, RecordTypes.LOADER);
   }
 
   public Builder withSigner(Signer signer) {
@@ -183,6 +190,26 @@ public class Builder {
           }
 
           response = bridge.getRecord().buildRecordFromString(builder.build());
+          break;
+        }
+      case LOADER:
+        {
+          RecordBuilderFromLoaderRequest.Builder builder =
+              RecordBuilderFromLoaderRequest.newBuilder()
+                  .setConfigData(Config.newConfigData())
+                  .setLoader((RecordOuterClass.Loader) this.payload);
+
+          if (this.signer != null) {
+            builder.setSigner(this.signer);
+          }
+          if (this.encrypter != null) {
+            builder.setEncrypter(this.encrypter);
+          }
+          if (this.decrypter != null) {
+            builder.setDecrypter(this.decrypter);
+          }
+
+          response = bridge.getRecord().buildRecordFromLoader(builder.build());
           break;
         }
       default:
