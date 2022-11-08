@@ -6,6 +6,8 @@ from bloock.client.entity.encrypter import Encrypter
 from bloock.client.entity.decrypter import Decrypter
 from bloock.client.entity.record import Record
 from bloock.client.entity.signer import Signer
+from bloock.client.entity.loader import Loader
+from bloock._config.config import Config
 
 
 class RecordBuilder:
@@ -28,6 +30,16 @@ class RecordBuilder:
         return RecordBuilder(
             payload=record.to_proto(),
             payload_type=proto.RecordTypes.RECORD,
+            signer=None,
+            encrypter=None,
+            decrypter=None,
+        )
+
+    @staticmethod
+    def from_loader(loader: Loader) -> RecordBuilder:
+        return RecordBuilder(
+            payload=loader.to_proto(),
+            payload_type=proto.RecordTypes.LOADER,
             signer=None,
             encrypter=None,
             decrypter=None,
@@ -83,16 +95,6 @@ class RecordBuilder:
             decrypter=None,
         )
 
-    @staticmethod
-    def from_raw(b: str) -> RecordBuilder:
-        return RecordBuilder(
-            payload=b,
-            payload_type=proto.RecordTypes.RAW,
-            signer=None,
-            encrypter=None,
-            decrypter=None,
-        )
-
     def with_signer(self, signer: Signer) -> RecordBuilder:
         self.signer = signer.to_proto()
         return self
@@ -114,6 +116,16 @@ class RecordBuilder:
             res = client.record().BuildRecordFromRecord(
                 proto.RecordBuilderFromRecordRequest(
                     payload=self.payload,
+                    signer=self.signer,
+                    encrypter=self.encrypter,
+                    decrypter=self.decrypter,
+                )
+            )
+        elif self.payload_type == proto.RecordTypes.LOADER:
+            res = client.record().BuildRecordFromLoader(
+                proto.RecordBuilderFromLoaderRequest(
+                    config_data=Config.new(),
+                    loader=self.payload,
                     signer=self.signer,
                     encrypter=self.encrypter,
                     decrypter=self.decrypter,
@@ -158,15 +170,6 @@ class RecordBuilder:
         elif self.payload_type == proto.RecordTypes.BYTES:
             res = client.record().BuildRecordFromBytes(
                 proto.RecordBuilderFromBytesRequest(
-                    payload=self.payload,
-                    signer=self.signer,
-                    encrypter=self.encrypter,
-                    decrypter=self.decrypter,
-                )
-            )
-        elif self.payload_type == proto.RecordTypes.RAW:
-            res = client.record().BuildRecordFromRaw(
-                proto.RecordBuilderFromRawRequest(
                     payload=self.payload,
                     signer=self.signer,
                     encrypter=self.encrypter,

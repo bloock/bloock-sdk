@@ -1,7 +1,7 @@
 use crate::config::{self, config_data::ConfigData};
 use crate::error::BloockError;
 use crate::error::ErrorKind;
-use bloock_http::HttpClient;
+use bloock_http::BloockHttpClient;
 #[cfg(test)]
 use bloock_http::MockClient;
 use serde::Serialize;
@@ -24,9 +24,9 @@ impl From<AnchorError> for BloockError {
 }
 
 pub fn configure(
-    http: Arc<HttpClient>,
+    http: Arc<BloockHttpClient>,
     config_data: Arc<ConfigData>,
-) -> service::AnchorService<HttpClient> {
+) -> service::AnchorService<BloockHttpClient> {
     service::AnchorService {
         http: Arc::clone(&http),
         config_service: config::configure(Arc::clone(&config_data)),

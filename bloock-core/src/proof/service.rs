@@ -49,7 +49,7 @@ impl<H: Client> ProofService<H> {
 
         let response = match self
             .http
-            .post::<String, ProofRetrieveRequest, ProofRetrieveResponse>(url, body, None)
+            .post_json::<String, ProofRetrieveRequest, ProofRetrieveResponse>(url, body, None)
             .await
         {
             Ok(res) => res,
@@ -279,12 +279,13 @@ mod tests {
             },
         };
         let mut http = MockClient::default();
-        http.expect_post::<String, ProofRetrieveRequest, ProofRetrieveResponse>()
+        http.expect_post_json::<String, ProofRetrieveRequest, ProofRetrieveResponse>()
             .return_once(|_, _, _| Ok(response));
 
         let service = configure_test(Arc::new(http));
         let final_response = service
             .get_proof(vec![RecordBuilder::from_string("Some String")
+                .unwrap()
                 .build()
                 .unwrap()])
             .await

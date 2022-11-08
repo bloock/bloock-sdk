@@ -1,5 +1,0 @@
-FROM ghcr.io/cross-rs/aarch64-apple-darwin:latest
-
-RUN curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v21.5/protoc-21.5-osx-aarch_64.zip
-RUN unzip protoc-21.5-osx-aarch_64.zip -d $HOME/.local 
-RUN export PATH="$PATH:$HOME/.local/bin"

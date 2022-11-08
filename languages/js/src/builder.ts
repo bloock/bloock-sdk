@@ -7,16 +7,18 @@ import {
   RecordBuilderFromBytesRequest,
   RecordBuilderFromFileRequest,
   RecordBuilderFromRecordRequest,
-  RecordBuilderFromRawRequest,
   Signer as SignerProto,
   Encrypter as EncrypterProto,
-  Decrypter as DecrypterProto
+  Decrypter as DecrypterProto,
+  RecordBuilderFromLoaderRequest
 } from "./bridge/proto/record";
 
 import { Record } from "./entity/record";
 import { Signer } from "./entity/signer";
 import { Encrypter } from "./entity/encrypter";
 import { Decrypter } from "./entity/decrypter";
+import { Loader } from "./entity/loader";
+import { NewConfigData } from "./config/config";
 
 export class RecordBuilder {
   payload: any;
@@ -34,8 +36,8 @@ export class RecordBuilder {
     return new RecordBuilder(str, RecordTypes.STRING);
   }
 
-  public static fromJson(json: string): RecordBuilder {
-    return new RecordBuilder(json, RecordTypes.JSON);
+  public static fromJson(json: any): RecordBuilder {
+    return new RecordBuilder(JSON.stringify(json), RecordTypes.JSON);
   }
 
   public static fromHex(hex: string): RecordBuilder {
@@ -54,8 +56,8 @@ export class RecordBuilder {
     return new RecordBuilder(bytes, RecordTypes.RECORD);
   }
 
-  public static fromRaw(raw: string): RecordBuilder {
-    return new RecordBuilder(raw, RecordTypes.RAW);
+  public static fromLoader(loader: Loader): RecordBuilder {
+    return new RecordBuilder(loader, RecordTypes.LOADER);
   }
 
   public withSigner(signer: Signer): RecordBuilder {
@@ -184,9 +186,10 @@ export class RecordBuilder {
             return Record.fromProto(res.record!);
           });
       }
-      case RecordTypes.RAW: {
-        const req = RecordBuilderFromRawRequest.fromPartial({
-          payload: this.payload,
+      case RecordTypes.LOADER: {
+        const req = RecordBuilderFromLoaderRequest.fromPartial({
+          configData: NewConfigData(),
+          loader: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
           decrypter: this.decrypter
@@ -194,7 +197,7 @@ export class RecordBuilder {
 
         return bridge
           .getRecord()
-          .BuildRecordFromRaw(req)
+          .BuildRecordFromLoader(req)
           .then(res => {
             if (res.error) {
               throw res.error;

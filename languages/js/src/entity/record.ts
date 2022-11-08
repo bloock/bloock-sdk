@@ -1,47 +1,22 @@
 import { BloockBridge } from "../bridge/bridge";
 import * as proto from "../bridge/proto/record";
-import { Proof } from "./proof";
+import { NewConfigData } from "../config/config";
+import { Publisher } from "./publisher";
 
 export class Record {
-  headers?: RecordHeader;
   payload: Uint8Array;
-  signatures: Signature[];
-  encryption?: Encryption | undefined;
-  proof?: Proof | undefined;
 
-  constructor(
-    headers: RecordHeader | undefined,
-    payload: Uint8Array,
-    signatures: Signature[],
-    encryption: Encryption | undefined,
-    proof: Proof | undefined
-  ) {
-    this.headers = headers;
+  constructor(payload: Uint8Array) {
     this.payload = payload;
-    this.signatures = signatures;
-    this.encryption = encryption;
-    this.proof = proof;
   }
 
   static fromProto(r: proto.Record) {
-    return new Record(
-      r.headers === undefined ? undefined : RecordHeader.fromProto(r.headers),
-      r.payload,
-      r.signatures.map(x => Signature.fromProto(x)),
-      r.encryption === undefined
-        ? undefined
-        : Encryption.fromProto(r.encryption),
-      r.proof === undefined ? undefined : Proof.fromProto(r.proof)
-    );
+    return new Record(r.payload);
   }
 
   toProto(): proto.Record {
     return proto.Record.fromPartial({
-      headers: this.headers,
-      payload: this.payload,
-      signatures: this.signatures.map(s => s.toProto()),
-      encryption: this.encryption,
-      proof: this.proof
+      payload: this.payload
     });
   }
 
@@ -50,6 +25,21 @@ export class Record {
     return bridge
       .getRecord()
       .GetHash(this.toProto())
+      .then(res => {
+        return res.hash;
+      });
+  }
+
+  async publish(publisher: Publisher): Promise<string> {
+    const bridge = new BloockBridge();
+    const request = proto.PublishRequest.fromPartial({
+      configData: NewConfigData(),
+      publisher: publisher.toProto(),
+      record: this.toProto()
+    });
+    return bridge
+      .getRecord()
+      .Publish(request)
       .then(res => {
         return res.hash;
       });
@@ -113,43 +103,6 @@ export class SignatureHeader {
 
   toProto(): proto.SignatureHeader {
     return proto.SignatureHeader.fromPartial({ alg: this.alg, kid: this.kid });
-  }
-}
-
-export class Encryption {
-  header: EncryptionHeader;
-  protected: string;
-
-  constructor(header: EncryptionHeader, prot: string) {
-    this.header = header;
-    this.protected = prot;
-  }
-
-  static fromProto(e: proto.Encryption): Encryption {
-    return new Encryption(EncryptionHeader.fromProto(e.header!), e.protected);
-  }
-
-  toProto(): proto.Encryption {
-    return proto.Encryption.fromPartial({
-      header: this.header.toProto(),
-      protected: this.protected
-    });
-  }
-}
-
-export class EncryptionHeader {
-  alg: string;
-
-  constructor(alg: string) {
-    this.alg = alg;
-  }
-
-  static fromProto(e: proto.EncryptionHeader): EncryptionHeader {
-    return new EncryptionHeader(e.alg);
-  }
-
-  toProto(): proto.EncryptionHeader {
-    return proto.EncryptionHeader.fromPartial({ alg: this.alg });
   }
 }
 

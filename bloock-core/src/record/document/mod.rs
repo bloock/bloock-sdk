@@ -1,423 +1,340 @@
-pub mod types;
-
-use bloock_encrypter::Encryption;
+use crate::{
+    error::{BloockResult, InfrastructureError},
+    proof::entity::proof::Proof,
+};
+use bloock_encrypter::EncrypterError;
+use bloock_metadata::{FileParser, MetadataParser};
 use bloock_signer::Signature;
-use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
-use std::fmt::{Debug, Display};
 
-use crate::error::BloockResult;
-use crate::proof::entity::proof::Proof;
-use crate::record::RecordError;
-
-#[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
-pub struct Headers {
-    pub ty: String,
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+pub struct Metadata {
+    pub signatures: Option<Vec<Signature>>,
+    pub proof: Option<Proof>,
+    pub is_encrypted: bool,
 }
 
-#[derive(Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug)]
 pub struct Document {
-    pub headers: Headers,
+    parser: FileParser,
+    is_encrypted: bool,
+
     pub payload: Vec<u8>,
     pub signatures: Option<Vec<Signature>>,
-    pub encryption: Option<Encryption>,
     pub proof: Option<Proof>,
 }
 
 impl Document {
-    pub fn new(
-        headers: Headers,
-        payload: Vec<u8>,
-        signatures: Option<Vec<Signature>>,
-        encryption: Option<Encryption>,
-        proof: Option<Proof>,
-    ) -> Self {
-        Self {
-            headers,
+    pub fn new(payload: &[u8]) -> BloockResult<Self> {
+        let mut parser = FileParser::load(payload).map_err(InfrastructureError::MetadataError)?;
+
+        let is_encrypted = parser.get("is_encrypted").unwrap_or(false);
+        let proof = parser.get("proof");
+        let signatures = parser.get("signatures");
+
+        let payload = parser
+            .get_data()
+            .map_err(InfrastructureError::MetadataError)?;
+
+        let doc = Document {
+            parser,
             payload,
-            signatures,
-            encryption,
             proof,
-        }
-    }
-
-    pub fn get_payload(&self) -> &[u8] {
-        &self.payload
-    }
-
-    pub fn add_signature(&mut self, signature: Signature) -> &mut Self {
-        match self.signatures.as_mut() {
-            Some(signatures) => signatures.push(signature),
-            None => self.signatures = Some(vec![signature]),
+            signatures,
+            is_encrypted,
         };
 
-        self
+        Ok(doc)
     }
 
-    pub fn set_encryption(&mut self, encryption: Encryption) {
-        self.payload = encryption.ciphertext.clone();
-        self.encryption = Some(encryption);
+    pub fn add_signature(&mut self, signature: Signature) -> BloockResult<&mut Self> {
+        if self.is_encrypted {
+            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
+        }
+        let signatures = match self.signatures.clone() {
+            Some(mut s) => {
+                s.push(signature);
+                s
+            }
+            None => vec![signature],
+        };
+
+        self.signatures = Some(signatures);
+        Ok(self)
     }
 
-    pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) {
-        self.payload = decrypted_payload;
-        self.encryption = None;
+    pub fn set_encryption(&mut self, ciphertext: Vec<u8>) -> BloockResult<()> {
+        self.update_parser(ciphertext)?;
+        self.update_payload()?;
+
+        self.signatures = None;
+        self.proof = None;
+        self.is_encrypted = true;
+
+        Ok(())
     }
 
-    pub fn set_proof(&mut self, proof: Proof) -> &mut Self {
+    pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
+        self.update_parser(decrypted_payload)?;
+        self.update_payload()?;
+
+        self.is_encrypted = false;
+        self.proof = self.parser.get("proof");
+        self.signatures = self.parser.get("signatures");
+        Ok(())
+    }
+
+    pub fn is_encrypted(&self) -> bool {
+        self.is_encrypted
+    }
+
+    pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
+        if self.is_encrypted {
+            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
+        }
         self.proof = Some(proof);
-        self
+        Ok(())
     }
 
-    pub fn serialize(&self) -> BloockResult<String> {
-        let headers = serde_json::to_vec(&self.headers)
-            .map_err(|e| RecordError::DocumentSerializationError(e.to_string()))?;
-
-        let signatures = self
-            .signatures
-            .as_ref()
-            .map(|s| {
-                serde_json::to_vec(s)
-                    .map_err(|e| RecordError::DocumentSerializationError(e.to_string()))
-            })
-            .unwrap_or(Ok(Vec::new()))?;
-
-        let encryption = self
-            .encryption
-            .as_ref()
-            .map(|e| {
-                serde_json::to_vec(e)
-                    .map_err(|e| RecordError::DocumentSerializationError(e.to_string()))
-            })
-            .unwrap_or(Ok(Vec::new()))?;
-
-        let proof = self
-            .proof
-            .as_ref()
-            .map(|e| {
-                serde_json::to_vec(e)
-                    .map_err(|e| RecordError::DocumentSerializationError(e.to_string()))
-            })
-            .unwrap_or(Ok(Vec::new()))?;
-
-        Ok(format!(
-            "{}.{}.{}.{}.{}",
-            base64_url::encode(&headers),
-            base64_url::encode(&self.payload),
-            base64_url::encode(&signatures),
-            base64_url::encode(&encryption),
-            base64_url::encode(&proof)
-        ))
+    pub fn get_signatures(&self) -> Option<Vec<Signature>> {
+        self.signatures.clone()
     }
 
-    pub fn deserialize(bytes: Vec<u8>) -> BloockResult<Self> {
-        let encoded = String::from_utf8(bytes)
-            .map_err(|e| RecordError::DocumentDeserializationError(e.to_string()))?;
+    pub fn get_proof(&self) -> Option<Proof> {
+        self.proof.clone()
+    }
 
-        let splitted: Vec<&str> = encoded.split('.').into_iter().collect();
+    pub fn get_payload(&self) -> Vec<u8> {
+        self.payload.clone()
+    }
 
-        fn deserialize_field<T: DeserializeOwned>(field: &str) -> Option<T> {
-            let decoded = base64_url::decode(field).ok()?;
-            serde_json::from_slice(&decoded).ok()
+    fn update_parser(&mut self, payload: Vec<u8>) -> BloockResult<()> {
+        self.parser = FileParser::load(&payload).map_err(InfrastructureError::MetadataError)?;
+        Ok(())
+    }
+
+    fn update_payload(&mut self) -> BloockResult<()> {
+        self.payload = self
+            .parser
+            .get_data()
+            .map_err(InfrastructureError::MetadataError)?;
+        Ok(())
+    }
+
+    pub fn build(&mut self) -> BloockResult<Vec<u8>> {
+        let metadata = Metadata {
+            signatures: self.get_signatures(),
+            proof: self.get_proof(),
+            is_encrypted: self.is_encrypted,
+        };
+
+        Self::build_file(&mut self.parser, metadata)
+    }
+
+    fn build_file(parser: &mut FileParser, metadata: Metadata) -> BloockResult<Vec<u8>> {
+        if metadata.is_encrypted {
+            parser
+                .set("is_encrypted", &true)
+                .map_err(InfrastructureError::MetadataError)?;
         }
 
-        let headers: Headers = deserialize_field(splitted[0]).ok_or_else(|| {
-            RecordError::DocumentDeserializationError("couldn't find headers".to_string())
-        })?;
-        let payload: Vec<u8> = base64_url::decode(splitted[1]).map_err(|_| {
-            RecordError::DocumentDeserializationError("couldn't find payload".to_string())
-        })?;
-        let signatures: Option<Vec<Signature>> = deserialize_field(splitted[2]);
-        let encryption: Option<Encryption> = deserialize_field(splitted[3]);
-        let proof: Option<Proof> = deserialize_field(splitted[4]);
+        if let Some(proof) = metadata.proof {
+            parser
+                .set("proof", &proof)
+                .map_err(InfrastructureError::MetadataError)?;
+        }
 
-        Ok(Self {
-            headers,
-            payload,
-            signatures,
-            encryption,
-            proof,
-        })
+        if let Some(signatures) = metadata.signatures {
+            parser
+                .set("signatures", &signatures)
+                .map_err(InfrastructureError::MetadataError)?;
+        }
+
+        let result = parser.build().map_err(InfrastructureError::MetadataError)?;
+        Ok(result)
     }
 }
 
-impl Display for Document {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let encoded = self
-            .serialize()
-            .unwrap_or_else(|_| "invalid_document".to_string());
-        let splitted: Vec<&str> = encoded.split('.').into_iter().collect();
-
-        fn decode_field(field: &str) -> Option<serde_json::Value> {
-            let decoded = base64_url::decode(field).ok()?;
-            serde_json::from_slice(&decoded).ok()
-        }
-
-        let headers = decode_field(splitted[0]);
-        let payload = decode_field(splitted[1]);
-        let signatures = decode_field(splitted[2]);
-        let encryption = decode_field(splitted[3]);
-        let proof = decode_field(splitted[4]);
-
-        let output = json!({
-            "headers": headers,
-            "payload": payload,
-            "signatures": signatures,
-            "encryption": encryption,
-            "proof": proof
-        });
-
-        f.write_str(
-            &serde_json::to_string(&output).unwrap_or_else(|_| "invalid_document".to_string()),
-        )
+impl PartialEq for Document {
+    fn eq(&self, other: &Self) -> bool {
+        self.get_payload() == other.get_payload()
     }
 }
+
+impl Eq for Document {}
 
 #[cfg(test)]
 mod tests {
 
-    use crate::proof::entity::anchor::ProofAnchor;
+    use bloock_encrypter::{
+        aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs},
+        Decrypter, Encrypter,
+    };
 
-    use super::{types::PayloadType, *};
-    use bloock_encrypter::EncryptionHeader;
-    use bloock_hasher::from_hex;
-    use bloock_signer::SignatureHeader;
-    use serde_json::json;
-    use std::vec;
+    use bloock_signer::{
+        ecsda::{EcsdaSigner, EcsdaSignerArgs},
+        SignatureHeader, Signer,
+    };
 
-    #[test]
-    fn test_with_payload() {
-        let headers = PayloadType::String.to_header();
-        let payload = "Some string".as_bytes().to_vec();
-        let document = Document::new(headers, payload.clone(), None, None, None);
+    use crate::{
+        anchor::entity::anchor::AnchorNetwork, proof::entity::anchor::ProofAnchor,
+        record::entity::record::Record,
+    };
 
-        let expected_headers = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "ty": "string"
-            }))
-            .unwrap(),
-        );
-        let expected_payload = base64_url::encode(&payload);
-        let expected_output = format!("{}.{}...", expected_headers, expected_payload);
+    use super::*;
 
-        assert_eq!(
-            expected_output,
-            document.serialize().unwrap(),
-            "Unexpected output received"
-        );
+    #[tokio::test]
+    async fn test_signed_pdf() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let signer = EcsdaSigner::new(EcsdaSignerArgs::new(
+            "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457",
+        ));
+
+        let mut document = Document::new(payload).unwrap();
+        let signature = signer.sign(payload).unwrap();
+        document.add_signature(signature.clone()).unwrap();
+        let built_doc = document.build().unwrap();
+        let signed_doc = Document::new(&built_doc).unwrap();
+        assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
     }
 
-    #[test]
-    fn test_with_payload_and_signature() {
-        let headers = PayloadType::String.to_header();
-        let payload = "Some string".as_bytes().to_vec();
-        let signature = Signature {
-            protected: "e0".to_string(),
-            header: SignatureHeader {
-                alg: "ECSDA".to_string(),
-                kid: "1234567890abcdef".to_string(),
-            },
-            signature: "1234567890abcdef1234567890abcdef".to_string(),
-        };
-        let document = Document::new(headers, payload.clone(), Some(vec![signature]), None, None);
+    #[tokio::test]
+    async fn test_encrypted_pdf() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
 
-        let expected_headers = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "ty": "string"
-            }))
-            .unwrap(),
-        );
-        let expected_payload = base64_url::encode(&payload);
-        let expected_signature = base64_url::encode(
-            &serde_json::to_vec(&json!([{
-                "header": {
-                    "alg": "ECSDA",
-                    "kid": "1234567890abcdef",
-                },
-                "protected": "e0",
-                "signature": "1234567890abcdef1234567890abcdef",
-            }]))
-            .unwrap(),
-        );
-        let expected_output = format!(
-            "{}.{}.{}..",
-            expected_headers, expected_payload, expected_signature
-        );
+        let mut document = Document::new(payload).unwrap();
+        let expected_payload = document.build().unwrap();
 
-        assert_eq!(
-            expected_output,
-            document.serialize().unwrap(),
-            "Unexpected output received"
-        );
+        let original_record = Record::new(document.clone());
+
+        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
+        document.set_encryption(ciphertext).unwrap();
+
+        let built_doc = document.build().unwrap();
+        let encrypted_doc = Document::new(&built_doc).unwrap();
+
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
+        let decrypted_payload = decrypter
+            .decrypt(&encrypted_doc.get_payload(), &[])
+            .unwrap();
+
+        assert_eq!(decrypted_payload, expected_payload);
+
+        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_record = Record::new(decrypted_doc);
+
+        assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
     }
+    #[tokio::test]
+    async fn test_encrypted_pdf_with_proof() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
 
-    #[test]
-    fn test_with_payload_and_signature_and_encryption() {
-        let headers = PayloadType::String.to_header();
-        let payload = "Some string".as_bytes().to_vec();
-        let signature = Signature {
-            protected: "e0".to_string(),
-            header: SignatureHeader {
-                alg: "ECSDA".to_string(),
-                kid: "1234567890abcdef".to_string(),
-            },
-            signature: "1234567890abcdef1234567890abcdef".to_string(),
-        };
-        let encryption = Encryption {
-            ciphertext: "ciphertext".as_bytes().to_vec(),
-            header: EncryptionHeader {
-                alg: "AES_ALG".to_string(),
-                enc: "AES_ENC".to_string(),
-                cty: "pdf".to_string(),
-            },
-            protected: "e0".to_string(),
-            tag: "id".to_string(),
-        };
-
-        let document = Document::new(
-            headers,
-            payload.clone(),
-            Some(vec![signature]),
-            Some(encryption.clone()),
-            None,
-        );
-
-        let expected_headers = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "ty": "string"
-            }))
-            .unwrap(),
-        );
-        let expected_payload = base64_url::encode(&payload);
-        let expected_signature = base64_url::encode(
-            &serde_json::to_vec(&json!([{
-                "header": {
-                    "alg": "ECSDA",
-                    "kid": "1234567890abcdef",
-                },
-                "protected": "e0",
-                "signature": "1234567890abcdef1234567890abcdef",
-            }]))
-            .unwrap(),
-        );
-
-        let expected_encryption = base64_url::encode(&serde_json::to_vec(&encryption).unwrap());
-
-        let expected_output = format!(
-            "{}.{}.{}.{}.",
-            expected_headers, expected_payload, expected_signature, expected_encryption
-        );
-
-        assert_eq!(
-            expected_output,
-            document.serialize().unwrap(),
-            "Unexpected output received"
-        );
-    }
-
-    #[test]
-    fn test_with_payload_and_signature_and_encryption_and_proof() {
-        let headers = PayloadType::String.to_header();
-        let payload = "Some string".as_bytes().to_vec();
-        let signature = Signature {
-            protected: "e0".to_string(),
-            header: SignatureHeader {
-                alg: "ECSDA".to_string(),
-                kid: "1234567890abcdef".to_string(),
-            },
-            signature: "1234567890abcdef1234567890abcdef".to_string(),
-        };
-
-        let encryption = Encryption {
-            protected: "e0".to_string(),
-            header: EncryptionHeader {
-                alg: "AES_ALG".to_string(),
-                enc: "AES_ENC".to_string(),
-                cty: "pdf".to_string(),
-            },
-            ciphertext: "ciphertext".as_bytes().to_vec(),
-            tag: "id".to_string(),
-        };
+        let mut document = Document::new(payload).unwrap();
 
         let proof = Proof {
-            leaves: vec![from_hex(
-                "1ca0e9d9a206f08d38a4e2cf485351674ffc9b0f3175e0cb6dbd8e0e19829b97",
-            )
-            .unwrap()],
-            nodes: vec![from_hex(
-                "1ca0e9d9a206f08d38a4e2cf485351674ffc9b0f3175e0cb6dbd8e0e19829b97",
-            )
-            .unwrap()],
-            depth: "000500050004000400040004000400030001".to_string(),
-            bitmap: "6d80".to_string(),
             anchor: ProofAnchor {
                 anchor_id: 1,
-                networks: vec![],
-                root: "".to_string(),
-                status: "pending".to_string(),
+                networks: vec![AnchorNetwork {
+                    name: "net".to_string(),
+                    state: "state".to_string(),
+                    tx_hash: "tx_hash".to_string(),
+                }],
+                root: "root".to_string(),
+                status: "status".to_string(),
             },
+            bitmap: "111".to_string(),
+            depth: "111".to_string(),
+            leaves: vec![[0u8; 32]],
+            nodes: vec![[0u8; 32]],
         };
-        let document = Document::new(
-            headers,
-            payload.clone(),
-            Some(vec![signature]),
-            Some(encryption.clone()),
-            Some(proof),
-        );
 
-        let expected_headers = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "ty": "string"
-            }))
-            .unwrap(),
-        );
-        let expected_payload = base64_url::encode(&payload);
-        let expected_signature = base64_url::encode(
-            &serde_json::to_vec(&json!([{
-                "header": {
-                    "alg": "ECSDA",
-                    "kid": "1234567890abcdef",
-                },
-                "protected": "e0",
-                "signature": "1234567890abcdef1234567890abcdef",
-            }]))
-            .unwrap(),
-        );
-        let expected_encryption = base64_url::encode(&serde_json::to_vec(&encryption).unwrap());
+        document.set_proof(proof.clone()).unwrap();
 
-        let expected_proof = base64_url::encode(
-            &serde_json::to_vec(&json!({
-                "leaves": [
-                    "1ca0e9d9a206f08d38a4e2cf485351674ffc9b0f3175e0cb6dbd8e0e19829b97"
-                ],
-                "nodes": [
-                    "1ca0e9d9a206f08d38a4e2cf485351674ffc9b0f3175e0cb6dbd8e0e19829b97"
-                ],
-                "depth": "000500050004000400040004000400030001",
-                "bitmap": "6d80",
-                "anchor": {
-                    "anchor_id": 1,
-                    "networks": [],
-                    "root": "",
-                    "status": "pending",
-                }
-            }))
-            .unwrap(),
-        );
-        let expected_output = format!(
-            "{}.{}.{}.{}.{}",
-            expected_headers,
-            expected_payload,
-            expected_signature,
-            expected_encryption,
-            expected_proof
-        );
+        let expected_payload = document.build().unwrap();
 
-        assert_eq!(
-            expected_output,
-            document.serialize().unwrap(),
-            "Unexpected output received"
-        );
+        let original_record = Record::new(document.clone());
+
+        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
+        document.set_encryption(ciphertext).unwrap();
+
+        let built_doc = document.build().unwrap();
+        let encrypted_doc = Document::new(&built_doc).unwrap();
+
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
+        let decrypted_payload = decrypter
+            .decrypt(&encrypted_doc.get_payload(), &[])
+            .unwrap();
+
+        assert_eq!(decrypted_payload, expected_payload);
+
+        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_record = Record::new(decrypted_doc);
+
+        assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
+        assert_eq!(decrypted_record.get_proof().unwrap(), proof);
+    }
+
+    #[tokio::test]
+    async fn test_encrypted_pdf_with_and_signatures() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
+
+        let mut document = Document::new(payload).unwrap();
+
+        let proof = Proof {
+            anchor: ProofAnchor {
+                anchor_id: 1,
+                networks: vec![AnchorNetwork {
+                    name: "net".to_string(),
+                    state: "state".to_string(),
+                    tx_hash: "tx_hash".to_string(),
+                }],
+                root: "root".to_string(),
+                status: "status".to_string(),
+            },
+            bitmap: "111".to_string(),
+            depth: "111".to_string(),
+            leaves: vec![[0u8; 32]],
+            nodes: vec![[0u8; 32]],
+        };
+
+        let signature = Signature {
+            header: SignatureHeader {
+                alg: "ES256K".to_string(),
+                kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
+            },
+            protected: "e30".to_string(),
+            signature: "945efccb10955499e50bd4e1eeadb51aac9136f3e91b8d29c1b817cb42284268500b5f191693a0d927601df5f282804a6eacf5ff8a1522bda5c2ec4dc681750b".to_string(),
+        };
+
+        document.set_proof(proof.clone()).unwrap();
+
+        document.add_signature(signature.clone()).unwrap();
+
+        let expected_payload = document.build().unwrap();
+
+        let original_record = Record::new(document.clone());
+
+        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
+        document.set_encryption(ciphertext).unwrap();
+
+        let built_doc = document.build().unwrap();
+        let encrypted_doc = Document::new(&built_doc).unwrap();
+
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
+        let decrypted_payload = decrypter
+            .decrypt(&encrypted_doc.get_payload(), &[])
+            .unwrap();
+
+        assert_eq!(decrypted_payload, expected_payload);
+
+        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_record = Record::new(decrypted_doc);
+
+        assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
+        assert_eq!(decrypted_record.get_proof().unwrap(), proof);
+        assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
     }
 }

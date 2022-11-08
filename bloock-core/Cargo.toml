@@ -13,20 +13,19 @@ serde_json = "1.0.82"
 cfg-if = "1.0.0"
 hex = "0.4.3"
 bitvec = "1"
-infer = "0.9.0"
 base64-url = "1.4.13"
 async-std = "1.12.0"
 bloock-hasher = { path = "../bloock-libs/hasher" }
+bloock-event = { path = "../bloock-libs/event" }
 bloock-signer = { path = "../bloock-libs/signer" }
 bloock-encrypter = { path = "../bloock-libs/encrypter" }
-bloock-publisher = { path = "../bloock-libs/publisher" }
+bloock-metadata = { path = "../bloock-libs/metadata" }
 bloock-http = { path = "../bloock-libs/http" }
 bloock-web3 = { path = "../bloock-libs/web3" }
 
 [dev-dependencies]
 mockall = "0.11.2"
 tokio = { version = "1.20.1", features = ["rt", "macros"]}
-bloock-publisher = { path = "../bloock-libs/publisher", features = ["testing"] }
 
 [dev-dependencies.bloock-http]
 path = "../bloock-libs/http"

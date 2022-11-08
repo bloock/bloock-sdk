@@ -1,12 +1,6 @@
 from typing import List
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
-from bloock._bridge.proto.config_pb2 import (
-    Network as NetworkProto,
-    ConfigData,
-    Configuration,
-    NetworkConfig,
-)
 from bloock._bridge.proto.proof_pb2 import (
     GetProofRequest,
     ValidateRootRequest,
@@ -19,24 +13,16 @@ from bloock.client.entity.anchor import Anchor
 from bloock.client.entity.network import Network
 from bloock.client.entity.proof import Proof
 from bloock.client.entity.record import Keys, RecordReceipt
+from bloock._config.config import Config
 
 
 class Client:
-    def __init__(self, api_key: str) -> None:
+    def __init__(self) -> None:
         self.bridge_client = bridge.BloockBridge()
-        self.config_data = ConfigData(
-            config=Configuration(api_key=api_key),
-        )
-
-    def set_api_host(self, host: str):
-        self.config_data.config.host = host
-
-    def set_network_config(self, network: Network, config: NetworkConfig):
-        self.config_data.networks_config[Network.to_proto(network)].CopyFrom(config)
 
     def send_records(self, records: List[str]) -> List[RecordReceipt]:
         res = self.bridge_client.record().SendRecords(
-            SendRecordsRequest(config_data=self.config_data, records=records)
+            SendRecordsRequest(config_data=Config.new(), records=records)
         )
 
         if res.error != Error():
@@ -45,7 +31,7 @@ class Client:
 
     def get_anchor(self, anchor_id: int) -> Anchor:
         res = self.bridge_client.anchor().GetAnchor(
-            GetAnchorRequest(config_data=self.config_data, anchor_id=anchor_id)
+            GetAnchorRequest(config_data=Config.new(), anchor_id=anchor_id)
         )
 
         if res.error != Error():
@@ -56,7 +42,7 @@ class Client:
     def wait_anchor(self, anchor_id: int, timeout=120000) -> Anchor:
         res = self.bridge_client.anchor().WaitAnchor(
             WaitAnchorRequest(
-                config_data=self.config_data, anchor_id=anchor_id, timeout=timeout
+                config_data=Config.new(), anchor_id=anchor_id, timeout=timeout
             )
         )
 
@@ -67,7 +53,7 @@ class Client:
 
     def get_proof(self, records: List[str]) -> Proof:
         res = self.bridge_client.proof().GetProof(
-            GetProofRequest(config_data=self.config_data, records=records)
+            GetProofRequest(config_data=Config.new(), records=records)
         )
 
         if res.error != Error():
@@ -77,7 +63,7 @@ class Client:
 
     def verify_proof(self, proof: Proof) -> str:
         res = self.bridge_client.proof().VerifyProof(
-            VerifyProofRequest(config_data=self.config_data, proof=proof.to_proto())
+            VerifyProofRequest(config_data=Config.new(), proof=proof.to_proto())
         )
 
         if res.error != Error():
@@ -90,7 +76,7 @@ class Client:
     ) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
-                config_data=self.config_data,
+                config_data=Config.new(),
                 records=records,
                 network=Network.to_proto(network),
             )
@@ -104,7 +90,7 @@ class Client:
     def validate_root(self, root: str, network: Network) -> int:
         res = self.bridge_client.proof().ValidateRoot(
             ValidateRootRequest(
-                config_data=self.config_data,
+                config_data=Config.new(),
                 root=root,
                 network=Network.to_proto(network),
             )

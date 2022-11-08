@@ -1,7 +1,7 @@
 import { BloockBridge } from "./bridge/bridge";
 
 import { GetAnchorRequest, WaitAnchorRequest } from "./bridge/proto/anchor";
-import { ConfigData, Network, NetworkConfig } from "./bridge/proto/config";
+import { Network } from "./bridge/proto/config";
 import {
   GetProofRequest,
   ValidateRootRequest,
@@ -9,37 +9,16 @@ import {
   VerifyRecordsRequest
 } from "./bridge/proto/proof";
 import { GenerateKeysRequest, SendRecordsRequest } from "./bridge/proto/record";
-
 import { Proof } from "./entity/proof";
 import { Anchor } from "./entity/anchor";
 import { Keys, RecordReceipt } from "./entity/record";
-
 import { NewConfigData } from "./config/config";
 
 export class BloockClient {
   private bridge: BloockBridge;
-  private configData: ConfigData;
 
-  constructor(apiKey: string) {
+  constructor() {
     this.bridge = new BloockBridge();
-    this.configData = NewConfigData(apiKey);
-  }
-
-  /**
-   * Overrides the API host.
-   * @param  {string} host The API host to apply
-   */
-  public setApiHost(host: string) {
-    this.configData.config!.host = host;
-  }
-
-  /**
-   * Overrides the Network configuration.
-   * @param {Network} network The network that we are modifying the config of
-   * @param {NetworkConfig} config The config we are going to set
-   */
-  public setNetworkConfiguration(network: Network, config: NetworkConfig) {
-    this.configData.networksConfig[network] = config;
   }
 
   /**
@@ -49,7 +28,7 @@ export class BloockClient {
    */
   public async sendRecords(records: string[]): Promise<RecordReceipt[]> {
     const request = SendRecordsRequest.fromPartial({
-      configData: this.configData,
+      configData: NewConfigData(),
       records: records
     });
 
@@ -68,7 +47,7 @@ export class BloockClient {
    */
   public async getAnchor(anchorId: number): Promise<Anchor> {
     const request = GetAnchorRequest.fromPartial({
-      configData: this.configData,
+      configData: NewConfigData(),
       anchorId: anchorId
     });
 
@@ -88,7 +67,7 @@ export class BloockClient {
    */
   public async waitAnchor(anchorId: number, timeout?: number): Promise<Anchor> {
     const request = WaitAnchorRequest.fromPartial({
-      configData: this.configData,
+      configData: NewConfigData(),
       anchorId: anchorId,
       timeout: timeout !== null ? timeout : 120000
     });
@@ -109,7 +88,7 @@ export class BloockClient {
    */
   public async getProof(records: string[]): Promise<Proof> {
     const request = GetProofRequest.fromPartial({
-      configData: this.configData,
+      configData: NewConfigData(),
       records: records
     });
 
@@ -129,7 +108,7 @@ export class BloockClient {
    */
   public async validateRoot(root: string, network: Network): Promise<number> {
     const request = ValidateRootRequest.fromPartial({
-      configData: this.configData,
+      configData: NewConfigData(),
       root: root,
       network: network
     });
@@ -150,7 +129,7 @@ export class BloockClient {
    */
   public async verifyProof(proof: Proof): Promise<string> {
     const request = VerifyProofRequest.fromPartial({
-      configData: this.configData,
+      configData: NewConfigData(),
       proof: proof.toProto()
     });
 
@@ -173,7 +152,7 @@ export class BloockClient {
     network?: Network
   ): Promise<number> {
     const request = VerifyRecordsRequest.fromPartial({
-      configData: this.configData,
+      configData: NewConfigData(),
       records: records,
       network: network
     });

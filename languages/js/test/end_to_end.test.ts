@@ -1,32 +1,44 @@
 import {
   RecordBuilder,
-  Network,
-  EcsdaSigner,
   BloockClient,
+  Bloock,
+  HostedPublisher,
+  HostedLoader,
   AesEncrypter,
-  AesDecrypter
+  AesDecrypter,
+  EcsdaSigner,
+  Network
 } from "../dist/index";
+import { describe, test, expect } from "@jest/globals";
 
 function getSdk() {
   const apiKey = process.env["API_KEY"] || "";
   const apiHost = process.env["API_HOST"] || "";
-  const client = new BloockClient(apiKey);
+  Bloock.setApiKey(apiKey);
+  const client = new BloockClient();
   if (apiHost) {
-    client.setApiHost(apiHost);
+    Bloock.setApiHost(apiHost);
   }
   return client;
 }
 
 describe("E2E Tests", () => {
   test("test_basic_e2e", async () => {
-    const sdk = getSdk();
+    let sdk = getSdk();
 
-    const records = [];
+    const records: string[] = [];
     let record = await RecordBuilder.fromString("Hello world").build();
     let hash = await record.getHash();
     expect(hash).toEqual(
       "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
     );
+
+    let result = await record.publish(new HostedPublisher());
+    expect(result).toEqual(hash);
+
+    record = await RecordBuilder.fromLoader(new HostedLoader(result)).build();
+    hash = await record.getHash();
+    expect(hash).toEqual(result);
     records.push(hash);
 
     record = await RecordBuilder.fromBytes(
@@ -45,7 +57,7 @@ describe("E2E Tests", () => {
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromJson('{"hello":"world"}').build();
+    record = await RecordBuilder.fromJson({ hello: "world" }).build();
     hash = await record.getHash();
     expect(hash).toEqual(
       "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"
@@ -88,15 +100,6 @@ describe("E2E Tests", () => {
     );
     records.push(hash);
 
-    record = await RecordBuilder.fromRaw(
-      "eyJ0eSI6InN0cmluZyJ9.U29tZSBzdHJpbmc.W3siaGVhZGVyIjp7ImFsZyI6IkVDU0RBIiwia2lkIjoiMTIzNDU2Nzg5MGFiY2RlZiJ9LCJwcm90ZWN0ZWQiOiJlMCIsInNpZ25hdHVyZSI6IjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVmIn1d.eyJoZWFkZXIiOnsiYWxnIjoiRUNTREEifSwicHJvdGVjdGVkIjoiZTAifQ.eyJhbmNob3IiOnsiYW5jaG9yX2lkIjoxLCJuZXR3b3JrcyI6W10sInJvb3QiOiIiLCJzdGF0dXMiOiJwZW5kaW5nIn0sImJpdG1hcCI6IjZkODAiLCJkZXB0aCI6IjAwMDUwMDA1MDAwNDAwMDQwMDA0MDAwNDAwMDQwMDAzMDAwMSIsImxlYXZlcyI6WyIxY2EwZTlkOWEyMDZmMDhkMzhhNGUyY2Y0ODUzNTE2NzRmZmM5YjBmMzE3NWUwY2I2ZGJkOGUwZTE5ODI5Yjk3Il0sIm5vZGVzIjpbIjFjYTBlOWQ5YTIwNmYwOGQzOGE0ZTJjZjQ4NTM1MTY3NGZmYzliMGYzMTc1ZTBjYjZkYmQ4ZTBlMTk4MjliOTciXX0"
-    ).build();
-    hash = await record.getHash();
-    expect(hash).toEqual(
-      "fc7eed1db0c14d70f875460a53c315d0df86a087ba9e921e9fe2923577c327f9"
-    );
-    records.push(hash);
-
     let keys = await sdk.generateKeys();
 
     record = await RecordBuilder.fromString("Hello world 3")
@@ -110,9 +113,6 @@ describe("E2E Tests", () => {
       .build();
 
     hash = await recordWithMultipleSignatures.getHash();
-    expect(hash).toEqual(
-      "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
-    );
     records.push(hash);
 
     const sendReceipt = await sdk.sendRecords(records);
