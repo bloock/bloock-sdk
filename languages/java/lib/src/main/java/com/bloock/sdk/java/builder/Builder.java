@@ -57,7 +57,7 @@ public class Builder {
   }
 
   public static Builder fromLoader(Loader loader) {
-    return new Builder(loader, RecordTypes.LOADER);
+    return new Builder(loader.toProto(), RecordTypes.LOADER);
   }
 
   public Builder withSigner(Signer signer) {

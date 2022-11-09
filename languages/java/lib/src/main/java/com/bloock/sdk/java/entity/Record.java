@@ -45,6 +45,7 @@ public class Record {
         PublishRequest.newBuilder()
             .setConfigData(Config.newConfigData())
             .setRecord(this.toProto())
+            .setPublisher(publisher.toProto())
             .build();
 
     PublishResponse response = bridge.getRecord().publish(req);

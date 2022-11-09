@@ -1,5 +1,4 @@
-package com.bloock.sdk.java;
-
+import com.bloock.sdk.java.Bloock;
 import com.bloock.sdk.java.builder.Builder;
 import com.bloock.sdk.java.client.Client;
 import com.bloock.sdk.java.entity.AesDecrypter;
@@ -16,9 +15,8 @@ import com.bloock.sdk.java.entity.RecordReceipt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 
-class ClientTest {
+class Test {
   static Client getSdk() {
     Bloock.apiKey = System.getenv("API_KEY");
     String apiHost = System.getenv("API_HOST");
@@ -28,8 +26,7 @@ class ClientTest {
     return new Client();
   }
 
-  @Test
-  void e2e() throws Exception {
+  public static void main(String[] args) throws Exception {
     Client sdk = getSdk();
     ArrayList<String> records = new ArrayList<>();
 
@@ -107,11 +104,14 @@ class ClientTest {
     assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");
     records.add(hash);
 
+    System.out.println("Records: " + Arrays.toString(records.toArray()));
+
     List<RecordReceipt> receipts = sdk.sendRecords(records);
 
     assert receipts.size() > 0;
     assert receipts.get(0).getRecord().equals(records.get(0));
 
+    System.out.println("Waiting for anchor...");
     Anchor anchor = sdk.waitAnchor(receipts.get(0).getAnchor());
 
     assert receipts.get(0).getAnchor() == anchor.getId();
@@ -131,5 +131,6 @@ class ClientTest {
     assert timestampVerifyRecords > 0;
 
     assert timestampValidateRoot == timestampVerifyRecords;
+    System.out.println("Done!");
   }
 }
