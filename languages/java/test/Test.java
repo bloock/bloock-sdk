@@ -33,7 +33,6 @@ class Test {
     Record record = Builder.fromString("Hello world").build();
     String hash = record.getHash();
     assert hash.equals("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd");
-    records.add(hash);
 
     String result = record.publish(new HostedPublisher());
     assert result.equals(hash);
@@ -87,7 +86,6 @@ class Test {
     } catch (Exception e) {
       throwsException = true;
     }
-
     assert throwsException;
 
     Keys keys = sdk.generateKeys();
@@ -104,14 +102,11 @@ class Test {
     assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");
     records.add(hash);
 
-    System.out.println("Records: " + Arrays.toString(records.toArray()));
-
     List<RecordReceipt> receipts = sdk.sendRecords(records);
 
     assert receipts.size() > 0;
     assert receipts.get(0).getRecord().equals(records.get(0));
 
-    System.out.println("Waiting for anchor...");
     Anchor anchor = sdk.waitAnchor(receipts.get(0).getAnchor());
 
     assert receipts.get(0).getAnchor() == anchor.getId();
@@ -131,6 +126,5 @@ class Test {
     assert timestampVerifyRecords > 0;
 
     assert timestampValidateRoot == timestampVerifyRecords;
-    System.out.println("Done!");
   }
 }
