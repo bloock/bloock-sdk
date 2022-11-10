@@ -457,20 +457,22 @@ export interface AnchorService {
 
 export class AnchorServiceClientImpl implements AnchorService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || "bloock.AnchorService";
     this.rpc = rpc;
     this.GetAnchor = this.GetAnchor.bind(this);
     this.WaitAnchor = this.WaitAnchor.bind(this);
   }
   GetAnchor(request: GetAnchorRequest): Promise<GetAnchorResponse> {
     const data = GetAnchorRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.AnchorService", "GetAnchor", data);
+    const promise = this.rpc.request(this.service, "GetAnchor", data);
     return promise.then((data) => GetAnchorResponse.decode(new _m0.Reader(data)));
   }
 
   WaitAnchor(request: WaitAnchorRequest): Promise<WaitAnchorResponse> {
     const data = WaitAnchorRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.AnchorService", "WaitAnchor", data);
+    const promise = this.rpc.request(this.service, "WaitAnchor", data);
     return promise.then((data) => WaitAnchorResponse.decode(new _m0.Reader(data)));
   }
 }

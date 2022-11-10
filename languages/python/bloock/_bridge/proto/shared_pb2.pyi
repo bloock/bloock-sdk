@@ -27,9 +27,6 @@ class Error(google.protobuf.message.Message):
         kind: builtins.str = ...,
         message: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal["kind", b"kind", "message", b"message"],
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["kind", b"kind", "message", b"message"]) -> None: ...
 
 global___Error = Error

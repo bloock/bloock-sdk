@@ -15,10 +15,11 @@ impl Blockchain {
         provider: String,
         contract_address: String,
         state: String,
+        api_key: String,
     ) -> Result<u128> {
         let request = Request::new_get_state_request(contract_address, state)?;
 
-        let state: U256 = Transport::send_request(provider, request).await?;
+        let state: U256 = Transport::send_request(provider, request, api_key).await?;
 
         Ok(state.as_u128())
     }
