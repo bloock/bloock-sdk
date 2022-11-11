@@ -3,7 +3,7 @@ use bloock_web3::blockchain::Blockchain;
 pub async fn get_state() {
     let state = "009b54cfa8b1aaf914dd8d0399256e4bea76d08c3291cb96f66c3a65a9c15a26";
     let contract_address = "522b2040CdfD247ED60921623044dF1c929524B7";
-    let provider = "https://mainnet.infura.io/v3/40e23a35d578492daacb318023772b52";
+    let provider = "https://ethereum.bloock.dev";
 
     let web3 = Blockchain {};
     let timestamp = web3
@@ -11,7 +11,7 @@ pub async fn get_state() {
             provider.to_string(),
             contract_address.to_string(),
             state.to_string(),
-            "".to_string(),
+            env!("API_KEY").to_string(),
         )
         .await
         .unwrap();
