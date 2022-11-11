@@ -34,5 +34,5 @@ jobs:
         working-directory: languages/java
       - uses: actions/upload-artifact@v2
         with:
-          name: jar
+          name: bloock_lib_java
           path: languages/java/lib/build/libs/lib-${{ steps.version.outputs.bloock_version }}.jar

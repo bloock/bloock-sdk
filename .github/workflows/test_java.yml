@@ -30,11 +30,11 @@ jobs:
       - name: Download bloock jar from package run
         uses: actions/download-artifact@v1
         with:
-          name: jar
+          name: bloock_lib_java
       - name: Test
         run: |
-          javac -cp "jar/lib-${{ steps.version.outputs.oso_version }}.jar:." languages/java/test/Test.java
-          java -cp "jar/lib-${{ steps.version.outputs.oso_version }}.jar:." languages/java/test/Test.java
+          javac -cp "bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}.jar:." languages/java/test/Test.java
+          java -cp "bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}.jar:." languages/java/test/Test.java
         env:
           API_HOST: ${{ secrets.api_host }}
           API_KEY: ${{ secrets.api_key }}
