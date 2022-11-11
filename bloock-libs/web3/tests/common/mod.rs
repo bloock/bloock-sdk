@@ -11,7 +11,7 @@ pub async fn get_state() {
             provider.to_string(),
             contract_address.to_string(),
             state.to_string(),
-            env!("API_KEY").to_string(),
+            "l3QMSKAb3HKbFNEREpypBgX9rGUfFc2jMyuROwedwRpEADj05oEASpWK55czeNaV".to_string(),
         )
         .await
         .unwrap();
