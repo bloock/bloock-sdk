@@ -99,8 +99,6 @@ jobs:
   build_java:
     needs: [check_java]
     uses: ./.github/workflows/build_java.yml
-    with:
-      os: ubuntu-latest
 
   test_java:
     needs: [build_java]

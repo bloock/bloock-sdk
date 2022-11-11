@@ -55,6 +55,10 @@ jobs:
     with:
       os: ${{ matrix.os }}
 
+  build_java:
+    needs: [build_linux, build_darwin, build_windows]
+    uses: ./.github/workflows/build_java.yml
+
   build_js:
     needs: [build_wasm]
     uses: ./.github/workflows/build_js.yml
@@ -92,6 +96,20 @@ jobs:
     with:
       os: ${{ matrix.os }}
       python-version: ${{ matrix.python-version }}
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
+
+  test_java:
+    needs: [build_java]
+    uses: ./.github/workflows/test_java.yml
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        java-version: [8, 11, 17, 19]
+    with:
+      os: ${{ matrix.os }}
+      java-version: ${{ matrix.java-version }}
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}

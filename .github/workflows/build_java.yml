@@ -2,15 +2,11 @@ name: Build Java
 
 on:
   workflow_call:
-    inputs:
-      os:
-        required: true
-        type: string
 
 jobs:
   build_java:
     name: Build Java
-    runs-on: ${{ inputs.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Set version env

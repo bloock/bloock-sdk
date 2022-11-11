@@ -27,10 +27,14 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ inputs.java-version }}
+      - name: Download bloock jar from package run
+        uses: actions/download-artifact@v1
+        with:
+          name: jar
       - name: Test
         run: |
-          make test
-        working-directory: languages/java
+          javac -cp "jar/lib-${{ steps.version.outputs.oso_version }}.jar:." languages/java/test/Test.java
+          java -cp "jar/lib-${{ steps.version.outputs.oso_version }}.jar:." languages/java/test/Test.java
         env:
           API_HOST: ${{ secrets.api_host }}
           API_KEY: ${{ secrets.api_key }}
