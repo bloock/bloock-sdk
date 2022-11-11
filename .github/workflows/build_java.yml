@@ -30,9 +30,9 @@ jobs:
           rm languages/java/Makefile
       - name: Build
         run: |
-          ./gradlew assemble
+          ./gradlew shadowJar
         working-directory: languages/java
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_lib_java
-          path: languages/java/lib/build/libs/lib-${{ steps.version.outputs.bloock_version }}.jar
+          path: languages/java/lib/build/libs/lib-${{ steps.version.outputs.bloock_version }}-all.jar

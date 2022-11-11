@@ -33,8 +33,8 @@ jobs:
           name: bloock_lib_java
       - name: Test
         run: |
-          javac -cp "bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}.jar:." languages/java/test/Test.java
-          java -cp "bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}.jar:." languages/java/test/Test.java
+          javac -cp "bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." languages/java/test/Test.java
+          java -cp "bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." -enableassertions languages/java/test/Test
         env:
           API_HOST: ${{ secrets.api_host }}
           API_KEY: ${{ secrets.api_key }}
