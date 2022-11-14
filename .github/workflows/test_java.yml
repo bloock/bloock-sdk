@@ -33,8 +33,8 @@ jobs:
           name: bloock_lib_java
       - name: Test
         run: |
-          javac -cp "bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." Test.java
-          java -cp "bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." -enableassertions Test
+          javac -cp "../../../bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." Test.java
+          java -cp "../../../bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." -enableassertions Test
         working-directory: languages/java/test
         env:
           API_HOST: ${{ secrets.api_host }}
