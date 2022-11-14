@@ -1,0 +1,75 @@
+plugins {
+    id 'java-library'
+    id 'com.google.protobuf' version '0.8.18'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+repositories {
+    maven {
+        url "https://maven-central.storage-download.googleapis.com/maven2/" 
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
+java {
+    withSourcesJar()
+}
+
+version = '2.0.0-beta.19'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+def grpcVersion = '1.48.0'
+def protobufVersion = '3.21.1'
+def protocVersion = protobufVersion
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    api 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.google.guava:guava:31.0.1-jre'
+    compileOnly "org.apache.tomcat:annotations-api:6.0.53"
+
+    // Protobuf + GRPC
+    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    testImplementation "io.grpc:grpc-testing:${grpcVersion}"
+
+    // FFI
+    implementation 'net.java.dev.jna:jna:5.12.1'
+
+    // Testing
+    testImplementation "junit:junit:4.12"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation "org.mockito:mockito-core:3.4.0"
+}
+
+protobuf {
+    protoc { artifact = "com.google.protobuf:protoc:${protocVersion}" }
+    plugins {
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}" }
+    }
+    generateProtoTasks {
+        all()*.plugins { grpc {} }
+    }
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir '../../../bloock-bridge/proto'
+        }
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

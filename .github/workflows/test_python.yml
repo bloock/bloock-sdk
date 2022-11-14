@@ -20,10 +20,10 @@ jobs:
     name: Test python ${{ inputs.python-version }} on ${{ inputs.os }}
     runs-on: ${{ inputs.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set version env
         id: version
-        run: echo "::set-output name=bloock_version::$(cat VERSION)"
+        run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
       - name: Set up Python ${{ inputs.python-version }}
         uses: actions/setup-python@v1
         with:

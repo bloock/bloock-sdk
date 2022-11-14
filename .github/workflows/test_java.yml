@@ -1,0 +1,41 @@
+name: Test Java
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      java-version:
+        required: true
+        type: string
+    secrets:
+      api_host:
+        required: true
+      api_key:
+        required: true
+
+jobs:
+  test_java:
+    name: Test java ${{ inputs.java-version }} on ${{ inputs.os }}
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set version env
+        id: version
+        run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ inputs.java-version }}
+      - name: Download bloock jar from package run
+        uses: actions/download-artifact@v1
+        with:
+          name: bloock_lib_java
+      - name: Test
+        run: |
+          javac -cp "../../../bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." Test.java
+          java -cp "../../../bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." -enableassertions Test
+        working-directory: languages/java/test
+        env:
+          API_HOST: ${{ secrets.api_host }}
+          API_KEY: ${{ secrets.api_key }}
