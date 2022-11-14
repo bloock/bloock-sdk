@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set version env
         id: version
+        shell: bash
         run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
       - name: Set up Python ${{ inputs.python-version }}
         uses: actions/setup-python@v1
@@ -31,11 +32,11 @@ jobs:
       - name: Download python wheels from package run
         uses: actions/download-artifact@v1
         with:
-          name: wheel
+          name: bloock_lib_python
       - name: "test"
         run: |
-          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../wheel --no-deps --no-index
-          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../wheel
+          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../bloock_lib_python --no-deps --no-index
+          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../bloock_lib_python
           python3 -m unittest
         working-directory: languages/python
         env:
