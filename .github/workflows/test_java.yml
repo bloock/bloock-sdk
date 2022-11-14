@@ -33,6 +33,7 @@ jobs:
         with:
           name: bloock_lib_java
       - name: Test
+        shell: bash
         run: |
           javac -cp "../../../bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." Test.java
           java -cp "../../../bloock_lib_java/lib-${{ steps.version.outputs.bloock_version }}-all.jar:." -enableassertions Test
