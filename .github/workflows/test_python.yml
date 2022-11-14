@@ -32,11 +32,11 @@ jobs:
       - name: Download python wheels from package run
         uses: actions/download-artifact@v1
         with:
-          name: wheel
+          name: bloock_lib_python
       - name: "test"
         run: |
-          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../wheel --no-deps --no-index
-          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../wheel
+          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../bloock_lib_python --no-deps --no-index
+          pip install bloock==${{ steps.version.outputs.bloock_version }} -f ../../bloock_lib_python
           python3 -m unittest
         working-directory: languages/python
         env:

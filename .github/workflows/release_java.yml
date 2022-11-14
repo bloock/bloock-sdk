@@ -1,4 +1,4 @@
-name: Release Python
+name: Release Java
 
 on:
   workflow_call:
@@ -15,18 +15,18 @@ jobs:
     name: Upload Python
     runs-on: ubuntu-latest
     steps:
-      - name: Download python wheels from package run
+      - name: Download JAR from package run
         uses: actions/download-artifact@v1
         with:
-          name: bloock_lib_python
-      - name: Zip wheels
-        run: zip --junk-paths -r bloock-lib-python.zip bloock_lib_python/
-      - name: Upload Python Package
+          name: bloock_lib_java
+      - name: Zip Java JAR
+        run: zip --junk-paths -r bloock_lib_java.zip bloock_lib_java/
+      - name: Upload Java Jar
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ inputs.release_url }}
-          asset_path: ./bloock-lib-python.zip
-          asset_name: bloock-lib-python-${{ inputs.version }}.zip
+          asset_path: ./bloock_lib_java.zip
+          asset_name: bloock-lib-java-${{ inputs.version }}.zip
           asset_content_type: application/zip
