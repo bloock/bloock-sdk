@@ -3,6 +3,7 @@ package com.bloock.sdk.java.bridge;
 import com.bloock.sdk.java.ffi.Ffi;
 import io.grpc.*;
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
@@ -40,7 +41,10 @@ public class ConnectionRequest<ReqT, RespT> extends ClientCall<ReqT, RespT> {
 
     byte[] payload;
     try {
-      payload = method.streamRequest(message).readAllBytes();
+      InputStream stream = method.streamRequest(message);
+      payload = new byte[(int) stream.available()];
+      DataInputStream dataInputStream = new DataInputStream(stream);
+      dataInputStream.readFully(payload);
     } catch (IOException e) {
       logger.severe(e.toString());
       return;
