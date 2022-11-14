@@ -44,7 +44,7 @@ public class ConnectionRequest<ReqT, RespT> extends ClientCall<ReqT, RespT> {
       InputStream stream = method.streamRequest(message);
       payload = new byte[(int) stream.available()];
       DataInputStream dataInputStream = new DataInputStream(stream);
-      dataInputStream .readFully(payload);
+      dataInputStream.readFully(payload);
     } catch (IOException e) {
       logger.severe(e.toString());
       return;
