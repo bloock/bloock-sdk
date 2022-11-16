@@ -15,7 +15,9 @@ from bloock.client.entity.loader import HostedLoader
 class TestE2E(unittest.TestCase):
     def setUp(self):
         bloock.api_key = os.environ["API_KEY"]
-        bloock.api_host = os.environ["API_HOST"]
+        api_host = os.environ.get("API_HOST")
+        if api_host != None:
+            bloock.api_host = api_host
         self.client = Client()
 
     def test_e2e_with_all_builders(self):
@@ -111,6 +113,9 @@ class TestE2E(unittest.TestCase):
             hash, "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
         )
         records.append(hash)
+
+        signatures = record_with_multiple_signatures.get_signatures()
+        self.assertEqual(len(signatures), 2)
 
         send_receipts = self.client.send_records(records)
         self.assertGreater(len(send_receipts), 0)
