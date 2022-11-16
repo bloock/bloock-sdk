@@ -133,6 +133,11 @@ impl Server {
                 .get_hash(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceGetSignatures => Ok(self
+                .record
+                .get_signatures(self.serialize_request(payload)?)
+                .await
+                .into()),
             BloockServer::RecordServiceGenerateKeys => Ok(self
                 .record
                 .generate_keys(self.serialize_request(payload)?)

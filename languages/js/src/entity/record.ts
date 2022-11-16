@@ -30,6 +30,16 @@ export class Record {
       });
   }
 
+  async getSignatures(): Promise<Signature[]> {
+    const bridge = new BloockBridge();
+    return bridge
+      .getRecord()
+      .GetSignatures(this.toProto())
+      .then(res => {
+        return res.signatures.map((x) => Signature.fromProto(x));
+      });
+  }
+
   async publish(publisher: Publisher): Promise<string> {
     const bridge = new BloockBridge();
     const request = proto.PublishRequest.fromPartial({

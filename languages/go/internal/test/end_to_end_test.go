@@ -107,6 +107,10 @@ func TestEndToEnd(t *testing.T) {
 		assert.Equal(t, hash, "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f")
 		records = append(records, hash)
 
+        signatures, err := recordWithMultipleSignatures.GetSignatures()
+		require.NoError(t, err)
+        assert.Equal(t, len(signatures), 2)
+
 		receipt, err := sdk.SendRecords(records)
 		require.NoError(t, err)
 		assert.Greater(t, len(receipt), 0)
