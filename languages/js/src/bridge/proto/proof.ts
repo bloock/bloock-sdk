@@ -33,7 +33,7 @@ export interface GetProofResponse {
 export interface ValidateRootRequest {
   configData?: ConfigData;
   root: string;
-  network: Network;
+  network?: Network | undefined;
 }
 
 export interface ValidateRootResponse {
@@ -363,7 +363,7 @@ export const GetProofResponse = {
 };
 
 function createBaseValidateRootRequest(): ValidateRootRequest {
-  return { configData: undefined, root: "", network: 0 };
+  return { configData: undefined, root: "", network: undefined };
 }
 
 export const ValidateRootRequest = {
@@ -374,7 +374,7 @@ export const ValidateRootRequest = {
     if (message.root !== "") {
       writer.uint32(18).string(message.root);
     }
-    if (message.network !== 0) {
+    if (message.network !== undefined) {
       writer.uint32(24).int32(message.network);
     }
     return writer;
@@ -408,7 +408,7 @@ export const ValidateRootRequest = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       root: isSet(object.root) ? String(object.root) : "",
-      network: isSet(object.network) ? networkFromJSON(object.network) : 0,
+      network: isSet(object.network) ? networkFromJSON(object.network) : undefined,
     };
   },
 
@@ -417,7 +417,8 @@ export const ValidateRootRequest = {
     message.configData !== undefined &&
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.root !== undefined && (obj.root = message.root);
-    message.network !== undefined && (obj.network = networkToJSON(message.network));
+    message.network !== undefined &&
+      (obj.network = message.network !== undefined ? networkToJSON(message.network) : undefined);
     return obj;
   },
 
@@ -427,7 +428,7 @@ export const ValidateRootRequest = {
       ? ConfigData.fromPartial(object.configData)
       : undefined;
     message.root = object.root ?? "";
-    message.network = object.network ?? 0;
+    message.network = object.network ?? undefined;
     return message;
   },
 };
@@ -751,7 +752,9 @@ export interface ProofService {
 
 export class ProofServiceClientImpl implements ProofService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || "bloock.ProofService";
     this.rpc = rpc;
     this.GetProof = this.GetProof.bind(this);
     this.ValidateRoot = this.ValidateRoot.bind(this);
@@ -760,25 +763,25 @@ export class ProofServiceClientImpl implements ProofService {
   }
   GetProof(request: GetProofRequest): Promise<GetProofResponse> {
     const data = GetProofRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.ProofService", "GetProof", data);
+    const promise = this.rpc.request(this.service, "GetProof", data);
     return promise.then((data) => GetProofResponse.decode(new _m0.Reader(data)));
   }
 
   ValidateRoot(request: ValidateRootRequest): Promise<ValidateRootResponse> {
     const data = ValidateRootRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.ProofService", "ValidateRoot", data);
+    const promise = this.rpc.request(this.service, "ValidateRoot", data);
     return promise.then((data) => ValidateRootResponse.decode(new _m0.Reader(data)));
   }
 
   VerifyProof(request: VerifyProofRequest): Promise<VerifyProofResponse> {
     const data = VerifyProofRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.ProofService", "VerifyProof", data);
+    const promise = this.rpc.request(this.service, "VerifyProof", data);
     return promise.then((data) => VerifyProofResponse.decode(new _m0.Reader(data)));
   }
 
   VerifyRecords(request: VerifyRecordsRequest): Promise<VerifyRecordsResponse> {
     const data = VerifyRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.ProofService", "VerifyRecords", data);
+    const promise = this.rpc.request(this.service, "VerifyRecords", data);
     return promise.then((data) => VerifyRecordsResponse.decode(new _m0.Reader(data)));
   }
 }

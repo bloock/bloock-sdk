@@ -12,6 +12,7 @@ import com.bloock.sdk.java.entity.Network;
 import com.bloock.sdk.java.entity.Proof;
 import com.bloock.sdk.java.entity.Record;
 import com.bloock.sdk.java.entity.RecordReceipt;
+import com.bloock.sdk.java.entity.Signature;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -102,6 +103,9 @@ class Test {
     assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");
     records.add(hash);
 
+    List<Signature> signatures = recordWithMultipleSignatures.getSignatures();
+    assert signatures.size() == 2;
+
     List<RecordReceipt> receipts = sdk.sendRecords(records);
 
     assert receipts.size() > 0;
@@ -121,7 +125,7 @@ class Test {
 
     assert timestampValidateRoot > 0;
 
-    long timestampVerifyRecords = sdk.verifyRecords(records);
+    long timestampVerifyRecords = sdk.verifyRecords(records, Network.BLOOCK_CHAIN);
 
     assert timestampVerifyRecords > 0;
 

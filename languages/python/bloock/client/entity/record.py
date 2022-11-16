@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 from bloock._bridge import bridge
 import bloock._bridge.proto.record_pb2 as proto
 from bloock._bridge.proto.shared_pb2 import Error
@@ -76,6 +77,13 @@ class Record:
             raise Exception(res.error.message)
         return res.hash
 
+    def get_signatures(self) -> List[Signature]:
+        client = bridge.BloockBridge()
+        res = client.record().GetSignatures(self.to_proto())
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return list(map(lambda x: Signature.from_proto(x), res.signatures))
+
     def publish(self, publisher: Publisher) -> str:
         client = bridge.BloockBridge()
         req = proto.PublishRequest(
@@ -87,6 +95,9 @@ class Record:
         if res.error != Error():
             raise Exception(res.error.message)
         return res.hash
+
+    def retrieve(self) -> bytes:
+        return self.payload
 
 
 class RecordReceipt:

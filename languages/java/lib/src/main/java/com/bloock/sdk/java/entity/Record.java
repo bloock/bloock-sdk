@@ -5,9 +5,12 @@ import com.bloock.sdk.java.bridge.proto.RecordOuterClass;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.PublishRequest;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.PublishResponse;
 import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordHash;
+import com.bloock.sdk.java.bridge.proto.RecordOuterClass.RecordSignatures;
 import com.bloock.sdk.java.bridge.proto.Shared.Error;
 import com.bloock.sdk.java.config.Config;
 import com.google.protobuf.ByteString;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Record {
   byte[] payload;
@@ -35,6 +38,19 @@ public class Record {
     return recordHash.getHash();
   }
 
+  public List<Signature> getSignatures() throws Exception {
+    Bridge bridge = new Bridge();
+    RecordSignatures recordSignatures = bridge.getRecord().getSignatures(this.toProto());
+
+    if (recordSignatures.getError() != Error.getDefaultInstance()) {
+      throw new Exception(recordSignatures.getError().toString());
+    }
+
+    return recordSignatures.getSignaturesList().stream()
+        .map(x -> Signature.fromProto(x))
+        .collect(Collectors.toList());
+  }
+
   public byte[] getPayload() {
     return payload;
   }
@@ -54,5 +70,9 @@ public class Record {
     }
 
     return response.getHash();
+  }
+
+  public byte[] retrieve() {
+    return this.payload;
   }
 }
