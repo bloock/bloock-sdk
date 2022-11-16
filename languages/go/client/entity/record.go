@@ -84,7 +84,7 @@ func (r Record) Publish(p Publisher) (string, error) {
 }
 
 func (r Record) Retrieve() []byte {
-    return r.Payload
+	return r.Payload
 }
 
 func MapRecordsToProto(records []Record) []*proto.Record {

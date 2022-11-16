@@ -73,6 +73,6 @@ public class Record {
   }
 
   public byte[] retrieve() {
-      return this.payload;
+    return this.payload;
   }
 }

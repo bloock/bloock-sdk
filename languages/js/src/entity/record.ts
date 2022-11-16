@@ -56,7 +56,7 @@ export class Record {
   }
 
   public retrieve(): Uint8Array {
-      return this.payload;
+    return this.payload;
   }
 }
 
