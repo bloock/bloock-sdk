@@ -125,7 +125,7 @@ class Test {
 
     assert timestampValidateRoot > 0;
 
-    long timestampVerifyRecords = sdk.verifyRecords(records);
+    long timestampVerifyRecords = sdk.verifyRecords(records, Network.BLOOCK_CHAIN);
 
     assert timestampVerifyRecords > 0;
 
