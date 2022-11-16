@@ -134,11 +134,11 @@ func (c *Client) VerifyRecords(records []string, params entity.NetworkParams) (u
 	return res.Timestamp, nil
 }
 
-func (c *Client) ValidateRoot(root string, network entity.Network) (uint64, error) {
+func (c *Client) ValidateRoot(root string, params entity.NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Proof().ValidateRoot(context.Background(), &proto.ValidateRootRequest{
 		ConfigData: config.NewConfigData(),
 		Root:       root,
-		Network:    network,
+		Network:    params.Network.Enum(),
 	})
 
 	if err != nil {

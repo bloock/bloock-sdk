@@ -119,7 +119,7 @@ public class Client {
   }
 
   public long verifyRecords(List<String> records) throws Exception {
-    return verifyRecords(records, Network.BLOOCK_CHAIN);
+    return verifyRecords(records, Network.ETHEREUM_MAINNET);
   }
 
   public long verifyRecords(List<String> records, Network network) throws Exception {
@@ -137,6 +137,10 @@ public class Client {
     }
 
     return response.getTimestamp();
+  }
+
+  public long validateRoot(String root) throws Exception {
+    return validateRoot(root, Network.ETHEREUM_MAINNET);
   }
 
   public long validateRoot(String root, Network network) throws Exception {

@@ -36,7 +36,7 @@ export class Record {
       .getRecord()
       .GetSignatures(this.toProto())
       .then(res => {
-        return res.signatures.map((x) => Signature.fromProto(x));
+        return res.signatures.map(x => Signature.fromProto(x));
       });
   }
 
