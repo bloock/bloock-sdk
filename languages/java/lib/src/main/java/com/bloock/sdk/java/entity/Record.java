@@ -71,4 +71,8 @@ public class Record {
 
     return response.getHash();
   }
+
+  public byte[] retrieve() {
+      return this.payload;
+  }
 }

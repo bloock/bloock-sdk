@@ -54,6 +54,10 @@ export class Record {
         return res.hash;
       });
   }
+
+  public retrieve(): Uint8Array {
+      return this.payload;
+  }
 }
 
 export class RecordHeader {

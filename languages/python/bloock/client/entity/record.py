@@ -96,6 +96,9 @@ class Record:
             raise Exception(res.error.message)
         return res.hash
 
+    def retrieve(self) -> bytes:
+        return self.payload
+
 
 class RecordReceipt:
     def __init__(self, anchor: int, client: str, record: str, status: str) -> None:

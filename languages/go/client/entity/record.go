@@ -83,6 +83,10 @@ func (r Record) Publish(p Publisher) (string, error) {
 	return res.Hash, nil
 }
 
+func (r Record) Retrieve() []byte {
+    return r.Payload
+}
+
 func MapRecordsToProto(records []Record) []*proto.Record {
 	recordsProto := make([]*proto.Record, len(records))
 	for i, record := range records {
