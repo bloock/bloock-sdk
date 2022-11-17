@@ -22,4 +22,8 @@ impl ConfigService {
     pub fn get_network_config(&self, network: Network) -> NetworkConfiguration {
         self.config_data.get_network_config(network)
     }
+
+    pub fn get_api_key(&self) -> String {
+        self.config_data.get_config().api_key
+    }
 }

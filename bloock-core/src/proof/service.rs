@@ -217,6 +217,7 @@ impl<H: Client> ProofService<H> {
                 config.http_provider,
                 config.contract_address,
                 root.get_hash(),
+                self.config_service.get_api_key(),
             )
             .await
         {
