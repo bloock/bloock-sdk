@@ -11,7 +11,7 @@ jobs:
     name: Compute and verify the version number
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/check_version
       - name: Set version env
         run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_ENV
@@ -55,6 +55,10 @@ jobs:
     with:
       os: ${{ matrix.os }}
 
+  build_java:
+    needs: [build_linux, build_darwin, build_windows]
+    uses: ./.github/workflows/build_java.yml
+
   build_js:
     needs: [build_wasm]
     uses: ./.github/workflows/build_js.yml
@@ -96,6 +100,20 @@ jobs:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
 
+  test_java:
+    needs: [build_java]
+    uses: ./.github/workflows/test_java.yml
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        java-version: [8, 11, 17, 19]
+    with:
+      os: ${{ matrix.os }}
+      java-version: ${{ matrix.java-version }}
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
+
   test_js:
     needs: [build_js]
     uses: ./.github/workflows/test_js.yml
@@ -113,18 +131,18 @@ jobs:
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [test_rust, test_js, test_go, test_python]
+    needs: [test_rust, test_js, test_go, test_python, test_java]
     if: startsWith(github.ref, 'refs/tags/')
     outputs:
       version: ${{ steps.version.outputs.version }}
       release_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set version env
         id: version
         env:
           github_ref: ${{ github.ref }}
-        run: echo "::set-output name=version::$(cat VERSION)"
+        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
@@ -162,6 +180,13 @@ jobs:
   release_js:
     needs: [create_release]
     uses: ./.github/workflows/release_js.yml
+    with:
+      version: ${{ needs.create_release.outputs.version }}
+      release_url: ${{ needs.create_release.outputs.release_url }}
+  
+  release_java:
+    needs: [create_release]
+    uses: ./.github/workflows/release_java.yml
     with:
       version: ${{ needs.create_release.outputs.version }}
       release_url: ${{ needs.create_release.outputs.release_url }}

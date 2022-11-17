@@ -59,6 +59,11 @@ class RecordServiceStub(object):
             request_serializer=record__pb2.Record.SerializeToString,
             response_deserializer=record__pb2.RecordHash.FromString,
         )
+        self.GetSignatures = channel.unary_unary(
+            "/bloock.RecordService/GetSignatures",
+            request_serializer=record__pb2.Record.SerializeToString,
+            response_deserializer=record__pb2.RecordSignatures.FromString,
+        )
         self.GenerateKeys = channel.unary_unary(
             "/bloock.RecordService/GenerateKeys",
             request_serializer=record__pb2.GenerateKeysRequest.SerializeToString,
@@ -128,6 +133,12 @@ class RecordServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def GetSignatures(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
     def GenerateKeys(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -187,6 +198,11 @@ def add_RecordServiceServicer_to_server(servicer, server):
             servicer.GetHash,
             request_deserializer=record__pb2.Record.FromString,
             response_serializer=record__pb2.RecordHash.SerializeToString,
+        ),
+        "GetSignatures": grpc.unary_unary_rpc_method_handler(
+            servicer.GetSignatures,
+            request_deserializer=record__pb2.Record.FromString,
+            response_serializer=record__pb2.RecordSignatures.SerializeToString,
         ),
         "GenerateKeys": grpc.unary_unary_rpc_method_handler(
             servicer.GenerateKeys,
@@ -460,6 +476,35 @@ class RecordService(object):
             "/bloock.RecordService/GetHash",
             record__pb2.Record.SerializeToString,
             record__pb2.RecordHash.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def GetSignatures(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/bloock.RecordService/GetSignatures",
+            record__pb2.Record.SerializeToString,
+            record__pb2.RecordSignatures.FromString,
             options,
             channel_credentials,
             insecure,

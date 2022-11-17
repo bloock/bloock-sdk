@@ -1,0 +1,128 @@
+plugins {
+    id 'java-library'
+    id 'com.google.protobuf' version '0.9.1'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'maven-publish'
+    id 'signing'
+    id('io.github.gradle-nexus.publish-plugin') version '1.1.0'
+}
+
+group = 'com.bloock.sdk'
+version = '2.0.0-beta.22'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+def grpcVersion = '1.50.2'
+def protobufVersion = '3.21.9'
+def protocVersion = protobufVersion
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    api 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.google.guava:guava:31.1-jre'
+    compileOnly "org.apache.tomcat:annotations-api:6.0.53"
+
+    // Protobuf + GRPC
+    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    testImplementation "io.grpc:grpc-testing:${grpcVersion}"
+
+    // FFI
+    implementation 'net.java.dev.jna:jna:5.12.1'
+
+    // Testing
+    testImplementation "junit:junit:4.12"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation "org.mockito:mockito-core:3.4.0"
+}
+
+protobuf {
+    protoc { artifact = "com.google.protobuf:protoc:${protocVersion}" }
+    plugins {
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}" }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins { grpc {} }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir '../../bloock-bridge/proto'
+        }
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from(components.java)
+            pom {
+                name = 'Bloock SDK'
+                description = 'Bloock SDK for Java'
+                url = 'https://www.bloock.com'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://raw.githubusercontent.com/bloock/bloock-sdk/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'bloock_it'
+                        name = 'BLOOCK'
+                        email = 'it@bloock.com'
+                    }
+                }
+                scm {
+                    url = 'https://www.bloock.com'
+                    connection = 'scm:git:https://github.com/bloock/bloock-sdk.git'
+                    developerConnection = 'scm:git:https://github.com/bloock/bloock-sdk.git'
+                }
+            }
+        }
+    }
+}
+
+signing {
+    def signingKey = findProperty("signingKey")
+    def signingPassword = findProperty("signingPassword")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(Jar).all {
+    duplicatesStrategy 'exclude'
+}

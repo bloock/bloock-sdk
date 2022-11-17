@@ -33,7 +33,7 @@ export interface GetProofResponse {
 export interface ValidateRootRequest {
   configData?: ConfigData;
   root: string;
-  network: Network;
+  network?: Network | undefined;
 }
 
 export interface ValidateRootResponse {
@@ -363,7 +363,7 @@ export const GetProofResponse = {
 };
 
 function createBaseValidateRootRequest(): ValidateRootRequest {
-  return { configData: undefined, root: "", network: 0 };
+  return { configData: undefined, root: "", network: undefined };
 }
 
 export const ValidateRootRequest = {
@@ -374,7 +374,7 @@ export const ValidateRootRequest = {
     if (message.root !== "") {
       writer.uint32(18).string(message.root);
     }
-    if (message.network !== 0) {
+    if (message.network !== undefined) {
       writer.uint32(24).int32(message.network);
     }
     return writer;
@@ -408,7 +408,7 @@ export const ValidateRootRequest = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       root: isSet(object.root) ? String(object.root) : "",
-      network: isSet(object.network) ? networkFromJSON(object.network) : 0,
+      network: isSet(object.network) ? networkFromJSON(object.network) : undefined,
     };
   },
 
@@ -417,7 +417,8 @@ export const ValidateRootRequest = {
     message.configData !== undefined &&
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.root !== undefined && (obj.root = message.root);
-    message.network !== undefined && (obj.network = networkToJSON(message.network));
+    message.network !== undefined &&
+      (obj.network = message.network !== undefined ? networkToJSON(message.network) : undefined);
     return obj;
   },
 
@@ -427,7 +428,7 @@ export const ValidateRootRequest = {
       ? ConfigData.fromPartial(object.configData)
       : undefined;
     message.root = object.root ?? "";
-    message.network = object.network ?? 0;
+    message.network = object.network ?? undefined;
     return message;
   },
 };

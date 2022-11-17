@@ -115,6 +115,9 @@ describe("E2E Tests", () => {
     hash = await recordWithMultipleSignatures.getHash();
     records.push(hash);
 
+    let signatures = await recordWithMultipleSignatures.getSignatures();
+    expect(signatures.length).toEqual(2);
+
     const sendReceipt = await sdk.sendRecords(records);
     expect(sendReceipt.length).toBeGreaterThan(0);
 

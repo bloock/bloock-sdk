@@ -10,7 +10,7 @@ jobs:
   version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/check_version
 
   check_rust:
@@ -88,6 +88,24 @@ jobs:
     with:
       os: ubuntu-latest
       python-version: "3.7"
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
+
+  check_java:
+    needs: [build_linux]
+    uses: ./.github/workflows/check_java.yml
+
+  build_java:
+    needs: [check_java]
+    uses: ./.github/workflows/build_java.yml
+
+  test_java:
+    needs: [build_java]
+    uses: ./.github/workflows/test_java.yml
+    with:
+      os: ubuntu-latest
+      java-version: "10"
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}

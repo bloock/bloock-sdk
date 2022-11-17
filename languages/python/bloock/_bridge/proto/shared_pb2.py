@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x0cshared.proto\x12\x06\x62loock"&\n\x05\x45rror\x12\x0c\n\x04kind\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\tBX\n\x1c\x62loock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3'
+    b'\n\x0cshared.proto\x12\x06\x62loock"&\n\x05\x45rror\x12\x0c\n\x04kind\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\tBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3'
 )
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
@@ -21,7 +21,7 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "shared_pb2", globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
     DESCRIPTOR._options = None
-    DESCRIPTOR._serialized_options = b"\n\034bloock.sdk.java.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+    DESCRIPTOR._serialized_options = b"\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
     _ERROR._serialized_start = 24
     _ERROR._serialized_end = 62
 # @@protoc_insertion_point(module_scope)

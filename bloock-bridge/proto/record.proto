@@ -3,7 +3,7 @@ syntax = "proto3";
 package bloock;
 
 option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
-option java_package = "bloock.sdk.java.bridge.proto";
+option java_package = "com.bloock.sdk.bridge.proto";
 
 import "shared.proto";
 import "config.proto";
@@ -28,6 +28,7 @@ service RecordService {
     rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromLoader(RecordBuilderFromLoaderRequest) returns (RecordBuilderResponse);
     rpc GetHash(Record) returns (RecordHash);
+    rpc GetSignatures(Record) returns (RecordSignatures);
     rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
     rpc Publish(PublishRequest) returns (PublishResponse);
 }
@@ -42,6 +43,11 @@ message GenerateKeysResponse {
 
 message RecordHash {
     string hash = 1;
+    optional Error error = 2;
+}
+
+message RecordSignatures {
+    repeated Signature signatures = 1;
     optional Error error = 2;
 }
 

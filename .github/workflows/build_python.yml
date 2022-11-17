@@ -12,7 +12,7 @@ jobs:
     name: Build wheel
     runs-on: ${{ inputs.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Download static libs
         uses: actions/download-artifact@v1
         with:
@@ -46,5 +46,5 @@ jobs:
           package-dir: languages/python
       - uses: actions/upload-artifact@v2
         with:
-          name: wheel
+          name: bloock_lib_python
           path: ./wheelhouse/*.whl

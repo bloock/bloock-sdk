@@ -18,7 +18,7 @@ test: build
 	yarn run test
 
 fmt:
-	yarn run fmt
+	yarn run fix
 
 lint:
 	yarn run lint

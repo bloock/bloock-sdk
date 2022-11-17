@@ -44,6 +44,25 @@ func (r Record) GetHash() (string, error) {
 	return res.Hash, nil
 }
 
+func (r Record) GetSignatures() ([]Signature, error) {
+	bridgeClient := bridge.NewBloockBridge()
+	res, err := bridgeClient.Record().GetSignatures(context.Background(), r.ToProto())
+
+	if err != nil {
+		return []Signature{}, err
+	}
+
+	if res.Error != nil {
+		return []Signature{}, errors.New(res.Error.Message)
+	}
+
+	signatures := make([]Signature, len(res.Signatures))
+	for i, signature := range res.Signatures {
+		signatures[i] = NewSignatureFromProto(signature)
+	}
+	return signatures, nil
+}
+
 func (r Record) Publish(p Publisher) (string, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	req := proto.PublishRequest{
@@ -62,6 +81,10 @@ func (r Record) Publish(p Publisher) (string, error) {
 	}
 
 	return res.Hash, nil
+}
+
+func (r Record) Retrieve() []byte {
+	return r.Payload
 }
 
 func MapRecordsToProto(records []Record) []*proto.Record {

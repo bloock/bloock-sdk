@@ -17,8 +17,8 @@ use crate::{
     items::{
         DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error, GenerateKeysRequest,
         GenerateKeysResponse, Loader, LoaderArgs, PublishRequest, PublishResponse, Publisher,
-        Record, RecordBuilderResponse, RecordHash, RecordServiceHandler, SendRecordsResponse,
-        Signer, SignerAlg,
+        Record, RecordBuilderResponse, RecordHash, RecordServiceHandler, RecordSignatures,
+        SendRecordsResponse, Signature, Signer, SignerAlg,
     },
 };
 
@@ -53,6 +53,11 @@ impl From<RecordBuilderResponse> for ResponseType {
 impl From<RecordHash> for ResponseType {
     fn from(res: RecordHash) -> Self {
         ResponseType::GetHash(res)
+    }
+}
+impl From<RecordSignatures> for ResponseType {
+    fn from(res: RecordSignatures) -> Self {
+        ResponseType::GetSignatures(res)
     }
 }
 
@@ -330,6 +335,48 @@ impl RecordServiceHandler for RecordServer {
         };
         let hash = record.get_hash();
         RecordHash { hash, error: None }
+    }
+
+    async fn get_signatures(&self, _req: Record) -> RecordSignatures {
+        let record: RecordCore = match _req.try_into() {
+            Ok(record) => record,
+            Err(e) => {
+                return RecordSignatures {
+                    signatures: vec![],
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
+
+        let signatures = match record.get_signatures() {
+            Some(signatures) => {
+                let mut result: Vec<Signature> = vec![];
+                for signature in signatures.iter() {
+                    result.push(match signature.clone().try_into() {
+                        Ok(res) => res,
+                        Err(err) => {
+                            return RecordSignatures {
+                                signatures: vec![],
+                                error: Some(Error {
+                                    kind: BridgeError::RecordError.to_string(),
+                                    message: err.to_string(),
+                                }),
+                            }
+                        }
+                    });
+                }
+                result
+            }
+            None => vec![],
+        };
+
+        RecordSignatures {
+            signatures,
+            error: None,
+        }
     }
 
     async fn generate_keys(&self, _req: GenerateKeysRequest) -> GenerateKeysResponse {

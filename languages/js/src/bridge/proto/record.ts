@@ -162,6 +162,11 @@ export interface RecordHash {
   error?: Error | undefined;
 }
 
+export interface RecordSignatures {
+  signatures: Signature[];
+  error?: Error | undefined;
+}
+
 export interface RecordHeader {
   ty: string;
 }
@@ -467,6 +472,68 @@ export const RecordHash = {
   fromPartial<I extends Exact<DeepPartial<RecordHash>, I>>(object: I): RecordHash {
     const message = createBaseRecordHash();
     message.hash = object.hash ?? "";
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
+function createBaseRecordSignatures(): RecordSignatures {
+  return { signatures: [], error: undefined };
+}
+
+export const RecordSignatures = {
+  encode(message: RecordSignatures, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.signatures) {
+      Signature.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): RecordSignatures {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRecordSignatures();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.signatures.push(Signature.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RecordSignatures {
+    return {
+      signatures: Array.isArray(object?.signatures) ? object.signatures.map((e: any) => Signature.fromJSON(e)) : [],
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: RecordSignatures): unknown {
+    const obj: any = {};
+    if (message.signatures) {
+      obj.signatures = message.signatures.map((e) => e ? Signature.toJSON(e) : undefined);
+    } else {
+      obj.signatures = [];
+    }
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<RecordSignatures>, I>>(object: I): RecordSignatures {
+    const message = createBaseRecordSignatures();
+    message.signatures = object.signatures?.map((e) => Signature.fromPartial(e)) || [];
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
@@ -2238,6 +2305,7 @@ export interface RecordService {
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse>;
   BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse>;
   GetHash(request: Record): Promise<RecordHash>;
+  GetSignatures(request: Record): Promise<RecordSignatures>;
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse>;
   Publish(request: PublishRequest): Promise<PublishResponse>;
 }
@@ -2257,6 +2325,7 @@ export class RecordServiceClientImpl implements RecordService {
     this.BuildRecordFromRecord = this.BuildRecordFromRecord.bind(this);
     this.BuildRecordFromLoader = this.BuildRecordFromLoader.bind(this);
     this.GetHash = this.GetHash.bind(this);
+    this.GetSignatures = this.GetSignatures.bind(this);
     this.GenerateKeys = this.GenerateKeys.bind(this);
     this.Publish = this.Publish.bind(this);
   }
@@ -2312,6 +2381,12 @@ export class RecordServiceClientImpl implements RecordService {
     const data = Record.encode(request).finish();
     const promise = this.rpc.request(this.service, "GetHash", data);
     return promise.then((data) => RecordHash.decode(new _m0.Reader(data)));
+  }
+
+  GetSignatures(request: Record): Promise<RecordSignatures> {
+    const data = Record.encode(request).finish();
+    const promise = this.rpc.request(this.service, "GetSignatures", data);
+    return promise.then((data) => RecordSignatures.decode(new _m0.Reader(data)));
   }
 
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse> {
@@ -2401,6 +2476,14 @@ export const RecordServiceDefinition = {
       requestType: Record,
       requestStream: false,
       responseType: RecordHash,
+      responseStream: false,
+      options: {},
+    },
+    getSignatures: {
+      name: "GetSignatures",
+      requestType: Record,
+      requestStream: false,
+      responseType: RecordSignatures,
       responseStream: false,
       options: {},
     },

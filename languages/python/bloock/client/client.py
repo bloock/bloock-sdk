@@ -72,7 +72,7 @@ class Client:
         return res.record
 
     def verify_records(
-        self, records: List[str], network: Network = Network.BLOOCK_CHAIN
+        self, records: List[str], network: Network = Network.ETHEREUM_MAINNET
     ) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
@@ -87,7 +87,9 @@ class Client:
 
         return res.timestamp
 
-    def validate_root(self, root: str, network: Network) -> int:
+    def validate_root(
+        self, root: str, network: Network = Network.ETHEREUM_MAINNET
+    ) -> int:
         res = self.bridge_client.proof().ValidateRoot(
             ValidateRootRequest(
                 config_data=Config.new(),

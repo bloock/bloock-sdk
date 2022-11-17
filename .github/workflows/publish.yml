@@ -42,3 +42,14 @@ jobs:
       version: ${{ github.event.inputs.version }}
     secrets:
       npm_auth_token: ${{ secrets.NPM_AUTH_TOKEN }}
+
+  publish_java:
+    needs: [mark-latest]
+    uses: ./.github/workflows/publish_java.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      sonatype_username: ${{ secrets.SONATYPE_USERNAME }}
+      sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}
+      pgp_secret: ${{ secrets.PGP_SECRET }}
+      pgp_passphrase: ${{ secrets.PGP_PASSPHRASE }}

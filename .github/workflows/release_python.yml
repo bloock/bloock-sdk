@@ -18,9 +18,9 @@ jobs:
       - name: Download python wheels from package run
         uses: actions/download-artifact@v1
         with:
-          name: wheel
+          name: bloock_lib_python
       - name: Zip wheels
-        run: zip --junk-paths -r bloock-lib-python.zip wheel/
+        run: zip --junk-paths -r bloock-lib-python.zip bloock_lib_python/
       - name: Upload Python Package
         uses: actions/upload-release-asset@v1
         env:
