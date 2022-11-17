@@ -16,7 +16,7 @@ runs:
       shell: bash
       working-directory: languages/python
     - name: Check java version matches
-      run: grep "version = '$bloock_version'" lib/build.gradle
+      run: grep "version = '$bloock_version'" build.gradle
       shell: bash
       working-directory: languages/java
     - name: Check bloock-bridge version matches
