@@ -31,6 +31,7 @@ jobs:
           rm languages/java/Makefile
       - name: Build
         run: |
+          ./gradlew build
           ./gradlew shadowJar
         working-directory: languages/java
       - uses: actions/upload-artifact@v2
