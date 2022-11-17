@@ -22,10 +22,9 @@ message Configuration {
 
 enum Network {
     ETHEREUM_MAINNET = 0;
-    ETHEREUM_RINKEBY = 1;
-    ETHEREUM_GOERLI = 2;
-    GNOSIS_CHAIN = 3;
-    BLOOCK_CHAIN = 4;
+    ETHEREUM_GOERLI = 1;
+    GNOSIS_CHAIN = 2;
+    BLOOCK_CHAIN = 3;
 }
 
 message NetworkConfig {

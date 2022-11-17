@@ -3,10 +3,9 @@ import _m0 from "protobufjs/minimal";
 
 export enum Network {
   ETHEREUM_MAINNET = 0,
-  ETHEREUM_RINKEBY = 1,
-  ETHEREUM_GOERLI = 2,
-  GNOSIS_CHAIN = 3,
-  BLOOCK_CHAIN = 4,
+  ETHEREUM_GOERLI = 1,
+  GNOSIS_CHAIN = 2,
+  BLOOCK_CHAIN = 3,
   UNRECOGNIZED = -1,
 }
 
@@ -16,15 +15,12 @@ export function networkFromJSON(object: any): Network {
     case "ETHEREUM_MAINNET":
       return Network.ETHEREUM_MAINNET;
     case 1:
-    case "ETHEREUM_RINKEBY":
-      return Network.ETHEREUM_RINKEBY;
-    case 2:
     case "ETHEREUM_GOERLI":
       return Network.ETHEREUM_GOERLI;
-    case 3:
+    case 2:
     case "GNOSIS_CHAIN":
       return Network.GNOSIS_CHAIN;
-    case 4:
+    case 3:
     case "BLOOCK_CHAIN":
       return Network.BLOOCK_CHAIN;
     case -1:
@@ -38,8 +34,6 @@ export function networkToJSON(object: Network): string {
   switch (object) {
     case Network.ETHEREUM_MAINNET:
       return "ETHEREUM_MAINNET";
-    case Network.ETHEREUM_RINKEBY:
-      return "ETHEREUM_RINKEBY";
     case Network.ETHEREUM_GOERLI:
       return "ETHEREUM_GOERLI";
     case Network.GNOSIS_CHAIN:

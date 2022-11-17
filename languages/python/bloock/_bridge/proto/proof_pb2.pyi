@@ -193,17 +193,35 @@ class ValidateRootRequest(google.protobuf.message.Message):
         *,
         config_data: config_pb2.ConfigData | None = ...,
         root: builtins.str = ...,
-        network: config_pb2.Network.ValueType = ...,
+        network: config_pb2.Network.ValueType | None = ...,
     ) -> None: ...
     def HasField(
-        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
+        self,
+        field_name: typing_extensions.Literal[
+            "_network",
+            b"_network",
+            "config_data",
+            b"config_data",
+            "network",
+            b"network",
+        ],
     ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "config_data", b"config_data", "network", b"network", "root", b"root"
+            "_network",
+            b"_network",
+            "config_data",
+            b"config_data",
+            "network",
+            b"network",
+            "root",
+            b"root",
         ],
     ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_network", b"_network"]
+    ) -> typing_extensions.Literal["network"] | None: ...
 
 global___ValidateRootRequest = ValidateRootRequest
 
