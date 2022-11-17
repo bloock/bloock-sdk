@@ -2,15 +2,15 @@ UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 
 copy_lib:
-	rm -rfv lib/src/main/resources/*
+	rm -rfv src/main/resources/*
 
 ifeq ($(UNAME_S),Linux)
-	mkdir -p lib/src/main/resources/linux
-	cp ../../bloock-bridge/build/native/x86_64-unknown-linux-musl/* lib/src/main/resources/linux/
+	mkdir -p src/main/resources/linux
+	cp ../../bloock-bridge/build/native/x86_64-unknown-linux-musl/* src/main/resources/linux/
 endif
 ifeq ($(UNAME_S),Darwin)
-	mkdir -p lib/src/main/resources/macos
-	cp ../../bloock-bridge/build/native/x86_64-apple-darwin/* lib/src/main/resources/macos/
+	mkdir -p src/main/resources/macos
+	cp ../../bloock-bridge/build/native/x86_64-apple-darwin/* src/main/resources/macos/
 endif
 
 dev: copy_lib

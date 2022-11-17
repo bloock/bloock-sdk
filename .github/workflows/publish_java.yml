@@ -1,0 +1,34 @@
+name: Publish Java
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+    secrets:
+      sonatype_username:
+        required: true
+      sonatype_password:
+        required: true
+      pgp_secret:
+        required: true
+      pgp_passphrase:
+        required: true
+
+jobs:
+  publish_java:
+    name: Publish Java
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "v${{ github.event.inputs.version }}"
+      - name: Publish with Gradle
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.sonatype_username }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.sonatype_password }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.pgp_secret }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.pgp_passphrase }}
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository --no-daemon
+        working-directory: languages/java

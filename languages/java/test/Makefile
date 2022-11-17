@@ -1,4 +1,4 @@
 BLOOCK_VERSION := $(shell cat ../../../VERSION)
 test:
-	javac -classpath "../lib/build/libs/lib-$(BLOOCK_VERSION)-all.jar:." Test.java
-	java -classpath "../lib/build/libs/lib-$(BLOOCK_VERSION)-all.jar:." -enableassertions Test
+	javac -classpath "../build/libs/bloock-sdk-$(BLOOCK_VERSION)-all.jar:." Test.java
+	java -classpath "../build/libs/bloock-sdk-$(BLOOCK_VERSION)-all.jar:." -enableassertions Test

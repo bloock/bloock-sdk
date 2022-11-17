@@ -11,8 +11,8 @@ on:
         type: string
 
 jobs:
-  release_python:
-    name: Upload Python
+  release_java:
+    name: Upload Java
     runs-on: ubuntu-latest
     steps:
       - name: Download JAR from package run
