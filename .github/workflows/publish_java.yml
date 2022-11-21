@@ -24,6 +24,19 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: "v${{ github.event.inputs.version }}"
+      - name: Download dylibs
+        uses: actions/download-artifact@v1
+        with:
+          name: bloock_core_lib_dynamic
+      - name: Copy libraries into resources.
+        run: |
+          mkdir -p languages/java/src/main/resources/linux
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so languages/java/src/main/resources/linux/libbloock_bridge.so
+          mkdir -p languages/java/src/main/resources/macos
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge-fat.dylib ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/src/main/resources/macos/libbloock_bridge.dylib
+          mkdir -p languages/java/src/main/resources/win
+          [[ -e bloock_core_lib_dynamic/bloock_bridge_windows.dll ]] && cp -r bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/java/src/main/resources/win/bloock_bridge.dll
+          rm languages/java/Makefile
       - name: Publish with Gradle
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.sonatype_username }}
