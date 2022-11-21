@@ -25,7 +25,7 @@ jobs:
         with:
           ref: "v${{ github.event.inputs.version }}"
       - run: |
-          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" $(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s https://api.github.com/repos/osohq/oso/releases/tags/v${{ github.event.inputs.version }} | jq -r '.assets[] | select(.name == "bloock-core-lib-dynamic-${{ github.event.inputs.version }}.zip") | .url') --output bloock-core-lib-dynamic-${{ github.event.inputs.version }}.zip
+          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" $(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s https://api.github.com/repos/bloock/bloock-sdk/releases/tags/v${{ github.event.inputs.version }} | jq -r '.assets[] | select(.name == "bloock-core-lib-dynamic-${{ github.event.inputs.version }}.zip") | .url') --output bloock-core-lib-dynamic-${{ github.event.inputs.version }}.zip
       - run: unzip bloock-core-lib-dynamic-${{ github.event.inputs.version }}.zip -d bloock-core-lib-dynamic-${{ github.event.inputs.version }}
       - name: Copy libraries into resources.
         run: |
