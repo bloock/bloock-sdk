@@ -4,6 +4,7 @@ use crate::Client;
 use crate::HttpError;
 use async_trait::async_trait;
 use js_sys::Promise;
+use js_sys::{ArrayBuffer, Uint8Array};
 use multipart::client::lazy::Multipart;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -197,21 +198,31 @@ impl SimpleHttpClient {
             .map_err(|e| HttpError::JsError(e.into()))?;
 
         let status = resp.status();
-        let response_text = JsFuture::from(resp.text().map_err(|e| HttpError::JsError(e.into()))?)
-            .await
-            .map_err(|e| HttpError::JsError(e.into()))?;
+
+        let response_bytes = parse_response(&resp).await?;
 
         if (200..300).contains(&status) {
-            match response_text.as_string() {
-                Some(s) => Ok(s.as_bytes().to_vec()),
-                None => Ok(vec![]),
-            }
+            return Ok(response_bytes);
         } else {
-            let response: ApiError = serde_wasm_bindgen::from_value(response_text)
+            let response: ApiError = serde_json::from_slice(&response_bytes)
                 .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
             return Err(HttpError::HttpClientError(response.message));
         }
     }
+}
+
+async fn parse_response(response: &Response) -> Result<Vec<u8>> {
+    let promise = response
+        .array_buffer()
+        .map_err(|e| HttpError::JsError(e.into()))?;
+    let array_buffer: ArrayBuffer = JsFuture::from(promise)
+        .await
+        .map_err(|e| HttpError::JsError(e.into()))?
+        .unchecked_into();
+    let typed_buff: Uint8Array = Uint8Array::new(&array_buffer);
+    let mut body = vec![0; typed_buff.length() as usize];
+    typed_buff.copy_to(&mut body);
+    Ok(body)
 }
 
 #[derive(Debug, Clone)]
