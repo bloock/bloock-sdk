@@ -3,11 +3,11 @@ package entity
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 type Proof struct {
-	leaves []string
-	nodes  []string
-	depth  string
-	bitmap string
-	anchor ProofAnchor
+	Leaves []string
+	Nodes  []string
+	Depth  string
+	Bitmap string
+	Anchor ProofAnchor
 }
 
 func NewProofFromProto(p *proto.Proof) Proof {
@@ -15,21 +15,21 @@ func NewProofFromProto(p *proto.Proof) Proof {
 		return Proof{}
 	}
 	return Proof{
-		leaves: p.Leaves,
-		nodes:  p.Nodes,
-		depth:  p.Depth,
-		bitmap: p.Bitmap,
-		anchor: NewProofAnchorFromProto(p.Anchor),
+		Leaves: p.Leaves,
+		Nodes:  p.Nodes,
+		Depth:  p.Depth,
+		Bitmap: p.Bitmap,
+		Anchor: NewProofAnchorFromProto(p.Anchor),
 	}
 }
 
 func (p Proof) ToProto() *proto.Proof {
 	return &proto.Proof{
-		Leaves: p.leaves,
-		Nodes:  p.nodes,
-		Depth:  p.depth,
-		Bitmap: p.bitmap,
-		Anchor: p.anchor.ToProto(),
+		Leaves: p.Leaves,
+		Nodes:  p.Nodes,
+		Depth:  p.Depth,
+		Bitmap: p.Bitmap,
+		Anchor: p.Anchor.ToProto(),
 	}
 }
 
