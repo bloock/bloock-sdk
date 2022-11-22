@@ -3,7 +3,6 @@ package entity
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 type Network = proto.Network
-type NetworkConfig = proto.NetworkConfig
 
 type networks struct {
 	BloockChain     Network

@@ -7,4 +7,5 @@ class Config:
     def new() -> ConfigData:
         return ConfigData(
             config=Configuration(api_key=bloock.api_key, host=bloock.api_host),
+            networks_config=bloock.network_config,
         )
