@@ -1,4 +1,4 @@
-__version__ = "2.0.0-beta.24"
+__version__ = "2.0.0-beta.25"
 
 from typing import Dict
 
@@ -10,6 +10,7 @@ from bloock.client.entity.network_config import NetworkConfig
 api_key = ""
 api_host = ""
 network_config: Dict[int, NetworkConfigProto] = {}
+
 
 def set_network_config(network: Network, config: NetworkConfig):
     bloock.network_config[int(network)] = NetworkConfigProto(
