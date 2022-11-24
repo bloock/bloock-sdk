@@ -6,10 +6,22 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
-func SetNetworkConfig(network entity.Network, config entity.NetworkConfig) {
-	bloock.NetworkConfig[int32(network)] = &proto.NetworkConfig{
-		ContractAddress: config.ContractAddress,
-		ContractAbi:     config.ContractAbi,
-		HttpProvider:    config.HttpProvider,
+func SetProvider(network entity.Network, provider string) {
+	if val, ok := bloock.NetworkConfig[int32(network)]; ok {
+		val.HttpProvider = provider
+	} else {
+		bloock.NetworkConfig[int32(network)] = &proto.NetworkConfig{
+			HttpProvider: provider,
+		}
+	}
+}
+
+func SetContractAddess(network entity.Network, contractAddess string) {
+	if val, ok := bloock.NetworkConfig[int32(network)]; ok {
+		val.ContractAddress = contractAddess
+	} else {
+		bloock.NetworkConfig[int32(network)] = &proto.NetworkConfig{
+			ContractAddress: contractAddess,
+		}
 	}
 }

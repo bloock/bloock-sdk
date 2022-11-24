@@ -1,13 +1,8 @@
-use std::collections::HashMap;
-
-use bloock_core::config::{
-    config_data::ConfigData as CoreConfigData,
-    entity::{config::NetworkConfiguration, network::Network},
-};
+use bloock_core::config::{config_data::ConfigData as CoreConfigData, entity::network::Network};
 
 use crate::{error::BridgeError, items::ConfigData};
 
-use super::network::{map_network_config, map_network_from_i32};
+use super::network::map_network_from_i32;
 
 pub fn map_config(config_data: Option<ConfigData>) -> Result<CoreConfigData, BridgeError> {
     let config_data = match config_data {
@@ -20,24 +15,29 @@ pub fn map_config(config_data: Option<ConfigData>) -> Result<CoreConfigData, Bri
         None => return Err(BridgeError::InvalidArgument),
     };
 
-    let mut networks_config: HashMap<Network, NetworkConfiguration> = HashMap::new();
+    let mut default_config = CoreConfigData::new(config.api_key);
+
     for (network, config) in config_data.networks_config {
         let network = match map_network_from_i32(network) {
             Some(network) => network,
             None => return Err(BridgeError::InvalidArgument),
         };
-        networks_config.insert(network, map_network_config(config.clone()));
-    }
 
-    let mut default_config = CoreConfigData::new(config.api_key);
+        if let Some(net_config) = default_config.networks_config.get_mut(&network) {
+            if !config.http_provider.is_empty() {
+                net_config.http_provider = config.http_provider;
+            }
+
+            if !config.contract_address.is_empty() {
+                net_config.contract_address = config.contract_address;
+            }
+        }
+    }
 
     if !config.host.is_empty() {
         default_config.config.host = config.host;
     }
 
-    if !networks_config.is_empty() {
-        default_config.networks_config = networks_config;
-    }
 
     Ok(default_config)
 }
