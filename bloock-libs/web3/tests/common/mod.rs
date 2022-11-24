@@ -11,7 +11,7 @@ pub async fn get_state() {
             provider.to_string(),
             contract_address.to_string(),
             state.to_string(),
-            "test_0rHiO3crFu5aQedLinMbSYJ1sKg0OUkGxjGzqxRlYnWAuntPdC3cx-oEAAzqX-6O".to_string(),
+            "test_k8S3N2jEqwPC4ear2iAfIKmtukSi5uAFbYjL1qcxIjnGuFR9D8qv4viyy6CMb5MB".to_string(),
         )
         .await
         .unwrap();
