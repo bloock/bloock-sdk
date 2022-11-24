@@ -1,5 +1,8 @@
 import { NetworkConfig } from "./entity/network_config";
-import { Network, NetworkConfig as NetworkConfigProto } from "./bridge/proto/config";
+import {
+  Network,
+  NetworkConfig as NetworkConfigProto
+} from "./bridge/proto/config";
 
 export class Bloock {
   private static instance: Bloock;
@@ -10,9 +13,9 @@ export class Bloock {
   };
 
   private constructor() {
-      this.apiKey = "";
-      this.apiHost = "";
-      this.networksConfig = {};
+    this.apiKey = "";
+    this.apiHost = "";
+    this.networksConfig = {};
   }
 
   public static getApiKey(): string | undefined {
@@ -61,9 +64,9 @@ export class Bloock {
     }
     if (Bloock.instance.networksConfig) {
       Bloock.instance.networksConfig[network] = {
-          ContractAddress: config.ContractAddress,
-          ContractAbi: config.ContractAbi,
-          HttpProvider: config.HttpProvider,
+        ContractAddress: config.ContractAddress,
+        ContractAbi: config.ContractAbi,
+        HttpProvider: config.HttpProvider
       };
     }
   }
