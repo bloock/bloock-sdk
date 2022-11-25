@@ -36,6 +36,9 @@ export class BloockClient {
       .getRecord()
       .SendRecords(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.records.map(r => RecordReceipt.fromProto(r));
       });
   }
@@ -55,6 +58,9 @@ export class BloockClient {
       .getAnchor()
       .GetAnchor(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return Anchor.fromProto(res.anchor!);
       });
   }
@@ -76,6 +82,9 @@ export class BloockClient {
       .getAnchor()
       .WaitAnchor(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return Anchor.fromProto(res.anchor!);
       });
   }
@@ -96,6 +105,9 @@ export class BloockClient {
       .getProof()
       .GetProof(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return Proof.fromProto(res.proof!);
       });
   }
@@ -117,6 +129,9 @@ export class BloockClient {
       .getProof()
       .ValidateRoot(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.timestamp;
       });
   }
@@ -137,6 +152,9 @@ export class BloockClient {
       .getProof()
       .VerifyProof(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.record!;
       });
   }
@@ -161,6 +179,9 @@ export class BloockClient {
       .getProof()
       .VerifyRecords(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.timestamp;
       });
   }
@@ -175,6 +196,9 @@ export class BloockClient {
       .getRecord()
       .GenerateKeys(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return Keys.fromProto(res);
       });
   }
