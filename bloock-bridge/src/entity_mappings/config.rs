@@ -1,4 +1,4 @@
-use bloock_core::config::{config_data::ConfigData as CoreConfigData, entity::network::Network};
+use bloock_core::config::config_data::ConfigData as CoreConfigData;
 
 use crate::{error::BridgeError, items::ConfigData};
 
@@ -37,7 +37,6 @@ pub fn map_config(config_data: Option<ConfigData>) -> Result<CoreConfigData, Bri
     if !config.host.is_empty() {
         default_config.config.host = config.host;
     }
-
 
     Ok(default_config)
 }
