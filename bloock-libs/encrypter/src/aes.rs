@@ -31,12 +31,14 @@ fn generate_key(password: &str, salt: &[u8], n_iterations: u32) -> [u8; KEY_LEN]
 
 pub struct AesEncrypterArgs {
     password: String,
+    associated_data: Vec<u8>,
 }
 
 impl AesEncrypterArgs {
-    pub fn new(password: &str) -> Self {
+    pub fn new(password: &str, associated_data: &[u8]) -> Self {
         Self {
             password: password.to_string(),
+            associated_data: associated_data.to_vec(),
         }
     }
 }
@@ -52,7 +54,7 @@ impl AesEncrypter {
 }
 
 impl Encrypter for AesEncrypter {
-    fn encrypt(&self, payload: &[u8], associated_data: &[u8]) -> Result<Vec<u8>> {
+    fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>> {
         // [ SALT | NUM_ITERATIONS | NONCE | ENCRYPTED_PAYLOAD | TAG ]
         //  |---------- HEADER -----------| |------- CIPHER --------|
 
@@ -85,7 +87,7 @@ impl Encrypter for AesEncrypter {
 
         let aead = Aes256Gcm::new(GenericArray::from_slice(&key));
         let aad_tag = aead
-            .encrypt_in_place_detached(&nonce, associated_data, in_out)
+            .encrypt_in_place_detached(&nonce, &self.args.associated_data, in_out)
             .map_err(|err| EncrypterError::FailedToEncryptInPlace(err.to_string()))?;
 
         // Copy the tag into the tag piece.
@@ -97,11 +99,13 @@ impl Encrypter for AesEncrypter {
 
 pub struct AesDecrypterArgs {
     pub password: String,
+    associated_data: Vec<u8>,
 }
 impl AesDecrypterArgs {
-    pub fn new(password: &str) -> Self {
+    pub fn new(password: &str, associated_data: &[u8]) -> Self {
         Self {
             password: password.to_string(),
+            associated_data: associated_data.to_vec(),
         }
     }
 }
@@ -117,7 +121,7 @@ impl AesDecrypter {
 }
 
 impl Decrypter for AesDecrypter {
-    fn decrypt(&self, data: &[u8], associated_data: &[u8]) -> Result<Vec<u8>> {
+    fn decrypt(&self, data: &[u8]) -> Result<Vec<u8>> {
         if data.len() <= HEADER_LEN {
             return Err(EncrypterError::InvalidPayloadLength());
         }
@@ -137,12 +141,12 @@ impl Decrypter for AesDecrypter {
 
         let payload = Payload {
             msg: cipher,
-            aad: associated_data,
+            aad: &self.args.associated_data,
         };
 
         let aead = Aes256Gcm::new(GenericArray::from_slice(&key));
         aead.decrypt(GenericArray::from_slice(nonce), payload)
-            .map_err(|_| EncrypterError::BadSeal())
+            .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))
     }
 }
 
@@ -150,24 +154,23 @@ impl Decrypter for AesDecrypter {
 mod tests {
     use crate::{
         aes::{AesDecrypter, AesDecrypterArgs},
-        Decrypter, Encrypter, EncrypterError,
+        Decrypter, Encrypter,
     };
 
     use super::{AesEncrypter, AesEncrypterArgs};
 
     #[test]
     fn test_aes_encryption() {
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
-
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad.clone()));
 
-        let ciphertext = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", aad));
 
-        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext, aad).unwrap();
+        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext).unwrap();
         let decrypted_payload = std::str::from_utf8(&decrypted_payload_bytes).unwrap();
 
         assert_eq!(payload_bytes, decrypted_payload_bytes);
@@ -176,34 +179,33 @@ mod tests {
 
     #[test]
     fn test_aes_encryption_invalid_decryption_aad() {
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
-
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let ciphertext = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad.clone()));
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
+        let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
         let invalid_aad = "different_user_id".as_bytes();
-        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext, invalid_aad);
-        assert_eq!(decrypted_payload_bytes, Err(EncrypterError::BadSeal()));
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", invalid_aad));
+        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext);
+        assert!(decrypted_payload_bytes.is_err());
     }
 
     #[test]
     fn test_aes_encryption_invalid_decryption_key() {
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
-
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let ciphertext = encrypter.encrypt(payload_bytes, aad).unwrap();
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad.clone()));
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("incorrect_password"));
+        let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
-        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext, aad);
-        assert_eq!(decrypted_payload_bytes, Err(EncrypterError::BadSeal()));
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("incorrect_password", aad));
+
+        let decrypted_payload_bytes = decrypter.decrypt(&ciphertext);
+        assert!(decrypted_payload_bytes.is_err());
     }
 }

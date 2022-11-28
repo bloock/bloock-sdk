@@ -65,6 +65,7 @@ enum SignerAlg {
 
 enum EncryptionAlg {
     A256GCM = 0;
+    RSA = 1;
 }
 
 message Signer {

@@ -99,7 +99,7 @@ impl Builder {
             let payload = self.document.get_payload();
 
             let decrypted_payload = decrypter
-                .decrypt(&payload, &[])
+                .decrypt(&payload)
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document.remove_encryption(decrypted_payload)?;
@@ -110,7 +110,7 @@ impl Builder {
         if let Some(encrypter) = &self.encrypter {
             let payload = self.document.build()?;
             let ciphertext = encrypter
-                .encrypt(&payload, &[])
+                .encrypt(&payload)
                 .map_err(InfrastructureError::EncrypterError)?;
 
             if let Some(doc) = record.document.as_mut() {
