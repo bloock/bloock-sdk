@@ -1,4 +1,3 @@
-import { NetworkConfig } from "./entity/network_config";
 import {
   Network,
   NetworkConfig as NetworkConfigProto
@@ -55,19 +54,41 @@ export class Bloock {
     return Bloock.instance.networksConfig;
   }
 
-  public static setNetworkConfiguration(
-    network: Network,
-    config: NetworkConfig
-  ) {
+  public static setProvider(network: Network, provider: string) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
     }
+
     if (Bloock.instance.networksConfig) {
-      Bloock.instance.networksConfig[network] = {
-        ContractAddress: config.ContractAddress,
-        ContractAbi: config.ContractAbi,
-        HttpProvider: config.HttpProvider
-      };
+      if (network in Bloock.instance.networksConfig) {
+        Bloock.instance.networksConfig[network].HttpProvider = provider;
+      } else {
+        Bloock.instance.networksConfig[network] = {
+          ContractAddress: "",
+          ContractAbi: "",
+          HttpProvider: provider
+        };
+      }
+    }
+  }
+
+  public static setContractAddress(network: Network, contractAddress: string) {
+    if (!Bloock.instance) {
+      Bloock.instance = new Bloock();
+    }
+
+    if (Bloock.instance.networksConfig) {
+      if (network in Bloock.instance.networksConfig) {
+        Bloock.instance.networksConfig[
+          network
+        ].ContractAddress = contractAddress;
+      } else {
+        Bloock.instance.networksConfig[network] = {
+          ContractAddress: "",
+          ContractAbi: contractAddress,
+          HttpProvider: ""
+        };
+      }
     }
   }
 }

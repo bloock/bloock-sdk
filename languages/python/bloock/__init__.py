@@ -3,18 +3,25 @@ __version__ = "2.0.0"
 from typing import Dict
 
 import bloock
-from bloock._bridge.proto.config_pb2 import NetworkConfig as NetworkConfigProto
+from bloock._bridge.proto.config_pb2 import NetworkConfig
 from bloock.client.entity.network import Network
-from bloock.client.entity.network_config import NetworkConfig
 
 api_key = ""
 api_host = ""
-network_config: Dict[int, NetworkConfigProto] = {}
+network_config: Dict[int, NetworkConfig] = {}
 
 
-def set_network_config(network: Network, config: NetworkConfig):
-    bloock.network_config[int(network)] = NetworkConfigProto(
-        ContractAddress=config.contract_address,
-        ContractAbi=config.contract_abi,
-        HttpProvider=config.http_provider,
-    )
+def set_provider(network: Network, provider: str):
+    if int(network) in bloock.network_config:
+        bloock.network_config[int(network)].HttpProvider = provider
+    else:
+        bloock.network_config[int(network)] = NetworkConfig(HttpProvider=provider)
+
+
+def set_contract_address(network: Network, contract_address: str):
+    if int(network) in bloock.network_config:
+        bloock.network_config[int(network)].ContractAddress = contract_address
+    else:
+        bloock.network_config[int(network)] = NetworkConfig(
+            ContractAddress=contract_address
+        )
