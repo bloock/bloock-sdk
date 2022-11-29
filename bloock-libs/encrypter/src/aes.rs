@@ -137,6 +137,10 @@ impl Decrypter for AesDecrypter {
         iterations.copy_from_slice(iter_slice);
         let n_iterations = u32::from_le_bytes(iterations);
 
+        if n_iterations > NUM_ITERATIONS {
+            return Err(EncrypterError::InvalidPayload());
+        }
+
         let key = generate_key(&self.args.password, salt, n_iterations);
 
         let payload = Payload {
@@ -207,5 +211,12 @@ mod tests {
 
         let decrypted_payload_bytes = decrypter.decrypt(&ciphertext);
         assert!(decrypted_payload_bytes.is_err());
+    }
+
+    #[test]
+    fn test_aes_decryption_invalid_payload() {
+        let unencrypted_payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", "".as_bytes()));
+        assert!(decrypter.decrypt(unencrypted_payload.as_bytes()).is_err());
     }
 }

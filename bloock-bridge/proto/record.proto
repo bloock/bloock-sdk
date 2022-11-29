@@ -30,12 +30,21 @@ service RecordService {
     rpc GetHash(Record) returns (RecordHash);
     rpc GetSignatures(Record) returns (RecordSignatures);
     rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
+    rpc GenerateRsaKeys(GenerateRsaKeysRequest) returns (GenerateRsaKeysResponse);
     rpc Publish(PublishRequest) returns (PublishResponse);
 }
 
 message GenerateKeysRequest {}
 
 message GenerateKeysResponse {
+    string privateKey = 1;
+    string publicKey = 2;
+    optional Error error = 3;
+}
+
+message GenerateRsaKeysRequest {}
+
+message GenerateRsaKeysResponse {
     string privateKey = 1;
     string publicKey = 2;
     optional Error error = 3;
@@ -83,7 +92,7 @@ message Encrypter {
 }
 
 message EncrypterArgs {
-    string password = 1;
+    string key = 1;
 }
 
 message Decrypter {
@@ -92,7 +101,7 @@ message Decrypter {
 }
 
 message DecrypterArgs {
-    string password = 1;
+    string key = 1;
 }
 
 message Signature {

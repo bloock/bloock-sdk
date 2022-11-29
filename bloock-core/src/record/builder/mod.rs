@@ -71,13 +71,13 @@ impl Builder {
         self
     }
 
-    pub fn with_encrypter<E: Encrypter + 'static>(mut self, encrypter: E) -> Self {
-        self.encrypter = Some(Box::new(encrypter));
+    pub fn with_encrypter(mut self, encrypter: Box<dyn Encrypter>) -> Self {
+        self.encrypter = Some(encrypter);
         self
     }
 
-    pub fn with_decrypter<E: Decrypter + 'static>(mut self, decrypter: E) -> Self {
-        self.decrypter = Some(Box::new(decrypter));
+    pub fn with_decrypter(mut self, decrypter: Box<dyn Decrypter>) -> Self {
+        self.decrypter = Some(decrypter);
         self
     }
 

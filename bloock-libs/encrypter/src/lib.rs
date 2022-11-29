@@ -26,6 +26,8 @@ pub enum EncrypterError {
     FailedToGenerateSalt(String),
     #[error("Length of decoded data is <= NONCE_LEN")]
     InvalidPayloadLength(),
+    #[error("Invalid payload")]
+    InvalidPayload(),
     #[error("Invalid Base64 data")]
     InvalidBase64(),
     #[error("Failed to decrypt: {0}")]
@@ -34,4 +36,6 @@ pub enum EncrypterError {
     NotEncrypted(),
     #[error("Document is encrypted. Metadata cannot be modified")]
     Encrypted(),
+    #[error("Error generating RSA key pair: {0}")]
+    ErrorGeneratingRsaKeyPair(String),
 }

@@ -6,8 +6,9 @@ use bloock_core::{
     error::BloockError,
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
-    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient, EcsdaSigner,
-    EcsdaSignerArgs,
+    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
+    Decrypter as DecrypterCore, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore,
+    RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
 };
 
 use super::response_types::ResponseType;
@@ -16,9 +17,9 @@ use crate::{
     error::{config_data_error, BridgeError},
     items::{
         DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error, GenerateKeysRequest,
-        GenerateKeysResponse, Loader, LoaderArgs, PublishRequest, PublishResponse, Publisher,
-        Record, RecordBuilderResponse, RecordHash, RecordServiceHandler, RecordSignatures,
-        SendRecordsResponse, Signature, Signer, SignerAlg,
+        GenerateKeysResponse, GenerateRsaKeysRequest, GenerateRsaKeysResponse, Loader, LoaderArgs,
+        PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse, RecordHash,
+        RecordServiceHandler, RecordSignatures, SendRecordsResponse, Signature, Signer, SignerAlg,
     },
 };
 
@@ -400,6 +401,27 @@ impl RecordServiceHandler for RecordServer {
         };
     }
 
+    async fn generate_rsa_keys(&self, _req: GenerateRsaKeysRequest) -> GenerateRsaKeysResponse {
+        let (private_key, public_key) = match EcsdaSigner::generate_keys() {
+            Ok(p) => p,
+            Err(e) => {
+                return GenerateRsaKeysResponse {
+                    private_key: "".to_string(),
+                    public_key: "".to_string(),
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
+        return GenerateRsaKeysResponse {
+            private_key,
+            public_key,
+            error: None,
+        };
+    }
+
     async fn publish(&self, req: PublishRequest) -> PublishResponse {
         let config_data = match map_config(req.config_data) {
             Ok(config) => config,
@@ -475,17 +497,18 @@ fn build_record(
     }
 
     if let Some(encrypt) = encrypter {
-        let encrypter = match EncryptionAlg::from_i32(encrypt.alg) {
-            Some(EncryptionAlg::A256gcm) => {
-                let args = match encrypt.args {
-                    Some(encrypter_arguments) => encrypter_arguments,
-                    None => {
-                        return record_builder_response_error("no arguments provided".to_string())
-                    }
-                };
+        let args = match encrypt.args {
+            Some(encrypter_arguments) => encrypter_arguments,
+            None => return record_builder_response_error("no arguments provided".to_string()),
+        };
 
-                AesEncrypter::new(AesEncrypterArgs::new(&args.password))
-            }
+        let encrypter: Box<dyn EncrypterCore> = match EncryptionAlg::from_i32(encrypt.alg) {
+            Some(alg) => match alg {
+                EncryptionAlg::A256gcm => {
+                    Box::new(AesEncrypter::new(AesEncrypterArgs::new(&args.key, &[])))
+                }
+                EncryptionAlg::Rsa => Box::new(RsaEncrypter::new(RsaEncrypterArgs::new(&args.key))),
+            },
             None => {
                 return record_builder_response_error("invalid encrypter provided".to_string());
             }
@@ -494,17 +517,18 @@ fn build_record(
     }
 
     if let Some(decrypt) = decrypter {
-        let decrypter = match EncryptionAlg::from_i32(decrypt.alg) {
-            Some(EncryptionAlg::A256gcm) => {
-                let args = match decrypt.args {
-                    Some(decrypter_arguments) => decrypter_arguments,
-                    None => {
-                        return record_builder_response_error("no arguments provided".to_string())
-                    }
-                };
+        let args = match decrypt.args {
+            Some(decrypter_arguments) => decrypter_arguments,
+            None => return record_builder_response_error("no arguments provided".to_string()),
+        };
 
-                AesDecrypter::new(AesDecrypterArgs::new(&args.password))
-            }
+        let decrypter: Box<dyn DecrypterCore> = match EncryptionAlg::from_i32(decrypt.alg) {
+            Some(alg) => match alg {
+                EncryptionAlg::A256gcm => {
+                    Box::new(AesDecrypter::new(AesDecrypterArgs::new(&args.key, &[])))
+                }
+                EncryptionAlg::Rsa => Box::new(RsaDecrypter::new(RsaDecrypterArgs::new(&args.key))),
+            },
             None => {
                 return record_builder_response_error("invalid decrypter provided".to_string());
             }
@@ -637,7 +661,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -659,7 +683,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -720,7 +744,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -744,7 +768,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -788,7 +812,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -806,7 +830,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -833,7 +857,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -850,7 +874,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -901,7 +925,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -920,7 +944,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
