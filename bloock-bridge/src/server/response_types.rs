@@ -1,4 +1,5 @@
 use crate::items::GenerateKeysResponse;
+use crate::items::GenerateRsaKeyPairResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetProofResponse;
 use crate::items::PublishResponse;
@@ -27,6 +28,7 @@ pub enum ResponseType {
     GetHash(RecordHash),
     GetSignatures(RecordSignatures),
     GenerateKeys(GenerateKeysResponse),
+    GenerateRsaKeyPairResponse(GenerateRsaKeyPairResponse),
     Publish(PublishResponse),
 }
 
@@ -47,6 +49,7 @@ impl ResponseType {
             ResponseType::BuildRecord(r) => r.encode(&mut result_vec),
             ResponseType::GetHash(r) => r.encode(&mut result_vec),
             ResponseType::GenerateKeys(r) => r.encode(&mut result_vec),
+            ResponseType::GenerateRsaKeyPairResponse(r) => r.encode(&mut result_vec),
             ResponseType::Publish(r) => r.encode(&mut result_vec),
             ResponseType::GetSignatures(r) => r.encode(&mut result_vec),
         }
@@ -68,6 +71,7 @@ impl ResponseType {
             ResponseType::BuildRecord(r) => r.encoded_len(),
             ResponseType::GetHash(r) => r.encoded_len(),
             ResponseType::GenerateKeys(r) => r.encoded_len(),
+            ResponseType::GenerateRsaKeyPairResponse(r) => r.encoded_len(),
             ResponseType::Publish(r) => r.encoded_len(),
             ResponseType::GetSignatures(r) => r.encoded_len(),
         }

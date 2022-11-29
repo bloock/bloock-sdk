@@ -152,16 +152,30 @@ func (c *Client) ValidateRoot(root string, params entity.NetworkParams) (uint64,
 	return res.Timestamp, nil
 }
 
-func (c *Client) GenerateKeys() (entity.Keys, error) {
+func (c *Client) GenerateKeys() (entity.KeyPair, error) {
 	res, err := c.bridgeClient.Record().GenerateKeys(context.Background(), &proto.GenerateKeysRequest{})
 
 	if err != nil {
-		return entity.Keys{}, err
+		return entity.KeyPair{}, err
 	}
 
 	if res.Error != nil {
-		return entity.Keys{}, errors.New(res.Error.Message)
+		return entity.KeyPair{}, errors.New(res.Error.Message)
 	}
 
 	return entity.NewKeysFromProto(res), nil
+}
+
+func (c *Client) GenerateRsaKeyPair() (entity.KeyPair, error) {
+	res, err := c.bridgeClient.Record().GenerateRsaKeyPair(context.Background(), &proto.GenerateRsaKeyPairRequest{})
+
+	if err != nil {
+		return entity.KeyPair{}, err
+	}
+
+	if res.Error != nil {
+		return entity.KeyPair{}, errors.New(res.Error.Message)
+	}
+
+	return entity.NewRsaKeyPairFromProto(res), nil
 }

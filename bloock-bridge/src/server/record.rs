@@ -17,9 +17,10 @@ use crate::{
     error::{config_data_error, BridgeError},
     items::{
         DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error, GenerateKeysRequest,
-        GenerateKeysResponse, GenerateRsaKeysRequest, GenerateRsaKeysResponse, Loader, LoaderArgs,
-        PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse, RecordHash,
-        RecordServiceHandler, RecordSignatures, SendRecordsResponse, Signature, Signer, SignerAlg,
+        GenerateKeysResponse, GenerateRsaKeyPairRequest, GenerateRsaKeyPairResponse, Loader,
+        LoaderArgs, PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse,
+        RecordHash, RecordServiceHandler, RecordSignatures, SendRecordsResponse, Signature, Signer,
+        SignerAlg,
     },
 };
 
@@ -65,6 +66,12 @@ impl From<RecordSignatures> for ResponseType {
 impl From<GenerateKeysResponse> for ResponseType {
     fn from(res: GenerateKeysResponse) -> Self {
         ResponseType::GenerateKeys(res)
+    }
+}
+
+impl From<GenerateRsaKeyPairResponse> for ResponseType {
+    fn from(res: GenerateRsaKeyPairResponse) -> Self {
+        ResponseType::GenerateRsaKeyPairResponse(res)
     }
 }
 
@@ -401,11 +408,14 @@ impl RecordServiceHandler for RecordServer {
         };
     }
 
-    async fn generate_rsa_keys(&self, _req: GenerateRsaKeysRequest) -> GenerateRsaKeysResponse {
-        let (private_key, public_key) = match EcsdaSigner::generate_keys() {
-            Ok(p) => p,
+    async fn generate_rsa_key_pair(
+        &self,
+        _req: GenerateRsaKeyPairRequest,
+    ) -> GenerateRsaKeyPairResponse {
+        let keypair = match bloock_core::generate_rsa_key_pair() {
+            Ok(keypair) => keypair,
             Err(e) => {
-                return GenerateRsaKeysResponse {
+                return GenerateRsaKeyPairResponse {
                     private_key: "".to_string(),
                     public_key: "".to_string(),
                     error: Some(Error {
@@ -415,9 +425,10 @@ impl RecordServiceHandler for RecordServer {
                 }
             }
         };
-        return GenerateRsaKeysResponse {
-            private_key,
-            public_key,
+
+        return GenerateRsaKeyPairResponse {
+            private_key: keypair.private_key,
+            public_key: keypair.public_key,
             error: None,
         };
     }
@@ -574,8 +585,8 @@ mod tests {
 
     use crate::{
         items::{
-            DecrypterArgs, EncrypterArgs, EncryptionAlg, GenerateKeysRequest, RecordServiceHandler,
-            SignerAlg, SignerArgs,
+            DecrypterArgs, EncrypterArgs, EncryptionAlg, GenerateKeysRequest,
+            GenerateRsaKeyPairRequest, RecordServiceHandler, SignerAlg, SignerArgs,
         },
         server::Server,
     };
@@ -1080,5 +1091,16 @@ mod tests {
         let error_response = keys_response.error;
 
         assert_eq!(None, error_response);
+    }
+
+    #[tokio::test]
+    async fn test_generate_rsa_key_pair() {
+        let server = Server::new();
+        let keys_response = server
+            .record
+            .generate_rsa_key_pair(GenerateRsaKeyPairRequest {})
+            .await;
+
+        assert_eq!(keys_response.error, None);
     }
 }

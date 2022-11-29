@@ -143,6 +143,11 @@ impl Server {
                 .generate_keys(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceGenerateRsaKeyPair => Ok(self
+                .record
+                .generate_rsa_key_pair(self.serialize_request(payload)?)
+                .await
+                .into()),
             BloockServer::RecordServicePublish => Ok(self
                 .record
                 .publish(self.serialize_request(payload)?)

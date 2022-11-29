@@ -9,14 +9,11 @@ pub struct RsaKeyPair {
     pub private_key: String,
 }
 
-pub fn generate_rsa_keypair() -> Result<RsaKeyPair> {
-    println!("CCC");
+pub fn generate_rsa_key_pair() -> Result<RsaKeyPair> {
     let mut rng = rand::thread_rng();
     let private_key = RsaPrivateKey::new(&mut rng, 2048).expect("failed to generate a key");
 
     let public_key = RsaPublicKey::from(&private_key);
-
-    println!("DDD");
 
     Ok(RsaKeyPair {
         public_key: public_key
@@ -61,7 +58,7 @@ impl Encrypter for RsaEncrypter {
         let padding = PaddingScheme::new_oaep::<sha2::Sha256>();
 
         public_key
-            .encrypt(&mut rng, padding, &payload[..])
+            .encrypt(&mut rng, padding, payload)
             .map_err(|err| EncrypterError::FailedToEncrypt(err.to_string()))
     }
 }
@@ -94,7 +91,7 @@ impl Decrypter for RsaDecrypter {
             .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))?;
         let padding = PaddingScheme::new_oaep::<sha2::Sha256>();
         private_key
-            .decrypt(padding, &cipher_text)
+            .decrypt(padding, cipher_text)
             .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))
     }
 }
@@ -103,7 +100,7 @@ impl Decrypter for RsaDecrypter {
 mod tests {
     use crate::{
         rsa::{
-            generate_rsa_keypair, RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
+            generate_rsa_key_pair, RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
         },
         Decrypter, Encrypter,
     };
@@ -112,7 +109,7 @@ mod tests {
     fn test_rsa_encryption() {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
-        let key_pair = generate_rsa_keypair().unwrap();
+        let key_pair = generate_rsa_key_pair().unwrap();
         let encrypter = RsaEncrypter::new(RsaEncrypterArgs::new(&key_pair.public_key));
 
         let ciphertext = encrypter.encrypt(payload.as_bytes()).unwrap();
@@ -132,7 +129,7 @@ mod tests {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
 
-        let key_pair = generate_rsa_keypair().unwrap();
+        let key_pair = generate_rsa_key_pair().unwrap();
 
         let encrypter = RsaEncrypter::new(RsaEncrypterArgs::new(&key_pair.public_key));
 

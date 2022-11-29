@@ -30,7 +30,7 @@ service RecordService {
     rpc GetHash(Record) returns (RecordHash);
     rpc GetSignatures(Record) returns (RecordSignatures);
     rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
-    rpc GenerateRsaKeys(GenerateRsaKeysRequest) returns (GenerateRsaKeysResponse);
+    rpc GenerateRsaKeyPair(GenerateRsaKeyPairRequest) returns (GenerateRsaKeyPairResponse);
     rpc Publish(PublishRequest) returns (PublishResponse);
 }
 
@@ -42,9 +42,9 @@ message GenerateKeysResponse {
     optional Error error = 3;
 }
 
-message GenerateRsaKeysRequest {}
+message GenerateRsaKeyPairRequest {}
 
-message GenerateRsaKeysResponse {
+message GenerateRsaKeyPairResponse {
     string privateKey = 1;
     string publicKey = 2;
     optional Error error = 3;
