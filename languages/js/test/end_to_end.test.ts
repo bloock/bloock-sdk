@@ -7,11 +7,11 @@ import {
   AesEncrypter,
   AesDecrypter,
   EcsdaSigner,
-  Network
+  Network,
+  RsaEncrypter,
+  RsaDecrypter
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
-import { RsaEncrypter } from "../dist/entity/encrypter";
-import { RsaDecrypter } from "../dist/entity/decrypter";
 
 function getSdk() {
   const apiKey = process.env["API_KEY"] || "";
