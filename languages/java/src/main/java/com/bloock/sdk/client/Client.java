@@ -27,7 +27,6 @@ import com.bloock.sdk.entity.Network;
 import com.bloock.sdk.entity.Proof;
 import com.bloock.sdk.entity.RecordReceipt;
 import com.bloock.sdk.entity.RsaKeyPair;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
