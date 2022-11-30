@@ -88,7 +88,7 @@ class Test {
 
     decryptedRecord =
         Builder.fromRecord(encryptedRecord)
-            .withDecrypter(new RsaDecrypter(keyPair.getPublicKey()))
+            .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
             .build();
 
     assert Arrays.equals(decryptedRecord.getPayload(), payload.getBytes());

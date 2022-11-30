@@ -11,8 +11,8 @@ public class RsaKeyPair {
     this.privateKey = privateKey;
   }
 
-  public static Keys fromProto(GenerateRsaKeyPairResponse keys) {
-    return new Keys(keys.getPublicKey(), keys.getPrivateKey());
+  public static RsaKeyPair fromProto(GenerateRsaKeyPairResponse keys) {
+    return new RsaKeyPair(keys.getPublicKey(), keys.getPrivateKey());
   }
 
   public String getPublicKey() {

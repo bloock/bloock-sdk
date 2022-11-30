@@ -15,6 +15,8 @@ import com.bloock.sdk.bridge.proto.ProofOuterClass.VerifyRecordsRequest;
 import com.bloock.sdk.bridge.proto.ProofOuterClass.VerifyRecordsResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateKeysRequest;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateKeysResponse;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateRsaKeyPairRequest;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateRsaKeyPairResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.SendRecordsRequest;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.SendRecordsResponse;
 import com.bloock.sdk.bridge.proto.Shared.Error;
@@ -24,6 +26,8 @@ import com.bloock.sdk.entity.Keys;
 import com.bloock.sdk.entity.Network;
 import com.bloock.sdk.entity.Proof;
 import com.bloock.sdk.entity.RecordReceipt;
+import com.bloock.sdk.entity.RsaKeyPair;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -172,15 +176,15 @@ public class Client {
     return Keys.fromProto(response);
   }
 
-  public Keys generateRsaKeyPair() throws Exception {
-    GenerateKeysRequest request = GenerateKeysRequest.newBuilder().build();
+  public RsaKeyPair generateRsaKeyPair() throws Exception {
+    GenerateRsaKeyPairRequest request = GenerateRsaKeyPairRequest.newBuilder().build();
 
-    GenerateKeysResponse response = bridge.getRecord().generateKeys(request);
+    GenerateRsaKeyPairResponse response = bridge.getRecord().generateRsaKeyPair(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 
-    return Keys.fromProto(response);
+    return RsaKeyPair.fromProto(response);
   }
 }
