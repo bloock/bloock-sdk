@@ -168,7 +168,7 @@ mod tests {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad.clone()));
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad));
 
         let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
@@ -187,7 +187,7 @@ mod tests {
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad.clone()));
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad));
 
         let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
@@ -203,7 +203,7 @@ mod tests {
         let payload_bytes = payload.as_bytes();
         let aad = "user_id".as_bytes();
 
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad.clone()));
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", aad));
 
         let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
