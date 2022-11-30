@@ -24,10 +24,7 @@ class _RecordTypes:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _RecordTypesEnumTypeWrapper(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RecordTypes.ValueType],
-    builtins.type,
-):  # noqa: F821
+class _RecordTypesEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RecordTypes.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     STRING: _RecordTypes.ValueType  # 0
     HEX: _RecordTypes.ValueType  # 1
@@ -52,10 +49,7 @@ class _SignerAlg:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _SignerAlgEnumTypeWrapper(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_SignerAlg.ValueType],
-    builtins.type,
-):  # noqa: F821
+class _SignerAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_SignerAlg.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ES256K: _SignerAlg.ValueType  # 0
 
@@ -68,36 +62,26 @@ class _EncryptionAlg:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _EncryptionAlgEnumTypeWrapper(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[
-        _EncryptionAlg.ValueType
-    ],
-    builtins.type,
-):  # noqa: F821
+class _EncryptionAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_EncryptionAlg.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     A256GCM: _EncryptionAlg.ValueType  # 0
+    RSA: _EncryptionAlg.ValueType  # 1
 
 class EncryptionAlg(_EncryptionAlg, metaclass=_EncryptionAlgEnumTypeWrapper): ...
 
 A256GCM: EncryptionAlg.ValueType  # 0
+RSA: EncryptionAlg.ValueType  # 1
 global___EncryptionAlg = EncryptionAlg
 
 class _DataAvailabilityType:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _DataAvailabilityTypeEnumTypeWrapper(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[
-        _DataAvailabilityType.ValueType
-    ],
-    builtins.type,
-):  # noqa: F821
+class _DataAvailabilityTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_DataAvailabilityType.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     HOSTED: _DataAvailabilityType.ValueType  # 0
 
-class DataAvailabilityType(
-    _DataAvailabilityType, metaclass=_DataAvailabilityTypeEnumTypeWrapper
-): ...
+class DataAvailabilityType(_DataAvailabilityType, metaclass=_DataAvailabilityTypeEnumTypeWrapper): ...
 
 HOSTED: DataAvailabilityType.ValueType  # 0
 global___DataAvailabilityType = DataAvailabilityType
@@ -128,28 +112,43 @@ class GenerateKeysResponse(google.protobuf.message.Message):
         publicKey: builtins.str = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error",
-            b"_error",
-            "error",
-            b"error",
-            "privateKey",
-            b"privateKey",
-            "publicKey",
-            b"publicKey",
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "privateKey", b"privateKey", "publicKey", b"publicKey"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___GenerateKeysResponse = GenerateKeysResponse
+
+class GenerateRsaKeyPairRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    def __init__(
+        self,
+    ) -> None: ...
+
+global___GenerateRsaKeyPairRequest = GenerateRsaKeyPairRequest
+
+class GenerateRsaKeyPairResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PRIVATEKEY_FIELD_NUMBER: builtins.int
+    PUBLICKEY_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    privateKey: builtins.str
+    publicKey: builtins.str
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        privateKey: builtins.str = ...,
+        publicKey: builtins.str = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "privateKey", b"privateKey", "publicKey", b"publicKey"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___GenerateRsaKeyPairResponse = GenerateRsaKeyPairResponse
 
 class RecordHash(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -165,19 +164,9 @@ class RecordHash(google.protobuf.message.Message):
         hash: builtins.str = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "hash", b"hash"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "hash", b"hash"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___RecordHash = RecordHash
 
@@ -187,11 +176,7 @@ class RecordSignatures(google.protobuf.message.Message):
     SIGNATURES_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     @property
-    def signatures(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___Signature
-    ]: ...
+    def signatures(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Signature]: ...
     @property
     def error(self) -> shared_pb2.Error: ...
     def __init__(
@@ -200,19 +185,9 @@ class RecordSignatures(google.protobuf.message.Message):
         signatures: collections.abc.Iterable[global___Signature] | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "signatures", b"signatures"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "signatures", b"signatures"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___RecordSignatures = RecordSignatures
 
@@ -226,9 +201,7 @@ class RecordHeader(google.protobuf.message.Message):
         *,
         ty: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["ty", b"ty"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["ty", b"ty"]) -> None: ...
 
 global___RecordHeader = RecordHeader
 
@@ -242,9 +215,7 @@ class Record(google.protobuf.message.Message):
         *,
         payload: builtins.bytes = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["payload", b"payload"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["payload", b"payload"]) -> None: ...
 
 global___Record = Record
 
@@ -262,12 +233,8 @@ class Signer(google.protobuf.message.Message):
         alg: global___SignerAlg.ValueType = ...,
         args: global___SignerArgs | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["args", b"args"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
 
 global___Signer = Signer
 
@@ -281,21 +248,9 @@ class SignerArgs(google.protobuf.message.Message):
         *,
         private_key: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_private_key", b"_private_key", "private_key", b"private_key"
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_private_key", b"_private_key", "private_key", b"private_key"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_private_key", b"_private_key"]
-    ) -> typing_extensions.Literal["private_key"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_private_key", b"_private_key", "private_key", b"private_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_private_key", b"_private_key", "private_key", b"private_key"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_private_key", b"_private_key"]) -> typing_extensions.Literal["private_key"] | None: ...
 
 global___SignerArgs = SignerArgs
 
@@ -313,28 +268,22 @@ class Encrypter(google.protobuf.message.Message):
         alg: global___EncryptionAlg.ValueType = ...,
         args: global___EncrypterArgs | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["args", b"args"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
 
 global___Encrypter = Encrypter
 
 class EncrypterArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    PASSWORD_FIELD_NUMBER: builtins.int
-    password: builtins.str
+    KEY_FIELD_NUMBER: builtins.int
+    key: builtins.str
     def __init__(
         self,
         *,
-        password: builtins.str = ...,
+        key: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["password", b"password"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["key", b"key"]) -> None: ...
 
 global___EncrypterArgs = EncrypterArgs
 
@@ -352,28 +301,22 @@ class Decrypter(google.protobuf.message.Message):
         alg: global___EncryptionAlg.ValueType = ...,
         args: global___DecrypterArgs | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["args", b"args"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
 
 global___Decrypter = Decrypter
 
 class DecrypterArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    PASSWORD_FIELD_NUMBER: builtins.int
-    password: builtins.str
+    KEY_FIELD_NUMBER: builtins.int
+    key: builtins.str
     def __init__(
         self,
         *,
-        password: builtins.str = ...,
+        key: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["password", b"password"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["key", b"key"]) -> None: ...
 
 global___DecrypterArgs = DecrypterArgs
 
@@ -394,15 +337,8 @@ class Signature(google.protobuf.message.Message):
         protected: builtins.str = ...,
         header: global___SignatureHeader | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["header", b"header"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "header", b"header", "protected", b"protected", "signature", b"signature"
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["header", b"header"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["header", b"header", "protected", b"protected", "signature", b"signature"]) -> None: ...
 
 global___Signature = Signature
 
@@ -419,9 +355,7 @@ class SignatureHeader(google.protobuf.message.Message):
         alg: builtins.str = ...,
         kid: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["alg", b"alg", "kid", b"kid"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "kid", b"kid"]) -> None: ...
 
 global___SignatureHeader = SignatureHeader
 
@@ -444,19 +378,7 @@ class RecordReceipt(google.protobuf.message.Message):
         record: builtins.str = ...,
         status: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "anchor",
-            b"anchor",
-            "client",
-            b"client",
-            "record",
-            b"record",
-            "status",
-            b"status",
-        ],
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["anchor", b"anchor", "client", b"client", "record", b"record", "status", b"status"]) -> None: ...
 
 global___RecordReceipt = RecordReceipt
 
@@ -482,54 +404,14 @@ class RecordBuilderFromStringRequest(google.protobuf.message.Message):
         encrypter: global___Encrypter | None = ...,
         decrypter: global___Decrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "signer",
-            b"signer",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "payload",
-            b"payload",
-            "signer",
-            b"signer",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "payload", b"payload", "signer", b"signer"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]
-    ) -> typing_extensions.Literal["decrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]) -> typing_extensions.Literal["decrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]
-    ) -> typing_extensions.Literal["encrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]) -> typing_extensions.Literal["encrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]
-    ) -> typing_extensions.Literal["signer"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]) -> typing_extensions.Literal["signer"] | None: ...
 
 global___RecordBuilderFromStringRequest = RecordBuilderFromStringRequest
 
@@ -555,54 +437,14 @@ class RecordBuilderFromHexRequest(google.protobuf.message.Message):
         encrypter: global___Encrypter | None = ...,
         decrypter: global___Decrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "signer",
-            b"signer",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "payload",
-            b"payload",
-            "signer",
-            b"signer",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "payload", b"payload", "signer", b"signer"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]
-    ) -> typing_extensions.Literal["decrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]) -> typing_extensions.Literal["decrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]
-    ) -> typing_extensions.Literal["encrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]) -> typing_extensions.Literal["encrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]
-    ) -> typing_extensions.Literal["signer"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]) -> typing_extensions.Literal["signer"] | None: ...
 
 global___RecordBuilderFromHexRequest = RecordBuilderFromHexRequest
 
@@ -628,54 +470,14 @@ class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
         encrypter: global___Encrypter | None = ...,
         decrypter: global___Decrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "signer",
-            b"signer",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "payload",
-            b"payload",
-            "signer",
-            b"signer",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "payload", b"payload", "signer", b"signer"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]
-    ) -> typing_extensions.Literal["decrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]) -> typing_extensions.Literal["decrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]
-    ) -> typing_extensions.Literal["encrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]) -> typing_extensions.Literal["encrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]
-    ) -> typing_extensions.Literal["signer"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]) -> typing_extensions.Literal["signer"] | None: ...
 
 global___RecordBuilderFromJSONRequest = RecordBuilderFromJSONRequest
 
@@ -701,54 +503,14 @@ class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
         encrypter: global___Encrypter | None = ...,
         decrypter: global___Decrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "signer",
-            b"signer",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "payload",
-            b"payload",
-            "signer",
-            b"signer",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "payload", b"payload", "signer", b"signer"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]
-    ) -> typing_extensions.Literal["decrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]) -> typing_extensions.Literal["decrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]
-    ) -> typing_extensions.Literal["encrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]) -> typing_extensions.Literal["encrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]
-    ) -> typing_extensions.Literal["signer"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]) -> typing_extensions.Literal["signer"] | None: ...
 
 global___RecordBuilderFromBytesRequest = RecordBuilderFromBytesRequest
 
@@ -774,54 +536,14 @@ class RecordBuilderFromFileRequest(google.protobuf.message.Message):
         encrypter: global___Encrypter | None = ...,
         decrypter: global___Decrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "signer",
-            b"signer",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "payload",
-            b"payload",
-            "signer",
-            b"signer",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "payload", b"payload", "signer", b"signer"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]
-    ) -> typing_extensions.Literal["decrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]) -> typing_extensions.Literal["decrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]
-    ) -> typing_extensions.Literal["encrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]) -> typing_extensions.Literal["encrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]
-    ) -> typing_extensions.Literal["signer"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]) -> typing_extensions.Literal["signer"] | None: ...
 
 global___RecordBuilderFromFileRequest = RecordBuilderFromFileRequest
 
@@ -848,56 +570,14 @@ class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
         encrypter: global___Encrypter | None = ...,
         decrypter: global___Decrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "payload",
-            b"payload",
-            "signer",
-            b"signer",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "payload",
-            b"payload",
-            "signer",
-            b"signer",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "payload", b"payload", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "decrypter", b"decrypter", "encrypter", b"encrypter", "payload", b"payload", "signer", b"signer"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]
-    ) -> typing_extensions.Literal["decrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]) -> typing_extensions.Literal["decrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]
-    ) -> typing_extensions.Literal["encrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]) -> typing_extensions.Literal["encrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]
-    ) -> typing_extensions.Literal["signer"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]) -> typing_extensions.Literal["signer"] | None: ...
 
 global___RecordBuilderFromRecordRequest = RecordBuilderFromRecordRequest
 
@@ -916,21 +596,9 @@ class RecordBuilderResponse(google.protobuf.message.Message):
         record: global___Record | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "record", b"record"
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "record", b"record"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "record", b"record"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "record", b"record"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___RecordBuilderResponse = RecordBuilderResponse
 
@@ -942,26 +610,15 @@ class SendRecordsRequest(google.protobuf.message.Message):
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
-    def records(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
-    ]: ...
+    def records(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
         records: collections.abc.Iterable[builtins.str] | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data", b"config_data", "records", b"records"
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "records", b"records"]) -> None: ...
 
 global___SendRecordsRequest = SendRecordsRequest
 
@@ -971,11 +628,7 @@ class SendRecordsResponse(google.protobuf.message.Message):
     RECORDS_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     @property
-    def records(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___RecordReceipt
-    ]: ...
+    def records(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___RecordReceipt]: ...
     @property
     def error(self) -> shared_pb2.Error: ...
     def __init__(
@@ -984,19 +637,9 @@ class SendRecordsResponse(google.protobuf.message.Message):
         records: collections.abc.Iterable[global___RecordReceipt] | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "records", b"records"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "records", b"records"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___SendRecordsResponse = SendRecordsResponse
 
@@ -1014,12 +657,8 @@ class Loader(google.protobuf.message.Message):
         type: global___DataAvailabilityType.ValueType = ...,
         args: global___LoaderArgs | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["args", b"args"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["args", b"args", "type", b"type"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["args", b"args", "type", b"type"]) -> None: ...
 
 global___Loader = Loader
 
@@ -1033,9 +672,7 @@ class LoaderArgs(google.protobuf.message.Message):
         *,
         hash: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["hash", b"hash"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["hash", b"hash"]) -> None: ...
 
 global___LoaderArgs = LoaderArgs
 
@@ -1066,60 +703,14 @@ class RecordBuilderFromLoaderRequest(google.protobuf.message.Message):
         encrypter: global___Encrypter | None = ...,
         decrypter: global___Decrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "config_data",
-            b"config_data",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "loader",
-            b"loader",
-            "signer",
-            b"signer",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_decrypter",
-            b"_decrypter",
-            "_encrypter",
-            b"_encrypter",
-            "_signer",
-            b"_signer",
-            "config_data",
-            b"config_data",
-            "decrypter",
-            b"decrypter",
-            "encrypter",
-            b"encrypter",
-            "loader",
-            b"loader",
-            "signer",
-            b"signer",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "config_data", b"config_data", "decrypter", b"decrypter", "encrypter", b"encrypter", "loader", b"loader", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_decrypter", b"_decrypter", "_encrypter", b"_encrypter", "_signer", b"_signer", "config_data", b"config_data", "decrypter", b"decrypter", "encrypter", b"encrypter", "loader", b"loader", "signer", b"signer"]) -> None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]
-    ) -> typing_extensions.Literal["decrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_decrypter", b"_decrypter"]) -> typing_extensions.Literal["decrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]
-    ) -> typing_extensions.Literal["encrypter"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_encrypter", b"_encrypter"]) -> typing_extensions.Literal["encrypter"] | None: ...
     @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]
-    ) -> typing_extensions.Literal["signer"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_signer", b"_signer"]) -> typing_extensions.Literal["signer"] | None: ...
 
 global___RecordBuilderFromLoaderRequest = RecordBuilderFromLoaderRequest
 
@@ -1137,12 +728,8 @@ class Publisher(google.protobuf.message.Message):
         type: global___DataAvailabilityType.ValueType = ...,
         args: global___PublisherArgs | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["args", b"args"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["args", b"args", "type", b"type"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["args", b"args", "type", b"type"]) -> None: ...
 
 global___Publisher = Publisher
 
@@ -1174,28 +761,8 @@ class PublishRequest(google.protobuf.message.Message):
         publisher: global___Publisher | None = ...,
         record: global___Record | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data",
-            b"config_data",
-            "publisher",
-            b"publisher",
-            "record",
-            b"record",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data",
-            b"config_data",
-            "publisher",
-            b"publisher",
-            "record",
-            b"record",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "publisher", b"publisher", "record", b"record"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "publisher", b"publisher", "record", b"record"]) -> None: ...
 
 global___PublishRequest = PublishRequest
 
@@ -1213,18 +780,8 @@ class PublishResponse(google.protobuf.message.Message):
         hash: builtins.str = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "hash", b"hash"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "hash", b"hash"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___PublishResponse = PublishResponse

@@ -7,12 +7,12 @@ from bloock._bridge.proto.proof_pb2 import (
     VerifyProofRequest,
     VerifyRecordsRequest,
 )
-from bloock._bridge.proto.record_pb2 import GenerateKeysRequest, SendRecordsRequest
+from bloock._bridge.proto.record_pb2 import GenerateKeysRequest, GenerateRsaKeyPairRequest, SendRecordsRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.client.entity.anchor import Anchor
 from bloock.client.entity.network import Network
 from bloock.client.entity.proof import Proof
-from bloock.client.entity.record import Keys, RecordReceipt
+from bloock.client.entity.record import EcsdaKeys, RecordReceipt, RsaKeyPair
 from bloock._config.config import Config
 
 
@@ -103,10 +103,18 @@ class Client:
 
         return res.timestamp
 
-    def generate_keys(self) -> Keys:
+    def generate_keys(self) -> EcsdaKeys:
         res = self.bridge_client.record().GenerateKeys(GenerateKeysRequest())
 
         if res.error != Error():
             raise Exception(res.error.message)
 
-        return Keys.from_proto(res)
+        return EcsdaKeys.from_proto(res)
+
+    def generate_rsa_keypair(self) -> RsaKeyPair:
+        res = self.bridge_client.record().GenerateRsaKeyPair(GenerateRsaKeyPairRequest())
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return RsaKeyPair.from_proto(res)
