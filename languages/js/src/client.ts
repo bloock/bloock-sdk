@@ -8,10 +8,10 @@ import {
   VerifyProofRequest,
   VerifyRecordsRequest
 } from "./bridge/proto/proof";
-import { GenerateKeysRequest, SendRecordsRequest } from "./bridge/proto/record";
+import { GenerateKeysRequest, GenerateRsaKeyPairRequest, SendRecordsRequest } from "./bridge/proto/record";
 import { Proof } from "./entity/proof";
 import { Anchor } from "./entity/anchor";
-import { Keys, RecordReceipt } from "./entity/record";
+import { Keys, RecordReceipt, RsaKeyPair } from "./entity/record";
 import { NewConfigData } from "./config/config";
 
 export class BloockClient {
@@ -195,6 +195,23 @@ export class BloockClient {
     return this.bridge
       .getRecord()
       .GenerateKeys(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return Keys.fromProto(res);
+      });
+  }
+
+  /**
+   * It generates a public and a private key for RSA encryption
+   * @returns {Promise<RsaKeyPair>} An object containing both the public and the private key
+   */
+  public async generateRsaKeyPair(): Promise<RsaKeyPair> {
+    let request = GenerateRsaKeyPairRequest.fromPartial({});
+    return this.bridge
+      .getRecord()
+      .GenerateRsaKeyPair(request)
       .then(res => {
         if (res.error) {
           throw res.error;

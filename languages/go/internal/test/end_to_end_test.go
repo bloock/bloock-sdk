@@ -55,13 +55,13 @@ func TestEndToEnd(t *testing.T) {
 		records = append(records, hash)
 
 		payload := "Hello world 2"
-		encrypted_record, err := builder.NewRecordBuilderFromString(payload).
+		encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
 			WithEncrypter(entity.NewAesEncrypter("some_password")).
 			Build()
 		require.NoError(t, err)
-		assert.NotEqual(t, payload, string(encrypted_record.Retrieve()))
+		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
-		record, err = builder.NewRecordBuilderFromRecord(encrypted_record).
+		record, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
 			WithDecrypter(entity.NewAesDecrypter("some_password")).
 			Build()
 		require.NoError(t, err)
@@ -71,20 +71,20 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 
-		_, err = builder.NewRecordBuilderFromRecord(encrypted_record).
+		_, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
 			WithDecrypter(entity.NewAesDecrypter("incorrect_password")).
 			Build()
 		require.Error(t, err)
 
 		keypair, err := sdk.GenerateRsaKeyPair()
 
-		encrypted_record, err = builder.NewRecordBuilderFromString(payload).
+		encryptedRecord, err = builder.NewRecordBuilderFromString(payload).
 			WithEncrypter(entity.NewRsaEncrypter(keypair.PublicKey)).
 			Build()
 		require.NoError(t, err)
-		assert.NotEqual(t, payload, string(encrypted_record.Payload))
+		assert.NotEqual(t, payload, string(encryptedRecord.Payload))
 
-		record, err = builder.NewRecordBuilderFromRecord(encrypted_record).
+		record, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
 			WithDecrypter(entity.NewAesDecrypter(keypair.PrivateKey)).
 			Build()
 		require.NoError(t, err)

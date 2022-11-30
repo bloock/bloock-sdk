@@ -96,6 +96,7 @@ export function signerAlgToJSON(object: SignerAlg): string {
 
 export enum EncryptionAlg {
   A256GCM = 0,
+  RSA = 1,
   UNRECOGNIZED = -1,
 }
 
@@ -104,6 +105,9 @@ export function encryptionAlgFromJSON(object: any): EncryptionAlg {
     case 0:
     case "A256GCM":
       return EncryptionAlg.A256GCM;
+    case 1:
+    case "RSA":
+      return EncryptionAlg.RSA;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -115,6 +119,8 @@ export function encryptionAlgToJSON(object: EncryptionAlg): string {
   switch (object) {
     case EncryptionAlg.A256GCM:
       return "A256GCM";
+    case EncryptionAlg.RSA:
+      return "RSA";
     case EncryptionAlg.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -157,6 +163,15 @@ export interface GenerateKeysResponse {
   error?: Error | undefined;
 }
 
+export interface GenerateRsaKeyPairRequest {
+}
+
+export interface GenerateRsaKeyPairResponse {
+  privateKey: string;
+  publicKey: string;
+  error?: Error | undefined;
+}
+
 export interface RecordHash {
   hash: string;
   error?: Error | undefined;
@@ -190,7 +205,7 @@ export interface Encrypter {
 }
 
 export interface EncrypterArgs {
-  password: string;
+  key: string;
 }
 
 export interface Decrypter {
@@ -199,7 +214,7 @@ export interface Decrypter {
 }
 
 export interface DecrypterArgs {
-  password: string;
+  key: string;
 }
 
 export interface Signature {
@@ -412,6 +427,112 @@ export const GenerateKeysResponse = {
 
   fromPartial<I extends Exact<DeepPartial<GenerateKeysResponse>, I>>(object: I): GenerateKeysResponse {
     const message = createBaseGenerateKeysResponse();
+    message.privateKey = object.privateKey ?? "";
+    message.publicKey = object.publicKey ?? "";
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
+function createBaseGenerateRsaKeyPairRequest(): GenerateRsaKeyPairRequest {
+  return {};
+}
+
+export const GenerateRsaKeyPairRequest = {
+  encode(_: GenerateRsaKeyPairRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateRsaKeyPairRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateRsaKeyPairRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): GenerateRsaKeyPairRequest {
+    return {};
+  },
+
+  toJSON(_: GenerateRsaKeyPairRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GenerateRsaKeyPairRequest>, I>>(_: I): GenerateRsaKeyPairRequest {
+    const message = createBaseGenerateRsaKeyPairRequest();
+    return message;
+  },
+};
+
+function createBaseGenerateRsaKeyPairResponse(): GenerateRsaKeyPairResponse {
+  return { privateKey: "", publicKey: "", error: undefined };
+}
+
+export const GenerateRsaKeyPairResponse = {
+  encode(message: GenerateRsaKeyPairResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.privateKey !== "") {
+      writer.uint32(10).string(message.privateKey);
+    }
+    if (message.publicKey !== "") {
+      writer.uint32(18).string(message.publicKey);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateRsaKeyPairResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateRsaKeyPairResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.privateKey = reader.string();
+          break;
+        case 2:
+          message.publicKey = reader.string();
+          break;
+        case 3:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenerateRsaKeyPairResponse {
+    return {
+      privateKey: isSet(object.privateKey) ? String(object.privateKey) : "",
+      publicKey: isSet(object.publicKey) ? String(object.publicKey) : "",
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: GenerateRsaKeyPairResponse): unknown {
+    const obj: any = {};
+    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
+    message.publicKey !== undefined && (obj.publicKey = message.publicKey);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GenerateRsaKeyPairResponse>, I>>(object: I): GenerateRsaKeyPairResponse {
+    const message = createBaseGenerateRsaKeyPairResponse();
     message.privateKey = object.privateKey ?? "";
     message.publicKey = object.publicKey ?? "";
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
@@ -802,13 +923,13 @@ export const Encrypter = {
 };
 
 function createBaseEncrypterArgs(): EncrypterArgs {
-  return { password: "" };
+  return { key: "" };
 }
 
 export const EncrypterArgs = {
   encode(message: EncrypterArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.password !== "") {
-      writer.uint32(10).string(message.password);
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
     }
     return writer;
   },
@@ -821,7 +942,7 @@ export const EncrypterArgs = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.password = reader.string();
+          message.key = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -832,18 +953,18 @@ export const EncrypterArgs = {
   },
 
   fromJSON(object: any): EncrypterArgs {
-    return { password: isSet(object.password) ? String(object.password) : "" };
+    return { key: isSet(object.key) ? String(object.key) : "" };
   },
 
   toJSON(message: EncrypterArgs): unknown {
     const obj: any = {};
-    message.password !== undefined && (obj.password = message.password);
+    message.key !== undefined && (obj.key = message.key);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<EncrypterArgs>, I>>(object: I): EncrypterArgs {
     const message = createBaseEncrypterArgs();
-    message.password = object.password ?? "";
+    message.key = object.key ?? "";
     return message;
   },
 };
@@ -909,13 +1030,13 @@ export const Decrypter = {
 };
 
 function createBaseDecrypterArgs(): DecrypterArgs {
-  return { password: "" };
+  return { key: "" };
 }
 
 export const DecrypterArgs = {
   encode(message: DecrypterArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.password !== "") {
-      writer.uint32(10).string(message.password);
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
     }
     return writer;
   },
@@ -928,7 +1049,7 @@ export const DecrypterArgs = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.password = reader.string();
+          message.key = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -939,18 +1060,18 @@ export const DecrypterArgs = {
   },
 
   fromJSON(object: any): DecrypterArgs {
-    return { password: isSet(object.password) ? String(object.password) : "" };
+    return { key: isSet(object.key) ? String(object.key) : "" };
   },
 
   toJSON(message: DecrypterArgs): unknown {
     const obj: any = {};
-    message.password !== undefined && (obj.password = message.password);
+    message.key !== undefined && (obj.key = message.key);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<DecrypterArgs>, I>>(object: I): DecrypterArgs {
     const message = createBaseDecrypterArgs();
-    message.password = object.password ?? "";
+    message.key = object.key ?? "";
     return message;
   },
 };
@@ -2307,6 +2428,7 @@ export interface RecordService {
   GetHash(request: Record): Promise<RecordHash>;
   GetSignatures(request: Record): Promise<RecordSignatures>;
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse>;
+  GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse>;
   Publish(request: PublishRequest): Promise<PublishResponse>;
 }
 
@@ -2327,6 +2449,7 @@ export class RecordServiceClientImpl implements RecordService {
     this.GetHash = this.GetHash.bind(this);
     this.GetSignatures = this.GetSignatures.bind(this);
     this.GenerateKeys = this.GenerateKeys.bind(this);
+    this.GenerateRsaKeyPair = this.GenerateRsaKeyPair.bind(this);
     this.Publish = this.Publish.bind(this);
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
@@ -2393,6 +2516,12 @@ export class RecordServiceClientImpl implements RecordService {
     const data = GenerateKeysRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "GenerateKeys", data);
     return promise.then((data) => GenerateKeysResponse.decode(new _m0.Reader(data)));
+  }
+
+  GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse> {
+    const data = GenerateRsaKeyPairRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "GenerateRsaKeyPair", data);
+    return promise.then((data) => GenerateRsaKeyPairResponse.decode(new _m0.Reader(data)));
   }
 
   Publish(request: PublishRequest): Promise<PublishResponse> {
@@ -2492,6 +2621,14 @@ export const RecordServiceDefinition = {
       requestType: GenerateKeysRequest,
       requestStream: false,
       responseType: GenerateKeysResponse,
+      responseStream: false,
+      options: {},
+    },
+    generateRsaKeyPair: {
+      name: "GenerateRsaKeyPair",
+      requestType: GenerateRsaKeyPairRequest,
+      requestStream: false,
+      responseType: GenerateRsaKeyPairResponse,
       responseStream: false,
       options: {},
     },

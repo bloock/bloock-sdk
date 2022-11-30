@@ -10,6 +10,8 @@ import {
   Network
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
+import { RsaEncrypter } from "../dist/entity/encrypter";
+import { RsaDecrypter } from "../dist/entity/decrypter";
 
 function getSdk() {
   const apiKey = process.env["API_KEY"] || "";
@@ -83,6 +85,27 @@ describe("E2E Tests", () => {
     expect(hash).toEqual(
       "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
     );
+
+    let keypair = await sdk.generateRsaKeyPair();
+    encrypted_record = await RecordBuilder.fromString(payload)
+      .withEncrypter(new RsaEncrypter(keypair.publicKey))
+      .build();
+
+    expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
+      payload
+    );
+
+    record = await RecordBuilder.fromRecord(encrypted_record)
+      .withDecrypter(new RsaDecrypter(keypair.privateKey))
+      .build();
+
+    expect(String.fromCharCode(...record.payload)).toEqual(payload);
+
+    hash = await record.getHash();
+    expect(hash).toEqual(
+      "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+    );
+
     records.push(hash);
 
     await expect(

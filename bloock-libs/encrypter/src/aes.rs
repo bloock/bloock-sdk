@@ -18,7 +18,7 @@ const TAG_LEN: usize = 16; // 128 bits
 const KEY_LEN: usize = 32; // 256 bits
 const SALT_LEN: usize = 16;
 
-const NUM_ITERATIONS: u32 = 20000;
+const NUM_ITERATIONS: u32 = 100000;
 const ITERATIONS_LEN: usize = size_of::<u32>();
 
 const HEADER_LEN: usize = NONCE_LEN + SALT_LEN + ITERATIONS_LEN;
