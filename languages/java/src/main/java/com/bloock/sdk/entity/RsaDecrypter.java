@@ -3,13 +3,13 @@ package com.bloock.sdk.entity;
 import com.bloock.sdk.bridge.proto.RecordOuterClass;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.EncryptionAlg;
 
-public class AesDecrypter implements Decrypter {
+public class RsaDecrypter implements Decrypter {
   EncryptionAlg alg;
   DecrypterArgs args;
 
-  public AesDecrypter(String password) {
-    this.alg = EncryptionAlg.A256GCM;
-    this.args = new DecrypterArgs(password);
+  public RsaDecrypter(String publicKey) {
+    this.alg = EncryptionAlg.RSA;
+    this.args = new DecrypterArgs(publicKey);
   }
 
   @Override

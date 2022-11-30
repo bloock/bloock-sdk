@@ -85,7 +85,7 @@ func TestEndToEnd(t *testing.T) {
 		assert.NotEqual(t, payload, string(encryptedRecord.Payload))
 
 		record, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
-			WithDecrypter(entity.NewAesDecrypter(keypair.PrivateKey)).
+			WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
 			Build()
 		require.NoError(t, err)
 		assert.Equal(t, payload, string(record.Retrieve()))

@@ -12,6 +12,9 @@ import com.bloock.sdk.entity.Network;
 import com.bloock.sdk.entity.Proof;
 import com.bloock.sdk.entity.Record;
 import com.bloock.sdk.entity.RecordReceipt;
+import com.bloock.sdk.entity.RsaDecrypter;
+import com.bloock.sdk.entity.RsaEncrypter;
+import com.bloock.sdk.entity.RsaKeyPair;
 import com.bloock.sdk.entity.Signature;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +80,22 @@ class Test {
 
     hash = decryptedRecord.getHash();
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
+
+    RsaKeyPair keyPair = sdk.generateRsaKeyPair();
+    encryptedRecord =
+        Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
+    assert payload.getBytes() != encryptedRecord.getPayload();
+
+    decryptedRecord =
+        Builder.fromRecord(encryptedRecord)
+            .withDecrypter(new RsaDecrypter(keyPair.getPublicKey()))
+            .build();
+
+    assert Arrays.equals(decryptedRecord.getPayload(), payload.getBytes());
+
+    hash = decryptedRecord.getHash();
+    assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
+
     records.add(hash);
 
     boolean throwsException = false;

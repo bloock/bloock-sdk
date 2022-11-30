@@ -171,4 +171,16 @@ public class Client {
 
     return Keys.fromProto(response);
   }
+
+  public Keys generateRsaKeyPair() throws Exception {
+    GenerateKeysRequest request = GenerateKeysRequest.newBuilder().build();
+
+    GenerateKeysResponse response = bridge.getRecord().generateKeys(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return Keys.fromProto(response);
+  }
 }
