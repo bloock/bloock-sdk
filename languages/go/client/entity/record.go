@@ -196,11 +196,11 @@ func NewKeysFromProto(k *proto.GenerateKeysResponse) KeyPair {
 }
 
 func NewRsaKeyPairFromProto(k *proto.GenerateRsaKeyPairResponse) KeyPair {
-    if k == nil {
-        return KeyPair{}
-    }
-    return KeyPair{
-        PublicKey: k.PublicKey,
-        PrivateKey: k.PrivateKey,
-    }
-} 
+	if k == nil {
+		return KeyPair{}
+	}
+	return KeyPair{
+		PublicKey:  k.PublicKey,
+		PrivateKey: k.PrivateKey,
+	}
+}

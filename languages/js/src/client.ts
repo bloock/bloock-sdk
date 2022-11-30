@@ -8,7 +8,11 @@ import {
   VerifyProofRequest,
   VerifyRecordsRequest
 } from "./bridge/proto/proof";
-import { GenerateKeysRequest, GenerateRsaKeyPairRequest, SendRecordsRequest } from "./bridge/proto/record";
+import {
+  GenerateKeysRequest,
+  GenerateRsaKeyPairRequest,
+  SendRecordsRequest
+} from "./bridge/proto/record";
 import { Proof } from "./entity/proof";
 import { Anchor } from "./entity/anchor";
 import { Keys, RecordReceipt, RsaKeyPair } from "./entity/record";

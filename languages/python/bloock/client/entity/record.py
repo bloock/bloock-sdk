@@ -134,6 +134,7 @@ class EcsdaKeys:
     def from_proto(res: proto.GenerateKeysResponse) -> EcsdaKeys:
         return EcsdaKeys(res.publicKey, res.privateKey)
 
+
 class RsaKeyPair:
     def __init__(self, public_key: str, private_key: str) -> None:
         self.public_key = public_key

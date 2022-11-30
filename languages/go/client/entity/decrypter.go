@@ -49,7 +49,7 @@ func (e RsaDecrypter) ToProto() *proto.Decrypter {
 }
 
 type DecrypterArgs struct {
-    Key string
+	Key string
 }
 
 func (e DecrypterArgs) ToProto() *proto.DecrypterArgs {
