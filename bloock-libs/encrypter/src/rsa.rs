@@ -11,7 +11,8 @@ pub struct RsaKeyPair {
 
 pub fn generate_rsa_key_pair() -> Result<RsaKeyPair> {
     let mut rng = rand::thread_rng();
-    let private_key = RsaPrivateKey::new(&mut rng, 2048).expect("failed to generate a key");
+    let private_key = RsaPrivateKey::new(&mut rng, 2048)
+        .map_err(|err| EncrypterError::ErrorGeneratingRsaKeyPair(err.to_string()))?;
 
     let public_key = RsaPublicKey::from(&private_key);
 
