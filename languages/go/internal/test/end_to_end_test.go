@@ -17,7 +17,7 @@ func TestEndToEnd(t *testing.T) {
 		records := []string{}
 
 		records = append(records, testFromString(t))
-		records = append(records, testFromHash(t))
+		records = append(records, testFromBytes(t))
 		records = append(records, testFromHex(t))
 		records = append(records, testFromJson(t))
 		records = append(records, testFromFile(t))
@@ -26,9 +26,9 @@ func TestEndToEnd(t *testing.T) {
 		testFromLoader(t)
 
 		testAesEncryption(t)
-		testRsaEncryption(t, sdk)
-
 		testAesEncryptionDataAvailability(t)
+
+		testRsaEncryption(t, sdk)
 		testRsaEncryptionDataAvailability(t, sdk)
 
 		receipt, err := sdk.SendRecords(records)
@@ -95,7 +95,7 @@ func testFromLoader(t *testing.T) {
 	assert.Equal(t, result, hash)
 }
 
-func testFromHash(t *testing.T) string {
+func testFromBytes(t *testing.T) string {
 	record, err := builder.NewRecordBuilderFromBytes([]byte{1, 2, 3, 4, 5}).Build()
 	require.NoError(t, err)
 
@@ -145,15 +145,21 @@ func testFromFile(t *testing.T) string {
 
 func testAesEncryption(t *testing.T) {
 	payload := "Hello world 2"
+    password := "some_password"
 	encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
-		WithEncrypter(entity.NewAesEncrypter("some_password")).
+		WithEncrypter(entity.NewAesEncrypter(password)).
 		Build()
 
 	require.NoError(t, err)
 	assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
+	_, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
+		WithDecrypter(entity.NewAesDecrypter("incorrect_password")).
+		Build()
+	require.Error(t, err)
+
 	decryptedRecord, err := builder.NewRecordBuilderFromRecord(encryptedRecord).
-		WithDecrypter(entity.NewAesDecrypter("some_password")).
+		WithDecrypter(entity.NewAesDecrypter(password)).
 		Build()
 
 	require.NoError(t, err)
@@ -162,11 +168,6 @@ func testAesEncryption(t *testing.T) {
 	hash, err := decryptedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
-
-	_, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
-		WithDecrypter(entity.NewAesDecrypter("incorrect_password")).
-		Build()
-	require.Error(t, err)
 }
 
 func testAesEncryptionDataAvailability(t *testing.T) {
