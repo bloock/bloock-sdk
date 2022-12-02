@@ -34,6 +34,8 @@ jobs:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Test Libs
+        env:
+          API_KEY: ${{ secrets.api_key }}
         run: make libs-test
       - name: Test Core
         run: make core-test
