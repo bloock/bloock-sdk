@@ -12,9 +12,6 @@ use crate::items::BloockServer;
 use crate::items::ProofServiceHandler;
 use crate::items::RecordServiceHandler;
 use crate::server::response_types::ResponseType;
-use bloock_core::client;
-use bloock_core::config::config_data::ConfigData;
-use bloock_core::event::entity::event::Event;
 
 pub struct Server {
     anchor: AnchorServer,
@@ -34,16 +31,8 @@ impl Server {
     pub async fn do_request(request_type: &str, payload: &str) -> Result<String, BridgeError> {
         let payload = base64::decode(payload)
             .map_err(|e| BridgeError::RequestDeserialization(e.to_string()))?;
-        let result = match Self::new().dispatch(request_type, &payload).await {
-            Ok(r) => {
-                Self::register_event(request_type, true, vec![]);
-                r
-            }
-            Err(e) => {
-                Self::register_event(request_type, false, vec![]);
-                return Err(e);
-            }
-        };
+        let server = Self::new();
+        let result = server.dispatch(request_type, &payload).await?;
 
         let result_vec = result.get_bytes()?;
         let result_str = base64::encode(result_vec);
@@ -56,8 +45,8 @@ impl Server {
         request_type: &str,
         payload: &[u8],
     ) -> Result<ResponseType, BridgeError> {
-        let request: BloockServer = BloockServer::from_str(request_type);
-        match request {
+        let server: BloockServer = BloockServer::from_str(request_type);
+        let response = match server {
             BloockServer::AnchorServiceGetAnchor => Ok(self
                 .anchor
                 .get_anchor(self.serialize_request(payload)?)
@@ -149,7 +138,9 @@ impl Server {
                 .await
                 .into()),
             _ => Err(BridgeError::ServiceNotFound),
-        }
+        };
+
+        response
     }
 
     fn serialize_request<T: prost::Message + Default>(
@@ -157,10 +148,5 @@ impl Server {
         payload: &[u8],
     ) -> Result<T, BridgeError> {
         T::decode(payload).map_err(|e| BridgeError::RequestDeserialization(e.to_string()))
-    }
-
-    fn register_event(name: &str, success: bool, _args: Vec<&str>) {
-        let client = client::configure(ConfigData::new("".to_owned()));
-        let _ = client.send_event(Event::new(name.to_owned(), success));
     }
 }

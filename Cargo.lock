@@ -431,6 +431,7 @@ dependencies = [
  "js-sys",
  "prost",
  "prost-build",
+ "serde_json",
  "thiserror",
  "tokio",
  "wasm-bindgen",

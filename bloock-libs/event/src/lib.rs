@@ -3,7 +3,6 @@ use serde::Serialize;
 use serde_json::Value;
 use thiserror::Error as ThisError;
 
-pub mod gtag;
 pub mod segment;
 
 pub type Result<T> = std::result::Result<T, EventError>;

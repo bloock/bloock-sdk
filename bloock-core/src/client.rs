@@ -13,6 +13,7 @@ use crate::record::service::RecordService;
 use crate::{anchor, event::service::EventService};
 use crate::{event, proof};
 use bloock_http::{BloockHttpClient, SimpleHttpClient};
+use serde_json::Value;
 use std::sync::Arc;
 
 pub struct BloockClient {
@@ -55,8 +56,9 @@ impl BloockClient {
         self.proof_service.verify_records(records, network).await
     }
 
-    pub async fn send_event(&self, event: Event) -> BloockResult<()> {
-        self.event_service.send_event(event).await
+    pub async fn send_event(&self, name: &str, error: Option<String>, attr: Option<Value>) -> () {
+        let event = Event::new(name, error.is_none(), attr);
+        let _ = self.event_service.send_event(event).await;
     }
 }
 
