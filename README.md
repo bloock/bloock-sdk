@@ -31,14 +31,14 @@ If you need help, you can join our Discord server where our engineering team wil
 
 ## Language support
 
-|  Language  | Requirements                    | Source        | Link        | Support  |
-|------------|---------------------------------|:-------------:|:-----------:|:--------:|
-| Javascript | Node: >=12.20.0<br>NPM: >=6.4.1 | [`Source JS`] | [`Link JS`] | ✓        |
-| Go         | 1.18+                           | [`Source Go`] | [`Link Go`] | ✓        |
-| Python     | -                               | -             | -           | :soon:   |
-| Java       | -                               | -             | -           | :soon:   |
-| PHP        | -                               | -             | -           | :soon:   |
-| Rust       | -                               | -             | -           | :soon:   |
+|  Language  | Requirements                    | Source            | Link            | Support  |
+|------------|---------------------------------|:-----------------:|:---------------:|:--------:|
+| Javascript | Node: >=12.20.0<br>NPM: >=6.4.1 | [`Source JS`]     | [`Link JS`]     | ✓        |
+| Go         | 1.18+                           | [`Source Go`]     | [`Link Go`]     | ✓        |
+| Python     | Python: >= 3.7 <br>PIP          | [`Source Python`] | [`Link Python`] | ✓        |
+| Java       | Java: >= 8 <br> Gradle or Maven | [`Source Java`]   | [`Link Java`]   | ✓        |
+| PHP        | -                               | -                 | -               | :soon:   |
+| Rust       | -                               | -                 | -               | :soon:   |
 
 
 ## OS support
@@ -106,8 +106,12 @@ See [LICENSE](https://github.com/bloock/bloock-sdk/blob/master/LICENSE).
 
 [`Source Go`]: https://github.com/bloock/bloock-sdk/tree/master/languages/go
 [`Source JS`]: https://github.com/bloock/bloock-sdk/tree/master/languages/js
+[`Source Python`]: https://github.com/bloock/bloock-sdk/tree/master/languages/python
+[`Source Java`]: https://github.com/bloock/bloock-sdk/tree/master/languages/java
 
 [//]: # (links)
 
 [`Link Go`]: https://github.com/bloock/bloock-sdk-go
 [`Link JS`]: https://www.npmjs.com/package/@bloock/sdk
+[`Link Python`]: https://pypi.org/project/bloock/
+[`Link Java`]: https://s01.oss.sonatype.org/#nexus-search;quick~bloock
