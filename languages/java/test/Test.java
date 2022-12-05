@@ -49,8 +49,6 @@ class Test {
     testRsaEncryption(sdk);
     testRsaEncryptionDataAvailability(sdk);
 
-    System.out.println("Builders done!");
-
     List<RecordReceipt> receipts = sdk.sendRecords(records);
 
     assert receipts.size() > 0;
