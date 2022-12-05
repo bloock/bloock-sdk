@@ -10,6 +10,8 @@ pub mod shared;
 
 pub use bloock_encrypter::{
     aes::AesDecrypter, aes::AesDecrypterArgs, aes::AesEncrypter, aes::AesEncrypterArgs,
+    ecies::generate_ecies_key_pair, ecies::EciesDecrypter, ecies::EciesDecrypterArgs,
+    ecies::EciesEncrypter, ecies::EciesEncrypterArgs, ecies::EciesKeyPair,
     rsa::generate_rsa_key_pair, rsa::RsaDecrypter, rsa::RsaDecrypterArgs, rsa::RsaEncrypter,
     rsa::RsaEncrypterArgs,
 };

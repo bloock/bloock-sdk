@@ -7,8 +7,9 @@ use bloock_core::{
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
     AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
-    Decrypter as DecrypterCore, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore,
-    RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
+    Decrypter as DecrypterCore, EciesDecrypter, EciesDecrypterArgs, EciesEncrypter,
+    EciesEncrypterArgs, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore, RsaDecrypter,
+    RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
 };
 
 use super::response_types::ResponseType;
@@ -16,7 +17,8 @@ use crate::{
     entity_mappings::config::map_config,
     error::{config_data_error, BridgeError},
     items::{
-        DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error, GenerateKeysRequest,
+        DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error,
+        GenerateEciesKeyPairRequest, GenerateEciesKeyPairResponse, GenerateKeysRequest,
         GenerateKeysResponse, GenerateRsaKeyPairRequest, GenerateRsaKeyPairResponse, Loader,
         LoaderArgs, PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse,
         RecordHash, RecordServiceHandler, RecordSignatures, SendRecordsResponse, Signature, Signer,
@@ -72,6 +74,12 @@ impl From<GenerateKeysResponse> for ResponseType {
 impl From<GenerateRsaKeyPairResponse> for ResponseType {
     fn from(res: GenerateRsaKeyPairResponse) -> Self {
         ResponseType::GenerateRsaKeyPairResponse(res)
+    }
+}
+
+impl From<GenerateEciesKeyPairResponse> for ResponseType {
+    fn from(res: GenerateEciesKeyPairResponse) -> Self {
+        ResponseType::GenerateEciesKeyPairResponse(res)
     }
 }
 
@@ -433,6 +441,19 @@ impl RecordServiceHandler for RecordServer {
         };
     }
 
+    async fn generate_ecies_key_pair(
+        &self,
+        _req: GenerateEciesKeyPairRequest,
+    ) -> GenerateEciesKeyPairResponse {
+        let keypair = bloock_core::generate_ecies_key_pair();
+
+        return GenerateEciesKeyPairResponse {
+            private_key: keypair.private_key,
+            public_key: keypair.public_key,
+            error: None,
+        };
+    }
+
     async fn publish(&self, req: PublishRequest) -> PublishResponse {
         let config_data = match map_config(req.config_data) {
             Ok(config) => config,
@@ -519,6 +540,9 @@ fn build_record(
                     Box::new(AesEncrypter::new(AesEncrypterArgs::new(&args.key, &[])))
                 }
                 EncryptionAlg::Rsa => Box::new(RsaEncrypter::new(RsaEncrypterArgs::new(&args.key))),
+                EncryptionAlg::Ecies => Box::new(EciesEncrypter::new(EciesEncrypterArgs::new(
+                    &args.key.as_bytes(),
+                ))),
             },
             None => {
                 return record_builder_response_error("invalid encrypter provided".to_string());
@@ -539,6 +563,9 @@ fn build_record(
                     Box::new(AesDecrypter::new(AesDecrypterArgs::new(&args.key, &[])))
                 }
                 EncryptionAlg::Rsa => Box::new(RsaDecrypter::new(RsaDecrypterArgs::new(&args.key))),
+                EncryptionAlg::Ecies => Box::new(EciesDecrypter::new(EciesDecrypterArgs::new(
+                    &args.key.as_bytes(),
+                ))),
             },
             None => {
                 return record_builder_response_error("invalid decrypter provided".to_string());

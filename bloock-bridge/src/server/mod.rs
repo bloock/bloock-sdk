@@ -148,6 +148,11 @@ impl Server {
                 .generate_rsa_key_pair(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceGenerateEciesKeyPair => Ok(self
+                .record
+                .generate_ecies_key_pair(self.serialize_request(payload)?)
+                .await
+                .into()),
             BloockServer::RecordServicePublish => Ok(self
                 .record
                 .publish(self.serialize_request(payload)?)

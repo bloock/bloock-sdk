@@ -31,6 +31,7 @@ service RecordService {
     rpc GetSignatures(Record) returns (RecordSignatures);
     rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
     rpc GenerateRsaKeyPair(GenerateRsaKeyPairRequest) returns (GenerateRsaKeyPairResponse);
+    rpc GenerateEciesKeyPair(GenerateEciesKeyPairRequest) returns (GenerateEciesKeyPairResponse);
     rpc Publish(PublishRequest) returns (PublishResponse);
 }
 
@@ -45,6 +46,13 @@ message GenerateKeysResponse {
 message GenerateRsaKeyPairRequest {}
 
 message GenerateRsaKeyPairResponse {
+    string privateKey = 1;
+    string publicKey = 2;
+    optional Error error = 3;
+}
+message GenerateEciesKeyPairRequest {}
+
+message GenerateEciesKeyPairResponse {
     string privateKey = 1;
     string publicKey = 2;
     optional Error error = 3;
@@ -75,6 +83,7 @@ enum SignerAlg {
 enum EncryptionAlg {
     A256GCM = 0;
     RSA = 1;
+    ECIES = 2;
 }
 
 message Signer {
