@@ -71,13 +71,13 @@ impl Builder {
         self
     }
 
-    pub fn with_encrypter<E: Encrypter + 'static>(mut self, encrypter: E) -> Self {
-        self.encrypter = Some(Box::new(encrypter));
+    pub fn with_encrypter(mut self, encrypter: Box<dyn Encrypter>) -> Self {
+        self.encrypter = Some(encrypter);
         self
     }
 
-    pub fn with_decrypter<E: Decrypter + 'static>(mut self, decrypter: E) -> Self {
-        self.decrypter = Some(Box::new(decrypter));
+    pub fn with_decrypter(mut self, decrypter: Box<dyn Decrypter>) -> Self {
+        self.decrypter = Some(decrypter);
         self
     }
 
@@ -99,7 +99,7 @@ impl Builder {
             let payload = self.document.get_payload();
 
             let decrypted_payload = decrypter
-                .decrypt(&payload, &[])
+                .decrypt(&payload)
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document.remove_encryption(decrypted_payload)?;
@@ -110,7 +110,7 @@ impl Builder {
         if let Some(encrypter) = &self.encrypter {
             let payload = self.document.build()?;
             let ciphertext = encrypter
-                .encrypt(&payload, &[])
+                .encrypt(&payload)
                 .map_err(InfrastructureError::EncrypterError)?;
 
             if let Some(doc) = record.document.as_mut() {

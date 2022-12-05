@@ -6,8 +6,8 @@ import { Network } from "./bridge/proto/config";
 import { RecordReceipt } from "./bridge/proto/record";
 import { RecordBuilder } from "./builder";
 import { EcsdaSigner } from "./entity/signer";
-import { AesEncrypter } from "./entity/encrypter";
-import { AesDecrypter } from "./entity/decrypter";
+import { AesEncrypter, RsaEncrypter } from "./entity/encrypter";
+import { AesDecrypter, RsaDecrypter } from "./entity/decrypter";
 import { HostedPublisher } from "./entity/publisher";
 import { HostedLoader } from "./entity/loader";
 
@@ -21,6 +21,8 @@ export {
   EcsdaSigner,
   AesEncrypter,
   AesDecrypter,
+  RsaEncrypter,
+  RsaDecrypter,
   HostedLoader,
   HostedPublisher
 };

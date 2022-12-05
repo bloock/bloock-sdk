@@ -6,8 +6,9 @@ use bloock_core::{
     error::BloockError,
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
-    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient, EcsdaSigner,
-    EcsdaSignerArgs,
+    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
+    Decrypter as DecrypterCore, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore,
+    RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
 };
 
 use super::response_types::ResponseType;
@@ -16,9 +17,10 @@ use crate::{
     error::{config_data_error, BridgeError},
     items::{
         DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error, GenerateKeysRequest,
-        GenerateKeysResponse, Loader, LoaderArgs, PublishRequest, PublishResponse, Publisher,
-        Record, RecordBuilderResponse, RecordHash, RecordServiceHandler, RecordSignatures,
-        SendRecordsResponse, Signature, Signer, SignerAlg,
+        GenerateKeysResponse, GenerateRsaKeyPairRequest, GenerateRsaKeyPairResponse, Loader,
+        LoaderArgs, PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse,
+        RecordHash, RecordServiceHandler, RecordSignatures, SendRecordsResponse, Signature, Signer,
+        SignerAlg,
     },
 };
 
@@ -64,6 +66,12 @@ impl From<RecordSignatures> for ResponseType {
 impl From<GenerateKeysResponse> for ResponseType {
     fn from(res: GenerateKeysResponse) -> Self {
         ResponseType::GenerateKeys(res)
+    }
+}
+
+impl From<GenerateRsaKeyPairResponse> for ResponseType {
+    fn from(res: GenerateRsaKeyPairResponse) -> Self {
+        ResponseType::GenerateRsaKeyPairResponse(res)
     }
 }
 
@@ -400,6 +408,31 @@ impl RecordServiceHandler for RecordServer {
         };
     }
 
+    async fn generate_rsa_key_pair(
+        &self,
+        _req: GenerateRsaKeyPairRequest,
+    ) -> GenerateRsaKeyPairResponse {
+        let keypair = match bloock_core::generate_rsa_key_pair() {
+            Ok(keypair) => keypair,
+            Err(e) => {
+                return GenerateRsaKeyPairResponse {
+                    private_key: "".to_string(),
+                    public_key: "".to_string(),
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
+
+        return GenerateRsaKeyPairResponse {
+            private_key: keypair.private_key,
+            public_key: keypair.public_key,
+            error: None,
+        };
+    }
+
     async fn publish(&self, req: PublishRequest) -> PublishResponse {
         let config_data = match map_config(req.config_data) {
             Ok(config) => config,
@@ -475,17 +508,18 @@ fn build_record(
     }
 
     if let Some(encrypt) = encrypter {
-        let encrypter = match EncryptionAlg::from_i32(encrypt.alg) {
-            Some(EncryptionAlg::A256gcm) => {
-                let args = match encrypt.args {
-                    Some(encrypter_arguments) => encrypter_arguments,
-                    None => {
-                        return record_builder_response_error("no arguments provided".to_string())
-                    }
-                };
+        let args = match encrypt.args {
+            Some(encrypter_arguments) => encrypter_arguments,
+            None => return record_builder_response_error("no arguments provided".to_string()),
+        };
 
-                AesEncrypter::new(AesEncrypterArgs::new(&args.password))
-            }
+        let encrypter: Box<dyn EncrypterCore> = match EncryptionAlg::from_i32(encrypt.alg) {
+            Some(alg) => match alg {
+                EncryptionAlg::A256gcm => {
+                    Box::new(AesEncrypter::new(AesEncrypterArgs::new(&args.key, &[])))
+                }
+                EncryptionAlg::Rsa => Box::new(RsaEncrypter::new(RsaEncrypterArgs::new(&args.key))),
+            },
             None => {
                 return record_builder_response_error("invalid encrypter provided".to_string());
             }
@@ -494,17 +528,18 @@ fn build_record(
     }
 
     if let Some(decrypt) = decrypter {
-        let decrypter = match EncryptionAlg::from_i32(decrypt.alg) {
-            Some(EncryptionAlg::A256gcm) => {
-                let args = match decrypt.args {
-                    Some(decrypter_arguments) => decrypter_arguments,
-                    None => {
-                        return record_builder_response_error("no arguments provided".to_string())
-                    }
-                };
+        let args = match decrypt.args {
+            Some(decrypter_arguments) => decrypter_arguments,
+            None => return record_builder_response_error("no arguments provided".to_string()),
+        };
 
-                AesDecrypter::new(AesDecrypterArgs::new(&args.password))
-            }
+        let decrypter: Box<dyn DecrypterCore> = match EncryptionAlg::from_i32(decrypt.alg) {
+            Some(alg) => match alg {
+                EncryptionAlg::A256gcm => {
+                    Box::new(AesDecrypter::new(AesDecrypterArgs::new(&args.key, &[])))
+                }
+                EncryptionAlg::Rsa => Box::new(RsaDecrypter::new(RsaDecrypterArgs::new(&args.key))),
+            },
             None => {
                 return record_builder_response_error("invalid decrypter provided".to_string());
             }
@@ -550,8 +585,8 @@ mod tests {
 
     use crate::{
         items::{
-            DecrypterArgs, EncrypterArgs, EncryptionAlg, GenerateKeysRequest, RecordServiceHandler,
-            SignerAlg, SignerArgs,
+            DecrypterArgs, EncrypterArgs, EncryptionAlg, GenerateKeysRequest,
+            GenerateRsaKeyPairRequest, RecordServiceHandler, SignerAlg, SignerArgs,
         },
         server::Server,
     };
@@ -637,7 +672,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -659,7 +694,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -720,7 +755,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -744,7 +779,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -788,7 +823,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -806,7 +841,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -833,7 +868,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -850,7 +885,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -901,7 +936,7 @@ mod tests {
             encrypter: Some(crate::items::Encrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(EncrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
             decrypter: None,
@@ -920,7 +955,7 @@ mod tests {
             decrypter: Some(crate::items::Decrypter {
                 alg: EncryptionAlg::A256gcm.into(),
                 args: Some(DecrypterArgs {
-                    password: password.to_string(),
+                    key: password.to_string(),
                 }),
             }),
         };
@@ -1056,5 +1091,16 @@ mod tests {
         let error_response = keys_response.error;
 
         assert_eq!(None, error_response);
+    }
+
+    #[tokio::test]
+    async fn test_generate_rsa_key_pair() {
+        let server = Server::new();
+        let keys_response = server
+            .record
+            .generate_rsa_key_pair(GenerateRsaKeyPairRequest {})
+            .await;
+
+        assert_eq!(keys_response.error, None);
     }
 }

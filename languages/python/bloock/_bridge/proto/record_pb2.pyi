@@ -76,10 +76,12 @@ class _EncryptionAlgEnumTypeWrapper(
 ):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     A256GCM: _EncryptionAlg.ValueType  # 0
+    RSA: _EncryptionAlg.ValueType  # 1
 
 class EncryptionAlg(_EncryptionAlg, metaclass=_EncryptionAlgEnumTypeWrapper): ...
 
 A256GCM: EncryptionAlg.ValueType  # 0
+RSA: EncryptionAlg.ValueType  # 1
 global___EncryptionAlg = EncryptionAlg
 
 class _DataAvailabilityType:
@@ -150,6 +152,55 @@ class GenerateKeysResponse(google.protobuf.message.Message):
     ) -> typing_extensions.Literal["error"] | None: ...
 
 global___GenerateKeysResponse = GenerateKeysResponse
+
+class GenerateRsaKeyPairRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    def __init__(
+        self,
+    ) -> None: ...
+
+global___GenerateRsaKeyPairRequest = GenerateRsaKeyPairRequest
+
+class GenerateRsaKeyPairResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PRIVATEKEY_FIELD_NUMBER: builtins.int
+    PUBLICKEY_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    privateKey: builtins.str
+    publicKey: builtins.str
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        privateKey: builtins.str = ...,
+        publicKey: builtins.str = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error",
+            b"_error",
+            "error",
+            b"error",
+            "privateKey",
+            b"privateKey",
+            "publicKey",
+            b"publicKey",
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
+
+global___GenerateRsaKeyPairResponse = GenerateRsaKeyPairResponse
 
 class RecordHash(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -325,15 +376,15 @@ global___Encrypter = Encrypter
 class EncrypterArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    PASSWORD_FIELD_NUMBER: builtins.int
-    password: builtins.str
+    KEY_FIELD_NUMBER: builtins.int
+    key: builtins.str
     def __init__(
         self,
         *,
-        password: builtins.str = ...,
+        key: builtins.str = ...,
     ) -> None: ...
     def ClearField(
-        self, field_name: typing_extensions.Literal["password", b"password"]
+        self, field_name: typing_extensions.Literal["key", b"key"]
     ) -> None: ...
 
 global___EncrypterArgs = EncrypterArgs
@@ -364,15 +415,15 @@ global___Decrypter = Decrypter
 class DecrypterArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    PASSWORD_FIELD_NUMBER: builtins.int
-    password: builtins.str
+    KEY_FIELD_NUMBER: builtins.int
+    key: builtins.str
     def __init__(
         self,
         *,
-        password: builtins.str = ...,
+        key: builtins.str = ...,
     ) -> None: ...
     def ClearField(
-        self, field_name: typing_extensions.Literal["password", b"password"]
+        self, field_name: typing_extensions.Literal["key", b"key"]
     ) -> None: ...
 
 global___DecrypterArgs = DecrypterArgs
