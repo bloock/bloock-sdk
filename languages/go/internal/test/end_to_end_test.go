@@ -145,7 +145,7 @@ func testFromFile(t *testing.T) string {
 
 func testAesEncryption(t *testing.T) {
 	payload := "Hello world 2"
-    password := "some_password"
+	password := "some_password"
 	encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
 		WithEncrypter(entity.NewAesEncrypter(password)).
 		Build()
