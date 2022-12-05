@@ -3,6 +3,7 @@ use thiserror::Error as ThisError;
 
 pub mod aes;
 pub mod rsa;
+pub mod ecies;
 
 pub type Result<T> = std::result::Result<T, EncrypterError>;
 

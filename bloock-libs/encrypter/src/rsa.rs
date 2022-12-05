@@ -136,7 +136,7 @@ mod tests {
 
         let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
-        let decrypter = RsaDecrypter::new(RsaDecrypterArgs::new("incorrect_password"));
+        let decrypter = RsaDecrypter::new(RsaDecrypterArgs::new("incorrect_key"));
 
         let decrypted_payload_bytes = decrypter.decrypt(&ciphertext);
         assert!(decrypted_payload_bytes.is_err());

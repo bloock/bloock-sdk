@@ -307,6 +307,7 @@ dependencies = [
  "aes-gcm",
  "base64",
  "base64-url",
+ "ecies",
  "getrandom",
  "hex",
  "hmac 0.12.1",
@@ -787,6 +788,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1435fa1053d8b2fbbe9be7e97eca7f33d37b28409959813daefc1446a14247f1"
 
 [[package]]
+name = "ecies"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "374125c18bfe63716aae1b6b4ee0243e6264f1766056b5efdd4f257732aa3543"
+dependencies = [
+ "aes-gcm",
+ "getrandom",
+ "hkdf",
+ "libsecp256k1",
+ "rand",
+ "sha2 0.10.6",
+ "typenum",
+]
+
+[[package]]
 name = "either"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1040,6 +1056,15 @@ name = "hex"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+
+[[package]]
+name = "hkdf"
+version = "0.12.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "791a029f6b9fc27657f6f188ec6e5e43f6911f6f878e0dc5501396e09809d437"
+dependencies = [
+ "hmac 0.12.1",
+]
 
 [[package]]
 name = "hmac"
