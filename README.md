@@ -1,9 +1,10 @@
 # Bloock SDKs
 
-[![Release](https://img.shields.io/github/release/bloock/bloock-sdk.svg?style=flat-square)](https://github.com/bloock/bloock-sdk/releases)
+[![Release](https://img.shields.io/github/release/bloock/bloock-sdk.svg)](https://github.com/bloock/bloock-sdk/releases)
 ![npm](https://img.shields.io/npm/v/@bloock/sdk)
+![PyPI](https://img.shields.io/pypi/v/bloock)
+![Maven](https://img.shields.io/maven-central/v/com.bloock.sdk/bloock-sdk?label=maven)
 [![GoDoc](https://pkg.go.dev/badge/github.com/bloock/bloock-sdk-go/v2?status.svg)](https://pkg.go.dev/github.com/bloock/bloock-sdk-go/v2?tab=doc)
-
 
 **BLOOCK** guarantees data integrity and authenticity in a simple, scalable, and confidential manner on top of distributed ledger technologies. Through BLOOCK, enterprises can minimize the principal risks and difficulties faced when defining, developing and managing a blockchain project. 
 -	Easy to use
@@ -114,4 +115,4 @@ See [LICENSE](https://github.com/bloock/bloock-sdk/blob/master/LICENSE).
 [`Link Go`]: https://github.com/bloock/bloock-sdk-go
 [`Link JS`]: https://www.npmjs.com/package/@bloock/sdk
 [`Link Python`]: https://pypi.org/project/bloock/
-[`Link Java`]: https://s01.oss.sonatype.org/#nexus-search;quick~bloock
+[`Link Java`]: https://search.maven.org/artifact/com.bloock.sdk/bloock-sdk
