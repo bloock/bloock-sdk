@@ -71,6 +71,9 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     with:
       os: ${{ matrix.os }}
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
 
   test_go:
     needs: [build_go]
