@@ -179,3 +179,17 @@ func (c *Client) GenerateRsaKeyPair() (entity.KeyPair, error) {
 
 	return entity.NewRsaKeyPairFromProto(res), nil
 }
+
+func (c *Client) GenerateEciesKeyPair() (entity.KeyPair, error) {
+	res, err := c.bridgeClient.Record().GenerateEciesKeyPair(context.Background(), &proto.GenerateEciesKeyPairRequest{})
+
+	if err != nil {
+		return entity.KeyPair{}, err
+	}
+
+	if res.Error != nil {
+		return entity.KeyPair{}, errors.New(res.Error.Message)
+	}
+
+	return entity.NewEciesKeyPairFromProto(res), nil
+}

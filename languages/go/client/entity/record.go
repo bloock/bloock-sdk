@@ -204,3 +204,13 @@ func NewRsaKeyPairFromProto(k *proto.GenerateRsaKeyPairResponse) KeyPair {
 		PrivateKey: k.PrivateKey,
 	}
 }
+
+func NewEciesKeyPairFromProto(k *proto.GenerateEciesKeyPairResponse) KeyPair {
+	if k == nil {
+		return KeyPair{}
+	}
+	return KeyPair{
+		PublicKey:  k.PublicKey,
+		PrivateKey: k.PrivateKey,
+	}
+}

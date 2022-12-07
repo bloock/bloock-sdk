@@ -540,9 +540,9 @@ fn build_record(
                     Box::new(AesEncrypter::new(AesEncrypterArgs::new(&args.key, &[])))
                 }
                 EncryptionAlg::Rsa => Box::new(RsaEncrypter::new(RsaEncrypterArgs::new(&args.key))),
-                EncryptionAlg::Ecies => Box::new(EciesEncrypter::new(EciesEncrypterArgs::new(
-                    &args.key.as_bytes(),
-                ))),
+                EncryptionAlg::Ecies => {
+                    Box::new(EciesEncrypter::new(EciesEncrypterArgs::new(args.key)))
+                }
             },
             None => {
                 return record_builder_response_error("invalid encrypter provided".to_string());
@@ -563,9 +563,9 @@ fn build_record(
                     Box::new(AesDecrypter::new(AesDecrypterArgs::new(&args.key, &[])))
                 }
                 EncryptionAlg::Rsa => Box::new(RsaDecrypter::new(RsaDecrypterArgs::new(&args.key))),
-                EncryptionAlg::Ecies => Box::new(EciesDecrypter::new(EciesDecrypterArgs::new(
-                    &args.key.as_bytes(),
-                ))),
+                EncryptionAlg::Ecies => {
+                    Box::new(EciesDecrypter::new(EciesDecrypterArgs::new(args.key)))
+                }
             },
             None => {
                 return record_builder_response_error("invalid decrypter provided".to_string());

@@ -31,6 +31,9 @@ func TestEndToEnd(t *testing.T) {
 		testRsaEncryption(t, sdk)
 		testRsaEncryptionDataAvailability(t, sdk)
 
+		testEciesEncryption(t, sdk)
+		testEciesEncryptionDataAvailability(t, sdk)
+
 		receipt, err := sdk.SendRecords(records)
 		require.NoError(t, err)
 		assert.Greater(t, len(receipt), 0)
@@ -243,6 +246,59 @@ func testRsaEncryptionDataAvailability(t *testing.T, sdk client.Client) {
 
 	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
 		WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
+		Build()
+
+	require.NoError(t, err)
+	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
+
+	hash, err := decryptedRecord.GetHash()
+	require.NoError(t, err)
+	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
+}
+
+func testEciesEncryption(t *testing.T, sdk client.Client) {
+	payload := "Hello world 2"
+	keypair, err := sdk.GenerateEciesKeyPair()
+
+	encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
+		WithEncrypter(entity.NewEciesEncrypter(keypair.PublicKey)).
+		Build()
+
+	require.NoError(t, err)
+	assert.NotEqual(t, payload, string(encryptedRecord.Payload))
+
+	record, err := builder.NewRecordBuilderFromRecord(encryptedRecord).
+		WithDecrypter(entity.NewEciesDecrypter(keypair.PrivateKey)).
+		Build()
+
+	require.NoError(t, err)
+	assert.Equal(t, payload, string(record.Retrieve()))
+
+	hash, err := record.GetHash()
+	require.NoError(t, err)
+	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
+}
+
+func testEciesEncryptionDataAvailability(t *testing.T, sdk client.Client) {
+	payload := "Hello world 2"
+	keypair, err := sdk.GenerateEciesKeyPair()
+
+	encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
+		WithEncrypter(entity.NewEciesEncrypter(keypair.PublicKey)).
+		Build()
+
+	assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
+
+	result, err := encryptedRecord.Publish(entity.NewHostedPublisher())
+	require.NoError(t, err)
+
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
+	require.NoError(t, err)
+
+	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
+
+	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+		WithDecrypter(entity.NewEciesDecrypter(keypair.PrivateKey)).
 		Build()
 
 	require.NoError(t, err)

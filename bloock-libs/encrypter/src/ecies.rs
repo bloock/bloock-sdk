@@ -1,27 +1,25 @@
 use crate::{Decrypter, Encrypter, EncrypterError, Result};
 
 pub struct EciesKeyPair {
-    pub public_key: Vec<u8>,
-    pub private_key: Vec<u8>,
+    pub public_key: String,
+    pub private_key: String,
 }
 
 pub fn generate_ecies_key_pair() -> EciesKeyPair {
     let (private_key, public_key) = ecies::utils::generate_keypair();
     EciesKeyPair {
-        public_key: public_key.serialize().to_vec(),
-        private_key: private_key.serialize().to_vec(),
+        public_key: hex::encode(public_key.serialize()),
+        private_key: hex::encode(private_key.serialize()),
     }
 }
 
 pub struct EciesEncrypterArgs {
-    public_key: Vec<u8>,
+    public_key: String,
 }
 
 impl EciesEncrypterArgs {
-    pub fn new(public_key: &[u8]) -> Self {
-        Self {
-            public_key: public_key.to_vec(),
-        }
+    pub fn new(public_key: String) -> Self {
+        Self { public_key }
     }
 }
 
@@ -37,20 +35,21 @@ impl EciesEncrypter {
 
 impl Encrypter for EciesEncrypter {
     fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>> {
-        Ok(ecies::encrypt(&self.args.public_key, payload)
+        let public_key = hex::decode(self.args.public_key.as_bytes())
+            .map_err(|e| EncrypterError::InvalidKey(e.to_string()))?;
+
+        Ok(ecies::encrypt(&public_key, payload)
             .map_err(|err| EncrypterError::FailedToEncrypt(err.to_string()))?)
     }
 }
 
 pub struct EciesDecrypterArgs {
-    private_key: Vec<u8>,
+    private_key: String,
 }
 
 impl EciesDecrypterArgs {
-    pub fn new(private_key: &[u8]) -> Self {
-        Self {
-            private_key: private_key.to_vec(),
-        }
+    pub fn new(private_key: String) -> Self {
+        Self { private_key }
     }
 }
 
@@ -66,7 +65,10 @@ impl EciesDecrypter {
 
 impl Decrypter for EciesDecrypter {
     fn decrypt(&self, cipher_text: &[u8]) -> Result<Vec<u8>> {
-        Ok(ecies::decrypt(&self.args.private_key, cipher_text)
+        let private_key = hex::decode(self.args.private_key.as_bytes())
+            .map_err(|e| EncrypterError::InvalidKey(e.to_string()))?;
+
+        Ok(ecies::decrypt(&private_key, cipher_text)
             .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))?)
     }
 }
@@ -86,12 +88,12 @@ mod tests {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
         let key_pair = generate_ecies_key_pair();
-        let encrypter = EciesEncrypter::new(EciesEncrypterArgs::new(&key_pair.public_key));
+        let encrypter = EciesEncrypter::new(EciesEncrypterArgs::new(key_pair.public_key));
 
         let ciphertext = encrypter.encrypt(payload.as_bytes()).unwrap();
         assert_ne!(ciphertext, payload.as_bytes());
 
-        let decrypter = EciesDecrypter::new(EciesDecrypterArgs::new(&key_pair.private_key));
+        let decrypter = EciesDecrypter::new(EciesDecrypterArgs::new(key_pair.private_key));
 
         let decrypted_payload_bytes = decrypter.decrypt(&ciphertext).unwrap();
         let decrypted_payload = std::str::from_utf8(&decrypted_payload_bytes).unwrap();
@@ -107,12 +109,11 @@ mod tests {
 
         let key_pair = generate_ecies_key_pair();
 
-        let encrypter = EciesEncrypter::new(EciesEncrypterArgs::new(&key_pair.public_key));
+        let encrypter = EciesEncrypter::new(EciesEncrypterArgs::new(key_pair.public_key));
 
         let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
-        let invalid_key = &[1, 2, 3];
-        let decrypter = EciesDecrypter::new(EciesDecrypterArgs::new(invalid_key));
+        let decrypter = EciesDecrypter::new(EciesDecrypterArgs::new(String::from("invalie key")));
 
         let decrypted_payload_bytes = decrypter.decrypt(&ciphertext);
         assert!(decrypted_payload_bytes.is_err());
@@ -121,7 +122,7 @@ mod tests {
     #[test]
     fn test_ecies_decryption_invalid_payload() {
         let unencrypted_payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
-        let decrypter = EciesDecrypter::new(EciesDecrypterArgs::new(&[1, 2, 3]));
+        let decrypter = EciesDecrypter::new(EciesDecrypterArgs::new(String::from("some key")));
         assert!(decrypter.decrypt(unencrypted_payload.as_bytes()).is_err());
     }
 }
