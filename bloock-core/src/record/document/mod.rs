@@ -201,23 +201,21 @@ mod tests {
     #[tokio::test]
     async fn test_encrypted_pdf() {
         let payload = include_bytes!("./assets/dummy.pdf");
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", &[]));
 
         let mut document = Document::new(payload).unwrap();
         let expected_payload = document.build().unwrap();
 
         let original_record = Record::new(document.clone());
 
-        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
+        let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
         document.set_encryption(ciphertext).unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
-        let decrypted_payload = decrypter
-            .decrypt(&encrypted_doc.get_payload(), &[])
-            .unwrap();
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", &[]));
+        let decrypted_payload = decrypter.decrypt(&encrypted_doc.get_payload()).unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
 
@@ -229,7 +227,7 @@ mod tests {
     #[tokio::test]
     async fn test_encrypted_pdf_with_proof() {
         let payload = include_bytes!("./assets/dummy.pdf");
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", &[]));
 
         let mut document = Document::new(payload).unwrap();
 
@@ -256,16 +254,14 @@ mod tests {
 
         let original_record = Record::new(document.clone());
 
-        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
+        let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
         document.set_encryption(ciphertext).unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
-        let decrypted_payload = decrypter
-            .decrypt(&encrypted_doc.get_payload(), &[])
-            .unwrap();
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", &[]));
+        let decrypted_payload = decrypter.decrypt(&encrypted_doc.get_payload()).unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
 
@@ -279,7 +275,7 @@ mod tests {
     #[tokio::test]
     async fn test_encrypted_pdf_with_and_signatures() {
         let payload = include_bytes!("./assets/dummy.pdf");
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password"));
+        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", &[]));
 
         let mut document = Document::new(payload).unwrap();
 
@@ -317,16 +313,14 @@ mod tests {
 
         let original_record = Record::new(document.clone());
 
-        let ciphertext = encrypter.encrypt(&document.build().unwrap(), &[]).unwrap();
+        let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
         document.set_encryption(ciphertext).unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password"));
-        let decrypted_payload = decrypter
-            .decrypt(&encrypted_doc.get_payload(), &[])
-            .unwrap();
+        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", &[]));
+        let decrypted_payload = decrypter.decrypt(&encrypted_doc.get_payload()).unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
 

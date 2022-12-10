@@ -69,6 +69,11 @@ class RecordServiceStub(object):
             request_serializer=record__pb2.GenerateKeysRequest.SerializeToString,
             response_deserializer=record__pb2.GenerateKeysResponse.FromString,
         )
+        self.GenerateRsaKeyPair = channel.unary_unary(
+            "/bloock.RecordService/GenerateRsaKeyPair",
+            request_serializer=record__pb2.GenerateRsaKeyPairRequest.SerializeToString,
+            response_deserializer=record__pb2.GenerateRsaKeyPairResponse.FromString,
+        )
         self.Publish = channel.unary_unary(
             "/bloock.RecordService/Publish",
             request_serializer=record__pb2.PublishRequest.SerializeToString,
@@ -145,6 +150,12 @@ class RecordServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def GenerateRsaKeyPair(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
     def Publish(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -208,6 +219,11 @@ def add_RecordServiceServicer_to_server(servicer, server):
             servicer.GenerateKeys,
             request_deserializer=record__pb2.GenerateKeysRequest.FromString,
             response_serializer=record__pb2.GenerateKeysResponse.SerializeToString,
+        ),
+        "GenerateRsaKeyPair": grpc.unary_unary_rpc_method_handler(
+            servicer.GenerateRsaKeyPair,
+            request_deserializer=record__pb2.GenerateRsaKeyPairRequest.FromString,
+            response_serializer=record__pb2.GenerateRsaKeyPairResponse.SerializeToString,
         ),
         "Publish": grpc.unary_unary_rpc_method_handler(
             servicer.Publish,
@@ -534,6 +550,35 @@ class RecordService(object):
             "/bloock.RecordService/GenerateKeys",
             record__pb2.GenerateKeysRequest.SerializeToString,
             record__pb2.GenerateKeysResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def GenerateRsaKeyPair(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/bloock.RecordService/GenerateRsaKeyPair",
+            record__pb2.GenerateRsaKeyPairRequest.SerializeToString,
+            record__pb2.GenerateRsaKeyPairResponse.FromString,
             options,
             channel_credentials,
             insecure,

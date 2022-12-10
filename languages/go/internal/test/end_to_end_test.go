@@ -55,27 +55,45 @@ func TestEndToEnd(t *testing.T) {
 		records = append(records, hash)
 
 		payload := "Hello world 2"
-		encrypted_record, err := builder.NewRecordBuilderFromString(payload).
+		encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
 			WithEncrypter(entity.NewAesEncrypter("some_password")).
 			Build()
 		require.NoError(t, err)
-		assert.NotEqual(t, payload, string(encrypted_record.Payload))
+		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
-		record, err = builder.NewRecordBuilderFromRecord(encrypted_record).
+		record, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
 			WithDecrypter(entity.NewAesDecrypter("some_password")).
 			Build()
 		require.NoError(t, err)
-		assert.Equal(t, payload, string(record.Payload))
+		assert.Equal(t, payload, string(record.Retrieve()))
+
+		hash, err = record.GetHash()
+		require.NoError(t, err)
+		assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
+
+		_, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
+			WithDecrypter(entity.NewAesDecrypter("incorrect_password")).
+			Build()
+		require.Error(t, err)
+
+		keypair, err := sdk.GenerateRsaKeyPair()
+
+		encryptedRecord, err = builder.NewRecordBuilderFromString(payload).
+			WithEncrypter(entity.NewRsaEncrypter(keypair.PublicKey)).
+			Build()
+		require.NoError(t, err)
+		assert.NotEqual(t, payload, string(encryptedRecord.Payload))
+
+		record, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
+			WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
+			Build()
+		require.NoError(t, err)
+		assert.Equal(t, payload, string(record.Retrieve()))
 
 		hash, err = record.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 		records = append(records, hash)
-
-		_, err = builder.NewRecordBuilderFromRecord(encrypted_record).
-			WithDecrypter(entity.NewAesDecrypter("incorrect_password")).
-			Build()
-		require.Error(t, err)
 
 		record, err = builder.NewRecordBuilderFromFile([]byte{2, 3, 4, 5, 6}).Build()
 		require.NoError(t, err)

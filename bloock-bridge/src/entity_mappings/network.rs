@@ -1,7 +1,5 @@
-use crate::items::{Network, NetworkConfig};
-use bloock_core::config::entity::{
-    config::NetworkConfiguration as CoreNetworkConfig, network::Network as CoreNetwork,
-};
+use crate::items::Network;
+use bloock_core::config::entity::network::Network as CoreNetwork;
 
 impl From<Network> for CoreNetwork {
     fn from(n: Network) -> Self {
@@ -16,12 +14,4 @@ impl From<Network> for CoreNetwork {
 
 pub fn map_network_from_i32(network: i32) -> Option<CoreNetwork> {
     Network::from_i32(network).map(|network| network.into())
-}
-
-pub fn map_network_config(network: NetworkConfig) -> CoreNetworkConfig {
-    CoreNetworkConfig {
-        contract_address: network.contract_address,
-        contract_abi: network.contract_abi,
-        http_provider: network.http_provider,
-    }
 }

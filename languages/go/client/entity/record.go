@@ -181,16 +181,26 @@ func NewRecordReceiptFromProto(r *proto.RecordReceipt) RecordReceipt {
 	}
 }
 
-type Keys struct {
+type KeyPair struct {
 	PublicKey  string
 	PrivateKey string
 }
 
-func NewKeysFromProto(k *proto.GenerateKeysResponse) Keys {
+func NewKeysFromProto(k *proto.GenerateKeysResponse) KeyPair {
 	if k == nil {
-		return Keys{}
+		return KeyPair{}
 	}
-	return Keys{
+	return KeyPair{
+		PublicKey:  k.PublicKey,
+		PrivateKey: k.PrivateKey,
+	}
+}
+
+func NewRsaKeyPairFromProto(k *proto.GenerateRsaKeyPairResponse) KeyPair {
+	if k == nil {
+		return KeyPair{}
+	}
+	return KeyPair{
 		PublicKey:  k.PublicKey,
 		PrivateKey: k.PrivateKey,
 	}

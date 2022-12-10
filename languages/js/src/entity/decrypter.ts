@@ -23,6 +23,23 @@ export class AesDecrypter implements Decrypter {
   }
 }
 
+export class RsaDecrypter implements Decrypter {
+  alg: proto.EncryptionAlg;
+  args: DecrypterArgs;
+
+  constructor(password: string) {
+    this.alg = proto.EncryptionAlg.RSA;
+    this.args = new DecrypterArgs(password);
+  }
+
+  public toProto(): proto.Decrypter {
+    return proto.Decrypter.fromPartial({
+      alg: this.alg,
+      args: this.args.toProto()
+    });
+  }
+}
+
 export class DecrypterArgs {
   password: string;
   constructor(password: string) {
@@ -30,6 +47,6 @@ export class DecrypterArgs {
   }
 
   public toProto(): proto.DecrypterArgs {
-    return proto.DecrypterArgs.fromPartial({ password: this.password });
+    return proto.DecrypterArgs.fromPartial({ key: this.password });
   }
 }

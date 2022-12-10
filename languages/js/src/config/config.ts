@@ -8,6 +8,7 @@ export function NewConfigData(): ConfigData {
       apiKey: Bloock.getApiKey(),
       host: Bloock.getApiHost(),
       disableAnalytics: Bloock.getDisableAnalytics()
-    })
+    }),
+    networksConfig: Bloock.getNetworkConfiguration()
   });
 }

@@ -6,8 +6,9 @@ use bloock_core::{
     error::BloockError,
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
-    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient, EcsdaSigner,
-    EcsdaSignerArgs,
+    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
+    Decrypter as DecrypterCore, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore,
+    RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
 };
 use serde_json::json;
 
@@ -17,10 +18,10 @@ use crate::{
     error::{config_data_error, BridgeError},
     items::{
         BloockServer, DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error,
-        GenerateKeysRequest, GenerateKeysResponse, Loader, LoaderArgs, PublishRequest,
-        PublishResponse, Publisher, Record, RecordBuilderResponse, RecordHash, RecordReceipt,
-        RecordServiceHandler, RecordSignatures, SendRecordsRequest, SendRecordsResponse, Signature,
-        Signer, SignerAlg,
+        GenerateKeysRequest, GenerateKeysResponse, GenerateRsaKeyPairRequest,
+        GenerateRsaKeyPairResponse, Loader, LoaderArgs, PublishRequest, PublishResponse, Publisher,
+        Record, RecordBuilderResponse, RecordHash, RecordReceipt, RecordServiceHandler,
+        RecordSignatures, SendRecordsRequest, SendRecordsResponse, Signature, Signer, SignerAlg,
     },
 };
 
@@ -56,6 +57,12 @@ impl From<RecordSignatures> for ResponseType {
 impl From<GenerateKeysResponse> for ResponseType {
     fn from(res: GenerateKeysResponse) -> Self {
         ResponseType::GenerateKeys(res)
+    }
+}
+
+impl From<GenerateRsaKeyPairResponse> for ResponseType {
+    fn from(res: GenerateRsaKeyPairResponse) -> Self {
+        ResponseType::GenerateRsaKeyPairResponse(res)
     }
 }
 
@@ -499,6 +506,31 @@ impl RecordServiceHandler for RecordServer {
         };
     }
 
+    async fn generate_rsa_key_pair(
+        &self,
+        _req: GenerateRsaKeyPairRequest,
+    ) -> GenerateRsaKeyPairResponse {
+        let keypair = match bloock_core::generate_rsa_key_pair() {
+            Ok(keypair) => keypair,
+            Err(e) => {
+                return GenerateRsaKeyPairResponse {
+                    private_key: "".to_string(),
+                    public_key: "".to_string(),
+                    error: Some(Error {
+                        kind: BridgeError::RecordError.to_string(),
+                        message: e.to_string(),
+                    }),
+                }
+            }
+        };
+
+        return GenerateRsaKeyPairResponse {
+            private_key: keypair.private_key,
+            public_key: keypair.public_key,
+            error: None,
+        };
+    }
+
     async fn publish(&self, req: PublishRequest) -> PublishResponse {
         let config_data = match map_config(req.clone().config_data) {
             Ok(config) => config,
@@ -610,22 +642,23 @@ async fn build_record(
     }
 
     if let Some(encrypt) = encrypter {
-        let encrypter = match EncryptionAlg::from_i32(encrypt.alg) {
-            Some(EncryptionAlg::A256gcm) => {
-                let args = match encrypt.args {
-                    Some(encrypter_arguments) => encrypter_arguments,
-                    None => {
-                        return RecordBuilderResponse::new_error(
-                            client,
-                            req_name,
-                            "no arguments provided".to_string(),
-                        )
-                        .await
-                    }
-                };
-
-                AesEncrypter::new(AesEncrypterArgs::new(&args.password))
+        let args = match encrypt.args {
+            Some(encrypter_arguments) => encrypter_arguments,
+            None => {
+                return RecordBuilderResponse::new_error(
+                    client,
+                    req_name,
+                    "no arguments provided".to_string(),
+                )
+                .await
             }
+        };
+
+        let encrypter: Box<dyn EncrypterCore> = match EncryptionAlg::from_i32(encrypt.alg) {
+            Some(alg) => match alg {
+                EncryptionAlg::A256gcm => AesEncrypter::new(AesEncrypterArgs::new(&args.key, &[])),
+                EncryptionAlg::Rsa => RsaEncrypter::new(RsaEncrypterArgs::new(&args.key)),
+            },
             None => {
                 return RecordBuilderResponse::new_error(
                     client,
@@ -639,22 +672,23 @@ async fn build_record(
     }
 
     if let Some(decrypt) = decrypter {
-        let decrypter = match EncryptionAlg::from_i32(decrypt.alg) {
-            Some(EncryptionAlg::A256gcm) => {
-                let args = match decrypt.args {
-                    Some(decrypter_arguments) => decrypter_arguments,
-                    None => {
-                        return RecordBuilderResponse::new_error(
-                            client,
-                            req_name,
-                            "no arguments provided".to_string(),
-                        )
-                        .await
-                    }
-                };
-
-                AesDecrypter::new(AesDecrypterArgs::new(&args.password))
+        let args = match decrypt.args {
+            Some(decrypter_arguments) => decrypter_arguments,
+            None => {
+                return RecordBuilderResponse::new_error(
+                    client,
+                    req_name,
+                    "no arguments provided".to_string(),
+                )
+                .await
             }
+        };
+
+        let decrypter: Box<dyn DecrypterCore> = match EncryptionAlg::from_i32(decrypt.alg) {
+            Some(alg) => match alg {
+                EncryptionAlg::A256gcm => AesDecrypter::new(AesDecrypterArgs::new(&args.key, &[])),
+                EncryptionAlg::Rsa => RsaDecrypter::new(RsaDecrypterArgs::new(&args.key)),
+            },
             None => {
                 return RecordBuilderResponse::new_error(
                     client,
@@ -883,7 +917,7 @@ impl RecordSignatures {
 #[cfg(test)]
 mod tests {
     use crate::{
-        items::{GenerateKeysRequest, RecordServiceHandler},
+        items::{GenerateKeysRequest, GenerateRsaKeyPairRequest, RecordServiceHandler},
         server::Server,
     };
 
@@ -896,5 +930,16 @@ mod tests {
         let error_response = keys_response.error;
 
         assert_eq!(None, error_response);
+    }
+
+    #[tokio::test]
+    async fn test_generate_rsa_key_pair() {
+        let server = Server::new();
+        let keys_response = server
+            .record
+            .generate_rsa_key_pair(GenerateRsaKeyPairRequest {})
+            .await;
+
+        assert_eq!(keys_response.error, None);
     }
 }

@@ -126,11 +126,21 @@ class RecordReceipt:
         )
 
 
-class Keys:
+class EcsdaKeys:
     def __init__(self, public_key: str, private_key: str) -> None:
         self.public_key = public_key
         self.private_key = private_key
 
     @staticmethod
-    def from_proto(res: proto.GenerateKeysResponse) -> Keys:
-        return Keys(res.publicKey, res.privateKey)
+    def from_proto(res: proto.GenerateKeysResponse) -> EcsdaKeys:
+        return EcsdaKeys(res.publicKey, res.privateKey)
+
+
+class RsaKeyPair:
+    def __init__(self, public_key: str, private_key: str) -> None:
+        self.public_key = public_key
+        self.private_key = private_key
+
+    @staticmethod
+    def from_proto(res: proto.GenerateRsaKeyPairResponse) -> RsaKeyPair:
+        return RsaKeyPair(res.publicKey, res.privateKey)

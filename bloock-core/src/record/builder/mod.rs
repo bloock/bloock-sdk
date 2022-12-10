@@ -71,13 +71,13 @@ impl Builder {
         self
     }
 
-    pub fn with_encrypter<E: Encrypter + 'static>(mut self, encrypter: E) -> Self {
-        self.encrypter = Some(Box::new(encrypter));
+    pub fn with_encrypter(mut self, encrypter: Box<dyn Encrypter>) -> Self {
+        self.encrypter = Some(encrypter);
         self
     }
 
-    pub fn with_decrypter<E: Decrypter + 'static>(mut self, decrypter: E) -> Self {
-        self.decrypter = Some(Box::new(decrypter));
+    pub fn with_decrypter(mut self, decrypter: Box<dyn Decrypter>) -> Self {
+        self.decrypter = Some(decrypter);
         self
     }
 
@@ -99,7 +99,7 @@ impl Builder {
             let payload = self.document.get_payload();
 
             let decrypted_payload = decrypter
-                .decrypt(&payload, &[])
+                .decrypt(&payload)
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document.remove_encryption(decrypted_payload)?;
@@ -108,7 +108,7 @@ impl Builder {
         if let Some(encrypter) = &self.encrypter {
             let payload = self.document.build()?;
             let ciphertext = encrypter
-                .encrypt(&payload, &[])
+                .encrypt(&payload)
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document.set_encryption(ciphertext)?;
@@ -299,7 +299,7 @@ mod tests {
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
             .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
@@ -307,7 +307,7 @@ mod tests {
 
         let unencrypted_record = RecordBuilder::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password)))
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
@@ -334,7 +334,7 @@ mod tests {
         let encrypted_record = RecordBuilder::from_file(payload.to_vec())
             .unwrap()
             .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
@@ -342,7 +342,7 @@ mod tests {
 
         let unencrypted_record = RecordBuilder::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password)))
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
@@ -371,7 +371,7 @@ mod tests {
 
         let encrypted_record = RecordBuilder::from_string(content.to_string())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
@@ -382,7 +382,7 @@ mod tests {
 
         let record = RecordBuilder::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password)))
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
@@ -398,13 +398,13 @@ mod tests {
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
             .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
         let record = RecordBuilder::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password)))
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
@@ -442,7 +442,7 @@ mod tests {
 
         let encrypted_record = RecordBuilder::from_record(record.clone())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 
@@ -451,7 +451,7 @@ mod tests {
 
         let record = RecordBuilder::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password)))
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
             .build()
             .unwrap();
 

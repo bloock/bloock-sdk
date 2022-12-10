@@ -8,10 +8,14 @@ import {
   VerifyProofRequest,
   VerifyRecordsRequest
 } from "./bridge/proto/proof";
-import { GenerateKeysRequest, SendRecordsRequest } from "./bridge/proto/record";
+import {
+  GenerateKeysRequest,
+  GenerateRsaKeyPairRequest,
+  SendRecordsRequest
+} from "./bridge/proto/record";
 import { Proof } from "./entity/proof";
 import { Anchor } from "./entity/anchor";
-import { Keys, RecordReceipt } from "./entity/record";
+import { Keys, RecordReceipt, RsaKeyPair } from "./entity/record";
 import { NewConfigData } from "./config/config";
 
 export class BloockClient {
@@ -36,6 +40,9 @@ export class BloockClient {
       .getRecord()
       .SendRecords(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.records.map(r => RecordReceipt.fromProto(r));
       });
   }
@@ -55,6 +62,9 @@ export class BloockClient {
       .getAnchor()
       .GetAnchor(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return Anchor.fromProto(res.anchor!);
       });
   }
@@ -76,6 +86,9 @@ export class BloockClient {
       .getAnchor()
       .WaitAnchor(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return Anchor.fromProto(res.anchor!);
       });
   }
@@ -96,6 +109,9 @@ export class BloockClient {
       .getProof()
       .GetProof(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return Proof.fromProto(res.proof!);
       });
   }
@@ -117,6 +133,9 @@ export class BloockClient {
       .getProof()
       .ValidateRoot(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.timestamp;
       });
   }
@@ -137,6 +156,9 @@ export class BloockClient {
       .getProof()
       .VerifyProof(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.record!;
       });
   }
@@ -161,6 +183,9 @@ export class BloockClient {
       .getProof()
       .VerifyRecords(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.timestamp;
       });
   }
@@ -175,6 +200,26 @@ export class BloockClient {
       .getRecord()
       .GenerateKeys(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return Keys.fromProto(res);
+      });
+  }
+
+  /**
+   * It generates a public and a private key for RSA encryption
+   * @returns {Promise<RsaKeyPair>} An object containing both the public and the private key
+   */
+  public async generateRsaKeyPair(): Promise<RsaKeyPair> {
+    let request = GenerateRsaKeyPairRequest.fromPartial({});
+    return this.bridge
+      .getRecord()
+      .GenerateRsaKeyPair(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return Keys.fromProto(res);
       });
   }

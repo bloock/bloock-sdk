@@ -10,8 +10,10 @@ pub mod shared;
 
 pub use bloock_encrypter::{
     aes::AesDecrypter, aes::AesDecrypterArgs, aes::AesEncrypter, aes::AesEncrypterArgs,
+    rsa::generate_rsa_key_pair, rsa::RsaDecrypter, rsa::RsaDecrypterArgs, rsa::RsaEncrypter,
+    rsa::RsaEncrypterArgs,
 };
-pub use bloock_encrypter::{Encrypter, EncrypterError};
+pub use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
 pub use bloock_hasher::{from_hex, to_hex, Hasher, HasherError, H256};
 pub use bloock_http::{BloockHttpClient, SimpleHttpClient};
 pub use bloock_signer::{

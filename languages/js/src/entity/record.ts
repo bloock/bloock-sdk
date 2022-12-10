@@ -161,3 +161,17 @@ export class Keys {
     return new Keys(k.publicKey, k.privateKey);
   }
 }
+
+export class RsaKeyPair {
+  publicKey: string;
+  privateKey: string;
+
+  constructor(publicKey: string, privateKey: string) {
+    this.publicKey = publicKey;
+    this.privateKey = privateKey;
+  }
+
+  static fromProto(k: proto.GenerateRsaKeyPairResponse): Keys {
+    return new Keys(k.publicKey, k.privateKey);
+  }
+}
