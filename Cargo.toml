@@ -4,7 +4,6 @@ members = [
     "bloock-core",
     "bloock-bridge",
     "bloock-libs/executor",
-    "bloock-libs/event",
     "bloock-libs/metadata",
     "bloock-libs/http",
     "bloock-libs/web3",

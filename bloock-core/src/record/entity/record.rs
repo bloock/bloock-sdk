@@ -17,7 +17,6 @@ pub struct Record {
 
 impl Record {
     pub fn new(document: Document) -> Self {
-        println!("{}", document.get_payload().len());
         let hash = Keccak256::generate_hash(&document.get_payload());
         Self {
             document: Some(document),

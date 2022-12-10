@@ -97,6 +97,7 @@ global___ConfigData = ConfigData
 class Configuration(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    LIBRARY_NAME_FIELD_NUMBER: builtins.int
     HOST_FIELD_NUMBER: builtins.int
     API_KEY_FIELD_NUMBER: builtins.int
     WAIT_MESSAGE_INTERVAL_FACTOR_FIELD_NUMBER: builtins.int
@@ -104,6 +105,8 @@ class Configuration(google.protobuf.message.Message):
     KEY_TYPE_ALGORITHM_FIELD_NUMBER: builtins.int
     ELLIPTIC_CURVE_KEY_FIELD_NUMBER: builtins.int
     SIGNATURE_ALGORITHM_FIELD_NUMBER: builtins.int
+    DISABLE_ANALYTICS_FIELD_NUMBER: builtins.int
+    library_name: builtins.str
     host: builtins.str
     api_key: builtins.str
     wait_message_interval_factor: builtins.int
@@ -111,9 +114,11 @@ class Configuration(google.protobuf.message.Message):
     key_type_algorithm: builtins.str
     elliptic_curve_key: builtins.str
     signature_algorithm: builtins.str
+    disable_analytics: builtins.bool
     def __init__(
         self,
         *,
+        library_name: builtins.str = ...,
         host: builtins.str = ...,
         api_key: builtins.str = ...,
         wait_message_interval_factor: builtins.int = ...,
@@ -121,18 +126,23 @@ class Configuration(google.protobuf.message.Message):
         key_type_algorithm: builtins.str = ...,
         elliptic_curve_key: builtins.str = ...,
         signature_algorithm: builtins.str = ...,
+        disable_analytics: builtins.bool = ...,
     ) -> None: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
             "api_key",
             b"api_key",
+            "disable_analytics",
+            b"disable_analytics",
             "elliptic_curve_key",
             b"elliptic_curve_key",
             "host",
             b"host",
             "key_type_algorithm",
             b"key_type_algorithm",
+            "library_name",
+            b"library_name",
             "signature_algorithm",
             b"signature_algorithm",
             "wait_message_interval_default",

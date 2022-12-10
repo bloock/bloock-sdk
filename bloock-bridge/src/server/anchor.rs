@@ -108,10 +108,7 @@ impl GetAnchorResponse {
             "anchor_id": req.anchor_id
         });
 
-        let error = match error {
-            Some(_) => Some(BridgeError::AnchorError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::AnchorError.to_string());
 
         client
             .send_event(
@@ -158,10 +155,7 @@ impl WaitAnchorResponse {
             "anchor_id": req.anchor_id
         });
 
-        let error = match error {
-            Some(_) => Some(BridgeError::AnchorError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::AnchorError.to_string());
 
         client
             .send_event(

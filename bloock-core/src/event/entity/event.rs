@@ -1,30 +1,65 @@
+use bloock_hasher::Hasher;
+use bloock_hasher::{sha256::Sha256, to_hex};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct LibraryInfo {
+    pub name: String,
+    pub version: String,
+}
+impl LibraryInfo {
+    pub fn new(library_name: String) -> Self {
+        LibraryInfo {
+            name: library_name,
+            version: env!("CARGO_PKG_VERSION").to_string(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Event {
     pub name: String,
+    pub user_id: String,
     pub properties: Value,
+    pub library: LibraryInfo,
 }
 
 impl Event {
-    pub fn new(name: &str, success: bool, properties: Option<Value>) -> Event {
+    pub fn new(
+        library_info: LibraryInfo,
+        api_key: &str,
+        name: &str,
+        success: bool,
+        properties: Option<Value>,
+    ) -> Event {
         let attrs = match properties {
             Some(p) => match p {
                 Value::Object(o) => {
-                    let mut m = o.clone();
+                    let mut m = o;
                     m.insert("success".to_string(), Value::Bool(success));
                     Value::Object(m)
                 }
-                o => o.clone(),
+                o => o,
             },
             None => json! {{
                 "success": success
             }},
         };
+
+        let mut name = name.replace('/', "_").replace('.', "_");
+
+        if name.starts_with('_') {
+            name = name[1..name.len()].to_owned();
+        }
+
+        let user_id = to_hex(Sha256::generate_hash(api_key.as_bytes()));
+
         Event {
-            name: name.to_owned(),
+            name,
+            user_id,
             properties: attrs,
+            library: library_info,
         }
     }
 }

@@ -9,6 +9,7 @@ from bloock.client.entity.network_config import NetworkConfig
 
 api_key = ""
 api_host = ""
+disable_analytics = False
 network_config: Dict[int, NetworkConfigProto] = {}
 
 

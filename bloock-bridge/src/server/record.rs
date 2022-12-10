@@ -417,33 +417,45 @@ impl RecordServiceHandler for RecordServer {
     }
 
     async fn get_hash(&self, req: Record) -> RecordHash {
-        let record: RecordCore = match req.try_into() {
-            Ok(record) => record,
-            Err(e) => {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
                 return RecordHash {
                     hash: "".to_string(),
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: e.to_string(),
-                    }),
+                    error: Some(config_data_error()),
                 }
             }
         };
-        let hash = record.get_hash();
-        RecordHash { hash, error: None }
-    }
 
-    async fn get_signatures(&self, req: Record) -> RecordSignatures {
+        let client = client::configure(config_data);
+
         let record: RecordCore = match req.try_into() {
             Ok(record) => record,
             Err(e) => {
+                return RecordHash::new_error(&client, e.to_string()).await;
+            }
+        };
+        let hash = record.get_hash();
+        RecordHash::new_success(&client, hash).await
+    }
+
+    async fn get_signatures(&self, req: Record) -> RecordSignatures {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
                 return RecordSignatures {
                     signatures: vec![],
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: e.to_string(),
-                    }),
+                    error: Some(config_data_error()),
                 }
+            }
+        };
+
+        let client = client::configure(config_data);
+
+        let record: RecordCore = match req.try_into() {
+            Ok(record) => record,
+            Err(e) => {
+                return RecordSignatures::new_error(&client, e.to_string()).await;
             }
         };
 
@@ -454,13 +466,7 @@ impl RecordServiceHandler for RecordServer {
                     result.push(match signature.clone().try_into() {
                         Ok(res) => res,
                         Err(err) => {
-                            return RecordSignatures {
-                                signatures: vec![],
-                                error: Some(Error {
-                                    kind: BridgeError::RecordError.to_string(),
-                                    message: err.to_string(),
-                                }),
-                            }
+                            return RecordSignatures::new_error(&client, err.to_string()).await
                         }
                     });
                 }
@@ -469,10 +475,7 @@ impl RecordServiceHandler for RecordServer {
             None => vec![],
         };
 
-        RecordSignatures {
-            signatures,
-            error: None,
-        }
+        RecordSignatures::new_success(&client, signatures).await
     }
 
     async fn generate_keys(&self, _req: GenerateKeysRequest) -> GenerateKeysResponse {
@@ -574,7 +577,7 @@ async fn build_record(
                     Some(signer_arguments) => signer_arguments,
                     None => {
                         return RecordBuilderResponse::new_error(
-                            &client,
+                            client,
                             req_name,
                             "no arguments provided".to_string(),
                         )
@@ -585,7 +588,7 @@ async fn build_record(
                     Some(private_key) => private_key,
                     None => {
                         return RecordBuilderResponse::new_error(
-                            &client,
+                            client,
                             req_name,
                             "no private key provided".to_string(),
                         )
@@ -596,7 +599,7 @@ async fn build_record(
             }
             None => {
                 return RecordBuilderResponse::new_error(
-                    &client,
+                    client,
                     req_name,
                     "invalid signer provided".to_string(),
                 )
@@ -613,7 +616,7 @@ async fn build_record(
                     Some(encrypter_arguments) => encrypter_arguments,
                     None => {
                         return RecordBuilderResponse::new_error(
-                            &client,
+                            client,
                             req_name,
                             "no arguments provided".to_string(),
                         )
@@ -625,7 +628,7 @@ async fn build_record(
             }
             None => {
                 return RecordBuilderResponse::new_error(
-                    &client,
+                    client,
                     req_name,
                     "invalid encrypter provided".to_string(),
                 )
@@ -642,7 +645,7 @@ async fn build_record(
                     Some(decrypter_arguments) => decrypter_arguments,
                     None => {
                         return RecordBuilderResponse::new_error(
-                            &client,
+                            client,
                             req_name,
                             "no arguments provided".to_string(),
                         )
@@ -654,7 +657,7 @@ async fn build_record(
             }
             None => {
                 return RecordBuilderResponse::new_error(
-                    &client,
+                    client,
                     req_name,
                     "invalid decrypter provided".to_string(),
                 )
@@ -669,13 +672,13 @@ async fn build_record(
         Ok(record) => match record.try_into() {
             Ok(record) => record,
             Err(e) => {
-                return RecordBuilderResponse::new_error(&client, req_name, e.to_string()).await
+                return RecordBuilderResponse::new_error(client, req_name, e.to_string()).await
             }
         },
-        Err(e) => return RecordBuilderResponse::new_error(&client, req_name, e.to_string()).await,
+        Err(e) => return RecordBuilderResponse::new_error(client, req_name, e.to_string()).await,
     };
 
-    RecordBuilderResponse::new_success(&client, req_name, record).await
+    RecordBuilderResponse::new_success(client, req_name, record).await
 }
 
 impl RecordBuilderResponse {
@@ -711,10 +714,7 @@ impl RecordBuilderResponse {
     async fn send_event(client: &BloockClient, req_name: &str, error: Option<&str>) {
         let event_attr = json!({});
 
-        let error = match error {
-            Some(_) => Some(BridgeError::RecordError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::RecordError.to_string());
 
         client.send_event(req_name, error, Some(event_attr)).await;
     }
@@ -755,10 +755,7 @@ impl SendRecordsResponse {
             "records_size": req.records.len()
         });
 
-        let error = match error {
-            Some(_) => Some(BridgeError::RecordError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::RecordError.to_string());
 
         client
             .send_event(
@@ -800,14 +797,82 @@ impl PublishResponse {
     async fn send_event(client: &BloockClient, error: Option<&str>, _req: &PublishRequest) {
         let event_attr = json!({});
 
-        let error = match error {
-            Some(_) => Some(BridgeError::PublishError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::PublishError.to_string());
 
         client
             .send_event(
                 BloockServer::RecordServicePublish.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
+    }
+}
+
+impl RecordHash {
+    async fn new_success(client: &BloockClient, hash: String) -> RecordHash {
+        Self::send_event(client, None).await;
+
+        RecordHash { hash, error: None }
+    }
+
+    async fn new_error(client: &BloockClient, err: String) -> RecordHash {
+        Self::send_event(client, Some(&err)).await;
+
+        RecordHash {
+            hash: "".to_string(),
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::RecordServiceGetHash.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
+    }
+}
+
+impl RecordSignatures {
+    async fn new_success(client: &BloockClient, signatures: Vec<Signature>) -> RecordSignatures {
+        Self::send_event(client, None).await;
+
+        RecordSignatures {
+            signatures,
+            error: None,
+        }
+    }
+
+    async fn new_error(client: &BloockClient, err: String) -> RecordSignatures {
+        Self::send_event(client, Some(&err)).await;
+
+        RecordSignatures {
+            signatures: vec![],
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::RecordServiceGetSignatures.as_str(),
                 error,
                 Some(event_attr),
             )

@@ -3,7 +3,7 @@ use crate::anchor::service::AnchorService;
 use crate::config::config_data::ConfigData;
 use crate::config::entity::network::Network;
 use crate::error::BloockResult;
-use crate::event::entity::event::Event;
+use crate::event::entity::event::{Event, LibraryInfo};
 use crate::proof::entity::proof::Proof;
 use crate::proof::service::ProofService;
 use crate::record;
@@ -17,6 +17,9 @@ use serde_json::Value;
 use std::sync::Arc;
 
 pub struct BloockClient {
+    library_name: String,
+    api_key: String,
+    disable_analytics: bool,
     anchor_service: AnchorService<BloockHttpClient>,
     record_service: RecordService<BloockHttpClient>,
     proof_service: ProofService<BloockHttpClient>,
@@ -56,9 +59,21 @@ impl BloockClient {
         self.proof_service.verify_records(records, network).await
     }
 
-    pub async fn send_event(&self, name: &str, error: Option<String>, attr: Option<Value>) -> () {
-        let event = Event::new(name, error.is_none(), attr);
-        let _ = self.event_service.send_event(event).await;
+    pub fn get_library_name(&self) -> String {
+        self.library_name.clone()
+    }
+
+    pub async fn send_event(&self, name: &str, error: Option<String>, attr: Option<Value>) {
+        if !self.disable_analytics {
+            let event = Event::new(
+                LibraryInfo::new(self.get_library_name()),
+                &self.api_key,
+                name,
+                error.is_none(),
+                attr,
+            );
+            let _ = self.event_service.send_event(event).await;
+        }
     }
 }
 
@@ -68,6 +83,9 @@ pub fn configure(config_data: ConfigData) -> BloockClient {
     let config_data = Arc::new(config_data);
 
     BloockClient {
+        library_name: config_data.config.library_name.clone(),
+        api_key: config_data.config.api_key.clone(),
+        disable_analytics: config_data.config.disable_analytics,
         anchor_service: anchor::configure(
             Arc::clone(&bloock_http_client),
             Arc::clone(&config_data),

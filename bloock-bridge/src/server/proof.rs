@@ -212,10 +212,7 @@ impl GetProofResponse {
             "records": req.records,
         });
 
-        let error = match error {
-            Some(_) => Some(BridgeError::ProofError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::ProofError.to_string());
 
         client
             .send_event(
@@ -258,10 +255,7 @@ impl ValidateRootResponse {
         let network: Network = req.network().into();
         let event_attr = json!({ "network": String::from(network) });
 
-        let error = match error {
-            Some(_) => Some(BridgeError::ProofError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::ProofError.to_string());
 
         client
             .send_event(
@@ -303,10 +297,7 @@ impl VerifyProofResponse {
     async fn send_event(client: &BloockClient, _req: &VerifyProofRequest, error: Option<&str>) {
         let event_attr = json!({});
 
-        let error = match error {
-            Some(_) => Some(BridgeError::ProofError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::ProofError.to_string());
 
         client
             .send_event(
@@ -352,10 +343,7 @@ impl VerifyRecordsResponse {
             "records_size": req.records.len(),
         });
 
-        let error = match error {
-            Some(_) => Some(BridgeError::ProofError.to_string()),
-            None => None,
-        };
+        let error = error.map(|_| BridgeError::ProofError.to_string());
 
         client
             .send_event(

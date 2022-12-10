@@ -11,9 +11,10 @@ pub struct ConfigData {
 }
 
 impl ConfigData {
-    pub fn new(api_key: String) -> Self {
+    pub fn new(api_key: String, library_name: String, disable_analytics: bool) -> Self {
         Self {
             config: Configuration {
+                library_name,
                 host: String::from("https://api.bloock.com"),
                 api_key,
                 wait_message_interval_factor: 2,
@@ -22,6 +23,7 @@ impl ConfigData {
                 elliptic_curve_key: String::from("secp256k1"),
                 signature_algorithm: String::from("'ES256K'"),
                 analytics_key: String::from("mVmPsQNQxbhZaZKxcLGF1mxB1kZ67LFU"),
+                disable_analytics,
             },
             networks_config: HashMap::from([
                 (

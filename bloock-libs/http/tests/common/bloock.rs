@@ -112,8 +112,6 @@ pub async fn bloock_http_client_post_file() {
         .await
         .unwrap();
 
-    println!("{:?}", res);
-
     let response: String =
         serde_json::from_value(res.get("files").unwrap().get("payload").unwrap().clone()).unwrap();
     assert_eq!(

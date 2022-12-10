@@ -235,16 +235,37 @@ global___RecordHeader = RecordHeader
 class Record(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     payload: builtins.bytes
     def __init__(
         self,
         *,
+        config_data: config_pb2.ConfigData | None = ...,
         payload: builtins.bytes = ...,
     ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_config_data", b"_config_data", "config_data", b"config_data"
+        ],
+    ) -> builtins.bool: ...
     def ClearField(
-        self, field_name: typing_extensions.Literal["payload", b"payload"]
+        self,
+        field_name: typing_extensions.Literal[
+            "_config_data",
+            b"_config_data",
+            "config_data",
+            b"config_data",
+            "payload",
+            b"payload",
+        ],
     ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_config_data", b"_config_data"]
+    ) -> typing_extensions.Literal["config_data"] | None: ...
 
 global___Record = Record
 
@@ -463,10 +484,13 @@ global___RecordReceipt = RecordReceipt
 class RecordBuilderFromStringRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
     SIGNER_FIELD_NUMBER: builtins.int
     ENCRYPTER_FIELD_NUMBER: builtins.int
     DECRYPTER_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     payload: builtins.str
     @property
     def signer(self) -> global___Signer: ...
@@ -477,6 +501,7 @@ class RecordBuilderFromStringRequest(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        config_data: config_pb2.ConfigData | None = ...,
         payload: builtins.str = ...,
         signer: global___Signer | None = ...,
         encrypter: global___Encrypter | None = ...,
@@ -491,6 +516,8 @@ class RecordBuilderFromStringRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -508,6 +535,8 @@ class RecordBuilderFromStringRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -536,10 +565,13 @@ global___RecordBuilderFromStringRequest = RecordBuilderFromStringRequest
 class RecordBuilderFromHexRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
     SIGNER_FIELD_NUMBER: builtins.int
     ENCRYPTER_FIELD_NUMBER: builtins.int
     DECRYPTER_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     payload: builtins.str
     @property
     def signer(self) -> global___Signer: ...
@@ -550,6 +582,7 @@ class RecordBuilderFromHexRequest(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        config_data: config_pb2.ConfigData | None = ...,
         payload: builtins.str = ...,
         signer: global___Signer | None = ...,
         encrypter: global___Encrypter | None = ...,
@@ -564,6 +597,8 @@ class RecordBuilderFromHexRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -581,6 +616,8 @@ class RecordBuilderFromHexRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -609,10 +646,13 @@ global___RecordBuilderFromHexRequest = RecordBuilderFromHexRequest
 class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
     SIGNER_FIELD_NUMBER: builtins.int
     ENCRYPTER_FIELD_NUMBER: builtins.int
     DECRYPTER_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     payload: builtins.str
     @property
     def signer(self) -> global___Signer: ...
@@ -623,6 +663,7 @@ class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        config_data: config_pb2.ConfigData | None = ...,
         payload: builtins.str = ...,
         signer: global___Signer | None = ...,
         encrypter: global___Encrypter | None = ...,
@@ -637,6 +678,8 @@ class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -654,6 +697,8 @@ class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -682,10 +727,13 @@ global___RecordBuilderFromJSONRequest = RecordBuilderFromJSONRequest
 class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
     SIGNER_FIELD_NUMBER: builtins.int
     ENCRYPTER_FIELD_NUMBER: builtins.int
     DECRYPTER_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     payload: builtins.bytes
     @property
     def signer(self) -> global___Signer: ...
@@ -696,6 +744,7 @@ class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        config_data: config_pb2.ConfigData | None = ...,
         payload: builtins.bytes = ...,
         signer: global___Signer | None = ...,
         encrypter: global___Encrypter | None = ...,
@@ -710,6 +759,8 @@ class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -727,6 +778,8 @@ class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -755,10 +808,13 @@ global___RecordBuilderFromBytesRequest = RecordBuilderFromBytesRequest
 class RecordBuilderFromFileRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
     SIGNER_FIELD_NUMBER: builtins.int
     ENCRYPTER_FIELD_NUMBER: builtins.int
     DECRYPTER_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     payload: builtins.bytes
     @property
     def signer(self) -> global___Signer: ...
@@ -769,6 +825,7 @@ class RecordBuilderFromFileRequest(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        config_data: config_pb2.ConfigData | None = ...,
         payload: builtins.bytes = ...,
         signer: global___Signer | None = ...,
         encrypter: global___Encrypter | None = ...,
@@ -783,6 +840,8 @@ class RecordBuilderFromFileRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -800,6 +859,8 @@ class RecordBuilderFromFileRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -828,10 +889,13 @@ global___RecordBuilderFromFileRequest = RecordBuilderFromFileRequest
 class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
     SIGNER_FIELD_NUMBER: builtins.int
     ENCRYPTER_FIELD_NUMBER: builtins.int
     DECRYPTER_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     @property
     def payload(self) -> global___Record: ...
     @property
@@ -843,6 +907,7 @@ class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        config_data: config_pb2.ConfigData | None = ...,
         payload: global___Record | None = ...,
         signer: global___Signer | None = ...,
         encrypter: global___Encrypter | None = ...,
@@ -857,6 +922,8 @@ class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",
@@ -876,6 +943,8 @@ class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
             b"_encrypter",
             "_signer",
             b"_signer",
+            "config_data",
+            b"config_data",
             "decrypter",
             b"decrypter",
             "encrypter",

@@ -8,8 +8,10 @@ import (
 func NewConfigData() *proto.ConfigData {
 	return &proto.ConfigData{
 		Config: &proto.Configuration{
-			Host:   bloock.ApiHost,
-			ApiKey: bloock.ApiKey,
+			LibraryName:      "Golang",
+			Host:             bloock.ApiHost,
+			ApiKey:           bloock.ApiKey,
+			DisableAnalytics: bloock.DisableAnalytics,
 		},
 		NetworksConfig: bloock.NetworkConfig,
 	}
