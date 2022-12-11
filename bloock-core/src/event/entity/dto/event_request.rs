@@ -28,6 +28,9 @@ impl EventRequest {
                 "library": {
                     "name": event.library.name,
                     "version": event.library.version,
+                },
+                "os": {
+                    "name": event.os.name
                 }
             }),
         }

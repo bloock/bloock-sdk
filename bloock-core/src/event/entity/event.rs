@@ -18,11 +18,24 @@ impl LibraryInfo {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct OsInfo {
+    pub name: String,
+}
+impl OsInfo {
+    pub fn new() -> Self {
+        OsInfo {
+            name: format!("{}.{}", std::env::consts::OS, std::env::consts::ARCH),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Event {
     pub name: String,
     pub user_id: String,
     pub properties: Value,
     pub library: LibraryInfo,
+    pub os: OsInfo,
 }
 
 impl Event {
@@ -60,6 +73,7 @@ impl Event {
             user_id,
             properties: attrs,
             library: library_info,
+            os: OsInfo::new(),
         }
     }
 }
