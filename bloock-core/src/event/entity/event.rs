@@ -21,8 +21,8 @@ impl LibraryInfo {
 pub struct OsInfo {
     pub name: String,
 }
-impl OsInfo {
-    pub fn new() -> Self {
+impl Default for OsInfo {
+    fn default() -> Self {
         OsInfo {
             name: format!("{}.{}", std::env::consts::OS, std::env::consts::ARCH),
         }
@@ -73,7 +73,7 @@ impl Event {
             user_id,
             properties: attrs,
             library: library_info,
-            os: OsInfo::new(),
+            os: OsInfo::default(),
         }
     }
 }
