@@ -57,6 +57,7 @@ export interface ConfigData_NetworksConfigEntry {
 }
 
 export interface Configuration {
+  libraryName: string;
   host: string;
   apiKey: string;
   waitMessageIntervalFactor: number;
@@ -64,6 +65,7 @@ export interface Configuration {
   keyTypeAlgorithm: string;
   ellipticCurveKey: string;
   signatureAlgorithm: string;
+  disableAnalytics: boolean;
 }
 
 export interface NetworkConfig {
@@ -217,6 +219,7 @@ export const ConfigData_NetworksConfigEntry = {
 
 function createBaseConfiguration(): Configuration {
   return {
+    libraryName: "",
     host: "",
     apiKey: "",
     waitMessageIntervalFactor: 0,
@@ -224,31 +227,38 @@ function createBaseConfiguration(): Configuration {
     keyTypeAlgorithm: "",
     ellipticCurveKey: "",
     signatureAlgorithm: "",
+    disableAnalytics: false,
   };
 }
 
 export const Configuration = {
   encode(message: Configuration, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.libraryName !== "") {
+      writer.uint32(10).string(message.libraryName);
+    }
     if (message.host !== "") {
-      writer.uint32(10).string(message.host);
+      writer.uint32(18).string(message.host);
     }
     if (message.apiKey !== "") {
-      writer.uint32(18).string(message.apiKey);
+      writer.uint32(26).string(message.apiKey);
     }
     if (message.waitMessageIntervalFactor !== 0) {
-      writer.uint32(24).int32(message.waitMessageIntervalFactor);
+      writer.uint32(32).int32(message.waitMessageIntervalFactor);
     }
     if (message.waitMessageIntervalDefault !== 0) {
-      writer.uint32(32).int32(message.waitMessageIntervalDefault);
+      writer.uint32(40).int32(message.waitMessageIntervalDefault);
     }
     if (message.keyTypeAlgorithm !== "") {
-      writer.uint32(42).string(message.keyTypeAlgorithm);
+      writer.uint32(50).string(message.keyTypeAlgorithm);
     }
     if (message.ellipticCurveKey !== "") {
-      writer.uint32(50).string(message.ellipticCurveKey);
+      writer.uint32(58).string(message.ellipticCurveKey);
     }
     if (message.signatureAlgorithm !== "") {
-      writer.uint32(58).string(message.signatureAlgorithm);
+      writer.uint32(66).string(message.signatureAlgorithm);
+    }
+    if (message.disableAnalytics === true) {
+      writer.uint32(72).bool(message.disableAnalytics);
     }
     return writer;
   },
@@ -261,25 +271,31 @@ export const Configuration = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.host = reader.string();
+          message.libraryName = reader.string();
           break;
         case 2:
-          message.apiKey = reader.string();
+          message.host = reader.string();
           break;
         case 3:
-          message.waitMessageIntervalFactor = reader.int32();
+          message.apiKey = reader.string();
           break;
         case 4:
-          message.waitMessageIntervalDefault = reader.int32();
+          message.waitMessageIntervalFactor = reader.int32();
           break;
         case 5:
-          message.keyTypeAlgorithm = reader.string();
+          message.waitMessageIntervalDefault = reader.int32();
           break;
         case 6:
-          message.ellipticCurveKey = reader.string();
+          message.keyTypeAlgorithm = reader.string();
           break;
         case 7:
+          message.ellipticCurveKey = reader.string();
+          break;
+        case 8:
           message.signatureAlgorithm = reader.string();
+          break;
+        case 9:
+          message.disableAnalytics = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -291,6 +307,7 @@ export const Configuration = {
 
   fromJSON(object: any): Configuration {
     return {
+      libraryName: isSet(object.libraryName) ? String(object.libraryName) : "",
       host: isSet(object.host) ? String(object.host) : "",
       apiKey: isSet(object.apiKey) ? String(object.apiKey) : "",
       waitMessageIntervalFactor: isSet(object.waitMessageIntervalFactor) ? Number(object.waitMessageIntervalFactor) : 0,
@@ -300,11 +317,13 @@ export const Configuration = {
       keyTypeAlgorithm: isSet(object.keyTypeAlgorithm) ? String(object.keyTypeAlgorithm) : "",
       ellipticCurveKey: isSet(object.ellipticCurveKey) ? String(object.ellipticCurveKey) : "",
       signatureAlgorithm: isSet(object.signatureAlgorithm) ? String(object.signatureAlgorithm) : "",
+      disableAnalytics: isSet(object.disableAnalytics) ? Boolean(object.disableAnalytics) : false,
     };
   },
 
   toJSON(message: Configuration): unknown {
     const obj: any = {};
+    message.libraryName !== undefined && (obj.libraryName = message.libraryName);
     message.host !== undefined && (obj.host = message.host);
     message.apiKey !== undefined && (obj.apiKey = message.apiKey);
     message.waitMessageIntervalFactor !== undefined &&
@@ -314,11 +333,13 @@ export const Configuration = {
     message.keyTypeAlgorithm !== undefined && (obj.keyTypeAlgorithm = message.keyTypeAlgorithm);
     message.ellipticCurveKey !== undefined && (obj.ellipticCurveKey = message.ellipticCurveKey);
     message.signatureAlgorithm !== undefined && (obj.signatureAlgorithm = message.signatureAlgorithm);
+    message.disableAnalytics !== undefined && (obj.disableAnalytics = message.disableAnalytics);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Configuration>, I>>(object: I): Configuration {
     const message = createBaseConfiguration();
+    message.libraryName = object.libraryName ?? "";
     message.host = object.host ?? "";
     message.apiKey = object.apiKey ?? "";
     message.waitMessageIntervalFactor = object.waitMessageIntervalFactor ?? 0;
@@ -326,6 +347,7 @@ export const Configuration = {
     message.keyTypeAlgorithm = object.keyTypeAlgorithm ?? "";
     message.ellipticCurveKey = object.ellipticCurveKey ?? "";
     message.signatureAlgorithm = object.signatureAlgorithm ?? "";
+    message.disableAnalytics = object.disableAnalytics ?? false;
     return message;
   },
 };

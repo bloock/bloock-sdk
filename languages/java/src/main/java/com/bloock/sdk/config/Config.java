@@ -7,7 +7,12 @@ import com.bloock.sdk.bridge.proto.Config.Configuration;
 public class Config {
   public static ConfigData newConfigData() {
     Configuration config =
-        Configuration.newBuilder().setHost(Bloock.apiHost).setApiKey(Bloock.apiKey).build();
+        Configuration.newBuilder()
+            .setLibraryName("Java")
+            .setHost(Bloock.apiHost)
+            .setApiKey(Bloock.apiKey)
+            .setDisableAnalytics(Bloock.disableAnalytics)
+            .build();
 
     return ConfigData.newBuilder()
         .setConfig(config)

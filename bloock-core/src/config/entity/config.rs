@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Configuration {
+    pub library_name: String,
     pub host: String,
     pub api_key: String,
     pub wait_message_interval_factor: u128,
@@ -10,11 +11,13 @@ pub struct Configuration {
     pub elliptic_curve_key: String,
     pub signature_algorithm: String,
     pub analytics_key: String,
+    pub disable_analytics: bool,
 }
 
 impl Default for Configuration {
     fn default() -> Self {
         Self {
+            library_name: String::from("unknown"),
             host: String::from(""),
             api_key: String::from(""),
             wait_message_interval_factor: 2,
@@ -23,6 +26,7 @@ impl Default for Configuration {
             elliptic_curve_key: String::from("secp256k1"),
             signature_algorithm: String::from("ES256K"),
             analytics_key: String::from(""),
+            disable_analytics: false,
         }
     }
 }

@@ -23,3 +23,7 @@ runs:
       run: |
         grep "^version = \"$bloock_version\"$" bloock-bridge/Cargo.toml
       shell: bash
+    - name: Check bloock-core version matches
+      run: |
+        grep "^version = \"$bloock_version\"$" bloock-core/Cargo.toml
+      shell: bash

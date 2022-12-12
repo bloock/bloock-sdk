@@ -7,6 +7,7 @@ export class Bloock {
   private static instance: Bloock;
   private apiKey?: string;
   private apiHost?: string;
+  private disableAnalytics: boolean = false;
   private networksConfig?: {
     [key: number]: NetworkConfigProto;
   };
@@ -43,6 +44,20 @@ export class Bloock {
       Bloock.instance = new Bloock();
     }
     Bloock.instance.apiHost = host;
+  }
+
+  public static getDisableAnalytics(): boolean {
+    if (!Bloock.instance) {
+      Bloock.instance = new Bloock();
+    }
+    return Bloock.instance.disableAnalytics;
+  }
+
+  public static setDisableAnalytics(disableAnalytics: boolean) {
+    if (!Bloock.instance) {
+      Bloock.instance = new Bloock();
+    }
+    Bloock.instance.disableAnalytics = disableAnalytics;
   }
 
   public static getNetworkConfiguration():

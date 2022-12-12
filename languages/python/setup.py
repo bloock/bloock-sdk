@@ -41,8 +41,8 @@ setup(
     long_description_content_type="text/markdown",
     author="Bloock",
     classifiers=[
-        "Development Status :: 4 - Beta",
-        "Programming Language :: Python :: 3.6",
+        "Development Status :: 5 - Production/Stable",
+        "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: Apache Software License",
     ],
     packages=find_namespace_packages(exclude=["test", "test.*"]),

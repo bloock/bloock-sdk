@@ -6,6 +6,11 @@ class Config:
     @staticmethod
     def new() -> ConfigData:
         return ConfigData(
-            config=Configuration(api_key=bloock.api_key, host=bloock.api_host),
+            config=Configuration(
+                library_name="Python",
+                api_key=bloock.api_key,
+                host=bloock.api_host,
+                disable_analytics=bloock.disable_analytics,
+            ),
             networks_config=bloock.network_config,
         )

@@ -85,6 +85,7 @@ public class Builder {
         {
           RecordBuilderFromBytesRequest.Builder builder =
               RecordBuilderFromBytesRequest.newBuilder()
+                  .setConfigData(Config.newConfigData())
                   .setPayload(ByteString.copyFrom((byte[]) this.payload));
 
           if (this.signer != null) {
@@ -104,6 +105,7 @@ public class Builder {
         {
           RecordBuilderFromFileRequest.Builder builder =
               RecordBuilderFromFileRequest.newBuilder()
+                  .setConfigData(Config.newConfigData())
                   .setPayload(ByteString.copyFrom((byte[]) this.payload));
 
           if (this.signer != null) {
@@ -122,7 +124,9 @@ public class Builder {
       case HEX:
         {
           RecordBuilderFromHexRequest.Builder builder =
-              RecordBuilderFromHexRequest.newBuilder().setPayload((String) this.payload);
+              RecordBuilderFromHexRequest.newBuilder()
+                  .setConfigData(Config.newConfigData())
+                  .setPayload((String) this.payload);
 
           if (this.signer != null) {
             builder.setSigner(this.signer);
@@ -140,7 +144,9 @@ public class Builder {
       case JSON:
         {
           RecordBuilderFromJSONRequest.Builder builder =
-              RecordBuilderFromJSONRequest.newBuilder().setPayload((String) this.payload);
+              RecordBuilderFromJSONRequest.newBuilder()
+                  .setConfigData(Config.newConfigData())
+                  .setPayload((String) this.payload);
 
           if (this.signer != null) {
             builder.setSigner(this.signer);
@@ -159,6 +165,7 @@ public class Builder {
         {
           RecordBuilderFromRecordRequest.Builder builder =
               RecordBuilderFromRecordRequest.newBuilder()
+                  .setConfigData(Config.newConfigData())
                   .setPayload((RecordOuterClass.Record) this.payload);
 
           if (this.signer != null) {
@@ -177,7 +184,9 @@ public class Builder {
       case STRING:
         {
           RecordBuilderFromStringRequest.Builder builder =
-              RecordBuilderFromStringRequest.newBuilder().setPayload((String) this.payload);
+              RecordBuilderFromStringRequest.newBuilder()
+                  .setConfigData(Config.newConfigData())
+                  .setPayload((String) this.payload);
 
           if (this.signer != null) {
             builder.setSigner(this.signer);

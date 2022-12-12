@@ -21,6 +21,7 @@ function getSdk() {
   if (apiHost) {
     Bloock.setApiHost(apiHost);
   }
+  Bloock.setDisableAnalytics(true);
   return client;
 }
 

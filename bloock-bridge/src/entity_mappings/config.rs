@@ -15,7 +15,11 @@ pub fn map_config(config_data: Option<ConfigData>) -> Result<CoreConfigData, Bri
         None => return Err(BridgeError::InvalidArgument),
     };
 
-    let mut default_config = CoreConfigData::new(config.api_key);
+    let mut default_config = CoreConfigData::new(
+        config.api_key,
+        config.library_name,
+        config.disable_analytics,
+    );
 
     for (network, config) in config_data.networks_config {
         let network = match map_network_from_i32(network) {

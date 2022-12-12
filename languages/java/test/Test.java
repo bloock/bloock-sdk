@@ -27,6 +27,7 @@ class Test {
     if (apiHost != null) {
       Bloock.apiHost = apiHost;
     }
+    Bloock.disableAnalytics = true;
     return new Client();
   }
 

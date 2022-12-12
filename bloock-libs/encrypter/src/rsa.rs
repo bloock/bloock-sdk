@@ -44,8 +44,8 @@ pub struct RsaEncrypter {
 }
 
 impl RsaEncrypter {
-    pub fn new(args: RsaEncrypterArgs) -> Self {
-        Self { args }
+    pub fn new(args: RsaEncrypterArgs) -> Box<Self> {
+        Box::new(Self { args })
     }
 }
 
@@ -81,8 +81,8 @@ pub struct RsaDecrypter {
 }
 
 impl RsaDecrypter {
-    pub fn new(args: RsaDecrypterArgs) -> Self {
-        Self { args }
+    pub fn new(args: RsaDecrypterArgs) -> Box<Self> {
+        Box::new(Self { args })
     }
 }
 

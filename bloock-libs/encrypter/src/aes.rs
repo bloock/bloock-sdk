@@ -48,8 +48,8 @@ pub struct AesEncrypter {
 }
 
 impl AesEncrypter {
-    pub fn new(args: AesEncrypterArgs) -> Self {
-        Self { args }
+    pub fn new(args: AesEncrypterArgs) -> Box<Self> {
+        Box::new(Self { args })
     }
 }
 
@@ -115,8 +115,8 @@ pub struct AesDecrypter {
 }
 
 impl AesDecrypter {
-    pub fn new(args: AesDecrypterArgs) -> Self {
-        Self { args }
+    pub fn new(args: AesDecrypterArgs) -> Box<Self> {
+        Box::new(Self { args })
     }
 }
 
