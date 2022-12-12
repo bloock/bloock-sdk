@@ -27,6 +27,7 @@ class Test {
     if (apiHost != null) {
       Bloock.apiHost = apiHost;
     }
+    Bloock.disableAnalytics = true;
     return new Client();
   }
 
@@ -46,7 +47,7 @@ class Test {
     assert hash.equals(result);
     records.add(hash);
 
-    record = Builder.fromBytes(new byte[] {1, 2, 3, 4, 5}).build();
+    record = Builder.fromBytes(new byte[] { 1, 2, 3, 4, 5 }).build();
     hash = record.getHash();
     assert hash.equals("7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4");
     records.add(hash);
@@ -61,20 +62,18 @@ class Test {
     assert hash.equals("586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312");
     records.add(hash);
 
-    record = Builder.fromFile(new byte[] {2, 3, 4, 5, 6}).build();
+    record = Builder.fromFile(new byte[] { 2, 3, 4, 5, 6 }).build();
     hash = record.getHash();
     assert hash.equals("507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446");
     records.add(hash);
 
     String payload = "Hello world 2";
-    Record encryptedRecord =
-        Builder.fromString(payload).withEncrypter(new AesEncrypter("some_password")).build();
+    Record encryptedRecord = Builder.fromString(payload).withEncrypter(new AesEncrypter("some_password")).build();
     assert payload.getBytes() != encryptedRecord.getPayload();
 
-    Record decryptedRecord =
-        Builder.fromRecord(encryptedRecord)
-            .withDecrypter(new AesDecrypter("some_password"))
-            .build();
+    Record decryptedRecord = Builder.fromRecord(encryptedRecord)
+        .withDecrypter(new AesDecrypter("some_password"))
+        .build();
 
     assert Arrays.equals(decryptedRecord.getPayload(), payload.getBytes());
 
@@ -82,14 +81,12 @@ class Test {
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
 
     RsaKeyPair keyPair = sdk.generateRsaKeyPair();
-    encryptedRecord =
-        Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
+    encryptedRecord = Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
     assert payload.getBytes() != encryptedRecord.getPayload();
 
-    decryptedRecord =
-        Builder.fromRecord(encryptedRecord)
-            .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
-            .build();
+    decryptedRecord = Builder.fromRecord(encryptedRecord)
+        .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
+        .build();
 
     assert Arrays.equals(decryptedRecord.getPayload(), payload.getBytes());
 
@@ -109,14 +106,13 @@ class Test {
     assert throwsException;
 
     Keys keys = sdk.generateKeys();
-    Record signedRecord =
-        Builder.fromString("Hello world 3")
-            .withSigner(new EcsdaSigner(keys.getPrivateKey()))
-            .build();
+    Record signedRecord = Builder.fromString("Hello world 3")
+        .withSigner(new EcsdaSigner(keys.getPrivateKey()))
+        .build();
 
     Keys keys2 = sdk.generateKeys();
-    Record recordWithMultipleSignatures =
-        Builder.fromRecord(signedRecord).withSigner(new EcsdaSigner(keys2.getPrivateKey())).build();
+    Record recordWithMultipleSignatures = Builder.fromRecord(signedRecord)
+        .withSigner(new EcsdaSigner(keys2.getPrivateKey())).build();
 
     hash = recordWithMultipleSignatures.getHash();
     assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");

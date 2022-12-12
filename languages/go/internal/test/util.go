@@ -15,5 +15,7 @@ func GetSdk() client.Client {
 	if apiHost != "" {
 		bloock.ApiHost = apiHost
 	}
+
+	bloock.DisableAnalytics = true
 	return client
 }
