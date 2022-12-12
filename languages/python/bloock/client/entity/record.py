@@ -124,15 +124,18 @@ class RecordReceipt:
             status=self.status,
         )
 
+
 class KeyPair:
     def __init__(self, public_key: str, private_key: str) -> None:
         self.public_key = public_key
         self.private_key = private_key
 
+
 class EcsdaKeys(KeyPair):
     @staticmethod
     def from_proto(res: proto.GenerateKeysResponse) -> KeyPair:
         return EcsdaKeys(res.publicKey, res.privateKey)
+
 
 class RsaKeyPair(KeyPair):
     @staticmethod
