@@ -60,7 +60,7 @@ impl Event {
             }},
         };
 
-        let mut name = name.replace('/', "_").replace('.', "_");
+        let mut name = name.replace(['/', '.'], "_");
 
         if name.starts_with('_') {
             name = name[1..name.len()].to_owned();
