@@ -17,6 +17,7 @@ import com.bloock.sdk.entity.Record;
 import com.bloock.sdk.entity.RecordReceipt;
 import com.bloock.sdk.entity.RsaDecrypter;
 import com.bloock.sdk.entity.RsaEncrypter;
+import com.bloock.sdk.entity.RsaKeyPair;
 import com.bloock.sdk.entity.Signature;
 import java.util.ArrayList;
 import java.util.Arrays;
