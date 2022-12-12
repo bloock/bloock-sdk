@@ -114,7 +114,7 @@ class Client:
 
         return res.timestamp
 
-    def generate_keys(self) -> EcsdaKeys:
+    def generate_keys(self) -> KeyPair:
         res = self.bridge_client.record().GenerateKeys(GenerateKeysRequest())
 
         if res.error != Error():

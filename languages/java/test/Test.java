@@ -4,9 +4,12 @@ import com.bloock.sdk.client.Client;
 import com.bloock.sdk.entity.AesDecrypter;
 import com.bloock.sdk.entity.AesEncrypter;
 import com.bloock.sdk.entity.Anchor;
+import com.bloock.sdk.entity.EciesDecrypter;
+import com.bloock.sdk.entity.EciesEncrypter;
 import com.bloock.sdk.entity.EcsdaSigner;
 import com.bloock.sdk.entity.HostedLoader;
 import com.bloock.sdk.entity.HostedPublisher;
+import com.bloock.sdk.entity.KeyPair;
 import com.bloock.sdk.entity.Keys;
 import com.bloock.sdk.entity.Network;
 import com.bloock.sdk.entity.Proof;
@@ -14,7 +17,6 @@ import com.bloock.sdk.entity.Record;
 import com.bloock.sdk.entity.RecordReceipt;
 import com.bloock.sdk.entity.RsaDecrypter;
 import com.bloock.sdk.entity.RsaEncrypter;
-import com.bloock.sdk.entity.RsaKeyPair;
 import com.bloock.sdk.entity.Signature;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +50,9 @@ class Test {
 
     testRsaEncryption(sdk);
     testRsaEncryptionDataAvailability(sdk);
+
+    testEciesEncryption(sdk);
+    testEciesEncryptionDataAvailability(sdk);
 
     List<RecordReceipt> receipts = sdk.sendRecords(records);
 
@@ -192,7 +197,7 @@ class Test {
 
   static void testRsaEncryption(Client sdk) throws Exception {
     String payload = "Hello world 2";
-    RsaKeyPair keyPair = sdk.generateRsaKeyPair();
+    KeyPair keyPair = sdk.generateRsaKeyPair();
     Record encryptedRecord =
         Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
@@ -210,7 +215,7 @@ class Test {
 
   static void testRsaEncryptionDataAvailability(Client sdk) throws Exception {
     String payload = "Hello world 2";
-    RsaKeyPair keyPair = sdk.generateRsaKeyPair();
+    KeyPair keyPair = sdk.generateRsaKeyPair();
     Record encryptedRecord =
         Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
@@ -222,6 +227,50 @@ class Test {
     Record decryptedRecord =
         Builder.fromRecord(loadedRecord)
             .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
+            .build();
+
+    assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
+
+    String hash = decryptedRecord.getHash();
+    assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
+  }
+
+  static void testEciesEncryption(Client sdk) throws Exception {
+    String payload = "Hello world 2";
+    KeyPair keyPair = sdk.generateEciesKeyPair();
+    Record encryptedRecord =
+        Builder.fromString(payload)
+            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
+            .build();
+    assert payload.getBytes() != encryptedRecord.retrieve();
+
+    Record decryptedRecord =
+        Builder.fromRecord(encryptedRecord)
+            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
+            .build();
+
+    assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
+
+    String hash = decryptedRecord.getHash();
+    assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
+  }
+
+  static void testEciesEncryptionDataAvailability(Client sdk) throws Exception {
+    String payload = "Hello world 2";
+    KeyPair keyPair = sdk.generateEciesKeyPair();
+    Record encryptedRecord =
+        Builder.fromString(payload)
+            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
+            .build();
+    assert payload.getBytes() != encryptedRecord.retrieve();
+
+    String result = encryptedRecord.publish(new HostedPublisher());
+
+    Record loadedRecord = Builder.fromLoader(new HostedLoader(result)).build();
+
+    Record decryptedRecord =
+        Builder.fromRecord(loadedRecord)
+            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
             .build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
