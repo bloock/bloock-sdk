@@ -197,7 +197,7 @@ class Test {
 
   static void testRsaEncryption(Client sdk) throws Exception {
     String payload = "Hello world 2";
-    KeyPair keyPair = sdk.generateRsaKeyPair();
+    RsaKeyPair keyPair = sdk.generateRsaKeyPair();
     Record encryptedRecord =
         Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
@@ -215,7 +215,7 @@ class Test {
 
   static void testRsaEncryptionDataAvailability(Client sdk) throws Exception {
     String payload = "Hello world 2";
-    KeyPair keyPair = sdk.generateRsaKeyPair();
+    RsaKeyPair keyPair = sdk.generateRsaKeyPair();
     Record encryptedRecord =
         Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
