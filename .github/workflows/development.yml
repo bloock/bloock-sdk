@@ -35,6 +35,9 @@ jobs:
         os: [ubuntu-latest]
     with:
       os: ${{ matrix.os }}
+    secrets:
+      api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
 
   check_js:
     needs: [build_wasm]
