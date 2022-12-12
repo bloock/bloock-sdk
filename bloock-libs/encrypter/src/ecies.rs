@@ -38,8 +38,8 @@ impl Encrypter for EciesEncrypter {
         let public_key = hex::decode(self.args.public_key.as_bytes())
             .map_err(|e| EncrypterError::InvalidKey(e.to_string()))?;
 
-        Ok(ecies::encrypt(&public_key, payload)
-            .map_err(|err| EncrypterError::FailedToEncrypt(err.to_string()))?)
+        ecies::encrypt(&public_key, payload)
+            .map_err(|err| EncrypterError::FailedToEncrypt(err.to_string()))
     }
 }
 
@@ -68,8 +68,8 @@ impl Decrypter for EciesDecrypter {
         let private_key = hex::decode(self.args.private_key.as_bytes())
             .map_err(|e| EncrypterError::InvalidKey(e.to_string()))?;
 
-        Ok(ecies::decrypt(&private_key, cipher_text)
-            .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))?)
+        ecies::decrypt(&private_key, cipher_text)
+            .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))
     }
 }
 
