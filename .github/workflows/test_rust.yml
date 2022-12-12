@@ -6,6 +6,11 @@ on:
       os:
         required: true
         type: string
+    secrets:
+      api_host:
+        required: true
+      api_key:
+        required: true
 
 jobs:
   test_rust:
