@@ -8,6 +8,7 @@ from bloock._bridge.proto.proof_pb2 import (
     VerifyRecordsRequest,
 )
 from bloock._bridge.proto.record_pb2 import (
+    GenerateEciesKeyPairRequest,
     GenerateKeysRequest,
     GenerateRsaKeyPairRequest,
     SendRecordsRequest,
@@ -16,7 +17,13 @@ from bloock._bridge.proto.shared_pb2 import Error
 from bloock.client.entity.anchor import Anchor
 from bloock.client.entity.network import Network
 from bloock.client.entity.proof import Proof
-from bloock.client.entity.record import EcsdaKeys, RecordReceipt, RsaKeyPair
+from bloock.client.entity.record import (
+    EciesKeyPair,
+    EcsdaKeys,
+    RecordReceipt,
+    KeyPair,
+    RsaKeyPair,
+)
 from bloock._config.config import Config
 
 
@@ -115,7 +122,7 @@ class Client:
 
         return EcsdaKeys.from_proto(res)
 
-    def generate_rsa_keypair(self) -> RsaKeyPair:
+    def generate_rsa_keypair(self) -> KeyPair:
         res = self.bridge_client.record().GenerateRsaKeyPair(
             GenerateRsaKeyPairRequest()
         )
@@ -124,3 +131,13 @@ class Client:
             raise Exception(res.error.message)
 
         return RsaKeyPair.from_proto(res)
+
+    def generate_ecies_keypair(self) -> KeyPair:
+        res = self.bridge_client.record().GenerateEciesKeyPair(
+            GenerateEciesKeyPairRequest()
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return EciesKeyPair.from_proto(res)

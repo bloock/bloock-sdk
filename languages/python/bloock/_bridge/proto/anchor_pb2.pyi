@@ -19,6 +19,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class Anchor(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -69,6 +70,7 @@ class Anchor(google.protobuf.message.Message):
 
 global___Anchor = Anchor
 
+@typing_extensions.final
 class AnchorNetwork(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -94,6 +96,7 @@ class AnchorNetwork(google.protobuf.message.Message):
 
 global___AnchorNetwork = AnchorNetwork
 
+@typing_extensions.final
 class GetAnchorRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -120,6 +123,7 @@ class GetAnchorRequest(google.protobuf.message.Message):
 
 global___GetAnchorRequest = GetAnchorRequest
 
+@typing_extensions.final
 class GetAnchorResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -172,6 +176,7 @@ class GetAnchorResponse(google.protobuf.message.Message):
 
 global___GetAnchorResponse = GetAnchorResponse
 
+@typing_extensions.final
 class WaitAnchorRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -206,6 +211,7 @@ class WaitAnchorRequest(google.protobuf.message.Message):
 
 global___WaitAnchorRequest = WaitAnchorRequest
 
+@typing_extensions.final
 class WaitAnchorResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

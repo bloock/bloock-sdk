@@ -34,3 +34,11 @@ class RsaEncrypter(Encrypter):
 
     def to_proto(self) -> proto.Encrypter:
         return proto.Encrypter(alg=self.alg, args=self.args.to_proto())
+
+
+class EciesEncrypter(Encrypter):
+    def __init__(self, public_key: str) -> None:
+        super().__init__(alg=proto.ECIES, args=EncrypterArgs(public_key))
+
+    def to_proto(self) -> proto.Encrypter:
+        return proto.Encrypter(alg=self.alg, args=self.args.to_proto())

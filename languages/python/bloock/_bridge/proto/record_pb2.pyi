@@ -27,7 +27,7 @@ class _RecordTypes:
 class _RecordTypesEnumTypeWrapper(
     google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RecordTypes.ValueType],
     builtins.type,
-):  # noqa: F821
+):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     STRING: _RecordTypes.ValueType  # 0
     HEX: _RecordTypes.ValueType  # 1
@@ -55,7 +55,7 @@ class _SignerAlg:
 class _SignerAlgEnumTypeWrapper(
     google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_SignerAlg.ValueType],
     builtins.type,
-):  # noqa: F821
+):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ES256K: _SignerAlg.ValueType  # 0
 
@@ -73,15 +73,17 @@ class _EncryptionAlgEnumTypeWrapper(
         _EncryptionAlg.ValueType
     ],
     builtins.type,
-):  # noqa: F821
+):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     A256GCM: _EncryptionAlg.ValueType  # 0
     RSA: _EncryptionAlg.ValueType  # 1
+    ECIES: _EncryptionAlg.ValueType  # 2
 
 class EncryptionAlg(_EncryptionAlg, metaclass=_EncryptionAlgEnumTypeWrapper): ...
 
 A256GCM: EncryptionAlg.ValueType  # 0
 RSA: EncryptionAlg.ValueType  # 1
+ECIES: EncryptionAlg.ValueType  # 2
 global___EncryptionAlg = EncryptionAlg
 
 class _DataAvailabilityType:
@@ -93,7 +95,7 @@ class _DataAvailabilityTypeEnumTypeWrapper(
         _DataAvailabilityType.ValueType
     ],
     builtins.type,
-):  # noqa: F821
+):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     HOSTED: _DataAvailabilityType.ValueType  # 0
 
@@ -104,6 +106,7 @@ class DataAvailabilityType(
 HOSTED: DataAvailabilityType.ValueType  # 0
 global___DataAvailabilityType = DataAvailabilityType
 
+@typing_extensions.final
 class GenerateKeysRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -113,6 +116,7 @@ class GenerateKeysRequest(google.protobuf.message.Message):
 
 global___GenerateKeysRequest = GenerateKeysRequest
 
+@typing_extensions.final
 class GenerateKeysResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -153,6 +157,7 @@ class GenerateKeysResponse(google.protobuf.message.Message):
 
 global___GenerateKeysResponse = GenerateKeysResponse
 
+@typing_extensions.final
 class GenerateRsaKeyPairRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -162,6 +167,7 @@ class GenerateRsaKeyPairRequest(google.protobuf.message.Message):
 
 global___GenerateRsaKeyPairRequest = GenerateRsaKeyPairRequest
 
+@typing_extensions.final
 class GenerateRsaKeyPairResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -202,6 +208,58 @@ class GenerateRsaKeyPairResponse(google.protobuf.message.Message):
 
 global___GenerateRsaKeyPairResponse = GenerateRsaKeyPairResponse
 
+@typing_extensions.final
+class GenerateEciesKeyPairRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    def __init__(
+        self,
+    ) -> None: ...
+
+global___GenerateEciesKeyPairRequest = GenerateEciesKeyPairRequest
+
+@typing_extensions.final
+class GenerateEciesKeyPairResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PRIVATEKEY_FIELD_NUMBER: builtins.int
+    PUBLICKEY_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    privateKey: builtins.str
+    publicKey: builtins.str
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        privateKey: builtins.str = ...,
+        publicKey: builtins.str = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error",
+            b"_error",
+            "error",
+            b"error",
+            "privateKey",
+            b"privateKey",
+            "publicKey",
+            b"publicKey",
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
+
+global___GenerateEciesKeyPairResponse = GenerateEciesKeyPairResponse
+
+@typing_extensions.final
 class RecordHash(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -232,6 +290,7 @@ class RecordHash(google.protobuf.message.Message):
 
 global___RecordHash = RecordHash
 
+@typing_extensions.final
 class RecordSignatures(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -267,6 +326,7 @@ class RecordSignatures(google.protobuf.message.Message):
 
 global___RecordSignatures = RecordSignatures
 
+@typing_extensions.final
 class RecordHeader(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -283,6 +343,7 @@ class RecordHeader(google.protobuf.message.Message):
 
 global___RecordHeader = RecordHeader
 
+@typing_extensions.final
 class Record(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -299,6 +360,7 @@ class Record(google.protobuf.message.Message):
 
 global___Record = Record
 
+@typing_extensions.final
 class Signer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -322,6 +384,7 @@ class Signer(google.protobuf.message.Message):
 
 global___Signer = Signer
 
+@typing_extensions.final
 class SignerArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -350,6 +413,7 @@ class SignerArgs(google.protobuf.message.Message):
 
 global___SignerArgs = SignerArgs
 
+@typing_extensions.final
 class Encrypter(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -373,6 +437,7 @@ class Encrypter(google.protobuf.message.Message):
 
 global___Encrypter = Encrypter
 
+@typing_extensions.final
 class EncrypterArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -389,6 +454,7 @@ class EncrypterArgs(google.protobuf.message.Message):
 
 global___EncrypterArgs = EncrypterArgs
 
+@typing_extensions.final
 class Decrypter(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -412,6 +478,7 @@ class Decrypter(google.protobuf.message.Message):
 
 global___Decrypter = Decrypter
 
+@typing_extensions.final
 class DecrypterArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -428,6 +495,7 @@ class DecrypterArgs(google.protobuf.message.Message):
 
 global___DecrypterArgs = DecrypterArgs
 
+@typing_extensions.final
 class Signature(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -457,6 +525,7 @@ class Signature(google.protobuf.message.Message):
 
 global___Signature = Signature
 
+@typing_extensions.final
 class SignatureHeader(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -476,6 +545,7 @@ class SignatureHeader(google.protobuf.message.Message):
 
 global___SignatureHeader = SignatureHeader
 
+@typing_extensions.final
 class RecordReceipt(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -511,6 +581,7 @@ class RecordReceipt(google.protobuf.message.Message):
 
 global___RecordReceipt = RecordReceipt
 
+@typing_extensions.final
 class RecordBuilderFromStringRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -584,6 +655,7 @@ class RecordBuilderFromStringRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromStringRequest = RecordBuilderFromStringRequest
 
+@typing_extensions.final
 class RecordBuilderFromHexRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -657,6 +729,7 @@ class RecordBuilderFromHexRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromHexRequest = RecordBuilderFromHexRequest
 
+@typing_extensions.final
 class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -730,6 +803,7 @@ class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromJSONRequest = RecordBuilderFromJSONRequest
 
+@typing_extensions.final
 class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -803,6 +877,7 @@ class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromBytesRequest = RecordBuilderFromBytesRequest
 
+@typing_extensions.final
 class RecordBuilderFromFileRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -876,6 +951,7 @@ class RecordBuilderFromFileRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromFileRequest = RecordBuilderFromFileRequest
 
+@typing_extensions.final
 class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -952,6 +1028,7 @@ class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromRecordRequest = RecordBuilderFromRecordRequest
 
+@typing_extensions.final
 class RecordBuilderResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -985,6 +1062,7 @@ class RecordBuilderResponse(google.protobuf.message.Message):
 
 global___RecordBuilderResponse = RecordBuilderResponse
 
+@typing_extensions.final
 class SendRecordsRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1016,6 +1094,7 @@ class SendRecordsRequest(google.protobuf.message.Message):
 
 global___SendRecordsRequest = SendRecordsRequest
 
+@typing_extensions.final
 class SendRecordsResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1051,6 +1130,7 @@ class SendRecordsResponse(google.protobuf.message.Message):
 
 global___SendRecordsResponse = SendRecordsResponse
 
+@typing_extensions.final
 class Loader(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1074,6 +1154,7 @@ class Loader(google.protobuf.message.Message):
 
 global___Loader = Loader
 
+@typing_extensions.final
 class LoaderArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1090,6 +1171,7 @@ class LoaderArgs(google.protobuf.message.Message):
 
 global___LoaderArgs = LoaderArgs
 
+@typing_extensions.final
 class RecordBuilderFromLoaderRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1174,6 +1256,7 @@ class RecordBuilderFromLoaderRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromLoaderRequest = RecordBuilderFromLoaderRequest
 
+@typing_extensions.final
 class Publisher(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1197,6 +1280,7 @@ class Publisher(google.protobuf.message.Message):
 
 global___Publisher = Publisher
 
+@typing_extensions.final
 class PublisherArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1206,6 +1290,7 @@ class PublisherArgs(google.protobuf.message.Message):
 
 global___PublisherArgs = PublisherArgs
 
+@typing_extensions.final
 class PublishRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1250,6 +1335,7 @@ class PublishRequest(google.protobuf.message.Message):
 
 global___PublishRequest = PublishRequest
 
+@typing_extensions.final
 class PublishResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

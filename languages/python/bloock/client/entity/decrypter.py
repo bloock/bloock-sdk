@@ -34,3 +34,11 @@ class RsaDecrypter(Decrypter):
 
     def to_proto(self) -> proto.Decrypter:
         return proto.Decrypter(alg=self.alg, args=self.args.to_proto())
+
+
+class EciesDecrypter(Decrypter):
+    def __init__(self, private_key: str) -> None:
+        super().__init__(alg=proto.ECIES, args=DecrypterArgs(private_key))
+
+    def to_proto(self) -> proto.Decrypter:
+        return proto.Decrypter(alg=self.alg, args=self.args.to_proto())

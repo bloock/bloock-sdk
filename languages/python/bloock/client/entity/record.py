@@ -135,11 +135,19 @@ class EcsdaKeys:
         return EcsdaKeys(res.publicKey, res.privateKey)
 
 
-class RsaKeyPair:
+class KeyPair:
     def __init__(self, public_key: str, private_key: str) -> None:
         self.public_key = public_key
         self.private_key = private_key
 
+
+class RsaKeyPair(KeyPair):
     @staticmethod
-    def from_proto(res: proto.GenerateRsaKeyPairResponse) -> RsaKeyPair:
-        return RsaKeyPair(res.publicKey, res.privateKey)
+    def from_proto(res: proto.GenerateRsaKeyPairResponse) -> KeyPair:
+        return KeyPair(res.publicKey, res.privateKey)
+
+
+class EciesKeyPair(KeyPair):
+    @staticmethod
+    def from_proto(res: proto.GenerateEciesKeyPairResponse) -> KeyPair:
+        return KeyPair(res.publicKey, res.privateKey)
