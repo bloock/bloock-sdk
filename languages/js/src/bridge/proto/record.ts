@@ -97,6 +97,7 @@ export function signerAlgToJSON(object: SignerAlg): string {
 export enum EncryptionAlg {
   A256GCM = 0,
   RSA = 1,
+  ECIES = 2,
   UNRECOGNIZED = -1,
 }
 
@@ -108,6 +109,9 @@ export function encryptionAlgFromJSON(object: any): EncryptionAlg {
     case 1:
     case "RSA":
       return EncryptionAlg.RSA;
+    case 2:
+    case "ECIES":
+      return EncryptionAlg.ECIES;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -121,6 +125,8 @@ export function encryptionAlgToJSON(object: EncryptionAlg): string {
       return "A256GCM";
     case EncryptionAlg.RSA:
       return "RSA";
+    case EncryptionAlg.ECIES:
+      return "ECIES";
     case EncryptionAlg.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -167,6 +173,15 @@ export interface GenerateRsaKeyPairRequest {
 }
 
 export interface GenerateRsaKeyPairResponse {
+  privateKey: string;
+  publicKey: string;
+  error?: Error | undefined;
+}
+
+export interface GenerateEciesKeyPairRequest {
+}
+
+export interface GenerateEciesKeyPairResponse {
   privateKey: string;
   publicKey: string;
   error?: Error | undefined;
@@ -533,6 +548,112 @@ export const GenerateRsaKeyPairResponse = {
 
   fromPartial<I extends Exact<DeepPartial<GenerateRsaKeyPairResponse>, I>>(object: I): GenerateRsaKeyPairResponse {
     const message = createBaseGenerateRsaKeyPairResponse();
+    message.privateKey = object.privateKey ?? "";
+    message.publicKey = object.publicKey ?? "";
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
+function createBaseGenerateEciesKeyPairRequest(): GenerateEciesKeyPairRequest {
+  return {};
+}
+
+export const GenerateEciesKeyPairRequest = {
+  encode(_: GenerateEciesKeyPairRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateEciesKeyPairRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateEciesKeyPairRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): GenerateEciesKeyPairRequest {
+    return {};
+  },
+
+  toJSON(_: GenerateEciesKeyPairRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GenerateEciesKeyPairRequest>, I>>(_: I): GenerateEciesKeyPairRequest {
+    const message = createBaseGenerateEciesKeyPairRequest();
+    return message;
+  },
+};
+
+function createBaseGenerateEciesKeyPairResponse(): GenerateEciesKeyPairResponse {
+  return { privateKey: "", publicKey: "", error: undefined };
+}
+
+export const GenerateEciesKeyPairResponse = {
+  encode(message: GenerateEciesKeyPairResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.privateKey !== "") {
+      writer.uint32(10).string(message.privateKey);
+    }
+    if (message.publicKey !== "") {
+      writer.uint32(18).string(message.publicKey);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateEciesKeyPairResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateEciesKeyPairResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.privateKey = reader.string();
+          break;
+        case 2:
+          message.publicKey = reader.string();
+          break;
+        case 3:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenerateEciesKeyPairResponse {
+    return {
+      privateKey: isSet(object.privateKey) ? String(object.privateKey) : "",
+      publicKey: isSet(object.publicKey) ? String(object.publicKey) : "",
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: GenerateEciesKeyPairResponse): unknown {
+    const obj: any = {};
+    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
+    message.publicKey !== undefined && (obj.publicKey = message.publicKey);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GenerateEciesKeyPairResponse>, I>>(object: I): GenerateEciesKeyPairResponse {
+    const message = createBaseGenerateEciesKeyPairResponse();
     message.privateKey = object.privateKey ?? "";
     message.publicKey = object.publicKey ?? "";
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
@@ -2429,14 +2550,13 @@ export interface RecordService {
   GetSignatures(request: Record): Promise<RecordSignatures>;
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse>;
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse>;
+  GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse>;
   Publish(request: PublishRequest): Promise<PublishResponse>;
 }
 
 export class RecordServiceClientImpl implements RecordService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "bloock.RecordService";
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.SendRecords = this.SendRecords.bind(this);
     this.BuildRecordFromString = this.BuildRecordFromString.bind(this);
@@ -2450,83 +2570,90 @@ export class RecordServiceClientImpl implements RecordService {
     this.GetSignatures = this.GetSignatures.bind(this);
     this.GenerateKeys = this.GenerateKeys.bind(this);
     this.GenerateRsaKeyPair = this.GenerateRsaKeyPair.bind(this);
+    this.GenerateEciesKeyPair = this.GenerateEciesKeyPair.bind(this);
     this.Publish = this.Publish.bind(this);
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
     const data = SendRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SendRecords", data);
+    const promise = this.rpc.request("bloock.RecordService", "SendRecords", data);
     return promise.then((data) => SendRecordsResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromStringRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromString", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromString", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromHex(request: RecordBuilderFromHexRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromHexRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromHex", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromHex", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromJson(request: RecordBuilderFromJSONRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromJSONRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromJson", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromJson", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromFile(request: RecordBuilderFromFileRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromFileRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromFile", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromFile", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromBytesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromBytes", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromBytes", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromRecordRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromRecord", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromRecord", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromLoaderRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromLoader", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromLoader", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   GetHash(request: Record): Promise<RecordHash> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetHash", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetHash", data);
     return promise.then((data) => RecordHash.decode(new _m0.Reader(data)));
   }
 
   GetSignatures(request: Record): Promise<RecordSignatures> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetSignatures", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetSignatures", data);
     return promise.then((data) => RecordSignatures.decode(new _m0.Reader(data)));
   }
 
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse> {
     const data = GenerateKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateKeys", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateKeys", data);
     return promise.then((data) => GenerateKeysResponse.decode(new _m0.Reader(data)));
   }
 
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse> {
     const data = GenerateRsaKeyPairRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateRsaKeyPair", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateRsaKeyPair", data);
     return promise.then((data) => GenerateRsaKeyPairResponse.decode(new _m0.Reader(data)));
+  }
+
+  GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse> {
+    const data = GenerateEciesKeyPairRequest.encode(request).finish();
+    const promise = this.rpc.request("bloock.RecordService", "GenerateEciesKeyPair", data);
+    return promise.then((data) => GenerateEciesKeyPairResponse.decode(new _m0.Reader(data)));
   }
 
   Publish(request: PublishRequest): Promise<PublishResponse> {
     const data = PublishRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "Publish", data);
+    const promise = this.rpc.request("bloock.RecordService", "Publish", data);
     return promise.then((data) => PublishResponse.decode(new _m0.Reader(data)));
   }
 }
@@ -2629,6 +2756,14 @@ export const RecordServiceDefinition = {
       requestType: GenerateRsaKeyPairRequest,
       requestStream: false,
       responseType: GenerateRsaKeyPairResponse,
+      responseStream: false,
+      options: {},
+    },
+    generateEciesKeyPair: {
+      name: "GenerateEciesKeyPair",
+      requestType: GenerateEciesKeyPairRequest,
+      requestStream: false,
+      responseType: GenerateEciesKeyPairResponse,
       responseStream: false,
       options: {},
     },
