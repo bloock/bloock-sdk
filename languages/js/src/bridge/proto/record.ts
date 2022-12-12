@@ -2623,7 +2623,7 @@ export class RecordServiceClientImpl implements RecordService {
 
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse> {
     const data = GenerateRsaKeyPairRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateRsaKeyPair", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateRsaKeyPair", data);
     return promise.then((data) => GenerateRsaKeyPairResponse.decode(new _m0.Reader(data)));
   }
 
