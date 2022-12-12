@@ -30,117 +30,20 @@ describe("E2E Tests", () => {
     let sdk = getSdk();
 
     const records: string[] = [];
-    let record = await RecordBuilder.fromString("Hello world").build();
-    let hash = await record.getHash();
-    expect(hash).toEqual(
-      "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
-    );
+    records.push(await testFromString());
+    records.push(await testFromBytes());
+    records.push(await testFromHex());
+    records.push(await testFromJson());
+    records.push(await testFromFile());
+    records.push(await testEcsdaSignature(sdk));
 
-    let result = await record.publish(new HostedPublisher());
-    expect(result).toEqual(hash);
+    await testFromLoader();
 
-    record = await RecordBuilder.fromLoader(new HostedLoader(result)).build();
-    hash = await record.getHash();
-    expect(hash).toEqual(result);
-    records.push(hash);
+    await testAesEncryption();
+    await testAesEncryptionDataAvailability();
 
-    record = await RecordBuilder.fromBytes(
-      Uint8Array.from([1, 2, 3, 4, 5])
-    ).build();
-    hash = await record.getHash();
-    expect(hash).toEqual(
-      "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4"
-    );
-    records.push(hash);
-
-    record = await RecordBuilder.fromHex("1234567890abcdef").build();
-    hash = await record.getHash();
-    expect(hash).toEqual(
-      "ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f"
-    );
-    records.push(hash);
-
-    record = await RecordBuilder.fromJson({ hello: "world" }).build();
-    hash = await record.getHash();
-    expect(hash).toEqual(
-      "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"
-    );
-    records.push(hash);
-
-    let payload = "Hello world 2";
-    let encrypted_record = await RecordBuilder.fromString(payload)
-      .withEncrypter(new AesEncrypter("some_password"))
-      .build();
-
-    expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
-      payload
-    );
-
-    record = await RecordBuilder.fromRecord(encrypted_record)
-      .withDecrypter(new AesDecrypter("some_password"))
-      .build();
-
-    expect(String.fromCharCode(...record.payload)).toEqual(payload);
-
-    hash = await record.getHash();
-    expect(hash).toEqual(
-      "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
-    );
-
-    let keypair = await sdk.generateRsaKeyPair();
-    encrypted_record = await RecordBuilder.fromString(payload)
-      .withEncrypter(new RsaEncrypter(keypair.publicKey))
-      .build();
-
-    expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
-      payload
-    );
-
-    record = await RecordBuilder.fromRecord(encrypted_record)
-      .withDecrypter(new RsaDecrypter(keypair.privateKey))
-      .build();
-
-    expect(String.fromCharCode(...record.payload)).toEqual(payload);
-
-    hash = await record.getHash();
-    expect(hash).toEqual(
-      "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
-    );
-
-    records.push(hash);
-
-    await expect(
-      RecordBuilder.fromRecord(encrypted_record).withDecrypter(
-        new AesDecrypter("incorrect_password")
-      ).build
-    ).rejects.toThrow();
-
-    record = await RecordBuilder.fromFile(
-      Uint8Array.from([2, 3, 4, 5, 6])
-    ).build();
-    hash = await record.getHash();
-    expect(hash).toEqual(
-      "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446"
-    );
-    records.push(hash);
-
-    let keys = await sdk.generateKeys();
-
-    record = await RecordBuilder.fromString("Hello world 3")
-      .withSigner(new EcsdaSigner(keys.privateKey))
-      .build();
-
-    keys = await sdk.generateKeys();
-
-    const recordWithMultipleSignatures = await RecordBuilder.fromRecord(record)
-      .withSigner(new EcsdaSigner(keys.privateKey))
-      .build();
-
-    hash = await recordWithMultipleSignatures.getHash();
-    records.push(hash);
-
-    let signatures = await recordWithMultipleSignatures.getSignatures();
-    expect(signatures.length).toEqual(2);
+    await testRsaEncryption(sdk);
+    await testRsaEncryptionDataAvailability(sdk);
 
     const sendReceipt = await sdk.sendRecords(records);
     expect(sendReceipt.length).toBeGreaterThan(0);
@@ -166,3 +69,211 @@ describe("E2E Tests", () => {
     expect(timestampValidateRoot).toEqual(timestampVerifyRecords);
   }, 120000);
 });
+
+async function testFromString(): Promise<string> {
+  let record = await RecordBuilder.fromString("Hello world").build();
+
+  let hash = await record.getHash();
+  expect(hash).toEqual(
+    "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
+  );
+
+  return hash;
+}
+
+async function testFromBytes(): Promise<string> {
+  let record = await RecordBuilder.fromBytes(
+    Uint8Array.from([1, 2, 3, 4, 5])
+  ).build();
+
+  let hash = await record.getHash();
+  expect(hash).toEqual(
+    "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4"
+  );
+
+  return hash;
+}
+
+async function testFromHex(): Promise<string> {
+  let record = await RecordBuilder.fromHex("1234567890abcdef").build();
+
+  let hash = await record.getHash();
+  expect(hash).toEqual(
+    "ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f"
+  );
+
+  return hash;
+}
+
+async function testFromJson(): Promise<string> {
+  let record = await RecordBuilder.fromJson({ hello: "world" }).build();
+
+  let hash = await record.getHash();
+  expect(hash).toEqual(
+    "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"
+  );
+
+  return hash;
+}
+
+async function testFromFile(): Promise<string> {
+  let record = await RecordBuilder.fromFile(
+    Uint8Array.from([2, 3, 4, 5, 6])
+  ).build();
+
+  let hash = await record.getHash();
+  expect(hash).toEqual(
+    "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446"
+  );
+
+  return hash;
+}
+
+async function testEcsdaSignature(sdk: BloockClient): Promise<string> {
+  let keys = await sdk.generateKeys();
+
+  let record = await RecordBuilder.fromString("Hello world 3")
+    .withSigner(new EcsdaSigner(keys.privateKey))
+    .build();
+
+  keys = await sdk.generateKeys();
+
+  const recordWithMultipleSignatures = await RecordBuilder.fromRecord(record)
+    .withSigner(new EcsdaSigner(keys.privateKey))
+    .build();
+
+  let hash = await recordWithMultipleSignatures.getHash();
+  expect(hash).toEqual(
+    "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
+  );
+
+  let signatures = await recordWithMultipleSignatures.getSignatures();
+  expect(signatures.length).toEqual(2);
+
+  return hash;
+}
+
+async function testFromLoader() {
+  let record = await RecordBuilder.fromString("Hello world").build();
+
+  let hash = await record.getHash();
+
+  let result = await record.publish(new HostedPublisher());
+  expect(result).toEqual(hash);
+
+  record = await RecordBuilder.fromLoader(new HostedLoader(result)).build();
+
+  hash = await record.getHash();
+
+  expect(hash).toEqual(result);
+}
+
+async function testAesEncryption() {
+  let payload = "Hello world 2";
+  let password = "some_password";
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new AesEncrypter(password))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  await expect(
+    RecordBuilder.fromRecord(encrypted_record).withDecrypter(
+      new AesDecrypter("incorrect_password")
+    ).build
+  ).rejects.toThrow();
+
+  let decrypted_record = await RecordBuilder.fromRecord(encrypted_record)
+    .withDecrypter(new AesDecrypter(password))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+
+  return hash;
+}
+
+async function testAesEncryptionDataAvailability() {
+  let payload = "Hello world 2";
+  let password = "some_password";
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new AesEncrypter(password))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  let result = await encrypted_record.publish(new HostedPublisher());
+
+  let loaded_record = await RecordBuilder.fromLoader(
+    new HostedLoader(result)
+  ).build();
+
+  let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
+    .withDecrypter(new AesDecrypter(password))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+
+  return hash;
+}
+
+async function testRsaEncryption(sdk: BloockClient) {
+  let payload = "Hello world 2";
+  let keypair = await sdk.generateRsaKeyPair();
+
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new RsaEncrypter(keypair.publicKey))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  let decrypted_record = await RecordBuilder.fromRecord(encrypted_record)
+    .withDecrypter(new RsaDecrypter(keypair.privateKey))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+}
+
+async function testRsaEncryptionDataAvailability(sdk: BloockClient) {
+  let payload = "Hello world 2";
+  let keypair = await sdk.generateRsaKeyPair();
+
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new RsaEncrypter(keypair.publicKey))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  let result = await encrypted_record.publish(new HostedPublisher());
+
+  let loaded_record = await RecordBuilder.fromLoader(
+    new HostedLoader(result)
+  ).build();
+
+  let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
+    .withDecrypter(new RsaDecrypter(keypair.privateKey))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+}
