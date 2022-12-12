@@ -1,5 +1,3 @@
-use std::env;
-
 use bloock_web3::blockchain::Blockchain;
 
 pub async fn get_state() {
@@ -13,7 +11,7 @@ pub async fn get_state() {
             provider.to_string(),
             contract_address.to_string(),
             state.to_string(),
-            env::var("API_KEY").unwrap(),
+            env!("API_KEY").to_string(),
         )
         .await
         .unwrap();
