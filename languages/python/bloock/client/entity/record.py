@@ -3,6 +3,7 @@ from typing import List
 from bloock._bridge import bridge
 import bloock._bridge.proto.record_pb2 as proto
 from bloock._bridge.proto.shared_pb2 import Error
+from bloock.client.entity.proof import Proof
 from bloock.client.entity.publisher import Publisher
 from bloock._config.config import Config
 
@@ -99,6 +100,20 @@ class Record:
 
     def retrieve(self) -> bytes:
         return self.payload
+
+    def set_proof(self, proof: Proof):
+        client = bridge.BloockBridge()
+        req = proto.SetProofRequest(
+            config_data=Config.new(),
+            record=self.to_proto(),
+            proof=proof.to_proto(),
+        )
+        res = client.record().SetProof(req)
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        self.payload = res.record.payload
 
 
 class RecordReceipt:
