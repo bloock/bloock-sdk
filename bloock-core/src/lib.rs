@@ -13,7 +13,7 @@ pub use bloock_encrypter::{
     ecies::generate_ecies_key_pair, ecies::EciesDecrypter, ecies::EciesDecrypterArgs,
     ecies::EciesEncrypter, ecies::EciesEncrypterArgs, ecies::EciesKeyPair,
     rsa::generate_rsa_key_pair, rsa::RsaDecrypter, rsa::RsaDecrypterArgs, rsa::RsaEncrypter,
-    rsa::RsaEncrypterArgs,
+    rsa::RsaEncrypterArgs, rsa::RsaKeyPair,
 };
 pub use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
 pub use bloock_hasher::{from_hex, to_hex, Hasher, HasherError, H256};

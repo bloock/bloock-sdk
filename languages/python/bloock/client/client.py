@@ -115,7 +115,9 @@ class Client:
         return res.timestamp
 
     def generate_keys(self) -> KeyPair:
-        res = self.bridge_client.record().GenerateKeys(GenerateKeysRequest())
+        res = self.bridge_client.record().GenerateKeys(
+            GenerateKeysRequest(config_data=Config.new())
+        )
 
         if res.error != Error():
             raise Exception(res.error.message)
@@ -124,7 +126,7 @@ class Client:
 
     def generate_rsa_keypair(self) -> KeyPair:
         res = self.bridge_client.record().GenerateRsaKeyPair(
-            GenerateRsaKeyPairRequest()
+            GenerateRsaKeyPairRequest(config_data=Config.new())
         )
 
         if res.error != Error():
@@ -134,7 +136,7 @@ class Client:
 
     def generate_ecies_keypair(self) -> KeyPair:
         res = self.bridge_client.record().GenerateEciesKeyPair(
-            GenerateEciesKeyPairRequest()
+            GenerateEciesKeyPairRequest(config_data=Config.new())
         )
 
         if res.error != Error():

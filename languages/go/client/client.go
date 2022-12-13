@@ -153,7 +153,9 @@ func (c *Client) ValidateRoot(root string, params entity.NetworkParams) (uint64,
 }
 
 func (c *Client) GenerateKeys() (entity.KeyPair, error) {
-	res, err := c.bridgeClient.Record().GenerateKeys(context.Background(), &proto.GenerateKeysRequest{})
+	res, err := c.bridgeClient.Record().GenerateKeys(context.Background(), &proto.GenerateKeysRequest{
+		ConfigData: config.NewConfigData(),
+	})
 
 	if err != nil {
 		return entity.KeyPair{}, err
@@ -167,7 +169,9 @@ func (c *Client) GenerateKeys() (entity.KeyPair, error) {
 }
 
 func (c *Client) GenerateRsaKeyPair() (entity.KeyPair, error) {
-	res, err := c.bridgeClient.Record().GenerateRsaKeyPair(context.Background(), &proto.GenerateRsaKeyPairRequest{})
+	res, err := c.bridgeClient.Record().GenerateRsaKeyPair(context.Background(), &proto.GenerateRsaKeyPairRequest{
+		ConfigData: config.NewConfigData(),
+	})
 
 	if err != nil {
 		return entity.KeyPair{}, err
@@ -181,7 +185,9 @@ func (c *Client) GenerateRsaKeyPair() (entity.KeyPair, error) {
 }
 
 func (c *Client) GenerateEciesKeyPair() (entity.KeyPair, error) {
-	res, err := c.bridgeClient.Record().GenerateEciesKeyPair(context.Background(), &proto.GenerateEciesKeyPairRequest{})
+	res, err := c.bridgeClient.Record().GenerateEciesKeyPair(context.Background(), &proto.GenerateEciesKeyPairRequest{
+		ConfigData: config.NewConfigData(),
+	})
 
 	if err != nil {
 		return entity.KeyPair{}, err

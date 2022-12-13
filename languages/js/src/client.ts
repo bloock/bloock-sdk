@@ -202,7 +202,10 @@ export class BloockClient {
    * @returns {Promise<KeyPair>} An object containing both the public and the private key
    */
   public async generateKeys(): Promise<KeyPair> {
-    let request = GenerateKeysRequest.fromPartial({});
+    let request = GenerateKeysRequest.fromPartial({
+      configData: NewConfigData()
+    });
+
     return this.bridge
       .getRecord()
       .GenerateKeys(request)
@@ -219,7 +222,10 @@ export class BloockClient {
    * @returns {Promise<KeyPair>} An object containing both the public and the private key
    */
   public async generateRsaKeyPair(): Promise<KeyPair> {
-    let request = GenerateRsaKeyPairRequest.fromPartial({});
+    let request = GenerateRsaKeyPairRequest.fromPartial({
+      configData: NewConfigData()
+    });
+
     return this.bridge
       .getRecord()
       .GenerateRsaKeyPair(request)
@@ -236,7 +242,10 @@ export class BloockClient {
    * @returns {Promise<KeyPair>} An object containing both the public and the private key
    */
   public async generateEciesKeyPair(): Promise<KeyPair> {
-    let request = GenerateEciesKeyPairRequest.fromPartial({});
+    let request = GenerateEciesKeyPairRequest.fromPartial({
+      configData: NewConfigData()
+    });
+
     return this.bridge
       .getRecord()
       .GenerateEciesKeyPair(request)

@@ -35,7 +35,9 @@ service RecordService {
     rpc Publish(PublishRequest) returns (PublishResponse);
 }
 
-message GenerateKeysRequest {}
+message GenerateKeysRequest {
+    ConfigData config_data = 1;
+}
 
 message GenerateKeysResponse {
     string privateKey = 1;
@@ -43,14 +45,18 @@ message GenerateKeysResponse {
     optional Error error = 3;
 }
 
-message GenerateRsaKeyPairRequest {}
+message GenerateRsaKeyPairRequest {
+    ConfigData config_data = 1;
+}
 
 message GenerateRsaKeyPairResponse {
     string privateKey = 1;
     string publicKey = 2;
     optional Error error = 3;
 }
-message GenerateEciesKeyPairRequest {}
+message GenerateEciesKeyPairRequest {
+    ConfigData config_data = 1;
+}
 
 message GenerateEciesKeyPairResponse {
     string privateKey = 1;

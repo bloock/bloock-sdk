@@ -8,8 +8,8 @@ use bloock_core::{
     record::entity::record::Record as RecordCore,
     AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
     Decrypter as DecrypterCore, EciesDecrypter, EciesDecrypterArgs, EciesEncrypter,
-    EciesEncrypterArgs, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore, RsaDecrypter,
-    RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
+    EciesEncrypterArgs, EciesKeyPair, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore,
+    RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, RsaKeyPair,
 };
 use serde_json::json;
 
@@ -19,10 +19,11 @@ use crate::{
     error::{config_data_error, BridgeError},
     items::{
         BloockServer, DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error,
-        GenerateEciesKeyPairRequest, GenerateEciesKeyPairResponse, GenerateKeysRequest, GenerateKeysResponse, GenerateRsaKeyPairRequest,
-        GenerateRsaKeyPairResponse, Loader, LoaderArgs, PublishRequest, PublishResponse, Publisher,
-        Record, RecordBuilderResponse, RecordHash, RecordReceipt, RecordServiceHandler,
-        RecordSignatures, SendRecordsRequest, SendRecordsResponse, Signature, Signer, SignerAlg,
+        GenerateEciesKeyPairRequest, GenerateEciesKeyPairResponse, GenerateKeysRequest,
+        GenerateKeysResponse, GenerateRsaKeyPairRequest, GenerateRsaKeyPairResponse, Loader,
+        LoaderArgs, PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse,
+        RecordHash, RecordReceipt, RecordServiceHandler, RecordSignatures, SendRecordsRequest,
+        SendRecordsResponse, Signature, Signer, SignerAlg,
     },
 };
 
@@ -492,63 +493,72 @@ impl RecordServiceHandler for RecordServer {
         RecordSignatures::new_success(&client, signatures).await
     }
 
-    async fn generate_keys(&self, _req: GenerateKeysRequest) -> GenerateKeysResponse {
-        let (private_key, public_key) = match EcsdaSigner::generate_keys() {
-            Ok(p) => p,
-            Err(e) => {
+    async fn generate_keys(&self, req: GenerateKeysRequest) -> GenerateKeysResponse {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
                 return GenerateKeysResponse {
                     private_key: "".to_string(),
                     public_key: "".to_string(),
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: e.to_string(),
-                    }),
+                    error: Some(config_data_error()),
                 }
             }
         };
-        return GenerateKeysResponse {
-            private_key,
-            public_key,
-            error: None,
+
+        let client = client::configure(config_data);
+        let (private_key, public_key) = match EcsdaSigner::generate_keys() {
+            Ok(p) => p,
+            Err(e) => return GenerateKeysResponse::new_error(&client, e.to_string()).await,
         };
+
+        GenerateKeysResponse::new_success(&client, private_key, public_key).await
     }
 
     async fn generate_rsa_key_pair(
         &self,
-        _req: GenerateRsaKeyPairRequest,
+        req: GenerateRsaKeyPairRequest,
     ) -> GenerateRsaKeyPairResponse {
-        let keypair = match bloock_core::generate_rsa_key_pair() {
-            Ok(keypair) => keypair,
-            Err(e) => {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
                 return GenerateRsaKeyPairResponse {
                     private_key: "".to_string(),
                     public_key: "".to_string(),
-                    error: Some(Error {
-                        kind: BridgeError::RecordError.to_string(),
-                        message: e.to_string(),
-                    }),
+                    error: Some(config_data_error()),
                 }
             }
         };
 
-        return GenerateRsaKeyPairResponse {
-            private_key: keypair.private_key,
-            public_key: keypair.public_key,
-            error: None,
+        let client = client::configure(config_data);
+
+        let keypair = match bloock_core::generate_rsa_key_pair() {
+            Ok(keypair) => keypair,
+            Err(e) => return GenerateRsaKeyPairResponse::new_error(&client, e.to_string()).await,
         };
+
+        GenerateRsaKeyPairResponse::new_success(&client, keypair).await
     }
 
     async fn generate_ecies_key_pair(
         &self,
-        _req: GenerateEciesKeyPairRequest,
+        req: GenerateEciesKeyPairRequest,
     ) -> GenerateEciesKeyPairResponse {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
+                return GenerateEciesKeyPairResponse {
+                    private_key: "".to_string(),
+                    public_key: "".to_string(),
+                    error: Some(config_data_error()),
+                }
+            }
+        };
+
+        let client = client::configure(config_data);
+
         let keypair = bloock_core::generate_ecies_key_pair();
 
-        return GenerateEciesKeyPairResponse {
-            private_key: keypair.private_key,
-            public_key: keypair.public_key,
-            error: None,
-        };
+        GenerateEciesKeyPairResponse::new_success(&client, keypair).await
     }
 
     async fn publish(&self, req: PublishRequest) -> PublishResponse {
@@ -936,32 +946,113 @@ impl RecordSignatures {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        items::{GenerateKeysRequest, GenerateRsaKeyPairRequest, RecordServiceHandler},
-        server::Server,
-    };
+impl GenerateKeysResponse {
+    async fn new_success(
+        client: &BloockClient,
+        private_key: String,
+        public_key: String,
+    ) -> GenerateKeysResponse {
+        Self::send_event(client, None).await;
 
-    #[tokio::test]
-    async fn test_generate_keys() {
-        let request_generate_keys = GenerateKeysRequest {};
-
-        let server = Server::new();
-        let keys_response = server.record.generate_keys(request_generate_keys).await;
-        let error_response = keys_response.error;
-
-        assert_eq!(None, error_response);
+        GenerateKeysResponse {
+            private_key,
+            public_key,
+            error: None,
+        }
     }
 
-    #[tokio::test]
-    async fn test_generate_rsa_key_pair() {
-        let server = Server::new();
-        let keys_response = server
-            .record
-            .generate_rsa_key_pair(GenerateRsaKeyPairRequest {})
-            .await;
+    async fn new_error(client: &BloockClient, err: String) -> GenerateKeysResponse {
+        Self::send_event(client, Some(&err)).await;
 
-        assert_eq!(keys_response.error, None);
+        GenerateKeysResponse {
+            private_key: "".to_string(),
+            public_key: "".to_string(),
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::RecordServiceGenerateKeys.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
+    }
+}
+
+impl GenerateRsaKeyPairResponse {
+    async fn new_success(client: &BloockClient, keypair: RsaKeyPair) -> GenerateRsaKeyPairResponse {
+        Self::send_event(client, None).await;
+
+        GenerateRsaKeyPairResponse {
+            private_key: keypair.private_key,
+            public_key: keypair.public_key,
+            error: None,
+        }
+    }
+
+    async fn new_error(client: &BloockClient, err: String) -> GenerateRsaKeyPairResponse {
+        Self::send_event(client, Some(&err)).await;
+
+        GenerateRsaKeyPairResponse {
+            private_key: "".to_string(),
+            public_key: "".to_string(),
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::RecordServiceGenerateRsaKeyPair.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
+    }
+}
+
+impl GenerateEciesKeyPairResponse {
+    async fn new_success(
+        client: &BloockClient,
+        keypair: EciesKeyPair,
+    ) -> GenerateEciesKeyPairResponse {
+        Self::send_event(client, None).await;
+
+        GenerateEciesKeyPairResponse {
+            private_key: keypair.private_key,
+            public_key: keypair.public_key,
+            error: None,
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::RecordServiceGenerateEciesKeyPair.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
     }
 }

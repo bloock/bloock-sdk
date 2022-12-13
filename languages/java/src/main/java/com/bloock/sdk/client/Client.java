@@ -167,7 +167,8 @@ public class Client {
   }
 
   public Keys generateKeys() throws Exception {
-    GenerateKeysRequest request = GenerateKeysRequest.newBuilder().build();
+    GenerateKeysRequest request =
+        GenerateKeysRequest.newBuilder().setConfigData(Config.newConfigData()).build();
 
     GenerateKeysResponse response = bridge.getRecord().generateKeys(request);
 
@@ -179,7 +180,8 @@ public class Client {
   }
 
   public RsaKeyPair generateRsaKeyPair() throws Exception {
-    GenerateRsaKeyPairRequest request = GenerateRsaKeyPairRequest.newBuilder().build();
+    GenerateRsaKeyPairRequest request =
+        GenerateRsaKeyPairRequest.newBuilder().setConfigData(Config.newConfigData()).build();
 
     GenerateRsaKeyPairResponse response = bridge.getRecord().generateRsaKeyPair(request);
 
@@ -191,7 +193,8 @@ public class Client {
   }
 
   public EciesKeyPair generateEciesKeyPair() throws Exception {
-    GenerateEciesKeyPairRequest request = GenerateEciesKeyPairRequest.newBuilder().build();
+    GenerateEciesKeyPairRequest request =
+        GenerateEciesKeyPairRequest.newBuilder().setConfigData(Config.newConfigData()).build();
 
     GenerateEciesKeyPairResponse response = bridge.getRecord().generateEciesKeyPair(request);
 

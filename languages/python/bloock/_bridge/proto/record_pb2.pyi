@@ -109,8 +109,19 @@ global___DataAvailabilityType = DataAvailabilityType
 class GenerateKeysRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     def __init__(
         self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+    ) -> None: ...
+    def HasField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
+    ) -> builtins.bool: ...
+    def ClearField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
     ) -> None: ...
 
 global___GenerateKeysRequest = GenerateKeysRequest
@@ -158,8 +169,19 @@ global___GenerateKeysResponse = GenerateKeysResponse
 class GenerateRsaKeyPairRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     def __init__(
         self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+    ) -> None: ...
+    def HasField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
+    ) -> builtins.bool: ...
+    def ClearField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
     ) -> None: ...
 
 global___GenerateRsaKeyPairRequest = GenerateRsaKeyPairRequest
@@ -207,8 +229,19 @@ global___GenerateRsaKeyPairResponse = GenerateRsaKeyPairResponse
 class GenerateEciesKeyPairRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
     def __init__(
         self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+    ) -> None: ...
+    def HasField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
+    ) -> builtins.bool: ...
+    def ClearField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
     ) -> None: ...
 
 global___GenerateEciesKeyPairRequest = GenerateEciesKeyPairRequest

@@ -161,6 +161,7 @@ export function dataAvailabilityTypeToJSON(object: DataAvailabilityType): string
 }
 
 export interface GenerateKeysRequest {
+  configData?: ConfigData;
 }
 
 export interface GenerateKeysResponse {
@@ -170,6 +171,7 @@ export interface GenerateKeysResponse {
 }
 
 export interface GenerateRsaKeyPairRequest {
+  configData?: ConfigData;
 }
 
 export interface GenerateRsaKeyPairResponse {
@@ -179,6 +181,7 @@ export interface GenerateRsaKeyPairResponse {
 }
 
 export interface GenerateEciesKeyPairRequest {
+  configData?: ConfigData;
 }
 
 export interface GenerateEciesKeyPairResponse {
@@ -351,11 +354,14 @@ export interface PublishResponse {
 }
 
 function createBaseGenerateKeysRequest(): GenerateKeysRequest {
-  return {};
+  return { configData: undefined };
 }
 
 export const GenerateKeysRequest = {
-  encode(_: GenerateKeysRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: GenerateKeysRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -366,6 +372,9 @@ export const GenerateKeysRequest = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -374,17 +383,22 @@ export const GenerateKeysRequest = {
     return message;
   },
 
-  fromJSON(_: any): GenerateKeysRequest {
-    return {};
+  fromJSON(object: any): GenerateKeysRequest {
+    return { configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined };
   },
 
-  toJSON(_: GenerateKeysRequest): unknown {
+  toJSON(message: GenerateKeysRequest): unknown {
     const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<GenerateKeysRequest>, I>>(_: I): GenerateKeysRequest {
+  fromPartial<I extends Exact<DeepPartial<GenerateKeysRequest>, I>>(object: I): GenerateKeysRequest {
     const message = createBaseGenerateKeysRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
     return message;
   },
 };
@@ -457,11 +471,14 @@ export const GenerateKeysResponse = {
 };
 
 function createBaseGenerateRsaKeyPairRequest(): GenerateRsaKeyPairRequest {
-  return {};
+  return { configData: undefined };
 }
 
 export const GenerateRsaKeyPairRequest = {
-  encode(_: GenerateRsaKeyPairRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: GenerateRsaKeyPairRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -472,6 +489,9 @@ export const GenerateRsaKeyPairRequest = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -480,17 +500,22 @@ export const GenerateRsaKeyPairRequest = {
     return message;
   },
 
-  fromJSON(_: any): GenerateRsaKeyPairRequest {
-    return {};
+  fromJSON(object: any): GenerateRsaKeyPairRequest {
+    return { configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined };
   },
 
-  toJSON(_: GenerateRsaKeyPairRequest): unknown {
+  toJSON(message: GenerateRsaKeyPairRequest): unknown {
     const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<GenerateRsaKeyPairRequest>, I>>(_: I): GenerateRsaKeyPairRequest {
+  fromPartial<I extends Exact<DeepPartial<GenerateRsaKeyPairRequest>, I>>(object: I): GenerateRsaKeyPairRequest {
     const message = createBaseGenerateRsaKeyPairRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
     return message;
   },
 };
@@ -563,11 +588,14 @@ export const GenerateRsaKeyPairResponse = {
 };
 
 function createBaseGenerateEciesKeyPairRequest(): GenerateEciesKeyPairRequest {
-  return {};
+  return { configData: undefined };
 }
 
 export const GenerateEciesKeyPairRequest = {
-  encode(_: GenerateEciesKeyPairRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: GenerateEciesKeyPairRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -578,6 +606,9 @@ export const GenerateEciesKeyPairRequest = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -586,17 +617,22 @@ export const GenerateEciesKeyPairRequest = {
     return message;
   },
 
-  fromJSON(_: any): GenerateEciesKeyPairRequest {
-    return {};
+  fromJSON(object: any): GenerateEciesKeyPairRequest {
+    return { configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined };
   },
 
-  toJSON(_: GenerateEciesKeyPairRequest): unknown {
+  toJSON(message: GenerateEciesKeyPairRequest): unknown {
     const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<GenerateEciesKeyPairRequest>, I>>(_: I): GenerateEciesKeyPairRequest {
+  fromPartial<I extends Exact<DeepPartial<GenerateEciesKeyPairRequest>, I>>(object: I): GenerateEciesKeyPairRequest {
     const message = createBaseGenerateEciesKeyPairRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
     return message;
   },
 };
