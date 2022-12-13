@@ -1,6 +1,7 @@
 import { BloockBridge } from "../bridge/bridge";
 import * as proto from "../bridge/proto/record";
 import { NewConfigData } from "../config/config";
+import { Proof } from "./proof";
 import { Publisher } from "./publisher";
 
 export class Record {
@@ -58,6 +59,26 @@ export class Record {
 
   public retrieve(): Uint8Array {
     return this.payload;
+  }
+
+  async setProof(proof: Proof) {
+    const bridge = new BloockBridge();
+
+    const req = proto.SetProofRequest.fromPartial({
+      configData: NewConfigData(),
+      record: this.toProto(),
+      proof: proof.toProto(),
+    });
+
+    return bridge
+      .getRecord()
+      .SetProof(req)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        this.payload = res.record?.payload!;
+      });
   }
 }
 

@@ -2,6 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { ConfigData } from "./config";
+import { Proof } from "./proof";
 import { Error } from "./shared";
 
 export enum RecordTypes {
@@ -351,6 +352,17 @@ export interface PublishRequest {
 export interface PublishResponse {
   hash: string;
   error?: Error | undefined;
+}
+
+export interface SetProofRequest {
+  configData?: ConfigData;
+  record?: Record;
+  proof?: Proof;
+}
+
+export interface SetProofResponse {
+  error?: Error | undefined;
+  record?: Record | undefined;
 }
 
 function createBaseGenerateKeysRequest(): GenerateKeysRequest {
@@ -2678,6 +2690,138 @@ export const PublishResponse = {
   },
 };
 
+function createBaseSetProofRequest(): SetProofRequest {
+  return { configData: undefined, record: undefined, proof: undefined };
+}
+
+export const SetProofRequest = {
+  encode(message: SetProofRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.record !== undefined) {
+      Record.encode(message.record, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.proof !== undefined) {
+      Proof.encode(message.proof, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SetProofRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSetProofRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.record = Record.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.proof = Proof.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SetProofRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      record: isSet(object.record) ? Record.fromJSON(object.record) : undefined,
+      proof: isSet(object.proof) ? Proof.fromJSON(object.proof) : undefined,
+    };
+  },
+
+  toJSON(message: SetProofRequest): unknown {
+    const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    message.proof !== undefined && (obj.proof = message.proof ? Proof.toJSON(message.proof) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<SetProofRequest>, I>>(object: I): SetProofRequest {
+    const message = createBaseSetProofRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.record = (object.record !== undefined && object.record !== null)
+      ? Record.fromPartial(object.record)
+      : undefined;
+    message.proof = (object.proof !== undefined && object.proof !== null) ? Proof.fromPartial(object.proof) : undefined;
+    return message;
+  },
+};
+
+function createBaseSetProofResponse(): SetProofResponse {
+  return { error: undefined, record: undefined };
+}
+
+export const SetProofResponse = {
+  encode(message: SetProofResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.record !== undefined) {
+      Record.encode(message.record, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SetProofResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSetProofResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.record = Record.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SetProofResponse {
+    return {
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+      record: isSet(object.record) ? Record.fromJSON(object.record) : undefined,
+    };
+  },
+
+  toJSON(message: SetProofResponse): unknown {
+    const obj: any = {};
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<SetProofResponse>, I>>(object: I): SetProofResponse {
+    const message = createBaseSetProofResponse();
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    message.record = (object.record !== undefined && object.record !== null)
+      ? Record.fromPartial(object.record)
+      : undefined;
+    return message;
+  },
+};
+
 export interface RecordService {
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse>;
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse>;
@@ -2693,6 +2837,7 @@ export interface RecordService {
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse>;
   GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse>;
   Publish(request: PublishRequest): Promise<PublishResponse>;
+  SetProof(request: SetProofRequest): Promise<SetProofResponse>;
 }
 
 export class RecordServiceClientImpl implements RecordService {
@@ -2715,6 +2860,7 @@ export class RecordServiceClientImpl implements RecordService {
     this.GenerateRsaKeyPair = this.GenerateRsaKeyPair.bind(this);
     this.GenerateEciesKeyPair = this.GenerateEciesKeyPair.bind(this);
     this.Publish = this.Publish.bind(this);
+    this.SetProof = this.SetProof.bind(this);
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
     const data = SendRecordsRequest.encode(request).finish();
@@ -2798,6 +2944,12 @@ export class RecordServiceClientImpl implements RecordService {
     const data = PublishRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "Publish", data);
     return promise.then((data) => PublishResponse.decode(new _m0.Reader(data)));
+  }
+
+  SetProof(request: SetProofRequest): Promise<SetProofResponse> {
+    const data = SetProofRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "SetProof", data);
+    return promise.then((data) => SetProofResponse.decode(new _m0.Reader(data)));
   }
 }
 
@@ -2915,6 +3067,14 @@ export const RecordServiceDefinition = {
       requestType: PublishRequest,
       requestStream: false,
       responseType: PublishResponse,
+      responseStream: false,
+      options: {},
+    },
+    setProof: {
+      name: "SetProof",
+      requestType: SetProofRequest,
+      requestStream: false,
+      responseType: SetProofResponse,
       responseStream: false,
       options: {},
     },
