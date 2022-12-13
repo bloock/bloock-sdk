@@ -88,6 +88,27 @@ func (r Record) Retrieve() []byte {
 	return r.Payload
 }
 
+func (r Record) SetProof(proof Proof) error {
+	bridgeClient := bridge.NewBloockBridge()
+	res, err := bridgeClient.Record().SetProof(context.Background(), &proto.SetProofRequest{
+		ConfigData: config.NewConfigData(),
+		Record:     r.ToProto(),
+		Proof:      proof.ToProto(),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if res.Error != nil {
+		return errors.New(res.Error.Message)
+	}
+
+	r.Payload = res.Record.Payload
+
+	return nil
+}
+
 func MapRecordsToProto(records []Record) []*proto.Record {
 	recordsProto := make([]*proto.Record, len(records))
 	for i, record := range records {
