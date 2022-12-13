@@ -4,6 +4,7 @@ use async_trait::async_trait;
 use bloock_core::{
     client::{self, BloockClient},
     error::BloockError,
+    proof::entity::proof::Proof,
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
     AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
@@ -23,7 +24,7 @@ use crate::{
         GenerateKeysResponse, GenerateRsaKeyPairRequest, GenerateRsaKeyPairResponse, Loader,
         LoaderArgs, PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse,
         RecordHash, RecordReceipt, RecordServiceHandler, RecordSignatures, SendRecordsRequest,
-        SendRecordsResponse, Signature, Signer, SignerAlg,
+        SendRecordsResponse, SetProofRequest, SetProofResponse, Signature, Signer, SignerAlg,
     },
 };
 
@@ -452,6 +453,55 @@ impl RecordServiceHandler for RecordServer {
         };
         let hash = record.get_hash();
         RecordHash::new_success(&client, hash).await
+    }
+
+    async fn set_proof(&self, req: SetProofRequest) -> SetProofResponse {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
+                return SetProofResponse {
+                    error: Some(config_data_error()),
+                    record: None,
+                }
+            }
+        };
+
+        let client = client::configure(config_data);
+
+        let mut record: RecordCore = match req.record {
+            Some(record) => match record.try_into() {
+                Ok(record) => record,
+                Err(e) => {
+                    return SetProofResponse::new_error(&client, e.to_string()).await;
+                }
+            },
+            None => {
+                return SetProofResponse::new_error(&client, "invalid record".to_string()).await
+            }
+        };
+
+        let proof: Proof = match req.proof {
+            Some(proof) => match proof.try_into() {
+                Ok(proof) => proof,
+                Err(e) => {
+                    return SetProofResponse::new_error(&client, e.to_string()).await;
+                }
+            },
+            None => {
+                return SetProofResponse::new_error(&client, "invalid record".to_string()).await
+            }
+        };
+
+        if let Err(e) = record.set_proof(proof) {
+            return SetProofResponse::new_error(&client, e.to_string()).await;
+        }
+
+        let final_record = match record.try_into() as Result<Record, BridgeError> {
+            Ok(record) => record,
+            Err(e) => return SetProofResponse::new_error(&client, e.to_string()).await,
+        };
+
+        SetProofResponse::new_success(&client, final_record).await
     }
 
     async fn get_signatures(&self, req: Record) -> RecordSignatures {
@@ -1056,3 +1106,41 @@ impl GenerateEciesKeyPairResponse {
             .await;
     }
 }
+
+impl SetProofResponse {
+    async fn new_success(client: &BloockClient, record: Record) -> SetProofResponse {
+        Self::send_event(client, None).await;
+
+        SetProofResponse {
+            error: None,
+            record: Some(record),
+        }
+    }
+
+    async fn new_error(client: &BloockClient, err: String) -> SetProofResponse {
+        Self::send_event(client, Some(&err)).await;
+
+        SetProofResponse {
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+            record: None,
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::RecordServiceSetProof.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
+    }
+}
+

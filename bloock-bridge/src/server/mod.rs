@@ -147,6 +147,11 @@ impl Server {
                 .publish(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceSetProof => Ok(self
+                .record
+                .publish(self.serialize_request(payload)?)
+                .await
+                .into()),
             _ => Err(BridgeError::ServiceNotFound),
         }
     }
