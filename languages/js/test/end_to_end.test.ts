@@ -9,7 +9,9 @@ import {
   EcsdaSigner,
   Network,
   RsaEncrypter,
-  RsaDecrypter
+  RsaDecrypter,
+  EciesEncrypter,
+  EciesDecrypter
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
 
@@ -44,6 +46,9 @@ describe("E2E Tests", () => {
 
     await testRsaEncryption(sdk);
     await testRsaEncryptionDataAvailability(sdk);
+
+    await testEciesEncryption(sdk);
+    await testEciesEncryptionDataAvailability(sdk);
 
     const sendReceipt = await sdk.sendRecords(records);
     expect(sendReceipt.length).toBeGreaterThan(0);
@@ -266,6 +271,58 @@ async function testRsaEncryptionDataAvailability(sdk: BloockClient) {
 
   let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
     .withDecrypter(new RsaDecrypter(keypair.privateKey))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+}
+
+async function testEciesEncryption(sdk: BloockClient) {
+  let payload = "Hello world 2";
+  let keypair = await sdk.generateEciesKeyPair();
+
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new EciesEncrypter(keypair.publicKey))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  let decrypted_record = await RecordBuilder.fromRecord(encrypted_record)
+    .withDecrypter(new EciesDecrypter(keypair.privateKey))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+}
+
+async function testEciesEncryptionDataAvailability(sdk: BloockClient) {
+  let payload = "Hello world 2";
+  let keypair = await sdk.generateEciesKeyPair();
+
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new EciesEncrypter(keypair.publicKey))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  let result = await encrypted_record.publish(new HostedPublisher());
+
+  let loaded_record = await RecordBuilder.fromLoader(
+    new HostedLoader(result)
+  ).build();
+
+  let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
+    .withDecrypter(new EciesDecrypter(keypair.privateKey))
     .build();
 
   expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);

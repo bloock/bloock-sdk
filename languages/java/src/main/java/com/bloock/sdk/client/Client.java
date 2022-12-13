@@ -13,6 +13,8 @@ import com.bloock.sdk.bridge.proto.ProofOuterClass.VerifyProofRequest;
 import com.bloock.sdk.bridge.proto.ProofOuterClass.VerifyProofResponse;
 import com.bloock.sdk.bridge.proto.ProofOuterClass.VerifyRecordsRequest;
 import com.bloock.sdk.bridge.proto.ProofOuterClass.VerifyRecordsResponse;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateEciesKeyPairRequest;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateEciesKeyPairResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateKeysRequest;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateKeysResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateRsaKeyPairRequest;
@@ -22,6 +24,7 @@ import com.bloock.sdk.bridge.proto.RecordOuterClass.SendRecordsResponse;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
 import com.bloock.sdk.entity.Anchor;
+import com.bloock.sdk.entity.EciesKeyPair;
 import com.bloock.sdk.entity.Keys;
 import com.bloock.sdk.entity.Network;
 import com.bloock.sdk.entity.Proof;
@@ -164,7 +167,8 @@ public class Client {
   }
 
   public Keys generateKeys() throws Exception {
-    GenerateKeysRequest request = GenerateKeysRequest.newBuilder().build();
+    GenerateKeysRequest request =
+        GenerateKeysRequest.newBuilder().setConfigData(Config.newConfigData()).build();
 
     GenerateKeysResponse response = bridge.getRecord().generateKeys(request);
 
@@ -176,7 +180,8 @@ public class Client {
   }
 
   public RsaKeyPair generateRsaKeyPair() throws Exception {
-    GenerateRsaKeyPairRequest request = GenerateRsaKeyPairRequest.newBuilder().build();
+    GenerateRsaKeyPairRequest request =
+        GenerateRsaKeyPairRequest.newBuilder().setConfigData(Config.newConfigData()).build();
 
     GenerateRsaKeyPairResponse response = bridge.getRecord().generateRsaKeyPair(request);
 
@@ -185,5 +190,18 @@ public class Client {
     }
 
     return RsaKeyPair.fromProto(response);
+  }
+
+  public EciesKeyPair generateEciesKeyPair() throws Exception {
+    GenerateEciesKeyPairRequest request =
+        GenerateEciesKeyPairRequest.newBuilder().setConfigData(Config.newConfigData()).build();
+
+    GenerateEciesKeyPairResponse response = bridge.getRecord().generateEciesKeyPair(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return EciesKeyPair.fromProto(response);
   }
 }

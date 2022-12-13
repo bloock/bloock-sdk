@@ -20,6 +20,13 @@ func NewAesEncrypter(password string) AesEncrypter {
 	}
 }
 
+func (e AesEncrypter) ToProto() *proto.Encrypter {
+	return &proto.Encrypter{
+		Alg:  e.Alg,
+		Args: e.Args.ToProto(),
+	}
+}
+
 type RsaEncrypter struct {
 	Alg  proto.EncryptionAlg
 	Args EncrypterArgs
@@ -34,14 +41,28 @@ func NewRsaEncrypter(key string) RsaEncrypter {
 	}
 }
 
-func (e AesEncrypter) ToProto() *proto.Encrypter {
+func (e RsaEncrypter) ToProto() *proto.Encrypter {
 	return &proto.Encrypter{
 		Alg:  e.Alg,
 		Args: e.Args.ToProto(),
 	}
 }
 
-func (e RsaEncrypter) ToProto() *proto.Encrypter {
+type EciesEncrypter struct {
+	Alg  proto.EncryptionAlg
+	Args EncrypterArgs
+}
+
+func NewEciesEncrypter(key string) RsaEncrypter {
+	return RsaEncrypter{
+		Alg: proto.EncryptionAlg_ECIES,
+		Args: EncrypterArgs{
+			Key: key,
+		},
+	}
+}
+
+func (e EciesEncrypter) ToProto() *proto.Encrypter {
 	return &proto.Encrypter{
 		Alg:  e.Alg,
 		Args: e.Args.ToProto(),

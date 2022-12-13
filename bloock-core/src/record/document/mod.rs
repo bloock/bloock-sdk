@@ -273,7 +273,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_encrypted_pdf_with_and_signatures() {
+    async fn test_encrypted_pdf_with_proof_and_signatures() {
         let payload = include_bytes!("./assets/dummy.pdf");
         let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", &[]));
 

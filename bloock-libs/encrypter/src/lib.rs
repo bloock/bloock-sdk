@@ -2,6 +2,7 @@ use serde::Serialize;
 use thiserror::Error as ThisError;
 
 pub mod aes;
+pub mod ecies;
 pub mod rsa;
 
 pub type Result<T> = std::result::Result<T, EncrypterError>;
@@ -18,6 +19,8 @@ pub trait Decrypter {
 pub enum EncrypterError {
     #[error("Failed to encrypt: {0}")]
     FailedToEncrypt(String),
+    #[error("Invalid key: {0}")]
+    InvalidKey(String),
     #[error("Failed to encrypt in-place: {0}")]
     FailedToEncryptInPlace(String),
     #[error("Couldn't random fill nonce: {0}")]

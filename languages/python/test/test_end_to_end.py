@@ -4,8 +4,8 @@ import bloock
 
 from bloock.client.builder import RecordBuilder
 from bloock.client.client import Client
-from bloock.client.entity.decrypter import AesDecrypter, RsaDecrypter
-from bloock.client.entity.encrypter import AesEncrypter, RsaEncrypter
+from bloock.client.entity.decrypter import AesDecrypter, EciesDecrypter, RsaDecrypter
+from bloock.client.entity.encrypter import AesEncrypter, EciesEncrypter, RsaEncrypter
 from bloock.client.entity.signer import EcsdaSigner
 from bloock.client.entity.network import Network
 from bloock.client.entity.publisher import HostedPublisher
@@ -38,6 +38,9 @@ class TestE2E(unittest.TestCase):
 
         self._testRsaEncryption()
         self._testRsaEncryptionDataAvailability()
+
+        self._testEciesEncryption()
+        self._testEciesEncryptionDataAvailability()
 
         send_receipts = self.client.send_records(records)
         self.assertGreater(len(send_receipts), 0)
@@ -240,6 +243,60 @@ class TestE2E(unittest.TestCase):
         record = (
             RecordBuilder.from_record(loaded_record)
             .with_decrypter(RsaDecrypter(keys.private_key))
+            .build()
+        )
+
+        self.assertEqual(payload, record.payload.decode())
+
+        hash = record.get_hash()
+        self.assertEqual(
+            "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
+        )
+
+    def _testEciesEncryption(self):
+        payload = "Hello world 2"
+        keys = self.client.generate_ecies_keypair()
+
+        encrypted_record = (
+            RecordBuilder.from_string(payload)
+            .with_encrypter(EciesEncrypter(keys.public_key))
+            .build()
+        )
+
+        self.assertNotEqual(payload.encode(), encrypted_record.payload)
+
+        record = (
+            RecordBuilder.from_record(encrypted_record)
+            .with_decrypter(EciesDecrypter(keys.private_key))
+            .build()
+        )
+
+        self.assertEqual(payload, record.payload.decode())
+
+        hash = record.get_hash()
+        self.assertEqual(
+            "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
+        )
+
+    def _testEciesEncryptionDataAvailability(self):
+        payload = "Hello world 2"
+        keys = self.client.generate_ecies_keypair()
+
+        encrypted_record = (
+            RecordBuilder.from_string(payload)
+            .with_encrypter(EciesEncrypter(keys.public_key))
+            .build()
+        )
+
+        self.assertNotEqual(payload.encode(), encrypted_record.payload)
+
+        result = encrypted_record.publish(HostedPublisher())
+
+        loaded_record = RecordBuilder.from_loader(HostedLoader(hash=result)).build()
+
+        record = (
+            RecordBuilder.from_record(loaded_record)
+            .with_decrypter(EciesDecrypter(keys.private_key))
             .build()
         )
 

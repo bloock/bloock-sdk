@@ -27,9 +27,26 @@ export class RsaEncrypter implements Encrypter {
   alg: proto.EncryptionAlg;
   args: EncrypterArgs;
 
-  constructor(password: string) {
+  constructor(public_key: string) {
     this.alg = proto.EncryptionAlg.RSA;
-    this.args = new EncrypterArgs(password);
+    this.args = new EncrypterArgs(public_key);
+  }
+
+  public toProto(): proto.Encrypter {
+    return proto.Encrypter.fromPartial({
+      alg: this.alg,
+      args: this.args.toProto()
+    });
+  }
+}
+
+export class EciesEncrypter implements Encrypter {
+  alg: proto.EncryptionAlg;
+  args: EncrypterArgs;
+
+  constructor(public_key: string) {
+    this.alg = proto.EncryptionAlg.ECIES;
+    this.args = new EncrypterArgs(public_key);
   }
 
   public toProto(): proto.Encrypter {

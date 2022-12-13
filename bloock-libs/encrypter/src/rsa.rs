@@ -54,7 +54,7 @@ impl Encrypter for RsaEncrypter {
         let mut rng = rand::thread_rng();
 
         let public_key = RsaPublicKey::from_public_key_pem(&self.args.public_key)
-            .map_err(|err| EncrypterError::FailedToEncrypt(err.to_string()))?;
+            .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
 
         let padding = PaddingScheme::new_oaep::<sha2::Sha256>();
 
@@ -89,7 +89,7 @@ impl RsaDecrypter {
 impl Decrypter for RsaDecrypter {
     fn decrypt(&self, cipher_text: &[u8]) -> Result<Vec<u8>> {
         let private_key = RsaPrivateKey::from_pkcs8_pem(&self.args.private_key)
-            .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))?;
+            .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
         let padding = PaddingScheme::new_oaep::<sha2::Sha256>();
         private_key
             .decrypt(padding, cipher_text)
@@ -136,7 +136,7 @@ mod tests {
 
         let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 
-        let decrypter = RsaDecrypter::new(RsaDecrypterArgs::new("incorrect_password"));
+        let decrypter = RsaDecrypter::new(RsaDecrypterArgs::new("incorrect_key"));
 
         let decrypted_payload_bytes = decrypter.decrypt(&ciphertext);
         assert!(decrypted_payload_bytes.is_err());

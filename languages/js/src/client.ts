@@ -9,13 +9,20 @@ import {
   VerifyRecordsRequest
 } from "./bridge/proto/proof";
 import {
+  GenerateEciesKeyPairRequest,
   GenerateKeysRequest,
   GenerateRsaKeyPairRequest,
   SendRecordsRequest
 } from "./bridge/proto/record";
 import { Proof } from "./entity/proof";
 import { Anchor } from "./entity/anchor";
-import { Keys, RecordReceipt, RsaKeyPair } from "./entity/record";
+import {
+  EcdsaKeyPair,
+  EciesKeyPair,
+  KeyPair,
+  RecordReceipt,
+  RsaKeyPair
+} from "./entity/record";
 import { NewConfigData } from "./config/config";
 
 export class BloockClient {
@@ -192,10 +199,13 @@ export class BloockClient {
 
   /**
    * It generates a public and a private key
-   * @returns {Promise<Keys>} An object containing both the public and the private key
+   * @returns {Promise<KeyPair>} An object containing both the public and the private key
    */
-  public async generateKeys(): Promise<Keys> {
-    let request = GenerateKeysRequest.fromPartial({});
+  public async generateKeys(): Promise<KeyPair> {
+    let request = GenerateKeysRequest.fromPartial({
+      configData: NewConfigData()
+    });
+
     return this.bridge
       .getRecord()
       .GenerateKeys(request)
@@ -203,16 +213,19 @@ export class BloockClient {
         if (res.error) {
           throw res.error;
         }
-        return Keys.fromProto(res);
+        return EcdsaKeyPair.fromProto(res);
       });
   }
 
   /**
    * It generates a public and a private key for RSA encryption
-   * @returns {Promise<RsaKeyPair>} An object containing both the public and the private key
+   * @returns {Promise<KeyPair>} An object containing both the public and the private key
    */
-  public async generateRsaKeyPair(): Promise<RsaKeyPair> {
-    let request = GenerateRsaKeyPairRequest.fromPartial({});
+  public async generateRsaKeyPair(): Promise<KeyPair> {
+    let request = GenerateRsaKeyPairRequest.fromPartial({
+      configData: NewConfigData()
+    });
+
     return this.bridge
       .getRecord()
       .GenerateRsaKeyPair(request)
@@ -220,7 +233,27 @@ export class BloockClient {
         if (res.error) {
           throw res.error;
         }
-        return Keys.fromProto(res);
+        return RsaKeyPair.fromProto(res);
+      });
+  }
+
+  /**
+   * It generates a public and a private key for ECIES encryption
+   * @returns {Promise<KeyPair>} An object containing both the public and the private key
+   */
+  public async generateEciesKeyPair(): Promise<KeyPair> {
+    let request = GenerateEciesKeyPairRequest.fromPartial({
+      configData: NewConfigData()
+    });
+
+    return this.bridge
+      .getRecord()
+      .GenerateEciesKeyPair(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return EciesKeyPair.fromProto(res);
       });
   }
 }

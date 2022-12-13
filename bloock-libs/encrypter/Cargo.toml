@@ -19,3 +19,4 @@ hex = "0.4.3"
 pbkdf2 = "0.11.0"
 hmac = "0.12.1"
 sha2 = "0.10.6"
+ecies = {version = "0.2", default-features = false, features = ["pure"]}
