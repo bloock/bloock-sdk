@@ -115,6 +115,7 @@ class RecordBuilder:
         if self.payload_type == proto.RecordTypes.RECORD:
             res = client.record().BuildRecordFromRecord(
                 proto.RecordBuilderFromRecordRequest(
+                    config_data=Config.new(),
                     payload=self.payload,
                     signer=self.signer,
                     encrypter=self.encrypter,
@@ -134,6 +135,7 @@ class RecordBuilder:
         elif self.payload_type == proto.RecordTypes.STRING:
             res = client.record().BuildRecordFromString(
                 proto.RecordBuilderFromStringRequest(
+                    config_data=Config.new(),
                     payload=self.payload,
                     signer=self.signer,
                     encrypter=self.encrypter,
@@ -143,6 +145,7 @@ class RecordBuilder:
         elif self.payload_type == proto.RecordTypes.HEX:
             res = client.record().BuildRecordFromHex(
                 proto.RecordBuilderFromHexRequest(
+                    config_data=Config.new(),
                     payload=self.payload,
                     signer=self.signer,
                     encrypter=self.encrypter,
@@ -152,6 +155,7 @@ class RecordBuilder:
         elif self.payload_type == proto.RecordTypes.JSON:
             res = client.record().BuildRecordFromJson(
                 proto.RecordBuilderFromJSONRequest(
+                    config_data=Config.new(),
                     payload=self.payload,
                     signer=self.signer,
                     encrypter=self.encrypter,
@@ -161,6 +165,7 @@ class RecordBuilder:
         elif self.payload_type == proto.RecordTypes.FILE:
             res = client.record().BuildRecordFromFile(
                 proto.RecordBuilderFromFileRequest(
+                    config_data=Config.new(),
                     payload=self.payload,
                     signer=self.signer,
                     encrypter=self.encrypter,
@@ -170,6 +175,7 @@ class RecordBuilder:
         elif self.payload_type == proto.RecordTypes.BYTES:
             res = client.record().BuildRecordFromBytes(
                 proto.RecordBuilderFromBytesRequest(
+                    config_data=Config.new(),
                     payload=self.payload,
                     signer=self.signer,
                     encrypter=self.encrypter,

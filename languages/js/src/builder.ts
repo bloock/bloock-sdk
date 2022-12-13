@@ -80,6 +80,7 @@ export class RecordBuilder {
     switch (this.payloadType) {
       case RecordTypes.STRING: {
         const req = RecordBuilderFromStringRequest.fromPartial({
+          configData: NewConfigData(),
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -98,6 +99,7 @@ export class RecordBuilder {
       }
       case RecordTypes.JSON: {
         const req = RecordBuilderFromJSONRequest.fromPartial({
+          configData: NewConfigData(),
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -116,6 +118,7 @@ export class RecordBuilder {
       }
       case RecordTypes.HEX: {
         const req = RecordBuilderFromHexRequest.fromPartial({
+          configData: NewConfigData(),
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -134,6 +137,7 @@ export class RecordBuilder {
       }
       case RecordTypes.BYTES: {
         const req = RecordBuilderFromBytesRequest.fromPartial({
+          configData: NewConfigData(),
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -152,6 +156,7 @@ export class RecordBuilder {
       }
       case RecordTypes.FILE: {
         const req = RecordBuilderFromFileRequest.fromPartial({
+          configData: NewConfigData(),
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,
@@ -170,6 +175,7 @@ export class RecordBuilder {
       }
       case RecordTypes.RECORD: {
         const req = RecordBuilderFromRecordRequest.fromPartial({
+          configData: NewConfigData(),
           payload: this.payload,
           signer: this.signer,
           encrypter: this.encrypter,

@@ -73,7 +73,10 @@ impl TryFrom<RecordCore> for Record {
     fn try_from(r: RecordCore) -> BridgeResult<Record> {
         let payload = r.serialize()?;
 
-        Ok(Record { payload })
+        Ok(Record {
+            config_data: None,
+            payload,
+        })
     }
 }
 

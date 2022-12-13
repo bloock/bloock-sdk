@@ -16,6 +16,7 @@ export class Record {
 
   toProto(): proto.Record {
     return proto.Record.fromPartial({
+      configData: NewConfigData(),
       payload: this.payload
     });
   }

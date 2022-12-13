@@ -28,8 +28,8 @@ pub struct EciesEncrypter {
 }
 
 impl EciesEncrypter {
-    pub fn new(args: EciesEncrypterArgs) -> Self {
-        Self { args }
+    pub fn new(args: EciesEncrypterArgs) -> Box<Self> {
+        Box::new(Self { args })
     }
 }
 
@@ -58,8 +58,8 @@ pub struct EciesDecrypter {
 }
 
 impl EciesDecrypter {
-    pub fn new(args: EciesDecrypterArgs) -> Self {
-        Self { args }
+    pub fn new(args: EciesDecrypterArgs) -> Box<Self> {
+        Box::new(Self { args })
     }
 }
 

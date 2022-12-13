@@ -20,7 +20,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class Proof(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -75,7 +74,6 @@ class Proof(google.protobuf.message.Message):
 
 global___Proof = Proof
 
-@typing_extensions.final
 class ProofAnchor(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -116,7 +114,6 @@ class ProofAnchor(google.protobuf.message.Message):
 
 global___ProofAnchor = ProofAnchor
 
-@typing_extensions.final
 class GetProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -148,7 +145,6 @@ class GetProofRequest(google.protobuf.message.Message):
 
 global___GetProofRequest = GetProofRequest
 
-@typing_extensions.final
 class GetProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -182,7 +178,6 @@ class GetProofResponse(google.protobuf.message.Message):
 
 global___GetProofResponse = GetProofResponse
 
-@typing_extensions.final
 class ValidateRootRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -230,7 +225,6 @@ class ValidateRootRequest(google.protobuf.message.Message):
 
 global___ValidateRootRequest = ValidateRootRequest
 
-@typing_extensions.final
 class ValidateRootResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -262,7 +256,6 @@ class ValidateRootResponse(google.protobuf.message.Message):
 
 global___ValidateRootResponse = ValidateRootResponse
 
-@typing_extensions.final
 class VerifyProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -293,7 +286,6 @@ class VerifyProofRequest(google.protobuf.message.Message):
 
 global___VerifyProofRequest = VerifyProofRequest
 
-@typing_extensions.final
 class VerifyProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -345,7 +337,6 @@ class VerifyProofResponse(google.protobuf.message.Message):
 
 global___VerifyProofResponse = VerifyProofResponse
 
-@typing_extensions.final
 class VerifyRecordsRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -398,7 +389,6 @@ class VerifyRecordsRequest(google.protobuf.message.Message):
 
 global___VerifyRecordsRequest = VerifyRecordsRequest
 
-@typing_extensions.final
 class VerifyRecordsResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

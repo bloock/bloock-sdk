@@ -105,26 +105,30 @@ impl Builder {
             self.document.remove_encryption(decrypted_payload)?;
         }
 
-        let mut record = Record::new(self.document.clone());
-
         if let Some(encrypter) = &self.encrypter {
             let payload = self.document.build()?;
             let ciphertext = encrypter
                 .encrypt(&payload)
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            if let Some(doc) = record.document.as_mut() {
-                doc.set_encryption(ciphertext)?;
-                self.document = doc.clone();
-            }
+            self.document.set_encryption(ciphertext)?;
         }
 
-        Ok(record)
+        Ok(Record::new(self.document))
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::{
+        anchor::entity::anchor::AnchorNetwork,
+        proof::entity::{anchor::ProofAnchor, proof::Proof},
+    };
+    use bloock_encrypter::aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs};
+    use bloock_signer::{
+        ecsda::{EcsdaSigner, EcsdaSignerArgs},
+        Signature, SignatureHeader,
+    };
 
     use super::*;
 
@@ -240,5 +244,281 @@ mod tests {
         let document_payload = document.get_payload();
 
         assert_eq!(payload, document_payload, "Unexpected payload received");
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_string_no_signature_nor_encryption() {
+        let content = "hello world!";
+
+        let response = RecordBuilder::from_string(content.to_string())
+            .unwrap()
+            .build()
+            .unwrap();
+
+        let result_payload = String::from_utf8(response.serialize().unwrap()).unwrap();
+        assert_eq!(content, result_payload);
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_string_set_signature() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let content = "hello world!";
+
+        let record = RecordBuilder::from_string(content.to_string())
+            .unwrap()
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .build()
+            .unwrap();
+
+        let document = Document::new(&record.clone().serialize().unwrap()).unwrap();
+
+        let result_signature = document.get_signatures().unwrap();
+        let result_protected = result_signature[0].clone().protected;
+        let result_algorithm = result_signature[0].clone().header.alg;
+        let result_public_key = result_signature[0].clone().header.kid;
+        let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
+        let result_proof = document.get_proof();
+
+        assert_eq!(1, result_signature.len());
+        assert_eq!("e30", result_protected);
+        assert_eq!("ES256K", result_algorithm);
+        assert_eq!(
+            "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8",
+            result_public_key
+        );
+        assert_ne!(content, result_payload);
+        assert_eq!(None, result_proof);
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_string_set_signature_and_encryption() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "some_password";
+        let content = "hello world!";
+
+        let record = RecordBuilder::from_string(content.to_string())
+            .unwrap()
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_ne!(content.as_bytes(), record.clone().serialize().unwrap());
+
+        let unencrypted_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        let result_signature = unencrypted_record.get_signatures().unwrap();
+        assert_eq!(1, result_signature.len());
+        assert_eq!(
+            content.as_bytes(),
+            unencrypted_record.get_payload().unwrap()
+        );
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_pdf_set_encryption() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "some_password";
+        let payload = include_bytes!("../../../assets/dummy.pdf");
+
+        let default_record = RecordBuilder::from_file(payload.to_vec())
+            .unwrap()
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .build()
+            .unwrap();
+
+        let encrypted_record = RecordBuilder::from_file(payload.to_vec())
+            .unwrap()
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_ne!(default_record.get_hash(), encrypted_record.get_hash());
+
+        let unencrypted_record = RecordBuilder::from_record(encrypted_record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        let expected_signatures = vec![
+            Signature {
+                header: SignatureHeader {
+                    alg: "ES256K".to_string(),
+                    kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
+                },
+                protected: "e30".to_string(),
+                signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e611416".to_string(),
+            }
+        ];
+
+        assert_eq!(
+            unencrypted_record.get_signatures().unwrap(),
+            expected_signatures
+        );
+        assert_eq!(default_record.get_hash(), unencrypted_record.get_hash());
+    }
+
+    #[tokio::test]
+    async fn test_build_record_with_encryption_and_decryption() {
+        let password = "some_password";
+        let content = "hello world!";
+
+        let encrypted_record = RecordBuilder::from_string(content.to_string())
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_ne!(
+            content.as_bytes(),
+            encrypted_record.clone().serialize().unwrap()
+        );
+
+        let record = RecordBuilder::from_record(encrypted_record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_eq!(content.as_bytes(), record.get_payload().unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_build_record_set_signature_encryption_and_decryption() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "some_password";
+        let content = "hello world!";
+
+        let record = RecordBuilder::from_string(content.to_string())
+            .unwrap()
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        let record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_eq!(content.as_bytes(), record.get_payload().unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_build_record_set_proof_encryption_and_decryption() {
+        let password = "some_password";
+        let content = "hello world!";
+
+        let mut record = RecordBuilder::from_string(content.to_string())
+            .unwrap()
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(Proof {
+                anchor: ProofAnchor {
+                    anchor_id: 1,
+                    networks: vec![AnchorNetwork {
+                        name: "net".to_string(),
+                        state: "state".to_string(),
+                        tx_hash: "tx_hash".to_string(),
+                    }],
+                    root: "root".to_string(),
+                    status: "status".to_string(),
+                },
+                bitmap: "111".to_string(),
+                depth: "111".to_string(),
+                leaves: vec![[0u8; 32]],
+                nodes: vec![[0u8; 32]],
+            })
+            .unwrap();
+
+        let encrypted_record = RecordBuilder::from_record(record.clone())
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_eq!(encrypted_record.get_proof(), None);
+        assert_ne!(encrypted_record.get_payload(), record.get_payload());
+
+        let record = RecordBuilder::from_record(encrypted_record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_eq!(content.as_bytes(), record.get_payload().unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_hex() {
+        let content = "776463776463776377637765";
+
+        RecordBuilder::from_hex(content.to_string())
+            .unwrap()
+            .build()
+            .unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_json() {
+        let content = "{\"hello\":\"world\"}";
+
+        RecordBuilder::from_json(content.to_string())
+            .unwrap()
+            .build()
+            .unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_file() {
+        let content = "hello world!";
+
+        let record = RecordBuilder::from_file(content.as_bytes().to_vec())
+            .unwrap()
+            .build()
+            .unwrap();
+
+        let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
+
+        assert_eq!(content, result_payload);
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_bytes() {
+        let content = "hello world!";
+
+        let record = RecordBuilder::from_bytes(content.as_bytes().to_vec())
+            .unwrap()
+            .build()
+            .unwrap();
+
+        let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
+
+        assert_eq!(content, result_payload);
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_record() {
+        let content = "hello world!";
+
+        let record = RecordBuilder::from_string(content.to_string())
+            .unwrap()
+            .build()
+            .unwrap();
+
+        let record = RecordBuilder::from_record(record).unwrap().build().unwrap();
+
+        let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
+
+        assert_eq!(content, result_payload);
     }
 }

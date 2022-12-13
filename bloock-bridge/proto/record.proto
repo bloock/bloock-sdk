@@ -73,6 +73,7 @@ message RecordHeader {
 }
 
 message Record {
+    optional ConfigData config_data = 1;
     bytes payload = 2;
 }
 
@@ -132,45 +133,51 @@ message RecordReceipt {
 }
 
 message RecordBuilderFromStringRequest {
-    string payload = 1;
-    optional Signer signer = 2;
-    optional Encrypter encrypter = 3;
-    optional Decrypter decrypter = 4;
+    ConfigData config_data = 1;
+    string payload = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+    optional Decrypter decrypter = 5;
 }
 
 message RecordBuilderFromHexRequest {
-    string payload = 1;
-    optional Signer signer = 2;
-    optional Encrypter encrypter = 3;
-    optional Decrypter decrypter = 4;
+    ConfigData config_data = 1;
+    string payload = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+    optional Decrypter decrypter = 5;
 }
 
 message RecordBuilderFromJSONRequest {
-    string payload = 1;
-    optional Signer signer = 2;
-    optional Encrypter encrypter = 3;
-    optional Decrypter decrypter = 4;
+    ConfigData config_data = 1;
+    string payload = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+    optional Decrypter decrypter = 5;
 }
 
 message RecordBuilderFromBytesRequest {
-    bytes payload = 1;
-    optional Signer signer = 2;
-    optional Encrypter encrypter = 3;
-    optional Decrypter decrypter = 4;
+    ConfigData config_data = 1;
+    bytes payload = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+    optional Decrypter decrypter = 5;
 }
 
 message RecordBuilderFromFileRequest {
-    bytes payload = 1;
-    optional Signer signer = 2;
-    optional Encrypter encrypter = 3;
-    optional Decrypter decrypter = 4;
+    ConfigData config_data = 1;
+    bytes payload = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+    optional Decrypter decrypter = 5;
 }
 
 message RecordBuilderFromRecordRequest {
-    Record payload = 1;
-    optional Signer signer = 2;
-    optional Encrypter encrypter = 3;
-    optional Decrypter decrypter = 4;
+    ConfigData config_data = 1;
+    Record payload = 2;
+    optional Signer signer = 3;
+    optional Encrypter encrypter = 4;
+    optional Decrypter decrypter = 5;
 }
 
 message RecordBuilderResponse {

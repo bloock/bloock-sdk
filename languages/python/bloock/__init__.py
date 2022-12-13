@@ -1,4 +1,4 @@
-__version__ = "2.0.1"
+__version__ = "2.0.2"
 
 from typing import Dict
 
@@ -8,6 +8,7 @@ from bloock.client.entity.network import Network
 
 api_key = ""
 api_host = ""
+disable_analytics = False
 network_config: Dict[int, NetworkConfig] = {}
 
 

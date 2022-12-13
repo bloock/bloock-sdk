@@ -24,7 +24,10 @@ public class Record {
   }
 
   public RecordOuterClass.Record toProto() {
-    return RecordOuterClass.Record.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
+    return RecordOuterClass.Record.newBuilder()
+        .setConfigData(Config.newConfigData())
+        .setPayload(ByteString.copyFrom(payload))
+        .build();
   }
 
   public String getHash() throws Exception {

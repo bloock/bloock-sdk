@@ -25,7 +25,8 @@ func NewRecordFromProto(r *proto.Record) Record {
 
 func (r Record) ToProto() *proto.Record {
 	return &proto.Record{
-		Payload: r.Payload,
+		ConfigData: config.NewConfigData(),
+		Payload:    r.Payload,
 	}
 }
 

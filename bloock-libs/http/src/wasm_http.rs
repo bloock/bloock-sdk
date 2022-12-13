@@ -26,7 +26,6 @@ use web_sys::Response;
 extern "C" {
     #[wasm_bindgen(js_name = fetch)]
     fn fetch(input: web_sys::Request) -> Promise;
-
 }
 
 pub struct SimpleHttpClient {}

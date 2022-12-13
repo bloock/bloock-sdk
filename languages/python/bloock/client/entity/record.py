@@ -67,6 +67,7 @@ class Record:
 
     def to_proto(self) -> proto.Record:
         return proto.Record(
+            config_data=Config.new(),
             payload=self.payload,
         )
 

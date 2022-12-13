@@ -8,6 +8,7 @@ import java.util.Map;
 public class Bloock {
   public static String apiKey = "";
   public static String apiHost = "";
+  public static Boolean disableAnalytics = false;
   public static Map<Integer, NetworkConfig> networkConfig = new HashMap<>();
 
   public static void setProvider(Network network, String provider) {

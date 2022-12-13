@@ -18,6 +18,7 @@ class TestE2E(unittest.TestCase):
         api_host = os.environ.get("API_HOST")
         if api_host != None:
             bloock.api_host = api_host
+        bloock.disable_analytics = True
         self.client = Client()
 
     def test_e2e_with_all_builders(self):
