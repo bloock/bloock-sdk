@@ -10,12 +10,14 @@ import { AesEncrypter, EciesEncrypter, RsaEncrypter } from "./entity/encrypter";
 import { AesDecrypter, EciesDecrypter, RsaDecrypter } from "./entity/decrypter";
 import { HostedPublisher } from "./entity/publisher";
 import { HostedLoader } from "./entity/loader";
+import { Record } from "./entity/record";
 
 export {
   Bloock,
   BloockClient,
   Anchor,
   Network,
+  Record,
   RecordReceipt,
   RecordBuilder,
   EcsdaSigner,

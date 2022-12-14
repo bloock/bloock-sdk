@@ -26,6 +26,7 @@ type ProofServiceClient interface {
 	ValidateRoot(ctx context.Context, in *ValidateRootRequest, opts ...grpc.CallOption) (*ValidateRootResponse, error)
 	VerifyProof(ctx context.Context, in *VerifyProofRequest, opts ...grpc.CallOption) (*VerifyProofResponse, error)
 	VerifyRecords(ctx context.Context, in *VerifyRecordsRequest, opts ...grpc.CallOption) (*VerifyRecordsResponse, error)
+	SetProof(ctx context.Context, in *SetProofRequest, opts ...grpc.CallOption) (*SetProofResponse, error)
 }
 
 type proofServiceClient struct {
@@ -72,6 +73,15 @@ func (c *proofServiceClient) VerifyRecords(ctx context.Context, in *VerifyRecord
 	return out, nil
 }
 
+func (c *proofServiceClient) SetProof(ctx context.Context, in *SetProofRequest, opts ...grpc.CallOption) (*SetProofResponse, error) {
+	out := new(SetProofResponse)
+	err := c.cc.Invoke(ctx, "/bloock.ProofService/SetProof", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProofServiceServer is the server API for ProofService service.
 // All implementations must embed UnimplementedProofServiceServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type ProofServiceServer interface {
 	ValidateRoot(context.Context, *ValidateRootRequest) (*ValidateRootResponse, error)
 	VerifyProof(context.Context, *VerifyProofRequest) (*VerifyProofResponse, error)
 	VerifyRecords(context.Context, *VerifyRecordsRequest) (*VerifyRecordsResponse, error)
+	SetProof(context.Context, *SetProofRequest) (*SetProofResponse, error)
 	mustEmbedUnimplementedProofServiceServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedProofServiceServer) VerifyProof(context.Context, *VerifyProof
 }
 func (UnimplementedProofServiceServer) VerifyRecords(context.Context, *VerifyRecordsRequest) (*VerifyRecordsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyRecords not implemented")
+}
+func (UnimplementedProofServiceServer) SetProof(context.Context, *SetProofRequest) (*SetProofResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetProof not implemented")
 }
 func (UnimplementedProofServiceServer) mustEmbedUnimplementedProofServiceServer() {}
 
@@ -184,6 +198,24 @@ func _ProofService_VerifyRecords_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProofService_SetProof_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetProofRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProofServiceServer).SetProof(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.ProofService/SetProof",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProofServiceServer).SetProof(ctx, req.(*SetProofRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProofService_ServiceDesc is the grpc.ServiceDesc for ProofService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var ProofService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyRecords",
 			Handler:    _ProofService_VerifyRecords_Handler,
+		},
+		{
+			MethodName: "SetProof",
+			Handler:    _ProofService_SetProof_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

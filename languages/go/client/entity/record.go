@@ -90,7 +90,7 @@ func (r Record) Retrieve() []byte {
 
 func (r Record) SetProof(proof Proof) error {
 	bridgeClient := bridge.NewBloockBridge()
-	res, err := bridgeClient.Record().SetProof(context.Background(), &proto.SetProofRequest{
+	res, err := bridgeClient.Proof().SetProof(context.Background(), &proto.SetProofRequest{
 		ConfigData: config.NewConfigData(),
 		Record:     r.ToProto(),
 		Proof:      proof.ToProto(),

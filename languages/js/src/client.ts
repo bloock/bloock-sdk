@@ -17,6 +17,7 @@ import {
 import { Proof } from "./entity/proof";
 import { Anchor } from "./entity/anchor";
 import {
+  Record,
   EcdsaKeyPair,
   EciesKeyPair,
   KeyPair,
@@ -37,10 +38,10 @@ export class BloockClient {
    * @param  {Record[]} records List of Record to send.
    * @returns {Promise<RecordReceipt[]>} List of RecordReceipt of each Record sent or error.
    */
-  public async sendRecords(records: string[]): Promise<RecordReceipt[]> {
+  public async sendRecords(records: Record[]): Promise<RecordReceipt[]> {
     const request = SendRecordsRequest.fromPartial({
       configData: NewConfigData(),
-      records: records
+      records: records.map(x => x.toProto())
     });
 
     return this.bridge
@@ -106,10 +107,10 @@ export class BloockClient {
    * @returns {Promise<Proof>} The Proof object containing the elements necessary to verify
    * the integrity of the records in the input list. If no record was requested, then returns None.
    */
-  public async getProof(records: string[]): Promise<Proof> {
+  public async getProof(records: Record[]): Promise<Proof> {
     const request = GetProofRequest.fromPartial({
       configData: NewConfigData(),
-      records: records
+      records: records.map(x => x.toProto())
     });
 
     return this.bridge
@@ -177,12 +178,12 @@ export class BloockClient {
    * @returns {Promise<number>} A number representing the timestamp in milliseconds when the anchor was registered in Blockchain
    */
   public async verifyRecords(
-    records: string[],
+    records: Record[],
     network?: Network
   ): Promise<number> {
     const request = VerifyRecordsRequest.fromPartial({
       configData: NewConfigData(),
-      records: records,
+      records: records.map(x => x.toProto()),
       network: network
     });
 

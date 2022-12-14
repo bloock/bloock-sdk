@@ -20,11 +20,10 @@ func NewClient() Client {
 	}
 }
 
-func (c *Client) SendRecords(records []string) ([]entity.RecordReceipt, error) {
-
+func (c *Client) SendRecords(records []entity.Record) ([]entity.RecordReceipt, error) {
 	res, err := c.bridgeClient.Record().SendRecords(context.Background(), &proto.SendRecordsRequest{
 		ConfigData: config.NewConfigData(),
-		Records:    records,
+		Records:    entity.MapRecordsToProto(records),
 	})
 
 	if err != nil {
@@ -82,10 +81,10 @@ func (c *Client) WaitAnchor(anchorID int64, params entity.AnchorParams) (entity.
 	return entity.NewAnchorFromProto(res.Anchor), nil
 }
 
-func (c *Client) GetProof(records []string) (entity.Proof, error) {
+func (c *Client) GetProof(records []entity.Record) (entity.Proof, error) {
 	res, err := c.bridgeClient.Proof().GetProof(context.Background(), &proto.GetProofRequest{
 		ConfigData: config.NewConfigData(),
-		Records:    records,
+		Records:    entity.MapRecordsToProto(records),
 	})
 
 	if err != nil {
@@ -116,10 +115,10 @@ func (c *Client) VerifyProof(proof entity.Proof) (string, error) {
 	return *res.Record, nil
 }
 
-func (c *Client) VerifyRecords(records []string, params entity.NetworkParams) (uint64, error) {
+func (c *Client) VerifyRecords(records []entity.Record, params entity.NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Proof().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
 		ConfigData: config.NewConfigData(),
-		Records:    records,
+		Records:    entity.MapRecordsToProto(records),
 		Network:    params.Network.Enum(),
 	})
 

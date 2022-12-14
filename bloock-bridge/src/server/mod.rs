@@ -147,7 +147,7 @@ impl Server {
                 .publish(self.serialize_request(payload)?)
                 .await
                 .into()),
-            BloockServer::RecordServiceSetProof => Ok(self
+            BloockServer::ProofServiceSetProof => Ok(self
                 .record
                 .publish(self.serialize_request(payload)?)
                 .await

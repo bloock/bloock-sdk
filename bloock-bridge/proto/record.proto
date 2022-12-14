@@ -7,7 +7,6 @@ option java_package = "com.bloock.sdk.bridge.proto";
 
 import "shared.proto";
 import "config.proto";
-import "proof.proto";
 
 enum RecordTypes {
 	STRING = 0;
@@ -34,7 +33,6 @@ service RecordService {
     rpc GenerateRsaKeyPair(GenerateRsaKeyPairRequest) returns (GenerateRsaKeyPairResponse);
     rpc GenerateEciesKeyPair(GenerateEciesKeyPairRequest) returns (GenerateEciesKeyPairResponse);
     rpc Publish(PublishRequest) returns (PublishResponse);
-    rpc SetProof(SetProofRequest) returns (SetProofResponse);
 }
 
 message GenerateKeysRequest {
@@ -195,7 +193,7 @@ message RecordBuilderResponse {
 
 message SendRecordsRequest {
     ConfigData config_data = 1;
-    repeated string records = 2;
+    repeated Record records = 2;
 }
 
 message SendRecordsResponse {
@@ -240,15 +238,4 @@ message PublishRequest {
 message PublishResponse {
     string hash = 1;
     optional Error error = 2;
-}
-
-message SetProofRequest {
-    ConfigData config_data = 1;
-    Record record = 2;
-    Proof proof = 3;
-}
-
-message SetProofResponse {
-    optional Error error = 1;
-    optional Record record = 2;
 }

@@ -36,7 +36,6 @@ type RecordServiceClient interface {
 	GenerateRsaKeyPair(ctx context.Context, in *GenerateRsaKeyPairRequest, opts ...grpc.CallOption) (*GenerateRsaKeyPairResponse, error)
 	GenerateEciesKeyPair(ctx context.Context, in *GenerateEciesKeyPairRequest, opts ...grpc.CallOption) (*GenerateEciesKeyPairResponse, error)
 	Publish(ctx context.Context, in *PublishRequest, opts ...grpc.CallOption) (*PublishResponse, error)
-	SetProof(ctx context.Context, in *SetProofRequest, opts ...grpc.CallOption) (*SetProofResponse, error)
 }
 
 type recordServiceClient struct {
@@ -173,15 +172,6 @@ func (c *recordServiceClient) Publish(ctx context.Context, in *PublishRequest, o
 	return out, nil
 }
 
-func (c *recordServiceClient) SetProof(ctx context.Context, in *SetProofRequest, opts ...grpc.CallOption) (*SetProofResponse, error) {
-	out := new(SetProofResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/SetProof", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // RecordServiceServer is the server API for RecordService service.
 // All implementations must embed UnimplementedRecordServiceServer
 // for forward compatibility
@@ -200,7 +190,6 @@ type RecordServiceServer interface {
 	GenerateRsaKeyPair(context.Context, *GenerateRsaKeyPairRequest) (*GenerateRsaKeyPairResponse, error)
 	GenerateEciesKeyPair(context.Context, *GenerateEciesKeyPairRequest) (*GenerateEciesKeyPairResponse, error)
 	Publish(context.Context, *PublishRequest) (*PublishResponse, error)
-	SetProof(context.Context, *SetProofRequest) (*SetProofResponse, error)
 	mustEmbedUnimplementedRecordServiceServer()
 }
 
@@ -249,9 +238,6 @@ func (UnimplementedRecordServiceServer) GenerateEciesKeyPair(context.Context, *G
 }
 func (UnimplementedRecordServiceServer) Publish(context.Context, *PublishRequest) (*PublishResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Publish not implemented")
-}
-func (UnimplementedRecordServiceServer) SetProof(context.Context, *SetProofRequest) (*SetProofResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetProof not implemented")
 }
 func (UnimplementedRecordServiceServer) mustEmbedUnimplementedRecordServiceServer() {}
 
@@ -518,24 +504,6 @@ func _RecordService_Publish_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RecordService_SetProof_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetProofRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).SetProof(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/SetProof",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).SetProof(ctx, req.(*SetProofRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // RecordService_ServiceDesc is the grpc.ServiceDesc for RecordService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -598,10 +566,6 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Publish",
 			Handler:    _RecordService_Publish_Handler,
-		},
-		{
-			MethodName: "SetProof",
-			Handler:    _RecordService_SetProof_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
