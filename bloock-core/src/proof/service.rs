@@ -40,7 +40,7 @@ impl<H: Client> ProofService<H> {
         }
 
         if records.len() == 1 && records[0].get_proof().is_some() {
-            return Ok(records[0].get_proof().unwrap())
+            return Ok(records[0].get_proof().unwrap());
         }
 
         records.sort();

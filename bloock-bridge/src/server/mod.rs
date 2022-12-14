@@ -148,8 +148,8 @@ impl Server {
                 .await
                 .into()),
             BloockServer::ProofServiceSetProof => Ok(self
-                .record
-                .publish(self.serialize_request(payload)?)
+                .proof
+                .set_proof(self.serialize_request(payload)?)
                 .await
                 .into()),
             _ => Err(BridgeError::ServiceNotFound),

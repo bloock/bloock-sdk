@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2/builder"
@@ -14,28 +15,9 @@ func TestEndToEnd(t *testing.T) {
 	sdk := GetSdk()
 
 	t.Run("E2E using all the builders", func(t *testing.T) {
+		testSetProof(t, sdk)
+
 		records := []entity.Record{}
-
-		record, err := builder.NewRecordBuilderFromString("Hello world").Build()
-
-		p := entity.Proof{
-			Leaves: []string{"123"},
-			Nodes:  []string{"456"},
-			Depth:  "1010101",
-			Bitmap: "0101010",
-			Anchor: entity.ProofAnchor{
-				AnchorID: 42,
-				Networks: []entity.AnchorNetwork{{
-					Name:   "Ethereum",
-					State:  "state",
-					TxHash: "dfdsf9aaf88323bjk3",
-				}},
-				Root:   "001",
-				Status: "success",
-			},
-		}
-
-		record.SetProof(p)
 
 		records = append(records, testFromString(t))
 		records = append(records, testFromBytes(t))
@@ -358,4 +340,36 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 	assert.Equal(t, len(signatures), 2)
 
 	return record
+}
+
+func testSetProof(t *testing.T, sdk client.Client) {
+	record, err := builder.NewRecordBuilderFromString("Hello world").Build()
+	require.NoError(t, err)
+
+	originalProof := entity.Proof{
+		Leaves: []string{"ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"},
+		Nodes:  []string{"ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"},
+		Depth:  "1010101",
+		Bitmap: "0101010",
+		Anchor: entity.ProofAnchor{
+			AnchorID: 42,
+			Networks: []entity.AnchorNetwork{{
+				Name:   "Ethereum",
+				State:  "state",
+				TxHash: "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+			}},
+			Root:   "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+			Status: "success",
+		},
+	}
+
+    err = record.SetProof(originalProof)
+    require.NoError(t, err)
+
+    finalProof, err := sdk.GetProof([]entity.Record{record})
+    fmt.Printf("==> %+v", finalProof)
+    require.NoError(t, err)
+
+    assert.Equal(t, finalProof, originalProof)
+
 }

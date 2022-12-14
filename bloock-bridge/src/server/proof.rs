@@ -47,6 +47,12 @@ impl From<VerifyRecordsResponse> for ResponseType {
     }
 }
 
+impl From<SetProofResponse> for ResponseType {
+    fn from(res: SetProofResponse) -> Self {
+        ResponseType::SetProof(res)
+    }
+}
+
 pub struct ProofServer {}
 
 #[async_trait(?Send)]
