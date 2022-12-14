@@ -6,6 +6,8 @@ import com.bloock.sdk.bridge.proto.RecordOuterClass.PublishRequest;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.PublishResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.RecordHash;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.RecordSignatures;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.SetProofRequest;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.SetProofResponse;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
 import com.google.protobuf.ByteString;
@@ -35,7 +37,7 @@ public class Record {
     RecordHash recordHash = bridge.getRecord().getHash(this.toProto());
 
     if (recordHash.getError() != Error.getDefaultInstance()) {
-      throw new Exception(recordHash.getError().toString());
+      throw new Exception(recordHash.getError().getMessage());
     }
 
     return recordHash.getHash();
@@ -46,7 +48,7 @@ public class Record {
     RecordSignatures recordSignatures = bridge.getRecord().getSignatures(this.toProto());
 
     if (recordSignatures.getError() != Error.getDefaultInstance()) {
-      throw new Exception(recordSignatures.getError().toString());
+      throw new Exception(recordSignatures.getError().getMessage());
     }
 
     return recordSignatures.getSignaturesList().stream()
@@ -69,7 +71,7 @@ public class Record {
 
     PublishResponse response = bridge.getRecord().publish(req);
     if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().toString());
+      throw new Exception(response.getError().getMessage());
     }
 
     return response.getHash();
@@ -77,5 +79,23 @@ public class Record {
 
   public byte[] retrieve() {
     return this.payload;
+  }
+
+  public void setProof(Proof proof) throws Exception {
+    Bridge bridge = new Bridge();
+    SetProofRequest request =
+        SetProofRequest.newBuilder()
+            .setProof(proof.toProto())
+            .setRecord(this.toProto())
+            .setConfigData(Config.newConfigData())
+            .build();
+
+    SetProofResponse response = bridge.getRecord().setProof(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    this.payload = response.getRecord().getPayload().toByteArray();
   }
 }
