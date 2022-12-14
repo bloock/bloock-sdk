@@ -71,15 +71,17 @@ impl ProofServiceHandler for ProofServer {
             .collect::<Result<Vec<RecordCore>, BridgeError>>()
         {
             Ok(r) => r,
-            Err(e) => return GetProofResponse::new_error(&client, e.to_string(), &req).await,
+            Err(e) => return GetProofResponse::new_error(&client, e.to_string(), vec![]).await,
         };
+
+        let hashes = records.iter().map(|record| record.get_hash()).collect();
 
         let proof = match client.get_proof(records).await {
             Ok(proof) => proof,
-            Err(e) => return GetProofResponse::new_error(&client, e.to_string(), &req).await,
+            Err(e) => return GetProofResponse::new_error(&client, e.to_string(), hashes).await,
         };
 
-        GetProofResponse::new_success(&client, proof.into(), &req).await
+        GetProofResponse::new_success(&client, proof.into(), hashes).await
     }
 
     async fn set_proof(&self, req: SetProofRequest) -> SetProofResponse {
@@ -234,9 +236,9 @@ impl GetProofResponse {
     async fn new_success(
         client: &BloockClient,
         proof: ItemsProof,
-        req: &GetProofRequest,
+        records: Vec<String>,
     ) -> GetProofResponse {
-        Self::send_event(client, req, None).await;
+        Self::send_event(client, records, None).await;
 
         GetProofResponse {
             proof: Some(proof),
@@ -247,9 +249,9 @@ impl GetProofResponse {
     async fn new_error(
         client: &BloockClient,
         err: String,
-        req: &GetProofRequest,
+        records: Vec<String>,
     ) -> GetProofResponse {
-        Self::send_event(client, req, Some(&err)).await;
+        Self::send_event(client, records, Some(&err)).await;
 
         GetProofResponse {
             proof: None,
@@ -257,10 +259,9 @@ impl GetProofResponse {
         }
     }
 
-    async fn send_event(client: &BloockClient, req: &GetProofRequest, error: Option<&str>) {
-        // .iter().map(|x| RecordCore::try_from(x.clone()).unwrap().get_hash()).collect::<Vec<_>>()
+    async fn send_event(client: &BloockClient, records: Vec<String>, error: Option<&str>) {
         let event_attr = json! ({
-            "records": req.records,
+            "records": records,
         });
 
         let error = error.map(|_| BridgeError::ProofError.to_string());
