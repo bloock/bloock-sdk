@@ -1,9 +1,8 @@
 package com.bloock.sdk.entity;
 
+import com.bloock.sdk.bridge.proto.ProofOuterClass;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.bloock.sdk.bridge.proto.ProofOuterClass;
 
 public class ProofAnchor {
   long anchorId;
@@ -37,19 +36,19 @@ public class ProofAnchor {
         .build();
   }
 
-public long getAnchorId() {
-	return anchorId;
-}
+  public long getAnchorId() {
+    return anchorId;
+  }
 
-public List<AnchorNetwork> getNetworks() {
-	return networks;
-}
+  public List<AnchorNetwork> getNetworks() {
+    return networks;
+  }
 
-public String getRoot() {
-	return root;
-}
+  public String getRoot() {
+    return root;
+  }
 
-public String getStatus() {
-	return status;
-}
+  public String getStatus() {
+    return status;
+  }
 }

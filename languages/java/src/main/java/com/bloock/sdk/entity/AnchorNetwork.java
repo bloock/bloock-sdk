@@ -30,15 +30,15 @@ public class AnchorNetwork {
     return "{" + " name: " + name + ", state: " + state + ", txHash: " + txHash + "}";
   }
 
-public String getName() {
-	return name;
-}
+  public String getName() {
+    return name;
+  }
 
-public String getState() {
-	return state;
-}
+  public String getState() {
+    return state;
+  }
 
-public String getTxHash() {
-	return txHash;
-}
+  public String getTxHash() {
+    return txHash;
+  }
 }
