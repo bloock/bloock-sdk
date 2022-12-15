@@ -1,13 +1,13 @@
 package com.bloock.sdk.entity;
 
 import com.bloock.sdk.bridge.Bridge;
+import com.bloock.sdk.bridge.proto.ProofOuterClass.SetProofRequest;
+import com.bloock.sdk.bridge.proto.ProofOuterClass.SetProofResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.PublishRequest;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.PublishResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.RecordHash;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.RecordSignatures;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.SetProofRequest;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.SetProofResponse;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
 import com.google.protobuf.ByteString;
@@ -90,7 +90,7 @@ public class Record {
             .setConfigData(Config.newConfigData())
             .build();
 
-    SetProofResponse response = bridge.getRecord().setProof(request);
+    SetProofResponse response = bridge.getProof().setProof(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());

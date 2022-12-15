@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2/builder"
@@ -15,8 +14,6 @@ func TestEndToEnd(t *testing.T) {
 	sdk := GetSdk()
 
 	t.Run("E2E using all the builders", func(t *testing.T) {
-		testSetProof(t, sdk)
-
 		records := []entity.Record{}
 
 		records = append(records, testFromString(t))
@@ -36,6 +33,8 @@ func TestEndToEnd(t *testing.T) {
 
 		testEciesEncryption(t, sdk)
 		testEciesEncryptionDataAvailability(t, sdk)
+
+		testSetProof(t, sdk)
 
 		receipt, err := sdk.SendRecords(records)
 		require.NoError(t, err)
@@ -339,7 +338,7 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 	require.NoError(t, err)
 	assert.Equal(t, len(signatures), 2)
 
-	return record
+	return recordWithMultipleSignatures
 }
 
 func testSetProof(t *testing.T, sdk client.Client) {
@@ -363,13 +362,12 @@ func testSetProof(t *testing.T, sdk client.Client) {
 		},
 	}
 
-    err = record.SetProof(originalProof)
-    require.NoError(t, err)
+	err = record.SetProof(originalProof)
+	require.NoError(t, err)
 
-    finalProof, err := sdk.GetProof([]entity.Record{record})
-    fmt.Printf("==> %+v", finalProof)
-    require.NoError(t, err)
+	finalProof, err := sdk.GetProof([]entity.Record{record})
+	require.NoError(t, err)
 
-    assert.Equal(t, finalProof, originalProof)
+	assert.Equal(t, originalProof, finalProof)
 
 }

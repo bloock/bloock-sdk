@@ -68,7 +68,7 @@ export class Record {
     const req = SetProofRequest.fromPartial({
       configData: NewConfigData(),
       record: this.toProto(),
-      proof: proof.toProto(),
+      proof: proof.toProto()
     });
 
     return bridge

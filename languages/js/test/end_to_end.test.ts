@@ -12,7 +12,10 @@ import {
   RsaEncrypter,
   RsaDecrypter,
   EciesEncrypter,
-  EciesDecrypter
+  EciesDecrypter,
+  Proof,
+  ProofAnchor,
+  AnchorNetwork
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
 
@@ -50,6 +53,8 @@ describe("E2E Tests", () => {
 
     await testEciesEncryption(sdk);
     await testEciesEncryptionDataAvailability(sdk);
+
+    await testSetProof(sdk);
 
     const sendReceipt = await sdk.sendRecords(records);
     expect(sendReceipt.length).toBeGreaterThan(0);
@@ -156,7 +161,7 @@ async function testEcsdaSignature(sdk: BloockClient): Promise<Record> {
   let signatures = await recordWithMultipleSignatures.getSignatures();
   expect(signatures.length).toEqual(2);
 
-  return record;
+  return recordWithMultipleSignatures;
 }
 
 async function testFromLoader() {
@@ -334,4 +339,33 @@ async function testEciesEncryptionDataAvailability(sdk: BloockClient) {
   expect(hash).toEqual(
     "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
   );
+}
+
+async function testSetProof(sdk: BloockClient) {
+  let record = await RecordBuilder.fromString("Hello world").build();
+
+  let original_proof = new Proof(
+    ["ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"],
+    ["ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"],
+    "1010101",
+    "0101010",
+    new ProofAnchor(
+      42,
+      [
+        new AnchorNetwork(
+          "Ethereum",
+          "state",
+          "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
+        )
+      ],
+      "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+      "success"
+    )
+  );
+
+  record.setProof(original_proof);
+
+  let finalProof = sdk.getProof([record]);
+
+  expect(finalProof).toEqual(original_proof);
 }

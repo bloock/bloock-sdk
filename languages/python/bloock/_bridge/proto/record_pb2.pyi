@@ -9,7 +9,6 @@ import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
-import proof_pb2
 import shared_pb2
 import sys
 import typing
@@ -1149,14 +1148,14 @@ class SendRecordsRequest(google.protobuf.message.Message):
     @property
     def records(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
+        global___Record
     ]: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        records: collections.abc.Iterable[builtins.str] | None = ...,
+        records: collections.abc.Iterable[global___Record] | None = ...,
     ) -> None: ...
     def HasField(
         self, field_name: typing_extensions.Literal["config_data", b"config_data"]
@@ -1433,89 +1432,3 @@ class PublishResponse(google.protobuf.message.Message):
     ) -> typing_extensions.Literal["error"] | None: ...
 
 global___PublishResponse = PublishResponse
-
-class SetProofRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    RECORD_FIELD_NUMBER: builtins.int
-    PROOF_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def record(self) -> global___Record: ...
-    @property
-    def proof(self) -> proof_pb2.Proof: ...
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        record: global___Record | None = ...,
-        proof: proof_pb2.Proof | None = ...,
-    ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data", b"config_data", "proof", b"proof", "record", b"record"
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data", b"config_data", "proof", b"proof", "record", b"record"
-        ],
-    ) -> None: ...
-
-global___SetProofRequest = SetProofRequest
-
-class SetProofResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ERROR_FIELD_NUMBER: builtins.int
-    RECORD_FIELD_NUMBER: builtins.int
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    @property
-    def record(self) -> global___Record: ...
-    def __init__(
-        self,
-        *,
-        error: shared_pb2.Error | None = ...,
-        record: global___Record | None = ...,
-    ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error",
-            b"_error",
-            "_record",
-            b"_record",
-            "error",
-            b"error",
-            "record",
-            b"record",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error",
-            b"_error",
-            "_record",
-            b"_record",
-            "error",
-            b"error",
-            "record",
-            b"record",
-        ],
-    ) -> None: ...
-    @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
-    @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_record", b"_record"]
-    ) -> typing_extensions.Literal["record"] | None: ...
-
-global___SetProofResponse = SetProofResponse

@@ -2,7 +2,6 @@ package com.bloock.sdk.entity;
 
 import com.bloock.sdk.bridge.proto.ProofOuterClass;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Proof {
   List<String> leaves;
@@ -11,7 +10,8 @@ public class Proof {
   String bitmap;
   ProofAnchor anchor;
 
-  Proof(List<String> leaves, List<String> nodes, String depth, String bitmap, ProofAnchor anchor) {
+  public Proof(
+      List<String> leaves, List<String> nodes, String depth, String bitmap, ProofAnchor anchor) {
     this.leaves = leaves;
     this.nodes = nodes;
     this.depth = depth;
@@ -56,38 +56,5 @@ public class Proof {
 
   public ProofAnchor getAnchor() {
     return anchor;
-  }
-}
-
-class ProofAnchor {
-  long anchorId;
-  List<AnchorNetwork> networks;
-  String root;
-  String status;
-
-  ProofAnchor(long anchorId, List<AnchorNetwork> networks, String root, String status) {
-    this.anchorId = anchorId;
-    this.networks = networks;
-    this.root = root;
-    this.status = status;
-  }
-
-  public static ProofAnchor fromProto(ProofOuterClass.ProofAnchor anchor) {
-    return new ProofAnchor(
-        anchor.getAnchorId(),
-        anchor.getNetworksList().stream()
-            .map(x -> AnchorNetwork.fromProto(x))
-            .collect(Collectors.toList()),
-        anchor.getRoot(),
-        anchor.getStatus());
-  }
-
-  ProofOuterClass.ProofAnchor toProto() {
-    return ProofOuterClass.ProofAnchor.newBuilder()
-        .setAnchorId(anchorId)
-        .addAllNetworks(networks.stream().map(x -> x.toProto()).collect(Collectors.toList()))
-        .setRoot(root)
-        .setStatus(status)
-        .build();
   }
 }
