@@ -365,7 +365,7 @@ async function testSetProof(sdk: BloockClient) {
 
   record.setProof(original_proof);
 
-  let finalProof = sdk.getProof([record]);
+  let finalProof = await sdk.getProof([record]);
 
   expect(finalProof).toEqual(original_proof);
 }
