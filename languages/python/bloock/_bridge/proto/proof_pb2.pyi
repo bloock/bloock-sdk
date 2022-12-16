@@ -9,6 +9,7 @@ import config_pb2
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
+import record_pb2
 import shared_pb2
 import sys
 import typing
@@ -124,14 +125,14 @@ class GetProofRequest(google.protobuf.message.Message):
     @property
     def records(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
+        record_pb2.Record
     ]: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        records: collections.abc.Iterable[builtins.str] | None = ...,
+        records: collections.abc.Iterable[record_pb2.Record] | None = ...,
     ) -> None: ...
     def HasField(
         self, field_name: typing_extensions.Literal["config_data", b"config_data"]
@@ -348,15 +349,15 @@ class VerifyRecordsRequest(google.protobuf.message.Message):
     @property
     def records(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
+        record_pb2.Record
     ]: ...
     network: config_pb2.Network.ValueType
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        records: collections.abc.Iterable[builtins.str] | None = ...,
+        records: collections.abc.Iterable[record_pb2.Record] | None = ...,
         network: config_pb2.Network.ValueType | None = ...,
     ) -> None: ...
     def HasField(
@@ -419,3 +420,89 @@ class VerifyRecordsResponse(google.protobuf.message.Message):
     ) -> typing_extensions.Literal["error"] | None: ...
 
 global___VerifyRecordsResponse = VerifyRecordsResponse
+
+class SetProofRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    RECORD_FIELD_NUMBER: builtins.int
+    PROOF_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    @property
+    def record(self) -> record_pb2.Record: ...
+    @property
+    def proof(self) -> global___Proof: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        record: record_pb2.Record | None = ...,
+        proof: global___Proof | None = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "proof", b"proof", "record", b"record"
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "proof", b"proof", "record", b"record"
+        ],
+    ) -> None: ...
+
+global___SetProofRequest = SetProofRequest
+
+class SetProofResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ERROR_FIELD_NUMBER: builtins.int
+    RECORD_FIELD_NUMBER: builtins.int
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    @property
+    def record(self) -> record_pb2.Record: ...
+    def __init__(
+        self,
+        *,
+        error: shared_pb2.Error | None = ...,
+        record: record_pb2.Record | None = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error",
+            b"_error",
+            "_record",
+            b"_record",
+            "error",
+            b"error",
+            "record",
+            b"record",
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error",
+            b"_error",
+            "_record",
+            b"_record",
+            "error",
+            b"error",
+            "record",
+            b"record",
+        ],
+    ) -> None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_record", b"_record"]
+    ) -> typing_extensions.Literal["record"] | None: ...
+
+global___SetProofResponse = SetProofResponse

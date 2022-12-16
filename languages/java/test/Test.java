@@ -4,6 +4,7 @@ import com.bloock.sdk.client.Client;
 import com.bloock.sdk.entity.AesDecrypter;
 import com.bloock.sdk.entity.AesEncrypter;
 import com.bloock.sdk.entity.Anchor;
+import com.bloock.sdk.entity.AnchorNetwork;
 import com.bloock.sdk.entity.EciesDecrypter;
 import com.bloock.sdk.entity.EciesEncrypter;
 import com.bloock.sdk.entity.EcsdaSigner;
@@ -13,6 +14,7 @@ import com.bloock.sdk.entity.KeyPair;
 import com.bloock.sdk.entity.Keys;
 import com.bloock.sdk.entity.Network;
 import com.bloock.sdk.entity.Proof;
+import com.bloock.sdk.entity.ProofAnchor;
 import com.bloock.sdk.entity.Record;
 import com.bloock.sdk.entity.RecordReceipt;
 import com.bloock.sdk.entity.RsaDecrypter;
@@ -36,7 +38,7 @@ class Test {
 
   public static void main(String[] args) throws Exception {
     Client sdk = getSdk();
-    ArrayList<String> records = new ArrayList<>();
+    ArrayList<Record> records = new ArrayList<>();
 
     records.add(testFromString());
     records.add(testFromBytes());
@@ -56,10 +58,12 @@ class Test {
     testEciesEncryption(sdk);
     testEciesEncryptionDataAvailability(sdk);
 
+    testSetProof(sdk);
+
     List<RecordReceipt> receipts = sdk.sendRecords(records);
 
     assert receipts.size() > 0;
-    assert receipts.get(0).getRecord().equals(records.get(0));
+    assert receipts.get(0).getRecord().equals(records.get(0).getHash());
 
     Anchor anchor = sdk.waitAnchor(receipts.get(0).getAnchor());
 
@@ -82,39 +86,39 @@ class Test {
     assert timestampValidateRoot == timestampVerifyRecords;
   }
 
-  static String testFromString() throws Exception {
+  static Record testFromString() throws Exception {
     Record record = Builder.fromString("Hello world").build();
     String hash = record.getHash();
     assert hash.equals("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd");
-    return hash;
+    return record;
   }
 
-  static String testFromBytes() throws Exception {
+  static Record testFromBytes() throws Exception {
     Record record = Builder.fromBytes(new byte[] {1, 2, 3, 4, 5}).build();
     String hash = record.getHash();
     assert hash.equals("7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4");
-    return hash;
+    return record;
   }
 
-  static String testFromHex() throws Exception {
+  static Record testFromHex() throws Exception {
     Record record = Builder.fromHex("1234567890abcdef").build();
     String hash = record.getHash();
     assert hash.equals("ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f");
-    return hash;
+    return record;
   }
 
-  static String testFromJson() throws Exception {
+  static Record testFromJson() throws Exception {
     Record record = Builder.fromJson("{\"hello\":\"world\"}").build();
     String hash = record.getHash();
     assert hash.equals("586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312");
-    return hash;
+    return record;
   }
 
-  static String testFromFile() throws Exception {
+  static Record testFromFile() throws Exception {
     Record record = Builder.fromFile(new byte[] {2, 3, 4, 5, 6}).build();
     String hash = record.getHash();
     assert hash.equals("507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446");
-    return hash;
+    return record;
   }
 
   static void testFromLoader() throws Exception {
@@ -129,7 +133,7 @@ class Test {
     assert hash.equals(result);
   }
 
-  static String testEcsdaSignature(Client sdk) throws Exception {
+  static Record testEcsdaSignature(Client sdk) throws Exception {
     Keys keys = sdk.generateKeys();
 
     Record signedRecord =
@@ -148,7 +152,7 @@ class Test {
     List<Signature> signatures = recordWithMultipleSignatures.getSignatures();
     assert signatures.size() == 2;
 
-    return hash;
+    return recordWithMultipleSignatures;
   }
 
   static void testAesEncryption() throws Exception {
@@ -279,5 +283,38 @@ class Test {
 
     String hash = decryptedRecord.getHash();
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
+  }
+
+  static void testSetProof(Client sdk) throws Exception {
+    Record record = Builder.fromString("Hello world").build();
+
+    Proof originalProof =
+        new Proof(
+            Arrays.asList("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
+            Arrays.asList("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
+            "1010101",
+            "0101010",
+            new ProofAnchor(
+                42L,
+                Arrays.asList(
+                    new AnchorNetwork(
+                        "Ethereum",
+                        "state",
+                        "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
+                "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+                "succes"));
+
+    record.setProof(originalProof);
+
+    Proof finalProof = sdk.getProof(Arrays.asList(record));
+
+    assert originalProof.getLeaves().equals(finalProof.getLeaves());
+    assert originalProof.getNodes().equals(finalProof.getNodes());
+    assert originalProof.getDepth().equals(finalProof.getDepth());
+    assert originalProof.getBitmap().equals(finalProof.getBitmap());
+
+    assert originalProof.getAnchor().getAnchorId() == finalProof.getAnchor().getAnchorId();
+    assert originalProof.getAnchor().getRoot().equals(finalProof.getAnchor().getRoot());
+    assert originalProof.getAnchor().getStatus().equals(finalProof.getAnchor().getStatus());
   }
 }

@@ -309,7 +309,7 @@ export interface RecordBuilderResponse {
 
 export interface SendRecordsRequest {
   configData?: ConfigData;
-  records: string[];
+  records: Record[];
 }
 
 export interface SendRecordsResponse {
@@ -2122,7 +2122,7 @@ export const SendRecordsRequest = {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
     for (const v of message.records) {
-      writer.uint32(18).string(v!);
+      Record.encode(v!, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -2138,7 +2138,7 @@ export const SendRecordsRequest = {
           message.configData = ConfigData.decode(reader, reader.uint32());
           break;
         case 2:
-          message.records.push(reader.string());
+          message.records.push(Record.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -2151,7 +2151,7 @@ export const SendRecordsRequest = {
   fromJSON(object: any): SendRecordsRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      records: Array.isArray(object?.records) ? object.records.map((e: any) => String(e)) : [],
+      records: Array.isArray(object?.records) ? object.records.map((e: any) => Record.fromJSON(e)) : [],
     };
   },
 
@@ -2160,7 +2160,7 @@ export const SendRecordsRequest = {
     message.configData !== undefined &&
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     if (message.records) {
-      obj.records = message.records.map((e) => e);
+      obj.records = message.records.map((e) => e ? Record.toJSON(e) : undefined);
     } else {
       obj.records = [];
     }
@@ -2172,7 +2172,7 @@ export const SendRecordsRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.records = object.records?.map((e) => e) || [];
+    message.records = object.records?.map((e) => Record.fromPartial(e)) || [];
     return message;
   },
 };

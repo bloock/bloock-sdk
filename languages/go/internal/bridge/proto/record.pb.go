@@ -1788,7 +1788,7 @@ type SendRecordsRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	ConfigData *ConfigData `protobuf:"bytes,1,opt,name=config_data,json=configData,proto3" json:"config_data,omitempty"`
-	Records    []string    `protobuf:"bytes,2,rep,name=records,proto3" json:"records,omitempty"`
+	Records    []*Record   `protobuf:"bytes,2,rep,name=records,proto3" json:"records,omitempty"`
 }
 
 func (x *SendRecordsRequest) Reset() {
@@ -1830,7 +1830,7 @@ func (x *SendRecordsRequest) GetConfigData() *ConfigData {
 	return nil
 }
 
-func (x *SendRecordsRequest) GetRecords() []string {
+func (x *SendRecordsRequest) GetRecords() []*Record {
 	if x != nil {
 		return x.Records
 	}
@@ -2521,12 +2521,13 @@ var file_record_proto_rawDesc = []byte{
 	0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6c,
 	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x48, 0x00, 0x52, 0x05, 0x65, 0x72,
 	0x72, 0x6f, 0x72, 0x88, 0x01, 0x01, 0x42, 0x08, 0x0a, 0x06, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72,
-	0x22, 0x63, 0x0a, 0x12, 0x53, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x73, 0x52,
+	0x22, 0x73, 0x0a, 0x12, 0x53, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x73, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x33, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67,
 	0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x62, 0x6c,
 	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x44, 0x61, 0x74, 0x61, 0x52,
-	0x0a, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x44, 0x61, 0x74, 0x61, 0x12, 0x18, 0x0a, 0x07, 0x72,
-	0x65, 0x63, 0x6f, 0x72, 0x64, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x07, 0x72, 0x65,
+	0x0a, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x44, 0x61, 0x74, 0x61, 0x12, 0x28, 0x0a, 0x07, 0x72,
+	0x65, 0x63, 0x6f, 0x72, 0x64, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x62,
+	0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x52, 0x07, 0x72, 0x65,
 	0x63, 0x6f, 0x72, 0x64, 0x73, 0x22, 0x7a, 0x0a, 0x13, 0x53, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x63,
 	0x6f, 0x72, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2f, 0x0a, 0x07,
 	0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x15, 0x2e,
@@ -2785,54 +2786,55 @@ var file_record_proto_depIdxs = []int32{
 	13, // 42: bloock.RecordBuilderResponse.record:type_name -> bloock.Record
 	40, // 43: bloock.RecordBuilderResponse.error:type_name -> bloock.Error
 	39, // 44: bloock.SendRecordsRequest.config_data:type_name -> bloock.ConfigData
-	22, // 45: bloock.SendRecordsResponse.records:type_name -> bloock.RecordReceipt
-	40, // 46: bloock.SendRecordsResponse.error:type_name -> bloock.Error
-	3,  // 47: bloock.Loader.type:type_name -> bloock.DataAvailabilityType
-	33, // 48: bloock.Loader.args:type_name -> bloock.LoaderArgs
-	39, // 49: bloock.RecordBuilderFromLoaderRequest.config_data:type_name -> bloock.ConfigData
-	32, // 50: bloock.RecordBuilderFromLoaderRequest.loader:type_name -> bloock.Loader
-	14, // 51: bloock.RecordBuilderFromLoaderRequest.signer:type_name -> bloock.Signer
-	16, // 52: bloock.RecordBuilderFromLoaderRequest.encrypter:type_name -> bloock.Encrypter
-	18, // 53: bloock.RecordBuilderFromLoaderRequest.decrypter:type_name -> bloock.Decrypter
-	3,  // 54: bloock.Publisher.type:type_name -> bloock.DataAvailabilityType
-	36, // 55: bloock.Publisher.args:type_name -> bloock.PublisherArgs
-	39, // 56: bloock.PublishRequest.config_data:type_name -> bloock.ConfigData
-	35, // 57: bloock.PublishRequest.publisher:type_name -> bloock.Publisher
-	13, // 58: bloock.PublishRequest.record:type_name -> bloock.Record
-	40, // 59: bloock.PublishResponse.error:type_name -> bloock.Error
-	30, // 60: bloock.RecordService.SendRecords:input_type -> bloock.SendRecordsRequest
-	23, // 61: bloock.RecordService.BuildRecordFromString:input_type -> bloock.RecordBuilderFromStringRequest
-	24, // 62: bloock.RecordService.BuildRecordFromHex:input_type -> bloock.RecordBuilderFromHexRequest
-	25, // 63: bloock.RecordService.BuildRecordFromJson:input_type -> bloock.RecordBuilderFromJSONRequest
-	27, // 64: bloock.RecordService.BuildRecordFromFile:input_type -> bloock.RecordBuilderFromFileRequest
-	26, // 65: bloock.RecordService.BuildRecordFromBytes:input_type -> bloock.RecordBuilderFromBytesRequest
-	28, // 66: bloock.RecordService.BuildRecordFromRecord:input_type -> bloock.RecordBuilderFromRecordRequest
-	34, // 67: bloock.RecordService.BuildRecordFromLoader:input_type -> bloock.RecordBuilderFromLoaderRequest
-	13, // 68: bloock.RecordService.GetHash:input_type -> bloock.Record
-	13, // 69: bloock.RecordService.GetSignatures:input_type -> bloock.Record
-	4,  // 70: bloock.RecordService.GenerateKeys:input_type -> bloock.GenerateKeysRequest
-	6,  // 71: bloock.RecordService.GenerateRsaKeyPair:input_type -> bloock.GenerateRsaKeyPairRequest
-	8,  // 72: bloock.RecordService.GenerateEciesKeyPair:input_type -> bloock.GenerateEciesKeyPairRequest
-	37, // 73: bloock.RecordService.Publish:input_type -> bloock.PublishRequest
-	31, // 74: bloock.RecordService.SendRecords:output_type -> bloock.SendRecordsResponse
-	29, // 75: bloock.RecordService.BuildRecordFromString:output_type -> bloock.RecordBuilderResponse
-	29, // 76: bloock.RecordService.BuildRecordFromHex:output_type -> bloock.RecordBuilderResponse
-	29, // 77: bloock.RecordService.BuildRecordFromJson:output_type -> bloock.RecordBuilderResponse
-	29, // 78: bloock.RecordService.BuildRecordFromFile:output_type -> bloock.RecordBuilderResponse
-	29, // 79: bloock.RecordService.BuildRecordFromBytes:output_type -> bloock.RecordBuilderResponse
-	29, // 80: bloock.RecordService.BuildRecordFromRecord:output_type -> bloock.RecordBuilderResponse
-	29, // 81: bloock.RecordService.BuildRecordFromLoader:output_type -> bloock.RecordBuilderResponse
-	10, // 82: bloock.RecordService.GetHash:output_type -> bloock.RecordHash
-	11, // 83: bloock.RecordService.GetSignatures:output_type -> bloock.RecordSignatures
-	5,  // 84: bloock.RecordService.GenerateKeys:output_type -> bloock.GenerateKeysResponse
-	7,  // 85: bloock.RecordService.GenerateRsaKeyPair:output_type -> bloock.GenerateRsaKeyPairResponse
-	9,  // 86: bloock.RecordService.GenerateEciesKeyPair:output_type -> bloock.GenerateEciesKeyPairResponse
-	38, // 87: bloock.RecordService.Publish:output_type -> bloock.PublishResponse
-	74, // [74:88] is the sub-list for method output_type
-	60, // [60:74] is the sub-list for method input_type
-	60, // [60:60] is the sub-list for extension type_name
-	60, // [60:60] is the sub-list for extension extendee
-	0,  // [0:60] is the sub-list for field type_name
+	13, // 45: bloock.SendRecordsRequest.records:type_name -> bloock.Record
+	22, // 46: bloock.SendRecordsResponse.records:type_name -> bloock.RecordReceipt
+	40, // 47: bloock.SendRecordsResponse.error:type_name -> bloock.Error
+	3,  // 48: bloock.Loader.type:type_name -> bloock.DataAvailabilityType
+	33, // 49: bloock.Loader.args:type_name -> bloock.LoaderArgs
+	39, // 50: bloock.RecordBuilderFromLoaderRequest.config_data:type_name -> bloock.ConfigData
+	32, // 51: bloock.RecordBuilderFromLoaderRequest.loader:type_name -> bloock.Loader
+	14, // 52: bloock.RecordBuilderFromLoaderRequest.signer:type_name -> bloock.Signer
+	16, // 53: bloock.RecordBuilderFromLoaderRequest.encrypter:type_name -> bloock.Encrypter
+	18, // 54: bloock.RecordBuilderFromLoaderRequest.decrypter:type_name -> bloock.Decrypter
+	3,  // 55: bloock.Publisher.type:type_name -> bloock.DataAvailabilityType
+	36, // 56: bloock.Publisher.args:type_name -> bloock.PublisherArgs
+	39, // 57: bloock.PublishRequest.config_data:type_name -> bloock.ConfigData
+	35, // 58: bloock.PublishRequest.publisher:type_name -> bloock.Publisher
+	13, // 59: bloock.PublishRequest.record:type_name -> bloock.Record
+	40, // 60: bloock.PublishResponse.error:type_name -> bloock.Error
+	30, // 61: bloock.RecordService.SendRecords:input_type -> bloock.SendRecordsRequest
+	23, // 62: bloock.RecordService.BuildRecordFromString:input_type -> bloock.RecordBuilderFromStringRequest
+	24, // 63: bloock.RecordService.BuildRecordFromHex:input_type -> bloock.RecordBuilderFromHexRequest
+	25, // 64: bloock.RecordService.BuildRecordFromJson:input_type -> bloock.RecordBuilderFromJSONRequest
+	27, // 65: bloock.RecordService.BuildRecordFromFile:input_type -> bloock.RecordBuilderFromFileRequest
+	26, // 66: bloock.RecordService.BuildRecordFromBytes:input_type -> bloock.RecordBuilderFromBytesRequest
+	28, // 67: bloock.RecordService.BuildRecordFromRecord:input_type -> bloock.RecordBuilderFromRecordRequest
+	34, // 68: bloock.RecordService.BuildRecordFromLoader:input_type -> bloock.RecordBuilderFromLoaderRequest
+	13, // 69: bloock.RecordService.GetHash:input_type -> bloock.Record
+	13, // 70: bloock.RecordService.GetSignatures:input_type -> bloock.Record
+	4,  // 71: bloock.RecordService.GenerateKeys:input_type -> bloock.GenerateKeysRequest
+	6,  // 72: bloock.RecordService.GenerateRsaKeyPair:input_type -> bloock.GenerateRsaKeyPairRequest
+	8,  // 73: bloock.RecordService.GenerateEciesKeyPair:input_type -> bloock.GenerateEciesKeyPairRequest
+	37, // 74: bloock.RecordService.Publish:input_type -> bloock.PublishRequest
+	31, // 75: bloock.RecordService.SendRecords:output_type -> bloock.SendRecordsResponse
+	29, // 76: bloock.RecordService.BuildRecordFromString:output_type -> bloock.RecordBuilderResponse
+	29, // 77: bloock.RecordService.BuildRecordFromHex:output_type -> bloock.RecordBuilderResponse
+	29, // 78: bloock.RecordService.BuildRecordFromJson:output_type -> bloock.RecordBuilderResponse
+	29, // 79: bloock.RecordService.BuildRecordFromFile:output_type -> bloock.RecordBuilderResponse
+	29, // 80: bloock.RecordService.BuildRecordFromBytes:output_type -> bloock.RecordBuilderResponse
+	29, // 81: bloock.RecordService.BuildRecordFromRecord:output_type -> bloock.RecordBuilderResponse
+	29, // 82: bloock.RecordService.BuildRecordFromLoader:output_type -> bloock.RecordBuilderResponse
+	10, // 83: bloock.RecordService.GetHash:output_type -> bloock.RecordHash
+	11, // 84: bloock.RecordService.GetSignatures:output_type -> bloock.RecordSignatures
+	5,  // 85: bloock.RecordService.GenerateKeys:output_type -> bloock.GenerateKeysResponse
+	7,  // 86: bloock.RecordService.GenerateRsaKeyPair:output_type -> bloock.GenerateRsaKeyPairResponse
+	9,  // 87: bloock.RecordService.GenerateEciesKeyPair:output_type -> bloock.GenerateEciesKeyPairResponse
+	38, // 88: bloock.RecordService.Publish:output_type -> bloock.PublishResponse
+	75, // [75:89] is the sub-list for method output_type
+	61, // [61:75] is the sub-list for method input_type
+	61, // [61:61] is the sub-list for extension type_name
+	61, // [61:61] is the sub-list for extension extendee
+	0,  // [0:61] is the sub-list for field type_name
 }
 
 func init() { file_record_proto_init() }

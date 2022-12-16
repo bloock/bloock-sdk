@@ -23,14 +23,14 @@ func NewRecordFromProto(r *proto.Record) Record {
 	}
 }
 
-func (r Record) ToProto() *proto.Record {
+func (r *Record) ToProto() *proto.Record {
 	return &proto.Record{
 		ConfigData: config.NewConfigData(),
 		Payload:    r.Payload,
 	}
 }
 
-func (r Record) GetHash() (string, error) {
+func (r *Record) GetHash() (string, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().GetHash(context.Background(), r.ToProto())
 
@@ -45,7 +45,7 @@ func (r Record) GetHash() (string, error) {
 	return res.Hash, nil
 }
 
-func (r Record) GetSignatures() ([]Signature, error) {
+func (r *Record) GetSignatures() ([]Signature, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().GetSignatures(context.Background(), r.ToProto())
 
@@ -64,7 +64,7 @@ func (r Record) GetSignatures() ([]Signature, error) {
 	return signatures, nil
 }
 
-func (r Record) Publish(p Publisher) (string, error) {
+func (r *Record) Publish(p Publisher) (string, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	req := proto.PublishRequest{
 		ConfigData: config.NewConfigData(),
@@ -84,8 +84,29 @@ func (r Record) Publish(p Publisher) (string, error) {
 	return res.Hash, nil
 }
 
-func (r Record) Retrieve() []byte {
+func (r *Record) Retrieve() []byte {
 	return r.Payload
+}
+
+func (r *Record) SetProof(proof Proof) error {
+	bridgeClient := bridge.NewBloockBridge()
+	res, err := bridgeClient.Proof().SetProof(context.Background(), &proto.SetProofRequest{
+		ConfigData: config.NewConfigData(),
+		Record:     r.ToProto(),
+		Proof:      proof.ToProto(),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if res.Error != nil {
+		return errors.New(res.Error.Message)
+	}
+
+	r.Payload = res.Record.Payload
+
+	return nil
 }
 
 func MapRecordsToProto(records []Record) []*proto.Record {

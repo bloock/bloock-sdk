@@ -28,6 +28,7 @@ import com.bloock.sdk.entity.EciesKeyPair;
 import com.bloock.sdk.entity.Keys;
 import com.bloock.sdk.entity.Network;
 import com.bloock.sdk.entity.Proof;
+import com.bloock.sdk.entity.Record;
 import com.bloock.sdk.entity.RecordReceipt;
 import com.bloock.sdk.entity.RsaKeyPair;
 import java.util.List;
@@ -40,11 +41,11 @@ public class Client {
     this.bridge = new Bridge();
   }
 
-  public List<RecordReceipt> sendRecords(List<String> records) throws Exception {
+  public List<RecordReceipt> sendRecords(List<Record> records) throws Exception {
     SendRecordsRequest request =
         SendRecordsRequest.newBuilder()
             .setConfigData(Config.newConfigData())
-            .addAllRecords(records)
+            .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()))
             .build();
 
     SendRecordsResponse response = bridge.getRecord().sendRecords(request);
@@ -92,11 +93,11 @@ public class Client {
     return Anchor.fromProto(response.getAnchor());
   }
 
-  public Proof getProof(List<String> records) throws Exception {
+  public Proof getProof(List<Record> records) throws Exception {
     GetProofRequest request =
         GetProofRequest.newBuilder()
             .setConfigData(Config.newConfigData())
-            .addAllRecords(records)
+            .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()))
             .build();
 
     GetProofResponse response = bridge.getProof().getProof(request);
@@ -124,15 +125,15 @@ public class Client {
     return response.getRecord();
   }
 
-  public long verifyRecords(List<String> records) throws Exception {
+  public long verifyRecords(List<Record> records) throws Exception {
     return verifyRecords(records, Network.ETHEREUM_MAINNET);
   }
 
-  public long verifyRecords(List<String> records, Network network) throws Exception {
+  public long verifyRecords(List<Record> records, Network network) throws Exception {
     VerifyRecordsRequest request =
         VerifyRecordsRequest.newBuilder()
             .setConfigData(Config.newConfigData())
-            .addAllRecords(records)
+            .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()))
             .setNetwork(network.toProto())
             .build();
 

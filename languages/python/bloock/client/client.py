@@ -20,6 +20,7 @@ from bloock.client.entity.proof import Proof
 from bloock.client.entity.record import (
     EciesKeyPair,
     EcsdaKeys,
+    Record,
     RecordReceipt,
     KeyPair,
     RsaKeyPair,
@@ -31,9 +32,11 @@ class Client:
     def __init__(self) -> None:
         self.bridge_client = bridge.BloockBridge()
 
-    def send_records(self, records: List[str]) -> List[RecordReceipt]:
+    def send_records(self, records: List[Record]) -> List[RecordReceipt]:
         res = self.bridge_client.record().SendRecords(
-            SendRecordsRequest(config_data=Config.new(), records=records)
+            SendRecordsRequest(
+                config_data=Config.new(), records=map(lambda x: x.to_proto(), records)
+            )
         )
 
         if res.error != Error():
@@ -62,9 +65,11 @@ class Client:
 
         return Anchor.from_proto(res.anchor)
 
-    def get_proof(self, records: List[str]) -> Proof:
+    def get_proof(self, records: List[Record]) -> Proof:
         res = self.bridge_client.proof().GetProof(
-            GetProofRequest(config_data=Config.new(), records=records)
+            GetProofRequest(
+                config_data=Config.new(), records=map(lambda x: x.to_proto(), records)
+            )
         )
 
         if res.error != Error():
@@ -83,12 +88,12 @@ class Client:
         return res.record
 
     def verify_records(
-        self, records: List[str], network: Network = Network.ETHEREUM_MAINNET
+        self, records: List[Record], network: Network = Network.ETHEREUM_MAINNET
     ) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
                 config_data=Config.new(),
-                records=records,
+                records=map(lambda x: x.to_proto(), records),
                 network=Network.to_proto(network),
             )
         )

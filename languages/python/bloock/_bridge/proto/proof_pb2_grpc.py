@@ -34,6 +34,11 @@ class ProofServiceStub(object):
             request_serializer=proof__pb2.VerifyRecordsRequest.SerializeToString,
             response_deserializer=proof__pb2.VerifyRecordsResponse.FromString,
         )
+        self.SetProof = channel.unary_unary(
+            "/bloock.ProofService/SetProof",
+            request_serializer=proof__pb2.SetProofRequest.SerializeToString,
+            response_deserializer=proof__pb2.SetProofResponse.FromString,
+        )
 
 
 class ProofServiceServicer(object):
@@ -63,6 +68,12 @@ class ProofServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def SetProof(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
 
 def add_ProofServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -85,6 +96,11 @@ def add_ProofServiceServicer_to_server(servicer, server):
             servicer.VerifyRecords,
             request_deserializer=proof__pb2.VerifyRecordsRequest.FromString,
             response_serializer=proof__pb2.VerifyRecordsResponse.SerializeToString,
+        ),
+        "SetProof": grpc.unary_unary_rpc_method_handler(
+            servicer.SetProof,
+            request_deserializer=proof__pb2.SetProofRequest.FromString,
+            response_serializer=proof__pb2.SetProofResponse.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -203,6 +219,35 @@ class ProofService(object):
             "/bloock.ProofService/VerifyRecords",
             proof__pb2.VerifyRecordsRequest.SerializeToString,
             proof__pb2.VerifyRecordsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def SetProof(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/bloock.ProofService/SetProof",
+            proof__pb2.SetProofRequest.SerializeToString,
+            proof__pb2.SetProofResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -193,7 +193,7 @@ message RecordBuilderResponse {
 
 message SendRecordsRequest {
     ConfigData config_data = 1;
-    repeated string records = 2;
+    repeated Record records = 2;
 }
 
 message SendRecordsResponse {

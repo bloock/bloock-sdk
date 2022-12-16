@@ -1148,14 +1148,14 @@ class SendRecordsRequest(google.protobuf.message.Message):
     @property
     def records(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
+        global___Record
     ]: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        records: collections.abc.Iterable[builtins.str] | None = ...,
+        records: collections.abc.Iterable[global___Record] | None = ...,
     ) -> None: ...
     def HasField(
         self, field_name: typing_extensions.Literal["config_data", b"config_data"]

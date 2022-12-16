@@ -4,8 +4,11 @@ import bloock
 
 from bloock.client.builder import RecordBuilder
 from bloock.client.client import Client
+from bloock.client.entity.anchor import AnchorNetwork
+from bloock.client.entity.proof import Proof, ProofAnchor
 from bloock.client.entity.decrypter import AesDecrypter, EciesDecrypter, RsaDecrypter
 from bloock.client.entity.encrypter import AesEncrypter, EciesEncrypter, RsaEncrypter
+from bloock.client.entity.record import Record
 from bloock.client.entity.signer import EcsdaSigner
 from bloock.client.entity.network import Network
 from bloock.client.entity.publisher import HostedPublisher
@@ -42,6 +45,8 @@ class TestE2E(unittest.TestCase):
         self._testEciesEncryption()
         self._testEciesEncryptionDataAvailability()
 
+        self._testSetProof()
+
         send_receipts = self.client.send_records(records)
         self.assertGreater(len(send_receipts), 0)
 
@@ -62,47 +67,47 @@ class TestE2E(unittest.TestCase):
 
         self.assertEqual(timestamp_verify_records, timestamp_validate_root)
 
-    def _testFromString(self) -> str:
+    def _testFromString(self) -> Record:
         record = RecordBuilder.from_string("Hello world").build()
         hash = record.get_hash()
         self.assertEqual(
             hash, "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
         )
-        return hash
+        return record
 
-    def _testFromBytes(self) -> str:
+    def _testFromBytes(self) -> Record:
         record = RecordBuilder.from_bytes(bytes([1, 2, 3, 4, 5])).build()
         hash = record.get_hash()
         self.assertEqual(
             hash, "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4"
         )
-        return hash
+        return record
 
-    def _testFromHex(self) -> str:
+    def _testFromHex(self) -> Record:
         record = RecordBuilder.from_hex("1234567890abcdef").build()
         hash = record.get_hash()
         self.assertEqual(
             hash, "ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f"
         )
-        return hash
+        return record
 
-    def _testFromJson(self) -> str:
+    def _testFromJson(self) -> Record:
         record = RecordBuilder.from_json('{"hello":"world"}').build()
         hash = record.get_hash()
         self.assertEqual(
             hash, "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"
         )
-        return hash
+        return record
 
-    def _testFromFile(self) -> str:
+    def _testFromFile(self) -> Record:
         record = RecordBuilder.from_file(bytes([2, 3, 4, 5, 6])).build()
         hash = record.get_hash()
         self.assertEqual(
             hash, "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446"
         )
-        return hash
+        return record
 
-    def _testEcsdaSignature(self) -> str:
+    def _testEcsdaSignature(self) -> Record:
         keys = self.client.generate_keys()
 
         record = (
@@ -127,9 +132,9 @@ class TestE2E(unittest.TestCase):
         signatures = record_with_multiple_signatures.get_signatures()
         self.assertEqual(len(signatures), 2)
 
-        return hash
+        return record_with_multiple_signatures
 
-    def _testFromLoader(self) -> str:
+    def _testFromLoader(self) -> Record:
         record = RecordBuilder.from_string("Hello world").build()
         hash = record.get_hash()
 
@@ -140,7 +145,7 @@ class TestE2E(unittest.TestCase):
         hash = record.get_hash()
         self.assertEqual(hash, result)
 
-        return hash
+        return record
 
     def _testAesEncryption(self):
         payload = "Hello world 2"
@@ -305,6 +310,46 @@ class TestE2E(unittest.TestCase):
         hash = record.get_hash()
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
+        )
+
+    def _testSetProof(self):
+        record = RecordBuilder.from_string("Hello world").build()
+
+        original_proof = Proof(
+            leaves=["ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"],
+            nodes=["ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"],
+            depth="1010101",
+            bitmap="0101010",
+            anchor=ProofAnchor(
+                anchor_id=42,
+                networks=[
+                    AnchorNetwork(
+                        name="Ethereum",
+                        state="state",
+                        tx_hash="ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+                    )
+                ],
+                root="ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+                status="success",
+            ),
+        )
+
+        record.set_proof(original_proof)
+
+        final_proof = self.client.get_proof([record])
+
+        self.assertEqual(original_proof.leaves, final_proof.leaves)
+        self.assertEqual(original_proof.nodes, final_proof.nodes)
+        self.assertEqual(original_proof.depth, final_proof.depth)
+        self.assertEqual(original_proof.bitmap, final_proof.bitmap)
+
+        self.assertEqual(original_proof.anchor.anchor_id, final_proof.anchor.anchor_id)
+        self.assertEqual(original_proof.anchor.root, final_proof.anchor.root)
+        self.assertEqual(original_proof.anchor.status, final_proof.anchor.status)
+        self.assertEqual(original_proof.anchor.anchor_id, final_proof.anchor.anchor_id)
+        self.assertEqual(
+            [network.__dict__ for network in original_proof.anchor.networks],
+            [network.__dict__ for network in final_proof.anchor.networks],
         )
 
 

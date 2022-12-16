@@ -14,7 +14,7 @@ func TestEndToEnd(t *testing.T) {
 	sdk := GetSdk()
 
 	t.Run("E2E using all the builders", func(t *testing.T) {
-		records := []string{}
+		records := []entity.Record{}
 
 		records = append(records, testFromString(t))
 		records = append(records, testFromBytes(t))
@@ -33,6 +33,8 @@ func TestEndToEnd(t *testing.T) {
 
 		testEciesEncryption(t, sdk)
 		testEciesEncryptionDataAvailability(t, sdk)
+
+		testSetProof(t, sdk)
 
 		receipt, err := sdk.SendRecords(records)
 		require.NoError(t, err)
@@ -66,7 +68,7 @@ func TestEndToEnd(t *testing.T) {
 	})
 }
 
-func testFromString(t *testing.T) string {
+func testFromString(t *testing.T) entity.Record {
 	record, err := builder.NewRecordBuilderFromString("Hello world").Build()
 	require.NoError(t, err)
 
@@ -75,7 +77,7 @@ func testFromString(t *testing.T) string {
 
 	assert.Equal(t, "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd", hash)
 
-	return hash
+	return record
 }
 
 func testFromLoader(t *testing.T) {
@@ -98,7 +100,7 @@ func testFromLoader(t *testing.T) {
 	assert.Equal(t, result, hash)
 }
 
-func testFromBytes(t *testing.T) string {
+func testFromBytes(t *testing.T) entity.Record {
 	record, err := builder.NewRecordBuilderFromBytes([]byte{1, 2, 3, 4, 5}).Build()
 	require.NoError(t, err)
 
@@ -107,10 +109,10 @@ func testFromBytes(t *testing.T) string {
 
 	assert.Equal(t, "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4", hash)
 
-	return hash
+	return record
 }
 
-func testFromHex(t *testing.T) string {
+func testFromHex(t *testing.T) entity.Record {
 	record, err := builder.NewRecordBuilderFromHex("1234567890abcdef").Build()
 	require.NoError(t, err)
 
@@ -119,10 +121,10 @@ func testFromHex(t *testing.T) string {
 
 	assert.Equal(t, "ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f", hash)
 
-	return hash
+	return record
 }
 
-func testFromJson(t *testing.T) string {
+func testFromJson(t *testing.T) entity.Record {
 	record, err := builder.NewRecordBuilderFromJSON("{\"hello\":\"world\"}").Build()
 	require.NoError(t, err)
 
@@ -131,10 +133,10 @@ func testFromJson(t *testing.T) string {
 
 	assert.Equal(t, "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312", hash)
 
-	return hash
+	return record
 }
 
-func testFromFile(t *testing.T) string {
+func testFromFile(t *testing.T) entity.Record {
 	record, err := builder.NewRecordBuilderFromFile([]byte{2, 3, 4, 5, 6}).Build()
 	require.NoError(t, err)
 
@@ -143,7 +145,7 @@ func testFromFile(t *testing.T) string {
 
 	assert.Equal(t, "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446", hash)
 
-	return hash
+	return record
 }
 
 func testAesEncryption(t *testing.T) {
@@ -309,7 +311,7 @@ func testEciesEncryptionDataAvailability(t *testing.T, sdk client.Client) {
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
 
-func testEcsdaSignature(t *testing.T, sdk client.Client) string {
+func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 	keys, err := sdk.GenerateKeys()
 	require.NoError(t, err)
 
@@ -336,5 +338,36 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) string {
 	require.NoError(t, err)
 	assert.Equal(t, len(signatures), 2)
 
-	return hash
+	return recordWithMultipleSignatures
+}
+
+func testSetProof(t *testing.T, sdk client.Client) {
+	record, err := builder.NewRecordBuilderFromString("Hello world").Build()
+	require.NoError(t, err)
+
+	originalProof := entity.Proof{
+		Leaves: []string{"ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"},
+		Nodes:  []string{"ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"},
+		Depth:  "1010101",
+		Bitmap: "0101010",
+		Anchor: entity.ProofAnchor{
+			AnchorID: 42,
+			Networks: []entity.AnchorNetwork{{
+				Name:   "Ethereum",
+				State:  "state",
+				TxHash: "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+			}},
+			Root:   "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+			Status: "success",
+		},
+	}
+
+	err = record.SetProof(originalProof)
+	require.NoError(t, err)
+
+	finalProof, err := sdk.GetProof([]entity.Record{record})
+	require.NoError(t, err)
+
+	assert.Equal(t, originalProof, finalProof)
+
 }

@@ -1,4 +1,5 @@
 import {
+  Record,
   RecordBuilder,
   BloockClient,
   Bloock,
@@ -11,7 +12,10 @@ import {
   RsaEncrypter,
   RsaDecrypter,
   EciesEncrypter,
-  EciesDecrypter
+  EciesDecrypter,
+  Proof,
+  ProofAnchor,
+  AnchorNetwork
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
 
@@ -31,7 +35,7 @@ describe("E2E Tests", () => {
   test("test_basic_e2e", async () => {
     let sdk = getSdk();
 
-    const records: string[] = [];
+    const records: Record[] = [];
     records.push(await testFromString());
     records.push(await testFromBytes());
     records.push(await testFromHex());
@@ -49,6 +53,8 @@ describe("E2E Tests", () => {
 
     await testEciesEncryption(sdk);
     await testEciesEncryptionDataAvailability(sdk);
+
+    await testSetProof(sdk);
 
     const sendReceipt = await sdk.sendRecords(records);
     expect(sendReceipt.length).toBeGreaterThan(0);
@@ -75,7 +81,7 @@ describe("E2E Tests", () => {
   }, 120000);
 });
 
-async function testFromString(): Promise<string> {
+async function testFromString(): Promise<Record> {
   let record = await RecordBuilder.fromString("Hello world").build();
 
   let hash = await record.getHash();
@@ -83,10 +89,10 @@ async function testFromString(): Promise<string> {
     "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
   );
 
-  return hash;
+  return record;
 }
 
-async function testFromBytes(): Promise<string> {
+async function testFromBytes(): Promise<Record> {
   let record = await RecordBuilder.fromBytes(
     Uint8Array.from([1, 2, 3, 4, 5])
   ).build();
@@ -96,10 +102,10 @@ async function testFromBytes(): Promise<string> {
     "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4"
   );
 
-  return hash;
+  return record;
 }
 
-async function testFromHex(): Promise<string> {
+async function testFromHex(): Promise<Record> {
   let record = await RecordBuilder.fromHex("1234567890abcdef").build();
 
   let hash = await record.getHash();
@@ -107,10 +113,10 @@ async function testFromHex(): Promise<string> {
     "ed8ab4fde4c4e2749641d9d89de3d920f9845e086abd71e6921319f41f0e784f"
   );
 
-  return hash;
+  return record;
 }
 
-async function testFromJson(): Promise<string> {
+async function testFromJson(): Promise<Record> {
   let record = await RecordBuilder.fromJson({ hello: "world" }).build();
 
   let hash = await record.getHash();
@@ -118,10 +124,10 @@ async function testFromJson(): Promise<string> {
     "586e9b1e1681ba3ebad5ff5e6f673d3e3aa129fcdb76f92083dbc386cdde4312"
   );
 
-  return hash;
+  return record;
 }
 
-async function testFromFile(): Promise<string> {
+async function testFromFile(): Promise<Record> {
   let record = await RecordBuilder.fromFile(
     Uint8Array.from([2, 3, 4, 5, 6])
   ).build();
@@ -131,10 +137,10 @@ async function testFromFile(): Promise<string> {
     "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446"
   );
 
-  return hash;
+  return record;
 }
 
-async function testEcsdaSignature(sdk: BloockClient): Promise<string> {
+async function testEcsdaSignature(sdk: BloockClient): Promise<Record> {
   let keys = await sdk.generateKeys();
 
   let record = await RecordBuilder.fromString("Hello world 3")
@@ -155,7 +161,7 @@ async function testEcsdaSignature(sdk: BloockClient): Promise<string> {
   let signatures = await recordWithMultipleSignatures.getSignatures();
   expect(signatures.length).toEqual(2);
 
-  return hash;
+  return recordWithMultipleSignatures;
 }
 
 async function testFromLoader() {
@@ -333,4 +339,33 @@ async function testEciesEncryptionDataAvailability(sdk: BloockClient) {
   expect(hash).toEqual(
     "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
   );
+}
+
+async function testSetProof(sdk: BloockClient) {
+  let record = await RecordBuilder.fromString("Hello world").build();
+
+  let original_proof = new Proof(
+    ["ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"],
+    ["ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"],
+    "1010101",
+    "0101010",
+    new ProofAnchor(
+      42,
+      [
+        new AnchorNetwork(
+          "Ethereum",
+          "state",
+          "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
+        )
+      ],
+      "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+      "success"
+    )
+  );
+
+  await record.setProof(original_proof);
+
+  let finalProof = await sdk.getProof([record]);
+
+  expect(finalProof).toEqual(original_proof);
 }

@@ -3,7 +3,6 @@ use std::{convert::TryInto, sync::Arc};
 use async_trait::async_trait;
 use bloock_core::{
     client::{self, BloockClient},
-    error::BloockError,
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
     AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
@@ -101,8 +100,8 @@ impl RecordServiceHandler for RecordServer {
             .clone()
             .records
             .iter()
-            .map(|record| record.try_into())
-            .collect::<Result<Vec<RecordCore>, BloockError>>()
+            .map(|record| record.clone().try_into())
+            .collect::<Result<Vec<RecordCore>, BridgeError>>()
         {
             Ok(r) => r,
             Err(e) => return SendRecordsResponse::new_error(&client, e.to_string(), &req).await,

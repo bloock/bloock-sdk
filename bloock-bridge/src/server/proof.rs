@@ -4,9 +4,9 @@ use async_trait::async_trait;
 use bloock_core::{
     client::{self, BloockClient},
     config::entity::network::Network,
-    error::{BloockError, BloockResult},
+    error::BloockError,
     proof::entity::proof::Proof,
-    record::entity::record::Record,
+    record::entity::record::Record as RecordCore,
 };
 use serde_json::json;
 
@@ -15,8 +15,9 @@ use crate::{
     error::{config_data_error, BridgeError},
     items::{
         BloockServer, Error, GetProofRequest, GetProofResponse, Proof as ItemsProof,
-        ProofServiceHandler, ValidateRootRequest, ValidateRootResponse, VerifyProofRequest,
-        VerifyProofResponse, VerifyRecordsRequest, VerifyRecordsResponse,
+        ProofServiceHandler, Record, SetProofRequest, SetProofResponse, ValidateRootRequest,
+        ValidateRootResponse, VerifyProofRequest, VerifyProofResponse, VerifyRecordsRequest,
+        VerifyRecordsResponse,
     },
 };
 
@@ -46,6 +47,12 @@ impl From<VerifyRecordsResponse> for ResponseType {
     }
 }
 
+impl From<SetProofResponse> for ResponseType {
+    fn from(res: SetProofResponse) -> Self {
+        ResponseType::SetProof(res)
+    }
+}
+
 pub struct ProofServer {}
 
 #[async_trait(?Send)]
@@ -66,19 +73,70 @@ impl ProofServiceHandler for ProofServer {
         let records = match req
             .records
             .iter()
-            .map(|record| record.try_into())
-            .collect::<BloockResult<Vec<Record>>>()
+            .map(|record| record.clone().try_into())
+            .collect::<Result<Vec<RecordCore>, BridgeError>>()
         {
             Ok(r) => r,
-            Err(e) => return GetProofResponse::new_error(&client, e.to_string(), &req).await,
+            Err(e) => return GetProofResponse::new_error(&client, e.to_string(), vec![]).await,
         };
+
+        let hashes = records.iter().map(|record| record.get_hash()).collect();
 
         let proof = match client.get_proof(records).await {
             Ok(proof) => proof,
-            Err(e) => return GetProofResponse::new_error(&client, e.to_string(), &req).await,
+            Err(e) => return GetProofResponse::new_error(&client, e.to_string(), hashes).await,
         };
 
-        GetProofResponse::new_success(&client, proof.into(), &req).await
+        GetProofResponse::new_success(&client, proof.into(), hashes).await
+    }
+
+    async fn set_proof(&self, req: SetProofRequest) -> SetProofResponse {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
+                return SetProofResponse {
+                    error: Some(config_data_error()),
+                    record: None,
+                }
+            }
+        };
+
+        let client = client::configure(config_data);
+
+        let mut record: RecordCore = match req.record {
+            Some(record) => match record.try_into() {
+                Ok(record) => record,
+                Err(e) => {
+                    return SetProofResponse::new_error(&client, e.to_string()).await;
+                }
+            },
+            None => {
+                return SetProofResponse::new_error(&client, "invalid record".to_string()).await
+            }
+        };
+
+        let proof: Proof = match req.proof {
+            Some(proof) => match proof.try_into() {
+                Ok(proof) => proof,
+                Err(e) => {
+                    return SetProofResponse::new_error(&client, e.to_string()).await;
+                }
+            },
+            None => {
+                return SetProofResponse::new_error(&client, "invalid record".to_string()).await
+            }
+        };
+
+        if let Err(e) = record.set_proof(proof) {
+            return SetProofResponse::new_error(&client, e.to_string()).await;
+        }
+
+        let final_record = match record.try_into() as Result<Record, BridgeError> {
+            Ok(record) => record,
+            Err(e) => return SetProofResponse::new_error(&client, e.to_string()).await,
+        };
+
+        SetProofResponse::new_success(&client, final_record).await
     }
 
     async fn validate_root(&self, req: ValidateRootRequest) -> ValidateRootResponse {
@@ -94,7 +152,7 @@ impl ProofServiceHandler for ProofServer {
 
         let client = client::configure(config_data);
 
-        let req_root: Result<Record, BloockError> = (&req.root).try_into();
+        let req_root: Result<RecordCore, BloockError> = (&req.root).try_into();
         let root = match req_root {
             Ok(r) => r,
             Err(e) => return ValidateRootResponse::new_error(&client, e.to_string(), &req).await,
@@ -161,8 +219,8 @@ impl ProofServiceHandler for ProofServer {
         let records = match req
             .records
             .iter()
-            .map(|r| r.try_into())
-            .collect::<Result<Vec<Record>, BloockError>>()
+            .map(|r| r.clone().try_into())
+            .collect::<Result<Vec<RecordCore>, BridgeError>>()
         {
             Ok(r) => r,
             Err(e) => return VerifyRecordsResponse::new_error(&client, e.to_string(), &req).await,
@@ -184,9 +242,9 @@ impl GetProofResponse {
     async fn new_success(
         client: &BloockClient,
         proof: ItemsProof,
-        req: &GetProofRequest,
+        records: Vec<String>,
     ) -> GetProofResponse {
-        Self::send_event(client, req, None).await;
+        Self::send_event(client, records, None).await;
 
         GetProofResponse {
             proof: Some(proof),
@@ -197,9 +255,9 @@ impl GetProofResponse {
     async fn new_error(
         client: &BloockClient,
         err: String,
-        req: &GetProofRequest,
+        records: Vec<String>,
     ) -> GetProofResponse {
-        Self::send_event(client, req, Some(&err)).await;
+        Self::send_event(client, records, Some(&err)).await;
 
         GetProofResponse {
             proof: None,
@@ -207,9 +265,9 @@ impl GetProofResponse {
         }
     }
 
-    async fn send_event(client: &BloockClient, req: &GetProofRequest, error: Option<&str>) {
+    async fn send_event(client: &BloockClient, records: Vec<String>, error: Option<&str>) {
         let event_attr = json! ({
-            "records": req.records,
+            "records": records,
         });
 
         let error = error.map(|_| BridgeError::ProofError.to_string());
@@ -348,6 +406,43 @@ impl VerifyRecordsResponse {
         client
             .send_event(
                 BloockServer::ProofServiceVerifyProof.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
+    }
+}
+
+impl SetProofResponse {
+    async fn new_success(client: &BloockClient, record: Record) -> SetProofResponse {
+        Self::send_event(client, None).await;
+
+        SetProofResponse {
+            error: None,
+            record: Some(record),
+        }
+    }
+
+    async fn new_error(client: &BloockClient, err: String) -> SetProofResponse {
+        Self::send_event(client, Some(&err)).await;
+
+        SetProofResponse {
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+            record: None,
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::ProofServiceSetProof.as_str(),
                 error,
                 Some(event_attr),
             )

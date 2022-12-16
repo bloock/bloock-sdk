@@ -39,6 +39,10 @@ impl<H: Client> ProofService<H> {
             return Err(ProofError::InvalidNumberOfRecords().into());
         }
 
+        if records.len() == 1 && records[0].get_proof().is_some() {
+            return Ok(records[0].get_proof().unwrap());
+        }
+
         records.sort();
 
         let url = format!("{}/core/proof", self.config_service.get_api_base_url());
