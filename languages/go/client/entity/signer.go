@@ -29,10 +29,12 @@ func (s EcsdaSigner) ToProto() *proto.Signer {
 
 type SignerArgs struct {
 	PrivateKey string
+	CommonName *string
 }
 
 func (s SignerArgs) ToProto() *proto.SignerArgs {
 	return &proto.SignerArgs{
 		PrivateKey: &s.PrivateKey,
+		CommonName: s.CommonName,
 	}
 }

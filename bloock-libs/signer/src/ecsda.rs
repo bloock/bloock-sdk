@@ -1,7 +1,7 @@
 use bloock_hasher::{sha256::Sha256, Hasher};
 use libsecp256k1::{Message, PublicKey, SecretKey};
 
-use crate::{SignerError, Verifier};
+use crate::{ProtectedHeader, SignerError, Verifier};
 
 use super::{Signature, Signer};
 use std::str;
@@ -10,22 +10,25 @@ pub const ECSDA_ALG: &str = "ES256K";
 
 pub struct EcsdaSignerArgs {
     pub private_key: String,
+    pub common_name: Option<String>,
 }
+
 impl EcsdaSignerArgs {
-    pub fn new(private_key: &str) -> Self {
+    pub fn new(private_key: &str, common_name: Option<String>) -> Self {
         Self {
             private_key: private_key.to_string(),
+            common_name,
         }
     }
 }
 
 pub struct EcsdaSigner {
-    _args: EcsdaSignerArgs,
+    args: EcsdaSignerArgs,
 }
 
 impl EcsdaSigner {
     pub fn new(args: EcsdaSignerArgs) -> Self {
-        Self { _args: args }
+        Self { args }
     }
 
     pub fn generate_keys() -> crate::Result<(String, String)> {
@@ -40,7 +43,7 @@ impl EcsdaSigner {
 
 impl Signer for EcsdaSigner {
     fn sign(&self, payload: &[u8]) -> crate::Result<Signature> {
-        let secret_key_hex = hex::decode(self._args.private_key.as_bytes())
+        let secret_key_hex = hex::decode(self.args.private_key.as_bytes())
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let secret_key = SecretKey::parse_slice(&secret_key_hex)
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
@@ -52,8 +55,13 @@ impl Signer for EcsdaSigner {
 
         let sig = libsecp256k1::sign(&message, &secret_key);
 
+        let protected = match self.args.common_name.clone() {
+            Some(common_name) => ProtectedHeader { common_name }.serialize()?,
+            None => base64_url::encode("{}"),
+        };
+
         let signature = Signature {
-            protected: base64_url::encode("{}"),
+            protected,
             signature: hex::encode(sig.0.serialize()),
             header: crate::SignatureHeader {
                 alg: ECSDA_ALG.to_string(),
@@ -105,7 +113,10 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs { private_key: pvk });
+        let c = EcsdaSigner::new(EcsdaSignerArgs {
+            private_key: pvk,
+            common_name: None,
+        });
         let signature = match c.sign(string_payload.as_bytes()) {
             Ok(signature) => signature,
             Err(e) => panic!("{}", e),
@@ -129,6 +140,7 @@ mod tests {
 
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: pvk.to_string(),
+            common_name: None,
         });
         let result = c.sign(string_payload.as_bytes());
         assert!(result.is_err());

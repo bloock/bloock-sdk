@@ -656,7 +656,8 @@ async fn build_record(
                         .await
                     }
                 };
-                EcsdaSigner::new(EcsdaSignerArgs::new(&private_key))
+
+                EcsdaSigner::new(EcsdaSignerArgs::new(&private_key, signer_arguments.common_name))
             }
             None => {
                 return RecordBuilderResponse::new_error(

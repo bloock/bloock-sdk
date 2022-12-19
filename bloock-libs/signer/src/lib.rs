@@ -25,6 +25,19 @@ pub struct SignatureHeader {
     pub kid: String,
 }
 
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProtectedHeader {
+    pub common_name: String,
+}
+
+impl ProtectedHeader {
+    fn serialize(&self) -> Result<String> {
+        Ok(base64_url::encode(&serde_json::to_string(self).map_err(
+            |err| SignerError::GeneralSerializeError(err.to_string()),
+        )?))
+    }
+}
+
 pub trait Signer {
     fn sign(&self, payload: &[u8]) -> Result<Signature>;
 }
