@@ -51,7 +51,10 @@ impl Signer for EcsdaSigner {
 
         let protected = match self.args.common_name.clone() {
             Some(common_name) => ProtectedHeader { common_name }.serialize()?,
-            None => base64_url::encode("{}"),
+            None => ProtectedHeader {
+                common_name: "".to_string(),
+            }
+            .serialize()?,
         };
 
         let hash = Sha256::generate_hash(

@@ -1,3 +1,5 @@
+use std::str::from_utf8;
+
 use ecsda::{EcsdaVerifier, ECSDA_ALG};
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
@@ -19,6 +21,12 @@ pub struct Signature {
     pub signature: String,
 }
 
+impl Signature {
+    pub fn get_common_name(&self) -> Result<String> {
+        Ok(ProtectedHeader::deserialize(&self.protected)?.common_name)
+    }
+}
+
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SignatureHeader {
     pub alg: String,
@@ -35,6 +43,17 @@ impl ProtectedHeader {
         Ok(base64_url::encode(&serde_json::to_string(self).map_err(
             |err| SignerError::GeneralSerializeError(err.to_string()),
         )?))
+    }
+
+    fn deserialize(protected: &str) -> Result<Self> {
+        Ok(serde_json::from_str(
+            from_utf8(
+                &base64_url::decode(&protected)
+                    .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
+            )
+            .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
+        )
+        .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?)
     }
 }
 
