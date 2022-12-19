@@ -24,9 +24,9 @@ func (b RecordBuilder) WithSigner(signer entity.Signer) RecordBuilder {
 }
 
 func (b RecordBuilder) WithCommonName(name string) RecordBuilder {
-    if b.signer != nil {
-        b.signer.Args.CommonName = &name
-    }
+	if b.signer != nil {
+		b.signer.Args.CommonName = &name
+	}
 	return b
 }
 

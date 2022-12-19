@@ -216,6 +216,7 @@ export interface Signer {
 
 export interface SignerArgs {
   privateKey?: string | undefined;
+  commonName?: string | undefined;
 }
 
 export interface Encrypter {
@@ -994,13 +995,16 @@ export const Signer = {
 };
 
 function createBaseSignerArgs(): SignerArgs {
-  return { privateKey: undefined };
+  return { privateKey: undefined, commonName: undefined };
 }
 
 export const SignerArgs = {
   encode(message: SignerArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.privateKey !== undefined) {
       writer.uint32(10).string(message.privateKey);
+    }
+    if (message.commonName !== undefined) {
+      writer.uint32(18).string(message.commonName);
     }
     return writer;
   },
@@ -1015,6 +1019,9 @@ export const SignerArgs = {
         case 1:
           message.privateKey = reader.string();
           break;
+        case 2:
+          message.commonName = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1024,18 +1031,23 @@ export const SignerArgs = {
   },
 
   fromJSON(object: any): SignerArgs {
-    return { privateKey: isSet(object.privateKey) ? String(object.privateKey) : undefined };
+    return {
+      privateKey: isSet(object.privateKey) ? String(object.privateKey) : undefined,
+      commonName: isSet(object.commonName) ? String(object.commonName) : undefined,
+    };
   },
 
   toJSON(message: SignerArgs): unknown {
     const obj: any = {};
     message.privateKey !== undefined && (obj.privateKey = message.privateKey);
+    message.commonName !== undefined && (obj.commonName = message.commonName);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<SignerArgs>, I>>(object: I): SignerArgs {
     const message = createBaseSignerArgs();
     message.privateKey = object.privateKey ?? undefined;
+    message.commonName = object.commonName ?? undefined;
     return message;
   },
 };
