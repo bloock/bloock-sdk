@@ -53,3 +53,17 @@ jobs:
       sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}
       pgp_secret: ${{ secrets.PGP_SECRET }}
       pgp_passphrase: ${{ secrets.PGP_PASSPHRASE }}
+
+  run_quickstarts:
+    needs: [publish_go, publish_python, publish_js, publish_java]
+    name: Run quickstarts.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.repo_api_token }}
+          repository: bloock/bloock-sdk-quickstart
+          event-type: run_quickstarts
+          client-payload: '{"version": "${{ github.event.inputs.version }}"}'
+
