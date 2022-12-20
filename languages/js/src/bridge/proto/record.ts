@@ -354,6 +354,16 @@ export interface PublishResponse {
   error?: Error | undefined;
 }
 
+export interface SignatureCommonNameRequest {
+  configData?: ConfigData;
+  signature?: Signature;
+}
+
+export interface SignatureCommonNameResponse {
+  commonName: string;
+  error?: Error | undefined;
+}
+
 function createBaseGenerateKeysRequest(): GenerateKeysRequest {
   return { configData: undefined };
 }
@@ -2690,6 +2700,128 @@ export const PublishResponse = {
   },
 };
 
+function createBaseSignatureCommonNameRequest(): SignatureCommonNameRequest {
+  return { configData: undefined, signature: undefined };
+}
+
+export const SignatureCommonNameRequest = {
+  encode(message: SignatureCommonNameRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.signature !== undefined) {
+      Signature.encode(message.signature, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SignatureCommonNameRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSignatureCommonNameRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.signature = Signature.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SignatureCommonNameRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      signature: isSet(object.signature) ? Signature.fromJSON(object.signature) : undefined,
+    };
+  },
+
+  toJSON(message: SignatureCommonNameRequest): unknown {
+    const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.signature !== undefined &&
+      (obj.signature = message.signature ? Signature.toJSON(message.signature) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<SignatureCommonNameRequest>, I>>(object: I): SignatureCommonNameRequest {
+    const message = createBaseSignatureCommonNameRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.signature = (object.signature !== undefined && object.signature !== null)
+      ? Signature.fromPartial(object.signature)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseSignatureCommonNameResponse(): SignatureCommonNameResponse {
+  return { commonName: "", error: undefined };
+}
+
+export const SignatureCommonNameResponse = {
+  encode(message: SignatureCommonNameResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.commonName !== "") {
+      writer.uint32(10).string(message.commonName);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SignatureCommonNameResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSignatureCommonNameResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.commonName = reader.string();
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SignatureCommonNameResponse {
+    return {
+      commonName: isSet(object.commonName) ? String(object.commonName) : "",
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: SignatureCommonNameResponse): unknown {
+    const obj: any = {};
+    message.commonName !== undefined && (obj.commonName = message.commonName);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<SignatureCommonNameResponse>, I>>(object: I): SignatureCommonNameResponse {
+    const message = createBaseSignatureCommonNameResponse();
+    message.commonName = object.commonName ?? "";
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
 export interface RecordService {
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse>;
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse>;
@@ -2700,6 +2832,7 @@ export interface RecordService {
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse>;
   BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse>;
   GetHash(request: Record): Promise<RecordHash>;
+  GetSignatureCommonName(request: SignatureCommonNameRequest): Promise<SignatureCommonNameResponse>;
   GetSignatures(request: Record): Promise<RecordSignatures>;
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse>;
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse>;
@@ -2722,6 +2855,7 @@ export class RecordServiceClientImpl implements RecordService {
     this.BuildRecordFromRecord = this.BuildRecordFromRecord.bind(this);
     this.BuildRecordFromLoader = this.BuildRecordFromLoader.bind(this);
     this.GetHash = this.GetHash.bind(this);
+    this.GetSignatureCommonName = this.GetSignatureCommonName.bind(this);
     this.GetSignatures = this.GetSignatures.bind(this);
     this.GenerateKeys = this.GenerateKeys.bind(this);
     this.GenerateRsaKeyPair = this.GenerateRsaKeyPair.bind(this);
@@ -2780,6 +2914,12 @@ export class RecordServiceClientImpl implements RecordService {
     const data = Record.encode(request).finish();
     const promise = this.rpc.request(this.service, "GetHash", data);
     return promise.then((data) => RecordHash.decode(new _m0.Reader(data)));
+  }
+
+  GetSignatureCommonName(request: SignatureCommonNameRequest): Promise<SignatureCommonNameResponse> {
+    const data = SignatureCommonNameRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "GetSignatureCommonName", data);
+    return promise.then((data) => SignatureCommonNameResponse.decode(new _m0.Reader(data)));
   }
 
   GetSignatures(request: Record): Promise<RecordSignatures> {
@@ -2887,6 +3027,14 @@ export const RecordServiceDefinition = {
       requestType: Record,
       requestStream: false,
       responseType: RecordHash,
+      responseStream: false,
+      options: {},
+    },
+    getSignatureCommonName: {
+      name: "GetSignatureCommonName",
+      requestType: SignatureCommonNameRequest,
+      requestStream: false,
+      responseType: SignatureCommonNameResponse,
       responseStream: false,
       options: {},
     },
