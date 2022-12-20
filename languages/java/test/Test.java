@@ -135,11 +135,15 @@ class Test {
 
   static Record testEcsdaSignature(Client sdk) throws Exception {
     Keys keys = sdk.generateKeys();
+    String name = "Some name";
 
     Record signedRecord =
         Builder.fromString("Hello world 3")
             .withSigner(new EcsdaSigner(keys.getPrivateKey()))
+            .withCommonName(name)
             .build();
+
+    assert signedRecord.getSignatures().get(0).getCommonName().equals(name);
 
     Keys keys2 = sdk.generateKeys();
 
