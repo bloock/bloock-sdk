@@ -143,8 +143,6 @@ class Test {
             .withCommonName(name)
             .build();
 
-    assert signedRecord.getSignatures().get(0).getCommonName().equals(name);
-
     Keys keys2 = sdk.generateKeys();
 
     Record recordWithMultipleSignatures =
@@ -155,6 +153,8 @@ class Test {
 
     List<Signature> signatures = recordWithMultipleSignatures.getSignatures();
     assert signatures.size() == 2;
+
+    assert signatures.get(0).getCommonName().equals(name);
 
     return recordWithMultipleSignatures;
   }
