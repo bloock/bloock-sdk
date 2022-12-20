@@ -124,12 +124,36 @@ mod tests {
 
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: pvk,
-            common_name: Some("some name".to_string()),
+            common_name: None,
         });
 
         let signature = c.sign(string_payload.as_bytes()).unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
+
+        let result = create_verifier_from_signature(&signature)
+            .unwrap()
+            .verify(string_payload.as_bytes(), signature)
+            .unwrap();
+
+        assert!(result);
+    }
+
+    #[test]
+    fn test_sign_and_verify_ok_set_common_name() {
+        let (pvk, _pb) = EcsdaSigner::generate_keys().unwrap();
+
+        let string_payload = "hello world";
+
+        let c = EcsdaSigner::new(EcsdaSignerArgs {
+            private_key: pvk,
+            common_name: Some("a name".to_string()),
+        });
+
+        let signature = c.sign(string_payload.as_bytes()).unwrap();
+
+        assert_eq!(signature.header.alg.as_str(), "ES256K");
+        assert_eq!(signature.get_common_name().unwrap().as_str(), "a name");
 
         let result = create_verifier_from_signature(&signature)
             .unwrap()
