@@ -22,6 +22,7 @@ func TestEndToEnd(t *testing.T) {
 		records = append(records, testFromJson(t))
 		records = append(records, testFromFile(t))
 		records = append(records, testEcsdaSignature(t, sdk))
+        return
 
 		testFromLoader(t)
 
@@ -315,9 +316,12 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 	keys, err := sdk.GenerateKeys()
 	require.NoError(t, err)
 
+    name := "Some name"
+
 	record, err := builder.
 		NewRecordBuilderFromString("Hello world 3").
 		WithSigner(entity.NewEcsdaSigner(keys.PrivateKey)).
+        WithCommonName(name).
 		Build()
 	require.NoError(t, err)
 
@@ -337,6 +341,9 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 	signatures, err := recordWithMultipleSignatures.GetSignatures()
 	require.NoError(t, err)
 	assert.Equal(t, len(signatures), 2)
+
+    retrievedName, err := signatures[0].GetCommonName()
+    assert.Equal(t, name, retrievedName)
 
 	return recordWithMultipleSignatures
 }
