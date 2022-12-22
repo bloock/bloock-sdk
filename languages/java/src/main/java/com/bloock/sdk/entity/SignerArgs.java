@@ -16,12 +16,11 @@ public class SignerArgs {
   }
 
   RecordOuterClass.SignerArgs toProto() {
-    RecordOuterClass.SignerArgs.Builder builder = RecordOuterClass.SignerArgs
-        .newBuilder()
-        .setPrivateKey(privateKey);
+    RecordOuterClass.SignerArgs.Builder builder =
+        RecordOuterClass.SignerArgs.newBuilder().setPrivateKey(privateKey);
 
     if (commonName != null) {
-        builder.setCommonName(commonName);
+      builder.setCommonName(commonName);
     }
 
     return builder.build();
