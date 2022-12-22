@@ -26,9 +26,7 @@ impl Signature {
         Ok(ProtectedHeader::deserialize(&self.protected)
             .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
             .common_name
-            .ok_or(SignerError::CommonNameNotSetOrInvalidFormat(
-                "not set".to_string(),
-            )))?
+            .ok_or_else(|| SignerError::CommonNameNotSetOrInvalidFormat("not set".to_string())))?
     }
 }
 
@@ -51,14 +49,14 @@ impl ProtectedHeader {
     }
 
     fn deserialize(protected: &str) -> Result<Self> {
-        Ok(serde_json::from_str(
+        serde_json::from_str(
             from_utf8(
                 &base64_url::decode(&protected)
                     .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
             )
             .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
         )
-        .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?)
+        .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))
     }
 }
 
