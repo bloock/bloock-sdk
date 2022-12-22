@@ -99,11 +99,6 @@ class RecordBuilder:
         self.signer = signer.to_proto()
         return self
 
-    def with_common_name(self, name: str) -> RecordBuilder:
-        if self.signer is not None:
-            self.signer.args.common_name = name
-        return self
-
     def with_encrypter(self, encrypter: Encrypter) -> RecordBuilder:
         self.encrypter = encrypter.to_proto()
         return self

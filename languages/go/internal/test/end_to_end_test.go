@@ -22,7 +22,6 @@ func TestEndToEnd(t *testing.T) {
 		records = append(records, testFromJson(t))
 		records = append(records, testFromFile(t))
 		records = append(records, testEcsdaSignature(t, sdk))
-        return
 
 		testFromLoader(t)
 
@@ -316,12 +315,14 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 	keys, err := sdk.GenerateKeys()
 	require.NoError(t, err)
 
-    name := "Some name"
+	name := "Some name"
 
 	record, err := builder.
 		NewRecordBuilderFromString("Hello world 3").
-		WithSigner(entity.NewEcsdaSigner(keys.PrivateKey)).
-        WithCommonName(name).
+		WithSigner(entity.NewEcsdaSigner(entity.SignerArgs{
+			PrivateKey: keys.PrivateKey,
+			CommonName: &name,
+		})).
 		Build()
 	require.NoError(t, err)
 
@@ -330,7 +331,7 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 
 	recordWithMultipleSignatures, err := builder.
 		NewRecordBuilderFromRecord(record).
-		WithSigner(entity.NewEcsdaSigner(keys.PrivateKey)).
+		WithSigner(entity.NewEcsdaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey})).
 		Build()
 
 	require.NoError(t, err)
@@ -342,8 +343,8 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 	require.NoError(t, err)
 	assert.Equal(t, len(signatures), 2)
 
-    retrievedName, err := signatures[0].GetCommonName()
-    assert.Equal(t, name, retrievedName)
+	retrievedName, err := signatures[0].GetCommonName()
+	assert.Equal(t, name, retrievedName)
 
 	return recordWithMultipleSignatures
 }
@@ -376,5 +377,4 @@ func testSetProof(t *testing.T, sdk client.Client) {
 	require.NoError(t, err)
 
 	assert.Equal(t, originalProof, finalProof)
-
 }

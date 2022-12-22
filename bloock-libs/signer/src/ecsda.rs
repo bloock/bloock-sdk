@@ -50,18 +50,24 @@ impl Signer for EcsdaSigner {
         let public_key = PublicKey::from_secret_key(&secret_key);
 
         let protected = match self.args.common_name.clone() {
-            Some(common_name) => ProtectedHeader { common_name }.serialize()?,
-            None => ProtectedHeader {
-                common_name: "".to_string(),
+            Some(common_name) => ProtectedHeader {
+                common_name: Some(common_name),
             }
             .serialize()?,
+            None => base64_url::encode("{}"),
         };
 
-        let hash = Sha256::generate_hash(
-            [protected.clone(), base64_url::encode(payload)]
-                .join(".")
-                .as_bytes(),
-        );
+        let payload_with_protected = &[protected.clone(), base64_url::encode(payload)]
+            .join(".")
+            .as_bytes()
+            .to_owned();
+
+        let hash = Sha256::generate_hash(if protected == base64_url::encode("{}") {
+            // to keep backwards compatibility if the protected header is empty we just sign the payload
+            payload
+        } else {
+            payload_with_protected
+        });
 
         let message = Message::parse(&hash);
 
@@ -90,11 +96,17 @@ impl Verifier for EcsdaVerifier {
         let public_key = PublicKey::parse_slice(&public_key_hex, None)
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
-        let hash = Sha256::generate_hash(
-            [signature.protected, base64_url::encode(payload)]
-                .join(".")
-                .as_bytes(),
-        );
+        let payload_with_protected = &[signature.protected.clone(), base64_url::encode(payload)]
+            .join(".")
+            .as_bytes()
+            .to_owned();
+
+        let hash = Sha256::generate_hash(if signature.protected == base64_url::encode("{}") {
+            // to keep backwards compatibility if the protected header is empty we just verify the payload
+            payload
+        } else {
+            payload_with_protected
+        });
 
         let message = Message::parse(&hash);
 
@@ -161,6 +173,23 @@ mod tests {
             .unwrap();
 
         assert!(result);
+    }
+
+    #[test]
+    fn test_sign_and_verify_ok_get_common_name_without_set() {
+        let (pvk, _pb) = EcsdaSigner::generate_keys().unwrap();
+
+        let string_payload = "hello world";
+
+        let c = EcsdaSigner::new(EcsdaSignerArgs {
+            private_key: pvk,
+            common_name: None,
+        });
+
+        let signature = c.sign(string_payload.as_bytes()).unwrap();
+
+        assert_eq!(signature.header.alg.as_str(), "ES256K");
+        assert!(signature.get_common_name().is_err());
     }
 
     #[test]

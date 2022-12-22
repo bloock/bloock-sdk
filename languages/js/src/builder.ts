@@ -65,13 +65,6 @@ export class RecordBuilder {
     return this;
   }
 
-  public withCommonName(name: string): RecordBuilder {
-    if (this.signer !== undefined) {
-      this.signer.args!.commonName = name;
-    }
-    return this;
-  }
-
   public withEncrypter(encrypter: Encrypter): RecordBuilder {
     this.encrypter = encrypter.toProto();
     return this;

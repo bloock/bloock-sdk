@@ -11,11 +11,12 @@ type EcsdaSigner struct {
 	Args SignerArgs
 }
 
-func NewEcsdaSigner(privateKey string) EcsdaSigner {
+func NewEcsdaSigner(args SignerArgs) EcsdaSigner {
 	return EcsdaSigner{
 		Alg: proto.SignerAlg_ES256K,
 		Args: SignerArgs{
-			PrivateKey: privateKey,
+			PrivateKey: args.PrivateKey,
+			CommonName: args.CommonName,
 		},
 	}
 }

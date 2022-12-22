@@ -109,10 +109,11 @@ class TestE2E(unittest.TestCase):
 
     def _testEcsdaSignature(self) -> Record:
         keys = self.client.generate_keys()
+        name = "some name"
 
         record = (
             RecordBuilder.from_string("Hello world 3")
-            .with_signer(EcsdaSigner(keys.private_key))
+            .with_signer(EcsdaSigner(keys.private_key, common_name=name))
             .build()
         )
 
@@ -131,6 +132,8 @@ class TestE2E(unittest.TestCase):
 
         signatures = record_with_multiple_signatures.get_signatures()
         self.assertEqual(len(signatures), 2)
+
+        self.assertEqual(name, signatures[0].get_common_name())
 
         return record_with_multiple_signatures
 

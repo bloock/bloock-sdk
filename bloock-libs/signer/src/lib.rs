@@ -23,7 +23,12 @@ pub struct Signature {
 
 impl Signature {
     pub fn get_common_name(&self) -> Result<String> {
-        Ok(ProtectedHeader::deserialize(&self.protected)?.common_name)
+        Ok(ProtectedHeader::deserialize(&self.protected)
+            .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
+            .common_name
+            .ok_or(SignerError::CommonNameNotSetOrInvalidFormat(
+                "not set".to_string(),
+            )))?
     }
 }
 
@@ -35,7 +40,7 @@ pub struct SignatureHeader {
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ProtectedHeader {
-    pub common_name: String,
+    pub common_name: Option<String>,
 }
 
 impl ProtectedHeader {
@@ -104,4 +109,8 @@ pub enum SignerError {
     GeneralDeserializeError(String),
     #[error("Error Verifier: {0}")]
     VerifierError(String),
+    #[error(
+        "Could not retrieve common name. Common name is not set or the format is invalid: {0}"
+    )]
+    CommonNameNotSetOrInvalidFormat(String),
 }
