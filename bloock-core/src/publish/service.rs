@@ -11,7 +11,7 @@ pub struct PublishService<H: Client> {
 impl<H: Client> PublishService<H> {
     pub async fn publish_hosted(&self, record: Record) -> BloockResult<String> {
         let url = format!(
-            "{}/hosting/v1/upload",
+            "{}/hosting/v1/hosted/upload",
             self.config_service.get_api_base_url()
         );
 
@@ -29,7 +29,7 @@ impl<H: Client> PublishService<H> {
 
     pub async fn retrieve_hosted(&self, hash: String) -> BloockResult<Vec<u8>> {
         let url = format!(
-            "{}/hosting/v1/{}",
+            "{}/hosting/v1/hosted/{}",
             self.config_service.get_api_base_url(),
             hash
         );
