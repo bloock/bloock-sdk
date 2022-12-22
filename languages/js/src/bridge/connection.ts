@@ -4,7 +4,7 @@ export class Connection {
   private ffiClient: FFIClient;
 
   constructor() {
-    this.ffiClient = new FFIClient();
+    this.ffiClient = FFIClient.getInstance();
   }
 
   async request(
