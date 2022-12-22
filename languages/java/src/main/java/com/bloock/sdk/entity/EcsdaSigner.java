@@ -12,23 +12,16 @@ public class EcsdaSigner implements Signer {
     this.args = new SignerArgs(privateKey);
   }
 
+  public EcsdaSigner(SignerArgs args) {
+    this.alg = SignerAlg.ES256K;
+    this.args = args;
+  }
+
   @Override
   public RecordOuterClass.Signer toProto() {
     return RecordOuterClass.Signer.newBuilder()
         .setAlg(this.alg)
         .setArgs(this.args.toProto())
         .build();
-  }
-}
-
-class SignerArgs {
-  String privateKey;
-
-  SignerArgs(String privateKey) {
-    this.privateKey = privateKey;
-  }
-
-  RecordOuterClass.SignerArgs toProto() {
-    return RecordOuterClass.SignerArgs.newBuilder().setPrivateKey(privateKey).build();
   }
 }

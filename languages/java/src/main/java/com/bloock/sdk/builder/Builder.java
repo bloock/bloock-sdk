@@ -65,16 +65,6 @@ public class Builder {
     return this;
   }
 
-  public Builder withCommonName(String name) {
-    if (this.signer != null) {
-      this.signer =
-          this.signer.toBuilder()
-              .setArgs(this.signer.getArgs().toBuilder().setCommonName(name).build())
-              .build();
-    }
-    return this;
-  }
-
   public Builder withEncrypter(Encrypter encrypter) {
     this.encrypter = encrypter.toProto();
     return this;

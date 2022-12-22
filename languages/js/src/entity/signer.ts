@@ -10,9 +10,9 @@ export class EcsdaSigner implements Signer {
   alg: proto.SignerAlg;
   args: SignerArgs;
 
-  constructor(privateKey: string, commonName?: string) {
+  constructor(privateKey: string, options?: { commonName?: string }) {
     this.alg = proto.SignerAlg.ES256K;
-    this.args = new SignerArgs(privateKey, commonName);
+    this.args = new SignerArgs(privateKey, options?.commonName);
   }
 
   public toProto(): proto.Signer {

@@ -8,6 +8,7 @@ import com.bloock.sdk.entity.AnchorNetwork;
 import com.bloock.sdk.entity.EciesDecrypter;
 import com.bloock.sdk.entity.EciesEncrypter;
 import com.bloock.sdk.entity.EcsdaSigner;
+import com.bloock.sdk.entity.SignerArgs;
 import com.bloock.sdk.entity.HostedLoader;
 import com.bloock.sdk.entity.HostedPublisher;
 import com.bloock.sdk.entity.KeyPair;
@@ -139,8 +140,7 @@ class Test {
 
     Record signedRecord =
         Builder.fromString("Hello world 3")
-            .withSigner(new EcsdaSigner(keys.getPrivateKey()))
-            .withCommonName(name)
+            .withSigner(new EcsdaSigner(new SignerArgs(keys.getPrivateKey(), name)))
             .build();
 
     Keys keys2 = sdk.generateKeys();

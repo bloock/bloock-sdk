@@ -145,8 +145,7 @@ async function testEcsdaSignature(sdk: BloockClient): Promise<Record> {
   let name = "Some name";
 
   let record = await RecordBuilder.fromString("Hello world 3")
-    .withSigner(new EcsdaSigner(keys.privateKey))
-    .withCommonName(name)
+    .withSigner(new EcsdaSigner(keys.privateKey, { commonName: name }))
     .build();
 
   keys = await sdk.generateKeys();
