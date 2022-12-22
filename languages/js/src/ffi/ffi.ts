@@ -14,10 +14,10 @@ export class FFIClient {
   }
 
   static getInstance() {
-      if (!FFIClient.instance) {
-          FFIClient.instance = new FFIClient();
-      }
-      return FFIClient.instance;
+    if (!FFIClient.instance) {
+      FFIClient.instance = new FFIClient();
+    }
+    return FFIClient.instance;
   }
 
   public async request(type: string, payload: Uint8Array): Promise<Uint8Array> {
