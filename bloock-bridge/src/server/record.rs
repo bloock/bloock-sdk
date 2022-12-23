@@ -376,7 +376,7 @@ impl RecordServiceHandler for RecordServer {
             }
         };
 
-        let req_loader_args: LoaderArgs = match req_loader.args {
+        let loader_args: LoaderArgs = match req_loader.args {
             Some(p) => p,
             None => {
                 return RecordBuilderResponse::new_error(
@@ -388,13 +388,13 @@ impl RecordServiceHandler for RecordServer {
             }
         };
 
+        let http = BloockHttpClient::new(config_data.get_config().api_key);
+        let service =
+            bloock_core::publish::configure(Arc::new(http), Arc::new(config_data.clone()));
+
         let result = match DataAvailabilityType::from_i32(req_loader.r#type) {
-            Some(DataAvailabilityType::Hosted) => {
-                let http = BloockHttpClient::new(config_data.get_config().api_key);
-                let service =
-                    bloock_core::publish::configure(Arc::new(http), Arc::new(config_data.clone()));
-                service.retrieve_hosted(req_loader_args.hash).await
-            }
+            Some(DataAvailabilityType::Hosted) => service.retrieve_hosted(loader_args.hash).await,
+            Some(DataAvailabilityType::Ipfs) => service.retrieve_ipfs(loader_args.hash).await,
             None => {
                 return RecordBuilderResponse::new_error(
                     &client,
@@ -597,13 +597,12 @@ impl RecordServiceHandler for RecordServer {
             }
         };
 
+        let http = BloockHttpClient::new(config_data.get_config().api_key);
+        let service = bloock_core::publish::configure(Arc::new(http), Arc::new(config_data));
+
         let result = match DataAvailabilityType::from_i32(req_publisher.r#type) {
-            Some(DataAvailabilityType::Hosted) => {
-                let http = BloockHttpClient::new(config_data.get_config().api_key);
-                let service =
-                    bloock_core::publish::configure(Arc::new(http), Arc::new(config_data));
-                service.publish_hosted(record).await
-            }
+            Some(DataAvailabilityType::Hosted) => service.publish_hosted(record).await,
+            Some(DataAvailabilityType::Ipfs) => service.publish_ipfs(record).await,
             None => {
                 return PublishResponse::new_error(
                     &client,

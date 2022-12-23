@@ -39,6 +39,39 @@ impl<H: Client> PublishService<H> {
             .await
             .map_err(|e| PublishError::PublishError(e.to_string()).into())
     }
+
+    pub async fn publish_ipfs(&self, _record: Record) -> BloockResult<String> {
+        return Ok("published to IPFS!".to_string());
+        // let url = format!(
+        //     "{}/hosting/v1/hosted/upload",
+        //     self.config_service.get_api_base_url()
+        // );
+
+        // let response: PublishHostedResponse = self
+        //     .http
+        //     .post_file(
+        //         url,
+        //         vec![("payload".to_owned(), record.serialize()?.to_vec())],
+        //         None,
+        //     )
+        //     .await
+        //     .map_err(|e| PublishError::PublishError(e.to_string()))?;
+        // Ok(response.hash)
+    }
+
+    pub async fn retrieve_ipfs(&self, _hash: String) -> BloockResult<Vec<u8>> {
+        Ok("retrieved from IPFS!".as_bytes().to_vec())
+        // let url = format!(
+        //     "{}/hosting/v1/hosted/{}",
+        //     self.config_service.get_api_base_url(),
+        //     hash
+        // );
+
+        // self.http
+        //     .get(url, None)
+        //     .await
+        //     .map_err(|e| PublishError::PublishError(e.to_string()).into())
+    }
 }
 
 #[cfg(test)]

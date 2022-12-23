@@ -203,6 +203,7 @@ message SendRecordsResponse {
 
 enum DataAvailabilityType {
     HOSTED = 0;
+    IPFS = 1;
 }
 
 message Loader {
