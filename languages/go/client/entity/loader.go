@@ -6,6 +6,16 @@ type Loader interface {
 	ToProto() *proto.Loader
 }
 
+type LoaderArgs struct {
+	hash string
+}
+
+func (e LoaderArgs) ToProto() *proto.LoaderArgs {
+	return &proto.LoaderArgs{
+		Hash: e.hash,
+	}
+}
+
 type HostedLoader struct {
 	Type proto.DataAvailabilityType
 	Args LoaderArgs
@@ -27,12 +37,23 @@ func (e HostedLoader) ToProto() *proto.Loader {
 	}
 }
 
-type LoaderArgs struct {
-	hash string
+type IpfsLoader struct {
+	Type proto.DataAvailabilityType
+	Args LoaderArgs
 }
 
-func (e LoaderArgs) ToProto() *proto.LoaderArgs {
-	return &proto.LoaderArgs{
-		Hash: e.hash,
+func NewIpfsLoader(hash string) IpfsLoader {
+	return IpfsLoader{
+		Type: proto.DataAvailabilityType_IPFS,
+		Args: LoaderArgs{
+			hash,
+		},
+	}
+}
+
+func (e IpfsLoader) ToProto() *proto.Loader {
+	return &proto.Loader{
+		Type: e.Type,
+		Args: e.Args.ToProto(),
 	}
 }
