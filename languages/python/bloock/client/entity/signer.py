@@ -8,7 +8,9 @@ class SignerArgs:
         self.common_name = common_name
 
     def to_proto(self) -> proto.SignerArgs:
-        return proto.SignerArgs(private_key=self.private_key)
+        return proto.SignerArgs(
+            private_key=self.private_key, common_name=self.common_name
+        )
 
 
 class Signer:

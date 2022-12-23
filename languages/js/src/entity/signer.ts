@@ -33,6 +33,9 @@ export class SignerArgs {
   }
 
   public toProto(): proto.SignerArgs {
-    return proto.SignerArgs.fromPartial({ privateKey: this.privateKey });
+    return proto.SignerArgs.fromPartial({
+      privateKey: this.privateKey,
+      commonName: this.commonName
+    });
   }
 }
