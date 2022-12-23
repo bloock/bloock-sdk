@@ -61,7 +61,7 @@ mod tests {
         let mut http = MockClient::default();
         http.expect_post_file::<String, PublishHostedResponse>()
             .with(
-                eq("https://api.bloock.com/hosting/v1/upload".to_owned()),
+                eq("https://api.bloock.com/hosting/v1/hosted/upload".to_owned()),
                 eq(vec![("payload".to_owned(), payload.to_vec())]),
                 eq(None),
             )
@@ -87,7 +87,7 @@ mod tests {
         let mut http = MockClient::default();
         http.expect_get::<String>()
             .with(
-                eq(format!("https://api.bloock.com/hosting/v1/{}", hash)),
+                eq(format!("https://api.bloock.com/hosting/v1/hosted/{}", hash)),
                 eq(None),
             )
             .return_once(move |_, _| Ok(payload.to_vec()));
