@@ -23,7 +23,8 @@ func TestEndToEnd(t *testing.T) {
 		records = append(records, testFromFile(t))
 		records = append(records, testEcsdaSignature(t, sdk))
 
-		testFromLoader(t)
+		testFromHostedLoader(t)
+		testFromIpfsLoader(t)
 
 		testAesEncryption(t)
 		testAesEncryptionDataAvailability(t)
@@ -80,8 +81,9 @@ func testFromString(t *testing.T) entity.Record {
 	return record
 }
 
-func testFromLoader(t *testing.T) {
-	record, err := builder.NewRecordBuilderFromString("Hello world").Build()
+func testFromHostedLoader(t *testing.T) {
+    payload := "Hello world"
+	record, err := builder.NewRecordBuilderFromString(payload).Build()
 	require.NoError(t, err)
 
 	hash, err := record.GetHash()
@@ -98,6 +100,31 @@ func testFromLoader(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, result, hash)
+
+    assert.Equal(t, payload, string(record.Retrieve()))
+}
+
+func testFromIpfsLoader(t *testing.T) {
+    payload := "Hello world"
+	record, err := builder.NewRecordBuilderFromString(payload).Build()
+	require.NoError(t, err)
+
+	hash, err := record.GetHash()
+	require.NoError(t, err)
+
+	result, err := record.Publish(entity.NewIpfsPublisher())
+	require.NoError(t, err)
+	assert.Equal(t, hash, result)
+
+	record, err = builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
+	require.NoError(t, err)
+
+	hash, err = record.GetHash()
+	require.NoError(t, err)
+
+	assert.Equal(t, result, hash)
+
+    assert.Equal(t, payload, string(record.Retrieve()))
 }
 
 func testFromBytes(t *testing.T) entity.Record {
