@@ -32,8 +32,7 @@ impl Document {
         let proof = parser.get("proof");
         let signatures = parser.get("signatures");
 
-        let payload = parser
-            .get_data();
+        let payload = parser.get_data();
 
         let doc = Document {
             parser,
@@ -113,9 +112,7 @@ impl Document {
     }
 
     fn update_payload(&mut self) -> BloockResult<()> {
-        self.payload = self
-            .parser
-            .get_data();
+        self.payload = self.parser.get_data();
         Ok(())
     }
 
