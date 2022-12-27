@@ -18,6 +18,8 @@ import {
   AnchorNetwork
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
+import { IpfsPublisher } from "../dist/entity/publisher";
+import { IpfsLoader } from "../dist/entity/loader";
 
 function getSdk() {
   const apiKey = process.env["API_KEY"] || "";
@@ -43,7 +45,8 @@ describe("E2E Tests", () => {
     records.push(await testFromFile());
     records.push(await testEcsdaSignature(sdk));
 
-    await testFromLoader();
+    await testFromHostedLoader();
+    await testFromIpfsLoader();
 
     await testAesEncryption();
     await testAesEncryptionDataAvailability();
@@ -164,7 +167,7 @@ async function testEcsdaSignature(sdk: BloockClient): Promise<Record> {
   return recordWithMultipleSignatures;
 }
 
-async function testFromLoader() {
+async function testFromHostedLoader() {
   let record = await RecordBuilder.fromString("Hello world").build();
 
   let hash = await record.getHash();
@@ -173,6 +176,22 @@ async function testFromLoader() {
   expect(result).toEqual(hash);
 
   record = await RecordBuilder.fromLoader(new HostedLoader(result)).build();
+
+  hash = await record.getHash();
+
+  expect(hash).toEqual(result);
+}
+
+async function testFromIpfsLoader() {
+    let payload = "Hello world";
+  let record = await RecordBuilder.fromString(payload).build();
+
+  let hash = await record.getHash();
+
+  let result = await record.publish(new IpfsPublisher());
+  expect(result).toEqual(hash);
+
+  record = await RecordBuilder.fromLoader(new IpfsLoader(result)).build();
 
   hash = await record.getHash();
 

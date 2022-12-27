@@ -6,6 +6,17 @@ export interface Loader {
   toProto(): proto.Loader;
 }
 
+export class LoaderArgs {
+  hash: string;
+  constructor(hash: string) {
+    this.hash = hash;
+  }
+
+  public toProto(): proto.LoaderArgs {
+    return proto.LoaderArgs.fromPartial({ hash: this.hash });
+  }
+}
+
 export class HostedLoader implements Loader {
   type: proto.DataAvailabilityType;
   args: LoaderArgs;
@@ -23,13 +34,19 @@ export class HostedLoader implements Loader {
   }
 }
 
-export class LoaderArgs {
-  hash: string;
+export class IpfsLoader implements Loader {
+  type: proto.DataAvailabilityType;
+  args: LoaderArgs;
+
   constructor(hash: string) {
-    this.hash = hash;
+    this.type = proto.DataAvailabilityType.IPFS;
+    this.args = new LoaderArgs(hash);
   }
 
-  public toProto(): proto.LoaderArgs {
-    return proto.LoaderArgs.fromPartial({ hash: this.hash });
+  public toProto(): proto.Loader {
+    return proto.Loader.fromPartial({
+      type: this.type,
+      args: this.args.toProto()
+    });
   }
 }
