@@ -41,8 +41,8 @@ impl MetadataParser for DefaultParser {
         Ok(())
     }
 
-    fn get_data(&mut self) -> Result<Vec<u8>> {
-        Ok(self._data_.clone())
+    fn get_data(&mut self) -> Vec<u8> {
+        self._data_.clone()
     }
 
     fn build(&mut self) -> Result<Vec<u8>> {
