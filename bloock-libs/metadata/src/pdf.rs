@@ -4,7 +4,9 @@ use serde::{de::DeserializeOwned, Serialize};
 
 #[derive(Debug, Clone)]
 pub struct PdfParser {
+    modified: bool,
     document: Document,
+    original_payload: Vec<u8>,
 }
 
 impl MetadataParser for PdfParser {
@@ -12,7 +14,11 @@ impl MetadataParser for PdfParser {
         let document =
             Document::load_mem(payload).map_err(|e| MetadataError::LoadError(e.to_string()))?;
 
-        Ok(PdfParser { document })
+        Ok(PdfParser {
+            modified: false,
+            document,
+            original_payload: payload.to_vec(),
+        })
     }
 
     fn get<T: DeserializeOwned>(&self, key: &str) -> Option<T> {
@@ -27,6 +33,8 @@ impl MetadataParser for PdfParser {
     }
 
     fn set<T: Serialize>(&mut self, key: &str, value: &T) -> Result<()> {
+        self.modified = true;
+
         let dictionary = self.get_metadata_dict_mut()?;
 
         let object = Object::from(key);
@@ -41,6 +49,8 @@ impl MetadataParser for PdfParser {
     }
 
     fn del(&mut self, key: &str) -> Result<()> {
+        self.modified = true;
+
         let dictionary = self.get_metadata_dict_mut()?;
 
         let object = Object::from(key);
@@ -52,7 +62,7 @@ impl MetadataParser for PdfParser {
         Ok(())
     }
 
-    fn get_data(&mut self) -> Result<Vec<u8>> {
+    fn get_data(&self) -> Result<Vec<u8>> {
         let mut doc = self.clone();
         doc.del("proof")?;
         doc.del("signatures")?;
@@ -60,11 +70,18 @@ impl MetadataParser for PdfParser {
     }
 
     fn build(&mut self) -> Result<Vec<u8>> {
-        let mut out: Vec<u8> = Vec::new();
-        self.document
-            .save_to(&mut out)
-            .map_err(|e| MetadataError::WriteError(e.to_string()))?;
-        Ok(out)
+        // document.save_to alters the original document (even if it hasn't been modified) and thus
+        // results in a different hash. To avoid this, we return the original payload if it has not
+        // been modified
+        if self.modified {
+            let mut out: Vec<u8> = Vec::new();
+            self.document
+                .save_to(&mut out)
+                .map_err(|e| MetadataError::WriteError(e.to_string()))?;
+            Ok(out)
+        } else {
+            Ok(self.original_payload.clone())
+        }
     }
 }
 

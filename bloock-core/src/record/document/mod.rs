@@ -26,7 +26,7 @@ pub struct Document {
 
 impl Document {
     pub fn new(payload: &[u8]) -> BloockResult<Self> {
-        let mut parser = FileParser::load(payload).map_err(InfrastructureError::MetadataError)?;
+        let parser = FileParser::load(payload).map_err(InfrastructureError::MetadataError)?;
 
         let is_encrypted = parser.get("is_encrypted").unwrap_or(false);
         let proof = parser.get("proof");
