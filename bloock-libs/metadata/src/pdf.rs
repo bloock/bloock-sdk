@@ -62,8 +62,11 @@ impl MetadataParser for PdfParser {
         Ok(())
     }
 
-    fn get_data(&mut self) -> Vec<u8> {
-        self.original_payload.clone()
+    fn get_data(&self) -> Result<Vec<u8>> {
+        let mut doc = self.clone();
+        doc.del("proof")?;
+        doc.del("signatures")?;
+        doc.build()
     }
 
     fn build(&mut self) -> Result<Vec<u8>> {
