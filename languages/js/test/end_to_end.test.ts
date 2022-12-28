@@ -15,11 +15,11 @@ import {
   EciesDecrypter,
   Proof,
   ProofAnchor,
-  AnchorNetwork
+  AnchorNetwork,
+  IpfsPublisher,
+  IpfsLoader
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
-import { IpfsPublisher } from "../dist/entity/publisher";
-import { IpfsLoader } from "../dist/entity/loader";
 
 function getSdk() {
   const apiKey = process.env["API_KEY"] || "";
@@ -183,7 +183,7 @@ async function testFromHostedLoader() {
 }
 
 async function testFromIpfsLoader() {
-    let payload = "Hello world";
+  let payload = "Hello world";
   let record = await RecordBuilder.fromString(payload).build();
 
   let hash = await record.getHash();
