@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2/builder"
@@ -27,13 +28,16 @@ func TestEndToEnd(t *testing.T) {
 		testFromIpfsLoader(t)
 
 		testAesEncryption(t)
-		testAesEncryptionDataAvailability(t)
+		testAesEncryptionHosted(t)
+		testAesEncryptionIpfs(t)
 
 		testRsaEncryption(t, sdk)
-		testRsaEncryptionDataAvailability(t, sdk)
+		testRsaEncryptionHosted(t, sdk)
+		testRsaEncryptionIpfs(t, sdk)
 
 		testEciesEncryption(t, sdk)
-		testEciesEncryptionDataAvailability(t, sdk)
+		testEciesEncryptionHosted(t, sdk)
+		testEciesEncryptionIpfs(t, sdk)
 
 		testSetProof(t, sdk)
 
@@ -82,7 +86,7 @@ func testFromString(t *testing.T) entity.Record {
 }
 
 func testFromHostedLoader(t *testing.T) {
-    payload := "Hello world"
+	payload := "Hello world"
 	record, err := builder.NewRecordBuilderFromString(payload).Build()
 	require.NoError(t, err)
 
@@ -101,11 +105,11 @@ func testFromHostedLoader(t *testing.T) {
 
 	assert.Equal(t, result, hash)
 
-    assert.Equal(t, payload, string(record.Retrieve()))
+	assert.Equal(t, payload, string(record.Retrieve()))
 }
 
 func testFromIpfsLoader(t *testing.T) {
-    payload := "Hello world"
+	payload := "Hello world"
 	record, err := builder.NewRecordBuilderFromString(payload).Build()
 	require.NoError(t, err)
 
@@ -124,7 +128,7 @@ func testFromIpfsLoader(t *testing.T) {
 
 	assert.Equal(t, result, hash)
 
-    assert.Equal(t, payload, string(record.Retrieve()))
+	assert.Equal(t, payload, string(record.Retrieve()))
 }
 
 func testFromBytes(t *testing.T) entity.Record {
@@ -202,7 +206,7 @@ func testAesEncryption(t *testing.T) {
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
 
-func testAesEncryptionDataAvailability(t *testing.T) {
+func testAesEncryptionHosted(t *testing.T) {
 	payload := "Hello world 2"
 	password := "some_password"
 
@@ -216,6 +220,37 @@ func testAesEncryptionDataAvailability(t *testing.T) {
 	require.NoError(t, err)
 
 	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
+	require.NoError(t, err)
+
+	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
+
+	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+		WithDecrypter(entity.NewAesDecrypter(password)).
+		Build()
+
+	require.NoError(t, err)
+	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
+
+	hash, err := decryptedRecord.GetHash()
+	require.NoError(t, err)
+	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
+}
+
+func testAesEncryptionIpfs(t *testing.T) {
+	payload := "Hello world 2"
+	password := "some_password"
+
+	encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
+		WithEncrypter(entity.NewAesEncrypter(password)).
+		Build()
+
+	assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
+
+	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
+	fmt.Println(result)
+	require.NoError(t, err)
+
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
 	require.NoError(t, err)
 
 	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
@@ -255,7 +290,7 @@ func testRsaEncryption(t *testing.T, sdk client.Client) {
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
 
-func testRsaEncryptionDataAvailability(t *testing.T, sdk client.Client) {
+func testRsaEncryptionHosted(t *testing.T, sdk client.Client) {
 	payload := "Hello world 2"
 	keypair, err := sdk.GenerateRsaKeyPair()
 
@@ -269,6 +304,36 @@ func testRsaEncryptionDataAvailability(t *testing.T, sdk client.Client) {
 	require.NoError(t, err)
 
 	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
+	require.NoError(t, err)
+
+	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
+
+	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+		WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
+		Build()
+
+	require.NoError(t, err)
+	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
+
+	hash, err := decryptedRecord.GetHash()
+	require.NoError(t, err)
+	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
+}
+
+func testRsaEncryptionIpfs(t *testing.T, sdk client.Client) {
+	payload := "Hello world 2"
+	keypair, err := sdk.GenerateRsaKeyPair()
+
+	encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
+		WithEncrypter(entity.NewRsaEncrypter(keypair.PublicKey)).
+		Build()
+
+	assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
+
+	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
+	require.NoError(t, err)
+
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
 	require.NoError(t, err)
 
 	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
@@ -308,7 +373,7 @@ func testEciesEncryption(t *testing.T, sdk client.Client) {
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
 
-func testEciesEncryptionDataAvailability(t *testing.T, sdk client.Client) {
+func testEciesEncryptionHosted(t *testing.T, sdk client.Client) {
 	payload := "Hello world 2"
 	keypair, err := sdk.GenerateEciesKeyPair()
 
@@ -322,6 +387,36 @@ func testEciesEncryptionDataAvailability(t *testing.T, sdk client.Client) {
 	require.NoError(t, err)
 
 	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
+	require.NoError(t, err)
+
+	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
+
+	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+		WithDecrypter(entity.NewEciesDecrypter(keypair.PrivateKey)).
+		Build()
+
+	require.NoError(t, err)
+	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
+
+	hash, err := decryptedRecord.GetHash()
+	require.NoError(t, err)
+	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
+}
+
+func testEciesEncryptionIpfs(t *testing.T, sdk client.Client) {
+	payload := "Hello world 2"
+	keypair, err := sdk.GenerateEciesKeyPair()
+
+	encryptedRecord, err := builder.NewRecordBuilderFromString(payload).
+		WithEncrypter(entity.NewEciesEncrypter(keypair.PublicKey)).
+		Build()
+
+	assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
+
+	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
+	require.NoError(t, err)
+
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
 	require.NoError(t, err)
 
 	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())

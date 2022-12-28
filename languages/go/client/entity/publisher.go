@@ -50,4 +50,3 @@ func (e IpfsPublisher) ToProto() *proto.Publisher {
 		Args: e.Args.ToProto(),
 	}
 }
-
