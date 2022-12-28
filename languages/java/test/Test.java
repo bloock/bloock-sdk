@@ -10,6 +10,8 @@ import com.bloock.sdk.entity.EciesEncrypter;
 import com.bloock.sdk.entity.EcsdaSigner;
 import com.bloock.sdk.entity.HostedLoader;
 import com.bloock.sdk.entity.HostedPublisher;
+import com.bloock.sdk.entity.IpfsLoader;
+import com.bloock.sdk.entity.IpfsPublisher;
 import com.bloock.sdk.entity.KeyPair;
 import com.bloock.sdk.entity.Keys;
 import com.bloock.sdk.entity.Network;
@@ -47,7 +49,8 @@ class Test {
     records.add(testFromFile());
     records.add(testEcsdaSignature(sdk));
 
-    testFromLoader();
+    testFromHostedLoader();
+    testFromIpfsLoader();
 
     testAesEncryption();
     testAesEncryptionDataAvailability();
@@ -121,7 +124,7 @@ class Test {
     return record;
   }
 
-  static void testFromLoader() throws Exception {
+  static void testFromHostedLoader() throws Exception {
     Record record = Builder.fromString("Hello world").build();
     String hash = record.getHash();
 
@@ -129,6 +132,18 @@ class Test {
     assert result.equals(hash);
 
     record = Builder.fromLoader(new HostedLoader(result)).build();
+    hash = record.getHash();
+    assert hash.equals(result);
+  }
+
+  static void testFromIpfsLoader() throws Exception {
+    Record record = Builder.fromString("Hello world").build();
+    String hash = record.getHash();
+
+    String result = record.publish(new IpfsPublisher());
+    assert result.equals(hash);
+
+    record = Builder.fromLoader(new IpfsLoader(result)).build();
     hash = record.getHash();
     assert hash.equals(result);
   }

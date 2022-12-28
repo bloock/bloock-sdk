@@ -3,12 +3,12 @@ package com.bloock.sdk.entity;
 import com.bloock.sdk.bridge.proto.RecordOuterClass;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.DataAvailabilityType;
 
-public class HostedLoader implements Loader {
+public class IpfsLoader implements Loader {
   DataAvailabilityType type;
   LoaderArgs args;
 
-  public HostedLoader(String hash) {
-    type = DataAvailabilityType.HOSTED;
+  public IpfsLoader(String hash) {
+    type = DataAvailabilityType.IPFS;
     args = new LoaderArgs(hash);
   }
 
