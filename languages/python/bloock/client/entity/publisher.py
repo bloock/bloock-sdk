@@ -25,3 +25,11 @@ class HostedPublisher(Publisher):
 
     def to_proto(self) -> proto.Publisher:
         return proto.Publisher(type=self.type, args=self.args.to_proto())
+
+
+class IpfsPublisher(Publisher):
+    def __init__(self) -> None:
+        super().__init__(type=proto.IPFS, args=PublisherArgs())
+
+    def to_proto(self) -> proto.Publisher:
+        return proto.Publisher(type=self.type, args=self.args.to_proto())

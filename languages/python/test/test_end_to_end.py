@@ -11,8 +11,8 @@ from bloock.client.entity.encrypter import AesEncrypter, EciesEncrypter, RsaEncr
 from bloock.client.entity.record import Record
 from bloock.client.entity.signer import EcsdaSigner
 from bloock.client.entity.network import Network
-from bloock.client.entity.publisher import HostedPublisher
-from bloock.client.entity.loader import HostedLoader
+from bloock.client.entity.publisher import HostedPublisher, IpfsPublisher
+from bloock.client.entity.loader import HostedLoader, IpfsLoader
 
 
 class TestE2E(unittest.TestCase):
@@ -34,7 +34,8 @@ class TestE2E(unittest.TestCase):
             self._testEcsdaSignature(),
         ]
 
-        self._testFromLoader()
+        self._testFromHostedLoader()
+        self._testFromIpfsLoader()
 
         self._testAesEncryption()
         self._testAesEncryptionDataAvailability()
@@ -134,7 +135,7 @@ class TestE2E(unittest.TestCase):
 
         return record_with_multiple_signatures
 
-    def _testFromLoader(self) -> Record:
+    def _testFromHostedLoader(self) -> Record:
         record = RecordBuilder.from_string("Hello world").build()
         hash = record.get_hash()
 
@@ -143,6 +144,20 @@ class TestE2E(unittest.TestCase):
 
         record = RecordBuilder.from_loader(HostedLoader(hash=result)).build()
         hash = record.get_hash()
+        self.assertEqual(hash, result)
+
+        return record
+
+    def _testFromIpfsLoader(self) -> Record:
+        record = RecordBuilder.from_string("Hello world").build()
+        hash = record.get_hash()
+
+        result = record.publish(IpfsPublisher())
+        self.assertEqual(hash, result)
+
+        record = RecordBuilder.from_loader(IpfsLoader(hash=result)).build()
+        hash = record.get_hash()
+        print(hash)
         self.assertEqual(hash, result)
 
         return record

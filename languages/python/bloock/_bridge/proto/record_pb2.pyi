@@ -98,12 +98,14 @@ class _DataAvailabilityTypeEnumTypeWrapper(
 ):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     HOSTED: _DataAvailabilityType.ValueType  # 0
+    IPFS: _DataAvailabilityType.ValueType  # 1
 
 class DataAvailabilityType(
     _DataAvailabilityType, metaclass=_DataAvailabilityTypeEnumTypeWrapper
 ): ...
 
 HOSTED: DataAvailabilityType.ValueType  # 0
+IPFS: DataAvailabilityType.ValueType  # 1
 global___DataAvailabilityType = DataAvailabilityType
 
 class GenerateKeysRequest(google.protobuf.message.Message):
