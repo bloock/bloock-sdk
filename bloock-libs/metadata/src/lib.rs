@@ -47,7 +47,7 @@ impl MetadataParser for FileParser {
         }
     }
 
-    fn get_data(&mut self) -> Result<Vec<u8>> {
+    fn get_data(&self) -> Result<Vec<u8>> {
         match self {
             FileParser::Default(p) => p.get_data(),
             FileParser::Pdf(p) => p.get_data(),
@@ -70,7 +70,7 @@ where
     fn get<T: DeserializeOwned>(&self, key: &str) -> Option<T>;
     fn set<T: Serialize>(&mut self, key: &str, value: &T) -> Result<()>;
     fn del(&mut self, key: &str) -> Result<()>;
-    fn get_data(&mut self) -> Result<Vec<u8>>;
+    fn get_data(&self) -> Result<Vec<u8>>;
     fn build(&mut self) -> Result<Vec<u8>>;
 }
 
