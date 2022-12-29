@@ -266,7 +266,7 @@ mod tests {
 
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private, None)))
             .build()
             .unwrap();
 
@@ -298,7 +298,7 @@ mod tests {
 
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -327,13 +327,13 @@ mod tests {
 
         let default_record = RecordBuilder::from_file(payload.to_vec())
             .unwrap()
-            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private, None)))
             .build()
             .unwrap();
 
         let encrypted_record = RecordBuilder::from_file(payload.to_vec())
             .unwrap()
-            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -397,7 +397,7 @@ mod tests {
 
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private)))
+            .with_signer(EcsdaSigner::new(EcsdaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();

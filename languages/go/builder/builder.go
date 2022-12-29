@@ -23,6 +23,13 @@ func (b RecordBuilder) WithSigner(signer entity.Signer) RecordBuilder {
 	return b
 }
 
+func (b RecordBuilder) WithCommonName(name string) RecordBuilder {
+	if b.signer != nil {
+		b.signer.Args.CommonName = &name
+	}
+	return b
+}
+
 func (b RecordBuilder) WithEncrypter(encrypter entity.Encrypter) RecordBuilder {
 	b.encrypter = encrypter.ToProto()
 	return b

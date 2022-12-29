@@ -127,6 +127,11 @@ impl Server {
                 .get_signatures(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceGetSignatureCommonName => Ok(self
+                .record
+                .get_signature_common_name(self.serialize_request(payload)?)
+                .await
+                .into()),
             BloockServer::RecordServiceGenerateKeys => Ok(self
                 .record
                 .generate_keys(self.serialize_request(payload)?)

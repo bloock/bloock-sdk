@@ -433,24 +433,46 @@ class SignerArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     PRIVATE_KEY_FIELD_NUMBER: builtins.int
+    COMMON_NAME_FIELD_NUMBER: builtins.int
     private_key: builtins.str
+    common_name: builtins.str
     def __init__(
         self,
         *,
         private_key: builtins.str | None = ...,
+        common_name: builtins.str | None = ...,
     ) -> None: ...
     def HasField(
         self,
         field_name: typing_extensions.Literal[
-            "_private_key", b"_private_key", "private_key", b"private_key"
+            "_common_name",
+            b"_common_name",
+            "_private_key",
+            b"_private_key",
+            "common_name",
+            b"common_name",
+            "private_key",
+            b"private_key",
         ],
     ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "_private_key", b"_private_key", "private_key", b"private_key"
+            "_common_name",
+            b"_common_name",
+            "_private_key",
+            b"_private_key",
+            "common_name",
+            b"common_name",
+            "private_key",
+            b"private_key",
         ],
     ) -> None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_common_name", b"_common_name"]
+    ) -> typing_extensions.Literal["common_name"] | None: ...
+    @typing.overload
     def WhichOneof(
         self, oneof_group: typing_extensions.Literal["_private_key", b"_private_key"]
     ) -> typing_extensions.Literal["private_key"] | None: ...
@@ -1434,3 +1456,63 @@ class PublishResponse(google.protobuf.message.Message):
     ) -> typing_extensions.Literal["error"] | None: ...
 
 global___PublishResponse = PublishResponse
+
+class SignatureCommonNameRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    SIGNATURE_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    @property
+    def signature(self) -> global___Signature: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        signature: global___Signature | None = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "signature", b"signature"
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "signature", b"signature"
+        ],
+    ) -> None: ...
+
+global___SignatureCommonNameRequest = SignatureCommonNameRequest
+
+class SignatureCommonNameResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    COMMON_NAME_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    common_name: builtins.str
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        common_name: builtins.str = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "common_name", b"common_name", "error", b"error"
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
+
+global___SignatureCommonNameResponse = SignatureCommonNameResponse

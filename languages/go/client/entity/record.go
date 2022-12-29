@@ -153,6 +153,24 @@ func NewSignatureFromProto(s *proto.Signature) Signature {
 	}
 }
 
+func (s *Signature) GetCommonName() (string, error) {
+	bridgeClient := bridge.NewBloockBridge()
+	res, err := bridgeClient.Record().GetSignatureCommonName(context.Background(), &proto.SignatureCommonNameRequest{
+		ConfigData: config.NewConfigData(),
+		Signature:  s.ToProto(),
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if res.Error != nil {
+		return "", errors.New(res.Error.Message)
+	}
+
+	return res.CommonName, nil
+}
+
 func (s Signature) ToProto() *proto.Signature {
 	return &proto.Signature{
 		Signature: s.Signature,

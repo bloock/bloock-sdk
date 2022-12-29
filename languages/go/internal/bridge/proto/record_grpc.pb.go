@@ -31,6 +31,7 @@ type RecordServiceClient interface {
 	BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromLoader(ctx context.Context, in *RecordBuilderFromLoaderRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
+	GetSignatureCommonName(ctx context.Context, in *SignatureCommonNameRequest, opts ...grpc.CallOption) (*SignatureCommonNameResponse, error)
 	GetSignatures(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordSignatures, error)
 	GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error)
 	GenerateRsaKeyPair(ctx context.Context, in *GenerateRsaKeyPairRequest, opts ...grpc.CallOption) (*GenerateRsaKeyPairResponse, error)
@@ -127,6 +128,15 @@ func (c *recordServiceClient) GetHash(ctx context.Context, in *Record, opts ...g
 	return out, nil
 }
 
+func (c *recordServiceClient) GetSignatureCommonName(ctx context.Context, in *SignatureCommonNameRequest, opts ...grpc.CallOption) (*SignatureCommonNameResponse, error) {
+	out := new(SignatureCommonNameResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetSignatureCommonName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *recordServiceClient) GetSignatures(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordSignatures, error) {
 	out := new(RecordSignatures)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetSignatures", in, out, opts...)
@@ -185,6 +195,7 @@ type RecordServiceServer interface {
 	BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromLoader(context.Context, *RecordBuilderFromLoaderRequest) (*RecordBuilderResponse, error)
 	GetHash(context.Context, *Record) (*RecordHash, error)
+	GetSignatureCommonName(context.Context, *SignatureCommonNameRequest) (*SignatureCommonNameResponse, error)
 	GetSignatures(context.Context, *Record) (*RecordSignatures, error)
 	GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error)
 	GenerateRsaKeyPair(context.Context, *GenerateRsaKeyPairRequest) (*GenerateRsaKeyPairResponse, error)
@@ -223,6 +234,9 @@ func (UnimplementedRecordServiceServer) BuildRecordFromLoader(context.Context, *
 }
 func (UnimplementedRecordServiceServer) GetHash(context.Context, *Record) (*RecordHash, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
+}
+func (UnimplementedRecordServiceServer) GetSignatureCommonName(context.Context, *SignatureCommonNameRequest) (*SignatureCommonNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSignatureCommonName not implemented")
 }
 func (UnimplementedRecordServiceServer) GetSignatures(context.Context, *Record) (*RecordSignatures, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSignatures not implemented")
@@ -414,6 +428,24 @@ func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecordService_GetSignatureCommonName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignatureCommonNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).GetSignatureCommonName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/GetSignatureCommonName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).GetSignatureCommonName(ctx, req.(*SignatureCommonNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RecordService_GetSignatures_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Record)
 	if err := dec(in); err != nil {
@@ -546,6 +578,10 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHash",
 			Handler:    _RecordService_GetHash_Handler,
+		},
+		{
+			MethodName: "GetSignatureCommonName",
+			Handler:    _RecordService_GetSignatureCommonName_Handler,
 		},
 		{
 			MethodName: "GetSignatures",

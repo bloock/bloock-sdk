@@ -1,6 +1,11 @@
 package com.bloock.sdk.entity;
 
+import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.SignatureCommonNameRequest;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.SignatureCommonNameResponse;
+import com.bloock.sdk.bridge.proto.Shared.Error;
+import com.bloock.sdk.config.Config;
 
 public class Signature {
   String signature;
@@ -38,5 +43,23 @@ public class Signature {
 
   public SignatureHeader getHeader() {
     return header;
+  }
+
+  public String getCommonName() throws Exception {
+    Bridge bridge = new Bridge();
+    SignatureCommonNameResponse res =
+        bridge
+            .getRecord()
+            .getSignatureCommonName(
+                SignatureCommonNameRequest.newBuilder()
+                    .setConfigData(Config.newConfigData())
+                    .setSignature(this.toProto())
+                    .build());
+
+    if (res.getError() != Error.getDefaultInstance()) {
+      throw new Exception(res.getError().getMessage());
+    }
+
+    return res.getCommonName();
   }
 }

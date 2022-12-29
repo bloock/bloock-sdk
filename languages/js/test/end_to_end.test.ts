@@ -148,9 +148,10 @@ async function testFromFile(): Promise<Record> {
 
 async function testEcsdaSignature(sdk: BloockClient): Promise<Record> {
   let keys = await sdk.generateKeys();
+  let name = "Some name";
 
   let record = await RecordBuilder.fromString("Hello world 3")
-    .withSigner(new EcsdaSigner(keys.privateKey))
+    .withSigner(new EcsdaSigner(keys.privateKey, { commonName: name }))
     .build();
 
   keys = await sdk.generateKeys();
@@ -166,6 +167,8 @@ async function testEcsdaSignature(sdk: BloockClient): Promise<Record> {
 
   let signatures = await recordWithMultipleSignatures.getSignatures();
   expect(signatures.length).toEqual(2);
+
+  expect(await signatures[0].getCommonName()).toEqual(name);
 
   return recordWithMultipleSignatures;
 }

@@ -9,6 +9,7 @@ use bloock_core::{
     Decrypter as DecrypterCore, EciesDecrypter, EciesDecrypterArgs, EciesEncrypter,
     EciesEncrypterArgs, EciesKeyPair, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore,
     RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, RsaKeyPair,
+    Signature as SignatureCore,
 };
 use serde_json::json;
 
@@ -22,7 +23,8 @@ use crate::{
         GenerateKeysResponse, GenerateRsaKeyPairRequest, GenerateRsaKeyPairResponse, Loader,
         LoaderArgs, PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse,
         RecordHash, RecordReceipt, RecordServiceHandler, RecordSignatures, SendRecordsRequest,
-        SendRecordsResponse, Signature, Signer, SignerAlg,
+        SendRecordsResponse, Signature, SignatureCommonNameRequest, SignatureCommonNameResponse,
+        Signer, SignerAlg,
     },
 };
 
@@ -49,9 +51,16 @@ impl From<RecordHash> for ResponseType {
         ResponseType::GetHash(res)
     }
 }
+
 impl From<RecordSignatures> for ResponseType {
     fn from(res: RecordSignatures) -> Self {
         ResponseType::GetSignatures(res)
+    }
+}
+
+impl From<SignatureCommonNameResponse> for ResponseType {
+    fn from(res: SignatureCommonNameResponse) -> Self {
+        ResponseType::GetSignatureCommonName(res)
     }
 }
 
@@ -453,6 +462,48 @@ impl RecordServiceHandler for RecordServer {
         RecordHash::new_success(&client, hash).await
     }
 
+    async fn get_signature_common_name(
+        &self,
+        req: SignatureCommonNameRequest,
+    ) -> SignatureCommonNameResponse {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
+                return SignatureCommonNameResponse {
+                    common_name: "".to_string(),
+                    error: Some(config_data_error()),
+                }
+            }
+        };
+
+        let client = client::configure(config_data);
+
+        let signature: SignatureCore = match req.signature {
+            Some(signature) => match signature.try_into() {
+                Ok(signature) => signature,
+                Err(err) => {
+                    return SignatureCommonNameResponse::new_error(&client, err.to_string()).await
+                }
+            },
+            None => {
+                return SignatureCommonNameResponse::new_error(
+                    &client,
+                    "invalid signature provided".to_string(),
+                )
+                .await;
+            }
+        };
+
+        let common_name = match signature.get_common_name() {
+            Ok(name) => name,
+            Err(err) => {
+                return SignatureCommonNameResponse::new_error(&client, err.to_string()).await
+            }
+        };
+
+        SignatureCommonNameResponse::new_success(&client, common_name).await
+    }
+
     async fn get_signatures(&self, req: Record) -> RecordSignatures {
         let config_data = match map_config(req.clone().config_data) {
             Ok(config) => config,
@@ -655,7 +706,11 @@ async fn build_record(
                         .await
                     }
                 };
-                EcsdaSigner::new(EcsdaSignerArgs::new(&private_key))
+
+                EcsdaSigner::new(EcsdaSignerArgs::new(
+                    &private_key,
+                    signer_arguments.common_name,
+                ))
             }
             None => {
                 return RecordBuilderResponse::new_error(
@@ -1048,6 +1103,46 @@ impl GenerateEciesKeyPairResponse {
         client
             .send_event(
                 BloockServer::RecordServiceGenerateEciesKeyPair.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
+    }
+}
+
+impl SignatureCommonNameResponse {
+    async fn new_success(
+        client: &BloockClient,
+        common_name: String,
+    ) -> SignatureCommonNameResponse {
+        Self::send_event(client, None).await;
+
+        SignatureCommonNameResponse {
+            common_name,
+            error: None,
+        }
+    }
+
+    async fn new_error(client: &BloockClient, err: String) -> SignatureCommonNameResponse {
+        Self::send_event(client, Some(&err)).await;
+
+        SignatureCommonNameResponse {
+            common_name: "".to_string(),
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::RecordServiceGetSignatureCommonName.as_str(),
                 error,
                 Some(event_attr),
             )

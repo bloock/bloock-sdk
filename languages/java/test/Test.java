@@ -23,6 +23,7 @@ import com.bloock.sdk.entity.RsaDecrypter;
 import com.bloock.sdk.entity.RsaEncrypter;
 import com.bloock.sdk.entity.RsaKeyPair;
 import com.bloock.sdk.entity.Signature;
+import com.bloock.sdk.entity.SignerArgs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -153,10 +154,11 @@ class Test {
 
   static Record testEcsdaSignature(Client sdk) throws Exception {
     Keys keys = sdk.generateKeys();
+    String name = "Some name";
 
     Record signedRecord =
         Builder.fromString("Hello world 3")
-            .withSigner(new EcsdaSigner(keys.getPrivateKey()))
+            .withSigner(new EcsdaSigner(new SignerArgs(keys.getPrivateKey(), name)))
             .build();
 
     Keys keys2 = sdk.generateKeys();
@@ -169,6 +171,8 @@ class Test {
 
     List<Signature> signatures = recordWithMultipleSignatures.getSignatures();
     assert signatures.size() == 2;
+
+    assert signatures.get(0).getCommonName().equals(name);
 
     return recordWithMultipleSignatures;
   }
