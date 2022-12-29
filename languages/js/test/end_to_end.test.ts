@@ -15,7 +15,9 @@ import {
   EciesDecrypter,
   Proof,
   ProofAnchor,
-  AnchorNetwork
+  AnchorNetwork,
+  IpfsPublisher,
+  IpfsLoader
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
 
@@ -43,16 +45,20 @@ describe("E2E Tests", () => {
     records.push(await testFromFile());
     records.push(await testEcsdaSignature(sdk));
 
-    await testFromLoader();
+    await testFromHostedLoader();
+    await testFromIpfsLoader();
 
     await testAesEncryption();
-    await testAesEncryptionDataAvailability();
+    await testAesEncryptionHosted();
+    await testAesEncryptionIpfs();
 
     await testRsaEncryption(sdk);
-    await testRsaEncryptionDataAvailability(sdk);
+    await testRsaEncryptionHosted(sdk);
+    await testRsaEncryptionIpfs(sdk);
 
     await testEciesEncryption(sdk);
-    await testEciesEncryptionDataAvailability(sdk);
+    await testEciesEncryptionHosted(sdk);
+    await testEciesEncryptionIpfs(sdk);
 
     await testSetProof(sdk);
 
@@ -167,7 +173,7 @@ async function testEcsdaSignature(sdk: BloockClient): Promise<Record> {
   return recordWithMultipleSignatures;
 }
 
-async function testFromLoader() {
+async function testFromHostedLoader() {
   let record = await RecordBuilder.fromString("Hello world").build();
 
   let hash = await record.getHash();
@@ -176,6 +182,22 @@ async function testFromLoader() {
   expect(result).toEqual(hash);
 
   record = await RecordBuilder.fromLoader(new HostedLoader(result)).build();
+
+  hash = await record.getHash();
+
+  expect(hash).toEqual(result);
+}
+
+async function testFromIpfsLoader() {
+  let payload = "Hello world";
+  let record = await RecordBuilder.fromString(payload).build();
+
+  let hash = await record.getHash();
+
+  let result = await record.publish(new IpfsPublisher());
+  expect(result).toEqual(hash);
+
+  record = await RecordBuilder.fromLoader(new IpfsLoader(result)).build();
 
   hash = await record.getHash();
 
@@ -211,7 +233,7 @@ async function testAesEncryption() {
   return hash;
 }
 
-async function testAesEncryptionDataAvailability() {
+async function testAesEncryptionHosted() {
   let payload = "Hello world 2";
   let password = "some_password";
   let encrypted_record = await RecordBuilder.fromString(payload)
@@ -224,6 +246,35 @@ async function testAesEncryptionDataAvailability() {
 
   let loaded_record = await RecordBuilder.fromLoader(
     new HostedLoader(result)
+  ).build();
+
+  let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
+    .withDecrypter(new AesDecrypter(password))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+
+  return hash;
+}
+
+async function testAesEncryptionIpfs() {
+  let payload = "Hello world 2";
+  let password = "some_password";
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new AesEncrypter(password))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  let result = await encrypted_record.publish(new IpfsPublisher());
+
+  let loaded_record = await RecordBuilder.fromLoader(
+    new IpfsLoader(result)
   ).build();
 
   let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
@@ -262,7 +313,7 @@ async function testRsaEncryption(sdk: BloockClient) {
   );
 }
 
-async function testRsaEncryptionDataAvailability(sdk: BloockClient) {
+async function testRsaEncryptionHosted(sdk: BloockClient) {
   let payload = "Hello world 2";
   let keypair = await sdk.generateRsaKeyPair();
 
@@ -276,6 +327,36 @@ async function testRsaEncryptionDataAvailability(sdk: BloockClient) {
 
   let loaded_record = await RecordBuilder.fromLoader(
     new HostedLoader(result)
+  ).build();
+
+  let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
+    .withDecrypter(new RsaDecrypter(keypair.privateKey))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+}
+
+async function testRsaEncryptionIpfs(sdk: BloockClient) {
+  let payload = "Hello world 2";
+  let keypair = await sdk.generateRsaKeyPair();
+
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new RsaEncrypter(keypair.publicKey))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  let result = await encrypted_record.publish(new IpfsPublisher());
+
+  let loaded_record = await RecordBuilder.fromLoader(
+    new IpfsLoader(result)
   ).build();
 
   let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
@@ -314,7 +395,7 @@ async function testEciesEncryption(sdk: BloockClient) {
   );
 }
 
-async function testEciesEncryptionDataAvailability(sdk: BloockClient) {
+async function testEciesEncryptionHosted(sdk: BloockClient) {
   let payload = "Hello world 2";
   let keypair = await sdk.generateEciesKeyPair();
 
@@ -328,6 +409,36 @@ async function testEciesEncryptionDataAvailability(sdk: BloockClient) {
 
   let loaded_record = await RecordBuilder.fromLoader(
     new HostedLoader(result)
+  ).build();
+
+  let decrypted_record = await RecordBuilder.fromRecord(loaded_record)
+    .withDecrypter(new EciesDecrypter(keypair.privateKey))
+    .build();
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
+
+  let hash = await decrypted_record.getHash();
+  expect(hash).toEqual(
+    "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
+  );
+}
+
+async function testEciesEncryptionIpfs(sdk: BloockClient) {
+  let payload = "Hello world 2";
+  let keypair = await sdk.generateEciesKeyPair();
+
+  let encrypted_record = await RecordBuilder.fromString(payload)
+    .withEncrypter(new EciesEncrypter(keypair.publicKey))
+    .build();
+
+  expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  let result = await encrypted_record.publish(new IpfsPublisher());
+
+  let loaded_record = await RecordBuilder.fromLoader(
+    new IpfsLoader(result)
   ).build();
 
   let decrypted_record = await RecordBuilder.fromRecord(loaded_record)

@@ -135,6 +135,7 @@ export function encryptionAlgToJSON(object: EncryptionAlg): string {
 
 export enum DataAvailabilityType {
   HOSTED = 0,
+  IPFS = 1,
   UNRECOGNIZED = -1,
 }
 
@@ -143,6 +144,9 @@ export function dataAvailabilityTypeFromJSON(object: any): DataAvailabilityType 
     case 0:
     case "HOSTED":
       return DataAvailabilityType.HOSTED;
+    case 1:
+    case "IPFS":
+      return DataAvailabilityType.IPFS;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -154,6 +158,8 @@ export function dataAvailabilityTypeToJSON(object: DataAvailabilityType): string
   switch (object) {
     case DataAvailabilityType.HOSTED:
       return "HOSTED";
+    case DataAvailabilityType.IPFS:
+      return "IPFS";
     case DataAvailabilityType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

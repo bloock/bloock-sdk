@@ -28,3 +28,11 @@ class HostedLoader(Loader):
 
     def to_proto(self) -> proto.Loader:
         return proto.Loader(type=self.type, args=self.args.to_proto())
+
+
+class IpfsLoader(Loader):
+    def __init__(self, hash: str) -> None:
+        super().__init__(type=proto.IPFS, args=LoaderArgs(hash))
+
+    def to_proto(self) -> proto.Loader:
+        return proto.Loader(type=self.type, args=self.args.to_proto())

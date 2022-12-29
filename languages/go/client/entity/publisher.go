@@ -6,6 +6,13 @@ type Publisher interface {
 	ToProto() *proto.Publisher
 }
 
+type PublisherArgs struct {
+}
+
+func (e PublisherArgs) ToProto() *proto.PublisherArgs {
+	return &proto.PublisherArgs{}
+}
+
 type HostedPublisher struct {
 	Type proto.DataAvailabilityType
 	Args PublisherArgs
@@ -25,9 +32,21 @@ func (e HostedPublisher) ToProto() *proto.Publisher {
 	}
 }
 
-type PublisherArgs struct {
+type IpfsPublisher struct {
+	Type proto.DataAvailabilityType
+	Args PublisherArgs
 }
 
-func (e PublisherArgs) ToProto() *proto.PublisherArgs {
-	return &proto.PublisherArgs{}
+func NewIpfsPublisher() IpfsPublisher {
+	return IpfsPublisher{
+		Type: proto.DataAvailabilityType_IPFS,
+		Args: PublisherArgs{},
+	}
+}
+
+func (e IpfsPublisher) ToProto() *proto.Publisher {
+	return &proto.Publisher{
+		Type: e.Type,
+		Args: e.Args.ToProto(),
+	}
 }

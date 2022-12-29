@@ -8,8 +8,8 @@ import { RecordBuilder } from "./builder";
 import { EcsdaSigner } from "./entity/signer";
 import { AesEncrypter, EciesEncrypter, RsaEncrypter } from "./entity/encrypter";
 import { AesDecrypter, EciesDecrypter, RsaDecrypter } from "./entity/decrypter";
-import { HostedPublisher } from "./entity/publisher";
-import { HostedLoader } from "./entity/loader";
+import { HostedPublisher, IpfsPublisher } from "./entity/publisher";
+import { HostedLoader, IpfsLoader } from "./entity/loader";
 import { Record } from "./entity/record";
 import { Proof, ProofAnchor } from "./entity/proof";
 import { AnchorNetwork } from "./entity/anchor";
@@ -33,5 +33,7 @@ export {
   HostedPublisher,
   Proof,
   ProofAnchor,
-  AnchorNetwork
+  AnchorNetwork,
+  IpfsPublisher,
+  IpfsLoader
 };
