@@ -188,6 +188,7 @@ mod tests {
         let payload = include_bytes!("./assets/dummy.pdf");
         let signer = EcsdaSigner::new(EcsdaSignerArgs::new(
             "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457",
+            None,
         ));
 
         let mut document = Document::new(payload).unwrap();

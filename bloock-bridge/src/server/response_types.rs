@@ -10,6 +10,7 @@ use crate::items::RecordHash;
 use crate::items::RecordSignatures;
 use crate::items::SendRecordsResponse;
 use crate::items::SetProofResponse;
+use crate::items::SignatureCommonNameResponse;
 use crate::items::ValidateRootResponse;
 use crate::items::VerifyProofResponse;
 use crate::items::VerifyRecordsResponse;
@@ -30,6 +31,7 @@ pub enum ResponseType {
     BuildRecord(RecordBuilderResponse),
     GetHash(RecordHash),
     GetSignatures(RecordSignatures),
+    GetSignatureCommonName(SignatureCommonNameResponse),
     GenerateKeys(GenerateKeysResponse),
     GenerateRsaKeyPairResponse(GenerateRsaKeyPairResponse),
     GenerateEciesKeyPairResponse(GenerateEciesKeyPairResponse),
@@ -58,6 +60,7 @@ impl ResponseType {
             ResponseType::GenerateEciesKeyPairResponse(r) => r.encode(&mut result_vec),
             ResponseType::Publish(r) => r.encode(&mut result_vec),
             ResponseType::GetSignatures(r) => r.encode(&mut result_vec),
+            ResponseType::GetSignatureCommonName(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -82,6 +85,7 @@ impl ResponseType {
             ResponseType::GenerateEciesKeyPairResponse(r) => r.encoded_len(),
             ResponseType::Publish(r) => r.encoded_len(),
             ResponseType::GetSignatures(r) => r.encoded_len(),
+            ResponseType::GetSignatureCommonName(r) => r.encoded_len(),
         }
     }
 }

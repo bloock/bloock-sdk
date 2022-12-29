@@ -1,7 +1,7 @@
 use bloock_hasher::{sha256::Sha256, Hasher};
 use libsecp256k1::{Message, PublicKey, SecretKey};
 
-use crate::{SignerError, Verifier};
+use crate::{ProtectedHeader, SignerError, Verifier};
 
 use super::{Signature, Signer};
 use std::str;
@@ -10,22 +10,25 @@ pub const ECSDA_ALG: &str = "ES256K";
 
 pub struct EcsdaSignerArgs {
     pub private_key: String,
+    pub common_name: Option<String>,
 }
+
 impl EcsdaSignerArgs {
-    pub fn new(private_key: &str) -> Self {
+    pub fn new(private_key: &str, common_name: Option<String>) -> Self {
         Self {
             private_key: private_key.to_string(),
+            common_name,
         }
     }
 }
 
 pub struct EcsdaSigner {
-    _args: EcsdaSignerArgs,
+    args: EcsdaSignerArgs,
 }
 
 impl EcsdaSigner {
     pub fn new(args: EcsdaSignerArgs) -> Self {
-        Self { _args: args }
+        Self { args }
     }
 
     pub fn generate_keys() -> crate::Result<(String, String)> {
@@ -40,20 +43,38 @@ impl EcsdaSigner {
 
 impl Signer for EcsdaSigner {
     fn sign(&self, payload: &[u8]) -> crate::Result<Signature> {
-        let secret_key_hex = hex::decode(self._args.private_key.as_bytes())
+        let secret_key_hex = hex::decode(self.args.private_key.as_bytes())
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let secret_key = SecretKey::parse_slice(&secret_key_hex)
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let public_key = PublicKey::from_secret_key(&secret_key);
 
-        let hash = Sha256::generate_hash(payload);
+        let protected = match self.args.common_name.clone() {
+            Some(common_name) => ProtectedHeader {
+                common_name: Some(common_name),
+            }
+            .serialize()?,
+            None => base64_url::encode("{}"),
+        };
+
+        let payload_with_protected = &[protected.clone(), base64_url::encode(payload)]
+            .join(".")
+            .as_bytes()
+            .to_owned();
+
+        let hash = Sha256::generate_hash(if protected == base64_url::encode("{}") {
+            // to keep backwards compatibility if the protected header is empty we just sign the payload
+            payload
+        } else {
+            payload_with_protected
+        });
 
         let message = Message::parse(&hash);
 
         let sig = libsecp256k1::sign(&message, &secret_key);
 
         let signature = Signature {
-            protected: base64_url::encode("{}"),
+            protected,
             signature: hex::encode(sig.0.serialize()),
             header: crate::SignatureHeader {
                 alg: ECSDA_ALG.to_string(),
@@ -75,7 +96,18 @@ impl Verifier for EcsdaVerifier {
         let public_key = PublicKey::parse_slice(&public_key_hex, None)
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
-        let hash = Sha256::generate_hash(payload);
+        let payload_with_protected = &[signature.protected.clone(), base64_url::encode(payload)]
+            .join(".")
+            .as_bytes()
+            .to_owned();
+
+        let hash = Sha256::generate_hash(if signature.protected == base64_url::encode("{}") {
+            // to keep backwards compatibility if the protected header is empty we just verify the payload
+            payload
+        } else {
+            payload_with_protected
+        });
+
         let message = Message::parse(&hash);
 
         let signature_string = hex::decode(signature.signature)
@@ -98,28 +130,66 @@ mod tests {
 
     #[test]
     fn test_sign_and_verify_ok() {
-        let (pvk, _pb) = match EcsdaSigner::generate_keys() {
-            Ok((pvk, pb)) => (pvk, pb),
-            Err(e) => panic!("{}", e),
-        };
+        let (pvk, _pb) = EcsdaSigner::generate_keys().unwrap();
 
         let string_payload = "hello world";
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs { private_key: pvk });
-        let signature = match c.sign(string_payload.as_bytes()) {
-            Ok(signature) => signature,
-            Err(e) => panic!("{}", e),
-        };
+        let c = EcsdaSigner::new(EcsdaSignerArgs {
+            private_key: pvk,
+            common_name: None,
+        });
+
+        let signature = c.sign(string_payload.as_bytes()).unwrap();
+
         assert_eq!(signature.header.alg.as_str(), "ES256K");
 
-        let result = match create_verifier_from_signature(&signature)
+        let result = create_verifier_from_signature(&signature)
             .unwrap()
             .verify(string_payload.as_bytes(), signature)
-        {
-            Ok(result) => result,
-            Err(e) => panic!("{}", e),
-        };
+            .unwrap();
+
         assert!(result);
+    }
+
+    #[test]
+    fn test_sign_and_verify_ok_set_common_name() {
+        let (pvk, _pb) = EcsdaSigner::generate_keys().unwrap();
+
+        let string_payload = "hello world";
+
+        let c = EcsdaSigner::new(EcsdaSignerArgs {
+            private_key: pvk,
+            common_name: Some("a name".to_string()),
+        });
+
+        let signature = c.sign(string_payload.as_bytes()).unwrap();
+
+        assert_eq!(signature.header.alg.as_str(), "ES256K");
+        assert_eq!(signature.get_common_name().unwrap().as_str(), "a name");
+
+        let result = create_verifier_from_signature(&signature)
+            .unwrap()
+            .verify(string_payload.as_bytes(), signature)
+            .unwrap();
+
+        assert!(result);
+    }
+
+    #[test]
+    fn test_sign_and_verify_ok_get_common_name_without_set() {
+        let (pvk, _pb) = EcsdaSigner::generate_keys().unwrap();
+
+        let string_payload = "hello world";
+
+        let c = EcsdaSigner::new(EcsdaSignerArgs {
+            private_key: pvk,
+            common_name: None,
+        });
+
+        let signature = c.sign(string_payload.as_bytes()).unwrap();
+
+        assert_eq!(signature.header.alg.as_str(), "ES256K");
+        assert!(signature.get_common_name().is_err());
     }
 
     #[test]
@@ -129,6 +199,7 @@ mod tests {
 
         let c = EcsdaSigner::new(EcsdaSignerArgs {
             private_key: pvk.to_string(),
+            common_name: None,
         });
         let result = c.sign(string_payload.as_bytes());
         assert!(result.is_err());

@@ -28,6 +28,7 @@ service RecordService {
     rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromLoader(RecordBuilderFromLoaderRequest) returns (RecordBuilderResponse);
     rpc GetHash(Record) returns (RecordHash);
+    rpc GetSignatureCommonName(SignatureCommonNameRequest) returns (SignatureCommonNameResponse);
     rpc GetSignatures(Record) returns (RecordSignatures);
     rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
     rpc GenerateRsaKeyPair(GenerateRsaKeyPairRequest) returns (GenerateRsaKeyPairResponse);
@@ -100,6 +101,7 @@ message Signer {
 
 message SignerArgs {
     optional string private_key = 1;
+    optional string common_name = 2;
 }
 
 message Encrypter {
@@ -237,5 +239,15 @@ message PublishRequest {
 
 message PublishResponse {
     string hash = 1;
+    optional Error error = 2;
+}
+
+message SignatureCommonNameRequest {
+    ConfigData config_data = 1;
+    Signature signature = 2;
+}
+
+message SignatureCommonNameResponse {
+    string common_name = 1;
     optional Error error = 2;
 }

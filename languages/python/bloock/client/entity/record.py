@@ -42,6 +42,17 @@ class Signature:
             header=self.header.to_proto(),
         )
 
+    def get_common_name(self) -> str:
+        client = bridge.BloockBridge()
+        res = client.record().GetSignatureCommonName(
+            proto.SignatureCommonNameRequest(
+                config_data=Config.new(), signature=self.to_proto()
+            )
+        )
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.common_name
+
 
 class SignatureHeader:
     def __init__(self, alg: str, kid: str) -> None:

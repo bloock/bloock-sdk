@@ -1,3 +1,5 @@
+use std::str::from_utf8;
+
 use ecsda::{EcsdaVerifier, ECSDA_ALG};
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
@@ -19,10 +21,43 @@ pub struct Signature {
     pub signature: String,
 }
 
+impl Signature {
+    pub fn get_common_name(&self) -> Result<String> {
+        Ok(ProtectedHeader::deserialize(&self.protected)
+            .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
+            .common_name
+            .ok_or_else(|| SignerError::CommonNameNotSetOrInvalidFormat("not set".to_string())))?
+    }
+}
+
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SignatureHeader {
     pub alg: String,
     pub kid: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ProtectedHeader {
+    pub common_name: Option<String>,
+}
+
+impl ProtectedHeader {
+    fn serialize(&self) -> Result<String> {
+        Ok(base64_url::encode(&serde_json::to_string(self).map_err(
+            |err| SignerError::GeneralSerializeError(err.to_string()),
+        )?))
+    }
+
+    fn deserialize(protected: &str) -> Result<Self> {
+        serde_json::from_str(
+            from_utf8(
+                &base64_url::decode(&protected)
+                    .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
+            )
+            .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
+        )
+        .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))
+    }
 }
 
 pub trait Signer {
@@ -72,4 +107,8 @@ pub enum SignerError {
     GeneralDeserializeError(String),
     #[error("Error Verifier: {0}")]
     VerifierError(String),
+    #[error(
+        "Could not retrieve common name. Common name is not set or the format is invalid: {0}"
+    )]
+    CommonNameNotSetOrInvalidFormat(String),
 }

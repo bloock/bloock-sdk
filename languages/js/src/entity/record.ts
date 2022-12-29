@@ -124,6 +124,21 @@ export class Signature {
       header: this.header.toProto()
     });
   }
+
+  async getCommonName(): Promise<string> {
+    const bridge = new BloockBridge();
+    return bridge
+      .getRecord()
+      .GetSignatureCommonName(
+        proto.SignatureCommonNameRequest.fromPartial({
+          configData: NewConfigData(),
+          signature: this.toProto()
+        })
+      )
+      .then(res => {
+        return res.commonName;
+      });
+  }
 }
 
 export class SignatureHeader {
