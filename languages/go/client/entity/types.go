@@ -5,10 +5,10 @@ import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 type Network = proto.Network
 
 func NetworkToProto(network Network) *proto.Network {
-    if network == -1 {
-        return nil
-    }
-    return &network
+	if network == -1 {
+		return nil
+	}
+	return &network
 }
 
 type networks struct {

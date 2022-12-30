@@ -88,7 +88,7 @@ class Client:
         return res.record
 
     def verify_records(
-        self, records: List[Record], network: Network|None = None
+        self, records: List[Record], network: Network | None = None
     ) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
@@ -103,9 +103,7 @@ class Client:
 
         return res.timestamp
 
-    def validate_root(
-        self, root: str, network: Network
-    ) -> int:
+    def validate_root(self, root: str, network: Network) -> int:
         res = self.bridge_client.proof().ValidateRoot(
             ValidateRootRequest(
                 config_data=Config.new(),
