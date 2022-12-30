@@ -22,7 +22,7 @@ func TestEndToEnd(t *testing.T) {
 		records = append(records, testFromHex(t))
 		records = append(records, testFromJson(t))
 		records = append(records, testFromFile(t))
-		records = append(records, testEcsdaSignature(t, sdk))
+		records = append(records, testEcdsaSignature(t, sdk))
 
 		testFromHostedLoader(t)
 		testFromIpfsLoader(t)
@@ -433,7 +433,7 @@ func testEciesEncryptionIpfs(t *testing.T, sdk client.Client) {
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
 
-func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
+func testEcdsaSignature(t *testing.T, sdk client.Client) entity.Record {
 	keys, err := sdk.GenerateKeys()
 	require.NoError(t, err)
 
@@ -441,7 +441,7 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 
 	record, err := builder.
 		NewRecordBuilderFromString("Hello world 3").
-		WithSigner(entity.NewEcsdaSigner(entity.SignerArgs{
+		WithSigner(entity.NewEcdsaSigner(entity.SignerArgs{
 			PrivateKey: keys.PrivateKey,
 			CommonName: &name,
 		})).
@@ -453,7 +453,7 @@ func testEcsdaSignature(t *testing.T, sdk client.Client) entity.Record {
 
 	recordWithMultipleSignatures, err := builder.
 		NewRecordBuilderFromRecord(record).
-		WithSigner(entity.NewEcsdaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey})).
+		WithSigner(entity.NewEcdsaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey})).
 		Build()
 
 	require.NoError(t, err)

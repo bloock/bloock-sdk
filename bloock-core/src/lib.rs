@@ -19,6 +19,6 @@ pub use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
 pub use bloock_hasher::{from_hex, to_hex, Hasher, HasherError, H256};
 pub use bloock_http::{BloockHttpClient, SimpleHttpClient};
 pub use bloock_signer::{
-    create_verifier_from_signature, ecsda::EcsdaSigner, ecsda::EcsdaSignerArgs, Signature,
+    create_verifier_from_signature, ecdsa::EcdsaSigner, ecdsa::EcdsaSignerArgs, Signature,
     SignatureHeader, Signer, SignerError,
 };

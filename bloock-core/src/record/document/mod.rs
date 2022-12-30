@@ -172,7 +172,7 @@ mod tests {
     };
 
     use bloock_signer::{
-        ecsda::{EcsdaSigner, EcsdaSignerArgs},
+        ecdsa::{EcdsaSigner, EcdsaSignerArgs},
         SignatureHeader, Signer,
     };
 
@@ -186,7 +186,7 @@ mod tests {
     #[tokio::test]
     async fn test_signed_pdf() {
         let payload = include_bytes!("./assets/dummy.pdf");
-        let signer = EcsdaSigner::new(EcsdaSignerArgs::new(
+        let signer = EcdsaSigner::new(EcdsaSignerArgs::new(
             "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457",
             None,
         ));

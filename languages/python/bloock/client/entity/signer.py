@@ -23,7 +23,7 @@ class Signer:
         raise NotImplementedError
 
 
-class EcsdaSigner(Signer):
+class EcdsaSigner(Signer):
     def __init__(self, private_key: str, common_name=None) -> None:
         super().__init__(alg=proto.ES256K, args=SignerArgs(private_key, common_name))
 

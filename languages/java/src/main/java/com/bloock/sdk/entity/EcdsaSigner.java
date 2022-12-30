@@ -3,16 +3,16 @@ package com.bloock.sdk.entity;
 import com.bloock.sdk.bridge.proto.RecordOuterClass;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.SignerAlg;
 
-public class EcsdaSigner implements Signer {
+public class EcdsaSigner implements Signer {
   RecordOuterClass.SignerAlg alg;
   SignerArgs args;
 
-  public EcsdaSigner(String privateKey) {
+  public EcdsaSigner(String privateKey) {
     this.alg = SignerAlg.ES256K;
     this.args = new SignerArgs(privateKey);
   }
 
-  public EcsdaSigner(SignerArgs args) {
+  public EcdsaSigner(SignerArgs args) {
     this.alg = SignerAlg.ES256K;
     this.args = args;
   }

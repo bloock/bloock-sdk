@@ -159,10 +159,10 @@ class KeyPair:
         self.private_key = private_key
 
 
-class EcsdaKeys(KeyPair):
+class EcdsaKeys(KeyPair):
     @staticmethod
     def from_proto(res: proto.GenerateKeysResponse) -> KeyPair:
-        return EcsdaKeys(res.publicKey, res.privateKey)
+        return EcdsaKeys(res.publicKey, res.privateKey)
 
 
 class RsaKeyPair(KeyPair):

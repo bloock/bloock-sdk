@@ -19,7 +19,7 @@ from bloock.client.entity.network import Network
 from bloock.client.entity.proof import Proof
 from bloock.client.entity.record import (
     EciesKeyPair,
-    EcsdaKeys,
+    EcdsaKeys,
     Record,
     RecordReceipt,
     KeyPair,
@@ -127,7 +127,7 @@ class Client:
         if res.error != Error():
             raise Exception(res.error.message)
 
-        return EcsdaKeys.from_proto(res)
+        return EcdsaKeys.from_proto(res)
 
     def generate_rsa_keypair(self) -> KeyPair:
         res = self.bridge_client.record().GenerateRsaKeyPair(
