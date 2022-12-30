@@ -130,7 +130,7 @@ export class BloockClient {
    * @param {Network} network blockchain network where the record will be validated
    * @returns {Promise<number>} A number representing the timestamp in milliseconds when the anchor was registered in Blockchain
    */
-  public async validateRoot(root: string, network?: Network): Promise<number> {
+  public async validateRoot(root: string, network: Network): Promise<number> {
     const request = ValidateRootRequest.fromPartial({
       configData: NewConfigData(),
       root: root,

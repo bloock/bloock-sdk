@@ -119,7 +119,7 @@ func (c *Client) VerifyRecords(records []entity.Record, params entity.NetworkPar
 	res, err := c.bridgeClient.Proof().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
 		ConfigData: config.NewConfigData(),
 		Records:    entity.MapRecordsToProto(records),
-		Network:    params.Network.Enum(),
+		Network:    entity.NetworkToProto(params.Network),
 	})
 
 	if err != nil {
@@ -133,11 +133,11 @@ func (c *Client) VerifyRecords(records []entity.Record, params entity.NetworkPar
 	return res.Timestamp, nil
 }
 
-func (c *Client) ValidateRoot(root string, params entity.NetworkParams) (uint64, error) {
+func (c *Client) ValidateRoot(root string, network entity.Network) (uint64, error) {
 	res, err := c.bridgeClient.Proof().ValidateRoot(context.Background(), &proto.ValidateRootRequest{
 		ConfigData: config.NewConfigData(),
 		Root:       root,
-		Network:    params.Network.Enum(),
+		Network:    network,
 	})
 
 	if err != nil {

@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2/builder"
@@ -58,12 +57,12 @@ func TestEndToEnd(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotEqual(t, "", proof)
 
-		network := entity.NewNetworkParams()
-		network.Network = entity.ListOfNetworks().BloockChain
-
-		timestampValidateRoot, err := sdk.ValidateRoot(root, network)
+		timestampValidateRoot, err := sdk.ValidateRoot(root, entity.ListOfNetworks().BloockChain)
 		require.NoError(t, err)
 		assert.Greater(t, timestampValidateRoot, uint64(0))
+
+		network := entity.NewNetworkParams()
+		network.Network = entity.ListOfNetworks().BloockChain
 
 		timestampVerifyRecords, err := sdk.VerifyRecords(records, network)
 		require.NoError(t, err)
@@ -247,7 +246,6 @@ func testAesEncryptionIpfs(t *testing.T) {
 	assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
 	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
-	fmt.Println(result)
 	require.NoError(t, err)
 
 	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()

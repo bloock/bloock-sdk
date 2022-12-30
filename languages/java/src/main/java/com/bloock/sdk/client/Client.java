@@ -126,17 +126,20 @@ public class Client {
   }
 
   public long verifyRecords(List<Record> records) throws Exception {
-    return verifyRecords(records, Network.ETHEREUM_MAINNET);
+    return verifyRecords(records, null);
   }
 
   public long verifyRecords(List<Record> records, Network network) throws Exception {
-    VerifyRecordsRequest request =
+    VerifyRecordsRequest.Builder builder =
         VerifyRecordsRequest.newBuilder()
             .setConfigData(Config.newConfigData())
-            .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()))
-            .setNetwork(network.toProto())
-            .build();
+            .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()));
 
+    if (network != null) {
+      builder.setNetwork(network.toProto());
+    }
+
+    VerifyRecordsRequest request = builder.build();
     VerifyRecordsResponse response = bridge.getProof().verifyRecords(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
@@ -144,10 +147,6 @@ public class Client {
     }
 
     return response.getTimestamp();
-  }
-
-  public long validateRoot(String root) throws Exception {
-    return validateRoot(root, Network.ETHEREUM_MAINNET);
   }
 
   public long validateRoot(String root, Network network) throws Exception {

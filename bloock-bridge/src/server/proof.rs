@@ -226,10 +226,9 @@ impl ProofServiceHandler for ProofServer {
             Err(e) => return VerifyRecordsResponse::new_error(&client, e.to_string(), &req).await,
         };
 
-        let timestamp = match client
-            .verify_records(records, Some(req.network().into()))
-            .await
-        {
+        let network = req.network.map(|_| req.network().into());
+
+        let timestamp = match client.verify_records(records, network).await {
             Ok(timestamp) => timestamp,
             Err(e) => return VerifyRecordsResponse::new_error(&client, e.to_string(), &req).await,
         };
