@@ -6,14 +6,14 @@ use crate::{ProtectedHeader, SignerError, Verifier};
 use super::{Signature, Signer};
 use std::str;
 
-pub const ECSDA_ALG: &str = "ES256K";
+pub const ECDSA_ALG: &str = "ES256K";
 
-pub struct EcsdaSignerArgs {
+pub struct EcdsaSignerArgs {
     pub private_key: String,
     pub common_name: Option<String>,
 }
 
-impl EcsdaSignerArgs {
+impl EcdsaSignerArgs {
     pub fn new(private_key: &str, common_name: Option<String>) -> Self {
         Self {
             private_key: private_key.to_string(),
@@ -22,12 +22,12 @@ impl EcsdaSignerArgs {
     }
 }
 
-pub struct EcsdaSigner {
-    args: EcsdaSignerArgs,
+pub struct EcdsaSigner {
+    args: EcdsaSignerArgs,
 }
 
-impl EcsdaSigner {
-    pub fn new(args: EcsdaSignerArgs) -> Self {
+impl EcdsaSigner {
+    pub fn new(args: EcdsaSignerArgs) -> Self {
         Self { args }
     }
 
@@ -41,7 +41,7 @@ impl EcsdaSigner {
     }
 }
 
-impl Signer for EcsdaSigner {
+impl Signer for EcdsaSigner {
     fn sign(&self, payload: &[u8]) -> crate::Result<Signature> {
         let secret_key_hex = hex::decode(self.args.private_key.as_bytes())
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
@@ -77,7 +77,7 @@ impl Signer for EcsdaSigner {
             protected,
             signature: hex::encode(sig.0.serialize()),
             header: crate::SignatureHeader {
-                alg: ECSDA_ALG.to_string(),
+                alg: ECDSA_ALG.to_string(),
                 kid: hex::encode(public_key.serialize_compressed()),
             },
         };
@@ -86,9 +86,9 @@ impl Signer for EcsdaSigner {
     }
 }
 
-pub struct EcsdaVerifier {}
+pub struct EcdsaVerifier {}
 
-impl Verifier for EcsdaVerifier {
+impl Verifier for EcdsaVerifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
         let public_key_hex = hex::decode(signature.header.kid.as_bytes())
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
@@ -124,17 +124,17 @@ impl Verifier for EcsdaVerifier {
 mod tests {
     use crate::{
         create_verifier_from_signature,
-        ecsda::{EcsdaSigner, EcsdaSignerArgs},
+        ecdsa::{EcdsaSigner, EcdsaSignerArgs},
         Signature, SignatureHeader, Signer, Verifier,
     };
 
     #[test]
     fn test_sign_and_verify_ok() {
-        let (pvk, _pb) = EcsdaSigner::generate_keys().unwrap();
+        let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 
         let string_payload = "hello world";
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs {
+        let c = EcdsaSigner::new(EcdsaSignerArgs {
             private_key: pvk,
             common_name: None,
         });
@@ -153,11 +153,11 @@ mod tests {
 
     #[test]
     fn test_sign_and_verify_ok_set_common_name() {
-        let (pvk, _pb) = EcsdaSigner::generate_keys().unwrap();
+        let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 
         let string_payload = "hello world";
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs {
+        let c = EcdsaSigner::new(EcdsaSignerArgs {
             private_key: pvk,
             common_name: Some("a name".to_string()),
         });
@@ -177,11 +177,11 @@ mod tests {
 
     #[test]
     fn test_sign_and_verify_ok_get_common_name_without_set() {
-        let (pvk, _pb) = EcsdaSigner::generate_keys().unwrap();
+        let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 
         let string_payload = "hello world";
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs {
+        let c = EcdsaSigner::new(EcdsaSignerArgs {
             private_key: pvk,
             common_name: None,
         });
@@ -197,7 +197,7 @@ mod tests {
         let string_payload = "hello world";
         let pvk = "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945";
 
-        let c = EcsdaSigner::new(EcsdaSignerArgs {
+        let c = EcdsaSigner::new(EcdsaSignerArgs {
             private_key: pvk.to_string(),
             common_name: None,
         });

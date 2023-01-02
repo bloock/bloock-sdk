@@ -6,10 +6,9 @@ use bloock_core::{
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
     AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
-    Decrypter as DecrypterCore, EciesDecrypter, EciesDecrypterArgs, EciesEncrypter,
-    EciesEncrypterArgs, EciesKeyPair, EcsdaSigner, EcsdaSignerArgs, Encrypter as EncrypterCore,
-    RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, RsaKeyPair,
-    Signature as SignatureCore,
+    Decrypter as DecrypterCore, EcdsaSigner, EcdsaSignerArgs, EciesDecrypter, EciesDecrypterArgs,
+    EciesEncrypter, EciesEncrypterArgs, EciesKeyPair, Encrypter as EncrypterCore, RsaDecrypter,
+    RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, RsaKeyPair, Signature as SignatureCore,
 };
 use serde_json::json;
 
@@ -556,7 +555,7 @@ impl RecordServiceHandler for RecordServer {
         };
 
         let client = client::configure(config_data);
-        let (private_key, public_key) = match EcsdaSigner::generate_keys() {
+        let (private_key, public_key) = match EcdsaSigner::generate_keys() {
             Ok(p) => p,
             Err(e) => return GenerateKeysResponse::new_error(&client, e.to_string()).await,
         };
@@ -707,7 +706,7 @@ async fn build_record(
                     }
                 };
 
-                EcsdaSigner::new(EcsdaSignerArgs::new(
+                EcdsaSigner::new(EcdsaSignerArgs::new(
                     &private_key,
                     signer_arguments.common_name,
                 ))

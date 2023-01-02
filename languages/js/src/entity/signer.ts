@@ -6,7 +6,7 @@ export interface Signer {
   toProto(): proto.Signer;
 }
 
-export class EcsdaSigner implements Signer {
+export class EcdsaSigner implements Signer {
   alg: proto.SignerAlg;
   args: SignerArgs;
 

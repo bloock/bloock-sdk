@@ -7,7 +7,7 @@ import {
   HostedLoader,
   AesEncrypter,
   AesDecrypter,
-  EcsdaSigner,
+  EcdsaSigner,
   Network,
   RsaEncrypter,
   RsaDecrypter,
@@ -43,7 +43,7 @@ describe("E2E Tests", () => {
     records.push(await testFromHex());
     records.push(await testFromJson());
     records.push(await testFromFile());
-    records.push(await testEcsdaSignature(sdk));
+    records.push(await testEcdsaSignature(sdk));
 
     await testFromHostedLoader();
     await testFromIpfsLoader();
@@ -146,18 +146,18 @@ async function testFromFile(): Promise<Record> {
   return record;
 }
 
-async function testEcsdaSignature(sdk: BloockClient): Promise<Record> {
+async function testEcdsaSignature(sdk: BloockClient): Promise<Record> {
   let keys = await sdk.generateKeys();
   let name = "Some name";
 
   let record = await RecordBuilder.fromString("Hello world 3")
-    .withSigner(new EcsdaSigner(keys.privateKey, { commonName: name }))
+    .withSigner(new EcdsaSigner(keys.privateKey, { commonName: name }))
     .build();
 
   keys = await sdk.generateKeys();
 
   const recordWithMultipleSignatures = await RecordBuilder.fromRecord(record)
-    .withSigner(new EcsdaSigner(keys.privateKey))
+    .withSigner(new EcdsaSigner(keys.privateKey))
     .build();
 
   let hash = await recordWithMultipleSignatures.getHash();

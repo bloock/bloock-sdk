@@ -5,9 +5,9 @@ import com.bloock.sdk.entity.AesDecrypter;
 import com.bloock.sdk.entity.AesEncrypter;
 import com.bloock.sdk.entity.Anchor;
 import com.bloock.sdk.entity.AnchorNetwork;
+import com.bloock.sdk.entity.EcdsaSigner;
 import com.bloock.sdk.entity.EciesDecrypter;
 import com.bloock.sdk.entity.EciesEncrypter;
-import com.bloock.sdk.entity.EcsdaSigner;
 import com.bloock.sdk.entity.HostedLoader;
 import com.bloock.sdk.entity.HostedPublisher;
 import com.bloock.sdk.entity.IpfsLoader;
@@ -48,7 +48,7 @@ class Test {
     records.add(testFromHex());
     records.add(testFromJson());
     records.add(testFromFile());
-    records.add(testEcsdaSignature(sdk));
+    records.add(testEcdsaSignature(sdk));
 
     testFromHostedLoader();
     testFromIpfsLoader();
@@ -152,19 +152,19 @@ class Test {
     assert hash.equals(result);
   }
 
-  static Record testEcsdaSignature(Client sdk) throws Exception {
+  static Record testEcdsaSignature(Client sdk) throws Exception {
     Keys keys = sdk.generateKeys();
     String name = "Some name";
 
     Record signedRecord =
         Builder.fromString("Hello world 3")
-            .withSigner(new EcsdaSigner(new SignerArgs(keys.getPrivateKey(), name)))
+            .withSigner(new EcdsaSigner(new SignerArgs(keys.getPrivateKey(), name)))
             .build();
 
     Keys keys2 = sdk.generateKeys();
 
     Record recordWithMultipleSignatures =
-        Builder.fromRecord(signedRecord).withSigner(new EcsdaSigner(keys2.getPrivateKey())).build();
+        Builder.fromRecord(signedRecord).withSigner(new EcdsaSigner(keys2.getPrivateKey())).build();
 
     String hash = recordWithMultipleSignatures.getHash();
     assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");

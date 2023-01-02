@@ -9,7 +9,7 @@ from bloock.client.entity.proof import Proof, ProofAnchor
 from bloock.client.entity.decrypter import AesDecrypter, EciesDecrypter, RsaDecrypter
 from bloock.client.entity.encrypter import AesEncrypter, EciesEncrypter, RsaEncrypter
 from bloock.client.entity.record import Record
-from bloock.client.entity.signer import EcsdaSigner
+from bloock.client.entity.signer import EcdsaSigner
 from bloock.client.entity.network import Network
 from bloock.client.entity.publisher import HostedPublisher, IpfsPublisher
 from bloock.client.entity.loader import HostedLoader, IpfsLoader
@@ -31,7 +31,7 @@ class TestE2E(unittest.TestCase):
             self._testFromHex(),
             self._testFromJson(),
             self._testFromFile(),
-            self._testEcsdaSignature(),
+            self._testEcdsaSignature(),
         ]
 
         self._testFromHostedLoader()
@@ -111,13 +111,13 @@ class TestE2E(unittest.TestCase):
         )
         return record
 
-    def _testEcsdaSignature(self) -> Record:
+    def _testEcdsaSignature(self) -> Record:
         keys = self.client.generate_keys()
         name = "some name"
 
         record = (
             RecordBuilder.from_string("Hello world 3")
-            .with_signer(EcsdaSigner(keys.private_key, common_name=name))
+            .with_signer(EcdsaSigner(keys.private_key, common_name=name))
             .build()
         )
 
@@ -125,7 +125,7 @@ class TestE2E(unittest.TestCase):
 
         record_with_multiple_signatures = (
             RecordBuilder.from_record(record)
-            .with_signer(EcsdaSigner(keys.private_key))
+            .with_signer(EcdsaSigner(keys.private_key))
             .build()
         )
 

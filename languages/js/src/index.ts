@@ -5,7 +5,7 @@ import { Anchor } from "./bridge/proto/anchor";
 import { Network } from "./bridge/proto/config";
 import { RecordReceipt } from "./bridge/proto/record";
 import { RecordBuilder } from "./builder";
-import { EcsdaSigner } from "./entity/signer";
+import { EcdsaSigner } from "./entity/signer";
 import { AesEncrypter, EciesEncrypter, RsaEncrypter } from "./entity/encrypter";
 import { AesDecrypter, EciesDecrypter, RsaDecrypter } from "./entity/decrypter";
 import { HostedPublisher, IpfsPublisher } from "./entity/publisher";
@@ -22,7 +22,7 @@ export {
   Record,
   RecordReceipt,
   RecordBuilder,
-  EcsdaSigner,
+  EcdsaSigner,
   AesEncrypter,
   AesDecrypter,
   RsaEncrypter,

@@ -1,10 +1,10 @@
 use std::str::from_utf8;
 
-use ecsda::{EcsdaVerifier, ECSDA_ALG};
+use ecdsa::{EcdsaVerifier, ECDSA_ALG};
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
 
-pub mod ecsda;
+pub mod ecdsa;
 
 pub type Result<T> = std::result::Result<T, SignerError>;
 
@@ -70,7 +70,7 @@ pub trait Verifier {
 
 pub fn create_verifier_from_signature(signature: &Signature) -> Result<impl Verifier> {
     match signature.header.alg.as_str() {
-        ECSDA_ALG => Ok(EcsdaVerifier {}),
+        ECDSA_ALG => Ok(EcdsaVerifier {}),
         _ => Err(SignerError::InvalidSignatureAlg()),
     }
 }

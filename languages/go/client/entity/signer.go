@@ -6,13 +6,13 @@ type Signer interface {
 	ToProto() *proto.Signer
 }
 
-type EcsdaSigner struct {
+type EcdsaSigner struct {
 	Alg  proto.SignerAlg
 	Args SignerArgs
 }
 
-func NewEcsdaSigner(args SignerArgs) EcsdaSigner {
-	return EcsdaSigner{
+func NewEcdsaSigner(args SignerArgs) EcdsaSigner {
+	return EcdsaSigner{
 		Alg: proto.SignerAlg_ES256K,
 		Args: SignerArgs{
 			PrivateKey: args.PrivateKey,
@@ -21,7 +21,7 @@ func NewEcsdaSigner(args SignerArgs) EcsdaSigner {
 	}
 }
 
-func (s EcsdaSigner) ToProto() *proto.Signer {
+func (s EcdsaSigner) ToProto() *proto.Signer {
 	return &proto.Signer{
 		Alg:  s.Alg,
 		Args: s.Args.ToProto(),
