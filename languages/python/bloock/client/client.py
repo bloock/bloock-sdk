@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
 from bloock._bridge.proto.proof_pb2 import (
@@ -88,7 +88,7 @@ class Client:
         return res.record
 
     def verify_records(
-        self, records: List[Record], network: Network | None = None
+        self, records: List[Record], network: Optional[Network] = None
     ) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
