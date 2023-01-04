@@ -46,7 +46,7 @@ message GetProofResponse {
 message ValidateRootRequest {
     ConfigData config_data = 1;
     string root = 2;
-    optional Network network = 3;
+    Network network = 3;
 }
 
 message ValidateRootResponse {

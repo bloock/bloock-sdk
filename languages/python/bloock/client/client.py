@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from bloock._bridge import bridge
 from bloock._bridge.proto.anchor_pb2 import GetAnchorRequest, WaitAnchorRequest
 from bloock._bridge.proto.proof_pb2 import (
@@ -88,13 +88,13 @@ class Client:
         return res.record
 
     def verify_records(
-        self, records: List[Record], network: Network = Network.ETHEREUM_MAINNET
+        self, records: List[Record], network: Optional[Network] = None
     ) -> int:
         res = self.bridge_client.proof().VerifyRecords(
             VerifyRecordsRequest(
                 config_data=Config.new(),
                 records=map(lambda x: x.to_proto(), records),
-                network=Network.to_proto(network),
+                network=Network.to_proto(network) if network is not None else None,
             )
         )
 
@@ -103,9 +103,7 @@ class Client:
 
         return res.timestamp
 
-    def validate_root(
-        self, root: str, network: Network = Network.ETHEREUM_MAINNET
-    ) -> int:
+    def validate_root(self, root: str, network: Network) -> int:
         res = self.bridge_client.proof().ValidateRoot(
             ValidateRootRequest(
                 config_data=Config.new(),
