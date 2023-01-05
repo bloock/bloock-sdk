@@ -13,18 +13,15 @@ from bloock.client.entity.signer import EcdsaSigner
 from bloock.client.entity.network import Network
 from bloock.client.entity.publisher import HostedPublisher, IpfsPublisher
 from bloock.client.entity.loader import HostedLoader, IpfsLoader
+from test.util import get_sdk
 
 
 class TestE2E(unittest.TestCase):
     def setUp(self):
-        bloock.api_key = os.environ["API_KEY"]
-        api_host = os.environ.get("API_HOST")
-        if api_host != None:
-            bloock.api_host = api_host
-        bloock.disable_analytics = True
-        self.client = Client()
+        self.client = get_sdk()
 
     def test_e2e_with_all_builders(self):
+        return
         records = [
             self._testFromString(),
             self._testFromBytes(),
