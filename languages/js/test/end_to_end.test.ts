@@ -2,7 +2,6 @@ import {
   Record,
   RecordBuilder,
   BloockClient,
-  Bloock,
   HostedPublisher,
   HostedLoader,
   AesEncrypter,
@@ -20,18 +19,7 @@ import {
   IpfsLoader
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
-
-function getSdk() {
-  const apiKey = process.env["API_KEY"] || "";
-  const apiHost = process.env["API_HOST"] || "";
-  Bloock.setApiKey(apiKey);
-  const client = new BloockClient();
-  if (apiHost) {
-    Bloock.setApiHost(apiHost);
-  }
-  Bloock.setDisableAnalytics(true);
-  return client;
-}
+import { getSdk } from "./util";
 
 describe("E2E Tests", () => {
   test("test_basic_e2e", async () => {

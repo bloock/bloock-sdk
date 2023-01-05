@@ -25,6 +25,7 @@ import {
   RsaKeyPair
 } from "./entity/record";
 import { NewConfigData } from "./config/config";
+import { VerifyWebhookSignatureRequest } from "./bridge/proto/webhook";
 
 export class BloockClient {
   private bridge: BloockBridge;
@@ -255,6 +256,39 @@ export class BloockClient {
           throw res.error;
         }
         return EciesKeyPair.fromProto(res);
+      });
+  }
+
+  /**
+   * It retrieves a proof for the specified list of Anchor using getProof and verifies it using verifyProof.
+   * @param  {Uint8Array} payload: The webhook JSON in bytes
+   * @param  {string} header: The signature header
+   * @param  {string} secretKey: The secret Key
+   * @param  {boolean} enforceTolerance: Weather to check for expiration of the signature
+   * @returns {Promise<boolean>} A boolean indicating weather the signature is valid or not
+   */
+  public async verifyWebhookSignature(
+    payload: Uint8Array,
+    header: string,
+    secretKey: string,
+    enforceTolerance: boolean
+  ): Promise<boolean> {
+    const request = VerifyWebhookSignatureRequest.fromPartial({
+      configData: NewConfigData(),
+      payload: payload,
+      header: header,
+      secretKey: secretKey,
+      enforceTolerance: enforceTolerance
+    });
+
+    return this.bridge
+      .getWebhook()
+      .VerifyWebhookSignature(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.isValid;
       });
   }
 }
