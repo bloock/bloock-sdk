@@ -198,3 +198,23 @@ func (c *Client) GenerateEciesKeyPair() (entity.KeyPair, error) {
 
 	return entity.NewEciesKeyPairFromProto(res), nil
 }
+
+func (c *Client) VerifyWebhookSignature(payload []byte, header string, secretKey string, enforceTolerance bool) (bool, error) {
+	res, err := c.bridgeClient.Webhook().VerifyWebhookSignature(context.Background(), &proto.VerifyWebhookSignatureRequest{
+		ConfigData:       config.NewConfigData(),
+		Payload:          payload,
+		Header:           header,
+		SecretKey:        secretKey,
+		EnforceTolerance: enforceTolerance,
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	if res.Error != nil {
+		return false, errors.New(res.Error.Message)
+	}
+
+	return res.IsValid, nil
+}

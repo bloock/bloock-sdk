@@ -75,6 +75,7 @@ fn verify_signature_ok() {
     .as_bytes();
 
     let header = "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29";
+    let secret = "NHJTAE6ikKBccSaeCSBSWGdp7NmixXy7";
 
-    assert!(verify_signature(payload, header, "NHJTAE6ikKBccSaeCSBSWGdp7NmixXy7", false).unwrap());
+    assert!(verify_signature(payload, header, secret, false).unwrap());
 }

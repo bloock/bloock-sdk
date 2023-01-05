@@ -94,7 +94,12 @@ impl VerifyWebhookSignatureResponse {
         req: &VerifyWebhookSignatureRequest,
         error: Option<&str>,
     ) {
-        let event_attr = json!({});
+        let event_attr = json!({
+            "payload": req.payload,
+            "header": req.header,
+            "secretKey": req.secret_key,
+            "enforceTolerance": req.enforce_tolerance
+        });
 
         let error = error.map(|_| BridgeError::AnchorError.to_string());
 
