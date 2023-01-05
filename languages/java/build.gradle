@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'com.bloock.sdk'
-version = '2.2.1'
+version = '2.2.1-beta.1'
 
 sourceCompatibility = 1.8
 
