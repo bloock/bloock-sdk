@@ -18,6 +18,7 @@ fn main() -> Result<()> {
                 "proto/anchor.proto",
                 "proto/record.proto",
                 "proto/proof.proto",
+                "proto/webhook.proto",
             ],
             &["proto/"],
         )?;

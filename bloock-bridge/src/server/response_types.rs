@@ -14,6 +14,7 @@ use crate::items::SignatureCommonNameResponse;
 use crate::items::ValidateRootResponse;
 use crate::items::VerifyProofResponse;
 use crate::items::VerifyRecordsResponse;
+use crate::items::VerifyWebhookSignatureResponse;
 use crate::items::WaitAnchorResponse;
 use crate::server::BridgeError;
 use prost::Message;
@@ -36,6 +37,7 @@ pub enum ResponseType {
     GenerateRsaKeyPairResponse(GenerateRsaKeyPairResponse),
     GenerateEciesKeyPairResponse(GenerateEciesKeyPairResponse),
     Publish(PublishResponse),
+    VerifyWebhookSignature(VerifyWebhookSignatureResponse),
 }
 
 impl ResponseType {
@@ -61,6 +63,7 @@ impl ResponseType {
             ResponseType::Publish(r) => r.encode(&mut result_vec),
             ResponseType::GetSignatures(r) => r.encode(&mut result_vec),
             ResponseType::GetSignatureCommonName(r) => r.encode(&mut result_vec),
+            ResponseType::VerifyWebhookSignature(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -86,6 +89,7 @@ impl ResponseType {
             ResponseType::Publish(r) => r.encoded_len(),
             ResponseType::GetSignatures(r) => r.encoded_len(),
             ResponseType::GetSignatureCommonName(r) => r.encoded_len(),
+            ResponseType::VerifyWebhookSignature(r) => r.encoded_len()
         }
     }
 }
