@@ -1,5 +1,3 @@
-use std::time::{Duration, SystemTime};
-
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 
@@ -17,20 +15,9 @@ pub fn verify_signature(
     payload: &[u8],
     header: &str,
     secret_key: &str,
-    enforce_tolerance: bool,
+    _enforce_tolerance: bool,
 ) -> BloockResult<bool> {
     let header = parse_header(header)?;
-
-    let time = SystemTime::UNIX_EPOCH + Duration::from_secs(header.timestamp);
-    let duration = SystemTime::now()
-        .duration_since(time)
-        .map_err(|_| WebhookError::TooOld())?;
-
-    let expired = duration > Duration::from_secs(600);
-
-    if enforce_tolerance && expired {
-        return Err(WebhookError::TooOld().into());
-    }
 
     let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes()).unwrap();
     mac.update(format!("{}", header.timestamp).as_bytes());
