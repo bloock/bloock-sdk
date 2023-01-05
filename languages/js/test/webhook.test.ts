@@ -38,6 +38,6 @@ describe("webhook", () => {
       false
     );
 
-    expect(isValid).toBe(true);
+    expect(isValid).toBe(false);
   });
 });
