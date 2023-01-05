@@ -89,7 +89,7 @@ impl ResponseType {
             ResponseType::Publish(r) => r.encoded_len(),
             ResponseType::GetSignatures(r) => r.encoded_len(),
             ResponseType::GetSignatureCommonName(r) => r.encoded_len(),
-            ResponseType::VerifyWebhookSignature(r) => r.encoded_len()
+            ResponseType::VerifyWebhookSignature(r) => r.encoded_len(),
         }
     }
 }

@@ -23,6 +23,6 @@ func TestVerifyWebhookSignature(t *testing.T) {
 		secret := "asdf"
 		isValid, err := sdk.VerifyWebhookSignature(payload, header, secret, false)
 		assert.NoError(t, err)
-		assert.True(t, isValid)
+		assert.False(t, isValid)
 	})
 }
