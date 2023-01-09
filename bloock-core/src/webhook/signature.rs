@@ -9,7 +9,7 @@ use super::WebhookError;
 
 #[derive(Debug)]
 struct Header {
-    timestamp: u128,
+    timestamp: u64,
     signature: Vec<u8>,
 }
 
@@ -22,9 +22,9 @@ pub fn verify_signature(
     let header = parse_header(header)?;
 
     let current_timestamp = util::get_current_timestamp();
-    let time_diff = current_timestamp - header.timestamp;
 
-    //                                  10 min
+    let time_diff = current_timestamp - Duration::from_secs(header.timestamp).as_millis();
+
     if enforce_tolerance && time_diff > 600000 {
         return Err(WebhookError::TooOld().into());
     }
@@ -49,8 +49,6 @@ fn parse_header(header: &str) -> BloockResult<Header> {
         .ok_or(WebhookError::InvalidSignatureHeader())?
         .parse::<u64>()
         .map_err(|_| WebhookError::InvalidSignatureHeader())?;
-
-    let timestamp = Duration::from_secs(timestamp).as_millis();
 
     let signature = hex::decode(
         signature
