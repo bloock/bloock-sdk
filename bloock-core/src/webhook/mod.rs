@@ -13,6 +13,8 @@ pub enum WebhookError {
     InvalidPayload(),
     #[error("Timestamp wasn't within tolerance")]
     TooOld(),
+    #[error("Invalid key length")]
+    InvalidKeyLenght(),
 }
 
 impl From<WebhookError> for BloockError {

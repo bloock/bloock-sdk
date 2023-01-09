@@ -29,7 +29,9 @@ pub fn verify_signature(
         return Err(WebhookError::TooOld().into());
     }
 
-    let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes()).unwrap();
+    let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes())
+        .map_err(|_| WebhookError::InvalidKeyLenght())?;
+
     mac.update(format!("{}", header.timestamp).as_bytes());
     mac.update(b".");
     mac.update(payload);
@@ -57,7 +59,7 @@ fn parse_header(header: &str) -> BloockResult<Header> {
             .get(1)
             .ok_or(WebhookError::InvalidSignatureHeader())?,
     )
-    .unwrap();
+    .map_err(|_| WebhookError::InvalidSignatureHeader())?;
 
     Ok(Header {
         timestamp,
