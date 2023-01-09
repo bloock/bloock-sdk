@@ -24,7 +24,8 @@ pub fn verify_signature(
     let current_timestamp = util::get_current_timestamp();
     let time_diff = current_timestamp - header.timestamp;
 
-    if enforce_tolerance && time_diff > 600000 /* 10 min */ {
+    //                                  10 min
+    if enforce_tolerance && time_diff > 600000 {
         return Err(WebhookError::TooOld().into());
     }
 
