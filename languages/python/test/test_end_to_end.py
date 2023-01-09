@@ -21,7 +21,6 @@ class TestE2E(unittest.TestCase):
         self.client = get_sdk()
 
     def test_e2e_with_all_builders(self):
-        return
         records = [
             self._testFromString(),
             self._testFromBytes(),
