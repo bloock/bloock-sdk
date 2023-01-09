@@ -1,13 +1,15 @@
+use std::time::Duration;
+
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 
-use crate::error::BloockResult;
+use crate::{error::BloockResult, shared::util};
 
 use super::WebhookError;
 
 #[derive(Debug)]
 struct Header {
-    timestamp: u64,
+    timestamp: u128,
     signature: Vec<u8>,
 }
 
@@ -15,9 +17,16 @@ pub fn verify_signature(
     payload: &[u8],
     header: &str,
     secret_key: &str,
-    _enforce_tolerance: bool,
+    enforce_tolerance: bool,
 ) -> BloockResult<bool> {
     let header = parse_header(header)?;
+
+    let current_timestamp = util::get_current_timestamp();
+    let time_diff = current_timestamp - header.timestamp;
+
+    if enforce_tolerance && time_diff > 600000 /* 10 min */ {
+        return Err(WebhookError::TooOld().into());
+    }
 
     let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes()).unwrap();
     mac.update(format!("{}", header.timestamp).as_bytes());
@@ -39,6 +48,8 @@ fn parse_header(header: &str) -> BloockResult<Header> {
         .ok_or(WebhookError::InvalidSignatureHeader())?
         .parse::<u64>()
         .map_err(|_| WebhookError::InvalidSignatureHeader())?;
+
+    let timestamp = Duration::from_secs(timestamp).as_millis();
 
     let signature = hex::decode(
         signature
