@@ -260,7 +260,7 @@ export class BloockClient {
   }
 
   /**
-   * It retrieves a proof for the specified list of Anchor using getProof and verifies it using verifyProof.
+   * It verifies the signature of a webhook JSON
    * @param  {Uint8Array} payload: The webhook JSON in bytes
    * @param  {string} header: The signature header
    * @param  {string} secretKey: The secret Key
