@@ -2,21 +2,25 @@ mod anchor;
 mod proof;
 mod record;
 mod response_types;
+mod webhook;
 
 use self::anchor::AnchorServer;
 use self::proof::ProofServer;
 use self::record::RecordServer;
+use self::webhook::WebhookServer;
 use crate::error::BridgeError;
 use crate::items::AnchorServiceHandler;
 use crate::items::BloockServer;
 use crate::items::ProofServiceHandler;
 use crate::items::RecordServiceHandler;
+use crate::items::WebhookServiceHandler;
 use crate::server::response_types::ResponseType;
 
 pub struct Server {
     anchor: AnchorServer,
     record: RecordServer,
     proof: ProofServer,
+    webhook: WebhookServer,
 }
 
 impl Server {
@@ -25,6 +29,7 @@ impl Server {
             anchor: AnchorServer {},
             record: RecordServer {},
             proof: ProofServer {},
+            webhook: WebhookServer {},
         }
     }
 
@@ -155,6 +160,11 @@ impl Server {
             BloockServer::ProofServiceSetProof => Ok(self
                 .proof
                 .set_proof(self.serialize_request(payload)?)
+                .await
+                .into()),
+            BloockServer::WebhookServiceVerifyWebhookSignature => Ok(self
+                .webhook
+                .verify_webhook_signature(self.serialize_request(payload)?)
                 .await
                 .into()),
             _ => Err(BridgeError::ServiceNotFound),

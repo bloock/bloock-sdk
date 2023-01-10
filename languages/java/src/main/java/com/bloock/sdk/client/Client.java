@@ -22,6 +22,8 @@ import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateRsaKeyPairResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.SendRecordsRequest;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.SendRecordsResponse;
 import com.bloock.sdk.bridge.proto.Shared.Error;
+import com.bloock.sdk.bridge.proto.Webhook.VerifyWebhookSignatureRequest;
+import com.bloock.sdk.bridge.proto.Webhook.VerifyWebhookSignatureResponse;
 import com.bloock.sdk.config.Config;
 import com.bloock.sdk.entity.Anchor;
 import com.bloock.sdk.entity.EciesKeyPair;
@@ -31,6 +33,7 @@ import com.bloock.sdk.entity.Proof;
 import com.bloock.sdk.entity.Record;
 import com.bloock.sdk.entity.RecordReceipt;
 import com.bloock.sdk.entity.RsaKeyPair;
+import com.google.protobuf.ByteString;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -203,5 +206,25 @@ public class Client {
     }
 
     return EciesKeyPair.fromProto(response);
+  }
+
+  public boolean verifyWebhookSignature(
+      byte[] payload, String header, String secretKey, boolean enforceTolerance) throws Exception {
+    VerifyWebhookSignatureRequest request =
+        VerifyWebhookSignatureRequest.newBuilder()
+            .setConfigData(Config.newConfigData())
+            .setPayload(ByteString.copyFrom(payload))
+            .setHeader(header)
+            .setSecretKey(secretKey)
+            .setEnforceTolerance(enforceTolerance)
+            .build();
+
+    VerifyWebhookSignatureResponse response = bridge.getWebhook().verifyWebhookSignature(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return response.getIsValid();
   }
 }

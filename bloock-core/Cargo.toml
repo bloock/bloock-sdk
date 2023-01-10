@@ -1,6 +1,6 @@
 [package]
 name = "bloock-core"
-version = "2.2.0"
+version = "2.2.1"
 edition = "2021"
 
 [lib]
@@ -17,6 +17,8 @@ base64 = "0.13.0"
 uuid = { version = "1.2.1", features = ["v4", "js"]}
 base64-url = "1.4.13"
 async-std = "1.12.0"
+hmac = "0.12.1"
+sha2 = "0.10.6"
 bloock-hasher = { path = "../bloock-libs/hasher" }
 bloock-signer = { path = "../bloock-libs/signer" }
 bloock-encrypter = { path = "../bloock-libs/encrypter" }

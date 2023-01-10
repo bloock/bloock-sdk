@@ -2,6 +2,7 @@ use super::{entity::anchor::Anchor, AnchorError};
 use crate::config::service::ConfigService;
 use crate::error::BloockResult;
 use crate::error::InfrastructureError;
+use crate::shared::util;
 use async_std::task;
 use bloock_http::Client;
 use std::sync::Arc;
@@ -29,7 +30,7 @@ impl<H: Client> AnchorService<H> {
         let config = self.config_service.get_config();
 
         let mut attempts = 0;
-        let start = get_current_timestamp();
+        let start = util::get_current_timestamp();
         let mut next_try = start + config.wait_message_interval_default;
 
         let timeout_time = start + timeout as u128;
@@ -41,17 +42,17 @@ impl<H: Client> AnchorService<H> {
                 }
             }
 
-            let mut current_time = get_current_timestamp();
+            let mut current_time = util::get_current_timestamp();
             if current_time > timeout_time {
                 return Err(AnchorError::AnchorTimeout()).map_err(|e| e.into());
             }
 
             task::sleep(Duration::from_millis(1000)).await;
 
-            current_time = get_current_timestamp();
+            current_time = util::get_current_timestamp();
             while current_time < next_try && current_time < timeout_time {
                 task::sleep(Duration::from_millis(200)).await;
-                current_time = get_current_timestamp();
+                current_time = util::get_current_timestamp();
             }
 
             if current_time >= timeout_time {
@@ -62,20 +63,6 @@ impl<H: Client> AnchorService<H> {
                 + config.wait_message_interval_default;
             attempts += 1;
         }
-    }
-}
-
-#[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
-fn get_current_timestamp() -> u128 {
-    (js_sys::Date::now()) as u128
-}
-
-#[cfg(not(any(target_arch = "wasm32", target_arch = "wasm64")))]
-fn get_current_timestamp() -> u128 {
-    use std::time::{SystemTime, UNIX_EPOCH};
-    match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_millis(),
-        Err(_) => 1,
     }
 }
 

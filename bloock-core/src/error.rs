@@ -4,6 +4,7 @@ use crate::event::EventError;
 use crate::proof::ProofError;
 use crate::publish::PublishError;
 use crate::record::RecordError;
+use crate::webhook::WebhookError;
 use bloock_encrypter::EncrypterError;
 use bloock_hasher::HasherError;
 use bloock_http::HttpError;
@@ -34,6 +35,8 @@ pub enum ErrorKind {
     Infrastructure(#[from] InfrastructureError),
     #[error("Operational error: {0}")]
     Operational(#[from] OperationalError),
+    #[error("Webhook error: {0}")]
+    Webhook(#[from] WebhookError),
 }
 
 #[derive(Debug, Clone, Serialize, Eq, PartialEq)]

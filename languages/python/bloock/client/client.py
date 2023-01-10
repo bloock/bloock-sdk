@@ -14,6 +14,7 @@ from bloock._bridge.proto.record_pb2 import (
     SendRecordsRequest,
 )
 from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.webhook_pb2 import VerifyWebhookSignatureRequest
 from bloock.client.entity.anchor import Anchor
 from bloock.client.entity.network import Network
 from bloock.client.entity.proof import Proof
@@ -146,3 +147,21 @@ class Client:
             raise Exception(res.error.message)
 
         return EciesKeyPair.from_proto(res)
+
+    def verify_webhook_signature(
+        self, payload: bytes, header: str, secret_key: str, enforce_tolerance: bool
+    ) -> int:
+        res = self.bridge_client.webhook().VerifyWebhookSignature(
+            VerifyWebhookSignatureRequest(
+                config_data=Config.new(),
+                payload=payload,
+                header=header,
+                secretKey=secret_key,
+                enforceTolerance=enforce_tolerance,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return res.is_valid

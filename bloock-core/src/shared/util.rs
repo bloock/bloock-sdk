@@ -13,6 +13,20 @@ pub fn hex_to_u16(src: String) -> BloockResult<Vec<u16>> {
     }
 }
 
+#[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]
+pub fn get_current_timestamp() -> u128 {
+    (js_sys::Date::now()) as u128
+}
+
+#[cfg(not(any(target_arch = "wasm32", target_arch = "wasm64")))]
+pub fn get_current_timestamp() -> u128 {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_millis(),
+        Err(_) => 1,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::error::OperationalError;

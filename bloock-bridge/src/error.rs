@@ -22,6 +22,8 @@ pub enum BridgeError {
     ProofError,
     #[error("Publish error")]
     PublishError,
+    #[error("Webhook error")]
+    WebhookError,
     #[error("Anchor missing from request")]
     MissingAnchor,
     #[error("{0}")]
