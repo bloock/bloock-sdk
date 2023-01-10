@@ -682,7 +682,7 @@ async fn build_record(
 ) -> RecordBuilderResponse {
     if let Some(signer) = signer {
         let signer = match SignerAlg::from_i32(signer.alg) {
-            Some(SignerAlg::Es256k) => {
+            Some(SignerAlg::Es256k | SignerAlg::Ens) => {
                 let signer_arguments = match signer.args {
                     Some(signer_arguments) => signer_arguments,
                     None => {

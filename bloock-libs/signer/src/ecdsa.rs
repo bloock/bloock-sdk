@@ -1,12 +1,21 @@
 use bloock_hasher::{sha256::Sha256, Hasher};
 use libsecp256k1::{Message, PublicKey, SecretKey};
 
-use crate::{ProtectedHeader, SignerError, Verifier};
+use crate::{ProtectedHeader, Result, SignerError, Verifier};
 
 use super::{Signature, Signer};
 use std::str;
 
 pub const ECDSA_ALG: &str = "ES256K";
+
+pub fn get_common_name(signature: &Signature) -> Result<String> {
+    ProtectedHeader::deserialize(&signature.protected)
+        .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
+        .common_name
+        .ok_or_else(|| {
+            SignerError::CommonNameNotSetOrInvalidFormat("common name not set".to_string())
+        })
+}
 
 pub struct EcdsaSignerArgs {
     pub private_key: String,
@@ -87,6 +96,12 @@ impl Signer for EcdsaSigner {
 }
 
 pub struct EcdsaVerifier {}
+
+impl EcdsaVerifier {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
 
 impl Verifier for EcdsaVerifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {

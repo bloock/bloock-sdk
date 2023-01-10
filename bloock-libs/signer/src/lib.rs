@@ -1,10 +1,12 @@
 use std::str::from_utf8;
 
 use ecdsa::{EcdsaVerifier, ECDSA_ALG};
+use ens::ENS_ALG;
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
 
 pub mod ecdsa;
+pub mod ens;
 
 pub type Result<T> = std::result::Result<T, SignerError>;
 
@@ -23,10 +25,11 @@ pub struct Signature {
 
 impl Signature {
     pub fn get_common_name(&self) -> Result<String> {
-        Ok(ProtectedHeader::deserialize(&self.protected)
-            .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
-            .common_name
-            .ok_or_else(|| SignerError::CommonNameNotSetOrInvalidFormat("not set".to_string())))?
+        match self.header.alg.as_str() {
+            ECDSA_ALG => ecdsa::get_common_name(self),
+            ENS_ALG => ens::get_common_name(self),
+            _ => unimplemented!(),
+        }
     }
 }
 
@@ -70,7 +73,7 @@ pub trait Verifier {
 
 pub fn create_verifier_from_signature(signature: &Signature) -> Result<impl Verifier> {
     match signature.header.alg.as_str() {
-        ECDSA_ALG => Ok(EcdsaVerifier {}),
+        ECDSA_ALG => Ok(EcdsaVerifier::new()),
         _ => Err(SignerError::InvalidSignatureAlg()),
     }
 }

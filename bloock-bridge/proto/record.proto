@@ -86,6 +86,7 @@ message Record {
 
 enum SignerAlg {
     ES256K = 0;
+    ENS = 1;
 }
 
 enum EncryptionAlg {
