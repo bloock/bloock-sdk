@@ -24,10 +24,10 @@ pub struct Signature {
 }
 
 impl Signature {
-    pub fn get_common_name(&self) -> Result<String> {
+    pub async fn get_common_name(&self) -> Result<String> {
         match self.header.alg.as_str() {
             ECDSA_ALG => ecdsa::get_common_name(self),
-            ENS_ALG => ens::get_common_name(self),
+            ENS_ALG => ens::get_common_name(self).await,
             _ => unimplemented!(),
         }
     }
@@ -114,4 +114,6 @@ pub enum SignerError {
         "Could not retrieve common name. Common name is not set or the format is invalid: {0}"
     )]
     CommonNameNotSetOrInvalidFormat(String),
+    #[error("ETH Domain not found")]
+    EthDomainNotFound(),
 }

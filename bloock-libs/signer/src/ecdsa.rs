@@ -166,8 +166,8 @@ mod tests {
         assert!(result);
     }
 
-    #[test]
-    fn test_sign_and_verify_ok_set_common_name() {
+    #[tokio::test]
+    async fn test_sign_and_verify_ok_set_common_name() {
         let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 
         let string_payload = "hello world";
@@ -180,7 +180,10 @@ mod tests {
         let signature = c.sign(string_payload.as_bytes()).unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
-        assert_eq!(signature.get_common_name().unwrap().as_str(), "a name");
+        assert_eq!(
+            signature.get_common_name().await.unwrap().as_str(),
+            "a name"
+        );
 
         let result = create_verifier_from_signature(&signature)
             .unwrap()
@@ -190,8 +193,8 @@ mod tests {
         assert!(result);
     }
 
-    #[test]
-    fn test_sign_and_verify_ok_get_common_name_without_set() {
+    #[tokio::test]
+    async fn test_sign_and_verify_ok_get_common_name_without_set() {
         let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 
         let string_payload = "hello world";
@@ -204,7 +207,7 @@ mod tests {
         let signature = c.sign(string_payload.as_bytes()).unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
-        assert!(signature.get_common_name().is_err());
+        assert!(signature.get_common_name().await.is_err());
     }
 
     #[test]

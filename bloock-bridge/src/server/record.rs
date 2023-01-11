@@ -493,7 +493,7 @@ impl RecordServiceHandler for RecordServer {
             }
         };
 
-        let common_name = match signature.get_common_name() {
+        let common_name = match signature.get_common_name().await {
             Ok(name) => name,
             Err(err) => {
                 return SignatureCommonNameResponse::new_error(&client, err.to_string()).await

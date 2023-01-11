@@ -1,3 +1,5 @@
+use ethers::providers::Middleware;
+
 use crate::{
     ecdsa::{EcdsaSigner, EcdsaSignerArgs, EcdsaVerifier},
     Result, Verifier,
@@ -8,8 +10,13 @@ use std::str;
 
 pub const ENS_ALG: &str = "ENS";
 
-pub fn get_common_name(signature: &Signature) -> Result<String> {
-    todo!()
+pub async fn get_common_name(signature: &Signature) -> Result<String> {
+    let provider = ethers::providers::MAINNET.provider();
+    let name = provider
+        .lookup_address(signature.header.kid.parse().unwrap())
+        .await
+        .unwrap();
+    Ok(name)
 }
 
 #[derive(Clone)]
@@ -64,4 +71,19 @@ impl Verifier for EnsVerifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool> {
         EcdsaVerifier::new().verify(payload, signature)
     }
+}
+
+#[tokio::test]
+async fn get_common_name_ens_ok() {
+    let signature = Signature {
+        header: crate::SignatureHeader {
+            alg: crate::ecdsa::ECDSA_ALG.to_string(),
+            kid: "d8dA6BF26964aF9D7eEd9e03E53415D37aA96045".to_string(),
+        },
+        protected: "".to_string(),
+        signature: "".to_string(),
+    };
+
+    let name = get_common_name(&signature).await.unwrap();
+    assert_eq!(name, "vitalik.eth")
 }
