@@ -1,7 +1,7 @@
-use std::str::from_utf8;
+use std::{fmt, str::from_utf8};
 
 use ecdsa::{EcdsaVerifier, ECDSA_ALG};
-use ens::ENS_ALG;
+use ens::{ENS_ALG, EnsVerifier};
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
 
@@ -9,6 +9,32 @@ pub mod ecdsa;
 pub mod ens;
 
 pub type Result<T> = std::result::Result<T, SignerError>;
+
+enum Algorithms {
+    ECDSA,
+    ENS,
+}
+
+impl fmt::Display for Algorithms {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Algorithms::ECDSA => write!(f, "{}", ECDSA_ALG),
+            Algorithms::ENS => write!(f, "{}", ENS_ALG),
+        }
+    }
+}
+
+impl TryFrom<&str> for Algorithms {
+    type Error = SignerError;
+
+    fn try_from(value: &str) -> Result<Self> {
+        match value {
+            ECDSA_ALG => Ok(Self::ECDSA),
+            ENS_ALG => Ok(Self::ENS),
+            _ => Err(SignerError::InvalidSignatureAlg()),
+        }
+    }
+}
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct JWSignatures {
@@ -25,10 +51,10 @@ pub struct Signature {
 
 impl Signature {
     pub async fn get_common_name(&self) -> Result<String> {
-        match self.header.alg.as_str() {
-            ECDSA_ALG => ecdsa::get_common_name(self),
-            ENS_ALG => ens::get_common_name(self).await,
-            _ => unimplemented!(),
+        let alg = Algorithms::try_from(self.header.alg.as_str())?;
+        match alg {
+            Algorithms::ECDSA => ecdsa::get_common_name(self),
+            Algorithms::ENS => ens::get_common_name(self).await,
         }
     }
 }
@@ -71,10 +97,10 @@ pub trait Verifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool>;
 }
 
-pub fn create_verifier_from_signature(signature: &Signature) -> Result<impl Verifier> {
-    match signature.header.alg.as_str() {
-        ECDSA_ALG => Ok(EcdsaVerifier::new()),
-        _ => Err(SignerError::InvalidSignatureAlg()),
+pub fn create_verifier_from_signature(signature: &Signature) -> Result<Box<dyn Verifier>> {
+    match Algorithms::try_from(signature.header.alg.as_str())? {
+        Algorithms::ECDSA => Ok(Box::new(EcdsaVerifier::default())),
+        Algorithms::ENS => Ok(Box::new(EnsVerifier::default())),
     }
 }
 

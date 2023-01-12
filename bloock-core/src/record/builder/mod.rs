@@ -66,8 +66,8 @@ impl Builder {
         }
     }
 
-    pub fn with_signer<S: Signer + 'static>(mut self, signer: S) -> Self {
-        self.signer = Some(Box::new(signer));
+    pub fn with_signer(mut self, signer: Box<dyn Signer>) -> Self {
+        self.signer = Some(signer);
         self
     }
 
@@ -126,8 +126,8 @@ mod tests {
     };
     use bloock_encrypter::aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs};
     use bloock_signer::{
-        ecdsa::{EcdsaSigner, EcdsaSignerArgs},
-        Signature, SignatureHeader,
+        ecdsa::{EcdsaSigner, EcdsaSignerArgs, ECDSA_ALG},
+        Signature, SignatureHeader, ens::{EnsSigner, EnsSignerArgs, ENS_ALG},
     };
 
     use super::*;
@@ -266,7 +266,7 @@ mod tests {
 
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
             .build()
             .unwrap();
 
@@ -281,13 +281,47 @@ mod tests {
 
         assert_eq!(1, result_signature.len());
         assert_eq!("e30", result_protected);
-        assert_eq!("ES256K", result_algorithm);
+        assert_eq!(ECDSA_ALG, result_algorithm);
         assert_eq!(
             "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8",
             result_public_key
         );
         assert_ne!(content, result_payload);
         assert_eq!(None, result_proof);
+    }
+
+    #[tokio::test]
+    async fn test_build_record_from_string_set_ens_signature() {
+        let (private, public) = EcdsaSigner::generate_keys().unwrap();
+        println!("PUB :=> {public}");
+        let content = "hello world!";
+
+        let record = RecordBuilder::from_string(content.to_string())
+            .unwrap()
+            .with_signer(EnsSigner::new_boxed(EnsSignerArgs::new(&private)))
+            .build()
+            .unwrap();
+
+        let document = Document::new(&record.clone().serialize().unwrap()).unwrap();
+
+        let result_signature = document.get_signatures().unwrap();
+        let result_protected = result_signature[0].clone().protected;
+        let result_algorithm = result_signature[0].clone().header.alg;
+        let result_public_key = result_signature[0].clone().header.kid;
+        let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
+        let result_proof = document.get_proof();
+
+        assert_eq!(1, result_signature.len());
+        assert_eq!("e30", result_protected);
+        assert_eq!(ENS_ALG, result_algorithm);
+        assert_eq!(
+            "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8",
+            result_public_key
+        );
+        assert_ne!(content, result_payload);
+        assert_eq!(None, result_proof);
+
+        println!("=> => => => => => {:#?}", result_signature[0].get_common_name().await)
     }
 
     #[tokio::test]
@@ -298,7 +332,7 @@ mod tests {
 
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -327,13 +361,13 @@ mod tests {
 
         let default_record = RecordBuilder::from_file(payload.to_vec())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
             .build()
             .unwrap();
 
         let encrypted_record = RecordBuilder::from_file(payload.to_vec())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -349,7 +383,7 @@ mod tests {
         let expected_signatures = vec![
             Signature {
                 header: SignatureHeader {
-                    alg: "ES256K".to_string(),
+                    alg: ECDSA_ALG.to_string(),
                     kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
                 },
                 protected: "e30".to_string(),
@@ -397,7 +431,7 @@ mod tests {
 
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();

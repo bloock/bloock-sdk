@@ -1,3 +1,4 @@
+use bloock_hasher::{keccak::Keccak256, Hasher};
 use ethers::providers::Middleware;
 
 use crate::{
@@ -12,11 +13,18 @@ pub const ENS_ALG: &str = "ENS";
 
 pub async fn get_common_name(signature: &Signature) -> Result<String> {
     let provider = ethers::providers::MAINNET.provider();
+    let address = derive_eth_addres(&signature.header.kid);
     let name = provider
-        .lookup_address(signature.header.kid.parse().unwrap())
+        .lookup_address(address.parse().unwrap())
         .await
         .unwrap();
     Ok(name)
+}
+
+fn derive_eth_addres(public_key: &str) -> String {
+    let public_key = hex::decode(public_key).unwrap();
+    let address = hex::encode(&Keccak256::generate_hash(&public_key)[12..]);
+    address
 }
 
 #[derive(Clone)]
@@ -52,8 +60,8 @@ impl EnsSigner {
         }
     }
 
-    pub fn generate_keys() -> Result<(String, String)> {
-        EcdsaSigner::generate_keys()
+    pub fn new_boxed(args: EnsSignerArgs) -> Box<Self> {
+        Box::new(Self::new(args))
     }
 }
 
@@ -65,25 +73,34 @@ impl Signer for EnsSigner {
     }
 }
 
+#[derive(Default)]
 pub struct EnsVerifier {}
 
 impl Verifier for EnsVerifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool> {
-        EcdsaVerifier::new().verify(payload, signature)
+        EcdsaVerifier::default().verify(payload, signature)
     }
 }
 
-#[tokio::test]
-async fn get_common_name_ens_ok() {
-    let signature = Signature {
-        header: crate::SignatureHeader {
-            alg: crate::ecdsa::ECDSA_ALG.to_string(),
-            kid: "d8dA6BF26964aF9D7eEd9e03E53415D37aA96045".to_string(),
-        },
-        protected: "".to_string(),
-        signature: "".to_string(),
-    };
+#[cfg(test)]
+mod tests {
+    use crate::{Algorithms, Signature};
 
-    let name = get_common_name(&signature).await.unwrap();
-    assert_eq!(name, "vitalik.eth")
+    use super::get_common_name;
+
+    #[tokio::test]
+    async fn get_common_name_ens_ok() {
+        let signature = Signature {
+            header: crate::SignatureHeader {
+                alg: Algorithms::ECDSA.to_string(),
+                kid: "0323be7883b973ab884070078ecf9a53a747dd1573ef8f507695d100857258eec3"
+                    .to_string(),
+            },
+            protected: "".to_string(),
+            signature: "".to_string(),
+        };
+
+        let name = get_common_name(&signature).await.unwrap();
+        assert_eq!(name, "vitalik.eth")
+    }
 }

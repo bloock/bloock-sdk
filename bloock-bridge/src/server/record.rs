@@ -7,8 +7,9 @@ use bloock_core::{
     record::entity::record::Record as RecordCore,
     AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
     Decrypter as DecrypterCore, EcdsaSigner, EcdsaSignerArgs, EciesDecrypter, EciesDecrypterArgs,
-    EciesEncrypter, EciesEncrypterArgs, EciesKeyPair, Encrypter as EncrypterCore, RsaDecrypter,
-    RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, RsaKeyPair, Signature as SignatureCore,
+    EciesEncrypter, EciesEncrypterArgs, EciesKeyPair, Encrypter as EncrypterCore, EnsSigner,
+    EnsSignerArgs, RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, RsaKeyPair,
+    Signature as SignatureCore, Signer as SignerCore,
 };
 use serde_json::json;
 
@@ -681,7 +682,8 @@ async fn build_record(
     decrypter: Option<Decrypter>,
 ) -> RecordBuilderResponse {
     if let Some(signer) = signer {
-        let signer = match SignerAlg::from_i32(signer.alg) {
+        let signer_alg = SignerAlg::from_i32(signer.alg);
+        let signer: Box<dyn SignerCore> = match signer_alg {
             Some(SignerAlg::Es256k | SignerAlg::Ens) => {
                 let signer_arguments = match signer.args {
                     Some(signer_arguments) => signer_arguments,
@@ -706,10 +708,13 @@ async fn build_record(
                     }
                 };
 
-                EcdsaSigner::new(EcdsaSignerArgs::new(
-                    &private_key,
-                    signer_arguments.common_name,
-                ))
+                match signer_alg.unwrap() {
+                    SignerAlg::Es256k => EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                        &private_key,
+                        signer_arguments.common_name,
+                    )),
+                    SignerAlg::Ens => EnsSigner::new_boxed(EnsSignerArgs::new(&private_key)),
+                }
             }
             None => {
                 return RecordBuilderResponse::new_error(

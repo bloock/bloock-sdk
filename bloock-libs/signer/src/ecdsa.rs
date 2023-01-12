@@ -1,7 +1,7 @@
 use bloock_hasher::{sha256::Sha256, Hasher};
 use libsecp256k1::{Message, PublicKey, SecretKey};
 
-use crate::{ProtectedHeader, Result, SignerError, Verifier};
+use crate::{Algorithms, ProtectedHeader, Result, SignerError, Verifier};
 
 use super::{Signature, Signer};
 use std::str;
@@ -38,6 +38,10 @@ pub struct EcdsaSigner {
 impl EcdsaSigner {
     pub fn new(args: EcdsaSignerArgs) -> Self {
         Self { args }
+    }
+
+    pub fn new_boxed(args: EcdsaSignerArgs) -> Box<Self> {
+        Box::new(Self::new(args))
     }
 
     pub fn generate_keys() -> crate::Result<(String, String)> {
@@ -86,7 +90,7 @@ impl Signer for EcdsaSigner {
             protected,
             signature: hex::encode(sig.0.serialize()),
             header: crate::SignatureHeader {
-                alg: ECDSA_ALG.to_string(),
+                alg: Algorithms::ECDSA.to_string(),
                 kid: hex::encode(public_key.serialize_compressed()),
             },
         };
@@ -95,13 +99,8 @@ impl Signer for EcdsaSigner {
     }
 }
 
+#[derive(Default)]
 pub struct EcdsaVerifier {}
-
-impl EcdsaVerifier {
-    pub fn new() -> Self {
-        Self {}
-    }
-}
 
 impl Verifier for EcdsaVerifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
@@ -140,7 +139,7 @@ mod tests {
     use crate::{
         create_verifier_from_signature,
         ecdsa::{EcdsaSigner, EcdsaSignerArgs},
-        Signature, SignatureHeader, Signer, Verifier,
+        Signature, SignatureHeader, Signer,
     };
 
     #[test]
