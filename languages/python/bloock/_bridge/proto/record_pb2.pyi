@@ -58,10 +58,12 @@ class _SignerAlgEnumTypeWrapper(
 ):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ES256K: _SignerAlg.ValueType  # 0
+    ENS: _SignerAlg.ValueType  # 1
 
 class SignerAlg(_SignerAlg, metaclass=_SignerAlgEnumTypeWrapper): ...
 
 ES256K: SignerAlg.ValueType  # 0
+ENS: SignerAlg.ValueType  # 1
 global___SignerAlg = SignerAlg
 
 class _EncryptionAlg:

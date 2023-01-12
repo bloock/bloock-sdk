@@ -22,6 +22,7 @@ func TestEndToEnd(t *testing.T) {
 		records = append(records, testFromJson(t))
 		records = append(records, testFromFile(t))
 		records = append(records, testEcdsaSignature(t, sdk))
+		records = append(records, testEnsSignature(t, sdk))
 
 		testFromHostedLoader(t)
 		testFromIpfsLoader(t)
@@ -467,6 +468,34 @@ func testEcdsaSignature(t *testing.T, sdk client.Client) entity.Record {
 	assert.Equal(t, name, retrievedName)
 
 	return recordWithMultipleSignatures
+}
+
+func testEnsSignature(t *testing.T, sdk client.Client) entity.Record {
+	keys, err := sdk.GenerateKeys()
+	require.NoError(t, err)
+
+	name := "vitalik.eth"
+
+	record, err := builder.
+		NewRecordBuilderFromString("Hello world 3").
+		WithSigner(entity.NewEnsSigner(entity.EnsArgs{
+			PrivateKey: keys.PrivateKey,
+		})).
+		Build()
+	require.NoError(t, err)
+
+	hash, err := record.GetHash()
+	require.NoError(t, err)
+	assert.Equal(t, hash, "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f")
+
+	signatures, err := record.GetSignatures()
+	require.NoError(t, err)
+	assert.Equal(t, len(signatures), 2)
+
+	retrievedName, err := signatures[0].GetCommonName()
+	assert.Equal(t, name, retrievedName)
+
+	return record
 }
 
 func testSetProof(t *testing.T, sdk client.Client) {

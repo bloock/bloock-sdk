@@ -6,6 +6,18 @@ type Signer interface {
 	ToProto() *proto.Signer
 }
 
+type SignerArgs struct {
+	PrivateKey string
+	CommonName *string
+}
+
+func (s SignerArgs) ToProto() *proto.SignerArgs {
+	return &proto.SignerArgs{
+		PrivateKey: &s.PrivateKey,
+		CommonName: s.CommonName,
+	}
+}
+
 type EcdsaSigner struct {
 	Alg  proto.SignerAlg
 	Args SignerArgs
@@ -28,14 +40,27 @@ func (s EcdsaSigner) ToProto() *proto.Signer {
 	}
 }
 
-type SignerArgs struct {
+type EnsArgs struct {
 	PrivateKey string
-	CommonName *string
 }
 
-func (s SignerArgs) ToProto() *proto.SignerArgs {
-	return &proto.SignerArgs{
-		PrivateKey: &s.PrivateKey,
-		CommonName: s.CommonName,
+type EnsSigner struct {
+	Alg  proto.SignerAlg
+	Args SignerArgs
+}
+
+func NewEnsSigner(args EnsArgs) EcdsaSigner {
+	return EcdsaSigner{
+		Alg: proto.SignerAlg_ENS,
+		Args: SignerArgs{
+			PrivateKey: args.PrivateKey,
+		},
+	}
+}
+
+func (s EnsSigner) ToProto() *proto.Signer {
+	return &proto.Signer{
+		Alg:  s.Alg,
+		Args: s.Args.ToProto(),
 	}
 }

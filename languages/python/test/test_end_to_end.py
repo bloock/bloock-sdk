@@ -9,7 +9,7 @@ from bloock.client.entity.proof import Proof, ProofAnchor
 from bloock.client.entity.decrypter import AesDecrypter, EciesDecrypter, RsaDecrypter
 from bloock.client.entity.encrypter import AesEncrypter, EciesEncrypter, RsaEncrypter
 from bloock.client.entity.record import Record
-from bloock.client.entity.signer import EcdsaSigner
+from bloock.client.entity.signer import EcdsaSigner, EnsSigner
 from bloock.client.entity.network import Network
 from bloock.client.entity.publisher import HostedPublisher, IpfsPublisher
 from bloock.client.entity.loader import HostedLoader, IpfsLoader
@@ -28,6 +28,7 @@ class TestE2E(unittest.TestCase):
             self._testFromJson(),
             self._testFromFile(),
             self._testEcdsaSignature(),
+            self._testEnsSignature(),
         ]
 
         self._testFromHostedLoader()
@@ -136,6 +137,28 @@ class TestE2E(unittest.TestCase):
         self.assertEqual(name, signatures[0].get_common_name())
 
         return record_with_multiple_signatures
+
+    def _testEnsSignature(self) -> Record:
+        keys = self.client.generate_keys()
+        name = "vitalik.eth"
+
+        record = (
+            RecordBuilder.from_string("Hello world 3")
+            .with_signer(EnsSigner(keys.private_key))
+            .build()
+        )
+
+        hash = record.get_hash()
+        self.assertEqual(
+            hash, "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
+        )
+
+        signatures = record.get_signatures()
+        self.assertEqual(len(signatures), 2)
+
+        self.assertEqual(name, signatures[0].get_common_name())
+
+        return record
 
     def _testFromHostedLoader(self) -> Record:
         record = RecordBuilder.from_string("Hello world").build()
