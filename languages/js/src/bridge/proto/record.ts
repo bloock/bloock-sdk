@@ -69,6 +69,7 @@ export function recordTypesToJSON(object: RecordTypes): string {
 
 export enum SignerAlg {
   ES256K = 0,
+  ENS = 1,
   UNRECOGNIZED = -1,
 }
 
@@ -77,6 +78,9 @@ export function signerAlgFromJSON(object: any): SignerAlg {
     case 0:
     case "ES256K":
       return SignerAlg.ES256K;
+    case 1:
+    case "ENS":
+      return SignerAlg.ENS;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -88,6 +92,8 @@ export function signerAlgToJSON(object: SignerAlg): string {
   switch (object) {
     case SignerAlg.ES256K:
       return "ES256K";
+    case SignerAlg.ENS:
+      return "ENS";
     case SignerAlg.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

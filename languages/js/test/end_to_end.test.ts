@@ -32,6 +32,7 @@ describe("E2E Tests", () => {
     records.push(await testFromJson());
     records.push(await testFromFile());
     records.push(await testEcdsaSignature(sdk));
+    records.push(await testEnsSignature(sdk));
 
     await testFromHostedLoader();
     await testFromIpfsLoader();
@@ -137,6 +138,33 @@ async function testFromFile(): Promise<Record> {
 async function testEcdsaSignature(sdk: BloockClient): Promise<Record> {
   let keys = await sdk.generateKeys();
   let name = "Some name";
+
+  let record = await RecordBuilder.fromString("Hello world 3")
+    .withSigner(new EcdsaSigner(keys.privateKey, { commonName: name }))
+    .build();
+
+  keys = await sdk.generateKeys();
+
+  const recordWithMultipleSignatures = await RecordBuilder.fromRecord(record)
+    .withSigner(new EcdsaSigner(keys.privateKey))
+    .build();
+
+  let hash = await recordWithMultipleSignatures.getHash();
+  expect(hash).toEqual(
+    "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
+  );
+
+  let signatures = await recordWithMultipleSignatures.getSignatures();
+  expect(signatures.length).toEqual(2);
+
+  expect(await signatures[0].getCommonName()).toEqual(name);
+
+  return recordWithMultipleSignatures;
+}
+
+async function testEnsSignature(sdk: BloockClient): Promise<Record> {
+  let keys = await sdk.generateKeys();
+  let name = "vitalik.eth";
 
   let record = await RecordBuilder.fromString("Hello world 3")
     .withSigner(new EcdsaSigner(keys.privateKey, { commonName: name }))
