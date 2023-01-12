@@ -67,7 +67,7 @@ BLOOCK offers direct integrations with multiple programming languages (see [Lang
 
 To achieve interoperability between different programming languages, we use an architecture that has the following elements:
 
-![Architecture](https://raw.githubusercontent.com/bloock/bloock-sdk/master/docs/architecture.png)
+![Architecture](https://raw.githubusercontent.com/bloock/bloock-sdk/master/docs/architecture.jpg)
 
 - Bloock Libs: Contain specific utilities used accross different features. Such as: hashing algorithms, digital signature algorithms, encrytption algorigthms, HTTP communication, ...
 - Bloock Core: Contains all the bussiness logic for every feature.
@@ -86,7 +86,7 @@ Most languages have some type of ability to communicate with another language, t
 
 To support this two cases, we chose Rust as a Core programming language because is able to compile to C and WebAssembly.
 
-![Interoperability](https://raw.githubusercontent.com/bloock/bloock-sdk/master/docs/interoperability.png)
+![Interoperability](https://raw.githubusercontent.com/bloock/bloock-sdk/master/docs/interoperability.jpg)
 
 Finally, to give full support, we generate C builds for different OS and architectures. See [OS support](#os-support).
 
