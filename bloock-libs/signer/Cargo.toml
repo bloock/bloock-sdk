@@ -17,4 +17,6 @@ libsecp256k1 = "0.7.1"
 getrandom = {version = "0.2.7", features = ["js"]}
 rand = "0.8.5"
 ethers = "1.0.2"
-tokio = { version = "1.24.1", features = ["macros"]}
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tokio = { version = "1.24.1", features = ["macros"] }
