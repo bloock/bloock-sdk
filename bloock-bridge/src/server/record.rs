@@ -88,6 +88,22 @@ impl From<PublishResponse> for ResponseType {
     }
 }
 
+macro_rules! record_builder_unwrap {
+    ($input:expr, $client:ident, $req_name:ident, $err_message:expr) => {
+        match $input {
+            Some(signer_arguments) => signer_arguments,
+            None => {
+                return RecordBuilderResponse::new_error(
+                    $client,
+                    $req_name,
+                    $err_message.to_string(),
+                )
+                .await
+            }
+        }
+    };
+}
+
 pub struct RecordServer {}
 
 #[async_trait(?Send)]
@@ -684,37 +700,34 @@ async fn build_record(
     if let Some(signer) = signer {
         let signer_alg = SignerAlg::from_i32(signer.alg);
         let signer: Box<dyn SignerCore> = match signer_alg {
-            Some(SignerAlg::Es256k | SignerAlg::Ens) => {
-                let signer_arguments = match signer.args {
-                    Some(signer_arguments) => signer_arguments,
-                    None => {
-                        return RecordBuilderResponse::new_error(
-                            client,
-                            req_name,
-                            "no arguments provided".to_string(),
-                        )
-                        .await
-                    }
-                };
-                let private_key = match signer_arguments.private_key {
-                    Some(private_key) => private_key,
-                    None => {
-                        return RecordBuilderResponse::new_error(
-                            client,
-                            req_name,
-                            "no private key provided".to_string(),
-                        )
-                        .await
-                    }
-                };
+            Some(SignerAlg::Es256k) => {
+                let signer_arguments =
+                    record_builder_unwrap!(signer.args, client, req_name, "no arguments provided");
 
-                match signer_alg.unwrap() {
-                    SignerAlg::Es256k => EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                        &private_key,
-                        signer_arguments.common_name,
-                    )),
-                    SignerAlg::Ens => EnsSigner::new_boxed(EnsSignerArgs::new(&private_key)),
-                }
+                let private_key = record_builder_unwrap!(
+                    signer_arguments.private_key,
+                    client,
+                    req_name,
+                    "no private key provided"
+                );
+
+                EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                    &private_key,
+                    signer_arguments.common_name,
+                ))
+            }
+            Some(SignerAlg::Ens) => {
+                let signer_arguments =
+                    record_builder_unwrap!(signer.args, client, req_name, "no arguments provided");
+
+                let private_key = record_builder_unwrap!(
+                    signer_arguments.private_key,
+                    client,
+                    req_name,
+                    "no private key provided"
+                );
+
+                EnsSigner::new_boxed(EnsSignerArgs::new(&private_key))
             }
             None => {
                 return RecordBuilderResponse::new_error(
