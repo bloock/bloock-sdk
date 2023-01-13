@@ -127,7 +127,8 @@ mod tests {
     use bloock_encrypter::aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs};
     use bloock_signer::{
         ecdsa::{EcdsaSigner, EcdsaSignerArgs, ECDSA_ALG},
-        Signature, SignatureHeader, ens::{EnsSigner, EnsSignerArgs, ENS_ALG},
+        ens::{EnsSigner, EnsSignerArgs, ENS_ALG},
+        Signature, SignatureHeader,
     };
 
     use super::*;
@@ -297,7 +298,7 @@ mod tests {
 
         let record = RecordBuilder::from_string(content.to_string())
             .unwrap()
-            .with_signer(EnsSigner::new_boxed(EnsSignerArgs::new(&private)))
+            .with_signer(EnsSigner::new_boxed(EnsSignerArgs::new(private)))
             .build()
             .unwrap();
 
@@ -321,8 +322,12 @@ mod tests {
         assert_eq!(None, result_proof);
 
         // set Vitalik's public key to test getting an ENS domain
-        result_signature[0].header.kid = "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099".to_string();
-        assert_eq!(result_signature[0].get_common_name().await.unwrap(), "vitalik.eth");
+        result_signature[0].header.kid =
+            "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099".to_string();
+        assert_eq!(
+            result_signature[0].get_common_name().await.unwrap(),
+            "vitalik.eth"
+        );
     }
 
     #[tokio::test]

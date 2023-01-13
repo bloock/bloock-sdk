@@ -1,7 +1,7 @@
 use std::{fmt, str::from_utf8};
 
 use ecdsa::{EcdsaVerifier, ECDSA_ALG};
-use ens::{ENS_ALG, EnsVerifier};
+use ens::{EnsVerifier, ENS_ALG};
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
 
@@ -11,15 +11,15 @@ pub mod ens;
 pub type Result<T> = std::result::Result<T, SignerError>;
 
 enum Algorithms {
-    ECDSA,
-    ENS,
+    Ecdsa,
+    Ens,
 }
 
 impl fmt::Display for Algorithms {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Algorithms::ECDSA => write!(f, "{}", ECDSA_ALG),
-            Algorithms::ENS => write!(f, "{}", ENS_ALG),
+            Algorithms::Ecdsa => write!(f, "{}", ECDSA_ALG),
+            Algorithms::Ens => write!(f, "{}", ENS_ALG),
         }
     }
 }
@@ -29,8 +29,8 @@ impl TryFrom<&str> for Algorithms {
 
     fn try_from(value: &str) -> Result<Self> {
         match value {
-            ECDSA_ALG => Ok(Self::ECDSA),
-            ENS_ALG => Ok(Self::ENS),
+            ECDSA_ALG => Ok(Self::Ecdsa),
+            ENS_ALG => Ok(Self::Ens),
             _ => Err(SignerError::InvalidSignatureAlg()),
         }
     }
@@ -53,8 +53,8 @@ impl Signature {
     pub async fn get_common_name(&self) -> Result<String> {
         let alg = Algorithms::try_from(self.header.alg.as_str())?;
         match alg {
-            Algorithms::ECDSA => ecdsa::get_common_name(self),
-            Algorithms::ENS => ens::get_common_name(self).await,
+            Algorithms::Ecdsa => ecdsa::get_common_name(self),
+            Algorithms::Ens => ens::get_common_name(self).await,
         }
     }
 }
@@ -99,8 +99,8 @@ pub trait Verifier {
 
 pub fn create_verifier_from_signature(signature: &Signature) -> Result<Box<dyn Verifier>> {
     match Algorithms::try_from(signature.header.alg.as_str())? {
-        Algorithms::ECDSA => Ok(Box::new(EcdsaVerifier::default())),
-        Algorithms::ENS => Ok(Box::new(EnsVerifier::default())),
+        Algorithms::Ecdsa => Ok(Box::<EcdsaVerifier>::default()),
+        Algorithms::Ens => Ok(Box::<EnsVerifier>::default()),
     }
 }
 

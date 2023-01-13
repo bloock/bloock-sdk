@@ -90,7 +90,7 @@ impl Signer for EcdsaSigner {
             protected,
             signature: hex::encode(sig.0.serialize()),
             header: crate::SignatureHeader {
-                alg: Algorithms::ECDSA.to_string(),
+                alg: Algorithms::Ecdsa.to_string(),
                 kid: hex::encode(public_key.serialize_compressed()),
             },
         };

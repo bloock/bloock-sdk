@@ -17,10 +17,10 @@ pub async fn get_common_name(signature: &Signature) -> Result<String> {
     let public_key = hex::decode(signature.header.kid.clone())
         .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
     let address = derive_eth_address(public_key)?;
-    Ok(provider
+    provider
         .lookup_address(address)
         .await
-        .map_err(|_| SignerError::EthDomainNotFound())?)
+        .map_err(|_| SignerError::EthDomainNotFound())
 }
 
 fn derive_eth_address(mut public_key: Vec<u8>) -> Result<Address> {
@@ -100,7 +100,7 @@ mod tests {
     async fn get_common_name_ens_ok() {
         let signature = Signature {
             header: crate::SignatureHeader {
-                alg: Algorithms::ECDSA.to_string(),
+                alg: Algorithms::Ecdsa.to_string(),
                 kid: "e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea6860992aac5e614a83f1ebe4019300373591268da38871df019f694f8e3190e493e711"
                     .to_string(),
             },
