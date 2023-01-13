@@ -66,7 +66,7 @@ impl Event {
             name = name[1..name.len()].to_owned();
         }
 
-        let user_id = to_hex(Sha256::generate_hash(api_key.as_bytes()));
+        let user_id = api_key.to_string();
 
         Event {
             name,
