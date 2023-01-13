@@ -1,9 +1,10 @@
 use bloock_hasher::{keccak::Keccak256, Hasher};
-use ethers::providers::Middleware;
+use ethers::{providers::Middleware, types::Address};
+use libsecp256k1::{PublicKey, PublicKeyFormat};
 
 use crate::{
     ecdsa::{EcdsaSigner, EcdsaSignerArgs, EcdsaVerifier},
-    Result, Verifier,
+    Result, SignerError, Verifier,
 };
 
 use super::{Signature, Signer};
@@ -13,18 +14,25 @@ pub const ENS_ALG: &str = "ENS";
 
 pub async fn get_common_name(signature: &Signature) -> Result<String> {
     let provider = ethers::providers::MAINNET.provider();
-    let address = derive_eth_addres(&signature.header.kid);
-    let name = provider
-        .lookup_address(address.parse().unwrap())
+    let public_key = hex::decode(signature.header.kid.clone())
+        .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
+    let address = derive_eth_address(public_key)?;
+    Ok(provider
+        .lookup_address(address)
         .await
-        .unwrap();
-    Ok(name)
+        .map_err(|_| SignerError::EthDomainNotFound())?)
 }
 
-fn derive_eth_addres(public_key: &str) -> String {
-    let public_key = hex::decode(public_key).unwrap();
-    let address = hex::encode(&Keccak256::generate_hash(&public_key)[12..]);
-    address
+fn derive_eth_address(mut public_key: Vec<u8>) -> Result<Address> {
+    if public_key.len() == 33 {
+        // the key is probably compressed, so we try to decompress it
+        public_key = PublicKey::parse_slice(&public_key, Some(PublicKeyFormat::Compressed))
+            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
+            .serialize()[1..]
+            .to_vec();
+    }
+    let address = Address::from_slice(&Keccak256::generate_hash(&public_key)[12..]);
+    Ok(address)
 }
 
 #[derive(Clone)]
@@ -86,14 +94,14 @@ impl Verifier for EnsVerifier {
 mod tests {
     use crate::{Algorithms, Signature};
 
-    use super::get_common_name;
+    use super::{derive_eth_address, get_common_name};
 
     #[tokio::test]
     async fn get_common_name_ens_ok() {
         let signature = Signature {
             header: crate::SignatureHeader {
                 alg: Algorithms::ECDSA.to_string(),
-                kid: "0323be7883b973ab884070078ecf9a53a747dd1573ef8f507695d100857258eec3"
+                kid: "e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea6860992aac5e614a83f1ebe4019300373591268da38871df019f694f8e3190e493e711"
                     .to_string(),
             },
             protected: "".to_string(),
@@ -102,5 +110,27 @@ mod tests {
 
         let name = get_common_name(&signature).await.unwrap();
         assert_eq!(name, "vitalik.eth")
+    }
+
+    #[test]
+    fn derive_eth_address_ok() {
+        let public_key = hex::decode("e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea6860992aac5e614a83f1ebe4019300373591268da38871df019f694f8e3190e493e711").unwrap();
+        let address = derive_eth_address(public_key).unwrap();
+        assert_eq!(
+            hex::encode(address),
+            "d8da6bf26964af9d7eed9e03e53415d37aa96045"
+        );
+    }
+
+    #[test]
+    fn derive_eth_address_compressed_key_ok() {
+        let public_key =
+            hex::decode("03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099")
+                .unwrap();
+        let address = derive_eth_address(public_key).unwrap();
+        assert_eq!(
+            hex::encode(address),
+            "d8da6bf26964af9d7eed9e03e53415d37aa96045"
+        );
     }
 }

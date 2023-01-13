@@ -292,8 +292,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_build_record_from_string_set_ens_signature() {
-        let (private, public) = EcdsaSigner::generate_keys().unwrap();
-        println!("PUB :=> {public}");
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
         let content = "hello world!";
 
         let record = RecordBuilder::from_string(content.to_string())
@@ -304,7 +303,7 @@ mod tests {
 
         let document = Document::new(&record.clone().serialize().unwrap()).unwrap();
 
-        let result_signature = document.get_signatures().unwrap();
+        let mut result_signature = document.get_signatures().unwrap();
         let result_protected = result_signature[0].clone().protected;
         let result_algorithm = result_signature[0].clone().header.alg;
         let result_public_key = result_signature[0].clone().header.kid;
@@ -321,7 +320,9 @@ mod tests {
         assert_ne!(content, result_payload);
         assert_eq!(None, result_proof);
 
-        println!("=> => => => => => {:#?}", result_signature[0].get_common_name().await)
+        // set Vitalik's public key to test getting an ENS domain
+        result_signature[0].header.kid = "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099".to_string();
+        assert_eq!(result_signature[0].get_common_name().await.unwrap(), "vitalik.eth");
     }
 
     #[tokio::test]
