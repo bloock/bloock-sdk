@@ -164,10 +164,9 @@ async function testEcdsaSignature(sdk: BloockClient): Promise<Record> {
 
 async function testEnsSignature(sdk: BloockClient): Promise<Record> {
   let keys = await sdk.generateKeys();
-  let name = "vitalik.eth";
 
   let record = await RecordBuilder.fromString("Hello world 3")
-    .withSigner(new EcdsaSigner(keys.privateKey, { commonName: name }))
+    .withSigner(new EcdsaSigner(keys.privateKey))
     .build();
 
   keys = await sdk.generateKeys();
@@ -182,9 +181,12 @@ async function testEnsSignature(sdk: BloockClient): Promise<Record> {
   );
 
   let signatures = await recordWithMultipleSignatures.getSignatures();
-  expect(signatures.length).toEqual(2);
+  expect(signatures.length).toEqual(1);
 
-  expect(await signatures[0].getCommonName()).toEqual(name);
+  // set Vitalik's public key to test getting an ENS domain
+  signatures[0].header.kid =
+    "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099";
+  expect(await signatures[0].getCommonName()).toEqual("vitalik.eth");
 
   return recordWithMultipleSignatures;
 }

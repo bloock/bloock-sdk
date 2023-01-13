@@ -140,7 +140,6 @@ class TestE2E(unittest.TestCase):
 
     def _testEnsSignature(self) -> Record:
         keys = self.client.generate_keys()
-        name = "vitalik.eth"
 
         record = (
             RecordBuilder.from_string("Hello world 3")
@@ -154,9 +153,16 @@ class TestE2E(unittest.TestCase):
         )
 
         signatures = record.get_signatures()
-        self.assertEqual(len(signatures), 2)
+        self.assertEqual(len(signatures), 1)
 
-        self.assertEqual(name, signatures[0].get_common_name())
+        # set Vitalik's public key to test getting an ENS domain
+        signatures[
+            0
+        ].header.kid = (
+            "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099"
+        )
+        name = signatures[0].get_common_name()
+        self.assertEqual(name, "vitalik.eth")
 
         return record
 

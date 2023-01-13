@@ -45,6 +45,10 @@ public class Signature {
     return header;
   }
 
+  public void setPublicKey(String key) {
+    this.header.kid = key;
+  }
+
   public String getCommonName() throws Exception {
     Bridge bridge = new Bridge();
     SignatureCommonNameResponse res =

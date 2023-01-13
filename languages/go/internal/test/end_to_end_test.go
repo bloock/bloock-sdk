@@ -474,8 +474,6 @@ func testEnsSignature(t *testing.T, sdk client.Client) entity.Record {
 	keys, err := sdk.GenerateKeys()
 	require.NoError(t, err)
 
-	name := "vitalik.eth"
-
 	record, err := builder.
 		NewRecordBuilderFromString("Hello world 3").
 		WithSigner(entity.NewEnsSigner(entity.EnsArgs{
@@ -490,10 +488,12 @@ func testEnsSignature(t *testing.T, sdk client.Client) entity.Record {
 
 	signatures, err := record.GetSignatures()
 	require.NoError(t, err)
-	assert.Equal(t, len(signatures), 2)
+	assert.Equal(t, len(signatures), 1)
 
+	// set Vitalik's public key to test getting an ENS domain
+	signatures[0].Header.Kid = "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099"
 	retrievedName, err := signatures[0].GetCommonName()
-	assert.Equal(t, name, retrievedName)
+	assert.Equal(t, retrievedName, "vitalik.eth")
 
 	return record
 }
