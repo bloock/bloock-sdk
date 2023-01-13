@@ -16,7 +16,8 @@ import {
   ProofAnchor,
   AnchorNetwork,
   IpfsPublisher,
-  IpfsLoader
+  IpfsLoader,
+  EnsSigner
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
 import { getSdk } from "./util";
@@ -166,21 +167,15 @@ async function testEnsSignature(sdk: BloockClient): Promise<Record> {
   let keys = await sdk.generateKeys();
 
   let record = await RecordBuilder.fromString("Hello world 3")
-    .withSigner(new EcdsaSigner(keys.privateKey))
+    .withSigner(new EnsSigner(keys.privateKey))
     .build();
 
-  keys = await sdk.generateKeys();
-
-  const recordWithMultipleSignatures = await RecordBuilder.fromRecord(record)
-    .withSigner(new EcdsaSigner(keys.privateKey))
-    .build();
-
-  let hash = await recordWithMultipleSignatures.getHash();
+  let hash = await record.getHash();
   expect(hash).toEqual(
     "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
   );
 
-  let signatures = await recordWithMultipleSignatures.getSignatures();
+  let signatures = await record.getSignatures();
   expect(signatures.length).toEqual(1);
 
   // set Vitalik's public key to test getting an ENS domain
@@ -188,7 +183,7 @@ async function testEnsSignature(sdk: BloockClient): Promise<Record> {
     "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099";
   expect(await signatures[0].getCommonName()).toEqual("vitalik.eth");
 
-  return recordWithMultipleSignatures;
+  return record;
 }
 
 async function testFromHostedLoader() {

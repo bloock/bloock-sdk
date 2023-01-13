@@ -29,6 +29,9 @@ export class Record {
       .getRecord()
       .GetHash(this.toProto())
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.hash;
       });
   }
@@ -39,6 +42,9 @@ export class Record {
       .getRecord()
       .GetSignatures(this.toProto())
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.signatures.map(x => Signature.fromProto(x));
       });
   }
@@ -54,6 +60,9 @@ export class Record {
       .getRecord()
       .Publish(request)
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.hash;
       });
   }
@@ -136,6 +145,9 @@ export class Signature {
         })
       )
       .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
         return res.commonName;
       });
   }
