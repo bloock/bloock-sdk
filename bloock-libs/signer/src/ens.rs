@@ -96,7 +96,24 @@ mod tests {
 
     use super::{derive_eth_address, get_common_name};
 
+    #[cfg(target_arch = "wasm32")]
+    mod wasm_tests {
+        use wasm_bindgen_test::wasm_bindgen_test;
+        wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+        use super::get_common_name_ens_ok;
+
+        #[wasm_bindgen_test]
+        async fn get_common_name_ens_ok_wasm() {
+            get_common_name_ens_ok().await;
+        }
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
     #[tokio::test]
+    async fn get_common_name_ens_ok_default() {
+        get_common_name_ens_ok().await;
+    }
+
     async fn get_common_name_ens_ok() {
         let signature = Signature {
             header: crate::SignatureHeader {

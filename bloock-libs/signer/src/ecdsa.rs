@@ -142,6 +142,24 @@ mod tests {
         Signature, SignatureHeader, Signer,
     };
 
+    #[cfg(target_arch = "wasm32")]
+    mod wasm_tests {
+        use wasm_bindgen_test::wasm_bindgen_test;
+
+        use super::{test_sign_and_verify_ok_set_common_name, test_sign_and_verify_ok_get_common_name_without_set};
+        wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+
+        #[wasm_bindgen_test]
+        async fn test_sign_and_verify_ok_set_common_name_wasm() {
+            test_sign_and_verify_ok_set_common_name().await;
+        }
+
+        #[wasm_bindgen_test]
+        async fn test_sign_and_verify_ok_get_common_name_without_set_wasm() {
+            test_sign_and_verify_ok_get_common_name_without_set().await;
+        }
+    }
+
     #[test]
     fn test_sign_and_verify_ok() {
         let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
@@ -165,7 +183,12 @@ mod tests {
         assert!(result);
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     #[tokio::test]
+    async fn test_sign_and_verify_ok_set_common_name_default() {
+        test_sign_and_verify_ok_set_common_name().await;
+    }
+
     async fn test_sign_and_verify_ok_set_common_name() {
         let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 
@@ -192,7 +215,12 @@ mod tests {
         assert!(result);
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     #[tokio::test]
+    async fn test_sign_and_verify_ok_get_common_name_without_set_default() {
+        test_sign_and_verify_ok_get_common_name_without_set().await;
+    }
+
     async fn test_sign_and_verify_ok_get_common_name_without_set() {
         let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 

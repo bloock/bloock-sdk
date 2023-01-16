@@ -532,6 +532,7 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tokio",
+ "wasm-bindgen-test",
 ]
 
 [[package]]
