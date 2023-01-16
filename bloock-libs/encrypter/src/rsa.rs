@@ -4,6 +4,8 @@ use rsa::{
     PaddingScheme, PublicKey, RsaPrivateKey, RsaPublicKey,
 };
 
+const RSA_ALG: &str = "RSA";
+
 pub struct RsaKeyPair {
     pub public_key: String,
     pub private_key: String,
@@ -61,6 +63,10 @@ impl Encrypter for RsaEncrypter {
         public_key
             .encrypt(&mut rng, padding, payload)
             .map_err(|err| EncrypterError::FailedToEncrypt(err.to_string()))
+    }
+
+    fn get_alg(&self) -> &str {
+        RSA_ALG
     }
 }
 

@@ -9,6 +9,7 @@ pub type Result<T> = std::result::Result<T, EncrypterError>;
 
 pub trait Encrypter {
     fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>>;
+    fn get_alg(&self) -> &str;
 }
 
 pub trait Decrypter {

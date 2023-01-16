@@ -1,5 +1,7 @@
 use crate::{Decrypter, Encrypter, EncrypterError, Result};
 
+const ECIES_ALG: &str = "ECIES-Secp256k1";
+
 pub struct EciesKeyPair {
     pub public_key: String,
     pub private_key: String,
@@ -40,6 +42,10 @@ impl Encrypter for EciesEncrypter {
 
         ecies::encrypt(&public_key, payload)
             .map_err(|err| EncrypterError::FailedToEncrypt(err.to_string()))
+    }
+
+    fn get_alg(&self) -> &str {
+        ECIES_ALG
     }
 }
 

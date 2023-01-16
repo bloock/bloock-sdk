@@ -63,7 +63,7 @@ impl Document {
         Ok(self)
     }
 
-    pub fn set_encryption(&mut self, ciphertext: Vec<u8>) -> BloockResult<()> {
+    pub fn set_encryption(&mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<()> {
         self.update_parser(ciphertext)?;
         self.update_payload()?;
 
@@ -71,7 +71,15 @@ impl Document {
         self.proof = None;
         self.is_encrypted = true;
 
+        self.set_encryption_alg(alg)?;
+
         Ok(())
+    }
+
+    fn set_encryption_alg(&mut self, alg: &str) -> BloockResult<()> {
+        self.parser
+            .set("encryption_alg", &alg)
+            .map_err(|err| InfrastructureError::MetadataError(err).into())
     }
 
     pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
