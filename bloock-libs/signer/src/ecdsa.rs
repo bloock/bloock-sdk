@@ -146,7 +146,10 @@ mod tests {
     mod wasm_tests {
         use wasm_bindgen_test::wasm_bindgen_test;
 
-        use super::{test_sign_and_verify_ok_set_common_name, test_sign_and_verify_ok_get_common_name_without_set};
+        use super::{
+            test_sign_and_verify_ok_get_common_name_without_set,
+            test_sign_and_verify_ok_set_common_name,
+        };
         wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 
         #[wasm_bindgen_test]
