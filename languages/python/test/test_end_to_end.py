@@ -142,14 +142,14 @@ class TestE2E(unittest.TestCase):
         keys = self.client.generate_keys()
 
         record = (
-            RecordBuilder.from_string("Hello world 3")
+            RecordBuilder.from_string("Hello world 4")
             .with_signer(EnsSigner(keys.private_key))
             .build()
         )
 
         hash = record.get_hash()
         self.assertEqual(
-            hash, "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
+            hash, "2dcd4054d07d4ac05e32fe83f438c99eb1674b98f035f14eff004be307ecae70"
         )
 
         signatures = record.get_signatures()

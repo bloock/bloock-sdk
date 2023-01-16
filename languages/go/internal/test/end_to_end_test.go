@@ -475,7 +475,7 @@ func testEnsSignature(t *testing.T, sdk client.Client) entity.Record {
 	require.NoError(t, err)
 
 	record, err := builder.
-		NewRecordBuilderFromString("Hello world 3").
+		NewRecordBuilderFromString("Hello world 4").
 		WithSigner(entity.NewEnsSigner(entity.EnsArgs{
 			PrivateKey: keys.PrivateKey,
 		})).
@@ -484,7 +484,7 @@ func testEnsSignature(t *testing.T, sdk client.Client) entity.Record {
 
 	hash, err := record.GetHash()
 	require.NoError(t, err)
-	assert.Equal(t, hash, "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f")
+	assert.Equal(t, hash, "2dcd4054d07d4ac05e32fe83f438c99eb1674b98f035f14eff004be307ecae70")
 
 	signatures, err := record.GetSignatures()
 	require.NoError(t, err)

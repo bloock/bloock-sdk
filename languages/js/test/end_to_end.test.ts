@@ -166,13 +166,13 @@ async function testEcdsaSignature(sdk: BloockClient): Promise<Record> {
 async function testEnsSignature(sdk: BloockClient): Promise<Record> {
   let keys = await sdk.generateKeys();
 
-  let record = await RecordBuilder.fromString("Hello world 3")
+  let record = await RecordBuilder.fromString("Hello world 4")
     .withSigner(new EnsSigner(keys.privateKey))
     .build();
 
   let hash = await record.getHash();
   expect(hash).toEqual(
-    "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
+    "2dcd4054d07d4ac05e32fe83f438c99eb1674b98f035f14eff004be307ecae70"
   );
 
   let signatures = await record.getSignatures();

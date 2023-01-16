@@ -111,7 +111,7 @@ class Test {
   }
 
   static Record testFromBytes() throws Exception {
-    Record record = Builder.fromBytes(new byte[] {1, 2, 3, 4, 5}).build();
+    Record record = Builder.fromBytes(new byte[] { 1, 2, 3, 4, 5 }).build();
     String hash = record.getHash();
     assert hash.equals("7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4");
     return record;
@@ -132,7 +132,7 @@ class Test {
   }
 
   static Record testFromFile() throws Exception {
-    Record record = Builder.fromFile(new byte[] {2, 3, 4, 5, 6}).build();
+    Record record = Builder.fromFile(new byte[] { 2, 3, 4, 5, 6 }).build();
     String hash = record.getHash();
     assert hash.equals("507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446");
     return record;
@@ -166,15 +166,14 @@ class Test {
     Keys keys = sdk.generateKeys();
     String name = "Some name";
 
-    Record signedRecord =
-        Builder.fromString("Hello world 3")
-            .withSigner(new EcdsaSigner(new SignerArgs(keys.getPrivateKey(), name)))
-            .build();
+    Record signedRecord = Builder.fromString("Hello world 3")
+        .withSigner(new EcdsaSigner(new SignerArgs(keys.getPrivateKey(), name)))
+        .build();
 
     Keys keys2 = sdk.generateKeys();
 
-    Record recordWithMultipleSignatures =
-        Builder.fromRecord(signedRecord).withSigner(new EcdsaSigner(keys2.getPrivateKey())).build();
+    Record recordWithMultipleSignatures = Builder.fromRecord(signedRecord)
+        .withSigner(new EcdsaSigner(keys2.getPrivateKey())).build();
 
     String hash = recordWithMultipleSignatures.getHash();
     assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");
@@ -190,11 +189,10 @@ class Test {
   static Record testEnsSignature(Client sdk) throws Exception {
     Keys keys = sdk.generateKeys();
 
-    Record record =
-        Builder.fromString("Hello world 3").withSigner(new EnsSigner(keys.getPrivateKey())).build();
+    Record record = Builder.fromString("Hello world 4").withSigner(new EnsSigner(keys.getPrivateKey())).build();
 
     String hash = record.getHash();
-    assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");
+    assert hash.equals("2dcd4054d07d4ac05e32fe83f438c99eb1674b98f035f14eff004be307ecae70");
 
     List<Signature> signatures = record.getSignatures();
     assert signatures.size() == 1;
@@ -210,8 +208,7 @@ class Test {
   static void testAesEncryption() throws Exception {
     String payload = "Hello world 2";
     String password = "some_password";
-    Record encryptedRecord =
-        Builder.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
+    Record encryptedRecord = Builder.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
     boolean throwsException = false;
@@ -224,8 +221,7 @@ class Test {
     }
     assert throwsException;
 
-    Record decryptedRecord =
-        Builder.fromRecord(encryptedRecord).withDecrypter(new AesDecrypter(password)).build();
+    Record decryptedRecord = Builder.fromRecord(encryptedRecord).withDecrypter(new AesDecrypter(password)).build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -236,16 +232,14 @@ class Test {
   static void testAesEncryptionHosted() throws Exception {
     String payload = "Hello world 2";
     String password = "some_password";
-    Record encryptedRecord =
-        Builder.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
+    Record encryptedRecord = Builder.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
     String result = encryptedRecord.publish(new HostedPublisher());
 
     Record loadedRecord = Builder.fromLoader(new HostedLoader(result)).build();
 
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord).withDecrypter(new AesDecrypter(password)).build();
+    Record decryptedRecord = Builder.fromRecord(loadedRecord).withDecrypter(new AesDecrypter(password)).build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -256,16 +250,14 @@ class Test {
   static void testAesEncryptionIpfs() throws Exception {
     String payload = "Hello world 2";
     String password = "some_password";
-    Record encryptedRecord =
-        Builder.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
+    Record encryptedRecord = Builder.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
     String result = encryptedRecord.publish(new IpfsPublisher());
 
     Record loadedRecord = Builder.fromLoader(new IpfsLoader(result)).build();
 
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord).withDecrypter(new AesDecrypter(password)).build();
+    Record decryptedRecord = Builder.fromRecord(loadedRecord).withDecrypter(new AesDecrypter(password)).build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -276,14 +268,13 @@ class Test {
   static void testRsaEncryption(Client sdk) throws Exception {
     String payload = "Hello world 2";
     RsaKeyPair keyPair = sdk.generateRsaKeyPair();
-    Record encryptedRecord =
-        Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
+    Record encryptedRecord = Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey()))
+        .build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
-    Record decryptedRecord =
-        Builder.fromRecord(encryptedRecord)
-            .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
-            .build();
+    Record decryptedRecord = Builder.fromRecord(encryptedRecord)
+        .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
+        .build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -294,18 +285,17 @@ class Test {
   static void testRsaEncryptionHosted(Client sdk) throws Exception {
     String payload = "Hello world 2";
     RsaKeyPair keyPair = sdk.generateRsaKeyPair();
-    Record encryptedRecord =
-        Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
+    Record encryptedRecord = Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey()))
+        .build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
     String result = encryptedRecord.publish(new HostedPublisher());
 
     Record loadedRecord = Builder.fromLoader(new HostedLoader(result)).build();
 
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord)
-            .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
-            .build();
+    Record decryptedRecord = Builder.fromRecord(loadedRecord)
+        .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
+        .build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -316,18 +306,17 @@ class Test {
   static void testRsaEncryptionIpfs(Client sdk) throws Exception {
     String payload = "Hello world 2";
     RsaKeyPair keyPair = sdk.generateRsaKeyPair();
-    Record encryptedRecord =
-        Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
+    Record encryptedRecord = Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey()))
+        .build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
     String result = encryptedRecord.publish(new IpfsPublisher());
 
     Record loadedRecord = Builder.fromLoader(new IpfsLoader(result)).build();
 
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord)
-            .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
-            .build();
+    Record decryptedRecord = Builder.fromRecord(loadedRecord)
+        .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
+        .build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -338,16 +327,14 @@ class Test {
   static void testEciesEncryption(Client sdk) throws Exception {
     String payload = "Hello world 2";
     KeyPair keyPair = sdk.generateEciesKeyPair();
-    Record encryptedRecord =
-        Builder.fromString(payload)
-            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-            .build();
+    Record encryptedRecord = Builder.fromString(payload)
+        .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
+        .build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
-    Record decryptedRecord =
-        Builder.fromRecord(encryptedRecord)
-            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-            .build();
+    Record decryptedRecord = Builder.fromRecord(encryptedRecord)
+        .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
+        .build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -358,20 +345,18 @@ class Test {
   static void testEciesEncryptionHosted(Client sdk) throws Exception {
     String payload = "Hello world 2";
     KeyPair keyPair = sdk.generateEciesKeyPair();
-    Record encryptedRecord =
-        Builder.fromString(payload)
-            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-            .build();
+    Record encryptedRecord = Builder.fromString(payload)
+        .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
+        .build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
     String result = encryptedRecord.publish(new HostedPublisher());
 
     Record loadedRecord = Builder.fromLoader(new HostedLoader(result)).build();
 
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord)
-            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-            .build();
+    Record decryptedRecord = Builder.fromRecord(loadedRecord)
+        .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
+        .build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -382,20 +367,18 @@ class Test {
   static void testEciesEncryptionIpfs(Client sdk) throws Exception {
     String payload = "Hello world 2";
     KeyPair keyPair = sdk.generateEciesKeyPair();
-    Record encryptedRecord =
-        Builder.fromString(payload)
-            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-            .build();
+    Record encryptedRecord = Builder.fromString(payload)
+        .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
+        .build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
     String result = encryptedRecord.publish(new IpfsPublisher());
 
     Record loadedRecord = Builder.fromLoader(new IpfsLoader(result)).build();
 
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord)
-            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-            .build();
+    Record decryptedRecord = Builder.fromRecord(loadedRecord)
+        .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
+        .build();
 
     assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -406,21 +389,20 @@ class Test {
   static void testSetProof(Client sdk) throws Exception {
     Record record = Builder.fromString("Hello world").build();
 
-    Proof originalProof =
-        new Proof(
-            Arrays.asList("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
-            Arrays.asList("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
-            "1010101",
-            "0101010",
-            new ProofAnchor(
-                42L,
-                Arrays.asList(
-                    new AnchorNetwork(
-                        "Ethereum",
-                        "state",
-                        "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
-                "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
-                "succes"));
+    Proof originalProof = new Proof(
+        Arrays.asList("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
+        Arrays.asList("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
+        "1010101",
+        "0101010",
+        new ProofAnchor(
+            42L,
+            Arrays.asList(
+                new AnchorNetwork(
+                    "Ethereum",
+                    "state",
+                    "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
+            "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+            "succes"));
 
     record.setProof(originalProof);
 
@@ -437,10 +419,8 @@ class Test {
   }
 
   private static void testVerifyWebhookSignatureOk(Client client) throws Exception {
-    String payload =
-        "{\"webhook_id\":\"80b505b4-df81-48f4-92a6-69cbc1a114a0\",\"request_id\":\"8d30ef45-69a3-4cdd-8457-8cad485848f2\",\"type\":\"core.bloock_chain\",\"created_at\":1672909660,\"data\":{\"created_at\":1672909591,\"finalized\":true,\"id\":105122,\"message_count\":1,\"network\":{\"anchor_id\":105122,\"created_at\":1672909661,\"name\":\"bloock_chain\",\"status\":\"Confirmed\",\"test\":false,\"tx_hash\":\"0x53d1c7c1ff8100b921ce0ef593c81ed4e5e50eff888b3bb5c69260c13f0b2f58\"},\"root\":\"fd71e7ac128ff2219853e43e4044769df36c5329ce34655b4c5d166d1564d5b7\",\"test\":false}}";
-    String header =
-        "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29";
+    String payload = "{\"webhook_id\":\"80b505b4-df81-48f4-92a6-69cbc1a114a0\",\"request_id\":\"8d30ef45-69a3-4cdd-8457-8cad485848f2\",\"type\":\"core.bloock_chain\",\"created_at\":1672909660,\"data\":{\"created_at\":1672909591,\"finalized\":true,\"id\":105122,\"message_count\":1,\"network\":{\"anchor_id\":105122,\"created_at\":1672909661,\"name\":\"bloock_chain\",\"status\":\"Confirmed\",\"test\":false,\"tx_hash\":\"0x53d1c7c1ff8100b921ce0ef593c81ed4e5e50eff888b3bb5c69260c13f0b2f58\"},\"root\":\"fd71e7ac128ff2219853e43e4044769df36c5329ce34655b4c5d166d1564d5b7\",\"test\":false}}";
+    String header = "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29";
     String secret = "NHJTAE6ikKBccSaeCSBSWGdp7NmixXy7";
 
     boolean isValid = client.verifyWebhookSignature(payload.getBytes(), header, secret, false);
@@ -448,10 +428,8 @@ class Test {
   }
 
   private static void testVerifyWebhookSignatureInvalidSecret(Client client) throws Exception {
-    String payload =
-        "{\"webhook_id\":\"80b505b4-df81-48f4-92a6-69cbc1a114a0\",\"request_id\":\"8d30ef45-69a3-4cdd-8457-8cad485848f2\",\"type\":\"core.bloock_chain\",\"created_at\":1672909660,\"data\":{\"created_at\":1672909591,\"finalized\":true,\"id\":105122,\"message_count\":1,\"network\":{\"anchor_id\":105122,\"created_at\":1672909661,\"name\":\"bloock_chain\",\"status\":\"Confirmed\",\"test\":false,\"tx_hash\":\"0x53d1c7c1ff8100b921ce0ef593c81ed4e5e50eff888b3bb5c69260c13f0b2f58\"},\"root\":\"fd71e7ac128ff2219853e43e4044769df36c5329ce34655b4c5d166d1564d5b7\",\"test\":false}}";
-    String header =
-        "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29";
+    String payload = "{\"webhook_id\":\"80b505b4-df81-48f4-92a6-69cbc1a114a0\",\"request_id\":\"8d30ef45-69a3-4cdd-8457-8cad485848f2\",\"type\":\"core.bloock_chain\",\"created_at\":1672909660,\"data\":{\"created_at\":1672909591,\"finalized\":true,\"id\":105122,\"message_count\":1,\"network\":{\"anchor_id\":105122,\"created_at\":1672909661,\"name\":\"bloock_chain\",\"status\":\"Confirmed\",\"test\":false,\"tx_hash\":\"0x53d1c7c1ff8100b921ce0ef593c81ed4e5e50eff888b3bb5c69260c13f0b2f58\"},\"root\":\"fd71e7ac128ff2219853e43e4044769df36c5329ce34655b4c5d166d1564d5b7\",\"test\":false}}";
+    String header = "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29";
     String secret = "asdf";
 
     boolean isValid = client.verifyWebhookSignature(payload.getBytes(), header, secret, false);
