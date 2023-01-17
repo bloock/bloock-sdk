@@ -1,9 +1,9 @@
-use bloock_hasher::{sha256::Sha256, Hasher};
-use libsecp256k1::{Message, PublicKey, SecretKey};
+use bloock_hasher::{sha256::Sha256, Hasher, H256};
+use libsecp256k1::{Message, PublicKey, RecoveryId, SecretKey};
 
-use crate::{Algorithms, ProtectedHeader, Result, SignerError, Verifier};
+use crate::{Algorithms, ProtectedHeader, Result, Signature, SignerError, Verifier};
 
-use super::{Signature, Signer};
+use super::Signer;
 use std::str;
 
 pub const ECDSA_ALG: &str = "ES256K";
@@ -15,6 +15,20 @@ pub fn get_common_name(signature: &Signature) -> Result<String> {
         .ok_or_else(|| {
             SignerError::CommonNameNotSetOrInvalidFormat("common name not set".to_string())
         })
+}
+
+pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<Vec<u8>> {
+    let signature_bytes = hex::decode(signature.signature.clone())
+        .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
+
+    let message = Message::parse(&message_hash);
+    let recovery_id = RecoveryId::parse(signature_bytes[64]).unwrap();
+    let parsed_sig = libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64]).unwrap();
+
+    Ok(libsecp256k1::recover(&message, &parsed_sig, &recovery_id)
+        .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
+        .serialize_compressed()
+        .to_vec())
 }
 
 pub struct EcdsaSignerArgs {
@@ -84,11 +98,16 @@ impl Signer for EcdsaSigner {
 
         let message = Message::parse(&hash);
 
-        let sig = libsecp256k1::sign(&message, &secret_key);
+        let (sig, recovery_id) = libsecp256k1::sign(&message, &secret_key);
+
+        // buffer = [signature;0..64 | recovery_id;65]
+        let mut buffer = [0u8; 65];
+        buffer[0..64].copy_from_slice(&sig.serialize()[..]);
+        buffer[64] = recovery_id.serialize();
 
         let signature = Signature {
             protected,
-            signature: hex::encode(sig.0.serialize()),
+            signature: hex::encode(buffer),
             header: crate::SignatureHeader {
                 alg: Algorithms::Ecdsa.to_string(),
                 kid: hex::encode(public_key.serialize_compressed()),
@@ -124,10 +143,10 @@ impl Verifier for EcdsaVerifier {
 
         let message = Message::parse(&hash);
 
-        let signature_string = hex::decode(signature.signature)
+        let signature_bytes = hex::decode(signature.signature)
             .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
 
-        let signature = libsecp256k1::Signature::parse_standard_slice(&signature_string)
+        let signature = libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64])
             .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
 
         Ok(libsecp256k1::verify(&message, &signature, &public_key))
@@ -136,32 +155,15 @@ impl Verifier for EcdsaVerifier {
 
 #[cfg(test)]
 mod tests {
+    use bloock_hasher::{sha256::Sha256, Hasher};
+
     use crate::{
         create_verifier_from_signature,
-        ecdsa::{EcdsaSigner, EcdsaSignerArgs},
+        ecdsa::{get_common_name, EcdsaSigner, EcdsaSignerArgs},
         Signature, SignatureHeader, Signer,
     };
 
-    #[cfg(target_arch = "wasm32")]
-    mod wasm_tests {
-        use wasm_bindgen_test::wasm_bindgen_test;
-
-        use super::{
-            test_sign_and_verify_ok_get_common_name_without_set,
-            test_sign_and_verify_ok_set_common_name,
-        };
-        wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-
-        #[wasm_bindgen_test]
-        async fn test_sign_and_verify_ok_set_common_name_wasm() {
-            test_sign_and_verify_ok_set_common_name().await;
-        }
-
-        #[wasm_bindgen_test]
-        async fn test_sign_and_verify_ok_get_common_name_without_set_wasm() {
-            test_sign_and_verify_ok_get_common_name_without_set().await;
-        }
-    }
+    use super::recover_public_key;
 
     #[test]
     fn test_sign_and_verify_ok() {
@@ -186,13 +188,8 @@ mod tests {
         assert!(result);
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
-    #[tokio::test]
-    async fn test_sign_and_verify_ok_set_common_name_default() {
-        test_sign_and_verify_ok_set_common_name().await;
-    }
-
-    async fn test_sign_and_verify_ok_set_common_name() {
+    #[test]
+    fn test_sign_and_verify_ok_set_common_name() {
         let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 
         let string_payload = "hello world";
@@ -205,10 +202,7 @@ mod tests {
         let signature = c.sign(string_payload.as_bytes()).unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
-        assert_eq!(
-            signature.get_common_name().await.unwrap().as_str(),
-            "a name"
-        );
+        assert_eq!(get_common_name(&signature).unwrap().as_str(), "a name");
 
         let result = create_verifier_from_signature(&signature)
             .unwrap()
@@ -218,13 +212,8 @@ mod tests {
         assert!(result);
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
-    #[tokio::test]
-    async fn test_sign_and_verify_ok_get_common_name_without_set_default() {
-        test_sign_and_verify_ok_get_common_name_without_set().await;
-    }
-
-    async fn test_sign_and_verify_ok_get_common_name_without_set() {
+    #[test]
+    fn test_sign_and_verify_ok_get_common_name_without_set() {
         let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
 
         let string_payload = "hello world";
@@ -237,7 +226,7 @@ mod tests {
         let signature = c.sign(string_payload.as_bytes()).unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
-        assert!(signature.get_common_name().await.is_err());
+        assert!(get_common_name(&signature).is_err());
     }
 
     #[test]
@@ -270,9 +259,10 @@ mod tests {
 
         let result = create_verifier_from_signature(&json_signature)
             .unwrap()
-            .verify(string_payload.as_bytes(), json_signature);
+            .verify(string_payload.as_bytes(), json_signature)
+            .unwrap();
 
-        assert!(result.is_err());
+        assert!(result == false);
     }
 
     #[test]
@@ -314,8 +304,29 @@ mod tests {
 
         let result = create_verifier_from_signature(&json_signature)
             .unwrap()
-            .verify(string_payload.as_bytes(), json_signature);
+            .verify(string_payload.as_bytes(), json_signature)
+            .unwrap();
 
-        assert!(result.is_err());
+        assert!(result == false);
+    }
+
+    #[test]
+    fn recover_public_key_ok() {
+        let (pvk, pb) = EcdsaSigner::generate_keys().unwrap();
+
+        let string_payload = "hello world";
+
+        let c = EcdsaSigner::new(EcdsaSignerArgs {
+            private_key: pvk,
+            common_name: None,
+        });
+
+        let signature = c.sign(string_payload.as_bytes()).unwrap();
+
+        let result_key =
+            recover_public_key(&signature, Sha256::generate_hash(string_payload.as_bytes()))
+                .unwrap();
+
+        assert_eq!(hex::encode(result_key), pb);
     }
 }

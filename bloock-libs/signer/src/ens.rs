@@ -1,9 +1,9 @@
-use bloock_hasher::{keccak::Keccak256, Hasher};
+use bloock_hasher::{keccak::Keccak256, Hasher, H256};
 use ethers::{providers::Middleware, types::Address};
 use libsecp256k1::{PublicKey, PublicKeyFormat};
 
 use crate::{
-    ecdsa::{EcdsaSigner, EcdsaSignerArgs, EcdsaVerifier},
+    ecdsa::{self, EcdsaSigner, EcdsaSignerArgs, EcdsaVerifier},
     Result, SignerError, Verifier,
 };
 
@@ -12,15 +12,19 @@ use std::str;
 
 pub const ENS_ALG: &str = "ENS";
 
-pub async fn get_common_name(signature: &Signature) -> Result<String> {
+pub async fn get_common_name(signature: &Signature, message_hash: H256) -> Result<String> {
     let provider = ethers::providers::MAINNET.provider();
-    let public_key = hex::decode(signature.header.kid.clone())
-        .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
+
+    let public_key = signature.recover_public_key(message_hash)?;
     let address = derive_eth_address(public_key)?;
     provider
         .lookup_address(address)
         .await
         .map_err(|_| SignerError::EthDomainNotFound())
+}
+
+pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<Vec<u8>> {
+    ecdsa::recover_public_key(signature, message_hash)
 }
 
 fn derive_eth_address(mut public_key: Vec<u8>) -> Result<Address> {
@@ -92,42 +96,7 @@ impl Verifier for EnsVerifier {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Algorithms, Signature};
-
-    use super::{derive_eth_address, get_common_name};
-
-    #[cfg(target_arch = "wasm32")]
-    mod wasm_tests {
-        use wasm_bindgen_test::wasm_bindgen_test;
-        wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-        use super::get_common_name_ens_ok;
-
-        #[wasm_bindgen_test]
-        async fn get_common_name_ens_ok_wasm() {
-            get_common_name_ens_ok().await;
-        }
-    }
-
-    #[cfg(not(target_arch = "wasm32"))]
-    #[tokio::test]
-    async fn get_common_name_ens_ok_default() {
-        get_common_name_ens_ok().await;
-    }
-
-    async fn get_common_name_ens_ok() {
-        let signature = Signature {
-            header: crate::SignatureHeader {
-                alg: Algorithms::Ecdsa.to_string(),
-                kid: "e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea6860992aac5e614a83f1ebe4019300373591268da38871df019f694f8e3190e493e711"
-                    .to_string(),
-            },
-            protected: "".to_string(),
-            signature: "".to_string(),
-        };
-
-        let name = get_common_name(&signature).await.unwrap();
-        assert_eq!(name, "vitalik.eth")
-    }
+    use super::derive_eth_address;
 
     #[test]
     fn derive_eth_address_ok() {

@@ -1,5 +1,6 @@
 use std::{fmt, str::from_utf8};
 
+use bloock_hasher::H256;
 use ecdsa::{EcdsaVerifier, ECDSA_ALG};
 use ens::{EnsVerifier, ENS_ALG};
 use serde::{Deserialize, Serialize};
@@ -50,11 +51,22 @@ pub struct Signature {
 }
 
 impl Signature {
-    pub async fn get_common_name(&self) -> Result<String> {
+    pub async fn get_common_name(&self, message_hash: Option<H256>) -> Result<String> {
         let alg = Algorithms::try_from(self.header.alg.as_str())?;
         match alg {
             Algorithms::Ecdsa => ecdsa::get_common_name(self),
-            Algorithms::Ens => ens::get_common_name(self).await,
+            Algorithms::Ens => {
+                ens::get_common_name(self, message_hash.ok_or(SignerError::ExpectedMessageHash())?)
+                    .await
+            }
+        }
+    }
+
+    pub fn recover_public_key(&self, message_hash: H256) -> Result<Vec<u8>> {
+        let alg = Algorithms::try_from(self.header.alg.as_str())?;
+        match alg {
+            Algorithms::Ecdsa => ecdsa::recover_public_key(self, message_hash),
+            Algorithms::Ens => ens::recover_public_key(self, message_hash),
         }
     }
 }
@@ -142,4 +154,6 @@ pub enum SignerError {
     CommonNameNotSetOrInvalidFormat(String),
     #[error("ETH Domain not found")]
     EthDomainNotFound(),
+    #[error("Expected message hash but found none")]
+    ExpectedMessageHash(),
 }
