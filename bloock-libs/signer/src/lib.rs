@@ -56,8 +56,11 @@ impl Signature {
         match alg {
             Algorithms::Ecdsa => ecdsa::get_common_name(self),
             Algorithms::Ens => {
-                ens::get_common_name(self, message_hash.ok_or(SignerError::ExpectedMessageHash())?)
-                    .await
+                ens::get_common_name(
+                    self,
+                    message_hash.ok_or(SignerError::ExpectedMessageHash())?,
+                )
+                .await
             }
         }
     }

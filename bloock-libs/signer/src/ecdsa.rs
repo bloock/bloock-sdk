@@ -22,7 +22,9 @@ pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<V
         .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
     if signature_bytes.len() != 65 {
-        return Err(SignerError::InvalidSignature("Invalid signature lenght".to_string()).into());
+        return Err(SignerError::InvalidSignature(
+            "Invalid signature lenght".to_string(),
+        ));
     }
 
     let message = Message::parse(&message_hash);
@@ -266,7 +268,7 @@ mod tests {
             .verify(string_payload.as_bytes(), json_signature)
             .unwrap();
 
-        assert!(result == false);
+        assert!(!result);
     }
 
     #[test]
@@ -311,7 +313,7 @@ mod tests {
             .verify(string_payload.as_bytes(), json_signature)
             .unwrap();
 
-        assert!(result == false);
+        assert!(!result);
     }
 
     #[test]
