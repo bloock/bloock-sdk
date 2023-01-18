@@ -1,6 +1,6 @@
 use crate::{Decrypter, Encrypter, EncrypterError, Result};
 
-const ECIES_ALG: &str = "ECIES-Secp256k1";
+pub const ECIES_ALG: &str = "ECIES-Secp256k1";
 
 pub struct EciesKeyPair {
     pub public_key: String,

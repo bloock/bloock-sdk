@@ -13,7 +13,7 @@ use crate::{EncrypterError, Result};
 
 use super::{Decrypter, Encrypter};
 
-const AES_ALG: &str = "AES256-GCM";
+pub const AES_ALG: &str = "AES256-GCM";
 
 const NONCE_LEN: usize = 12; // 96 bits
 const TAG_LEN: usize = 16; // 128 bits

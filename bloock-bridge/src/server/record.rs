@@ -23,7 +23,7 @@ use crate::{
         LoaderArgs, PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse,
         RecordHash, RecordReceipt, RecordServiceHandler, RecordSignatures, SendRecordsRequest,
         SendRecordsResponse, Signature, SignatureCommonNameRequest, SignatureCommonNameResponse,
-        Signer, SignerAlg,
+        Signer, SignerAlg, EncryptionAlgResponse,
     },
 };
 
@@ -669,6 +669,10 @@ impl RecordServiceHandler for RecordServer {
         };
 
         PublishResponse::new_success(&client, hash, &req).await
+    }
+
+    async fn get_encryption_alg(&self, input: Record) -> EncryptionAlgResponse {
+        todo!()
     }
 }
 

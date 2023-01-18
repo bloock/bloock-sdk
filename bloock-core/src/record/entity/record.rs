@@ -73,6 +73,23 @@ impl Record {
             None => Err(RecordError::DocumentNotFound.into()),
         }
     }
+
+    pub fn is_encrypted(&self) -> bool {
+        match &self.document {
+            Some(doc) => doc.is_encrypted(),
+            None => false,
+        }
+    }
+
+    fn get_encryption_alg(&self) -> BloockResult<String> {
+        match &self.document {
+            Some(doc) => doc.get_encryption_alg().ok_or(
+                RecordError::EncryptionError("Could not retrieve encryption algorithm".to_string())
+                    .into(),
+            ),
+            None => Err(RecordError::EncryptionError("Record is not encrypted".to_string()).into()),
+        }
+    }
 }
 
 impl Ord for Record {

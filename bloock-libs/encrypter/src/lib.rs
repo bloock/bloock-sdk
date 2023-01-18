@@ -1,3 +1,8 @@
+use std::fmt;
+
+use crate::aes::AES_ALG;
+use crate::ecies::ECIES_ALG;
+use crate::rsa::RSA_ALG;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
@@ -6,6 +11,22 @@ pub mod ecies;
 pub mod rsa;
 
 pub type Result<T> = std::result::Result<T, EncrypterError>;
+
+enum EncryptionAlg {
+    Aes,
+    Rsa,
+    Ecies,
+}
+
+impl fmt::Display for EncryptionAlg {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            EncryptionAlg::Aes => write!(f, "{}", AES_ALG),
+            EncryptionAlg::Rsa => write!(f, "{}", RSA_ALG),
+            EncryptionAlg::Ecies => write!(f, "{}", ECIES_ALG),
+        }
+    }
+}
 
 pub trait Encrypter {
     fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>>;

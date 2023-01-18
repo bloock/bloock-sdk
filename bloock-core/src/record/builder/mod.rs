@@ -111,7 +111,8 @@ impl Builder {
                 .encrypt(&payload)
                 .map_err(InfrastructureError::EncrypterError)?;
 
-            self.document.set_encryption(ciphertext, encrypter.get_alg())?;
+            self.document
+                .set_encryption(ciphertext, encrypter.get_alg())?;
         }
 
         Ok(Record::new(self.document))

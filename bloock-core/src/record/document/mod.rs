@@ -82,6 +82,10 @@ impl Document {
             .map_err(|err| InfrastructureError::MetadataError(err).into())
     }
 
+    pub fn get_encryption_alg(&self) -> Option<String> {
+        self.parser.get("encryption_alg")
+    }
+
     pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
         self.update_parser(decrypted_payload)?;
         self.update_payload()?;
@@ -218,7 +222,9 @@ mod tests {
         let original_record = Record::new(document.clone());
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document.set_encryption(ciphertext).unwrap();
+        document
+            .set_encryption(ciphertext, encrypter.get_alg())
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
@@ -264,7 +270,9 @@ mod tests {
         let original_record = Record::new(document.clone());
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document.set_encryption(ciphertext).unwrap();
+        document
+            .set_encryption(ciphertext, encrypter.get_alg())
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
@@ -323,7 +331,9 @@ mod tests {
         let original_record = Record::new(document.clone());
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document.set_encryption(ciphertext).unwrap();
+        document
+            .set_encryption(ciphertext, encrypter.get_alg())
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();

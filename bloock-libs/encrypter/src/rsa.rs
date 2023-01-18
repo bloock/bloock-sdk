@@ -4,7 +4,7 @@ use rsa::{
     PaddingScheme, PublicKey, RsaPrivateKey, RsaPublicKey,
 };
 
-const RSA_ALG: &str = "RSA";
+pub const RSA_ALG: &str = "RSA";
 
 pub struct RsaKeyPair {
     pub public_key: String,
