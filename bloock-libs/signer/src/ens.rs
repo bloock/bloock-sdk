@@ -28,7 +28,7 @@ pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<V
 }
 
 fn derive_eth_address(mut public_key: Vec<u8>) -> Result<Address> {
-    if public_key.len() == 33 {
+    if public_key.len() != 64 {
         // the key is probably compressed, so we try to decompress it
         public_key = PublicKey::parse_slice(&public_key, Some(PublicKeyFormat::Compressed))
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
@@ -96,7 +96,49 @@ impl Verifier for EnsVerifier {
 
 #[cfg(test)]
 mod tests {
-    use super::derive_eth_address;
+    use bloock_hasher::H256;
+
+    use crate::{Algorithms, Signature};
+
+    use super::{derive_eth_address, get_common_name};
+
+    #[cfg(target_arch = "wasm32")]
+    mod wasm_tests {
+        use wasm_bindgen_test::wasm_bindgen_test;
+        wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+        use super::get_common_name_ens_ok;
+
+        #[wasm_bindgen_test]
+        async fn get_common_name_ens_ok_wasm() {
+            get_common_name_ens_ok().await;
+        }
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[tokio::test]
+    async fn get_common_name_ens_ok_default() {
+        get_common_name_ens_ok().await;
+    }
+
+    async fn get_common_name_ens_ok() {
+        let signature = Signature {
+            header: crate::SignatureHeader {
+                alg: Algorithms::Ens.to_string(),
+                kid: "".to_string(),
+            },
+            protected: "".to_string(),
+            signature: "66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601".to_string(),
+        };
+
+        let message_hash: H256 =
+            hex::decode("7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6")
+                .unwrap()
+                .try_into()
+                .unwrap();
+
+        let name = get_common_name(&signature, message_hash).await.unwrap();
+        assert_eq!(name, "vitalik.eth")
+    }
 
     #[test]
     fn derive_eth_address_ok() {
@@ -118,5 +160,11 @@ mod tests {
             hex::encode(address),
             "d8da6bf26964af9d7eed9e03e53415d37aa96045"
         );
+    }
+
+    #[test]
+    fn derive_eth_address_invalid_key() {
+        let public_key = hex::decode("e94ba0").unwrap();
+        assert!(derive_eth_address(public_key).is_err());
     }
 }

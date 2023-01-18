@@ -21,6 +21,10 @@ pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<V
     let signature_bytes = hex::decode(signature.signature.clone())
         .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
+    if signature_bytes.len() != 65 {
+        return Err(SignerError::InvalidSignature("Invalid signature lenght".to_string()).into());
+    }
+
     let message = Message::parse(&message_hash);
     let recovery_id = RecoveryId::parse(signature_bytes[64]).unwrap();
     let parsed_sig = libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64]).unwrap();
