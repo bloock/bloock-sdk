@@ -105,7 +105,7 @@ impl Builder {
             self.document.remove_encryption(decrypted_payload)?;
         }
 
-        let record = Record::new(self.document)?;
+        let mut record = Record::new(self.document)?;
 
         if let Some(encrypter) = self.encrypter {
             record.encrypt(encrypter)?;
