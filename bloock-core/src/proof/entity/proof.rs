@@ -41,6 +41,10 @@ impl Proof {
     fn to_string(&self) -> serde_json::Result<String> {
         serde_json::to_string(self)
     }
+
+    pub fn get_hash(&self) -> H256 {
+        unimplemented!()
+    }
 }
 
 impl Serialize for Proof {

@@ -105,17 +105,13 @@ impl Builder {
             self.document.remove_encryption(decrypted_payload)?;
         }
 
-        if let Some(encrypter) = &self.encrypter {
-            let payload = self.document.build()?;
-            let ciphertext = encrypter
-                .encrypt(&payload)
-                .map_err(InfrastructureError::EncrypterError)?;
+        let record = Record::new(self.document)?;
 
-            self.document
-                .set_encryption(ciphertext, encrypter.get_alg())?;
+        if let Some(encrypter) = self.encrypter {
+            record.encrypt(encrypter)?;
         }
 
-        Ok(Record::new(self.document))
+        Ok(record)
     }
 }
 

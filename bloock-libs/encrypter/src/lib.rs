@@ -12,10 +12,23 @@ pub mod rsa;
 
 pub type Result<T> = std::result::Result<T, EncrypterError>;
 
-enum EncryptionAlg {
+pub enum EncryptionAlg {
     Aes,
     Rsa,
     Ecies,
+}
+
+impl TryFrom<&str> for EncryptionAlg {
+    type Error = EncrypterError;
+
+    fn try_from(value: &str) -> Result<Self> {
+        match value {
+            AES_ALG => Ok(Self::Aes),
+            RSA_ALG => Ok(Self::Rsa),
+            ECIES_ALG => Ok(Self::Ecies),
+            _ => Err(EncrypterError::InvalidAlgorithm()),
+        }
+    }
 }
 
 impl fmt::Display for EncryptionAlg {
@@ -63,4 +76,6 @@ pub enum EncrypterError {
     Encrypted(),
     #[error("Error generating RSA key pair: {0}")]
     ErrorGeneratingRsaKeyPair(String),
+    #[error("Invalid algorithm")]
+    InvalidAlgorithm(),
 }

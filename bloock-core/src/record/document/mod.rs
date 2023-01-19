@@ -2,7 +2,7 @@ use crate::{
     error::{BloockResult, InfrastructureError},
     proof::entity::proof::Proof,
 };
-use bloock_encrypter::EncrypterError;
+use bloock_encrypter::{EncrypterError, EncryptionAlg};
 use bloock_metadata::{FileParser, MetadataParser};
 use bloock_signer::Signature;
 use serde::{Deserialize, Serialize};
@@ -82,8 +82,14 @@ impl Document {
             .map_err(|err| InfrastructureError::MetadataError(err).into())
     }
 
-    pub fn get_encryption_alg(&self) -> Option<String> {
-        self.parser.get("encryption_alg")
+    pub fn get_encryption_alg(&self) -> BloockResult<EncryptionAlg> {
+        match self.parser.get::<String>("encryption_alg") {
+            Some(alg) => alg
+                .as_str()
+                .try_into()
+                .map_err(|err| InfrastructureError::EncrypterError(err).into()),
+            None => todo!(),
+        }
     }
 
     pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
@@ -219,7 +225,7 @@ mod tests {
         let mut document = Document::new(payload).unwrap();
         let expected_payload = document.build().unwrap();
 
-        let original_record = Record::new(document.clone());
+        let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
         document
@@ -235,7 +241,7 @@ mod tests {
         assert_eq!(decrypted_payload, expected_payload);
 
         let decrypted_doc = Document::new(&decrypted_payload).unwrap();
-        let decrypted_record = Record::new(decrypted_doc);
+        let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
     }
@@ -267,7 +273,7 @@ mod tests {
 
         let expected_payload = document.build().unwrap();
 
-        let original_record = Record::new(document.clone());
+        let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
         document
@@ -283,7 +289,7 @@ mod tests {
         assert_eq!(decrypted_payload, expected_payload);
 
         let decrypted_doc = Document::new(&decrypted_payload).unwrap();
-        let decrypted_record = Record::new(decrypted_doc);
+        let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
         assert_eq!(decrypted_record.get_proof().unwrap(), proof);
@@ -328,7 +334,7 @@ mod tests {
 
         let expected_payload = document.build().unwrap();
 
-        let original_record = Record::new(document.clone());
+        let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
         document
@@ -344,7 +350,7 @@ mod tests {
         assert_eq!(decrypted_payload, expected_payload);
 
         let decrypted_doc = Document::new(&decrypted_payload).unwrap();
-        let decrypted_record = Record::new(decrypted_doc);
+        let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
         assert_eq!(decrypted_record.get_proof().unwrap(), proof);

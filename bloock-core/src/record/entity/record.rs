@@ -1,10 +1,11 @@
 use std::cmp::Ordering;
 
+use bloock_encrypter::{Encrypter, EncryptionAlg};
 use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
 use bloock_signer::Signature;
 
 use crate::{
-    error::{BloockError, BloockResult, InfrastructureError},
+    error::{BloockError, BloockResult, InfrastructureError, OperationalError},
     proof::entity::proof::Proof,
     record::{document::Document, RecordError},
 };
@@ -16,12 +17,20 @@ pub struct Record {
 }
 
 impl Record {
-    pub fn new(document: Document) -> Self {
-        let hash = Keccak256::generate_hash(&document.get_payload());
-        Self {
+    pub fn new(mut document: Document) -> BloockResult<Self> {
+        if document.is_encrypted() {
+            return Err(OperationalError::CannotCreateRecordFromEncrypteDocument().into());
+        }
+
+        let hash = match document.get_proof() {
+            Some(proof) => proof.get_hash(),
+            None => Keccak256::generate_hash(&document.build()?),
+        };
+
+        Ok(Self {
             document: Some(document),
             hash,
-        }
+        })
     }
 
     pub fn from_hash(hash: H256) -> Self {
@@ -29,6 +38,22 @@ impl Record {
             document: None,
             hash,
         }
+    }
+
+    pub fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<()> {
+        let doc = match &mut self.document {
+            Some(doc) => doc,
+            None => return Ok(()), // TODO return error
+        };
+
+        let payload = doc.build()?;
+        let ciphertext = encrypter
+            .encrypt(&payload)
+            .map_err(InfrastructureError::EncrypterError)?;
+
+        doc.set_encryption(ciphertext, encrypter.get_alg())?;
+
+        Ok(())
     }
 
     pub fn get_hash(&self) -> String {
@@ -81,12 +106,9 @@ impl Record {
         }
     }
 
-    fn get_encryption_alg(&self) -> BloockResult<String> {
+    pub fn get_encryption_alg(&self) -> BloockResult<EncryptionAlg> {
         match &self.document {
-            Some(doc) => doc.get_encryption_alg().ok_or(
-                RecordError::EncryptionError("Could not retrieve encryption algorithm".to_string())
-                    .into(),
-            ),
+            Some(doc) => doc.get_encryption_alg(),
             None => Err(RecordError::EncryptionError("Record is not encrypted".to_string()).into()),
         }
     }
@@ -127,7 +149,7 @@ mod tests {
     #[test]
     fn test_new_record() {
         let document = Document::new("Some String".as_bytes()).unwrap();
-        let record = Record::new(document);
+        let record = Record::new(document).unwrap();
 
         assert_eq!(
             String::from("b585bd5a04d10f064ba44be7fae68c9837bd3be24168bc46bdf041fc2762154b"),

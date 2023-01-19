@@ -22,6 +22,7 @@ const SALT_LEN: usize = 16;
 
 const NUM_ITERATIONS: u32 = 100000;
 const MAX_ITERATIONS: u32 = 100000; // has to be >= NUM_ITERATIONS
+const _: () = assert!(MAX_ITERATIONS >= NUM_ITERATIONS);
 const ITERATIONS_LEN: usize = size_of::<u32>();
 
 const HEADER_LEN: usize = NONCE_LEN + SALT_LEN + ITERATIONS_LEN;

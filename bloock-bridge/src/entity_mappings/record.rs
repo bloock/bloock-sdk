@@ -64,7 +64,7 @@ impl TryFrom<Record> for RecordCore {
     type Error = BridgeError;
     fn try_from(r: Record) -> BridgeResult<RecordCore> {
         let document = Document::new(&r.payload)?;
-        Ok(RecordCore::new(document))
+        RecordCore::new(document).map_err(BridgeError::BloockError)
     }
 }
 
