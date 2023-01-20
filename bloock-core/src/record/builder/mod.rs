@@ -82,16 +82,6 @@ impl Builder {
     }
 
     pub fn build(mut self) -> BloockResult<Record> {
-        if let Some(signer) = &self.signer {
-            let payload = self.document.get_payload();
-
-            let signature = signer
-                .sign(&payload)
-                .map_err(InfrastructureError::SignerError)?;
-
-            self.document.add_signature(signature)?;
-        }
-
         if let Some(decrypter) = &self.decrypter {
             if !self.document.is_encrypted() {
                 Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
@@ -103,6 +93,16 @@ impl Builder {
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document.remove_encryption(decrypted_payload)?;
+        }
+
+        if let Some(signer) = &self.signer {
+            let payload = self.document.get_payload();
+
+            let signature = signer
+                .sign(&payload)
+                .map_err(InfrastructureError::SignerError)?;
+
+            self.document.add_signature(signature)?;
         }
 
         let mut record = Record::new(self.document)?;
@@ -335,7 +335,7 @@ mod tests {
             .build()
             .unwrap();
 
-        assert_ne!(default_record.get_hash(), encrypted_record.get_hash());
+        assert_eq!(default_record.get_hash(), encrypted_record.get_hash());
 
         let unencrypted_record = RecordBuilder::from_record(encrypted_record)
             .unwrap()

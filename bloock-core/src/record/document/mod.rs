@@ -60,6 +60,11 @@ impl Document {
         };
 
         self.signatures = Some(signatures);
+
+        if self.proof.is_some() {
+            self.proof = None;
+        }
+
         Ok(self)
     }
 
@@ -358,7 +363,7 @@ mod tests {
         let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
-        assert_eq!(decrypted_record.get_proof().unwrap(), proof);
         assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
+        assert!(decrypted_record.get_proof().is_none());
     }
 }
