@@ -34,6 +34,8 @@ pub enum ProofError {
     InvalidProof,
     #[error("Invalid verification")]
     InvalidVerification,
+    #[error("The proof's hash can only be retrieved from proofs of only one record")]
+    CannotRetrieveHash()
 }
 
 impl From<ProofError> for BloockError {

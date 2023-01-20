@@ -23,7 +23,7 @@ impl Record {
         }
 
         let hash = match document.get_proof() {
-            Some(proof) => proof.get_hash(),
+            Some(proof) => proof.get_hash()?,
             None => Keccak256::generate_hash(&document.build()?),
         };
 
@@ -144,16 +144,82 @@ impl TryFrom<&String> for Record {
 #[cfg(test)]
 mod tests {
 
+    use bloock_signer::SignatureHeader;
+
+    use crate::proof::entity::anchor::ProofAnchor;
+
     use super::*;
 
     #[test]
-    fn test_new_record() {
+    fn new_record() {
         let document = Document::new("Some String".as_bytes()).unwrap();
         let record = Record::new(document).unwrap();
 
         assert_eq!(
             String::from("b585bd5a04d10f064ba44be7fae68c9837bd3be24168bc46bdf041fc2762154b"),
             record.get_hash(),
+            "Wrong record hash received"
+        );
+    }
+
+    #[test]
+    fn new_record_from_document_with_proof() {
+        let mut document = Document::new("Some String".as_bytes()).unwrap();
+
+        let hash = "02aae7e86eb50f61a62083a320475d9d60cbd52749dbf08fa942b1b97f50aee5";
+
+        let proof = Proof {
+            leaves: vec![from_hex(hash).unwrap()],
+            nodes: vec![],
+            depth: "0004000600060005".to_string(),
+            bitmap: "bfdf7000".to_string(),
+            anchor: ProofAnchor {
+                anchor_id: 35554,
+                networks: vec![],
+                root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695"
+                    .to_string(),
+                status: "Success".to_string(),
+            },
+        };
+
+        document.set_proof(proof).unwrap();
+
+        let record = Record::new(document).unwrap();
+
+        assert_eq!(hash, record.get_hash(), "Wrong record hash received");
+    }
+
+    #[test]
+    fn new_record_from_document_with_signature() {
+        let mut document = Document::new("Some String".as_bytes()).unwrap();
+
+        let record_no_signature = Record::new(document.clone()).unwrap();
+
+        document.signatures = Some(vec![Signature {
+            protected: "e30".to_string(),
+            header: SignatureHeader {
+                alg: "ES256K".to_string(),
+                kid: "12c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
+            },
+            signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+        }]);
+
+        let record_with_signature = Record::new(document).unwrap();
+
+        assert_ne!(
+            record_no_signature.get_hash(),
+            record_with_signature.get_hash()
+        );
+
+        assert_eq!(
+            "b585bd5a04d10f064ba44be7fae68c9837bd3be24168bc46bdf041fc2762154b",
+            record_no_signature.get_hash(),
+            "Wrong record hash received"
+        );
+
+        assert_eq!(
+            "62c565b3696ac56130fb50b104ba3af93df03b191d6279f71a50457b80a391dc",
+            record_with_signature.get_hash(),
             "Wrong record hash received"
         );
     }
