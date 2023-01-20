@@ -43,7 +43,7 @@ impl Record {
     pub fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<()> {
         let doc = match &mut self.document {
             Some(doc) => doc,
-            None => return Ok(()), // TODO return error
+            None => return Err(RecordError::DocumentNotFound.into()),
         };
 
         let payload = doc.build()?;

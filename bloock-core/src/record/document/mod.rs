@@ -88,7 +88,12 @@ impl Document {
                 .as_str()
                 .try_into()
                 .map_err(|err| InfrastructureError::EncrypterError(err).into()),
-            None => todo!(),
+            None => {
+                return Err(InfrastructureError::EncrypterError(
+                    EncrypterError::CouldNotRetrieveAlgorithm(),
+                )
+                .into())
+            }
         }
     }
 

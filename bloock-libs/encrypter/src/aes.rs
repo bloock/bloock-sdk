@@ -13,7 +13,7 @@ use crate::{EncrypterError, Result};
 
 use super::{Decrypter, Encrypter};
 
-pub const AES_ALG: &str = "AES256-GCM";
+pub const AES_ALG: &str = "A256GCM";
 
 const NONCE_LEN: usize = 12; // 96 bits
 const TAG_LEN: usize = 16; // 128 bits
@@ -21,7 +21,8 @@ const KEY_LEN: usize = 32; // 256 bits
 const SALT_LEN: usize = 16;
 
 const NUM_ITERATIONS: u32 = 100000;
-const MAX_ITERATIONS: u32 = 100000; // has to be >= NUM_ITERATIONS
+// has to be >= NUM_ITERATIONS, it's to control that if an invalid payload is sent it doesn't loop forever
+const MAX_ITERATIONS: u32 = 100000;
 const _: () = assert!(MAX_ITERATIONS >= NUM_ITERATIONS);
 const ITERATIONS_LEN: usize = size_of::<u32>();
 

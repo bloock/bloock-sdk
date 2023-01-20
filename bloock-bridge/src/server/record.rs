@@ -693,10 +693,10 @@ impl RecordServiceHandler for RecordServer {
 
         match record.is_encrypted() {
             true => match record.get_encryption_alg() {
-                Ok(_) => todo!(), // EncryptionAlgResponse::new_success(&client, alg),
-                Err(_) => todo!(),
+                Ok(alg) => EncryptionAlgResponse::new_success(&client, alg.into()).await,
+                Err(err) => EncryptionAlgResponse::new_error(&client, err.to_string()).await,
             },
-            false => todo!(),
+            false => EncryptionAlgResponse::new_error(&client, "Record is encrypted".to_string()).await,
         }
     }
 }

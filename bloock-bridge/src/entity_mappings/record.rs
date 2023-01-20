@@ -1,6 +1,6 @@
 use crate::{
     error::{BridgeError, BridgeResult},
-    items::{Record, RecordReceipt, Signature, SignatureHeader},
+    items::{Record, RecordReceipt, Signature, SignatureHeader, EncryptionAlg},
 };
 use bloock_core::{
     record::{
@@ -12,6 +12,16 @@ use bloock_core::{
     Signature as SignatureCore, SignatureHeader as SignatureHeaderCore,
 };
 use std::convert::TryFrom;
+
+impl From<bloock_encrypter::EncryptionAlg> for EncryptionAlg {
+    fn from(alg: bloock_encrypter::EncryptionAlg) -> Self {
+        match alg {
+            bloock_encrypter::EncryptionAlg::A256gcm => EncryptionAlg::A256gcm,
+            bloock_encrypter::EncryptionAlg::Rsa => EncryptionAlg::Rsa,
+            bloock_encrypter::EncryptionAlg::Ecies => EncryptionAlg::Ecies,
+        }
+    }
+}
 
 impl From<SignatureHeader> for SignatureHeaderCore {
     fn from(s: SignatureHeader) -> Self {
