@@ -1,6 +1,6 @@
 use crate::{
     error::{BloockResult, InfrastructureError},
-    proof::entity::proof::Proof,
+    proof::{entity::proof::Proof, ProofError},
 };
 use bloock_encrypter::{EncrypterError, EncryptionAlg};
 use bloock_metadata::{FileParser, MetadataParser};
@@ -120,6 +120,11 @@ impl Document {
         if self.is_encrypted {
             return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
+
+        if proof.leaves.len() > 1 {
+            return Err(ProofError::OnlyOneRecordProof().into());
+        }
+
         self.proof = Some(proof);
         Ok(())
     }
