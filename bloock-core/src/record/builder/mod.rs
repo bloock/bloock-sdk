@@ -534,7 +534,14 @@ mod hash_tests {
 
     use super::RecordBuilder;
 
-    fn get_test_proof() -> Proof {
+    const PAYLOAD: &str = "hello world";
+    const HASH_PAYLOAD: &str = "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad";
+    const HASH_SIGNED_PAYLOAD: &str =
+        "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6";
+    const HASH_DOUBLY_SIGNED_PAYLOAD: &str =
+        "a1f550ad1cd0de4fd5fad5d1cbe2d04b533cf373ade5fb563fbbcd0ae94e6f1f";
+
+    fn get_test_proof(hash: &str) -> Proof {
         Proof {
             anchor: ProofAnchor {
                 anchor_id: 1,
@@ -548,29 +555,24 @@ mod hash_tests {
             },
             bitmap: "111".to_string(),
             depth: "111".to_string(),
-            leaves: vec![Keccak256::generate_hash("hello world".as_bytes())],
+            leaves: vec![bloock_hasher::from_hex(hash).unwrap()],
             nodes: vec![[0u8; 32]],
         }
     }
 
     #[test]
     fn build_plain_record() {
-        let payload = "hello world".to_string();
-        let record = RecordBuilder::from_string(payload)
+        let record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
             .build()
             .unwrap();
 
-        assert_eq!(
-            record.get_hash(),
-            "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"
-        );
+        assert_eq!(record.get_hash(), HASH_PAYLOAD);
     }
 
     #[test]
     fn build_plain_record_with_encrypter() {
-        let payload = "hello world";
-        let record = RecordBuilder::from_string(payload.to_string())
+        let record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
             .build()
@@ -579,21 +581,17 @@ mod hash_tests {
         assert!(record.is_encrypted());
         assert_ne!(
             String::from_utf8(record.clone().serialize().unwrap()).unwrap(),
-            payload
+            PAYLOAD
         );
 
-        assert_eq!(
-            record.get_hash(),
-            "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"
-        );
+        assert_eq!(record.get_hash(), HASH_PAYLOAD);
     }
 
     #[test]
     fn build_plain_record_with_signer() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let payload = "hello world";
 
-        let record = RecordBuilder::from_string(payload.to_string())
+        let record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
             .build()
@@ -603,10 +601,7 @@ mod hash_tests {
             &record.clone().serialize().unwrap(),
         ));
 
-        assert_eq!(
-            expected_hash,
-            "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6"
-        );
+        assert_eq!(expected_hash, HASH_SIGNED_PAYLOAD);
 
         // hash = Hash of signed record
         assert_eq!(record.get_hash(), expected_hash);
@@ -615,9 +610,8 @@ mod hash_tests {
     #[test]
     fn build_plain_record_with_signer_and_encrypter() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let payload = "hello world";
 
-        let record = RecordBuilder::from_string(payload.to_string())
+        let record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
@@ -626,18 +620,14 @@ mod hash_tests {
 
         assert!(record.is_encrypted());
         // hash = Hash of signed record before encryption
-        assert_eq!(
-            record.get_hash(),
-            "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6"
-        );
+        assert_eq!(record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_encrypted_record() {
         let password = "password";
-        let payload = "hello world";
 
-        let encrypted_record = RecordBuilder::from_string(payload.to_string())
+        let encrypted_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
@@ -655,20 +645,16 @@ mod hash_tests {
 
         let result_payload = String::from_utf8(record.clone().serialize().unwrap()).unwrap();
 
-        assert_eq!(payload, result_payload);
+        assert_eq!(PAYLOAD, result_payload);
 
-        assert_eq!(
-            record.get_hash(),
-            "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"
-        );
+        assert_eq!(record.get_hash(), HASH_PAYLOAD);
     }
 
     #[test]
     fn build_from_encrypted_record_decrypt_and_encrypt() {
         let password = "password";
-        let payload = "hello world";
 
-        let encrypted_record = RecordBuilder::from_string(payload.to_string())
+        let encrypted_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
@@ -687,21 +673,17 @@ mod hash_tests {
 
         let result_payload = String::from_utf8(final_record.clone().serialize().unwrap()).unwrap();
 
-        assert_ne!(payload, result_payload);
+        assert_ne!(PAYLOAD, result_payload);
 
-        assert_eq!(
-            final_record.get_hash(),
-            "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"
-        );
+        assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
     }
 
     #[test]
     fn build_from_encrypted_record_decrypt_and_sign() {
         let password = "password";
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let payload = "hello world";
 
-        let encrypted_record = RecordBuilder::from_string(payload.to_string())
+        let encrypted_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
@@ -719,19 +701,15 @@ mod hash_tests {
         assert!(!final_record.is_encrypted());
 
         // hash = Hash of signed record
-        assert_eq!(
-            final_record.get_hash(),
-            "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6"
-        );
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_encrypted_record_decrypt_and_sign_and_encrypt() {
         let password = "password";
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let payload = "hello world";
 
-        let encrypted_record = RecordBuilder::from_string(payload.to_string())
+        let encrypted_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
@@ -750,18 +728,14 @@ mod hash_tests {
         assert!(final_record.is_encrypted());
 
         // hash = Hash of signed record before encryption
-        assert_eq!(
-            final_record.get_hash(),
-            "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6"
-        );
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_signed_record() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let payload = "hello world";
 
-        let signed_record = RecordBuilder::from_string(payload.to_string())
+        let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
             .build()
@@ -772,18 +746,14 @@ mod hash_tests {
             .build()
             .unwrap();
 
-        assert_eq!(
-            final_record.get_hash(),
-            "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6"
-        );
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_signed_record_and_encrypt() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let payload = "hello world";
 
-        let signed_record = RecordBuilder::from_string(payload.to_string())
+        let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
             .build()
@@ -797,19 +767,15 @@ mod hash_tests {
 
         assert!(final_record.is_encrypted());
 
-        assert_eq!(
-            final_record.get_hash(),
-            "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6"
-        );
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_signed_record_and_sign() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
         let private2 = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
-        let payload = "hello world";
 
-        let signed_record = RecordBuilder::from_string(payload.to_string())
+        let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
             .build()
@@ -821,19 +787,15 @@ mod hash_tests {
             .build()
             .unwrap();
 
-        assert_eq!(
-            final_record.get_hash(),
-            "a1f550ad1cd0de4fd5fad5d1cbe2d04b533cf373ade5fb563fbbcd0ae94e6f1f"
-        );
+        assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_signed_record_and_sign_and_encrypt() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
         let private2 = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
-        let payload = "hello world";
 
-        let signed_record = RecordBuilder::from_string(payload.to_string())
+        let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
             .build()
@@ -848,19 +810,15 @@ mod hash_tests {
 
         assert!(final_record.is_encrypted());
 
-        assert_eq!(
-            final_record.get_hash(),
-            "a1f550ad1cd0de4fd5fad5d1cbe2d04b533cf373ade5fb563fbbcd0ae94e6f1f"
-        );
+        assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_signed_and_encrypted_record() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let payload = "hello world";
         let password = "password";
 
-        let record = RecordBuilder::from_string(payload)
+        let record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
@@ -875,19 +833,15 @@ mod hash_tests {
             .build()
             .unwrap();
 
-        assert_eq!(
-            final_record.get_hash(),
-            "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6"
-        );
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_signed_and_encrypted_record_and_encrypt() {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let payload = "hello world";
         let password = "password";
 
-        let record = RecordBuilder::from_string(payload)
+        let record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
@@ -905,10 +859,7 @@ mod hash_tests {
 
         assert!(record.is_encrypted());
 
-        assert_eq!(
-            final_record.get_hash(),
-            "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6"
-        );
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
     #[test]
@@ -916,9 +867,8 @@ mod hash_tests {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
         let private2 = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
         let password = "password";
-        let payload = "hello world";
 
-        let signed_record = RecordBuilder::from_string(payload.to_string())
+        let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
@@ -934,10 +884,7 @@ mod hash_tests {
 
         assert!(!final_record.is_encrypted());
 
-        assert_eq!(
-            final_record.get_hash(),
-            "a1f550ad1cd0de4fd5fad5d1cbe2d04b533cf373ade5fb563fbbcd0ae94e6f1f"
-        );
+        assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
     #[test]
@@ -945,9 +892,8 @@ mod hash_tests {
         let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
         let private2 = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
         let password = "password";
-        let payload = "hello world";
 
-        let signed_record = RecordBuilder::from_string(payload.to_string())
+        let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
@@ -964,25 +910,455 @@ mod hash_tests {
 
         assert!(final_record.is_encrypted());
 
-        assert_eq!(
-            final_record.get_hash(),
-            "a1f550ad1cd0de4fd5fad5d1cbe2d04b533cf373ade5fb563fbbcd0ae94e6f1f"
-        );
+        assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
     #[test]
     fn build_from_record_with_proof() {
-        let payload = "hello world".to_string();
-        let mut record = RecordBuilder::from_string(payload)
+        let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
             .build()
             .unwrap();
 
-        record.set_proof(get_test_proof()).unwrap();
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
 
-        assert_eq!(
-            record.get_hash(),
-            "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad"
-        );
+        let final_record = RecordBuilder::from_record(record).unwrap().build().unwrap();
+
+        assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_encrypt() {
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .build()
+            .unwrap();
+
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .build()
+            .unwrap();
+
+        assert!(final_record.is_encrypted());
+
+        assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_sign() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .build()
+            .unwrap();
+
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        assert!(final_record.get_proof().is_none());
+
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_sign_and_encrypt() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .build()
+            .unwrap();
+
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .build()
+            .unwrap();
+
+        assert!(final_record.get_proof().is_none());
+        assert!(final_record.is_encrypted());
+
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_encrpted_record_with_proof() {
+        let password = "password";
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .build()
+            .unwrap();
+
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(record.is_encrypted());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_encrpted_record_with_proof_and_encrypt() {
+        let password = "password";
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .build()
+            .unwrap();
+
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(record.is_encrypted());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_encrpted_record_with_proof_and_sign() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "password";
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .build()
+            .unwrap();
+
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(record.is_encrypted());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_encrpted_record_with_proof_and_sign_and_encrypt() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "password";
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .build()
+            .unwrap();
+
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(record.is_encrypted());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_signature() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
+            .unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        let final_record = RecordBuilder::from_record(record).unwrap().build().unwrap();
+
+        assert!(final_record.get_proof().is_some());
+
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_signature_and_encrypt() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
+            .unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .build()
+            .unwrap();
+
+        assert!(final_record.is_encrypted());
+
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_signature_and_sign() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let private2 = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
+
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
+            .unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private2, None)))
+            .build()
+            .unwrap();
+
+        assert!(final_record.get_proof().is_none());
+
+        assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_signature_and_sign_and_encrypt() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let private2 = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
+
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
+            .unwrap();
+
+        assert!(record.get_proof().is_some());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private2, None)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .build()
+            .unwrap();
+
+        assert!(final_record.is_encrypted());
+
+        assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_signature_and_is_encrypted() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "password";
+
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
+            .unwrap();
+
+        record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(record.is_encrypted());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_signature_and_is_encrypted_and_encrypt() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let password = "password";
+
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
+            .unwrap();
+
+        record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(record.is_encrypted());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(final_record.is_encrypted());
+
+        assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_signature_and_is_encrypted_and_sign() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let private2 = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
+        let password = "password";
+
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
+            .unwrap();
+
+        record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(record.is_encrypted());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private2, None)))
+            .build()
+            .unwrap();
+
+        assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
+    }
+
+    #[test]
+    fn build_from_record_with_proof_and_signature_and_is_encrypted_and_sign_and_encrypt() {
+        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let private2 = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
+        let password = "password";
+
+        let mut record = RecordBuilder::from_string(PAYLOAD)
+            .unwrap()
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private, None)))
+            .build()
+            .unwrap();
+
+        record
+            .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
+            .unwrap();
+
+        record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(record.is_encrypted());
+
+        let final_record = RecordBuilder::from_record(record)
+            .unwrap()
+            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(private2, None)))
+            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .build()
+            .unwrap();
+
+        assert!(final_record.is_encrypted());
+
+        assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 }

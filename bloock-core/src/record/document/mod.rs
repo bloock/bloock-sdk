@@ -1,6 +1,6 @@
 use crate::{
     error::{BloockResult, InfrastructureError},
-    proof::{entity::proof::Proof, ProofError},
+    proof::entity::proof::Proof,
 };
 use bloock_encrypter::{EncrypterError, EncryptionAlg};
 use bloock_metadata::{FileParser, MetadataParser};
@@ -121,10 +121,6 @@ impl Document {
             return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
 
-        if proof.leaves.len() > 1 {
-            return Err(ProofError::OnlyOneRecordProof().into());
-        }
-
         self.proof = Some(proof);
         Ok(())
     }
@@ -171,10 +167,18 @@ impl Document {
                 .map_err(InfrastructureError::MetadataError)?;
         }
 
-        if let Some(proof) = metadata.proof {
-            parser
+        match metadata.proof {
+            Some(proof) => parser
                 .set("proof", &proof)
-                .map_err(InfrastructureError::MetadataError)?;
+                .map_err(InfrastructureError::MetadataError)?,
+            None => {
+                let proof: Option<Proof> = parser.get("proof");
+                if proof.is_some() {
+                    parser
+                        .del("proof")
+                        .map_err(InfrastructureError::MetadataError)?;
+                }
+            }
         }
 
         if let Some(signatures) = metadata.signatures {

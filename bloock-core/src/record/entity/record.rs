@@ -6,7 +6,7 @@ use bloock_signer::Signature;
 
 use crate::{
     error::{BloockError, BloockResult, InfrastructureError, OperationalError},
-    proof::entity::proof::Proof,
+    proof::{entity::proof::Proof, ProofError},
     record::{document::Document, RecordError},
 };
 
@@ -87,7 +87,16 @@ impl Record {
 
     pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
         match self.document.as_mut() {
-            Some(d) => d.set_proof(proof),
+            Some(d) => {
+                if proof.leaves.len() > 1 {
+                    return Err(ProofError::OnlyOneRecordProof().into());
+                }
+
+                if proof.leaves[0] != self.hash {
+                    return Err(ProofError::ProofFromAnotherRecord().into());
+                }
+                d.set_proof(proof)
+            }
             None => Err(RecordError::DocumentNotFound.into()),
         }
     }
