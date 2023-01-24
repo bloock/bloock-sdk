@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use bloock_encrypter::{Encrypter, EncryptionAlg};
+use bloock_encrypter::{Encrypter, EncrypterError, EncryptionAlg};
 use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
 use bloock_signer::Signature;
 
@@ -19,13 +19,26 @@ pub struct Record {
 impl Record {
     pub fn new(mut document: Document) -> BloockResult<Self> {
         if document.is_encrypted() {
-            return Err(OperationalError::CannotCreateRecordFromEncrypteDocument().into());
+            return Err(OperationalError::CannotCreateRecordFromEncryptedDocument().into());
         }
 
         let hash = match document.get_proof() {
             Some(proof) => proof.get_hash()?,
             None => Keccak256::generate_hash(&document.build()?),
         };
+
+        Ok(Self {
+            document: Some(document),
+            hash,
+        })
+    }
+
+    pub fn new_with_hash(document: Document, hash: &str) -> BloockResult<Self> {
+        if !document.is_encrypted() {
+            return Err(InfrastructureError::EncrypterError(EncrypterError::NotEncrypted()).into());
+        }
+
+        let hash = bloock_hasher::from_hex(hash).map_err(InfrastructureError::HasherError)?;
 
         Ok(Self {
             document: Some(document),

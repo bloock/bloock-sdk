@@ -95,7 +95,7 @@ pub enum OperationalError {
     #[error("Could not merge hashes")]
     MergeError(),
     #[error("Cannot create record from an encrypted document")]
-    CannotCreateRecordFromEncrypteDocument(),
+    CannotCreateRecordFromEncryptedDocument(),
 }
 
 impl From<OperationalError> for BloockError {

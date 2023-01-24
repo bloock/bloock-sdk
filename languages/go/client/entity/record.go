@@ -11,6 +11,7 @@ import (
 
 type Record struct {
 	Payload []byte
+	hash    string
 }
 
 func NewRecordFromProto(r *proto.Record) Record {
@@ -20,6 +21,7 @@ func NewRecordFromProto(r *proto.Record) Record {
 
 	return Record{
 		Payload: r.Payload,
+		hash:    r.Hash,
 	}
 }
 
@@ -27,6 +29,7 @@ func (r *Record) ToProto() *proto.Record {
 	return &proto.Record{
 		ConfigData: config.NewConfigData(),
 		Payload:    r.Payload,
+		Hash:       r.hash,
 	}
 }
 
@@ -62,6 +65,25 @@ func (r *Record) GetSignatures() ([]Signature, error) {
 		signatures[i] = NewSignatureFromProto(signature)
 	}
 	return signatures, nil
+}
+
+func (r *Record) GetEncryptionAlg() (EncryptionAlg, error) {
+	bridgeClient := bridge.NewBloockBridge()
+	res, err := bridgeClient.Record().GetEncryptionAlg(context.Background(), r.ToProto())
+
+	if err != nil {
+		return ALG_NOT_FOUND, err
+	}
+
+	if res.Error != nil {
+		return ALG_NOT_FOUND, errors.New(res.Error.Message)
+	}
+
+	if res.Alg == nil {
+		return ALG_NOT_FOUND, errors.New("Could not retrieve encryption algorithm")
+	}
+
+	return EncryptionAlgFromProto[*res.Alg], nil
 }
 
 func (r *Record) Publish(p Publisher) (string, error) {

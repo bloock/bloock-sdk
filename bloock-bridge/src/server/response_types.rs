@@ -1,3 +1,4 @@
+use crate::items::EncryptionAlgResponse;
 use crate::items::GenerateEciesKeyPairResponse;
 use crate::items::GenerateKeysResponse;
 use crate::items::GenerateRsaKeyPairResponse;
@@ -38,6 +39,7 @@ pub enum ResponseType {
     GenerateEciesKeyPairResponse(GenerateEciesKeyPairResponse),
     Publish(PublishResponse),
     VerifyWebhookSignature(VerifyWebhookSignatureResponse),
+    EncryptionAlgResponse(EncryptionAlgResponse),
 }
 
 impl ResponseType {
@@ -64,6 +66,7 @@ impl ResponseType {
             ResponseType::GetSignatures(r) => r.encode(&mut result_vec),
             ResponseType::GetSignatureCommonName(r) => r.encode(&mut result_vec),
             ResponseType::VerifyWebhookSignature(r) => r.encode(&mut result_vec),
+            ResponseType::EncryptionAlgResponse(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -90,6 +93,7 @@ impl ResponseType {
             ResponseType::GetSignatures(r) => r.encoded_len(),
             ResponseType::GetSignatureCommonName(r) => r.encoded_len(),
             ResponseType::VerifyWebhookSignature(r) => r.encoded_len(),
+            ResponseType::EncryptionAlgResponse(r) => r.encoded_len(),
         }
     }
 }

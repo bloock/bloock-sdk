@@ -87,6 +87,12 @@ impl From<PublishResponse> for ResponseType {
     }
 }
 
+impl From<EncryptionAlgResponse> for ResponseType {
+    fn from(res: EncryptionAlgResponse) -> Self {
+        ResponseType::EncryptionAlgResponse(res)
+    }
+}
+
 pub struct RecordServer {}
 
 #[async_trait(?Send)]
