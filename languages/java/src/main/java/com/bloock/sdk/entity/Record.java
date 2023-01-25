@@ -8,6 +8,7 @@ import com.bloock.sdk.bridge.proto.RecordOuterClass.PublishRequest;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.PublishResponse;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.RecordHash;
 import com.bloock.sdk.bridge.proto.RecordOuterClass.RecordSignatures;
+import com.bloock.sdk.bridge.proto.RecordOuterClass.EncryptionAlgResponse;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
 import com.google.protobuf.ByteString;
@@ -16,19 +17,22 @@ import java.util.stream.Collectors;
 
 public class Record {
   byte[] payload;
+  String hash;
 
-  Record(byte[] payload) {
+  Record(byte[] payload, String hash) {
     this.payload = payload;
+    this.hash = hash;
   }
 
   public static Record fromProto(RecordOuterClass.Record record) {
-    return new Record(record.getPayload().toByteArray());
+    return new Record(record.getPayload().toByteArray(), record.getHash());
   }
 
   public RecordOuterClass.Record toProto() {
     return RecordOuterClass.Record.newBuilder()
         .setConfigData(Config.newConfigData())
         .setPayload(ByteString.copyFrom(payload))
+        .setHash(hash)
         .build();
   }
 
@@ -97,5 +101,16 @@ public class Record {
     }
 
     this.payload = response.getRecord().getPayload().toByteArray();
+  }
+
+  public EncryptionAlg getEncryptionAlg() throws Exception {
+    Bridge bridge = new Bridge();
+    EncryptionAlgResponse res = bridge.getRecord().getEncryptionAlg(this.toProto());
+
+    if (res.getError() != Error.getDefaultInstance()) {
+      throw new Exception(res.getError().getMessage());
+    }
+
+    return EncryptionAlg.fromProto(res.getAlg());
   }
 }

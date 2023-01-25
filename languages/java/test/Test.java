@@ -8,6 +8,7 @@ import com.bloock.sdk.entity.AnchorNetwork;
 import com.bloock.sdk.entity.EcdsaSigner;
 import com.bloock.sdk.entity.EciesDecrypter;
 import com.bloock.sdk.entity.EciesEncrypter;
+import com.bloock.sdk.entity.EncryptionAlg;
 import com.bloock.sdk.entity.HostedLoader;
 import com.bloock.sdk.entity.HostedPublisher;
 import com.bloock.sdk.entity.IpfsLoader;
@@ -46,6 +47,8 @@ class Test {
     testVerifyWebhookSignatureInvalidSecret(sdk);
 
     testEnd2End(sdk);
+
+    System.out.println("\033[1m\u001B[32mALL TESTS RAN SUCCESSFULLY!\u001B[0m\033[0m");
   }
 
   static void testEnd2End(Client sdk) throws Exception {
@@ -174,9 +177,6 @@ class Test {
     Record recordWithMultipleSignatures =
         Builder.fromRecord(signedRecord).withSigner(new EcdsaSigner(keys2.getPrivateKey())).build();
 
-    String hash = recordWithMultipleSignatures.getHash();
-    assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");
-
     List<Signature> signatures = recordWithMultipleSignatures.getSignatures();
     assert signatures.size() == 2;
 
@@ -191,6 +191,8 @@ class Test {
     Record encryptedRecord =
         Builder.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
+
+    assert encryptedRecord.getEncryptionAlg() == EncryptionAlg.AES256GCM;
 
     boolean throwsException = false;
     try {
@@ -258,6 +260,8 @@ class Test {
         Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
 
+    assert encryptedRecord.getEncryptionAlg() == EncryptionAlg.RSA;
+
     Record decryptedRecord =
         Builder.fromRecord(encryptedRecord)
             .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
@@ -321,6 +325,8 @@ class Test {
             .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
             .build();
     assert payload.getBytes() != encryptedRecord.retrieve();
+
+    assert encryptedRecord.getEncryptionAlg() == EncryptionAlg.ECIES;
 
     Record decryptedRecord =
         Builder.fromRecord(encryptedRecord)

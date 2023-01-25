@@ -7,7 +7,7 @@ class EncryptionAlg(Enum):
     AES256GCM = 0
     RSA = 1
     ECIES = 2
-    ALG_NOT_FOUND = -1
+    UNRECOGNIZED = -1
 
     def __int__(self):
         return self.value
@@ -21,4 +21,4 @@ class EncryptionAlg(Enum):
         elif alg == proto.EncryptionAlg.ECIES:
             return EncryptionAlg.ECIES
         else:
-            return EncryptionAlg.ALG_NOT_FOUND
+            return EncryptionAlg.UNRECOGNIZED

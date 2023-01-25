@@ -54,6 +54,9 @@ class Signature:
             raise Exception(res.error.message)
         return res.common_name
 
+    def get_alg(self) -> str:
+        return self.header.alg
+
 
 class SignatureHeader:
     def __init__(self, alg: str, kid: str) -> None:
