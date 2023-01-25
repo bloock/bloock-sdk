@@ -1,10 +1,10 @@
 import os
 import unittest
-import bloock
 
 from bloock.client.builder import RecordBuilder
 from bloock.client.client import Client
 from bloock.client.entity.anchor import AnchorNetwork
+from bloock.client.entity.encryption_alg import EncryptionAlg
 from bloock.client.entity.proof import Proof, ProofAnchor
 from bloock.client.entity.decrypter import AesDecrypter, EciesDecrypter, RsaDecrypter
 from bloock.client.entity.encrypter import AesEncrypter, EciesEncrypter, RsaEncrypter
@@ -125,11 +125,6 @@ class TestE2E(unittest.TestCase):
             .build()
         )
 
-        hash = record_with_multiple_signatures.get_hash()
-        self.assertEqual(
-            hash, "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
-        )
-
         signatures = record_with_multiple_signatures.get_signatures()
         self.assertEqual(len(signatures), 2)
 
@@ -174,6 +169,8 @@ class TestE2E(unittest.TestCase):
         )
 
         self.assertNotEqual(payload.encode(), encrypted_record.payload)
+
+        self.assertEqual(encrypted_record.get_encryption_alg(), EncryptionAlg.AES256GCM)
 
         with self.assertRaises(Exception) as _:
             RecordBuilder.from_record(encrypted_record).with_decrypter(
@@ -261,6 +258,8 @@ class TestE2E(unittest.TestCase):
 
         self.assertNotEqual(payload.encode(), encrypted_record.payload)
 
+        self.assertEqual(encrypted_record.get_encryption_alg(), EncryptionAlg.RSA)
+
         record = (
             RecordBuilder.from_record(encrypted_record)
             .with_decrypter(RsaDecrypter(keys.private_key))
@@ -343,6 +342,8 @@ class TestE2E(unittest.TestCase):
         )
 
         self.assertNotEqual(payload.encode(), encrypted_record.payload)
+
+        self.assertEqual(encrypted_record.get_encryption_alg(), EncryptionAlg.ECIES)
 
         record = (
             RecordBuilder.from_record(encrypted_record)

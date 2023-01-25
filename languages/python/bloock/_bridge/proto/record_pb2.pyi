@@ -353,6 +353,43 @@ class RecordSignatures(google.protobuf.message.Message):
 
 global___RecordSignatures = RecordSignatures
 
+class EncryptionAlgResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ALG_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    alg: global___EncryptionAlg.ValueType
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        alg: global___EncryptionAlg.ValueType | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_alg", b"_alg", "_error", b"_error", "alg", b"alg", "error", b"error"
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_alg", b"_alg", "_error", b"_error", "alg", b"alg", "error", b"error"
+        ],
+    ) -> None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_alg", b"_alg"]
+    ) -> typing_extensions.Literal["alg"] | None: ...
+    @typing.overload
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
+
+global___EncryptionAlgResponse = EncryptionAlgResponse
+
 class RecordHeader(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -374,14 +411,17 @@ class Record(google.protobuf.message.Message):
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
+    HASH_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     payload: builtins.bytes
+    hash: builtins.str
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
         payload: builtins.bytes = ...,
+        hash: builtins.str = ...,
     ) -> None: ...
     def HasField(
         self,
@@ -396,6 +436,8 @@ class Record(google.protobuf.message.Message):
             b"_config_data",
             "config_data",
             b"config_data",
+            "hash",
+            b"hash",
             "payload",
             b"payload",
         ],
