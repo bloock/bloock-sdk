@@ -64,6 +64,6 @@ public class Signature {
   }
 
   public String getAlg() {
-      return this.header.alg;
+    return this.header.alg;
   }
 }
