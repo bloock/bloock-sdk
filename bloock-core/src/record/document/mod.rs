@@ -93,12 +93,10 @@ impl Document {
                 .as_str()
                 .try_into()
                 .map_err(|err| InfrastructureError::EncrypterError(err).into()),
-            None => {
-                return Err(InfrastructureError::EncrypterError(
-                    EncrypterError::CouldNotRetrieveAlgorithm(),
-                )
-                .into())
-            }
+            None => Err(InfrastructureError::EncrypterError(
+                EncrypterError::CouldNotRetrieveAlgorithm(),
+            )
+            .into()),
         }
     }
 
@@ -347,7 +345,7 @@ mod tests {
             signature: "945efccb10955499e50bd4e1eeadb51aac9136f3e91b8d29c1b817cb42284268500b5f191693a0d927601df5f282804a6eacf5ff8a1522bda5c2ec4dc681750b".to_string(),
         };
 
-        document.set_proof(proof.clone()).unwrap();
+        document.set_proof(proof).unwrap();
 
         document.add_signature(signature.clone()).unwrap();
 

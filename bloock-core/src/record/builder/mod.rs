@@ -609,7 +609,6 @@ mod hash_tests {
 
     #[test]
     fn build_plain_record_with_signer_and_encrypter() {
-
         let record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
             .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))

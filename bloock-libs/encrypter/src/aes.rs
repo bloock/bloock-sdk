@@ -20,10 +20,9 @@ const TAG_LEN: usize = 16; // 128 bits
 const KEY_LEN: usize = 32; // 256 bits
 const SALT_LEN: usize = 16;
 
+// it's to control that if the buffer contains an invalid number of iterations it doesn't loop forever
+const MAX_ITERATIONS: u32 = 100000; // has to be >= NUM_ITERATIONS
 const NUM_ITERATIONS: u32 = 100000;
-// has to be >= NUM_ITERATIONS, it's to control that if an invalid payload is sent it doesn't loop forever
-const MAX_ITERATIONS: u32 = 100000;
-const _: () = assert!(MAX_ITERATIONS >= NUM_ITERATIONS);
 const ITERATIONS_LEN: usize = size_of::<u32>();
 
 const HEADER_LEN: usize = NONCE_LEN + SALT_LEN + ITERATIONS_LEN;

@@ -197,7 +197,7 @@ async function testAesEncryption() {
 
   expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
 
-  expect(await encrypted_record.getEncryptionAlg()).toEqual(EncryptionAlg.A256GCM);
+  expect(await encrypted_record.getEncryptionAlg()).toEqual(EncryptionAlg.AES256GCM);
 
   await expect(
     RecordBuilder.fromRecord(encrypted_record).withDecrypter(
