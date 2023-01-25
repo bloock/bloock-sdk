@@ -77,7 +77,7 @@ message RecordSignatures {
 }
 
 message EncryptionAlgResponse {
-    optional EncryptionAlg alg = 1;
+    EncryptionAlg alg = 1;
     optional Error error = 2;
 }
 

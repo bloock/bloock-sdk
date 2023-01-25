@@ -364,26 +364,19 @@ class EncryptionAlgResponse(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        alg: global___EncryptionAlg.ValueType | None = ...,
+        alg: global___EncryptionAlg.ValueType = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
     def HasField(
         self,
-        field_name: typing_extensions.Literal[
-            "_alg", b"_alg", "_error", b"_error", "alg", b"alg", "error", b"error"
-        ],
+        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
     ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "_alg", b"_alg", "_error", b"_error", "alg", b"alg", "error", b"error"
+            "_error", b"_error", "alg", b"alg", "error", b"error"
         ],
     ) -> None: ...
-    @typing.overload
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_alg", b"_alg"]
-    ) -> typing_extensions.Literal["alg"] | None: ...
-    @typing.overload
     def WhichOneof(
         self, oneof_group: typing_extensions.Literal["_error", b"_error"]
     ) -> typing_extensions.Literal["error"] | None: ...

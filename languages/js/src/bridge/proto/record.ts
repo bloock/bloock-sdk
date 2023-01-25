@@ -207,7 +207,7 @@ export interface RecordSignatures {
 }
 
 export interface EncryptionAlgResponse {
-  alg?: EncryptionAlg | undefined;
+  alg: EncryptionAlg;
   error?: Error | undefined;
 }
 
@@ -848,12 +848,12 @@ export const RecordSignatures = {
 };
 
 function createBaseEncryptionAlgResponse(): EncryptionAlgResponse {
-  return { alg: undefined, error: undefined };
+  return { alg: 0, error: undefined };
 }
 
 export const EncryptionAlgResponse = {
   encode(message: EncryptionAlgResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.alg !== undefined) {
+    if (message.alg !== 0) {
       writer.uint32(8).int32(message.alg);
     }
     if (message.error !== undefined) {
@@ -885,21 +885,21 @@ export const EncryptionAlgResponse = {
 
   fromJSON(object: any): EncryptionAlgResponse {
     return {
-      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : undefined,
+      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : 0,
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: EncryptionAlgResponse): unknown {
     const obj: any = {};
-    message.alg !== undefined && (obj.alg = message.alg !== undefined ? encryptionAlgToJSON(message.alg) : undefined);
+    message.alg !== undefined && (obj.alg = encryptionAlgToJSON(message.alg));
     message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<EncryptionAlgResponse>, I>>(object: I): EncryptionAlgResponse {
     const message = createBaseEncryptionAlgResponse();
-    message.alg = object.alg ?? undefined;
+    message.alg = object.alg ?? 0;
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },

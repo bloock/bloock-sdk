@@ -682,7 +682,7 @@ impl RecordServiceHandler for RecordServer {
             Ok(config) => config,
             Err(_) => {
                 return EncryptionAlgResponse {
-                    alg: None,
+                    alg: 0,
                     error: Some(config_data_error()),
                 }
             }
@@ -1192,7 +1192,7 @@ impl EncryptionAlgResponse {
         Self::send_event(client, None).await;
 
         EncryptionAlgResponse {
-            alg: Some(alg.into()),
+            alg: alg.into(),
             error: None,
         }
     }
@@ -1201,7 +1201,7 @@ impl EncryptionAlgResponse {
         Self::send_event(client, Some(&err)).await;
 
         EncryptionAlgResponse {
-            alg: None,
+            alg: 0,
             error: Some(Error {
                 kind: BridgeError::RecordError.to_string(),
                 message: err,

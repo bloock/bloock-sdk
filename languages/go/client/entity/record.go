@@ -72,18 +72,14 @@ func (r *Record) GetEncryptionAlg() (EncryptionAlg, error) {
 	res, err := bridgeClient.Record().GetEncryptionAlg(context.Background(), r.ToProto())
 
 	if err != nil {
-		return ALG_NOT_FOUND, err
+		return UNRECOGNIZED, err
 	}
 
 	if res.Error != nil {
-		return ALG_NOT_FOUND, errors.New(res.Error.Message)
+		return UNRECOGNIZED, errors.New(res.Error.Message)
 	}
 
-	if res.Alg == nil {
-		return ALG_NOT_FOUND, errors.New("Could not retrieve encryption algorithm")
-	}
-
-	return EncryptionAlgFromProto[*res.Alg], nil
+	return EncryptionAlgFromProto[res.Alg], nil
 }
 
 func (r *Record) Publish(p Publisher) (string, error) {
