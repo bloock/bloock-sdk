@@ -62,4 +62,8 @@ public class Signature {
 
     return res.getCommonName();
   }
+
+  public String getAlg() {
+      return this.header.alg;
+  }
 }
