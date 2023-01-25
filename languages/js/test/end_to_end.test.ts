@@ -197,7 +197,9 @@ async function testAesEncryption() {
 
   expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
 
-  expect(await encrypted_record.getEncryptionAlg()).toEqual(EncryptionAlg.AES256GCM);
+  expect(await encrypted_record.getEncryptionAlg()).toEqual(
+    EncryptionAlg.AES256GCM
+  );
 
   await expect(
     RecordBuilder.fromRecord(encrypted_record).withDecrypter(
@@ -371,7 +373,9 @@ async function testEciesEncryption(sdk: BloockClient) {
 
   expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
 
-  expect(await encrypted_record.getEncryptionAlg()).toEqual(EncryptionAlg.ECIES);
+  expect(await encrypted_record.getEncryptionAlg()).toEqual(
+    EncryptionAlg.ECIES
+  );
 
   let decrypted_record = await RecordBuilder.fromRecord(encrypted_record)
     .withDecrypter(new EciesDecrypter(keypair.privateKey))

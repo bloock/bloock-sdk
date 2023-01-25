@@ -23,7 +23,7 @@ export class Record {
     return proto.Record.fromPartial({
       configData: NewConfigData(),
       payload: this.payload,
-      hash: this.hash,
+      hash: this.hash
     });
   }
 
@@ -170,7 +170,7 @@ export class Signature {
   }
 
   getAlg(): string {
-      return this.header.alg;
+    return this.header.alg;
   }
 }
 
