@@ -193,6 +193,10 @@ func (s *Signature) GetCommonName() (string, error) {
 	return res.CommonName, nil
 }
 
+func (s *Signature) GetAlg() (string) {
+    return s.Header.Alg
+}
+
 func (s Signature) ToProto() *proto.Signature {
 	return &proto.Signature{
 		Signature: s.Signature,

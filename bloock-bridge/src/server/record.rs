@@ -702,7 +702,7 @@ impl RecordServiceHandler for RecordServer {
                 Ok(alg) => EncryptionAlgResponse::new_success(&client, alg.into()).await,
                 Err(err) => EncryptionAlgResponse::new_error(&client, err.to_string()).await,
             },
-            false => EncryptionAlgResponse::new_error(&client, "Record is encrypted".to_string()).await,
+            false => EncryptionAlgResponse::new_error(&client, "Record is not encrypted".to_string()).await,
         }
     }
 }

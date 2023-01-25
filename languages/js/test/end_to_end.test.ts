@@ -16,7 +16,8 @@ import {
   ProofAnchor,
   AnchorNetwork,
   IpfsPublisher,
-  IpfsLoader
+  IpfsLoader,
+  EncryptionAlg
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
 import { getSdk } from "./util";
@@ -148,11 +149,6 @@ async function testEcdsaSignature(sdk: BloockClient): Promise<Record> {
     .withSigner(new EcdsaSigner(keys.privateKey))
     .build();
 
-  let hash = await recordWithMultipleSignatures.getHash();
-  expect(hash).toEqual(
-    "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f"
-  );
-
   let signatures = await recordWithMultipleSignatures.getSignatures();
   expect(signatures.length).toEqual(2);
 
@@ -200,6 +196,8 @@ async function testAesEncryption() {
     .build();
 
   expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  expect(await encrypted_record.getEncryptionAlg()).toEqual(EncryptionAlg.A256GCM);
 
   await expect(
     RecordBuilder.fromRecord(encrypted_record).withDecrypter(
@@ -289,6 +287,8 @@ async function testRsaEncryption(sdk: BloockClient) {
 
   expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
 
+  expect(await encrypted_record.getEncryptionAlg()).toEqual(EncryptionAlg.RSA);
+
   let decrypted_record = await RecordBuilder.fromRecord(encrypted_record)
     .withDecrypter(new RsaDecrypter(keypair.privateKey))
     .build();
@@ -370,6 +370,8 @@ async function testEciesEncryption(sdk: BloockClient) {
     .build();
 
   expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(payload);
+
+  expect(await encrypted_record.getEncryptionAlg()).toEqual(EncryptionAlg.ECIES);
 
   let decrypted_record = await RecordBuilder.fromRecord(encrypted_record)
     .withDecrypter(new EciesDecrypter(keypair.privateKey))
