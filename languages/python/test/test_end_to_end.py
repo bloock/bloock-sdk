@@ -9,6 +9,7 @@ from bloock.client.entity.proof import Proof, ProofAnchor
 from bloock.client.entity.decrypter import AesDecrypter, EciesDecrypter, RsaDecrypter
 from bloock.client.entity.encrypter import AesEncrypter, EciesEncrypter, RsaEncrypter
 from bloock.client.entity.record import Record
+from bloock.client.entity.signature import SignatureAlg
 from bloock.client.entity.signer import EcdsaSigner
 from bloock.client.entity.network import Network
 from bloock.client.entity.publisher import HostedPublisher, IpfsPublisher
@@ -129,6 +130,7 @@ class TestE2E(unittest.TestCase):
         self.assertEqual(len(signatures), 2)
 
         self.assertEqual(name, signatures[0].get_common_name())
+        self.assertEqual(SignatureAlg.ECDSA, signatures[0].get_alg())
 
         return record_with_multiple_signatures
 

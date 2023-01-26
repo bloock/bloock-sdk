@@ -8,6 +8,7 @@ from bloock.client.entity.encryption_alg import EncryptionAlg
 from bloock.client.entity.proof import Proof
 from bloock.client.entity.publisher import Publisher
 from bloock._config.config import Config
+from bloock.client.entity.signature import Signature
 
 
 class RecordHeader:
@@ -20,55 +21,6 @@ class RecordHeader:
 
     def to_proto(self) -> proto.RecordHeader:
         return proto.RecordHeader(ty=self.ty)
-
-
-class Signature:
-    def __init__(self, signature: str, protected: str, header: SignatureHeader) -> None:
-        self.signature = signature
-        self.protected = protected
-        self.header = header
-
-    @staticmethod
-    def from_proto(signature: proto.Signature) -> Signature:
-        return Signature(
-            signature=signature.signature,
-            protected=signature.protected,
-            header=SignatureHeader.from_proto(signature.header),
-        )
-
-    def to_proto(self) -> proto.Signature:
-        return proto.Signature(
-            signature=self.signature,
-            protected=self.protected,
-            header=self.header.to_proto(),
-        )
-
-    def get_common_name(self) -> str:
-        client = bridge.BloockBridge()
-        res = client.record().GetSignatureCommonName(
-            proto.SignatureCommonNameRequest(
-                config_data=Config.new(), signature=self.to_proto()
-            )
-        )
-        if res.error != Error():
-            raise Exception(res.error.message)
-        return res.common_name
-
-    def get_alg(self) -> str:
-        return self.header.alg
-
-
-class SignatureHeader:
-    def __init__(self, alg: str, kid: str) -> None:
-        self.alg = alg
-        self.kid = kid
-
-    @staticmethod
-    def from_proto(header: proto.SignatureHeader) -> SignatureHeader:
-        return SignatureHeader(alg=header.alg, kid=header.kid)
-
-    def to_proto(self) -> proto.SignatureHeader:
-        return proto.SignatureHeader(alg=self.alg, kid=self.kid)
 
 
 class Record:
