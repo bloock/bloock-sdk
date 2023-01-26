@@ -221,19 +221,14 @@ func testAesEncryptionHosted(t *testing.T) {
 	result, err := encryptedRecord.Publish(entity.NewHostedPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).
 		WithDecrypter(entity.NewAesDecrypter(password)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -251,19 +246,15 @@ func testAesEncryptionIpfs(t *testing.T) {
 	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).
 		WithDecrypter(entity.NewAesDecrypter(password)).
 		Build()
+	require.NoError(t, err)
 
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -307,19 +298,14 @@ func testRsaEncryptionHosted(t *testing.T, sdk client.Client) {
 	result, err := encryptedRecord.Publish(entity.NewHostedPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).
 		WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -337,19 +323,14 @@ func testRsaEncryptionIpfs(t *testing.T, sdk client.Client) {
 	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).
 		WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -393,19 +374,14 @@ func testEciesEncryptionHosted(t *testing.T, sdk client.Client) {
 	result, err := encryptedRecord.Publish(entity.NewHostedPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).
 		WithDecrypter(entity.NewEciesDecrypter(keypair.PrivateKey)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -423,19 +399,14 @@ func testEciesEncryptionIpfs(t *testing.T, sdk client.Client) {
 	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).
 		WithDecrypter(entity.NewEciesDecrypter(keypair.PrivateKey)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
