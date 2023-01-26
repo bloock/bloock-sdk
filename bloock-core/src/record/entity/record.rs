@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use bloock_encrypter::{Encrypter, EncrypterError, EncryptionAlg};
+use bloock_encrypter::{Encrypter, EncryptionAlg};
 use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
 use bloock_signer::Signature;
 
