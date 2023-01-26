@@ -34,10 +34,6 @@ impl Record {
     }
 
     pub fn new_with_hash(document: Document, hash: &str) -> BloockResult<Self> {
-        if !document.is_encrypted() {
-            return Err(InfrastructureError::EncrypterError(EncrypterError::NotEncrypted()).into());
-        }
-
         let hash = bloock_hasher::from_hex(hash).map_err(InfrastructureError::HasherError)?;
 
         Ok(Self {
