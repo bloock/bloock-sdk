@@ -5,10 +5,10 @@ import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 type EncryptionAlg int32
 
 const (
-	AES256GCM    EncryptionAlg = iota
-	RSA          EncryptionAlg = iota
-	ECIES        EncryptionAlg = iota
-	UNRECOGNIZED EncryptionAlg = -1
+	AES256GCM                   EncryptionAlg = iota
+	RSA                         EncryptionAlg = iota
+	ECIES                       EncryptionAlg = iota
+	UNRECOGNIZED_ENCRYPTION_ALG EncryptionAlg = -1
 )
 
 var (

@@ -433,7 +433,10 @@ mod tests {
                 },
                 bitmap: "111".to_string(),
                 depth: "111".to_string(),
-                leaves: vec![[0u8; 32]],
+                leaves: vec![bloock_hasher::from_hex(
+                    "57caa176af1ac0433c5df30e8dabcd2ec1af1e92a26eced5f719b88458777cd6",
+                )
+                .unwrap()],
                 nodes: vec![[0u8; 32]],
             })
             .unwrap();

@@ -472,6 +472,8 @@ func testEcdsaSignature(t *testing.T, sdk client.Client) entity.Record {
 	retrievedName, err := signatures[0].GetCommonName()
 	assert.Equal(t, name, retrievedName)
 
+    assert.Equal(t, entity.ECDSA, signatures[0].GetAlg())
+
 	return recordWithMultipleSignatures
 }
 
