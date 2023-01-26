@@ -24,6 +24,7 @@ import com.bloock.sdk.entity.RsaDecrypter;
 import com.bloock.sdk.entity.RsaEncrypter;
 import com.bloock.sdk.entity.RsaKeyPair;
 import com.bloock.sdk.entity.Signature;
+import com.bloock.sdk.entity.SignatureAlg;
 import com.bloock.sdk.entity.SignerArgs;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -181,6 +182,7 @@ class Test {
     assert signatures.size() == 2;
 
     assert signatures.get(0).getCommonName().equals(name);
+    assert signatures.get(0).getAlg().equals(SignatureAlg.ECDSA);
 
     return recordWithMultipleSignatures;
   }
