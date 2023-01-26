@@ -17,7 +17,8 @@ import {
   AnchorNetwork,
   IpfsPublisher,
   IpfsLoader,
-  EncryptionAlg
+  EncryptionAlg,
+  SignatureAlg
 } from "../dist/index";
 import { describe, test, expect } from "@jest/globals";
 import { getSdk } from "./util";
@@ -153,6 +154,7 @@ async function testEcdsaSignature(sdk: BloockClient): Promise<Record> {
   expect(signatures.length).toEqual(2);
 
   expect(await signatures[0].getCommonName()).toEqual(name);
+  expect(signatures[0].getAlg()).toEqual(SignatureAlg.ECDSA);
 
   return recordWithMultipleSignatures;
 }
