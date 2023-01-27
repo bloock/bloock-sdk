@@ -16,7 +16,7 @@ pub struct AnchorService<H: Client> {
 impl<H: Client> AnchorService<H> {
     pub async fn get_anchor(&self, anchor_id: i64) -> BloockResult<Anchor> {
         let base_url = self.config_service.get_api_base_url();
-        let url = format!("{}/core/anchor/{}", base_url, anchor_id);
+        let url = format!("{base_url}/core/anchor/{anchor_id}");
         match self.http.get_json::<String, Anchor>(url, None).await {
             Ok(res) => Ok(res),
             Err(e) => Err(e).map_err(|e| InfrastructureError::Http(e).into()),

@@ -57,7 +57,7 @@ impl BloockError {
     pub fn unwrap_operational(self) -> OperationalError {
         match self.0 {
             ErrorKind::Operational(e) => e,
-            e => panic!("Expected ErrorKind::Parse; was: {}", e),
+            e => panic!("Expected ErrorKind::Parse; was: {e}"),
         }
     }
 }

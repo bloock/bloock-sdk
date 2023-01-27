@@ -70,22 +70,22 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
         buf.push_str("\n\n");
         buf.push_str("#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]\n");
         buf.push_str("#[repr(i32)]\n");
-        writeln!(buf, "pub enum {} {{", enum_name).unwrap();
+        writeln!(buf, "pub enum {enum_name} {{").unwrap();
 
         let mut i = 0;
         for service in self.service_methods.iter() {
             for method in service.1 {
                 let method_name = format!("{}_{}", service.0, method).to_case(Case::UpperCamel);
-                writeln!(buf, "\t{} = {},", method_name, i).unwrap();
+                writeln!(buf, "\t{method_name} = {i},").unwrap();
                 i += 1;
             }
         }
 
-        writeln!(buf, "\tUnknown = {},", i).unwrap();
+        writeln!(buf, "\tUnknown = {i},").unwrap();
         buf.push_str("}\n");
 
         buf.push_str("\n\n");
-        writeln!(buf, "impl {} {{", enum_name).unwrap();
+        writeln!(buf, "impl {enum_name} {{").unwrap();
         buf.push_str("\tpub fn as_str(&self) -> &'static str {\n");
         buf.push_str("\t\tmatch self {\n");
 
@@ -100,8 +100,7 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
                 );
                 writeln!(
                     buf,
-                    "\t\t\t{}::{} => {},\n",
-                    enum_name, method_name, method_str
+                    "\t\t\t{enum_name}::{method_name} => {method_str},\n"
                 )
                 .unwrap();
             }
@@ -113,7 +112,7 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
 
         writeln!(buf).unwrap();
 
-        writeln!(buf, "\tpub fn from_str(s: &str) -> {} {{", enum_name).unwrap();
+        writeln!(buf, "\tpub fn from_str(s: &str) -> {enum_name} {{").unwrap();
         buf.push_str("\t\tmatch s {\n");
         for service in self.service_methods.iter() {
             for method in service.1 {
@@ -126,8 +125,7 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
                 );
                 writeln!(
                     buf,
-                    "\t\t\t {} => {}::{},",
-                    method_str, enum_name, method_name
+                    "\t\t\t {method_str} => {enum_name}::{method_name},"
                 )
                 .unwrap();
             }

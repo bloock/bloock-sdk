@@ -34,9 +34,9 @@ impl TryFrom<&str> for EncryptionAlg {
 impl fmt::Display for EncryptionAlg {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            EncryptionAlg::A256gcm => write!(f, "{}", AES_ALG),
-            EncryptionAlg::Rsa => write!(f, "{}", RSA_ALG),
-            EncryptionAlg::Ecies => write!(f, "{}", ECIES_ALG),
+            EncryptionAlg::A256gcm => write!(f, "{AES_ALG}"),
+            EncryptionAlg::Rsa => write!(f, "{RSA_ALG}"),
+            EncryptionAlg::Ecies => write!(f, "{ECIES_ALG}"),
         }
     }
 }
