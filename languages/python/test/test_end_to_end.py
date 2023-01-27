@@ -205,17 +205,15 @@ class TestE2E(unittest.TestCase):
 
         result = encrypted_record.publish(HostedPublisher())
 
-        loaded_record = RecordBuilder.from_loader(HostedLoader(hash=result)).build()
-
-        decrypted_record = (
-            RecordBuilder.from_record(loaded_record)
+        loaded_record = (
+            RecordBuilder.from_loader(HostedLoader(hash=result))
             .with_decrypter(AesDecrypter(password))
             .build()
         )
 
-        self.assertEqual(payload, decrypted_record.payload.decode())
+        self.assertEqual(payload, loaded_record.payload.decode())
 
-        hash = decrypted_record.get_hash()
+        hash = loaded_record.get_hash()
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
         )
@@ -233,17 +231,15 @@ class TestE2E(unittest.TestCase):
 
         result = encrypted_record.publish(IpfsPublisher())
 
-        loaded_record = RecordBuilder.from_loader(IpfsLoader(hash=result)).build()
-
-        decrypted_record = (
-            RecordBuilder.from_record(loaded_record)
+        loaded_record = (
+            RecordBuilder.from_loader(IpfsLoader(hash=result))
             .with_decrypter(AesDecrypter(password))
             .build()
         )
 
-        self.assertEqual(payload, decrypted_record.payload.decode())
+        self.assertEqual(payload, loaded_record.payload.decode())
 
-        hash = decrypted_record.get_hash()
+        hash = loaded_record.get_hash()
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
         )
@@ -289,17 +285,15 @@ class TestE2E(unittest.TestCase):
 
         result = encrypted_record.publish(HostedPublisher())
 
-        loaded_record = RecordBuilder.from_loader(HostedLoader(hash=result)).build()
-
-        record = (
-            RecordBuilder.from_record(loaded_record)
+        loaded_record = (
+            RecordBuilder.from_loader(HostedLoader(hash=result))
             .with_decrypter(RsaDecrypter(keys.private_key))
             .build()
         )
 
-        self.assertEqual(payload, record.payload.decode())
+        self.assertEqual(payload, loaded_record.payload.decode())
 
-        hash = record.get_hash()
+        hash = loaded_record.get_hash()
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
         )
@@ -318,17 +312,15 @@ class TestE2E(unittest.TestCase):
 
         result = encrypted_record.publish(IpfsPublisher())
 
-        loaded_record = RecordBuilder.from_loader(IpfsLoader(hash=result)).build()
-
-        record = (
-            RecordBuilder.from_record(loaded_record)
+        loaded_record = (
+            RecordBuilder.from_loader(IpfsLoader(hash=result))
             .with_decrypter(RsaDecrypter(keys.private_key))
             .build()
         )
 
-        self.assertEqual(payload, record.payload.decode())
+        self.assertEqual(payload, loaded_record.payload.decode())
 
-        hash = record.get_hash()
+        hash = loaded_record.get_hash()
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
         )
@@ -374,17 +366,15 @@ class TestE2E(unittest.TestCase):
 
         result = encrypted_record.publish(HostedPublisher())
 
-        loaded_record = RecordBuilder.from_loader(HostedLoader(hash=result)).build()
-
-        record = (
-            RecordBuilder.from_record(loaded_record)
+        loaded_record = (
+            RecordBuilder.from_loader(HostedLoader(hash=result))
             .with_decrypter(EciesDecrypter(keys.private_key))
             .build()
         )
 
-        self.assertEqual(payload, record.payload.decode())
+        self.assertEqual(payload, loaded_record.payload.decode())
 
-        hash = record.get_hash()
+        hash = loaded_record.get_hash()
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
         )
@@ -403,17 +393,15 @@ class TestE2E(unittest.TestCase):
 
         result = encrypted_record.publish(IpfsPublisher())
 
-        loaded_record = RecordBuilder.from_loader(IpfsLoader(hash=result)).build()
-
-        record = (
-            RecordBuilder.from_record(loaded_record)
+        loaded_record = (
+            RecordBuilder.from_loader(IpfsLoader(hash=result))
             .with_decrypter(EciesDecrypter(keys.private_key))
             .build()
         )
 
-        self.assertEqual(payload, record.payload.decode())
+        self.assertEqual(payload, loaded_record.payload.decode())
 
-        hash = record.get_hash()
+        hash = loaded_record.get_hash()
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
         )
