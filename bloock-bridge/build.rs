@@ -98,11 +98,7 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
                     service.0,
                     method.to_case(Case::UpperCamel)
                 );
-                writeln!(
-                    buf,
-                    "\t\t\t{enum_name}::{method_name} => {method_str},\n"
-                )
-                .unwrap();
+                writeln!(buf, "\t\t\t{enum_name}::{method_name} => {method_str},\n").unwrap();
             }
         }
         buf.push_str("\t\t\t_ => \"unknown\",\n");
@@ -123,11 +119,7 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
                     service.0,
                     method.to_case(Case::UpperCamel)
                 );
-                writeln!(
-                    buf,
-                    "\t\t\t {method_str} => {enum_name}::{method_name},"
-                )
-                .unwrap();
+                writeln!(buf, "\t\t\t {method_str} => {enum_name}::{method_name},").unwrap();
             }
         }
         buf.push_str("\t\t\t _ => BloockServer::Unknown,\n");
