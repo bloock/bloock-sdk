@@ -253,6 +253,7 @@ export interface Signature {
   signature: string;
   protected: string;
   header?: SignatureHeader;
+  messageHash: string;
 }
 
 export interface SignatureHeader {
@@ -369,6 +370,7 @@ export interface PublishResponse {
 export interface SignatureCommonNameRequest {
   configData?: ConfigData;
   signature?: Signature;
+  hash: string;
 }
 
 export interface SignatureCommonNameResponse {
@@ -1289,7 +1291,7 @@ export const DecrypterArgs = {
 };
 
 function createBaseSignature(): Signature {
-  return { signature: "", protected: "", header: undefined };
+  return { signature: "", protected: "", header: undefined, messageHash: "" };
 }
 
 export const Signature = {
@@ -1302,6 +1304,9 @@ export const Signature = {
     }
     if (message.header !== undefined) {
       SignatureHeader.encode(message.header, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.messageHash !== "") {
+      writer.uint32(34).string(message.messageHash);
     }
     return writer;
   },
@@ -1322,6 +1327,9 @@ export const Signature = {
         case 3:
           message.header = SignatureHeader.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.messageHash = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1335,6 +1343,7 @@ export const Signature = {
       signature: isSet(object.signature) ? String(object.signature) : "",
       protected: isSet(object.protected) ? String(object.protected) : "",
       header: isSet(object.header) ? SignatureHeader.fromJSON(object.header) : undefined,
+      messageHash: isSet(object.messageHash) ? String(object.messageHash) : "",
     };
   },
 
@@ -1343,6 +1352,7 @@ export const Signature = {
     message.signature !== undefined && (obj.signature = message.signature);
     message.protected !== undefined && (obj.protected = message.protected);
     message.header !== undefined && (obj.header = message.header ? SignatureHeader.toJSON(message.header) : undefined);
+    message.messageHash !== undefined && (obj.messageHash = message.messageHash);
     return obj;
   },
 
@@ -1353,6 +1363,7 @@ export const Signature = {
     message.header = (object.header !== undefined && object.header !== null)
       ? SignatureHeader.fromPartial(object.header)
       : undefined;
+    message.messageHash = object.messageHash ?? "";
     return message;
   },
 };
@@ -2713,7 +2724,7 @@ export const PublishResponse = {
 };
 
 function createBaseSignatureCommonNameRequest(): SignatureCommonNameRequest {
-  return { configData: undefined, signature: undefined };
+  return { configData: undefined, signature: undefined, hash: "" };
 }
 
 export const SignatureCommonNameRequest = {
@@ -2723,6 +2734,9 @@ export const SignatureCommonNameRequest = {
     }
     if (message.signature !== undefined) {
       Signature.encode(message.signature, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.hash !== "") {
+      writer.uint32(26).string(message.hash);
     }
     return writer;
   },
@@ -2740,6 +2754,9 @@ export const SignatureCommonNameRequest = {
         case 2:
           message.signature = Signature.decode(reader, reader.uint32());
           break;
+        case 3:
+          message.hash = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -2752,6 +2769,7 @@ export const SignatureCommonNameRequest = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       signature: isSet(object.signature) ? Signature.fromJSON(object.signature) : undefined,
+      hash: isSet(object.hash) ? String(object.hash) : "",
     };
   },
 
@@ -2761,6 +2779,7 @@ export const SignatureCommonNameRequest = {
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.signature !== undefined &&
       (obj.signature = message.signature ? Signature.toJSON(message.signature) : undefined);
+    message.hash !== undefined && (obj.hash = message.hash);
     return obj;
   },
 
@@ -2772,6 +2791,7 @@ export const SignatureCommonNameRequest = {
     message.signature = (object.signature !== undefined && object.signature !== null)
       ? Signature.fromPartial(object.signature)
       : undefined;
+    message.hash = object.hash ?? "";
     return message;
   },
 };

@@ -111,18 +111,26 @@ export class Signature {
   signature: string;
   protected: string;
   header: SignatureHeader;
+  messageHash: string;
 
-  constructor(signature: string, prot: string, header: SignatureHeader) {
+  constructor(
+    signature: string,
+    prot: string,
+    header: SignatureHeader,
+    messageHash: string
+  ) {
     this.signature = signature;
     this.protected = prot;
     this.header = header;
+    this.messageHash = messageHash;
   }
 
   static fromProto(s: proto.Signature): Signature {
     return new Signature(
       s.signature,
       s.protected,
-      SignatureHeader.fromProto(s.header!)
+      SignatureHeader.fromProto(s.header!),
+      s.messageHash
     );
   }
 
@@ -130,7 +138,8 @@ export class Signature {
     return proto.Signature.fromPartial({
       signature: this.signature,
       protected: this.protected,
-      header: this.header.toProto()
+      header: this.header.toProto(),
+      messageHash: this.messageHash
     });
   }
 

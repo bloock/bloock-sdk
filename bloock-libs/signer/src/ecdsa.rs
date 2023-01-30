@@ -1,4 +1,4 @@
-use bloock_hasher::{sha256::Sha256, Hasher, H256};
+use bloock_hasher::{keccak::Keccak256, sha256::Sha256, Hasher, H256};
 use libsecp256k1::{Message, PublicKey, RecoveryId, SecretKey};
 
 use crate::{Algorithms, ProtectedHeader, Result, Signature, SignerError, Verifier};
@@ -118,6 +118,7 @@ impl Signer for EcdsaSigner {
                 alg: Algorithms::Ecdsa.to_string(),
                 kid: hex::encode(public_key.serialize_compressed()),
             },
+            message_hash: hex::encode(Keccak256::generate_hash(payload)),
         };
 
         Ok(signature)
@@ -261,6 +262,7 @@ mod tests {
             protected: "e30".to_string(),
             header: json_header,
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
         let result = create_verifier_from_signature(&json_signature)
@@ -284,6 +286,7 @@ mod tests {
             protected: "e30".to_string(),
             header: json_header,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
         let result = create_verifier_from_signature(&json_signature)
@@ -306,6 +309,7 @@ mod tests {
             protected: "e30".to_string(),
             header: json_header,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
         let result = create_verifier_from_signature(&json_signature)

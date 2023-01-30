@@ -42,10 +42,12 @@ impl TryFrom<Signature> for SignatureCore {
                 ))
             }
         };
+
         Ok(Self {
             signature: r.signature,
             header: signature_header,
             protected: r.protected,
+            message_hash: r.message_hash,
         })
     }
 }
@@ -56,6 +58,7 @@ impl From<SignatureCore> for Signature {
             signature: s.signature,
             protected: s.protected,
             header: Some(s.header.into()),
+            message_hash: s.message_hash,
         }
     }
 }

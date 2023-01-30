@@ -12,10 +12,12 @@ use std::str;
 
 pub const ENS_ALG: &str = "ENS";
 
-pub async fn get_common_name(signature: &Signature, message_hash: H256) -> Result<String> {
+pub async fn get_common_name(signature: &Signature) -> Result<String> {
     let provider = ethers::providers::MAINNET.provider();
+    let hash = bloock_hasher::from_hex(&signature.message_hash)
+        .map_err(|err| SignerError::SignerError(err.to_string()))?;
 
-    let public_key = signature.recover_public_key(message_hash)?;
+    let public_key = signature.recover_public_key(hash)?;
     let address = derive_eth_address(public_key)?;
     provider
         .lookup_address(address)
@@ -96,8 +98,6 @@ impl Verifier for EnsVerifier {
 
 #[cfg(test)]
 mod tests {
-    use bloock_hasher::H256;
-
     use crate::{Algorithms, Signature};
 
     use super::{derive_eth_address, get_common_name};
@@ -128,15 +128,10 @@ mod tests {
             },
             protected: "".to_string(),
             signature: "66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601".to_string(),
+            message_hash: "7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6".to_string(),
         };
 
-        let message_hash: H256 =
-            hex::decode("7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6")
-                .unwrap()
-                .try_into()
-                .unwrap();
-
-        let name = get_common_name(&signature, message_hash).await.unwrap();
+        let name = get_common_name(&signature).await.unwrap();
         assert_eq!(name, "vitalik.eth")
     }
 

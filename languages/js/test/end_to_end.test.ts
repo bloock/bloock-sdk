@@ -178,9 +178,10 @@ async function testEnsSignature(sdk: BloockClient): Promise<Record> {
   let signatures = await record.getSignatures();
   expect(signatures.length).toEqual(1);
 
-  // set Vitalik's public key to test getting an ENS domain
-  signatures[0].header.kid =
-    "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099";
+  signatures[0].signature =
+    "66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601";
+  signatures[0].messageHash =
+    "7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6";
   expect(await signatures[0].getCommonName()).toEqual("vitalik.eth");
 
   return record;

@@ -48,20 +48,15 @@ pub struct Signature {
     pub header: SignatureHeader,
     pub protected: String,
     pub signature: String,
+    pub message_hash: String,
 }
 
 impl Signature {
-    pub async fn get_common_name(&self, message_hash: Option<H256>) -> Result<String> {
+    pub async fn get_common_name(&self) -> Result<String> {
         let alg = Algorithms::try_from(self.header.alg.as_str())?;
         match alg {
             Algorithms::Ecdsa => ecdsa::get_common_name(self),
-            Algorithms::Ens => {
-                ens::get_common_name(
-                    self,
-                    message_hash.ok_or(SignerError::ExpectedMessageHash())?,
-                )
-                .await
-            }
+            Algorithms::Ens => ens::get_common_name(self).await,
         }
     }
 
@@ -125,6 +120,7 @@ impl From<JWSignatures> for Signature {
             protected: s.signatures[0].protected.clone(),
             signature: s.signatures[0].signature.clone(),
             header: s.signatures[0].header.clone(),
+            message_hash: s.signatures[0].message_hash.clone(),
         }
     }
 }

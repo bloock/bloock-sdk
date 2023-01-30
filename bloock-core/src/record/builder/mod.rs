@@ -304,7 +304,7 @@ mod tests {
 
         let document = Document::new(&record.clone().serialize().unwrap()).unwrap();
 
-        let mut result_signature = document.get_signatures().unwrap();
+        let result_signature = document.get_signatures().unwrap();
         let result_protected = result_signature[0].clone().protected;
         let result_algorithm = result_signature[0].clone().header.alg;
         let result_public_key = result_signature[0].clone().header.kid;
@@ -320,14 +320,6 @@ mod tests {
         );
         assert_ne!(content, result_payload);
         assert_eq!(None, result_proof);
-
-        // set Vitalik's public key to test getting an ENS domain
-        result_signature[0].header.kid =
-            "03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099".to_string();
-        assert_eq!(
-            result_signature[0].get_common_name().await.unwrap(),
-            "vitalik.eth"
-        );
     }
 
     #[tokio::test]
@@ -393,7 +385,8 @@ mod tests {
                     kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
                 },
                 protected: "e30".to_string(),
-                signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e611416".to_string(),
+                signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e61141600".to_string(),
+                message_hash: unencrypted_record.get_hash(),
             }
         ];
 

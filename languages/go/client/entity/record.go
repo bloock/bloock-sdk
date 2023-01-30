@@ -137,9 +137,10 @@ func (rh RecordHeader) ToProto() *proto.RecordHeader {
 }
 
 type Signature struct {
-	Signature string
-	Protected string
-	Header    SignatureHeader
+	Signature   string
+	Protected   string
+	Header      SignatureHeader
+	MessageHash string
 }
 
 func NewSignatureFromProto(s *proto.Signature) Signature {
@@ -147,9 +148,10 @@ func NewSignatureFromProto(s *proto.Signature) Signature {
 		return Signature{}
 	}
 	return Signature{
-		Signature: s.Signature,
-		Protected: s.Protected,
-		Header:    NewSignatureHeaderFromProto(s.Header),
+		Signature:   s.Signature,
+		Protected:   s.Protected,
+		Header:      NewSignatureHeaderFromProto(s.Header),
+		MessageHash: s.MessageHash,
 	}
 }
 
@@ -173,9 +175,10 @@ func (s *Signature) GetCommonName() (string, error) {
 
 func (s Signature) ToProto() *proto.Signature {
 	return &proto.Signature{
-		Signature: s.Signature,
-		Protected: s.Protected,
-		Header:    s.Header.ToProto(),
+		Signature:   s.Signature,
+		Protected:   s.Protected,
+		Header:      s.Header.ToProto(),
+		MessageHash: s.MessageHash,
 	}
 }
 

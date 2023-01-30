@@ -22,10 +22,13 @@ class RecordHeader:
 
 
 class Signature:
-    def __init__(self, signature: str, protected: str, header: SignatureHeader) -> None:
+    def __init__(
+        self, signature: str, protected: str, header: SignatureHeader, message_hash: str
+    ) -> None:
         self.signature = signature
         self.protected = protected
         self.header = header
+        self.message_hash = message_hash
 
     @staticmethod
     def from_proto(signature: proto.Signature) -> Signature:
@@ -33,6 +36,7 @@ class Signature:
             signature=signature.signature,
             protected=signature.protected,
             header=SignatureHeader.from_proto(signature.header),
+            message_hash=signature.message_hash,
         )
 
     def to_proto(self) -> proto.Signature:
@@ -40,6 +44,7 @@ class Signature:
             signature=self.signature,
             protected=self.protected,
             header=self.header.to_proto(),
+            message_hash=self.message_hash,
         )
 
     def get_common_name(self) -> str:

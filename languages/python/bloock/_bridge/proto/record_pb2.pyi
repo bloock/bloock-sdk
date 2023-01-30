@@ -565,16 +565,19 @@ class Signature(google.protobuf.message.Message):
     SIGNATURE_FIELD_NUMBER: builtins.int
     PROTECTED_FIELD_NUMBER: builtins.int
     HEADER_FIELD_NUMBER: builtins.int
+    MESSAGE_HASH_FIELD_NUMBER: builtins.int
     signature: builtins.str
     protected: builtins.str
     @property
     def header(self) -> global___SignatureHeader: ...
+    message_hash: builtins.str
     def __init__(
         self,
         *,
         signature: builtins.str = ...,
         protected: builtins.str = ...,
         header: global___SignatureHeader | None = ...,
+        message_hash: builtins.str = ...,
     ) -> None: ...
     def HasField(
         self, field_name: typing_extensions.Literal["header", b"header"]
@@ -582,7 +585,14 @@ class Signature(google.protobuf.message.Message):
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "header", b"header", "protected", b"protected", "signature", b"signature"
+            "header",
+            b"header",
+            "message_hash",
+            b"message_hash",
+            "protected",
+            b"protected",
+            "signature",
+            b"signature",
         ],
     ) -> None: ...
 
@@ -1464,15 +1474,18 @@ class SignatureCommonNameRequest(google.protobuf.message.Message):
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
     SIGNATURE_FIELD_NUMBER: builtins.int
+    HASH_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
     def signature(self) -> global___Signature: ...
+    hash: builtins.str
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
         signature: global___Signature | None = ...,
+        hash: builtins.str = ...,
     ) -> None: ...
     def HasField(
         self,
@@ -1483,7 +1496,7 @@ class SignatureCommonNameRequest(google.protobuf.message.Message):
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "config_data", b"config_data", "signature", b"signature"
+            "config_data", b"config_data", "hash", b"hash", "signature", b"signature"
         ],
     ) -> None: ...
 

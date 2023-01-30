@@ -171,6 +171,7 @@ mod tests {
         Decrypter, Encrypter,
     };
 
+    use bloock_hasher::{keccak::Keccak256, Hasher};
     use bloock_signer::{
         ecdsa::{EcdsaSigner, EcdsaSignerArgs},
         SignatureHeader, Signer,
@@ -304,6 +305,7 @@ mod tests {
             },
             protected: "e30".to_string(),
             signature: "945efccb10955499e50bd4e1eeadb51aac9136f3e91b8d29c1b817cb42284268500b5f191693a0d927601df5f282804a6eacf5ff8a1522bda5c2ec4dc681750b".to_string(),
+            message_hash: hex::encode(Keccak256::generate_hash(payload)),
         };
 
         document.set_proof(proof.clone()).unwrap();
