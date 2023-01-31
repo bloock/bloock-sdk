@@ -124,7 +124,7 @@ mod tests {
         let mut http = MockClient::default();
         http.expect_get::<String>()
             .with(
-                eq(format!("https://api.bloock.com/hosting/v1/hosted/{}", hash)),
+                eq(format!("https://api.bloock.com/hosting/v1/hosted/{hash}")),
                 eq(None),
             )
             .return_once(move |_, _| Ok(payload.to_vec()));
@@ -180,7 +180,7 @@ mod tests {
         let mut http = MockClient::default();
         http.expect_get::<String>()
             .with(
-                eq(format!("https://api.bloock.com/hosting/v1/ipfs/{}", hash)),
+                eq(format!("https://api.bloock.com/hosting/v1/ipfs/{hash}")),
                 eq(None),
             )
             .return_once(move |_, _| Ok(payload.to_vec()));

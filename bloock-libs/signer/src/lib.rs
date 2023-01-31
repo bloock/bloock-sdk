@@ -19,8 +19,8 @@ enum Algorithms {
 impl fmt::Display for Algorithms {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Algorithms::Ecdsa => write!(f, "{}", ECDSA_ALG),
-            Algorithms::Ens => write!(f, "{}", ENS_ALG),
+            Algorithms::Ecdsa => write!(f, "{ECDSA_ALG}"),
+            Algorithms::Ens => write!(f, "{ENS_ALG}"),
         }
     }
 }
