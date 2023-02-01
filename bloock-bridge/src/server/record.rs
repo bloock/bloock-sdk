@@ -17,13 +17,13 @@ use crate::{
     entity_mappings::config::map_config,
     error::{config_data_error, BridgeError},
     items::{
-        BloockServer, DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, Error,
-        GenerateEciesKeyPairRequest, GenerateEciesKeyPairResponse, GenerateKeysRequest,
-        GenerateKeysResponse, GenerateRsaKeyPairRequest, GenerateRsaKeyPairResponse, Loader,
-        LoaderArgs, PublishRequest, PublishResponse, Publisher, Record, RecordBuilderResponse,
-        RecordHash, RecordReceipt, RecordServiceHandler, RecordSignatures, SendRecordsRequest,
-        SendRecordsResponse, Signature, SignatureCommonNameRequest, SignatureCommonNameResponse,
-        Signer, SignerAlg,
+        BloockServer, DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg,
+        EncryptionAlgResponse, Error, GenerateEciesKeyPairRequest, GenerateEciesKeyPairResponse,
+        GenerateKeysRequest, GenerateKeysResponse, GenerateRsaKeyPairRequest,
+        GenerateRsaKeyPairResponse, Loader, LoaderArgs, PublishRequest, PublishResponse, Publisher,
+        Record, RecordBuilderResponse, RecordHash, RecordReceipt, RecordServiceHandler,
+        RecordSignatures, SendRecordsRequest, SendRecordsResponse, Signature,
+        SignatureCommonNameRequest, SignatureCommonNameResponse, Signer, SignerAlg,
     },
 };
 
@@ -84,6 +84,12 @@ impl From<GenerateEciesKeyPairResponse> for ResponseType {
 impl From<PublishResponse> for ResponseType {
     fn from(res: PublishResponse) -> Self {
         ResponseType::Publish(res)
+    }
+}
+
+impl From<EncryptionAlgResponse> for ResponseType {
+    fn from(res: EncryptionAlgResponse) -> Self {
+        ResponseType::EncryptionAlgResponse(res)
     }
 }
 
@@ -670,6 +676,38 @@ impl RecordServiceHandler for RecordServer {
 
         PublishResponse::new_success(&client, hash, &req).await
     }
+
+    async fn get_encryption_alg(&self, req: Record) -> EncryptionAlgResponse {
+        let config_data = match map_config(req.clone().config_data) {
+            Ok(config) => config,
+            Err(_) => {
+                return EncryptionAlgResponse {
+                    alg: 0,
+                    error: Some(config_data_error()),
+                }
+            }
+        };
+
+        let client = client::configure(config_data);
+
+        let record: RecordCore = match req.try_into() {
+            Ok(record) => record,
+            Err(e) => {
+                return EncryptionAlgResponse::new_error(&client, e.to_string()).await;
+            }
+        };
+
+        match record.is_encrypted() {
+            true => match record.get_encryption_alg() {
+                Ok(alg) => EncryptionAlgResponse::new_success(&client, alg.into()).await,
+                Err(err) => EncryptionAlgResponse::new_error(&client, err.to_string()).await,
+            },
+            false => {
+                EncryptionAlgResponse::new_error(&client, "Record is not encrypted".to_string())
+                    .await
+            }
+        }
+    }
 }
 
 async fn build_record(
@@ -1142,6 +1180,43 @@ impl SignatureCommonNameResponse {
         client
             .send_event(
                 BloockServer::RecordServiceGetSignatureCommonName.as_str(),
+                error,
+                Some(event_attr),
+            )
+            .await;
+    }
+}
+
+impl EncryptionAlgResponse {
+    async fn new_success(client: &BloockClient, alg: EncryptionAlg) -> EncryptionAlgResponse {
+        Self::send_event(client, None).await;
+
+        EncryptionAlgResponse {
+            alg: alg.into(),
+            error: None,
+        }
+    }
+
+    async fn new_error(client: &BloockClient, err: String) -> EncryptionAlgResponse {
+        Self::send_event(client, Some(&err)).await;
+
+        EncryptionAlgResponse {
+            alg: 0,
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+        }
+    }
+
+    async fn send_event(client: &BloockClient, error: Option<&str>) {
+        let event_attr = json!({});
+
+        let error = error.map(|_| BridgeError::RecordError.to_string());
+
+        client
+            .send_event(
+                BloockServer::RecordServiceGetEncryptionAlg.as_str(),
                 error,
                 Some(event_attr),
             )

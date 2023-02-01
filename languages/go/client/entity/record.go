@@ -11,6 +11,7 @@ import (
 
 type Record struct {
 	Payload []byte
+	hash    string
 }
 
 func NewRecordFromProto(r *proto.Record) Record {
@@ -20,6 +21,7 @@ func NewRecordFromProto(r *proto.Record) Record {
 
 	return Record{
 		Payload: r.Payload,
+		hash:    r.Hash,
 	}
 }
 
@@ -27,6 +29,7 @@ func (r *Record) ToProto() *proto.Record {
 	return &proto.Record{
 		ConfigData: config.NewConfigData(),
 		Payload:    r.Payload,
+		Hash:       r.hash,
 	}
 }
 
@@ -62,6 +65,21 @@ func (r *Record) GetSignatures() ([]Signature, error) {
 		signatures[i] = NewSignatureFromProto(signature)
 	}
 	return signatures, nil
+}
+
+func (r *Record) GetEncryptionAlg() (EncryptionAlg, error) {
+	bridgeClient := bridge.NewBloockBridge()
+	res, err := bridgeClient.Record().GetEncryptionAlg(context.Background(), r.ToProto())
+
+	if err != nil {
+		return UNRECOGNIZED_ENCRYPTION_ALG, err
+	}
+
+	if res.Error != nil {
+		return UNRECOGNIZED_ENCRYPTION_ALG, errors.New(res.Error.Message)
+	}
+
+	return EncryptionAlgFromProto[res.Alg], nil
 }
 
 func (r *Record) Publish(p Publisher) (string, error) {
@@ -133,71 +151,6 @@ func NewRecordHeaderFromProto(r *proto.RecordHeader) RecordHeader {
 func (rh RecordHeader) ToProto() *proto.RecordHeader {
 	return &proto.RecordHeader{
 		Ty: rh.Ty,
-	}
-}
-
-type Signature struct {
-	Signature string
-	Protected string
-	Header    SignatureHeader
-}
-
-func NewSignatureFromProto(s *proto.Signature) Signature {
-	if s == nil {
-		return Signature{}
-	}
-	return Signature{
-		Signature: s.Signature,
-		Protected: s.Protected,
-		Header:    NewSignatureHeaderFromProto(s.Header),
-	}
-}
-
-func (s *Signature) GetCommonName() (string, error) {
-	bridgeClient := bridge.NewBloockBridge()
-	res, err := bridgeClient.Record().GetSignatureCommonName(context.Background(), &proto.SignatureCommonNameRequest{
-		ConfigData: config.NewConfigData(),
-		Signature:  s.ToProto(),
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	if res.Error != nil {
-		return "", errors.New(res.Error.Message)
-	}
-
-	return res.CommonName, nil
-}
-
-func (s Signature) ToProto() *proto.Signature {
-	return &proto.Signature{
-		Signature: s.Signature,
-		Protected: s.Protected,
-		Header:    s.Header.ToProto(),
-	}
-}
-
-type SignatureHeader struct {
-	Alg string
-	Kid string
-}
-
-func NewSignatureHeaderFromProto(s *proto.SignatureHeader) SignatureHeader {
-	if s == nil {
-		return SignatureHeader{}
-	}
-	return SignatureHeader{
-		Alg: s.Alg,
-		Kid: s.Kid,
-	}
-}
-
-func (s SignatureHeader) ToProto() *proto.SignatureHeader {
-	return &proto.SignatureHeader{
-		Alg: s.Alg,
-		Kid: s.Kid,
 	}
 }
 

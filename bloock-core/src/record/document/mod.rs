@@ -2,7 +2,7 @@ use crate::{
     error::{BloockResult, InfrastructureError},
     proof::entity::proof::Proof,
 };
-use bloock_encrypter::EncrypterError;
+use bloock_encrypter::{EncrypterError, EncryptionAlg};
 use bloock_metadata::{FileParser, MetadataParser};
 use bloock_signer::Signature;
 use serde::{Deserialize, Serialize};
@@ -60,10 +60,15 @@ impl Document {
         };
 
         self.signatures = Some(signatures);
+
+        if self.proof.is_some() {
+            self.proof = None;
+        }
+
         Ok(self)
     }
 
-    pub fn set_encryption(&mut self, ciphertext: Vec<u8>) -> BloockResult<()> {
+    pub fn set_encryption(&mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<()> {
         self.update_parser(ciphertext)?;
         self.update_payload()?;
 
@@ -71,7 +76,28 @@ impl Document {
         self.proof = None;
         self.is_encrypted = true;
 
+        self.set_encryption_alg(alg)?;
+
         Ok(())
+    }
+
+    fn set_encryption_alg(&mut self, alg: &str) -> BloockResult<()> {
+        self.parser
+            .set("encryption_alg", &alg)
+            .map_err(|err| InfrastructureError::MetadataError(err).into())
+    }
+
+    pub fn get_encryption_alg(&self) -> BloockResult<EncryptionAlg> {
+        match self.parser.get::<String>("encryption_alg") {
+            Some(alg) => alg
+                .as_str()
+                .try_into()
+                .map_err(|err| InfrastructureError::EncrypterError(err).into()),
+            None => Err(InfrastructureError::EncrypterError(
+                EncrypterError::CouldNotRetrieveAlgorithm(),
+            )
+            .into()),
+        }
     }
 
     pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
@@ -92,6 +118,7 @@ impl Document {
         if self.is_encrypted {
             return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
+
         self.proof = Some(proof);
         Ok(())
     }
@@ -138,10 +165,18 @@ impl Document {
                 .map_err(InfrastructureError::MetadataError)?;
         }
 
-        if let Some(proof) = metadata.proof {
-            parser
+        match metadata.proof {
+            Some(proof) => parser
                 .set("proof", &proof)
-                .map_err(InfrastructureError::MetadataError)?;
+                .map_err(InfrastructureError::MetadataError)?,
+            None => {
+                let proof: Option<Proof> = parser.get("proof");
+                if proof.is_some() {
+                    parser
+                        .del("proof")
+                        .map_err(InfrastructureError::MetadataError)?;
+                }
+            }
         }
 
         if let Some(signatures) = metadata.signatures {
@@ -207,10 +242,12 @@ mod tests {
         let mut document = Document::new(payload).unwrap();
         let expected_payload = document.build().unwrap();
 
-        let original_record = Record::new(document.clone());
+        let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document.set_encryption(ciphertext).unwrap();
+        document
+            .set_encryption(ciphertext, encrypter.get_alg())
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
@@ -221,7 +258,7 @@ mod tests {
         assert_eq!(decrypted_payload, expected_payload);
 
         let decrypted_doc = Document::new(&decrypted_payload).unwrap();
-        let decrypted_record = Record::new(decrypted_doc);
+        let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
     }
@@ -253,10 +290,12 @@ mod tests {
 
         let expected_payload = document.build().unwrap();
 
-        let original_record = Record::new(document.clone());
+        let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document.set_encryption(ciphertext).unwrap();
+        document
+            .set_encryption(ciphertext, encrypter.get_alg())
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
@@ -267,7 +306,7 @@ mod tests {
         assert_eq!(decrypted_payload, expected_payload);
 
         let decrypted_doc = Document::new(&decrypted_payload).unwrap();
-        let decrypted_record = Record::new(decrypted_doc);
+        let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
         assert_eq!(decrypted_record.get_proof().unwrap(), proof);
@@ -306,16 +345,18 @@ mod tests {
             signature: "945efccb10955499e50bd4e1eeadb51aac9136f3e91b8d29c1b817cb42284268500b5f191693a0d927601df5f282804a6eacf5ff8a1522bda5c2ec4dc681750b".to_string(),
         };
 
-        document.set_proof(proof.clone()).unwrap();
+        document.set_proof(proof).unwrap();
 
         document.add_signature(signature.clone()).unwrap();
 
         let expected_payload = document.build().unwrap();
 
-        let original_record = Record::new(document.clone());
+        let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document.set_encryption(ciphertext).unwrap();
+        document
+            .set_encryption(ciphertext, encrypter.get_alg())
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
@@ -326,10 +367,10 @@ mod tests {
         assert_eq!(decrypted_payload, expected_payload);
 
         let decrypted_doc = Document::new(&decrypted_payload).unwrap();
-        let decrypted_record = Record::new(decrypted_doc);
+        let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
-        assert_eq!(decrypted_record.get_proof().unwrap(), proof);
         assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
+        assert!(decrypted_record.get_proof().is_none());
     }
 }

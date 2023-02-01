@@ -1,6 +1,6 @@
 use crate::{
     error::{BridgeError, BridgeResult},
-    items::{Record, RecordReceipt, Signature, SignatureHeader},
+    items::{EncryptionAlg, Record, RecordReceipt, Signature, SignatureHeader},
 };
 use bloock_core::{
     record::{
@@ -12,6 +12,16 @@ use bloock_core::{
     Signature as SignatureCore, SignatureHeader as SignatureHeaderCore,
 };
 use std::convert::TryFrom;
+
+impl From<bloock_encrypter::EncryptionAlg> for EncryptionAlg {
+    fn from(alg: bloock_encrypter::EncryptionAlg) -> Self {
+        match alg {
+            bloock_encrypter::EncryptionAlg::A256gcm => EncryptionAlg::A256gcm,
+            bloock_encrypter::EncryptionAlg::Rsa => EncryptionAlg::Rsa,
+            bloock_encrypter::EncryptionAlg::Ecies => EncryptionAlg::Ecies,
+        }
+    }
+}
 
 impl From<SignatureHeader> for SignatureHeaderCore {
     fn from(s: SignatureHeader) -> Self {
@@ -64,18 +74,26 @@ impl TryFrom<Record> for RecordCore {
     type Error = BridgeError;
     fn try_from(r: Record) -> BridgeResult<RecordCore> {
         let document = Document::new(&r.payload)?;
-        Ok(RecordCore::new(document))
+        if document.is_encrypted() {
+            // when a record is encrypted, we cannot generate the hash,
+            // so we grab the one we generated before encryption
+            RecordCore::new_with_hash(document, &r.hash).map_err(BridgeError::BloockError)
+        } else {
+            RecordCore::new(document).map_err(BridgeError::BloockError)
+        }
     }
 }
 
 impl TryFrom<RecordCore> for Record {
     type Error = BridgeError;
     fn try_from(r: RecordCore) -> BridgeResult<Record> {
+        let hash = r.get_hash();
         let payload = r.serialize()?;
 
         Ok(Record {
             config_data: None,
             payload,
+            hash,
         })
     }
 }

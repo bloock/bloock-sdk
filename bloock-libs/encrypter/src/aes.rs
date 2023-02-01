@@ -13,11 +13,15 @@ use crate::{EncrypterError, Result};
 
 use super::{Decrypter, Encrypter};
 
+pub const AES_ALG: &str = "A256GCM";
+
 const NONCE_LEN: usize = 12; // 96 bits
 const TAG_LEN: usize = 16; // 128 bits
 const KEY_LEN: usize = 32; // 256 bits
 const SALT_LEN: usize = 16;
 
+// it's to control that if the buffer contains an invalid number of iterations it doesn't loop forever
+const MAX_ITERATIONS: u32 = 100000; // has to be >= NUM_ITERATIONS
 const NUM_ITERATIONS: u32 = 100000;
 const ITERATIONS_LEN: usize = size_of::<u32>();
 
@@ -95,6 +99,10 @@ impl Encrypter for AesEncrypter {
 
         Ok(data)
     }
+
+    fn get_alg(&self) -> &str {
+        AES_ALG
+    }
 }
 
 pub struct AesDecrypterArgs {
@@ -137,7 +145,7 @@ impl Decrypter for AesDecrypter {
         iterations.copy_from_slice(iter_slice);
         let n_iterations = u32::from_le_bytes(iterations);
 
-        if n_iterations > NUM_ITERATIONS {
+        if n_iterations > MAX_ITERATIONS {
             return Err(EncrypterError::InvalidPayload());
         }
 

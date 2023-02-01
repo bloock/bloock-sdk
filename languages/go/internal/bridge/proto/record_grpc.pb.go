@@ -33,6 +33,7 @@ type RecordServiceClient interface {
 	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
 	GetSignatureCommonName(ctx context.Context, in *SignatureCommonNameRequest, opts ...grpc.CallOption) (*SignatureCommonNameResponse, error)
 	GetSignatures(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordSignatures, error)
+	GetEncryptionAlg(ctx context.Context, in *Record, opts ...grpc.CallOption) (*EncryptionAlgResponse, error)
 	GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error)
 	GenerateRsaKeyPair(ctx context.Context, in *GenerateRsaKeyPairRequest, opts ...grpc.CallOption) (*GenerateRsaKeyPairResponse, error)
 	GenerateEciesKeyPair(ctx context.Context, in *GenerateEciesKeyPairRequest, opts ...grpc.CallOption) (*GenerateEciesKeyPairResponse, error)
@@ -146,6 +147,15 @@ func (c *recordServiceClient) GetSignatures(ctx context.Context, in *Record, opt
 	return out, nil
 }
 
+func (c *recordServiceClient) GetEncryptionAlg(ctx context.Context, in *Record, opts ...grpc.CallOption) (*EncryptionAlgResponse, error) {
+	out := new(EncryptionAlgResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetEncryptionAlg", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *recordServiceClient) GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error) {
 	out := new(GenerateKeysResponse)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/GenerateKeys", in, out, opts...)
@@ -197,6 +207,7 @@ type RecordServiceServer interface {
 	GetHash(context.Context, *Record) (*RecordHash, error)
 	GetSignatureCommonName(context.Context, *SignatureCommonNameRequest) (*SignatureCommonNameResponse, error)
 	GetSignatures(context.Context, *Record) (*RecordSignatures, error)
+	GetEncryptionAlg(context.Context, *Record) (*EncryptionAlgResponse, error)
 	GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error)
 	GenerateRsaKeyPair(context.Context, *GenerateRsaKeyPairRequest) (*GenerateRsaKeyPairResponse, error)
 	GenerateEciesKeyPair(context.Context, *GenerateEciesKeyPairRequest) (*GenerateEciesKeyPairResponse, error)
@@ -240,6 +251,9 @@ func (UnimplementedRecordServiceServer) GetSignatureCommonName(context.Context, 
 }
 func (UnimplementedRecordServiceServer) GetSignatures(context.Context, *Record) (*RecordSignatures, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSignatures not implemented")
+}
+func (UnimplementedRecordServiceServer) GetEncryptionAlg(context.Context, *Record) (*EncryptionAlgResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEncryptionAlg not implemented")
 }
 func (UnimplementedRecordServiceServer) GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateKeys not implemented")
@@ -464,6 +478,24 @@ func _RecordService_GetSignatures_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecordService_GetEncryptionAlg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Record)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).GetEncryptionAlg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/GetEncryptionAlg",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).GetEncryptionAlg(ctx, req.(*Record))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RecordService_GenerateKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GenerateKeysRequest)
 	if err := dec(in); err != nil {
@@ -586,6 +618,10 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSignatures",
 			Handler:    _RecordService_GetSignatures_Handler,
+		},
+		{
+			MethodName: "GetEncryptionAlg",
+			Handler:    _RecordService_GetEncryptionAlg_Handler,
 		},
 		{
 			MethodName: "GenerateKeys",

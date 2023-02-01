@@ -1,5 +1,8 @@
 use std::convert::TryInto;
 
+use crate::error::BloockResult;
+use crate::proof::ProofError;
+
 use super::anchor::ProofAnchor;
 use bloock_hasher::H256;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
@@ -40,6 +43,14 @@ impl Proof {
     #[allow(dead_code)]
     fn to_string(&self) -> serde_json::Result<String> {
         serde_json::to_string(self)
+    }
+
+    pub fn get_hash(&self) -> BloockResult<H256> {
+        if self.leaves.len() != 1 {
+            Err(ProofError::CannotRetrieveHash().into())
+        } else {
+            Ok(self.leaves[0])
+        }
     }
 }
 

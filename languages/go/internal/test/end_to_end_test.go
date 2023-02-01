@@ -188,6 +188,9 @@ func testAesEncryption(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
+	alg, err := encryptedRecord.GetEncryptionAlg()
+	assert.Equal(t, entity.AES256GCM, alg)
+
 	_, err = builder.NewRecordBuilderFromRecord(encryptedRecord).
 		WithDecrypter(entity.NewAesDecrypter("incorrect_password")).
 		Build()
@@ -218,19 +221,14 @@ func testAesEncryptionHosted(t *testing.T) {
 	result, err := encryptedRecord.Publish(entity.NewHostedPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).
 		WithDecrypter(entity.NewAesDecrypter(password)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -248,19 +246,15 @@ func testAesEncryptionIpfs(t *testing.T) {
 	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).
 		WithDecrypter(entity.NewAesDecrypter(password)).
 		Build()
+	require.NoError(t, err)
 
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -275,6 +269,9 @@ func testRsaEncryption(t *testing.T, sdk client.Client) {
 
 	require.NoError(t, err)
 	assert.NotEqual(t, payload, string(encryptedRecord.Payload))
+
+	alg, err := encryptedRecord.GetEncryptionAlg()
+	assert.Equal(t, entity.RSA, alg)
 
 	record, err := builder.NewRecordBuilderFromRecord(encryptedRecord).
 		WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
@@ -301,19 +298,14 @@ func testRsaEncryptionHosted(t *testing.T, sdk client.Client) {
 	result, err := encryptedRecord.Publish(entity.NewHostedPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).
 		WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -331,19 +323,14 @@ func testRsaEncryptionIpfs(t *testing.T, sdk client.Client) {
 	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).
 		WithDecrypter(entity.NewRsaDecrypter(keypair.PrivateKey)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -358,6 +345,9 @@ func testEciesEncryption(t *testing.T, sdk client.Client) {
 
 	require.NoError(t, err)
 	assert.NotEqual(t, payload, string(encryptedRecord.Payload))
+
+	alg, err := encryptedRecord.GetEncryptionAlg()
+	assert.Equal(t, entity.ECIES, alg)
 
 	record, err := builder.NewRecordBuilderFromRecord(encryptedRecord).
 		WithDecrypter(entity.NewEciesDecrypter(keypair.PrivateKey)).
@@ -384,19 +374,14 @@ func testEciesEncryptionHosted(t *testing.T, sdk client.Client) {
 	result, err := encryptedRecord.Publish(entity.NewHostedPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewHostedLoader(result)).
 		WithDecrypter(entity.NewEciesDecrypter(keypair.PrivateKey)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -414,19 +399,14 @@ func testEciesEncryptionIpfs(t *testing.T, sdk client.Client) {
 	result, err := encryptedRecord.Publish(entity.NewIpfsPublisher())
 	require.NoError(t, err)
 
-	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).Build()
-	require.NoError(t, err)
-
-	assert.Equal(t, encryptedRecord.Retrieve(), loadedRecord.Retrieve())
-
-	decryptedRecord, err := builder.NewRecordBuilderFromRecord(loadedRecord).
+	loadedRecord, err := builder.NewRecordBuilderFromLoader(entity.NewIpfsLoader(result)).
 		WithDecrypter(entity.NewEciesDecrypter(keypair.PrivateKey)).
 		Build()
-
 	require.NoError(t, err)
-	assert.Equal(t, payload, string(decryptedRecord.Retrieve()))
 
-	hash, err := decryptedRecord.GetHash()
+	assert.Equal(t, payload, string(loadedRecord.Retrieve()))
+
+	hash, err := loadedRecord.GetHash()
 	require.NoError(t, err)
 	assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
 }
@@ -455,9 +435,6 @@ func testEcdsaSignature(t *testing.T, sdk client.Client) entity.Record {
 		Build()
 
 	require.NoError(t, err)
-	hash, err := recordWithMultipleSignatures.GetHash()
-	require.NoError(t, err)
-	assert.Equal(t, hash, "79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f")
 
 	signatures, err := recordWithMultipleSignatures.GetSignatures()
 	require.NoError(t, err)
@@ -466,6 +443,8 @@ func testEcdsaSignature(t *testing.T, sdk client.Client) entity.Record {
 	retrievedName, err := signatures[0].GetCommonName()
 	assert.Equal(t, name, retrievedName)
 
+	assert.Equal(t, entity.ECDSA, signatures[0].GetAlg())
+
 	return recordWithMultipleSignatures
 }
 
@@ -473,8 +452,10 @@ func testSetProof(t *testing.T, sdk client.Client) {
 	record, err := builder.NewRecordBuilderFromString("Hello world").Build()
 	require.NoError(t, err)
 
+	expectedHash := "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"
+
 	originalProof := entity.Proof{
-		Leaves: []string{"ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"},
+		Leaves: []string{expectedHash},
 		Nodes:  []string{"ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"},
 		Depth:  "1010101",
 		Bitmap: "0101010",
@@ -492,6 +473,10 @@ func testSetProof(t *testing.T, sdk client.Client) {
 
 	err = record.SetProof(originalProof)
 	require.NoError(t, err)
+
+	hash, err := record.GetHash()
+	require.NoError(t, err)
+	assert.Equal(t, expectedHash, hash)
 
 	finalProof, err := sdk.GetProof([]entity.Record{record})
 	require.NoError(t, err)

@@ -1,3 +1,8 @@
+use std::fmt;
+
+use crate::aes::AES_ALG;
+use crate::ecies::ECIES_ALG;
+use crate::rsa::RSA_ALG;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
@@ -7,8 +12,38 @@ pub mod rsa;
 
 pub type Result<T> = std::result::Result<T, EncrypterError>;
 
+pub enum EncryptionAlg {
+    A256gcm,
+    Rsa,
+    Ecies,
+}
+
+impl TryFrom<&str> for EncryptionAlg {
+    type Error = EncrypterError;
+
+    fn try_from(value: &str) -> Result<Self> {
+        match value {
+            AES_ALG => Ok(Self::A256gcm),
+            RSA_ALG => Ok(Self::Rsa),
+            ECIES_ALG => Ok(Self::Ecies),
+            _ => Err(EncrypterError::InvalidAlgorithm()),
+        }
+    }
+}
+
+impl fmt::Display for EncryptionAlg {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            EncryptionAlg::A256gcm => write!(f, "{AES_ALG}"),
+            EncryptionAlg::Rsa => write!(f, "{RSA_ALG}"),
+            EncryptionAlg::Ecies => write!(f, "{ECIES_ALG}"),
+        }
+    }
+}
+
 pub trait Encrypter {
     fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>>;
+    fn get_alg(&self) -> &str;
 }
 
 pub trait Decrypter {
@@ -41,4 +76,8 @@ pub enum EncrypterError {
     Encrypted(),
     #[error("Error generating RSA key pair: {0}")]
     ErrorGeneratingRsaKeyPair(String),
+    #[error("Invalid algorithm")]
+    InvalidAlgorithm(),
+    #[error("Could not retrieve encryption algorithm")]
+    CouldNotRetrieveAlgorithm(),
 }

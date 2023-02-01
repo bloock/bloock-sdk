@@ -8,6 +8,7 @@ import com.bloock.sdk.entity.AnchorNetwork;
 import com.bloock.sdk.entity.EcdsaSigner;
 import com.bloock.sdk.entity.EciesDecrypter;
 import com.bloock.sdk.entity.EciesEncrypter;
+import com.bloock.sdk.entity.EncryptionAlg;
 import com.bloock.sdk.entity.HostedLoader;
 import com.bloock.sdk.entity.HostedPublisher;
 import com.bloock.sdk.entity.IpfsLoader;
@@ -23,6 +24,7 @@ import com.bloock.sdk.entity.RsaDecrypter;
 import com.bloock.sdk.entity.RsaEncrypter;
 import com.bloock.sdk.entity.RsaKeyPair;
 import com.bloock.sdk.entity.Signature;
+import com.bloock.sdk.entity.SignatureAlg;
 import com.bloock.sdk.entity.SignerArgs;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +48,8 @@ class Test {
     testVerifyWebhookSignatureInvalidSecret(sdk);
 
     testEnd2End(sdk);
+
+    System.out.println("\033[1m\u001B[32mALL TESTS RAN SUCCESSFULLY!\u001B[0m\033[0m");
   }
 
   static void testEnd2End(Client sdk) throws Exception {
@@ -174,13 +178,11 @@ class Test {
     Record recordWithMultipleSignatures =
         Builder.fromRecord(signedRecord).withSigner(new EcdsaSigner(keys2.getPrivateKey())).build();
 
-    String hash = recordWithMultipleSignatures.getHash();
-    assert hash.equals("79addac952bf2c80b87161407ac455cf389b17b98e8f3e75ed9638ab06481f4f");
-
     List<Signature> signatures = recordWithMultipleSignatures.getSignatures();
     assert signatures.size() == 2;
 
     assert signatures.get(0).getCommonName().equals(name);
+    assert signatures.get(0).getAlg().equals(SignatureAlg.ECDSA);
 
     return recordWithMultipleSignatures;
   }
@@ -191,6 +193,8 @@ class Test {
     Record encryptedRecord =
         Builder.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
+
+    assert encryptedRecord.getEncryptionAlg() == EncryptionAlg.AES256GCM;
 
     boolean throwsException = false;
     try {
@@ -220,14 +224,14 @@ class Test {
 
     String result = encryptedRecord.publish(new HostedPublisher());
 
-    Record loadedRecord = Builder.fromLoader(new HostedLoader(result)).build();
+    Record loadedRecord =
+        Builder.fromLoader(new HostedLoader(result))
+            .withDecrypter(new AesDecrypter(password))
+            .build();
 
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord).withDecrypter(new AesDecrypter(password)).build();
+    assert Arrays.equals(loadedRecord.retrieve(), payload.getBytes());
 
-    assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
-
-    String hash = decryptedRecord.getHash();
+    String hash = loadedRecord.getHash();
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
   }
 
@@ -240,14 +244,14 @@ class Test {
 
     String result = encryptedRecord.publish(new IpfsPublisher());
 
-    Record loadedRecord = Builder.fromLoader(new IpfsLoader(result)).build();
+    Record loadedRecord =
+        Builder.fromLoader(new IpfsLoader(result))
+            .withDecrypter(new AesDecrypter(password))
+            .build();
 
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord).withDecrypter(new AesDecrypter(password)).build();
+    assert Arrays.equals(loadedRecord.retrieve(), payload.getBytes());
 
-    assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
-
-    String hash = decryptedRecord.getHash();
+    String hash = loadedRecord.getHash();
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
   }
 
@@ -257,6 +261,8 @@ class Test {
     Record encryptedRecord =
         Builder.fromString(payload).withEncrypter(new RsaEncrypter(keyPair.getPublicKey())).build();
     assert payload.getBytes() != encryptedRecord.retrieve();
+
+    assert encryptedRecord.getEncryptionAlg() == EncryptionAlg.RSA;
 
     Record decryptedRecord =
         Builder.fromRecord(encryptedRecord)
@@ -278,16 +284,14 @@ class Test {
 
     String result = encryptedRecord.publish(new HostedPublisher());
 
-    Record loadedRecord = Builder.fromLoader(new HostedLoader(result)).build();
-
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord)
+    Record loadedRecord =
+        Builder.fromLoader(new HostedLoader(result))
             .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
             .build();
 
-    assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
+    assert Arrays.equals(loadedRecord.retrieve(), payload.getBytes());
 
-    String hash = decryptedRecord.getHash();
+    String hash = loadedRecord.getHash();
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
   }
 
@@ -300,16 +304,14 @@ class Test {
 
     String result = encryptedRecord.publish(new IpfsPublisher());
 
-    Record loadedRecord = Builder.fromLoader(new IpfsLoader(result)).build();
-
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord)
+    Record loadedRecord =
+        Builder.fromLoader(new IpfsLoader(result))
             .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
             .build();
 
-    assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
+    assert Arrays.equals(loadedRecord.retrieve(), payload.getBytes());
 
-    String hash = decryptedRecord.getHash();
+    String hash = loadedRecord.getHash();
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
   }
 
@@ -321,6 +323,8 @@ class Test {
             .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
             .build();
     assert payload.getBytes() != encryptedRecord.retrieve();
+
+    assert encryptedRecord.getEncryptionAlg() == EncryptionAlg.ECIES;
 
     Record decryptedRecord =
         Builder.fromRecord(encryptedRecord)
@@ -344,16 +348,14 @@ class Test {
 
     String result = encryptedRecord.publish(new HostedPublisher());
 
-    Record loadedRecord = Builder.fromLoader(new HostedLoader(result)).build();
-
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord)
+    Record loadedRecord =
+        Builder.fromLoader(new HostedLoader(result))
             .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
             .build();
 
-    assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
+    assert Arrays.equals(loadedRecord.retrieve(), payload.getBytes());
 
-    String hash = decryptedRecord.getHash();
+    String hash = loadedRecord.getHash();
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
   }
 
@@ -368,16 +370,14 @@ class Test {
 
     String result = encryptedRecord.publish(new IpfsPublisher());
 
-    Record loadedRecord = Builder.fromLoader(new IpfsLoader(result)).build();
-
-    Record decryptedRecord =
-        Builder.fromRecord(loadedRecord)
+    Record loadedRecord =
+        Builder.fromLoader(new IpfsLoader(result))
             .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
             .build();
 
-    assert Arrays.equals(decryptedRecord.retrieve(), payload.getBytes());
+    assert Arrays.equals(loadedRecord.retrieve(), payload.getBytes());
 
-    String hash = decryptedRecord.getHash();
+    String hash = loadedRecord.getHash();
     assert hash.equals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
   }
 

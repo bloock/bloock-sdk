@@ -167,6 +167,11 @@ impl Server {
                 .verify_webhook_signature(self.serialize_request(payload)?)
                 .await
                 .into()),
+            BloockServer::RecordServiceGetEncryptionAlg => Ok(self
+                .record
+                .get_encryption_alg(self.serialize_request(payload)?)
+                .await
+                .into()),
             _ => Err(BridgeError::ServiceNotFound),
         }
     }

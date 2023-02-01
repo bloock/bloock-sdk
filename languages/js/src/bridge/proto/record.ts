@@ -206,6 +206,11 @@ export interface RecordSignatures {
   error?: Error | undefined;
 }
 
+export interface EncryptionAlgResponse {
+  alg: EncryptionAlg;
+  error?: Error | undefined;
+}
+
 export interface RecordHeader {
   ty: string;
 }
@@ -213,6 +218,7 @@ export interface RecordHeader {
 export interface Record {
   configData?: ConfigData | undefined;
   payload: Uint8Array;
+  hash: string;
 }
 
 export interface Signer {
@@ -841,6 +847,64 @@ export const RecordSignatures = {
   },
 };
 
+function createBaseEncryptionAlgResponse(): EncryptionAlgResponse {
+  return { alg: 0, error: undefined };
+}
+
+export const EncryptionAlgResponse = {
+  encode(message: EncryptionAlgResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.alg !== 0) {
+      writer.uint32(8).int32(message.alg);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): EncryptionAlgResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseEncryptionAlgResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.alg = reader.int32() as any;
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): EncryptionAlgResponse {
+    return {
+      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : 0,
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: EncryptionAlgResponse): unknown {
+    const obj: any = {};
+    message.alg !== undefined && (obj.alg = encryptionAlgToJSON(message.alg));
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<EncryptionAlgResponse>, I>>(object: I): EncryptionAlgResponse {
+    const message = createBaseEncryptionAlgResponse();
+    message.alg = object.alg ?? 0;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
 function createBaseRecordHeader(): RecordHeader {
   return { ty: "" };
 }
@@ -889,7 +953,7 @@ export const RecordHeader = {
 };
 
 function createBaseRecord(): Record {
-  return { configData: undefined, payload: new Uint8Array() };
+  return { configData: undefined, payload: new Uint8Array(), hash: "" };
 }
 
 export const Record = {
@@ -899,6 +963,9 @@ export const Record = {
     }
     if (message.payload.length !== 0) {
       writer.uint32(18).bytes(message.payload);
+    }
+    if (message.hash !== "") {
+      writer.uint32(26).string(message.hash);
     }
     return writer;
   },
@@ -916,6 +983,9 @@ export const Record = {
         case 2:
           message.payload = reader.bytes();
           break;
+        case 3:
+          message.hash = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -928,6 +998,7 @@ export const Record = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      hash: isSet(object.hash) ? String(object.hash) : "",
     };
   },
 
@@ -937,6 +1008,7 @@ export const Record = {
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.payload !== undefined &&
       (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
+    message.hash !== undefined && (obj.hash = message.hash);
     return obj;
   },
 
@@ -946,6 +1018,7 @@ export const Record = {
       ? ConfigData.fromPartial(object.configData)
       : undefined;
     message.payload = object.payload ?? new Uint8Array();
+    message.hash = object.hash ?? "";
     return message;
   },
 };
@@ -2840,6 +2913,7 @@ export interface RecordService {
   GetHash(request: Record): Promise<RecordHash>;
   GetSignatureCommonName(request: SignatureCommonNameRequest): Promise<SignatureCommonNameResponse>;
   GetSignatures(request: Record): Promise<RecordSignatures>;
+  GetEncryptionAlg(request: Record): Promise<EncryptionAlgResponse>;
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse>;
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse>;
   GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse>;
@@ -2863,6 +2937,7 @@ export class RecordServiceClientImpl implements RecordService {
     this.GetHash = this.GetHash.bind(this);
     this.GetSignatureCommonName = this.GetSignatureCommonName.bind(this);
     this.GetSignatures = this.GetSignatures.bind(this);
+    this.GetEncryptionAlg = this.GetEncryptionAlg.bind(this);
     this.GenerateKeys = this.GenerateKeys.bind(this);
     this.GenerateRsaKeyPair = this.GenerateRsaKeyPair.bind(this);
     this.GenerateEciesKeyPair = this.GenerateEciesKeyPair.bind(this);
@@ -2932,6 +3007,12 @@ export class RecordServiceClientImpl implements RecordService {
     const data = Record.encode(request).finish();
     const promise = this.rpc.request(this.service, "GetSignatures", data);
     return promise.then((data) => RecordSignatures.decode(new _m0.Reader(data)));
+  }
+
+  GetEncryptionAlg(request: Record): Promise<EncryptionAlgResponse> {
+    const data = Record.encode(request).finish();
+    const promise = this.rpc.request(this.service, "GetEncryptionAlg", data);
+    return promise.then((data) => EncryptionAlgResponse.decode(new _m0.Reader(data)));
   }
 
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse> {
@@ -3049,6 +3130,14 @@ export const RecordServiceDefinition = {
       requestType: Record,
       requestStream: false,
       responseType: RecordSignatures,
+      responseStream: false,
+      options: {},
+    },
+    getEncryptionAlg: {
+      name: "GetEncryptionAlg",
+      requestType: Record,
+      requestStream: false,
+      responseType: EncryptionAlgResponse,
       responseStream: false,
       options: {},
     },
