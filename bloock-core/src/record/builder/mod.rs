@@ -123,6 +123,7 @@ mod tests {
         proof::entity::{anchor::ProofAnchor, proof::Proof},
     };
     use bloock_encrypter::aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs};
+    use bloock_hasher::{keccak::Keccak256, Hasher};
     use bloock_signer::{
         ecdsa::{EcdsaSigner, EcdsaSignerArgs, ECDSA_ALG},
         ens::{EnsSigner, EnsSignerArgs, ENS_ALG},
@@ -384,7 +385,7 @@ mod tests {
                 },
                 protected: "e30".to_string(),
                 signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e61141600".to_string(),
-                message_hash: unencrypted_record.get_hash(),
+                message_hash: hex::encode(Keccak256::generate_hash(unencrypted_record.get_payload().unwrap())),
             }
         ];
 
@@ -573,9 +574,9 @@ mod hash_tests {
     const PAYLOAD: &str = "hello world";
     const HASH_PAYLOAD: &str = "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad";
     const HASH_SIGNED_PAYLOAD: &str =
-        "7c9776c8f87b207dd9f83cca10e3d856f1fef63488d38366ef88283a1e0c38b6";
+        "35af08da6fbcd93a3ec5a85d44333de4b062c2ba88d9077fff174b7793abaa63";
     const HASH_DOUBLY_SIGNED_PAYLOAD: &str =
-        "a1f550ad1cd0de4fd5fad5d1cbe2d04b533cf373ade5fb563fbbcd0ae94e6f1f";
+        "5f9064051ec1994a53119ccbeb6ad1a2c04754a8a9faf8b0d951b931376b9332";
 
     const PRIVATE_KEY: &str = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
     const PRIVATE_KEY2: &str = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
@@ -630,7 +631,10 @@ mod hash_tests {
     fn build_plain_record_with_signer() {
         let record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -647,7 +651,10 @@ mod hash_tests {
     fn build_plain_record_with_signer_and_encrypter() {
         let record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
             .build()
             .unwrap();
@@ -726,7 +733,10 @@ mod hash_tests {
         let final_record = RecordBuilder::from_record(encrypted_record)
             .unwrap()
             .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -750,7 +760,10 @@ mod hash_tests {
         let final_record = RecordBuilder::from_record(encrypted_record)
             .unwrap()
             .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -764,7 +777,10 @@ mod hash_tests {
     fn build_from_signed_record() {
         let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -780,7 +796,10 @@ mod hash_tests {
     fn build_from_signed_record_and_encrypt() {
         let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -799,13 +818,19 @@ mod hash_tests {
     fn build_from_signed_record_and_sign() {
         let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
         let final_record = RecordBuilder::from_record(signed_record)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY2, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY2,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -816,13 +841,19 @@ mod hash_tests {
     fn build_from_signed_record_and_sign_and_encrypt() {
         let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
         let final_record = RecordBuilder::from_record(signed_record)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY2, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY2,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
             .build()
             .unwrap();
@@ -839,7 +870,10 @@ mod hash_tests {
         let record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -861,7 +895,10 @@ mod hash_tests {
         let record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -885,7 +922,10 @@ mod hash_tests {
 
         let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -893,7 +933,10 @@ mod hash_tests {
         let final_record = RecordBuilder::from_record(signed_record)
             .unwrap()
             .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new("password", &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY2, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY2,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -908,7 +951,10 @@ mod hash_tests {
 
         let signed_record = RecordBuilder::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -916,7 +962,10 @@ mod hash_tests {
         let final_record = RecordBuilder::from_record(signed_record)
             .unwrap()
             .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new("password", &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY2, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY2,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -973,7 +1022,10 @@ mod hash_tests {
 
         let final_record = RecordBuilder::from_record(record)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -995,7 +1047,10 @@ mod hash_tests {
 
         let final_record = RecordBuilder::from_record(record)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
             .build()
             .unwrap();
@@ -1088,7 +1143,10 @@ mod hash_tests {
         let final_record = RecordBuilder::from_record(record)
             .unwrap()
             .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1118,7 +1176,10 @@ mod hash_tests {
         let final_record = RecordBuilder::from_record(record)
             .unwrap()
             .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();
@@ -1130,7 +1191,10 @@ mod hash_tests {
     fn build_from_record_with_proof_and_signature() {
         let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1151,7 +1215,10 @@ mod hash_tests {
     fn build_from_record_with_proof_and_signature_and_encrypt() {
         let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1176,7 +1243,10 @@ mod hash_tests {
     fn build_from_record_with_proof_and_signature_and_sign() {
         let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1188,7 +1258,10 @@ mod hash_tests {
 
         let final_record = RecordBuilder::from_record(record)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY2, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY2,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1201,7 +1274,10 @@ mod hash_tests {
     fn build_from_record_with_proof_and_signature_and_sign_and_encrypt() {
         let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1213,7 +1289,10 @@ mod hash_tests {
 
         let final_record = RecordBuilder::from_record(record)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY2, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY2,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
             .build()
             .unwrap();
@@ -1229,7 +1308,10 @@ mod hash_tests {
 
         let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1260,7 +1342,10 @@ mod hash_tests {
 
         let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1294,7 +1379,10 @@ mod hash_tests {
 
         let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1313,7 +1401,10 @@ mod hash_tests {
         let final_record = RecordBuilder::from_record(record)
             .unwrap()
             .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY2, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY2,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1326,7 +1417,10 @@ mod hash_tests {
 
         let mut record = RecordBuilder::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY,
+                None,
+            )))
             .build()
             .unwrap();
 
@@ -1345,7 +1439,10 @@ mod hash_tests {
         let final_record = RecordBuilder::from_record(record)
             .unwrap()
             .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new(EcdsaSignerArgs::new(PRIVATE_KEY2, None)))
+            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
+                PRIVATE_KEY2,
+                None,
+            )))
             .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
             .build()
             .unwrap();

@@ -23,7 +23,7 @@ pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<V
 
     if signature_bytes.len() != 65 {
         return Err(SignerError::InvalidSignature(
-            "Invalid signature lenght".to_string(),
+            "Invalid signature length".to_string(),
         ));
     }
 

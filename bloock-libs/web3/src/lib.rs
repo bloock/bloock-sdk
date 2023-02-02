@@ -4,7 +4,6 @@ pub mod blockchain;
 mod request;
 mod response;
 mod transport;
-mod types;
 
 pub type Result<T> = std::result::Result<T, BlockchainError>;
 

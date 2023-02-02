@@ -52,11 +52,11 @@ pub struct Signature {
 }
 
 impl Signature {
-    pub async fn get_common_name(&self) -> Result<String> {
+    pub async fn get_common_name(&self, ens_provider: String) -> Result<String> {
         let alg = Algorithms::try_from(self.header.alg.as_str())?;
         match alg {
             Algorithms::Ecdsa => ecdsa::get_common_name(self),
-            Algorithms::Ens => ens::get_common_name(self).await,
+            Algorithms::Ens => ens::get_common_name(self, ens_provider).await,
         }
     }
 

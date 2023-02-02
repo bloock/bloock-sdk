@@ -1,5 +1,4 @@
 use bloock_hasher::{keccak::Keccak256, Hasher, H256};
-use ethers::{providers::Middleware, types::Address};
 use libsecp256k1::{PublicKey, PublicKeyFormat};
 
 use crate::{
@@ -12,24 +11,28 @@ use std::str;
 
 pub const ENS_ALG: &str = "ENS";
 
-pub async fn get_common_name(signature: &Signature) -> Result<String> {
-    let provider = ethers::providers::MAINNET.provider();
+pub async fn get_common_name(signature: &Signature, provider: String) -> Result<String> {
     let hash = bloock_hasher::from_hex(&signature.message_hash)
         .map_err(|err| SignerError::SignerError(err.to_string()))?;
 
     let public_key = signature.recover_public_key(hash)?;
     let address = derive_eth_address(public_key)?;
-    provider
-        .lookup_address(address)
-        .await
-        .map_err(|_| SignerError::EthDomainNotFound())
+
+    let web3 = bloock_web3::blockchain::Blockchain {};
+    web3.reverse_ens(
+        provider,
+        address,
+        option_env!("API_KEY").unwrap().to_string(),
+    )
+    .await
+    .map_err(|_| SignerError::EthDomainNotFound())
 }
 
 pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<Vec<u8>> {
     ecdsa::recover_public_key(signature, message_hash)
 }
 
-fn derive_eth_address(mut public_key: Vec<u8>) -> Result<Address> {
+fn derive_eth_address(mut public_key: Vec<u8>) -> Result<String> {
     if public_key.len() != 64 {
         // the key is probably compressed, so we try to decompress it
         public_key = PublicKey::parse_slice(&public_key, Some(PublicKeyFormat::Compressed))
@@ -37,8 +40,8 @@ fn derive_eth_address(mut public_key: Vec<u8>) -> Result<Address> {
             .serialize()[1..]
             .to_vec();
     }
-    let address = Address::from_slice(&Keccak256::generate_hash(&public_key)[12..]);
-    Ok(address)
+
+    Ok(hex::encode(&Keccak256::generate_hash(&public_key)[12..]))
 }
 
 #[derive(Clone)]
@@ -121,6 +124,7 @@ mod tests {
     }
 
     async fn get_common_name_ens_ok() {
+        let provider = "https://ethereum.bloock.com".to_string();
         let signature = Signature {
             header: crate::SignatureHeader {
                 alg: Algorithms::Ens.to_string(),
@@ -131,7 +135,7 @@ mod tests {
             message_hash: "7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6".to_string(),
         };
 
-        let name = get_common_name(&signature).await.unwrap();
+        let name = get_common_name(&signature, provider).await.unwrap();
         assert_eq!(name, "vitalik.eth")
     }
 
@@ -139,10 +143,7 @@ mod tests {
     fn derive_eth_address_ok() {
         let public_key = hex::decode("e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea6860992aac5e614a83f1ebe4019300373591268da38871df019f694f8e3190e493e711").unwrap();
         let address = derive_eth_address(public_key).unwrap();
-        assert_eq!(
-            hex::encode(address),
-            "d8da6bf26964af9d7eed9e03e53415d37aa96045"
-        );
+        assert_eq!(address, "d8da6bf26964af9d7eed9e03e53415d37aa96045");
     }
 
     #[test]
@@ -151,10 +152,7 @@ mod tests {
             hex::decode("03e95ba0b752d75197a8bad8d2e6ed4b9eb60a1e8b08d257927d0df4f3ea686099")
                 .unwrap();
         let address = derive_eth_address(public_key).unwrap();
-        assert_eq!(
-            hex::encode(address),
-            "d8da6bf26964af9d7eed9e03e53415d37aa96045"
-        );
+        assert_eq!(address, "d8da6bf26964af9d7eed9e03e53415d37aa96045");
     }
 
     #[test]

@@ -3,6 +3,7 @@ use std::{convert::TryInto, sync::Arc};
 use async_trait::async_trait;
 use bloock_core::{
     client::{self, BloockClient},
+    config::entity::network::Network,
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
     AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
@@ -92,7 +93,7 @@ impl From<EncryptionAlgResponse> for ResponseType {
     fn from(res: EncryptionAlgResponse) -> Self {
         ResponseType::EncryptionAlgResponse(res)
     }
-}s
+}
 
 macro_rules! record_builder_unwrap {
     ($input:expr, $client:ident, $req_name:ident, $err_message:expr) => {
@@ -498,7 +499,7 @@ impl RecordServiceHandler for RecordServer {
             }
         };
 
-        let client = client::configure(config_data);
+        let client = client::configure(config_data.clone());
 
         let signature: SignatureCore = match req.signature {
             Some(signature) => match signature.try_into() {
@@ -516,7 +517,12 @@ impl RecordServiceHandler for RecordServer {
             }
         };
 
-        let common_name = match signature.get_common_name().await {
+        let provider = match config_data.networks_config.get(&Network::EthereumMainnet) {
+            Some(n) => n.http_provider.clone(),
+            None => "".to_string(),
+        };
+
+        let common_name = match signature.get_common_name(provider).await {
             Ok(name) => name,
             Err(err) => {
                 return SignatureCommonNameResponse::new_error(&client, err.to_string()).await
