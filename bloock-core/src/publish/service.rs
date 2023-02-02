@@ -108,7 +108,7 @@ mod tests {
 
         let record = Record::new(Document::new(&payload).unwrap());
 
-        let result = service.publish_hosted(record).await.unwrap();
+        let result = service.publish_hosted(record.unwrap()).await.unwrap();
 
         assert_eq!(
             &result, "c5a2180e2f97506550f1bba5d863bc6ed05ad8b51daf6fca1ac7d396ef3183c5",
@@ -164,7 +164,7 @@ mod tests {
 
         let record = Record::new(Document::new(&payload).unwrap());
 
-        let result = service.publish_ipfs(record).await.unwrap();
+        let result = service.publish_ipfs(record.unwrap()).await.unwrap();
 
         assert_eq!(
             &result, "c5a2180e2f97506550f1bba5d863bc6ed05ad8b51daf6fca1ac7d396ef3183c5",

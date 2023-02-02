@@ -212,6 +212,11 @@ export interface RecordSignatures {
   error?: Error | undefined;
 }
 
+export interface EncryptionAlgResponse {
+  alg: EncryptionAlg;
+  error?: Error | undefined;
+}
+
 export interface RecordHeader {
   ty: string;
 }
@@ -219,6 +224,7 @@ export interface RecordHeader {
 export interface Record {
   configData?: ConfigData | undefined;
   payload: Uint8Array;
+  hash: string;
 }
 
 export interface Signer {
@@ -849,6 +855,64 @@ export const RecordSignatures = {
   },
 };
 
+function createBaseEncryptionAlgResponse(): EncryptionAlgResponse {
+  return { alg: 0, error: undefined };
+}
+
+export const EncryptionAlgResponse = {
+  encode(message: EncryptionAlgResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.alg !== 0) {
+      writer.uint32(8).int32(message.alg);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): EncryptionAlgResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseEncryptionAlgResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.alg = reader.int32() as any;
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): EncryptionAlgResponse {
+    return {
+      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : 0,
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: EncryptionAlgResponse): unknown {
+    const obj: any = {};
+    message.alg !== undefined && (obj.alg = encryptionAlgToJSON(message.alg));
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<EncryptionAlgResponse>, I>>(object: I): EncryptionAlgResponse {
+    const message = createBaseEncryptionAlgResponse();
+    message.alg = object.alg ?? 0;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
 function createBaseRecordHeader(): RecordHeader {
   return { ty: "" };
 }
@@ -897,7 +961,7 @@ export const RecordHeader = {
 };
 
 function createBaseRecord(): Record {
-  return { configData: undefined, payload: new Uint8Array() };
+  return { configData: undefined, payload: new Uint8Array(), hash: "" };
 }
 
 export const Record = {
@@ -907,6 +971,9 @@ export const Record = {
     }
     if (message.payload.length !== 0) {
       writer.uint32(18).bytes(message.payload);
+    }
+    if (message.hash !== "") {
+      writer.uint32(26).string(message.hash);
     }
     return writer;
   },
@@ -924,6 +991,9 @@ export const Record = {
         case 2:
           message.payload = reader.bytes();
           break;
+        case 3:
+          message.hash = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -936,6 +1006,7 @@ export const Record = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      hash: isSet(object.hash) ? String(object.hash) : "",
     };
   },
 
@@ -945,6 +1016,7 @@ export const Record = {
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.payload !== undefined &&
       (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
+    message.hash !== undefined && (obj.hash = message.hash);
     return obj;
   },
 
@@ -954,6 +1026,7 @@ export const Record = {
       ? ConfigData.fromPartial(object.configData)
       : undefined;
     message.payload = object.payload ?? new Uint8Array();
+    message.hash = object.hash ?? "";
     return message;
   },
 };
@@ -2866,6 +2939,7 @@ export interface RecordService {
   GetHash(request: Record): Promise<RecordHash>;
   GetSignatureCommonName(request: SignatureCommonNameRequest): Promise<SignatureCommonNameResponse>;
   GetSignatures(request: Record): Promise<RecordSignatures>;
+  GetEncryptionAlg(request: Record): Promise<EncryptionAlgResponse>;
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse>;
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse>;
   GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse>;
@@ -2874,9 +2948,7 @@ export interface RecordService {
 
 export class RecordServiceClientImpl implements RecordService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "bloock.RecordService";
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.SendRecords = this.SendRecords.bind(this);
     this.BuildRecordFromString = this.BuildRecordFromString.bind(this);
@@ -2889,6 +2961,7 @@ export class RecordServiceClientImpl implements RecordService {
     this.GetHash = this.GetHash.bind(this);
     this.GetSignatureCommonName = this.GetSignatureCommonName.bind(this);
     this.GetSignatures = this.GetSignatures.bind(this);
+    this.GetEncryptionAlg = this.GetEncryptionAlg.bind(this);
     this.GenerateKeys = this.GenerateKeys.bind(this);
     this.GenerateRsaKeyPair = this.GenerateRsaKeyPair.bind(this);
     this.GenerateEciesKeyPair = this.GenerateEciesKeyPair.bind(this);
@@ -2896,91 +2969,97 @@ export class RecordServiceClientImpl implements RecordService {
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
     const data = SendRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SendRecords", data);
+    const promise = this.rpc.request("bloock.RecordService", "SendRecords", data);
     return promise.then((data) => SendRecordsResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromStringRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromString", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromString", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromHex(request: RecordBuilderFromHexRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromHexRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromHex", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromHex", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromJson(request: RecordBuilderFromJSONRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromJSONRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromJson", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromJson", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromFile(request: RecordBuilderFromFileRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromFileRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromFile", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromFile", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromBytesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromBytes", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromBytes", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromRecordRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromRecord", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromRecord", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromLoaderRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromLoader", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromLoader", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   GetHash(request: Record): Promise<RecordHash> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetHash", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetHash", data);
     return promise.then((data) => RecordHash.decode(new _m0.Reader(data)));
   }
 
   GetSignatureCommonName(request: SignatureCommonNameRequest): Promise<SignatureCommonNameResponse> {
     const data = SignatureCommonNameRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetSignatureCommonName", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetSignatureCommonName", data);
     return promise.then((data) => SignatureCommonNameResponse.decode(new _m0.Reader(data)));
   }
 
   GetSignatures(request: Record): Promise<RecordSignatures> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetSignatures", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetSignatures", data);
     return promise.then((data) => RecordSignatures.decode(new _m0.Reader(data)));
+  }
+
+  GetEncryptionAlg(request: Record): Promise<EncryptionAlgResponse> {
+    const data = Record.encode(request).finish();
+    const promise = this.rpc.request("bloock.RecordService", "GetEncryptionAlg", data);
+    return promise.then((data) => EncryptionAlgResponse.decode(new _m0.Reader(data)));
   }
 
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse> {
     const data = GenerateKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateKeys", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateKeys", data);
     return promise.then((data) => GenerateKeysResponse.decode(new _m0.Reader(data)));
   }
 
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse> {
     const data = GenerateRsaKeyPairRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateRsaKeyPair", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateRsaKeyPair", data);
     return promise.then((data) => GenerateRsaKeyPairResponse.decode(new _m0.Reader(data)));
   }
 
   GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse> {
     const data = GenerateEciesKeyPairRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateEciesKeyPair", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateEciesKeyPair", data);
     return promise.then((data) => GenerateEciesKeyPairResponse.decode(new _m0.Reader(data)));
   }
 
   Publish(request: PublishRequest): Promise<PublishResponse> {
     const data = PublishRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "Publish", data);
+    const promise = this.rpc.request("bloock.RecordService", "Publish", data);
     return promise.then((data) => PublishResponse.decode(new _m0.Reader(data)));
   }
 }
@@ -3075,6 +3154,14 @@ export const RecordServiceDefinition = {
       requestType: Record,
       requestStream: false,
       responseType: RecordSignatures,
+      responseStream: false,
+      options: {},
+    },
+    getEncryptionAlg: {
+      name: "GetEncryptionAlg",
+      requestType: Record,
+      requestStream: false,
+      responseType: EncryptionAlgResponse,
       responseStream: false,
       options: {},
     },

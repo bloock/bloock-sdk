@@ -4,9 +4,11 @@ from bloock._bridge import bridge
 import bloock._bridge.proto.record_pb2 as proto
 from bloock._bridge.proto.proof_pb2 import SetProofRequest
 from bloock._bridge.proto.shared_pb2 import Error
+from bloock.client.entity.encryption_alg import EncryptionAlg
 from bloock.client.entity.proof import Proof
 from bloock.client.entity.publisher import Publisher
 from bloock._config.config import Config
+from bloock.client.entity.signature import Signature
 
 
 class RecordHeader:
@@ -21,72 +23,18 @@ class RecordHeader:
         return proto.RecordHeader(ty=self.ty)
 
 
-class Signature:
-    def __init__(
-        self, signature: str, protected: str, header: SignatureHeader, message_hash: str
-    ) -> None:
-        self.signature = signature
-        self.protected = protected
-        self.header = header
-        self.message_hash = message_hash
-
-    @staticmethod
-    def from_proto(signature: proto.Signature) -> Signature:
-        return Signature(
-            signature=signature.signature,
-            protected=signature.protected,
-            header=SignatureHeader.from_proto(signature.header),
-            message_hash=signature.message_hash,
-        )
-
-    def to_proto(self) -> proto.Signature:
-        return proto.Signature(
-            signature=self.signature,
-            protected=self.protected,
-            header=self.header.to_proto(),
-            message_hash=self.message_hash,
-        )
-
-    def get_common_name(self) -> str:
-        client = bridge.BloockBridge()
-        res = client.record().GetSignatureCommonName(
-            proto.SignatureCommonNameRequest(
-                config_data=Config.new(), signature=self.to_proto()
-            )
-        )
-        if res.error != Error():
-            raise Exception(res.error.message)
-        return res.common_name
-
-
-class SignatureHeader:
-    def __init__(self, alg: str, kid: str) -> None:
-        self.alg = alg
-        self.kid = kid
-
-    @staticmethod
-    def from_proto(header: proto.SignatureHeader) -> SignatureHeader:
-        return SignatureHeader(alg=header.alg, kid=header.kid)
-
-    def to_proto(self) -> proto.SignatureHeader:
-        return proto.SignatureHeader(alg=self.alg, kid=self.kid)
-
-
 class Record:
-    def __init__(
-        self,
-        payload: bytes,
-    ) -> None:
+    def __init__(self, payload: bytes, hash: str) -> None:
         self.payload = payload
+        self.hash = hash
 
     @staticmethod
     def from_proto(record: proto.Record) -> Record:
-        return Record(payload=record.payload)
+        return Record(payload=record.payload, hash=record.hash)
 
     def to_proto(self) -> proto.Record:
         return proto.Record(
-            config_data=Config.new(),
-            payload=self.payload,
+            config_data=Config.new(), payload=self.payload, hash=self.hash
         )
 
     def get_hash(self) -> str:
@@ -102,6 +50,13 @@ class Record:
         if res.error != Error():
             raise Exception(res.error.message)
         return list(map(lambda x: Signature.from_proto(x), res.signatures))
+
+    def get_encryption_alg(self) -> EncryptionAlg:
+        client = bridge.BloockBridge()
+        res = client.record().GetEncryptionAlg(self.to_proto())
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return EncryptionAlg.from_proto(res.alg)
 
     def publish(self, publisher: Publisher) -> str:
         client = bridge.BloockBridge()

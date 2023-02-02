@@ -173,15 +173,13 @@ export interface WebhookService {
 
 export class WebhookServiceClientImpl implements WebhookService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "bloock.WebhookService";
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.VerifyWebhookSignature = this.VerifyWebhookSignature.bind(this);
   }
   VerifyWebhookSignature(request: VerifyWebhookSignatureRequest): Promise<VerifyWebhookSignatureResponse> {
     const data = VerifyWebhookSignatureRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "VerifyWebhookSignature", data);
+    const promise = this.rpc.request("bloock.WebhookService", "VerifyWebhookSignature", data);
     return promise.then((data) => VerifyWebhookSignatureResponse.decode(new _m0.Reader(data)));
   }
 }

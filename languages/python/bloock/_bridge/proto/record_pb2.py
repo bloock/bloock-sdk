@@ -6,7 +6,6 @@ from google.protobuf.internal import builder as _builder
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database
-
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -16,98 +15,98 @@ from . import shared_pb2 as shared__pb2
 from . import config_pb2 as config__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x0crecord.proto\x12\x06\x62loock\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto">\n\x13GenerateKeysRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData"j\n\x14GenerateKeysResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"D\n\x19GenerateRsaKeyPairRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData"p\n\x1aGenerateRsaKeyPairResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"F\n\x1bGenerateEciesKeyPairRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData"r\n\x1cGenerateEciesKeyPairResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"G\n\nRecordHash\x12\x0c\n\x04hash\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"f\n\x10RecordSignatures\x12%\n\nsignatures\x18\x01 \x03(\x0b\x32\x11.bloock.Signature\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"\x1a\n\x0cRecordHeader\x12\n\n\x02ty\x18\x01 \x01(\t"W\n\x06Record\x12,\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigDataH\x00\x88\x01\x01\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x42\x0e\n\x0c_config_data"J\n\x06Signer\x12\x1e\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x11.bloock.SignerAlg\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.SignerArgs"`\n\nSignerArgs\x12\x18\n\x0bprivate_key\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x18\n\x0b\x63ommon_name\x18\x02 \x01(\tH\x01\x88\x01\x01\x42\x0e\n\x0c_private_keyB\x0e\n\x0c_common_name"T\n\tEncrypter\x12"\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlg\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.EncrypterArgs"\x1c\n\rEncrypterArgs\x12\x0b\n\x03key\x18\x01 \x01(\t"T\n\tDecrypter\x12"\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlg\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.DecrypterArgs"\x1c\n\rDecrypterArgs\x12\x0b\n\x03key\x18\x01 \x01(\t"p\n\tSignature\x12\x11\n\tsignature\x18\x01 \x01(\t\x12\x11\n\tprotected\x18\x02 \x01(\t\x12\'\n\x06header\x18\x03 \x01(\x0b\x32\x17.bloock.SignatureHeader\x12\x14\n\x0cmessage_hash\x18\x04 \x01(\t"+\n\x0fSignatureHeader\x12\x0b\n\x03\x61lg\x18\x01 \x01(\t\x12\x0b\n\x03kid\x18\x02 \x01(\t"O\n\rRecordReceipt\x12\x0e\n\x06\x61nchor\x18\x01 \x01(\x03\x12\x0e\n\x06\x63lient\x18\x02 \x01(\t\x12\x0e\n\x06record\x18\x03 \x01(\t\x12\x0e\n\x06status\x18\x04 \x01(\t"\xfc\x01\n\x1eRecordBuilderFromStringRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\t\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter"\xf9\x01\n\x1bRecordBuilderFromHexRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\t\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter"\xfa\x01\n\x1cRecordBuilderFromJSONRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\t\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter"\xfb\x01\n\x1dRecordBuilderFromBytesRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter"\xfa\x01\n\x1cRecordBuilderFromFileRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter"\x8c\x02\n\x1eRecordBuilderFromRecordRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1f\n\x07payload\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter"d\n\x15RecordBuilderResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"^\n\x12SendRecordsRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1f\n\x07records\x18\x02 \x03(\x0b\x32\x0e.bloock.Record"j\n\x13SendRecordsResponse\x12&\n\x07records\x18\x01 \x03(\x0b\x32\x15.bloock.RecordReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"V\n\x06Loader\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.LoaderArgs"\x1a\n\nLoaderArgs\x12\x0c\n\x04hash\x18\x01 \x01(\t"\x8b\x02\n\x1eRecordBuilderFromLoaderRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06loader\x18\x02 \x01(\x0b\x32\x0e.bloock.Loader\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter"\\\n\tPublisher\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.PublisherArgs"\x0f\n\rPublisherArgs"\x7f\n\x0ePublishRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12$\n\tpublisher\x18\x02 \x01(\x0b\x32\x11.bloock.Publisher\x12\x1e\n\x06record\x18\x03 \x01(\x0b\x32\x0e.bloock.Record"L\n\x0fPublishResponse\x12\x0c\n\x04hash\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"y\n\x1aSignatureCommonNameRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12$\n\tsignature\x18\x02 \x01(\x0b\x32\x11.bloock.Signature\x12\x0c\n\x04hash\x18\x03 \x01(\t"_\n\x1bSignatureCommonNameResponse\x12\x13\n\x0b\x63ommon_name\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error*Y\n\x0bRecordTypes\x12\n\n\x06STRING\x10\x00\x12\x07\n\x03HEX\x10\x01\x12\x08\n\x04JSON\x10\x02\x12\t\n\x05\x42YTES\x10\x03\x12\x08\n\x04\x46ILE\x10\x04\x12\n\n\x06RECORD\x10\x05\x12\n\n\x06LOADER\x10\x06* \n\tSignerAlg\x12\n\n\x06\x45S256K\x10\x00\x12\x07\n\x03\x45NS\x10\x01*0\n\rEncryptionAlg\x12\x0b\n\x07\x41\x32\x35\x36GCM\x10\x00\x12\x07\n\x03RSA\x10\x01\x12\t\n\x05\x45\x43IES\x10\x02*,\n\x14\x44\x61taAvailabilityType\x12\n\n\x06HOSTED\x10\x00\x12\x08\n\x04IPFS\x10\x01\x32\xfb\t\n\rRecordService\x12\x46\n\x0bSendRecords\x12\x1a.bloock.SendRecordsRequest\x1a\x1b.bloock.SendRecordsResponse\x12^\n\x15\x42uildRecordFromString\x12&.bloock.RecordBuilderFromStringRequest\x1a\x1d.bloock.RecordBuilderResponse\x12X\n\x12\x42uildRecordFromHex\x12#.bloock.RecordBuilderFromHexRequest\x1a\x1d.bloock.RecordBuilderResponse\x12Z\n\x13\x42uildRecordFromJson\x12$.bloock.RecordBuilderFromJSONRequest\x1a\x1d.bloock.RecordBuilderResponse\x12Z\n\x13\x42uildRecordFromFile\x12$.bloock.RecordBuilderFromFileRequest\x1a\x1d.bloock.RecordBuilderResponse\x12\\\n\x14\x42uildRecordFromBytes\x12%.bloock.RecordBuilderFromBytesRequest\x1a\x1d.bloock.RecordBuilderResponse\x12^\n\x15\x42uildRecordFromRecord\x12&.bloock.RecordBuilderFromRecordRequest\x1a\x1d.bloock.RecordBuilderResponse\x12^\n\x15\x42uildRecordFromLoader\x12&.bloock.RecordBuilderFromLoaderRequest\x1a\x1d.bloock.RecordBuilderResponse\x12-\n\x07GetHash\x12\x0e.bloock.Record\x1a\x12.bloock.RecordHash\x12\x61\n\x16GetSignatureCommonName\x12".bloock.SignatureCommonNameRequest\x1a#.bloock.SignatureCommonNameResponse\x12\x39\n\rGetSignatures\x12\x0e.bloock.Record\x1a\x18.bloock.RecordSignatures\x12I\n\x0cGenerateKeys\x12\x1b.bloock.GenerateKeysRequest\x1a\x1c.bloock.GenerateKeysResponse\x12[\n\x12GenerateRsaKeyPair\x12!.bloock.GenerateRsaKeyPairRequest\x1a".bloock.GenerateRsaKeyPairResponse\x12\x61\n\x14GenerateEciesKeyPair\x12#.bloock.GenerateEciesKeyPairRequest\x1a$.bloock.GenerateEciesKeyPairResponse\x12:\n\x07Publish\x12\x16.bloock.PublishRequest\x1a\x17.bloock.PublishResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3'
-)
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0crecord.proto\x12\x06\x62loock\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\">\n\x13GenerateKeysRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\"j\n\x14GenerateKeysResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"D\n\x19GenerateRsaKeyPairRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\"p\n\x1aGenerateRsaKeyPairResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"F\n\x1bGenerateEciesKeyPairRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\"r\n\x1cGenerateEciesKeyPairResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"G\n\nRecordHash\x12\x0c\n\x04hash\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"f\n\x10RecordSignatures\x12%\n\nsignatures\x18\x01 \x03(\x0b\x32\x11.bloock.Signature\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"h\n\x15\x45ncryptionAlgResponse\x12\"\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlg\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x1a\n\x0cRecordHeader\x12\n\n\x02ty\x18\x01 \x01(\t\"e\n\x06Record\x12,\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigDataH\x00\x88\x01\x01\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12\x0c\n\x04hash\x18\x03 \x01(\tB\x0e\n\x0c_config_data\"J\n\x06Signer\x12\x1e\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x11.bloock.SignerAlg\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.SignerArgs\"`\n\nSignerArgs\x12\x18\n\x0bprivate_key\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x18\n\x0b\x63ommon_name\x18\x02 \x01(\tH\x01\x88\x01\x01\x42\x0e\n\x0c_private_keyB\x0e\n\x0c_common_name\"T\n\tEncrypter\x12\"\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlg\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.EncrypterArgs\"\x1c\n\rEncrypterArgs\x12\x0b\n\x03key\x18\x01 \x01(\t\"T\n\tDecrypter\x12\"\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlg\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.DecrypterArgs\"\x1c\n\rDecrypterArgs\x12\x0b\n\x03key\x18\x01 \x01(\t\"p\n\tSignature\x12\x11\n\tsignature\x18\x01 \x01(\t\x12\x11\n\tprotected\x18\x02 \x01(\t\x12\'\n\x06header\x18\x03 \x01(\x0b\x32\x17.bloock.SignatureHeader\x12\x14\n\x0cmessage_hash\x18\x04 \x01(\t\"+\n\x0fSignatureHeader\x12\x0b\n\x03\x61lg\x18\x01 \x01(\t\x12\x0b\n\x03kid\x18\x02 \x01(\t\"O\n\rRecordReceipt\x12\x0e\n\x06\x61nchor\x18\x01 \x01(\x03\x12\x0e\n\x06\x63lient\x18\x02 \x01(\t\x12\x0e\n\x06record\x18\x03 \x01(\t\x12\x0e\n\x06status\x18\x04 \x01(\t\"\xfc\x01\n\x1eRecordBuilderFromStringRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\t\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter\"\xf9\x01\n\x1bRecordBuilderFromHexRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\t\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter\"\xfa\x01\n\x1cRecordBuilderFromJSONRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\t\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter\"\xfb\x01\n\x1dRecordBuilderFromBytesRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter\"\xfa\x01\n\x1cRecordBuilderFromFileRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter\"\x8c\x02\n\x1eRecordBuilderFromRecordRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1f\n\x07payload\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter\"d\n\x15RecordBuilderResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"^\n\x12SendRecordsRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1f\n\x07records\x18\x02 \x03(\x0b\x32\x0e.bloock.Record\"j\n\x13SendRecordsResponse\x12&\n\x07records\x18\x01 \x03(\x0b\x32\x15.bloock.RecordReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"V\n\x06Loader\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.LoaderArgs\"\x1a\n\nLoaderArgs\x12\x0c\n\x04hash\x18\x01 \x01(\t\"\x8b\x02\n\x1eRecordBuilderFromLoaderRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06loader\x18\x02 \x01(\x0b\x32\x0e.bloock.Loader\x12#\n\x06signer\x18\x03 \x01(\x0b\x32\x0e.bloock.SignerH\x00\x88\x01\x01\x12)\n\tencrypter\x18\x04 \x01(\x0b\x32\x11.bloock.EncrypterH\x01\x88\x01\x01\x12)\n\tdecrypter\x18\x05 \x01(\x0b\x32\x11.bloock.DecrypterH\x02\x88\x01\x01\x42\t\n\x07_signerB\x0c\n\n_encrypterB\x0c\n\n_decrypter\"\\\n\tPublisher\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.PublisherArgs\"\x0f\n\rPublisherArgs\"\x7f\n\x0ePublishRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12$\n\tpublisher\x18\x02 \x01(\x0b\x32\x11.bloock.Publisher\x12\x1e\n\x06record\x18\x03 \x01(\x0b\x32\x0e.bloock.Record\"L\n\x0fPublishResponse\x12\x0c\n\x04hash\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"y\n\x1aSignatureCommonNameRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12$\n\tsignature\x18\x02 \x01(\x0b\x32\x11.bloock.Signature\x12\x0c\n\x04hash\x18\x03 \x01(\t\"_\n\x1bSignatureCommonNameResponse\x12\x13\n\x0b\x63ommon_name\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error*Y\n\x0bRecordTypes\x12\n\n\x06STRING\x10\x00\x12\x07\n\x03HEX\x10\x01\x12\x08\n\x04JSON\x10\x02\x12\t\n\x05\x42YTES\x10\x03\x12\x08\n\x04\x46ILE\x10\x04\x12\n\n\x06RECORD\x10\x05\x12\n\n\x06LOADER\x10\x06* \n\tSignerAlg\x12\n\n\x06\x45S256K\x10\x00\x12\x07\n\x03\x45NS\x10\x01*0\n\rEncryptionAlg\x12\x0b\n\x07\x41\x32\x35\x36GCM\x10\x00\x12\x07\n\x03RSA\x10\x01\x12\t\n\x05\x45\x43IES\x10\x02*,\n\x14\x44\x61taAvailabilityType\x12\n\n\x06HOSTED\x10\x00\x12\x08\n\x04IPFS\x10\x01\x32\xbe\n\n\rRecordService\x12\x46\n\x0bSendRecords\x12\x1a.bloock.SendRecordsRequest\x1a\x1b.bloock.SendRecordsResponse\x12^\n\x15\x42uildRecordFromString\x12&.bloock.RecordBuilderFromStringRequest\x1a\x1d.bloock.RecordBuilderResponse\x12X\n\x12\x42uildRecordFromHex\x12#.bloock.RecordBuilderFromHexRequest\x1a\x1d.bloock.RecordBuilderResponse\x12Z\n\x13\x42uildRecordFromJson\x12$.bloock.RecordBuilderFromJSONRequest\x1a\x1d.bloock.RecordBuilderResponse\x12Z\n\x13\x42uildRecordFromFile\x12$.bloock.RecordBuilderFromFileRequest\x1a\x1d.bloock.RecordBuilderResponse\x12\\\n\x14\x42uildRecordFromBytes\x12%.bloock.RecordBuilderFromBytesRequest\x1a\x1d.bloock.RecordBuilderResponse\x12^\n\x15\x42uildRecordFromRecord\x12&.bloock.RecordBuilderFromRecordRequest\x1a\x1d.bloock.RecordBuilderResponse\x12^\n\x15\x42uildRecordFromLoader\x12&.bloock.RecordBuilderFromLoaderRequest\x1a\x1d.bloock.RecordBuilderResponse\x12-\n\x07GetHash\x12\x0e.bloock.Record\x1a\x12.bloock.RecordHash\x12\x61\n\x16GetSignatureCommonName\x12\".bloock.SignatureCommonNameRequest\x1a#.bloock.SignatureCommonNameResponse\x12\x39\n\rGetSignatures\x12\x0e.bloock.Record\x1a\x18.bloock.RecordSignatures\x12\x41\n\x10GetEncryptionAlg\x12\x0e.bloock.Record\x1a\x1d.bloock.EncryptionAlgResponse\x12I\n\x0cGenerateKeys\x12\x1b.bloock.GenerateKeysRequest\x1a\x1c.bloock.GenerateKeysResponse\x12[\n\x12GenerateRsaKeyPair\x12!.bloock.GenerateRsaKeyPairRequest\x1a\".bloock.GenerateRsaKeyPairResponse\x12\x61\n\x14GenerateEciesKeyPair\x12#.bloock.GenerateEciesKeyPairRequest\x1a$.bloock.GenerateEciesKeyPairResponse\x12:\n\x07Publish\x12\x16.bloock.PublishRequest\x1a\x17.bloock.PublishResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "record_pb2", globals())
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'record_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
-    DESCRIPTOR._options = None
-    DESCRIPTOR._serialized_options = b"\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
-    _RECORDTYPES._serialized_start = 4304
-    _RECORDTYPES._serialized_end = 4393
-    _SIGNERALG._serialized_start = 4395
-    _SIGNERALG._serialized_end = 4427
-    _ENCRYPTIONALG._serialized_start = 4429
-    _ENCRYPTIONALG._serialized_end = 4477
-    _DATAAVAILABILITYTYPE._serialized_start = 4479
-    _DATAAVAILABILITYTYPE._serialized_end = 4523
-    _GENERATEKEYSREQUEST._serialized_start = 52
-    _GENERATEKEYSREQUEST._serialized_end = 114
-    _GENERATEKEYSRESPONSE._serialized_start = 116
-    _GENERATEKEYSRESPONSE._serialized_end = 222
-    _GENERATERSAKEYPAIRREQUEST._serialized_start = 224
-    _GENERATERSAKEYPAIRREQUEST._serialized_end = 292
-    _GENERATERSAKEYPAIRRESPONSE._serialized_start = 294
-    _GENERATERSAKEYPAIRRESPONSE._serialized_end = 406
-    _GENERATEECIESKEYPAIRREQUEST._serialized_start = 408
-    _GENERATEECIESKEYPAIRREQUEST._serialized_end = 478
-    _GENERATEECIESKEYPAIRRESPONSE._serialized_start = 480
-    _GENERATEECIESKEYPAIRRESPONSE._serialized_end = 594
-    _RECORDHASH._serialized_start = 596
-    _RECORDHASH._serialized_end = 667
-    _RECORDSIGNATURES._serialized_start = 669
-    _RECORDSIGNATURES._serialized_end = 771
-    _RECORDHEADER._serialized_start = 773
-    _RECORDHEADER._serialized_end = 799
-    _RECORD._serialized_start = 801
-    _RECORD._serialized_end = 888
-    _SIGNER._serialized_start = 890
-    _SIGNER._serialized_end = 964
-    _SIGNERARGS._serialized_start = 966
-    _SIGNERARGS._serialized_end = 1062
-    _ENCRYPTER._serialized_start = 1064
-    _ENCRYPTER._serialized_end = 1148
-    _ENCRYPTERARGS._serialized_start = 1150
-    _ENCRYPTERARGS._serialized_end = 1178
-    _DECRYPTER._serialized_start = 1180
-    _DECRYPTER._serialized_end = 1264
-    _DECRYPTERARGS._serialized_start = 1266
-    _DECRYPTERARGS._serialized_end = 1294
-    _SIGNATURE._serialized_start = 1296
-    _SIGNATURE._serialized_end = 1408
-    _SIGNATUREHEADER._serialized_start = 1410
-    _SIGNATUREHEADER._serialized_end = 1453
-    _RECORDRECEIPT._serialized_start = 1455
-    _RECORDRECEIPT._serialized_end = 1534
-    _RECORDBUILDERFROMSTRINGREQUEST._serialized_start = 1537
-    _RECORDBUILDERFROMSTRINGREQUEST._serialized_end = 1789
-    _RECORDBUILDERFROMHEXREQUEST._serialized_start = 1792
-    _RECORDBUILDERFROMHEXREQUEST._serialized_end = 2041
-    _RECORDBUILDERFROMJSONREQUEST._serialized_start = 2044
-    _RECORDBUILDERFROMJSONREQUEST._serialized_end = 2294
-    _RECORDBUILDERFROMBYTESREQUEST._serialized_start = 2297
-    _RECORDBUILDERFROMBYTESREQUEST._serialized_end = 2548
-    _RECORDBUILDERFROMFILEREQUEST._serialized_start = 2551
-    _RECORDBUILDERFROMFILEREQUEST._serialized_end = 2801
-    _RECORDBUILDERFROMRECORDREQUEST._serialized_start = 2804
-    _RECORDBUILDERFROMRECORDREQUEST._serialized_end = 3072
-    _RECORDBUILDERRESPONSE._serialized_start = 3074
-    _RECORDBUILDERRESPONSE._serialized_end = 3174
-    _SENDRECORDSREQUEST._serialized_start = 3176
-    _SENDRECORDSREQUEST._serialized_end = 3270
-    _SENDRECORDSRESPONSE._serialized_start = 3272
-    _SENDRECORDSRESPONSE._serialized_end = 3378
-    _LOADER._serialized_start = 3380
-    _LOADER._serialized_end = 3466
-    _LOADERARGS._serialized_start = 3468
-    _LOADERARGS._serialized_end = 3494
-    _RECORDBUILDERFROMLOADERREQUEST._serialized_start = 3497
-    _RECORDBUILDERFROMLOADERREQUEST._serialized_end = 3764
-    _PUBLISHER._serialized_start = 3766
-    _PUBLISHER._serialized_end = 3858
-    _PUBLISHERARGS._serialized_start = 3860
-    _PUBLISHERARGS._serialized_end = 3875
-    _PUBLISHREQUEST._serialized_start = 3877
-    _PUBLISHREQUEST._serialized_end = 4004
-    _PUBLISHRESPONSE._serialized_start = 4006
-    _PUBLISHRESPONSE._serialized_end = 4082
-    _SIGNATURECOMMONNAMEREQUEST._serialized_start = 4084
-    _SIGNATURECOMMONNAMEREQUEST._serialized_end = 4205
-    _SIGNATURECOMMONNAMERESPONSE._serialized_start = 4207
-    _SIGNATURECOMMONNAMERESPONSE._serialized_end = 4302
-    _RECORDSERVICE._serialized_start = 4526
-    _RECORDSERVICE._serialized_end = 5801
+  DESCRIPTOR._options = None
+  DESCRIPTOR._serialized_options = b'\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
+  _RECORDTYPES._serialized_start=4424
+  _RECORDTYPES._serialized_end=4513
+  _SIGNERALG._serialized_start=4515
+  _SIGNERALG._serialized_end=4547
+  _ENCRYPTIONALG._serialized_start=4549
+  _ENCRYPTIONALG._serialized_end=4597
+  _DATAAVAILABILITYTYPE._serialized_start=4599
+  _DATAAVAILABILITYTYPE._serialized_end=4643
+  _GENERATEKEYSREQUEST._serialized_start=52
+  _GENERATEKEYSREQUEST._serialized_end=114
+  _GENERATEKEYSRESPONSE._serialized_start=116
+  _GENERATEKEYSRESPONSE._serialized_end=222
+  _GENERATERSAKEYPAIRREQUEST._serialized_start=224
+  _GENERATERSAKEYPAIRREQUEST._serialized_end=292
+  _GENERATERSAKEYPAIRRESPONSE._serialized_start=294
+  _GENERATERSAKEYPAIRRESPONSE._serialized_end=406
+  _GENERATEECIESKEYPAIRREQUEST._serialized_start=408
+  _GENERATEECIESKEYPAIRREQUEST._serialized_end=478
+  _GENERATEECIESKEYPAIRRESPONSE._serialized_start=480
+  _GENERATEECIESKEYPAIRRESPONSE._serialized_end=594
+  _RECORDHASH._serialized_start=596
+  _RECORDHASH._serialized_end=667
+  _RECORDSIGNATURES._serialized_start=669
+  _RECORDSIGNATURES._serialized_end=771
+  _ENCRYPTIONALGRESPONSE._serialized_start=773
+  _ENCRYPTIONALGRESPONSE._serialized_end=877
+  _RECORDHEADER._serialized_start=879
+  _RECORDHEADER._serialized_end=905
+  _RECORD._serialized_start=907
+  _RECORD._serialized_end=1008
+  _SIGNER._serialized_start=1010
+  _SIGNER._serialized_end=1084
+  _SIGNERARGS._serialized_start=1086
+  _SIGNERARGS._serialized_end=1182
+  _ENCRYPTER._serialized_start=1184
+  _ENCRYPTER._serialized_end=1268
+  _ENCRYPTERARGS._serialized_start=1270
+  _ENCRYPTERARGS._serialized_end=1298
+  _DECRYPTER._serialized_start=1300
+  _DECRYPTER._serialized_end=1384
+  _DECRYPTERARGS._serialized_start=1386
+  _DECRYPTERARGS._serialized_end=1414
+  _SIGNATURE._serialized_start=1416
+  _SIGNATURE._serialized_end=1528
+  _SIGNATUREHEADER._serialized_start=1530
+  _SIGNATUREHEADER._serialized_end=1573
+  _RECORDRECEIPT._serialized_start=1575
+  _RECORDRECEIPT._serialized_end=1654
+  _RECORDBUILDERFROMSTRINGREQUEST._serialized_start=1657
+  _RECORDBUILDERFROMSTRINGREQUEST._serialized_end=1909
+  _RECORDBUILDERFROMHEXREQUEST._serialized_start=1912
+  _RECORDBUILDERFROMHEXREQUEST._serialized_end=2161
+  _RECORDBUILDERFROMJSONREQUEST._serialized_start=2164
+  _RECORDBUILDERFROMJSONREQUEST._serialized_end=2414
+  _RECORDBUILDERFROMBYTESREQUEST._serialized_start=2417
+  _RECORDBUILDERFROMBYTESREQUEST._serialized_end=2668
+  _RECORDBUILDERFROMFILEREQUEST._serialized_start=2671
+  _RECORDBUILDERFROMFILEREQUEST._serialized_end=2921
+  _RECORDBUILDERFROMRECORDREQUEST._serialized_start=2924
+  _RECORDBUILDERFROMRECORDREQUEST._serialized_end=3192
+  _RECORDBUILDERRESPONSE._serialized_start=3194
+  _RECORDBUILDERRESPONSE._serialized_end=3294
+  _SENDRECORDSREQUEST._serialized_start=3296
+  _SENDRECORDSREQUEST._serialized_end=3390
+  _SENDRECORDSRESPONSE._serialized_start=3392
+  _SENDRECORDSRESPONSE._serialized_end=3498
+  _LOADER._serialized_start=3500
+  _LOADER._serialized_end=3586
+  _LOADERARGS._serialized_start=3588
+  _LOADERARGS._serialized_end=3614
+  _RECORDBUILDERFROMLOADERREQUEST._serialized_start=3617
+  _RECORDBUILDERFROMLOADERREQUEST._serialized_end=3884
+  _PUBLISHER._serialized_start=3886
+  _PUBLISHER._serialized_end=3978
+  _PUBLISHERARGS._serialized_start=3980
+  _PUBLISHERARGS._serialized_end=3995
+  _PUBLISHREQUEST._serialized_start=3997
+  _PUBLISHREQUEST._serialized_end=4124
+  _PUBLISHRESPONSE._serialized_start=4126
+  _PUBLISHRESPONSE._serialized_end=4202
+  _SIGNATURECOMMONNAMEREQUEST._serialized_start=4204
+  _SIGNATURECOMMONNAMEREQUEST._serialized_end=4325
+  _SIGNATURECOMMONNAMERESPONSE._serialized_start=4327
+  _SIGNATURECOMMONNAMERESPONSE._serialized_end=4422
+  _RECORDSERVICE._serialized_start=4646
+  _RECORDSERVICE._serialized_end=5988
 # @@protoc_insertion_point(module_scope)

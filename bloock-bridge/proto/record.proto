@@ -30,6 +30,7 @@ service RecordService {
     rpc GetHash(Record) returns (RecordHash);
     rpc GetSignatureCommonName(SignatureCommonNameRequest) returns (SignatureCommonNameResponse);
     rpc GetSignatures(Record) returns (RecordSignatures);
+    rpc GetEncryptionAlg(Record) returns (EncryptionAlgResponse);
     rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
     rpc GenerateRsaKeyPair(GenerateRsaKeyPairRequest) returns (GenerateRsaKeyPairResponse);
     rpc GenerateEciesKeyPair(GenerateEciesKeyPairRequest) returns (GenerateEciesKeyPairResponse);
@@ -75,6 +76,11 @@ message RecordSignatures {
     optional Error error = 2;
 }
 
+message EncryptionAlgResponse {
+    EncryptionAlg alg = 1;
+    optional Error error = 2;
+}
+
 message RecordHeader {
     string ty = 1;
 }
@@ -82,6 +88,7 @@ message RecordHeader {
 message Record {
     optional ConfigData config_data = 1;
     bytes payload = 2;
+    string hash = 3;
 }
 
 enum SignerAlg {

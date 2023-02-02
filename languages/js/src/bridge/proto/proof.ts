@@ -896,9 +896,7 @@ export interface ProofService {
 
 export class ProofServiceClientImpl implements ProofService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "bloock.ProofService";
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.GetProof = this.GetProof.bind(this);
     this.ValidateRoot = this.ValidateRoot.bind(this);
@@ -908,31 +906,31 @@ export class ProofServiceClientImpl implements ProofService {
   }
   GetProof(request: GetProofRequest): Promise<GetProofResponse> {
     const data = GetProofRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetProof", data);
+    const promise = this.rpc.request("bloock.ProofService", "GetProof", data);
     return promise.then((data) => GetProofResponse.decode(new _m0.Reader(data)));
   }
 
   ValidateRoot(request: ValidateRootRequest): Promise<ValidateRootResponse> {
     const data = ValidateRootRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ValidateRoot", data);
+    const promise = this.rpc.request("bloock.ProofService", "ValidateRoot", data);
     return promise.then((data) => ValidateRootResponse.decode(new _m0.Reader(data)));
   }
 
   VerifyProof(request: VerifyProofRequest): Promise<VerifyProofResponse> {
     const data = VerifyProofRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "VerifyProof", data);
+    const promise = this.rpc.request("bloock.ProofService", "VerifyProof", data);
     return promise.then((data) => VerifyProofResponse.decode(new _m0.Reader(data)));
   }
 
   VerifyRecords(request: VerifyRecordsRequest): Promise<VerifyRecordsResponse> {
     const data = VerifyRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "VerifyRecords", data);
+    const promise = this.rpc.request("bloock.ProofService", "VerifyRecords", data);
     return promise.then((data) => VerifyRecordsResponse.decode(new _m0.Reader(data)));
   }
 
   SetProof(request: SetProofRequest): Promise<SetProofResponse> {
     const data = SetProofRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SetProof", data);
+    const promise = this.rpc.request("bloock.ProofService", "SetProof", data);
     return promise.then((data) => SetProofResponse.decode(new _m0.Reader(data)));
   }
 }

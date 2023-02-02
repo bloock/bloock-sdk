@@ -13,6 +13,8 @@ import { HostedLoader, IpfsLoader } from "./entity/loader";
 import { Record } from "./entity/record";
 import { Proof, ProofAnchor } from "./entity/proof";
 import { AnchorNetwork } from "./entity/anchor";
+import { EncryptionAlg } from "./entity/encryption_alg";
+import { SignatureAlg } from "./entity/signature";
 
 export {
   Bloock,
@@ -36,5 +38,7 @@ export {
   AnchorNetwork,
   IpfsPublisher,
   IpfsLoader,
-  EnsSigner
+  EnsSigner,
+  EncryptionAlg,
+  SignatureAlg
 };

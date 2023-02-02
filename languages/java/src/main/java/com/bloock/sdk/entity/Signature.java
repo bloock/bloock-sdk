@@ -74,4 +74,8 @@ public class Signature {
 
     return res.getCommonName();
   }
+
+  public SignatureAlg getAlg() {
+    return SignatureAlg.fromString(this.header.alg);
+  }
 }
