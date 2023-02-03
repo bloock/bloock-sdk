@@ -9,6 +9,7 @@ import com.bloock.sdk.entity.EcdsaSigner;
 import com.bloock.sdk.entity.EciesDecrypter;
 import com.bloock.sdk.entity.EciesEncrypter;
 import com.bloock.sdk.entity.EncryptionAlg;
+import com.bloock.sdk.entity.EnsSigner;
 import com.bloock.sdk.entity.HostedLoader;
 import com.bloock.sdk.entity.HostedPublisher;
 import com.bloock.sdk.entity.IpfsLoader;
@@ -61,6 +62,7 @@ class Test {
     records.add(testFromJson());
     records.add(testFromFile());
     records.add(testEcdsaSignature(sdk));
+    records.add(testEnsSignature(sdk));
 
     testFromHostedLoader();
     testFromIpfsLoader();
@@ -185,6 +187,28 @@ class Test {
     assert signatures.get(0).getAlg().equals(SignatureAlg.ECDSA);
 
     return recordWithMultipleSignatures;
+  }
+
+  static Record testEnsSignature(Client sdk) throws Exception {
+    Keys keys = sdk.generateKeys();
+
+    Record record =
+        Builder.fromString("Hello world 4").withSigner(new EnsSigner(keys.getPrivateKey())).build();
+
+    List<Signature> signatures = record.getSignatures();
+    assert signatures.size() == 1;
+    assert signatures.get(0).getAlg().equals(SignatureAlg.ENS);
+
+    signatures
+        .get(0)
+        .setSignature(
+            "66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601");
+    signatures
+        .get(0)
+        .setMessageHash("7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6");
+    assert signatures.get(0).getCommonName().equals("vitalik.eth");
+
+    return record;
   }
 
   static void testAesEncryption() throws Exception {

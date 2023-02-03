@@ -29,3 +29,11 @@ class EcdsaSigner(Signer):
 
     def to_proto(self) -> proto.Signer:
         return proto.Signer(alg=self.alg, args=self.args.to_proto())
+
+
+class EnsSigner(Signer):
+    def __init__(self, private_key: str) -> None:
+        super().__init__(alg=proto.ENS, args=SignerArgs(private_key))
+
+    def to_proto(self) -> proto.Signer:
+        return proto.Signer(alg=self.alg, args=self.args.to_proto())

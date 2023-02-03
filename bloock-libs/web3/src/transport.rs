@@ -4,17 +4,22 @@ use bloock_http::Client;
 pub struct Transport {}
 
 impl Transport {
-    pub async fn send_request<T: TryFrom<Response, Error = BlockchainError>>(
+    pub async fn send_request(
         provider: String,
         req: Request,
         api_key: String,
-    ) -> Result<T, BlockchainError> {
+    ) -> Result<Vec<u8>, BlockchainError> {
         let client = bloock_http::BloockHttpClient::new(api_key);
         let res: Response = client
             .post_json(provider, req, None)
             .await
             .map_err(|e| BlockchainError::Web3Error(e.to_string()))?;
 
-        T::try_from(res)
+        let value = res.result.strip_prefix("0x").ok_or_else(|| {
+            BlockchainError::Web3Error("Invalid hex response received".to_string())
+        })?;
+
+        hex::decode(value)
+            .map_err(|_| BlockchainError::Web3Error("Invalid hex response received".to_string()))
     }
 }

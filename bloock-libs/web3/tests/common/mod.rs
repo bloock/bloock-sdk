@@ -21,3 +21,20 @@ pub async fn get_state() {
         "Timestamp doesn't match the expected"
     );
 }
+
+pub async fn reverse_ens() {
+    let address = "d8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+    let provider = "https://ethereum.bloock.com";
+
+    let web3 = Blockchain {};
+    let domain = web3
+        .reverse_ens(
+            provider.to_string(),
+            address.to_string(),
+            option_env!("API_KEY").unwrap().to_string(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(domain, "vitalik.eth", "Domain doesn't match the expected");
+}

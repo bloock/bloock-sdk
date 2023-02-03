@@ -3,12 +3,14 @@ use std::{convert::TryInto, sync::Arc};
 use async_trait::async_trait;
 use bloock_core::{
     client::{self, BloockClient},
+    config::entity::network::Network,
     record::builder::{Builder, RecordBuilder},
     record::entity::record::Record as RecordCore,
     AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, BloockHttpClient,
     Decrypter as DecrypterCore, EcdsaSigner, EcdsaSignerArgs, EciesDecrypter, EciesDecrypterArgs,
-    EciesEncrypter, EciesEncrypterArgs, EciesKeyPair, Encrypter as EncrypterCore, RsaDecrypter,
-    RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, RsaKeyPair, Signature as SignatureCore,
+    EciesEncrypter, EciesEncrypterArgs, EciesKeyPair, Encrypter as EncrypterCore, EnsSigner,
+    EnsSignerArgs, RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, RsaKeyPair,
+    Signature as SignatureCore, Signer as SignerCore,
 };
 use serde_json::json;
 
@@ -91,6 +93,22 @@ impl From<EncryptionAlgResponse> for ResponseType {
     fn from(res: EncryptionAlgResponse) -> Self {
         ResponseType::EncryptionAlgResponse(res)
     }
+}
+
+macro_rules! record_builder_unwrap {
+    ($input:expr, $client:ident, $req_name:ident, $err_message:expr) => {
+        match $input {
+            Some(signer_arguments) => signer_arguments,
+            None => {
+                return RecordBuilderResponse::new_error(
+                    $client,
+                    $req_name,
+                    $err_message.to_string(),
+                )
+                .await
+            }
+        }
+    };
 }
 
 pub struct RecordServer {}
@@ -481,7 +499,7 @@ impl RecordServiceHandler for RecordServer {
             }
         };
 
-        let client = client::configure(config_data);
+        let client = client::configure(config_data.clone());
 
         let signature: SignatureCore = match req.signature {
             Some(signature) => match signature.try_into() {
@@ -499,7 +517,15 @@ impl RecordServiceHandler for RecordServer {
             }
         };
 
-        let common_name = match signature.get_common_name() {
+        let provider = match config_data.networks_config.get(&Network::EthereumMainnet) {
+            Some(n) => n.http_provider.clone(),
+            None => "".to_string(),
+        };
+
+        let common_name = match signature
+            .get_common_name(provider, config_data.config.api_key)
+            .await
+        {
             Ok(name) => name,
             Err(err) => {
                 return SignatureCommonNameResponse::new_error(&client, err.to_string()).await
@@ -719,35 +745,36 @@ async fn build_record(
     decrypter: Option<Decrypter>,
 ) -> RecordBuilderResponse {
     if let Some(signer) = signer {
-        let signer = match SignerAlg::from_i32(signer.alg) {
+        let signer_alg = SignerAlg::from_i32(signer.alg);
+        let signer: Box<dyn SignerCore> = match signer_alg {
             Some(SignerAlg::Es256k) => {
-                let signer_arguments = match signer.args {
-                    Some(signer_arguments) => signer_arguments,
-                    None => {
-                        return RecordBuilderResponse::new_error(
-                            client,
-                            req_name,
-                            "no arguments provided".to_string(),
-                        )
-                        .await
-                    }
-                };
-                let private_key = match signer_arguments.private_key {
-                    Some(private_key) => private_key,
-                    None => {
-                        return RecordBuilderResponse::new_error(
-                            client,
-                            req_name,
-                            "no private key provided".to_string(),
-                        )
-                        .await
-                    }
-                };
+                let signer_arguments =
+                    record_builder_unwrap!(signer.args, client, req_name, "no arguments provided");
 
-                EcdsaSigner::new(EcdsaSignerArgs::new(
+                let private_key = record_builder_unwrap!(
+                    signer_arguments.private_key,
+                    client,
+                    req_name,
+                    "no private key provided"
+                );
+
+                EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
                     &private_key,
                     signer_arguments.common_name,
                 ))
+            }
+            Some(SignerAlg::Ens) => {
+                let signer_arguments =
+                    record_builder_unwrap!(signer.args, client, req_name, "no arguments provided");
+
+                let private_key = record_builder_unwrap!(
+                    signer_arguments.private_key,
+                    client,
+                    req_name,
+                    "no private key provided"
+                );
+
+                EnsSigner::new_boxed(EnsSignerArgs::new(&private_key))
             }
             None => {
                 return RecordBuilderResponse::new_error(

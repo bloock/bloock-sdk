@@ -93,6 +93,7 @@ message Record {
 
 enum SignerAlg {
     ES256K = 0;
+    ENS = 1;
 }
 
 enum EncryptionAlg {
@@ -133,6 +134,7 @@ message Signature {
     string signature = 1;
     string protected = 2;
     SignatureHeader header = 3;
+    string message_hash = 4;
 }
 
 message SignatureHeader {
@@ -253,6 +255,7 @@ message PublishResponse {
 message SignatureCommonNameRequest {
     ConfigData config_data = 1;
     Signature signature = 2;
+    string hash = 3;
 }
 
 message SignatureCommonNameResponse {

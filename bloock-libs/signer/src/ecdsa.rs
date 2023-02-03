@@ -1,12 +1,41 @@
-use bloock_hasher::{sha256::Sha256, Hasher};
-use libsecp256k1::{Message, PublicKey, SecretKey};
+use bloock_hasher::{keccak::Keccak256, sha256::Sha256, Hasher, H256};
+use libsecp256k1::{Message, PublicKey, RecoveryId, SecretKey};
 
-use crate::{ProtectedHeader, SignerError, Verifier};
+use crate::{Algorithms, ProtectedHeader, Result, Signature, SignerError, Verifier};
 
-use super::{Signature, Signer};
+use super::Signer;
 use std::str;
 
 pub const ECDSA_ALG: &str = "ES256K";
+
+pub fn get_common_name(signature: &Signature) -> Result<String> {
+    ProtectedHeader::deserialize(&signature.protected)
+        .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
+        .common_name
+        .ok_or_else(|| {
+            SignerError::CommonNameNotSetOrInvalidFormat("common name not set".to_string())
+        })
+}
+
+pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<Vec<u8>> {
+    let signature_bytes = hex::decode(signature.signature.clone())
+        .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
+
+    if signature_bytes.len() != 65 {
+        return Err(SignerError::InvalidSignature(
+            "Invalid signature length".to_string(),
+        ));
+    }
+
+    let message = Message::parse(&message_hash);
+    let recovery_id = RecoveryId::parse(signature_bytes[64]).unwrap();
+    let parsed_sig = libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64]).unwrap();
+
+    Ok(libsecp256k1::recover(&message, &parsed_sig, &recovery_id)
+        .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
+        .serialize_compressed()
+        .to_vec())
+}
 
 pub struct EcdsaSignerArgs {
     pub private_key: String,
@@ -29,6 +58,10 @@ pub struct EcdsaSigner {
 impl EcdsaSigner {
     pub fn new(args: EcdsaSignerArgs) -> Self {
         Self { args }
+    }
+
+    pub fn new_boxed(args: EcdsaSignerArgs) -> Box<Self> {
+        Box::new(Self::new(args))
     }
 
     pub fn generate_keys() -> crate::Result<(String, String)> {
@@ -71,21 +104,28 @@ impl Signer for EcdsaSigner {
 
         let message = Message::parse(&hash);
 
-        let sig = libsecp256k1::sign(&message, &secret_key);
+        let (sig, recovery_id) = libsecp256k1::sign(&message, &secret_key);
+
+        // buffer = [signature;0..64 | recovery_id;65]
+        let mut buffer = [0u8; 65];
+        buffer[0..64].copy_from_slice(&sig.serialize()[..]);
+        buffer[64] = recovery_id.serialize();
 
         let signature = Signature {
             protected,
-            signature: hex::encode(sig.0.serialize()),
+            signature: hex::encode(buffer),
             header: crate::SignatureHeader {
-                alg: ECDSA_ALG.to_string(),
+                alg: Algorithms::Ecdsa.to_string(),
                 kid: hex::encode(public_key.serialize_compressed()),
             },
+            message_hash: hex::encode(Keccak256::generate_hash(payload)),
         };
 
         Ok(signature)
     }
 }
 
+#[derive(Default)]
 pub struct EcdsaVerifier {}
 
 impl Verifier for EcdsaVerifier {
@@ -110,10 +150,10 @@ impl Verifier for EcdsaVerifier {
 
         let message = Message::parse(&hash);
 
-        let signature_string = hex::decode(signature.signature)
+        let signature_bytes = hex::decode(signature.signature)
             .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
 
-        let signature = libsecp256k1::Signature::parse_standard_slice(&signature_string)
+        let signature = libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64])
             .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
 
         Ok(libsecp256k1::verify(&message, &signature, &public_key))
@@ -122,11 +162,15 @@ impl Verifier for EcdsaVerifier {
 
 #[cfg(test)]
 mod tests {
+    use bloock_hasher::{sha256::Sha256, Hasher};
+
     use crate::{
         create_verifier_from_signature,
-        ecdsa::{EcdsaSigner, EcdsaSignerArgs},
-        Signature, SignatureHeader, Signer, Verifier,
+        ecdsa::{get_common_name, EcdsaSigner, EcdsaSignerArgs},
+        Signature, SignatureHeader, Signer,
     };
+
+    use super::recover_public_key;
 
     #[test]
     fn test_sign_and_verify_ok() {
@@ -165,7 +209,7 @@ mod tests {
         let signature = c.sign(string_payload.as_bytes()).unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
-        assert_eq!(signature.get_common_name().unwrap().as_str(), "a name");
+        assert_eq!(get_common_name(&signature).unwrap().as_str(), "a name");
 
         let result = create_verifier_from_signature(&signature)
             .unwrap()
@@ -189,7 +233,7 @@ mod tests {
         let signature = c.sign(string_payload.as_bytes()).unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
-        assert!(signature.get_common_name().is_err());
+        assert!(get_common_name(&signature).is_err());
     }
 
     #[test]
@@ -218,13 +262,15 @@ mod tests {
             protected: "e30".to_string(),
             header: json_header,
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
         let result = create_verifier_from_signature(&json_signature)
             .unwrap()
-            .verify(string_payload.as_bytes(), json_signature);
+            .verify(string_payload.as_bytes(), json_signature)
+            .unwrap();
 
-        assert!(result.is_err());
+        assert!(!result);
     }
 
     #[test]
@@ -240,6 +286,7 @@ mod tests {
             protected: "e30".to_string(),
             header: json_header,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
         let result = create_verifier_from_signature(&json_signature)
@@ -262,12 +309,34 @@ mod tests {
             protected: "e30".to_string(),
             header: json_header,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
         let result = create_verifier_from_signature(&json_signature)
             .unwrap()
-            .verify(string_payload.as_bytes(), json_signature);
+            .verify(string_payload.as_bytes(), json_signature)
+            .unwrap();
 
-        assert!(result.is_err());
+        assert!(!result);
+    }
+
+    #[test]
+    fn recover_public_key_ok() {
+        let (pvk, pb) = EcdsaSigner::generate_keys().unwrap();
+
+        let string_payload = "hello world";
+
+        let c = EcdsaSigner::new(EcdsaSignerArgs {
+            private_key: pvk,
+            common_name: None,
+        });
+
+        let signature = c.sign(string_payload.as_bytes()).unwrap();
+
+        let result_key =
+            recover_public_key(&signature, Sha256::generate_hash(string_payload.as_bytes()))
+                .unwrap();
+
+        assert_eq!(hex::encode(result_key), pb);
     }
 }

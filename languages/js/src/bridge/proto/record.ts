@@ -69,6 +69,7 @@ export function recordTypesToJSON(object: RecordTypes): string {
 
 export enum SignerAlg {
   ES256K = 0,
+  ENS = 1,
   UNRECOGNIZED = -1,
 }
 
@@ -77,6 +78,9 @@ export function signerAlgFromJSON(object: any): SignerAlg {
     case 0:
     case "ES256K":
       return SignerAlg.ES256K;
+    case 1:
+    case "ENS":
+      return SignerAlg.ENS;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -88,6 +92,8 @@ export function signerAlgToJSON(object: SignerAlg): string {
   switch (object) {
     case SignerAlg.ES256K:
       return "ES256K";
+    case SignerAlg.ENS:
+      return "ENS";
     case SignerAlg.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -253,6 +259,7 @@ export interface Signature {
   signature: string;
   protected: string;
   header?: SignatureHeader;
+  messageHash: string;
 }
 
 export interface SignatureHeader {
@@ -369,6 +376,7 @@ export interface PublishResponse {
 export interface SignatureCommonNameRequest {
   configData?: ConfigData;
   signature?: Signature;
+  hash: string;
 }
 
 export interface SignatureCommonNameResponse {
@@ -1356,7 +1364,7 @@ export const DecrypterArgs = {
 };
 
 function createBaseSignature(): Signature {
-  return { signature: "", protected: "", header: undefined };
+  return { signature: "", protected: "", header: undefined, messageHash: "" };
 }
 
 export const Signature = {
@@ -1369,6 +1377,9 @@ export const Signature = {
     }
     if (message.header !== undefined) {
       SignatureHeader.encode(message.header, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.messageHash !== "") {
+      writer.uint32(34).string(message.messageHash);
     }
     return writer;
   },
@@ -1389,6 +1400,9 @@ export const Signature = {
         case 3:
           message.header = SignatureHeader.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.messageHash = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1402,6 +1416,7 @@ export const Signature = {
       signature: isSet(object.signature) ? String(object.signature) : "",
       protected: isSet(object.protected) ? String(object.protected) : "",
       header: isSet(object.header) ? SignatureHeader.fromJSON(object.header) : undefined,
+      messageHash: isSet(object.messageHash) ? String(object.messageHash) : "",
     };
   },
 
@@ -1410,6 +1425,7 @@ export const Signature = {
     message.signature !== undefined && (obj.signature = message.signature);
     message.protected !== undefined && (obj.protected = message.protected);
     message.header !== undefined && (obj.header = message.header ? SignatureHeader.toJSON(message.header) : undefined);
+    message.messageHash !== undefined && (obj.messageHash = message.messageHash);
     return obj;
   },
 
@@ -1420,6 +1436,7 @@ export const Signature = {
     message.header = (object.header !== undefined && object.header !== null)
       ? SignatureHeader.fromPartial(object.header)
       : undefined;
+    message.messageHash = object.messageHash ?? "";
     return message;
   },
 };
@@ -2780,7 +2797,7 @@ export const PublishResponse = {
 };
 
 function createBaseSignatureCommonNameRequest(): SignatureCommonNameRequest {
-  return { configData: undefined, signature: undefined };
+  return { configData: undefined, signature: undefined, hash: "" };
 }
 
 export const SignatureCommonNameRequest = {
@@ -2790,6 +2807,9 @@ export const SignatureCommonNameRequest = {
     }
     if (message.signature !== undefined) {
       Signature.encode(message.signature, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.hash !== "") {
+      writer.uint32(26).string(message.hash);
     }
     return writer;
   },
@@ -2807,6 +2827,9 @@ export const SignatureCommonNameRequest = {
         case 2:
           message.signature = Signature.decode(reader, reader.uint32());
           break;
+        case 3:
+          message.hash = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -2819,6 +2842,7 @@ export const SignatureCommonNameRequest = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       signature: isSet(object.signature) ? Signature.fromJSON(object.signature) : undefined,
+      hash: isSet(object.hash) ? String(object.hash) : "",
     };
   },
 
@@ -2828,6 +2852,7 @@ export const SignatureCommonNameRequest = {
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.signature !== undefined &&
       (obj.signature = message.signature ? Signature.toJSON(message.signature) : undefined);
+    message.hash !== undefined && (obj.hash = message.hash);
     return obj;
   },
 
@@ -2839,6 +2864,7 @@ export const SignatureCommonNameRequest = {
     message.signature = (object.signature !== undefined && object.signature !== null)
       ? Signature.fromPartial(object.signature)
       : undefined;
+    message.hash = object.hash ?? "";
     return message;
   },
 };
@@ -2922,9 +2948,7 @@ export interface RecordService {
 
 export class RecordServiceClientImpl implements RecordService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "bloock.RecordService";
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.SendRecords = this.SendRecords.bind(this);
     this.BuildRecordFromString = this.BuildRecordFromString.bind(this);
@@ -2945,97 +2969,97 @@ export class RecordServiceClientImpl implements RecordService {
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
     const data = SendRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SendRecords", data);
+    const promise = this.rpc.request("bloock.RecordService", "SendRecords", data);
     return promise.then((data) => SendRecordsResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromStringRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromString", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromString", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromHex(request: RecordBuilderFromHexRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromHexRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromHex", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromHex", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromJson(request: RecordBuilderFromJSONRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromJSONRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromJson", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromJson", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromFile(request: RecordBuilderFromFileRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromFileRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromFile", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromFile", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromBytesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromBytes", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromBytes", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromRecordRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromRecord", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromRecord", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromLoaderRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BuildRecordFromLoader", data);
+    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromLoader", data);
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
   GetHash(request: Record): Promise<RecordHash> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetHash", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetHash", data);
     return promise.then((data) => RecordHash.decode(new _m0.Reader(data)));
   }
 
   GetSignatureCommonName(request: SignatureCommonNameRequest): Promise<SignatureCommonNameResponse> {
     const data = SignatureCommonNameRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetSignatureCommonName", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetSignatureCommonName", data);
     return promise.then((data) => SignatureCommonNameResponse.decode(new _m0.Reader(data)));
   }
 
   GetSignatures(request: Record): Promise<RecordSignatures> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetSignatures", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetSignatures", data);
     return promise.then((data) => RecordSignatures.decode(new _m0.Reader(data)));
   }
 
   GetEncryptionAlg(request: Record): Promise<EncryptionAlgResponse> {
     const data = Record.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetEncryptionAlg", data);
+    const promise = this.rpc.request("bloock.RecordService", "GetEncryptionAlg", data);
     return promise.then((data) => EncryptionAlgResponse.decode(new _m0.Reader(data)));
   }
 
   GenerateKeys(request: GenerateKeysRequest): Promise<GenerateKeysResponse> {
     const data = GenerateKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateKeys", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateKeys", data);
     return promise.then((data) => GenerateKeysResponse.decode(new _m0.Reader(data)));
   }
 
   GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse> {
     const data = GenerateRsaKeyPairRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateRsaKeyPair", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateRsaKeyPair", data);
     return promise.then((data) => GenerateRsaKeyPairResponse.decode(new _m0.Reader(data)));
   }
 
   GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse> {
     const data = GenerateEciesKeyPairRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GenerateEciesKeyPair", data);
+    const promise = this.rpc.request("bloock.RecordService", "GenerateEciesKeyPair", data);
     return promise.then((data) => GenerateEciesKeyPairResponse.decode(new _m0.Reader(data)));
   }
 
   Publish(request: PublishRequest): Promise<PublishResponse> {
     const data = PublishRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "Publish", data);
+    const promise = this.rpc.request("bloock.RecordService", "Publish", data);
     return promise.then((data) => PublishResponse.decode(new _m0.Reader(data)));
   }
 }

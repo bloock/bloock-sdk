@@ -1,12 +1,41 @@
-use std::str::from_utf8;
+use std::{fmt, str::from_utf8};
 
+use bloock_hasher::H256;
 use ecdsa::{EcdsaVerifier, ECDSA_ALG};
+use ens::{EnsVerifier, ENS_ALG};
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
 
 pub mod ecdsa;
+pub mod ens;
 
 pub type Result<T> = std::result::Result<T, SignerError>;
+
+enum Algorithms {
+    Ecdsa,
+    Ens,
+}
+
+impl fmt::Display for Algorithms {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Algorithms::Ecdsa => write!(f, "{ECDSA_ALG}"),
+            Algorithms::Ens => write!(f, "{ENS_ALG}"),
+        }
+    }
+}
+
+impl TryFrom<&str> for Algorithms {
+    type Error = SignerError;
+
+    fn try_from(value: &str) -> Result<Self> {
+        match value {
+            ECDSA_ALG => Ok(Self::Ecdsa),
+            ENS_ALG => Ok(Self::Ens),
+            _ => Err(SignerError::InvalidSignatureAlg()),
+        }
+    }
+}
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct JWSignatures {
@@ -19,14 +48,24 @@ pub struct Signature {
     pub header: SignatureHeader,
     pub protected: String,
     pub signature: String,
+    pub message_hash: String,
 }
 
 impl Signature {
-    pub fn get_common_name(&self) -> Result<String> {
-        Ok(ProtectedHeader::deserialize(&self.protected)
-            .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
-            .common_name
-            .ok_or_else(|| SignerError::CommonNameNotSetOrInvalidFormat("not set".to_string())))?
+    pub async fn get_common_name(&self, ens_provider: String, api_key: String) -> Result<String> {
+        let alg = Algorithms::try_from(self.header.alg.as_str())?;
+        match alg {
+            Algorithms::Ecdsa => ecdsa::get_common_name(self),
+            Algorithms::Ens => ens::get_common_name(self, ens_provider, api_key).await,
+        }
+    }
+
+    pub fn recover_public_key(&self, message_hash: H256) -> Result<Vec<u8>> {
+        let alg = Algorithms::try_from(self.header.alg.as_str())?;
+        match alg {
+            Algorithms::Ecdsa => ecdsa::recover_public_key(self, message_hash),
+            Algorithms::Ens => ens::recover_public_key(self, message_hash),
+        }
     }
 }
 
@@ -68,10 +107,10 @@ pub trait Verifier {
     fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool>;
 }
 
-pub fn create_verifier_from_signature(signature: &Signature) -> Result<impl Verifier> {
-    match signature.header.alg.as_str() {
-        ECDSA_ALG => Ok(EcdsaVerifier {}),
-        _ => Err(SignerError::InvalidSignatureAlg()),
+pub fn create_verifier_from_signature(signature: &Signature) -> Result<Box<dyn Verifier>> {
+    match Algorithms::try_from(signature.header.alg.as_str())? {
+        Algorithms::Ecdsa => Ok(Box::<EcdsaVerifier>::default()),
+        Algorithms::Ens => Ok(Box::<EnsVerifier>::default()),
     }
 }
 
@@ -81,6 +120,7 @@ impl From<JWSignatures> for Signature {
             protected: s.signatures[0].protected.clone(),
             signature: s.signatures[0].signature.clone(),
             header: s.signatures[0].header.clone(),
+            message_hash: s.signatures[0].message_hash.clone(),
         }
     }
 }
@@ -111,4 +151,8 @@ pub enum SignerError {
         "Could not retrieve common name. Common name is not set or the format is invalid: {0}"
     )]
     CommonNameNotSetOrInvalidFormat(String),
+    #[error("ETH Domain not found")]
+    EthDomainNotFound(),
+    #[error("Expected message hash but found none")]
+    ExpectedMessageHash(),
 }

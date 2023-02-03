@@ -6,6 +6,23 @@ export interface Signer {
   toProto(): proto.Signer;
 }
 
+export class SignerArgs {
+  privateKey: string;
+  commonName: string | undefined;
+
+  constructor(privateKey: string, commonName?: string) {
+    this.privateKey = privateKey;
+    this.commonName = commonName;
+  }
+
+  public toProto(): proto.SignerArgs {
+    return proto.SignerArgs.fromPartial({
+      privateKey: this.privateKey,
+      commonName: this.commonName
+    });
+  }
+}
+
 export class EcdsaSigner implements Signer {
   alg: proto.SignerAlg;
   args: SignerArgs;
@@ -23,19 +40,19 @@ export class EcdsaSigner implements Signer {
   }
 }
 
-export class SignerArgs {
-  privateKey: string;
-  commonName: string | undefined;
+export class EnsSigner implements Signer {
+  alg: proto.SignerAlg;
+  args: SignerArgs;
 
-  constructor(privateKey: string, commonName?: string) {
-    this.privateKey = privateKey;
-    this.commonName = commonName;
+  constructor(privateKey: string) {
+    this.alg = proto.SignerAlg.ENS;
+    this.args = new SignerArgs(privateKey);
   }
 
-  public toProto(): proto.SignerArgs {
-    return proto.SignerArgs.fromPartial({
-      privateKey: this.privateKey,
-      commonName: this.commonName
+  public toProto(): proto.Signer {
+    return proto.Signer.fromPartial({
+      alg: this.alg,
+      args: this.args.toProto()
     });
   }
 }

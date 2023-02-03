@@ -8,6 +8,7 @@ from bloock._config.config import Config
 
 class SignatureAlg(Enum):
     ECDSA = 0
+    ENS = 1
     UNRECOGNIZED = -1
 
     def __int__(self):
@@ -17,15 +18,20 @@ class SignatureAlg(Enum):
     def from_str(alg: str) -> SignatureAlg:
         if alg == "ES256K":
             return SignatureAlg.ECDSA
+        elif alg == "ENS":
+            return SignatureAlg.ENS
         else:
             return SignatureAlg.UNRECOGNIZED
 
 
 class Signature:
-    def __init__(self, signature: str, protected: str, header: SignatureHeader) -> None:
+    def __init__(
+        self, message_hash: str, signature: str, protected: str, header: SignatureHeader
+    ) -> None:
         self.signature = signature
         self.protected = protected
         self.header = header
+        self.message_hash = message_hash
 
     @staticmethod
     def from_proto(signature: proto.Signature) -> Signature:
@@ -33,6 +39,7 @@ class Signature:
             signature=signature.signature,
             protected=signature.protected,
             header=SignatureHeader.from_proto(signature.header),
+            message_hash=signature.message_hash,
         )
 
     def to_proto(self) -> proto.Signature:
@@ -40,6 +47,7 @@ class Signature:
             signature=self.signature,
             protected=self.protected,
             header=self.header.to_proto(),
+            message_hash=self.message_hash,
         )
 
     def get_common_name(self) -> str:

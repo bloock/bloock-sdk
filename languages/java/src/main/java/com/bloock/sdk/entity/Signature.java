@@ -11,18 +11,21 @@ public class Signature {
   String signature;
   String protected_;
   SignatureHeader header;
+  String messageHash;
 
-  Signature(String signature, String protected_, SignatureHeader header) {
+  Signature(String signature, String protected_, SignatureHeader header, String messageHash) {
     this.signature = signature;
     this.protected_ = protected_;
     this.header = header;
+    this.messageHash = messageHash;
   }
 
   public static Signature fromProto(RecordOuterClass.Signature signature) {
     return new Signature(
         signature.getSignature(),
         signature.getProtected(),
-        SignatureHeader.fromProto(signature.getHeader()));
+        SignatureHeader.fromProto(signature.getHeader()),
+        signature.getMessageHash());
   }
 
   public RecordOuterClass.Signature toProto() {
@@ -30,6 +33,7 @@ public class Signature {
         .setSignature(this.signature)
         .setProtected(this.protected_)
         .setHeader(this.header.toProto())
+        .setMessageHash(this.messageHash)
         .build();
   }
 
@@ -43,6 +47,14 @@ public class Signature {
 
   public SignatureHeader getHeader() {
     return header;
+  }
+
+  public void setSignature(String signature) {
+    this.signature = signature;
+  }
+
+  public void setMessageHash(String hash) {
+    this.messageHash = hash;
   }
 
   public String getCommonName() throws Exception {

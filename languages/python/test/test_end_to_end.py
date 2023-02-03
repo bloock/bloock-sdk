@@ -9,6 +9,7 @@ from bloock.client.entity.proof import Proof, ProofAnchor
 from bloock.client.entity.decrypter import AesDecrypter, EciesDecrypter, RsaDecrypter
 from bloock.client.entity.encrypter import AesEncrypter, EciesEncrypter, RsaEncrypter
 from bloock.client.entity.record import Record
+from bloock.client.entity.signer import EcdsaSigner, EnsSigner
 from bloock.client.entity.signature import SignatureAlg
 from bloock.client.entity.signer import EcdsaSigner
 from bloock.client.entity.network import Network
@@ -29,6 +30,7 @@ class TestE2E(unittest.TestCase):
             self._testFromJson(),
             self._testFromFile(),
             self._testEcdsaSignature(),
+            self._testEnsSignature(),
         ]
 
         self._testFromHostedLoader()
@@ -134,6 +136,31 @@ class TestE2E(unittest.TestCase):
 
         return record_with_multiple_signatures
 
+    def _testEnsSignature(self) -> Record:
+        keys = self.client.generate_keys()
+
+        record = (
+            RecordBuilder.from_string("Hello world 4")
+            .with_signer(EnsSigner(keys.private_key))
+            .build()
+        )
+
+        signatures = record.get_signatures()
+        self.assertEqual(len(signatures), 1)
+
+        signatures[
+            0
+        ].signature = "66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601"
+        signatures[
+            0
+        ].message_hash = (
+            "7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6"
+        )
+        self.assertEqual("vitalik.eth", signatures[0].get_common_name())
+        self.assertEqual(SignatureAlg.ENS, signatures[0].get_alg())
+
+        return record
+
     def _testFromHostedLoader(self) -> Record:
         record = RecordBuilder.from_string("Hello world").build()
         hash = record.get_hash()
@@ -156,7 +183,6 @@ class TestE2E(unittest.TestCase):
 
         record = RecordBuilder.from_loader(IpfsLoader(hash=result)).build()
         hash = record.get_hash()
-        print(hash)
         self.assertEqual(hash, result)
 
         return record

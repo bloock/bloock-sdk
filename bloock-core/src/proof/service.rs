@@ -1,7 +1,6 @@
 use bitvec::{order::Msb0, prelude::BitVec};
 use bloock_hasher::{keccak::Keccak256, Hasher, H256};
 use bloock_http::{Client, HttpError};
-use bloock_signer::Verifier;
 use bloock_web3::blockchain::Blockchain;
 
 use std::sync::Arc;
