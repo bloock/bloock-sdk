@@ -183,7 +183,6 @@ class TestE2E(unittest.TestCase):
 
         record = RecordBuilder.from_loader(IpfsLoader(hash=result)).build()
         hash = record.get_hash()
-        print(hash)
         self.assertEqual(hash, result)
 
         return record
