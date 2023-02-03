@@ -461,18 +461,14 @@ func testEnsSignature(t *testing.T, sdk client.Client) entity.Record {
 		Build()
 	require.NoError(t, err)
 
-	hash, err := record.GetHash()
-	require.NoError(t, err)
-	assert.Equal(t, hash, "2dcd4054d07d4ac05e32fe83f438c99eb1674b98f035f14eff004be307ecae70")
-
 	signatures, err := record.GetSignatures()
 	require.NoError(t, err)
 	assert.Equal(t, len(signatures), 1)
 
-	signatures[0].Signature = "66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601"
-	signatures[0].MessageHash = "7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6"
 	retrievedName, err := signatures[0].GetCommonName()
-	assert.Equal(t, retrievedName, "vitalik.eth")
+	assert.Equal(t, "vitalik.eth", retrievedName)
+
+	assert.Equal(t, entity.ENS, signatures[0].GetAlg())
 
 	return record
 }

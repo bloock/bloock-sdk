@@ -13,19 +13,22 @@ type SignatureAlg int32
 
 const (
 	ECDSA                      SignatureAlg = iota
+	ENS                        SignatureAlg = iota
 	UNRECOGNIZED_SIGNATURE_ALG SignatureAlg = -1
 )
 
 var (
 	SignatureAlgFromProto = map[string]SignatureAlg{
 		"ES256K": ECDSA,
+		"ENS":    ENS,
 	}
 )
 
 type Signature struct {
-	Signature string
-	Protected string
-	Header    SignatureHeader
+	Signature   string
+	Protected   string
+	Header      SignatureHeader
+	MessageHash string
 }
 
 func NewSignatureFromProto(s *proto.Signature) Signature {
@@ -33,9 +36,10 @@ func NewSignatureFromProto(s *proto.Signature) Signature {
 		return Signature{}
 	}
 	return Signature{
-		Signature: s.Signature,
-		Protected: s.Protected,
-		Header:    NewSignatureHeaderFromProto(s.Header),
+		Signature:   s.Signature,
+		Protected:   s.Protected,
+		Header:      NewSignatureHeaderFromProto(s.Header),
+		MessageHash: s.MessageHash,
 	}
 }
 
@@ -66,9 +70,10 @@ func (s *Signature) GetAlg() SignatureAlg {
 
 func (s Signature) ToProto() *proto.Signature {
 	return &proto.Signature{
-		Signature: s.Signature,
-		Protected: s.Protected,
-		Header:    s.Header.ToProto(),
+		Signature:   s.Signature,
+		Protected:   s.Protected,
+		Header:      s.Header.ToProto(),
+		MessageHash: s.MessageHash,
 	}
 }
 

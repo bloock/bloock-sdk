@@ -11,7 +11,11 @@ use std::str;
 
 pub const ENS_ALG: &str = "ENS";
 
-pub async fn get_common_name(signature: &Signature, provider: String) -> Result<String> {
+pub async fn get_common_name(
+    signature: &Signature,
+    provider: String,
+    api_key: String,
+) -> Result<String> {
     let hash = bloock_hasher::from_hex(&signature.message_hash)
         .map_err(|err| SignerError::SignerError(err.to_string()))?;
 
@@ -19,13 +23,9 @@ pub async fn get_common_name(signature: &Signature, provider: String) -> Result<
     let address = derive_eth_address(public_key)?;
 
     let web3 = bloock_web3::blockchain::Blockchain {};
-    web3.reverse_ens(
-        provider,
-        address,
-        option_env!("API_KEY").unwrap().to_string(),
-    )
-    .await
-    .map_err(|_| SignerError::EthDomainNotFound())
+    web3.reverse_ens(provider, address, api_key)
+        .await
+        .map_err(|_| SignerError::EthDomainNotFound())
 }
 
 pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<Vec<u8>> {
@@ -135,7 +135,13 @@ mod tests {
             message_hash: "7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6".to_string(),
         };
 
-        let name = get_common_name(&signature, provider).await.unwrap();
+        let name = get_common_name(
+            &signature,
+            provider,
+            option_env!("API_KEY").unwrap().to_string(),
+        )
+        .await
+        .unwrap();
         assert_eq!(name, "vitalik.eth")
     }
 

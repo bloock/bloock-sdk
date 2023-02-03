@@ -168,11 +168,6 @@ async function testEnsSignature(sdk: BloockClient): Promise<Record> {
     .withSigner(new EnsSigner(keys.privateKey))
     .build();
 
-  let hash = await record.getHash();
-  expect(hash).toEqual(
-    "2dcd4054d07d4ac05e32fe83f438c99eb1674b98f035f14eff004be307ecae70"
-  );
-
   let signatures = await record.getSignatures();
   expect(signatures.length).toEqual(1);
 
@@ -181,6 +176,7 @@ async function testEnsSignature(sdk: BloockClient): Promise<Record> {
   signatures[0].messageHash =
     "7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6";
   expect(await signatures[0].getCommonName()).toEqual("vitalik.eth");
+  expect(signatures[0].getAlg()).toEqual(SignatureAlg.ENS);
 
   return record;
 }

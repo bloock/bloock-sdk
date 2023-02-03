@@ -4,7 +4,8 @@ import { NewConfigData } from "../config/config";
 
 export enum SignatureAlg {
   UNRECOGNIZED = -1,
-  ECDSA = 1
+  ECDSA = 0,
+  ENS = 1
 }
 
 export namespace SignatureAlg {
@@ -12,6 +13,8 @@ export namespace SignatureAlg {
     switch (alg) {
       case "ES256K":
         return SignatureAlg.ECDSA;
+      case "ENS":
+        return SignatureAlg.ENS;
       default:
         return SignatureAlg.UNRECOGNIZED;
     }
@@ -22,15 +25,23 @@ export class Signature {
   signature: string;
   protected: string;
   header: SignatureHeader;
+  messageHash: string;
 
-  constructor(signature: string, prot: string, header: SignatureHeader) {
+  constructor(
+    messageHash: string,
+    signature: string,
+    prot: string,
+    header: SignatureHeader
+  ) {
     this.signature = signature;
     this.protected = prot;
     this.header = header;
+    this.messageHash = messageHash;
   }
 
   static fromProto(s: proto.Signature): Signature {
     return new Signature(
+      s.messageHash,
       s.signature,
       s.protected,
       SignatureHeader.fromProto(s.header!)
@@ -41,7 +52,8 @@ export class Signature {
     return proto.Signature.fromPartial({
       signature: this.signature,
       protected: this.protected,
-      header: this.header.toProto()
+      header: this.header.toProto(),
+      messageHash: this.messageHash
     });
   }
 

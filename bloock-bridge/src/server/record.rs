@@ -522,7 +522,10 @@ impl RecordServiceHandler for RecordServer {
             None => "".to_string(),
         };
 
-        let common_name = match signature.get_common_name(provider).await {
+        let common_name = match signature
+            .get_common_name(provider, config_data.config.api_key)
+            .await
+        {
             Ok(name) => name,
             Err(err) => {
                 return SignatureCommonNameResponse::new_error(&client, err.to_string()).await

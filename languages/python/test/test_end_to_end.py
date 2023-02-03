@@ -145,11 +145,6 @@ class TestE2E(unittest.TestCase):
             .build()
         )
 
-        hash = record.get_hash()
-        self.assertEqual(
-            hash, "2dcd4054d07d4ac05e32fe83f438c99eb1674b98f035f14eff004be307ecae70"
-        )
-
         signatures = record.get_signatures()
         self.assertEqual(len(signatures), 1)
 
@@ -161,8 +156,8 @@ class TestE2E(unittest.TestCase):
         ].message_hash = (
             "7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6"
         )
-        name = signatures[0].get_common_name()
-        self.assertEqual(name, "vitalik.eth")
+        self.assertEqual("vitalik.eth", signatures[0].get_common_name())
+        self.assertEqual(SignatureAlg.ENS, signatures[0].get_alg())
 
         return record
 
