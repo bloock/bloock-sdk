@@ -17,7 +17,7 @@ dev: copy_lib
 	./gradlew run
 
 build: copy_lib
-	./gradlew build
+	./gradlew build -x test
 
 test: copy_lib
 	./gradlew test
