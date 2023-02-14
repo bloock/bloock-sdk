@@ -100,7 +100,7 @@ mod tests {
 
         let decrypted = service
             .decrypt_aes(
-                encrypted.clone(),
+                encrypted,
                 AesDecrypter::new(AesDecrypterArgs::new(password, &[])),
             )
             .unwrap();
@@ -137,7 +137,7 @@ mod tests {
 
         let decrypted = service
             .decrypt_rsa(
-                encrypted.clone(),
+                encrypted,
                 RsaDecrypter::new(RsaDecrypterArgs::new(&key_pair.private_key)),
             )
             .unwrap();
@@ -174,7 +174,7 @@ mod tests {
 
         let decrypted = service
             .decrypt_ecies(
-                encrypted.clone(),
+                encrypted,
                 EciesDecrypter::new(EciesDecrypterArgs::new(key_pair.private_key)),
             )
             .unwrap();
