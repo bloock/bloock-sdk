@@ -1,4 +1,4 @@
-import * as proto from "../bridge/proto/record";
+import * as proto from "../bridge/proto/availability_entities";
 
 export interface Loader {
   type: proto.DataAvailabilityType;
@@ -7,13 +7,13 @@ export interface Loader {
 }
 
 export class LoaderArgs {
-  hash: string;
-  constructor(hash: string) {
-    this.hash = hash;
+  id: string;
+  constructor(id: string) {
+    this.id = id;
   }
 
   public toProto(): proto.LoaderArgs {
-    return proto.LoaderArgs.fromPartial({ hash: this.hash });
+    return proto.LoaderArgs.fromPartial({ id: this.id });
   }
 }
 
@@ -21,9 +21,9 @@ export class HostedLoader implements Loader {
   type: proto.DataAvailabilityType;
   args: LoaderArgs;
 
-  constructor(hash: string) {
+  constructor(id: string) {
     this.type = proto.DataAvailabilityType.HOSTED;
-    this.args = new LoaderArgs(hash);
+    this.args = new LoaderArgs(id);
   }
 
   public toProto(): proto.Loader {
@@ -38,9 +38,9 @@ export class IpfsLoader implements Loader {
   type: proto.DataAvailabilityType;
   args: LoaderArgs;
 
-  constructor(hash: string) {
+  constructor(id: string) {
     this.type = proto.DataAvailabilityType.IPFS;
-    this.args = new LoaderArgs(hash);
+    this.args = new LoaderArgs(id);
   }
 
   public toProto(): proto.Loader {

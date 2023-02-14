@@ -1,13 +1,11 @@
-use crate::config::ConfigData;
-use std::sync::Arc;
-
 use super::entity::{
     config::{Configuration, NetworkConfiguration},
     network::Network,
 };
+use crate::config::ConfigData;
 
 pub struct ConfigService {
-    pub config_data: Arc<ConfigData>,
+    pub config_data: ConfigData,
 }
 
 impl ConfigService {

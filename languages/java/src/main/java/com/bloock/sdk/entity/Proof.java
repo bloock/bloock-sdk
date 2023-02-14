@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.ProofOuterClass;
+import com.bloock.sdk.bridge.proto.IntegrityEntities;
 import java.util.List;
 
 public class Proof {
@@ -19,7 +19,7 @@ public class Proof {
     this.anchor = anchor;
   }
 
-  public static Proof fromProto(ProofOuterClass.Proof proof) {
+  public static Proof fromProto(IntegrityEntities.Proof proof) {
     return new Proof(
         proof.getLeavesList(),
         proof.getNodesList(),
@@ -28,8 +28,8 @@ public class Proof {
         ProofAnchor.fromProto(proof.getAnchor()));
   }
 
-  public ProofOuterClass.Proof toProto() {
-    return ProofOuterClass.Proof.newBuilder()
+  public IntegrityEntities.Proof toProto() {
+    return IntegrityEntities.Proof.newBuilder()
         .addAllLeaves(leaves)
         .addAllNodes(nodes)
         .setDepth(depth)

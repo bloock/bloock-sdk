@@ -1,5 +1,5 @@
 import { AnchorNetwork } from "./anchor";
-import * as proto from "../bridge/proto/proof";
+import * as proto from "../bridge/proto/integrity_entities";
 
 export class Proof {
   leaves: string[];

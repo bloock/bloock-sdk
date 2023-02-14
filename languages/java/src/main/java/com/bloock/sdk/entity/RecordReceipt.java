@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.IntegrityEntities;
 
 public class RecordReceipt {
   long anchor;
@@ -15,13 +15,13 @@ public class RecordReceipt {
     this.status = status;
   }
 
-  public static RecordReceipt fromProto(RecordOuterClass.RecordReceipt receipt) {
+  public static RecordReceipt fromProto(IntegrityEntities.RecordReceipt receipt) {
     return new RecordReceipt(
         receipt.getAnchor(), receipt.getClient(), receipt.getRecord(), receipt.getStatus());
   }
 
-  RecordOuterClass.RecordReceipt toProto() {
-    return RecordOuterClass.RecordReceipt.newBuilder()
+  IntegrityEntities.RecordReceipt toProto() {
+    return IntegrityEntities.RecordReceipt.newBuilder()
         .setAnchor(anchor)
         .setClient(client)
         .setRecord(record)

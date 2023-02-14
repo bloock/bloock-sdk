@@ -1,8 +1,8 @@
-import * as proto from "../bridge/proto/record";
+import * as proto from "../bridge/proto/authenticity_entities";
 
 export interface Signer {
   alg: proto.SignerAlg;
-  args: SignerArgs;
+  args: proto.SignerArgs;
   toProto(): proto.Signer;
 }
 

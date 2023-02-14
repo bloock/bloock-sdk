@@ -1,6 +1,6 @@
 use crate::{
     error::{BloockResult, InfrastructureError},
-    proof::entity::proof::Proof,
+    integrity::entity::proof::Proof,
 };
 use bloock_encrypter::{EncrypterError, EncryptionAlg};
 use bloock_metadata::{FileParser, MetadataParser};
@@ -68,7 +68,7 @@ impl Document {
         Ok(self)
     }
 
-    pub fn set_encryption(&mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<()> {
+    pub fn set_encryption(mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<Self> {
         self.update_parser(ciphertext)?;
         self.update_payload()?;
 
@@ -78,7 +78,7 @@ impl Document {
 
         self.set_encryption_alg(alg)?;
 
-        Ok(())
+        Ok(self)
     }
 
     fn set_encryption_alg(&mut self, alg: &str) -> BloockResult<()> {
@@ -100,14 +100,14 @@ impl Document {
         }
     }
 
-    pub fn remove_encryption(&mut self, decrypted_payload: Vec<u8>) -> BloockResult<()> {
+    pub fn remove_encryption(mut self, decrypted_payload: Vec<u8>) -> BloockResult<Self> {
         self.update_parser(decrypted_payload)?;
         self.update_payload()?;
 
         self.is_encrypted = false;
         self.proof = self.parser.get("proof");
         self.signatures = self.parser.get("signatures");
-        Ok(())
+        Ok(self)
     }
 
     pub fn is_encrypted(&self) -> bool {
@@ -201,23 +201,20 @@ impl Eq for Document {}
 #[cfg(test)]
 mod tests {
 
+    use super::*;
+    use crate::{
+        integrity::entity::{anchor::AnchorNetwork, proof::ProofAnchor},
+        record::entity::record::Record,
+    };
     use bloock_encrypter::{
         aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs},
         Decrypter, Encrypter,
     };
-
     use bloock_hasher::{keccak::Keccak256, Hasher};
     use bloock_signer::{
         ecdsa::{EcdsaSigner, EcdsaSignerArgs},
         SignatureHeader, Signer,
     };
-
-    use crate::{
-        anchor::entity::anchor::AnchorNetwork, proof::entity::anchor::ProofAnchor,
-        record::entity::record::Record,
-    };
-
-    use super::*;
 
     #[tokio::test]
     async fn test_signed_pdf() {
@@ -246,7 +243,7 @@ mod tests {
         let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document
+        document = document
             .set_encryption(ciphertext, encrypter.get_alg())
             .unwrap();
 
@@ -294,7 +291,7 @@ mod tests {
         let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document
+        document = document
             .set_encryption(ciphertext, encrypter.get_alg())
             .unwrap();
 
@@ -356,7 +353,7 @@ mod tests {
         let original_record = Record::new(document.clone()).unwrap();
 
         let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document
+        document = document
             .set_encryption(ciphertext, encrypter.get_alg())
             .unwrap();
 

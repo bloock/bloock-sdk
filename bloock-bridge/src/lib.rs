@@ -1,11 +1,12 @@
-pub mod items {
+#[macro_use]
+mod macros;
+mod items {
     #![allow(unknown_lints)]
     #![allow(clippy::all)]
     include!(concat!(env!("OUT_DIR"), "/bloock.rs"));
 }
-mod entity_mappings;
 mod error;
-pub mod ffi;
+mod ffi;
 mod server;
 
 #[cfg(any(target_arch = "wasm32", target_arch = "wasm64"))]

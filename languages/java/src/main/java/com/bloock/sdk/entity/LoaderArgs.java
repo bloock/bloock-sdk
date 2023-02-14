@@ -1,15 +1,15 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities;
 
 public class LoaderArgs {
-  String hash;
+  String id;
 
-  public LoaderArgs(String hash) {
-    this.hash = hash;
+  public LoaderArgs(String id) {
+    this.id = id;
   }
 
-  public RecordOuterClass.LoaderArgs toProto() {
-    return RecordOuterClass.LoaderArgs.newBuilder().setHash(this.hash).build();
+  public AvailabilityEntities.LoaderArgs toProto() {
+    return AvailabilityEntities.LoaderArgs.newBuilder().setId(this.id).build();
   }
 }

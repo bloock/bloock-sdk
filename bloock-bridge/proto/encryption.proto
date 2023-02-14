@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "record_entities.proto";
+import "encryption_entities.proto";
+import "shared.proto";
+import "config.proto";
+
+
+service EncryptionService {
+    rpc GenerateRsaKeyPair(GenerateRsaKeyPairRequest) returns (GenerateRsaKeyPairResponse);
+    rpc GenerateEciesKeyPair(GenerateEciesKeyPairRequest) returns (GenerateEciesKeyPairResponse);
+
+    rpc Encrypt(EncryptRequest) returns (EncryptResponse);
+    rpc Decrypt(DecryptRequest) returns (DecryptResponse);
+
+    rpc GetEncryptionAlg(EncryptionAlgRequest) returns (EncryptionAlgResponse);
+}
+
+message GenerateRsaKeyPairRequest {
+    ConfigData config_data = 1;
+}
+
+message GenerateRsaKeyPairResponse {
+    string privateKey = 1;
+    string publicKey = 2;
+    optional Error error = 3;
+}
+message GenerateEciesKeyPairRequest {
+    ConfigData config_data = 1;
+}
+
+message GenerateEciesKeyPairResponse {
+    string privateKey = 1;
+    string publicKey = 2;
+    optional Error error = 3;
+}
+
+message EncryptRequest {
+    ConfigData config_data = 1;
+    Record record = 2;
+    Encrypter encrypter = 3;
+}
+
+message EncryptResponse {
+    Record record = 1;
+    optional Error error = 2;
+}
+
+message DecryptRequest {
+    ConfigData config_data = 1;
+    Record record = 2;
+    Decrypter decrypter = 3;
+}
+
+message DecryptResponse {
+    Record record = 1;
+    optional Error error = 2;
+}
+
+message EncryptionAlgRequest {
+    ConfigData config_data = 1;
+    Record record = 2;
+}
+
+message EncryptionAlgResponse {
+    EncryptionAlg alg = 1;
+    optional Error error = 2;
+}

@@ -1,34 +1,60 @@
 import { Connection } from "./connection";
-import { AnchorService, AnchorServiceClientImpl } from "./proto/anchor";
-import { ProofService, ProofServiceClientImpl } from "./proto/proof";
+import {
+  AuthenticityService,
+  AuthenticityServiceClientImpl
+} from "./proto/authenticity";
+import {
+  AvailabilityService,
+  AvailabilityServiceClientImpl
+} from "./proto/availability";
+import {
+  EncryptionService,
+  EncryptionServiceClientImpl
+} from "./proto/encryption";
+import {
+  IntegrityService,
+  IntegrityServiceClientImpl
+} from "./proto/integrity";
 import { RecordService, RecordServiceClientImpl } from "./proto/record";
 import { WebhookService, WebhookServiceClientImpl } from "./proto/webhook";
 
 export class BloockBridge {
-  private anchor: AnchorService;
+  private authenticity: AuthenticityService;
+  private availability: AvailabilityService;
+  private encryption: EncryptionService;
+  private integrity: IntegrityService;
   private record: RecordService;
-  private proof: ProofService;
   private webhook: WebhookService;
 
   constructor() {
     let connection = new Connection();
 
-    this.anchor = new AnchorServiceClientImpl(connection);
+    this.authenticity = new AuthenticityServiceClientImpl(connection);
+    this.availability = new AvailabilityServiceClientImpl(connection);
+    this.encryption = new EncryptionServiceClientImpl(connection);
+    this.integrity = new IntegrityServiceClientImpl(connection);
     this.record = new RecordServiceClientImpl(connection);
-    this.proof = new ProofServiceClientImpl(connection);
     this.webhook = new WebhookServiceClientImpl(connection);
   }
 
-  public getAnchor(): AnchorService {
-    return this.anchor;
+  public getAuthenticity(): AuthenticityService {
+    return this.authenticity;
+  }
+
+  public getAvailability(): AvailabilityService {
+    return this.availability;
+  }
+
+  public getEncryption(): EncryptionService {
+    return this.encryption;
+  }
+
+  public getIntegrity(): IntegrityService {
+    return this.integrity;
   }
 
   public getRecord(): RecordService {
     return this.record;
-  }
-
-  public getProof(): ProofService {
-    return this.proof;
   }
 
   public getWebhook(): WebhookService {

@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "integrity_entities.proto";
+import "record_entities.proto";
+import "shared.proto";
+import "config.proto";
+
+service IntegrityService {
+    rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
+
+    rpc GetAnchor(GetAnchorRequest) returns (GetAnchorResponse);
+    rpc WaitAnchor(WaitAnchorRequest) returns (WaitAnchorResponse);
+    
+    rpc GetProof(GetProofRequest) returns (GetProofResponse);
+    rpc ValidateRoot(ValidateRootRequest) returns (ValidateRootResponse);
+    rpc VerifyProof(VerifyProofRequest) returns (VerifyProofResponse);
+    rpc VerifyRecords(VerifyRecordsRequest) returns (VerifyRecordsResponse);
+}
+
+message SendRecordsRequest {
+    ConfigData config_data = 1;
+    repeated Record records = 2;
+}
+
+message SendRecordsResponse {
+    repeated RecordReceipt records = 1;
+    optional Error error = 2;
+}
+
+message GetAnchorRequest {
+    ConfigData config_data = 1;
+    int64 anchor_id = 2;
+}
+
+message GetAnchorResponse {
+    optional Anchor anchor = 1;
+    optional Error error = 2;
+}
+
+message WaitAnchorRequest {
+    ConfigData config_data = 1;
+    int64 anchor_id = 2;
+    int64 timeout = 3;
+}
+
+message WaitAnchorResponse {
+    optional Anchor anchor = 1;
+    optional Error error = 2;
+}
+
+message GetProofRequest {
+    ConfigData config_data = 1;
+    repeated Record records = 2;
+}
+
+message GetProofResponse {
+    Proof proof = 1;
+    optional Error error = 2;
+}
+
+message ValidateRootRequest {
+    ConfigData config_data = 1;
+    string root = 2;
+    Network network = 3;
+}
+
+message ValidateRootResponse {
+    uint64 timestamp = 1; // TODO Should be u128
+    optional Error error = 2;
+}
+
+message VerifyProofRequest {
+    ConfigData config_data = 1;
+    Proof proof = 2;
+}
+
+message VerifyProofResponse {
+    optional string record = 1;
+    optional Error error = 2;
+}
+
+message VerifyRecordsRequest {
+    ConfigData config_data = 1;
+    repeated Record records = 2;
+    optional Network network = 3;
+}
+
+message VerifyRecordsResponse {
+    uint64 timestamp = 1; // TODO Should be u128
+    optional Error error = 2;
+}

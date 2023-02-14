@@ -20,8 +20,7 @@ build: copy_lib
 	./gradlew build
 
 test: copy_lib
-	./gradlew shadowJar
-	$(MAKE) -C test
+	./gradlew test
 
 fmt.jar:
 	$(eval URL := $(shell curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/google/google-java-format/releases/latest | jq '.assets[] | select(.name | test("all-deps.jar")) | .browser_download_url'))

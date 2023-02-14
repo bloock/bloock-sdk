@@ -1,7 +1,7 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.DataAvailabilityType;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities.DataAvailabilityType;
 
 public class IpfsPublisher implements Publisher {
   DataAvailabilityType type;
@@ -13,8 +13,8 @@ public class IpfsPublisher implements Publisher {
   }
 
   @Override
-  public RecordOuterClass.Publisher toProto() {
-    return RecordOuterClass.Publisher.newBuilder()
+  public AvailabilityEntities.Publisher toProto() {
+    return AvailabilityEntities.Publisher.newBuilder()
         .setType(this.type)
         .setArgs(this.args.toProto())
         .build();

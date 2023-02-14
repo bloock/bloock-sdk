@@ -134,7 +134,9 @@ impl SimpleHttpClient {
             Some(b) => req.send_bytes(b),
             None => req.call(),
         }
-        .map_err(|e| HttpError::RequestError(e.to_string()))?;
+        .map(Some)
+        .unwrap_or_else(|e| e.into_response())
+        .ok_or_else(|| HttpError::RequestError("Error while sending request".to_string()))?;
 
         let status = res.status();
 

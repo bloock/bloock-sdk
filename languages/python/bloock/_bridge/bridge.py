@@ -1,23 +1,38 @@
 from .channel import Channel
-from .proto import anchor_pb2_grpc, record_pb2_grpc, proof_pb2_grpc, webhook_pb2_grpc
+from .proto import (
+    authenticity_pb2_grpc,
+    availability_pb2_grpc,
+    encryption_pb2_grpc,
+    integrity_pb2_grpc,
+    record_pb2_grpc,
+    webhook_pb2_grpc,
+)
 
 
 class BloockBridge:
     def __init__(self):
         channel = Channel()
-        self.Anchor = anchor_pb2_grpc.AnchorServiceStub(channel)
-        self.Record = record_pb2_grpc.RecordServiceStub(channel)
-        self.Proof = proof_pb2_grpc.ProofServiceStub(channel)
-        self.Webhook = webhook_pb2_grpc.WebhookServiceStub(channel)
+        self._authenticity = authenticity_pb2_grpc.AuthenticityServiceStub(channel)
+        self._availability = availability_pb2_grpc.AvailabilityServiceStub(channel)
+        self._encryption = encryption_pb2_grpc.EncryptionServiceStub(channel)
+        self._integrity = integrity_pb2_grpc.IntegrityServiceStub(channel)
+        self._record = record_pb2_grpc.RecordServiceStub(channel)
+        self._webhook = webhook_pb2_grpc.WebhookServiceStub(channel)
 
-    def anchor(self) -> anchor_pb2_grpc.AnchorServiceStub:
-        return self.Anchor
+    def authenticity(self) -> authenticity_pb2_grpc.AuthenticityServiceStub:
+        return self._authenticity
+
+    def availability(self) -> availability_pb2_grpc.AvailabilityServiceStub:
+        return self._availability
+
+    def encryption(self) -> encryption_pb2_grpc.EncryptionServiceStub:
+        return self._encryption
+
+    def integrity(self) -> integrity_pb2_grpc.IntegrityServiceStub:
+        return self._integrity
 
     def record(self) -> record_pb2_grpc.RecordServiceStub:
-        return self.Record
-
-    def proof(self) -> proof_pb2_grpc.ProofServiceStub:
-        return self.Proof
+        return self._record
 
     def webhook(self) -> webhook_pb2_grpc.WebhookServiceStub:
-        return self.Webhook
+        return self._webhook

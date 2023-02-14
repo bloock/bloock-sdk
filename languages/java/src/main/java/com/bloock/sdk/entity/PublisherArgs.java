@@ -1,9 +1,9 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities;
 
 public class PublisherArgs {
-  RecordOuterClass.PublisherArgs toProto() {
-    return RecordOuterClass.PublisherArgs.newBuilder().build();
+  AvailabilityEntities.PublisherArgs toProto() {
+    return AvailabilityEntities.PublisherArgs.newBuilder().build();
   }
 }

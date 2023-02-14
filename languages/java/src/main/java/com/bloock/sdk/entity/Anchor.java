@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.AnchorOuterClass;
+import com.bloock.sdk.bridge.proto.IntegrityEntities;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +20,7 @@ public class Anchor {
     this.status = status;
   }
 
-  public static Anchor fromProto(AnchorOuterClass.Anchor anchor) {
+  public static Anchor fromProto(IntegrityEntities.Anchor anchor) {
     return new Anchor(
         anchor.getId(),
         anchor.getBlockRootsList(),
@@ -31,8 +31,8 @@ public class Anchor {
         anchor.getStatus());
   }
 
-  AnchorOuterClass.Anchor toProto() {
-    return AnchorOuterClass.Anchor.newBuilder()
+  IntegrityEntities.Anchor toProto() {
+    return IntegrityEntities.Anchor.newBuilder()
         .setId(this.id)
         .addAllBlockRoots(this.blockRoots)
         .addAllNetworks(this.networks.stream().map(x -> x.toProto()).collect(Collectors.toList()))

@@ -2,26 +2,22 @@ extern crate prost_build;
 use convert_case::{Case, Casing};
 use prost_build::{Service, ServiceGenerator};
 use std::collections::HashMap;
-use std::env;
 use std::fmt::Write;
 use std::io::Result;
+use std::{env, fs};
 
 fn main() -> Result<()> {
+    let paths: Vec<String> = fs::read_dir("./proto")
+        .unwrap()
+        .into_iter()
+        .map(|e| e.unwrap().path().display().to_string())
+        .collect();
+
     prost_build::Config::new()
         .service_generator(Box::new(BloockBridgeServiceGenerator {
             service_methods: HashMap::new(),
         }))
-        .compile_protos(
-            &[
-                "proto/shared.proto",
-                "proto/config.proto",
-                "proto/anchor.proto",
-                "proto/record.proto",
-                "proto/proof.proto",
-                "proto/webhook.proto",
-            ],
-            &["proto/"],
-        )?;
+        .compile_protos(paths.as_slice(), &["proto/"])?;
 
     let crate_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
 
@@ -54,16 +50,30 @@ impl ServiceGenerator for BloockBridgeServiceGenerator {
             write!(
                 buf,
                 "\n   \
-                async fn {}(&self, input: {}) -> {};",
+                async fn {}(&self, input: &{}) -> Result<{}, String>;",
                 method.name, method.input_type, method.output_type
             )
             .unwrap();
         }
 
-        buf.push_str("\n}");
+        buf.push_str("\n}\n\n");
+
+        for method in service.methods.iter() {
+            write!(
+                buf,
+                "\nresponse_type_event!({}, {});",
+                method.input_type, method.output_type
+            )
+            .unwrap();
+        }
+
+        buf.push_str("\n\n");
     }
 
     fn finalize_package(&mut self, _package: &str, buf: &mut String) {
+        buf.push_str("use crate::server::response_types::{ResponseType, RequestConfigData, ToResponseType, ResponseTypeEvent};\n\n");
+        buf.push_str("use crate::server::config::entity::{map_config};\n\n");
+
         let enum_name = format!("{}Server", _package.to_case(Case::UpperCamel));
         buf.push_str("\n\n");
         buf.push_str("use async_trait::async_trait;");

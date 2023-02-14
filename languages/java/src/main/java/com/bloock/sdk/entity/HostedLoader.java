@@ -1,19 +1,19 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.DataAvailabilityType;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities.DataAvailabilityType;
 
 public class HostedLoader implements Loader {
   DataAvailabilityType type;
   LoaderArgs args;
 
-  public HostedLoader(String hash) {
+  public HostedLoader(String id) {
     type = DataAvailabilityType.HOSTED;
-    args = new LoaderArgs(hash);
+    args = new LoaderArgs(id);
   }
 
-  public RecordOuterClass.Loader toProto() {
-    return RecordOuterClass.Loader.newBuilder()
+  public AvailabilityEntities.Loader toProto() {
+    return AvailabilityEntities.Loader.newBuilder()
         .setType(this.type)
         .setArgs(this.args.toProto())
         .build();

@@ -1,36 +1,33 @@
 package com.bloock.sdk.entity;
 
 import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.ProofOuterClass.SetProofRequest;
-import com.bloock.sdk.bridge.proto.ProofOuterClass.SetProofResponse;
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.EncryptionAlgResponse;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.PublishRequest;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.PublishResponse;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.RecordHash;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.RecordSignatures;
+import com.bloock.sdk.bridge.proto.Config.ConfigData;
+import com.bloock.sdk.bridge.proto.Record.GetHashRequest;
+import com.bloock.sdk.bridge.proto.Record.GetHashResponse;
+import com.bloock.sdk.bridge.proto.Record.SetProofRequest;
+import com.bloock.sdk.bridge.proto.Record.SetProofResponse;
+import com.bloock.sdk.bridge.proto.RecordEntities;
 import com.bloock.sdk.bridge.proto.Shared.Error;
-import com.bloock.sdk.config.Config;
 import com.google.protobuf.ByteString;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class Record {
   byte[] payload;
   String hash;
+  ConfigData configData;
 
-  Record(byte[] payload, String hash) {
+  Record(byte[] payload, String hash, ConfigData configData) {
     this.payload = payload;
     this.hash = hash;
+    this.configData = configData;
   }
 
-  public static Record fromProto(RecordOuterClass.Record record) {
-    return new Record(record.getPayload().toByteArray(), record.getHash());
+  public static Record fromProto(RecordEntities.Record record, ConfigData configData) {
+    return new Record(record.getPayload().toByteArray(), record.getHash(), configData);
   }
 
-  public RecordOuterClass.Record toProto() {
-    return RecordOuterClass.Record.newBuilder()
-        .setConfigData(Config.newConfigData())
+  public RecordEntities.Record toProto() {
+    return RecordEntities.Record.newBuilder()
+        .setConfigData(this.configData)
         .setPayload(ByteString.copyFrom(payload))
         .setHash(hash)
         .build();
@@ -38,7 +35,12 @@ public class Record {
 
   public String getHash() throws Exception {
     Bridge bridge = new Bridge();
-    RecordHash recordHash = bridge.getRecord().getHash(this.toProto());
+    GetHashRequest request =
+        GetHashRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setRecord(this.toProto())
+            .build();
+    GetHashResponse recordHash = bridge.getRecord().getHash(request);
 
     if (recordHash.getError() != Error.getDefaultInstance()) {
       throw new Exception(recordHash.getError().getMessage());
@@ -47,38 +49,8 @@ public class Record {
     return recordHash.getHash();
   }
 
-  public List<Signature> getSignatures() throws Exception {
-    Bridge bridge = new Bridge();
-    RecordSignatures recordSignatures = bridge.getRecord().getSignatures(this.toProto());
-
-    if (recordSignatures.getError() != Error.getDefaultInstance()) {
-      throw new Exception(recordSignatures.getError().getMessage());
-    }
-
-    return recordSignatures.getSignaturesList().stream()
-        .map(x -> Signature.fromProto(x))
-        .collect(Collectors.toList());
-  }
-
   public byte[] getPayload() {
     return payload;
-  }
-
-  public String publish(Publisher publisher) throws Exception {
-    Bridge bridge = new Bridge();
-    PublishRequest req =
-        PublishRequest.newBuilder()
-            .setConfigData(Config.newConfigData())
-            .setRecord(this.toProto())
-            .setPublisher(publisher.toProto())
-            .build();
-
-    PublishResponse response = bridge.getRecord().publish(req);
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
-    }
-
-    return response.getHash();
   }
 
   public byte[] retrieve() {
@@ -91,26 +63,15 @@ public class Record {
         SetProofRequest.newBuilder()
             .setProof(proof.toProto())
             .setRecord(this.toProto())
-            .setConfigData(Config.newConfigData())
+            .setConfigData(this.configData)
             .build();
 
-    SetProofResponse response = bridge.getProof().setProof(request);
+    SetProofResponse response = bridge.getRecord().setProof(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 
     this.payload = response.getRecord().getPayload().toByteArray();
-  }
-
-  public EncryptionAlg getEncryptionAlg() throws Exception {
-    Bridge bridge = new Bridge();
-    EncryptionAlgResponse res = bridge.getRecord().getEncryptionAlg(this.toProto());
-
-    if (res.getError() != Error.getDefaultInstance()) {
-      throw new Exception(res.getError().getMessage());
-    }
-
-    return EncryptionAlg.fromProto(res.getAlg());
   }
 }

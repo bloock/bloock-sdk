@@ -1,13 +1,14 @@
-pub mod anchor;
-pub mod client;
+pub mod authenticity;
+pub mod availability;
 pub mod config;
+pub mod encryption;
 pub mod error;
 pub mod event;
-pub mod proof;
-pub mod publish;
 pub mod record;
 pub mod shared;
 pub mod webhook;
+
+pub mod integrity;
 
 pub use bloock_encrypter::{
     aes::AesDecrypter, aes::AesDecrypterArgs, aes::AesEncrypter, aes::AesEncrypterArgs,

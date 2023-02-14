@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.AuthenticityEntities;
 
 public class SignatureHeader {
   public String getAlg() {
@@ -19,11 +19,14 @@ public class SignatureHeader {
     this.kid = kid;
   }
 
-  public static SignatureHeader fromProto(RecordOuterClass.SignatureHeader header) {
+  public static SignatureHeader fromProto(AuthenticityEntities.SignatureHeader header) {
     return new SignatureHeader(header.getAlg(), header.getKid());
   }
 
-  public RecordOuterClass.SignatureHeader toProto() {
-    return RecordOuterClass.SignatureHeader.newBuilder().setAlg(this.alg).setKid(this.kid).build();
+  public AuthenticityEntities.SignatureHeader toProto() {
+    return AuthenticityEntities.SignatureHeader.newBuilder()
+        .setAlg(this.alg)
+        .setKid(this.kid)
+        .build();
   }
 }

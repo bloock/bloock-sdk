@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "config.proto";
+
+enum RecordTypes {
+	STRING = 0;
+	HEX = 1;
+	JSON = 2;
+	BYTES = 3;
+	FILE = 4;
+    RECORD = 5;
+    LOADER = 6;
+}
+
+message RecordHeader {
+    string ty = 1;
+}
+
+message Record {
+    optional ConfigData config_data = 1;
+    bytes payload = 2;
+    string hash = 3;
+}

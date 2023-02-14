@@ -1,10 +1,10 @@
-__version__ = "2.3.0"
+__version__ = "2.4.0"
 
 from typing import Dict
 
 import bloock
 from bloock._bridge.proto.config_pb2 import NetworkConfig
-from bloock.client.entity.network import Network
+from bloock.entity.network import Network
 
 api_key = ""
 api_host = ""

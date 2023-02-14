@@ -1,11 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.SignatureCommonNameRequest;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.SignatureCommonNameResponse;
-import com.bloock.sdk.bridge.proto.Shared.Error;
-import com.bloock.sdk.config.Config;
+import com.bloock.sdk.bridge.proto.AuthenticityEntities;
 
 public class Signature {
   String signature;
@@ -20,7 +15,7 @@ public class Signature {
     this.messageHash = messageHash;
   }
 
-  public static Signature fromProto(RecordOuterClass.Signature signature) {
+  public static Signature fromProto(AuthenticityEntities.Signature signature) {
     return new Signature(
         signature.getSignature(),
         signature.getProtected(),
@@ -28,8 +23,8 @@ public class Signature {
         signature.getMessageHash());
   }
 
-  public RecordOuterClass.Signature toProto() {
-    return RecordOuterClass.Signature.newBuilder()
+  public AuthenticityEntities.Signature toProto() {
+    return AuthenticityEntities.Signature.newBuilder()
         .setSignature(this.signature)
         .setProtected(this.protected_)
         .setHeader(this.header.toProto())
@@ -55,24 +50,6 @@ public class Signature {
 
   public void setMessageHash(String hash) {
     this.messageHash = hash;
-  }
-
-  public String getCommonName() throws Exception {
-    Bridge bridge = new Bridge();
-    SignatureCommonNameResponse res =
-        bridge
-            .getRecord()
-            .getSignatureCommonName(
-                SignatureCommonNameRequest.newBuilder()
-                    .setConfigData(Config.newConfigData())
-                    .setSignature(this.toProto())
-                    .build());
-
-    if (res.getError() != Error.getDefaultInstance()) {
-      throw new Exception(res.getError().getMessage());
-    }
-
-    return res.getCommonName();
   }
 
   public SignatureAlg getAlg() {

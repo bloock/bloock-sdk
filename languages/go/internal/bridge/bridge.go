@@ -3,32 +3,44 @@ package bridge
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 type BloockBridge struct {
-	anchor  proto.AnchorServiceClient
-	record  proto.RecordServiceClient
-	proof   proto.ProofServiceClient
-	webhook proto.WebhookServiceClient
+	authenticity proto.AuthenticityServiceClient
+	availability proto.AvailabilityServiceClient
+	encryption   proto.EncryptionServiceClient
+	integrity    proto.IntegrityServiceClient
+	record       proto.RecordServiceClient
+	webhook      proto.WebhookServiceClient
 }
 
 func NewBloockBridge() BloockBridge {
 	conn := NewBloockConnection()
 	return BloockBridge{
-		anchor:  proto.NewAnchorServiceClient(conn),
-		record:  proto.NewRecordServiceClient(conn),
-		proof:   proto.NewProofServiceClient(conn),
-		webhook: proto.NewWebhookServiceClient(conn),
+		authenticity: proto.NewAuthenticityServiceClient(conn),
+		availability: proto.NewAvailabilityServiceClient(conn),
+		encryption:   proto.NewEncryptionServiceClient(conn),
+		integrity:    proto.NewIntegrityServiceClient(conn),
+		record:       proto.NewRecordServiceClient(conn),
+		webhook:      proto.NewWebhookServiceClient(conn),
 	}
 }
 
-func (b *BloockBridge) Anchor() proto.AnchorServiceClient {
-	return b.anchor
+func (b *BloockBridge) Authenticity() proto.AuthenticityServiceClient {
+	return b.authenticity
+}
+
+func (b *BloockBridge) Availability() proto.AvailabilityServiceClient {
+	return b.availability
+}
+
+func (b *BloockBridge) Encryption() proto.EncryptionServiceClient {
+	return b.encryption
+}
+
+func (b *BloockBridge) Integrity() proto.IntegrityServiceClient {
+	return b.integrity
 }
 
 func (b *BloockBridge) Record() proto.RecordServiceClient {
 	return b.record
-}
-
-func (b *BloockBridge) Proof() proto.ProofServiceClient {
-	return b.proof
 }
 
 func (b *BloockBridge) Webhook() proto.WebhookServiceClient {

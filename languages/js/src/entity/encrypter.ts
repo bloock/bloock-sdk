@@ -1,4 +1,4 @@
-import * as proto from "../bridge/proto/record";
+import * as proto from "../bridge/proto/encryption_entities";
 
 export interface Encrypter {
   alg: proto.EncryptionAlg;

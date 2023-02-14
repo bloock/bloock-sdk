@@ -1,34 +1,47 @@
-mod anchor;
-mod proof;
 mod record;
-mod response_types;
+pub mod response_types;
 mod webhook;
 
-use self::anchor::AnchorServer;
-use self::proof::ProofServer;
-use self::record::RecordServer;
-use self::webhook::WebhookServer;
+mod authenticity;
+mod availability;
+pub mod config;
+mod encryption;
+mod integrity;
+
+use self::authenticity::server::AuthenticityServer;
+use self::availability::server::AvailabilityServer;
+use self::encryption::server::EncryptionServer;
+use self::integrity::server::IntegrityServer;
+use self::record::server::RecordServer;
+use self::response_types::ToResponseType;
+use self::webhook::server::WebhookServer;
 use crate::error::BridgeError;
-use crate::items::AnchorServiceHandler;
+use crate::items::AuthenticityServiceHandler;
+use crate::items::AvailabilityServiceHandler;
 use crate::items::BloockServer;
-use crate::items::ProofServiceHandler;
+use crate::items::EncryptionServiceHandler;
+use crate::items::IntegrityServiceHandler;
 use crate::items::RecordServiceHandler;
 use crate::items::WebhookServiceHandler;
 use crate::server::response_types::ResponseType;
 
 pub struct Server {
-    anchor: AnchorServer,
+    authenticity: AuthenticityServer,
+    availability: AvailabilityServer,
+    encryption: EncryptionServer,
+    integrity: IntegrityServer,
     record: RecordServer,
-    proof: ProofServer,
     webhook: WebhookServer,
 }
 
 impl Server {
     pub fn new() -> Self {
         Self {
-            anchor: AnchorServer {},
+            authenticity: AuthenticityServer {},
+            availability: AvailabilityServer {},
+            encryption: EncryptionServer {},
+            integrity: IntegrityServer {},
             record: RecordServer {},
-            proof: ProofServer {},
             webhook: WebhookServer {},
         }
     }
@@ -52,126 +65,267 @@ impl Server {
     ) -> Result<ResponseType, BridgeError> {
         let server: BloockServer = BloockServer::from_str(request_type);
         match server {
-            BloockServer::AnchorServiceGetAnchor => Ok(self
-                .anchor
-                .get_anchor(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::AnchorServiceWaitAnchor => Ok(self
-                .anchor
-                .wait_anchor(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceSendRecords => Ok(self
-                .record
-                .send_records(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::ProofServiceGetProof => Ok(self
-                .proof
-                .get_proof(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::ProofServiceValidateRoot => Ok(self
-                .proof
-                .validate_root(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::ProofServiceVerifyProof => Ok(self
-                .proof
-                .verify_proof(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::ProofServiceVerifyRecords => Ok(self
-                .proof
-                .verify_records(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceBuildRecordFromString => Ok(self
-                .record
-                .build_record_from_string(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceBuildRecordFromHex => Ok(self
-                .record
-                .build_record_from_hex(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceBuildRecordFromJson => Ok(self
-                .record
-                .build_record_from_json(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceBuildRecordFromFile => Ok(self
-                .record
-                .build_record_from_file(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceBuildRecordFromBytes => Ok(self
-                .record
-                .build_record_from_bytes(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceBuildRecordFromRecord => Ok(self
-                .record
-                .build_record_from_record(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceBuildRecordFromLoader => Ok(self
-                .record
-                .build_record_from_loader(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceGetHash => Ok(self
-                .record
-                .get_hash(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceGetSignatures => Ok(self
-                .record
-                .get_signatures(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceGetSignatureCommonName => Ok(self
-                .record
-                .get_signature_common_name(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceGenerateKeys => Ok(self
-                .record
-                .generate_keys(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceGenerateRsaKeyPair => Ok(self
-                .record
-                .generate_rsa_key_pair(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceGenerateEciesKeyPair => Ok(self
-                .record
-                .generate_ecies_key_pair(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServicePublish => Ok(self
-                .record
-                .publish(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::ProofServiceSetProof => Ok(self
-                .proof
-                .set_proof(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::WebhookServiceVerifyWebhookSignature => Ok(self
-                .webhook
-                .verify_webhook_signature(self.serialize_request(payload)?)
-                .await
-                .into()),
-            BloockServer::RecordServiceGetEncryptionAlg => Ok(self
-                .record
-                .get_encryption_alg(self.serialize_request(payload)?)
-                .await
-                .into()),
+            BloockServer::AuthenticityServiceGenerateEcdsaKeys => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .authenticity
+                    .generate_ecdsa_keys(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::AuthenticityServiceSign => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .authenticity
+                    .sign(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::AuthenticityServiceVerify => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .authenticity
+                    .verify(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::AuthenticityServiceGetSignatures => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .authenticity
+                    .get_signatures(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::AuthenticityServiceGetSignatureCommonName => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .authenticity
+                    .get_signature_common_name(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IntegrityServiceGetAnchor => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .integrity
+                    .get_anchor(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IntegrityServiceWaitAnchor => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .integrity
+                    .wait_anchor(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IntegrityServiceSendRecords => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .integrity
+                    .send_records(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IntegrityServiceGetProof => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .integrity
+                    .get_proof(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IntegrityServiceValidateRoot => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .integrity
+                    .validate_root(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IntegrityServiceVerifyProof => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .integrity
+                    .verify_proof(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IntegrityServiceVerifyRecords => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .integrity
+                    .verify_records(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceBuildRecordFromString => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .build_record_from_string(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceBuildRecordFromHex => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .build_record_from_hex(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceBuildRecordFromJson => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .build_record_from_json(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceBuildRecordFromFile => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .build_record_from_file(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceBuildRecordFromBytes => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .build_record_from_bytes(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceBuildRecordFromRecord => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .build_record_from_record(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceBuildRecordFromLoader => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .build_record_from_loader(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceGetHash => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .get_hash(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceSetProof => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .set_proof(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::AvailabilityServicePublish => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .availability
+                    .publish(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::AvailabilityServiceRetrieve => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .availability
+                    .retrieve(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::EncryptionServiceGenerateRsaKeyPair => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .encryption
+                    .generate_rsa_key_pair(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::EncryptionServiceGenerateEciesKeyPair => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .encryption
+                    .generate_ecies_key_pair(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::EncryptionServiceEncrypt => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .encryption
+                    .encrypt(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::EncryptionServiceDecrypt => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .encryption
+                    .decrypt(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::EncryptionServiceGetEncryptionAlg => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .encryption
+                    .get_encryption_alg(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::WebhookServiceVerifyWebhookSignature => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .webhook
+                    .verify_webhook_signature(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             _ => Err(BridgeError::ServiceNotFound),
         }
     }

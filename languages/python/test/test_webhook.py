@@ -1,11 +1,13 @@
 import unittest
 
-from test.util import get_sdk
+from bloock.client.webhook import WebhookClient
+from test.util import init_sdk
 
 
-class TestE2E(unittest.TestCase):
-    def setUp(self):
-        self.client = get_sdk()
+class TestWebhook(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        init_sdk()
 
     def test_verify_webhook_signature_ok(self):
         payload = bytes(
@@ -14,7 +16,10 @@ class TestE2E(unittest.TestCase):
         )
         header = "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29"
         secret = "NHJTAE6ikKBccSaeCSBSWGdp7NmixXy7"
-        is_valid = self.client.verify_webhook_signature(payload, header, secret, False)
+        webhook_client = WebhookClient()
+        is_valid = webhook_client.verify_webhook_signature(
+            payload, header, secret, False
+        )
         self.assertTrue(is_valid)
 
     def test_verify_webhook_signature_invalid_secret(self):
@@ -24,5 +29,8 @@ class TestE2E(unittest.TestCase):
         )
         header = "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29"
         secret = "asdf"
-        is_valid = self.client.verify_webhook_signature(payload, header, secret, False)
+        webhook_client = WebhookClient()
+        is_valid = webhook_client.verify_webhook_signature(
+            payload, header, secret, False
+        )
         self.assertFalse(is_valid)

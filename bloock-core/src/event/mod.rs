@@ -23,13 +23,12 @@ impl From<EventError> for BloockError {
     }
 }
 
-pub fn configure(
-    http: Arc<SimpleHttpClient>,
-    config_data: Arc<ConfigData>,
-) -> service::EventService<SimpleHttpClient> {
+pub fn configure(config_data: ConfigData) -> service::EventService<SimpleHttpClient> {
+    let simple_http_client = Arc::new(SimpleHttpClient::new());
+
     service::EventService {
-        http: Arc::clone(&http),
-        config_service: config::configure(Arc::clone(&config_data)),
+        http: simple_http_client,
+        config_service: config::configure(config_data),
     }
 }
 

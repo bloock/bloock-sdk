@@ -1,4 +1,4 @@
-import * as proto from "../bridge/proto/anchor";
+import * as proto from "../bridge/proto/integrity_entities";
 
 export class Anchor {
   id: number;

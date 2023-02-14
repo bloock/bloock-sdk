@@ -1,7 +1,7 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.EncryptionAlg;
+import com.bloock.sdk.bridge.proto.EncryptionEntities;
+import com.bloock.sdk.bridge.proto.EncryptionEntities.EncryptionAlg;
 
 public class RsaEncrypter implements Encrypter {
   EncryptionAlg alg;
@@ -13,8 +13,8 @@ public class RsaEncrypter implements Encrypter {
   }
 
   @Override
-  public RecordOuterClass.Encrypter toProto() {
-    return RecordOuterClass.Encrypter.newBuilder()
+  public EncryptionEntities.Encrypter toProto() {
+    return EncryptionEntities.Encrypter.newBuilder()
         .setAlg(this.alg)
         .setArgs(this.args.toProto())
         .build();

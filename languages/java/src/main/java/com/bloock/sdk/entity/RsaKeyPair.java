@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateRsaKeyPairResponse;
+import com.bloock.sdk.bridge.proto.Encryption.GenerateRsaKeyPairResponse;
 
 public class RsaKeyPair extends KeyPair {
   RsaKeyPair(String publicKey, String privateKey) {

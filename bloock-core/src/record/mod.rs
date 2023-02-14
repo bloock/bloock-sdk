@@ -1,12 +1,5 @@
-use crate::{
-    config::{self, config_data::ConfigData},
-    error::{BloockError, ErrorKind},
-};
-use bloock_http::BloockHttpClient;
-#[cfg(test)]
-use bloock_http::MockClient;
+use crate::error::{BloockError, ErrorKind};
 use serde::Serialize;
-use std::sync::Arc;
 use thiserror::Error;
 pub mod builder;
 pub mod document;
@@ -37,20 +30,11 @@ impl From<RecordError> for BloockError {
     }
 }
 
-pub fn configure(
-    http: Arc<BloockHttpClient>,
-    config_data: Arc<ConfigData>,
-) -> service::RecordService<BloockHttpClient> {
-    service::RecordService {
-        http: Arc::clone(&http),
-        config_service: config::configure(Arc::clone(&config_data)),
-    }
+pub fn configure() -> service::RecordService {
+    service::RecordService {}
 }
 
 #[cfg(test)]
-pub fn configure_test(http: Arc<MockClient>) -> service::RecordService<MockClient> {
-    service::RecordService {
-        http: Arc::clone(&http),
-        config_service: config::configure_test(),
-    }
+pub fn configure_test() -> service::RecordService {
+    service::RecordService {}
 }

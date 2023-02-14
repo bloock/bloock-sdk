@@ -1,19 +1,19 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.DataAvailabilityType;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities.DataAvailabilityType;
 
 public class IpfsLoader implements Loader {
   DataAvailabilityType type;
   LoaderArgs args;
 
-  public IpfsLoader(String hash) {
+  public IpfsLoader(String id) {
     type = DataAvailabilityType.IPFS;
-    args = new LoaderArgs(hash);
+    args = new LoaderArgs(id);
   }
 
-  public RecordOuterClass.Loader toProto() {
-    return RecordOuterClass.Loader.newBuilder()
+  public AvailabilityEntities.Loader toProto() {
+    return AvailabilityEntities.Loader.newBuilder()
         .setType(this.type)
         .setArgs(this.args.toProto())
         .build();

@@ -5,7 +5,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
-func NewConfigData() *proto.ConfigData {
+func NewConfigDataDefault() *proto.ConfigData {
 	return &proto.ConfigData{
 		Config: &proto.Configuration{
 			LibraryName:      "Golang",
@@ -15,4 +15,8 @@ func NewConfigData() *proto.ConfigData {
 		},
 		NetworksConfig: bloock.NetworkConfig,
 	}
+}
+
+func NewConfigData(configData *proto.ConfigData) *proto.ConfigData {
+	return configData
 }

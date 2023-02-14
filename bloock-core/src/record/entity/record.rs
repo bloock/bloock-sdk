@@ -1,12 +1,12 @@
 use std::cmp::Ordering;
 
-use bloock_encrypter::{Encrypter, EncryptionAlg};
+use bloock_encrypter::{Decrypter, Encrypter, EncrypterError, EncryptionAlg};
 use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
-use bloock_signer::Signature;
+use bloock_signer::{Signature, Signer};
 
 use crate::{
     error::{BloockError, BloockResult, InfrastructureError, OperationalError},
-    proof::{entity::proof::Proof, ProofError},
+    integrity::{entity::proof::Proof, IntegrityError},
     record::{document::Document, RecordError},
 };
 
@@ -49,8 +49,8 @@ impl Record {
         }
     }
 
-    pub fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<()> {
-        let doc = match &mut self.document {
+    pub fn encrypt(mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<Self> {
+        let mut doc = match self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
@@ -60,9 +60,74 @@ impl Record {
             .encrypt(&payload)
             .map_err(InfrastructureError::EncrypterError)?;
 
-        doc.set_encryption(ciphertext, encrypter.get_alg())?;
+        doc = doc.set_encryption(ciphertext, encrypter.get_alg())?;
 
-        Ok(())
+        self.document = Some(doc);
+        Ok(self)
+    }
+
+    pub fn decrypt(mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<Self> {
+        let mut doc = match self.document {
+            Some(doc) => doc,
+            None => return Err(RecordError::DocumentNotFound.into()),
+        };
+
+        if !doc.is_encrypted() {
+            Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
+        }
+
+        let payload = doc.get_payload();
+
+        let decrypted_payload = decrypter
+            .decrypt(&payload)
+            .map_err(InfrastructureError::EncrypterError)?;
+
+        doc = doc.remove_encryption(decrypted_payload)?;
+
+        self.document = Some(doc);
+        Ok(self)
+    }
+
+    pub fn sign(&mut self, signer: Box<dyn Signer>) -> BloockResult<Signature> {
+        let doc = match &mut self.document {
+            Some(doc) => doc,
+            None => return Err(RecordError::DocumentNotFound.into()),
+        };
+
+        let payload = doc.get_payload();
+
+        let signature = signer
+            .sign(&payload)
+            .map_err(InfrastructureError::SignerError)?;
+
+        doc.add_signature(signature.clone())?;
+
+        Ok(signature)
+    }
+
+    pub fn verify(&mut self) -> BloockResult<bool> {
+        let signatures = match self.get_signatures() {
+            Some(s) => s,
+            None => return Err(IntegrityError::InvalidVerification.into()),
+        };
+
+        let payload = match self.get_payload() {
+            Some(s) => s,
+            None => return Err(IntegrityError::InvalidVerification.into()),
+        };
+
+        for signature in signatures {
+            let verifier = bloock_signer::create_verifier_from_signature(&signature)
+                .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
+            let verification_response = verifier
+                .verify(payload, signature.clone())
+                .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
+            if !verification_response {
+                return Ok(false);
+            }
+        }
+
+        Ok(true)
     }
 
     pub fn get_hash(&self) -> String {
@@ -98,11 +163,11 @@ impl Record {
         match self.document.as_mut() {
             Some(d) => {
                 if proof.leaves.len() > 1 {
-                    return Err(ProofError::OnlyOneRecordProof().into());
+                    return Err(IntegrityError::OnlyOneRecordProof().into());
                 }
 
                 if proof.leaves[0] != self.hash {
-                    return Err(ProofError::ProofFromAnotherRecord().into());
+                    return Err(IntegrityError::ProofFromAnotherRecord().into());
                 }
                 d.set_proof(proof)
             }
@@ -162,11 +227,10 @@ impl TryFrom<&String> for Record {
 #[cfg(test)]
 mod tests {
 
-    use bloock_signer::SignatureHeader;
-
-    use crate::proof::entity::anchor::ProofAnchor;
+    use crate::integrity::entity::proof::ProofAnchor;
 
     use super::*;
+    use bloock_signer::SignatureHeader;
 
     #[test]
     fn new_record() {

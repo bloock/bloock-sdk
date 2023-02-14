@@ -5,7 +5,7 @@ import com.bloock.sdk.bridge.proto.Config.ConfigData;
 import com.bloock.sdk.bridge.proto.Config.Configuration;
 
 public class Config {
-  public static ConfigData newConfigData() {
+  public static ConfigData newConfigDataDefault() {
     Configuration config =
         Configuration.newBuilder()
             .setLibraryName("Java")
@@ -18,5 +18,9 @@ public class Config {
         .setConfig(config)
         .putAllNetworksConfig(Bloock.networkConfig)
         .build();
+  }
+
+  public static ConfigData newConfigData(ConfigData configData) {
+    return configData;
   }
 }

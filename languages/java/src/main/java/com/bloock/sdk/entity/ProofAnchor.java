@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.ProofOuterClass;
+import com.bloock.sdk.bridge.proto.IntegrityEntities;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +17,7 @@ public class ProofAnchor {
     this.status = status;
   }
 
-  public static ProofAnchor fromProto(ProofOuterClass.ProofAnchor anchor) {
+  public static ProofAnchor fromProto(IntegrityEntities.ProofAnchor anchor) {
     return new ProofAnchor(
         anchor.getAnchorId(),
         anchor.getNetworksList().stream()
@@ -27,8 +27,8 @@ public class ProofAnchor {
         anchor.getStatus());
   }
 
-  ProofOuterClass.ProofAnchor toProto() {
-    return ProofOuterClass.ProofAnchor.newBuilder()
+  IntegrityEntities.ProofAnchor toProto() {
+    return IntegrityEntities.ProofAnchor.newBuilder()
         .setAnchorId(anchorId)
         .addAllNetworks(networks.stream().map(x -> x.toProto()).collect(Collectors.toList()))
         .setRoot(root)

@@ -1,28 +1,27 @@
 import { BloockBridge } from "../bridge/bridge";
-import * as proto from "../bridge/proto/record";
-import { SetProofRequest } from "../bridge/proto/proof";
-import { NewConfigData } from "../config/config";
+import * as proto from "../bridge/proto/record_entities";
+import { GetHashRequest, SetProofRequest } from "../bridge/proto/record";
 import { Proof } from "./proof";
-import { Publisher } from "./publisher";
-import { EncryptionAlg } from "./encryption_alg";
-import { Signature } from "./signature";
+import { ConfigData } from "../bridge/proto/config";
 
 export class Record {
   payload: Uint8Array;
   hash: string;
+  configData: ConfigData;
 
-  constructor(payload: Uint8Array, hash: string) {
+  constructor(payload: Uint8Array, hash: string, configData: ConfigData) {
     this.payload = payload;
     this.hash = hash;
+    this.configData = configData;
   }
 
-  static fromProto(r: proto.Record) {
-    return new Record(r.payload, r.hash);
+  static fromProto(r: proto.Record, configData: ConfigData) {
+    return new Record(r.payload, r.hash, configData);
   }
 
   toProto(): proto.Record {
     return proto.Record.fromPartial({
-      configData: NewConfigData(),
+      configData: this.configData,
       payload: this.payload,
       hash: this.hash
     });
@@ -32,51 +31,12 @@ export class Record {
     const bridge = new BloockBridge();
     return bridge
       .getRecord()
-      .GetHash(this.toProto())
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return res.hash;
-      });
-  }
-
-  async getSignatures(): Promise<Signature[]> {
-    const bridge = new BloockBridge();
-    return bridge
-      .getRecord()
-      .GetSignatures(this.toProto())
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return res.signatures.map(x => Signature.fromProto(x));
-      });
-  }
-
-  async getEncryptionAlg(): Promise<EncryptionAlg> {
-    const bridge = new BloockBridge();
-    return bridge
-      .getRecord()
-      .GetEncryptionAlg(this.toProto())
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return EncryptionAlg.fromProto(res.alg);
-      });
-  }
-
-  async publish(publisher: Publisher): Promise<string> {
-    const bridge = new BloockBridge();
-    const request = proto.PublishRequest.fromPartial({
-      configData: NewConfigData(),
-      publisher: publisher.toProto(),
-      record: this.toProto()
-    });
-    return bridge
-      .getRecord()
-      .Publish(request)
+      .GetHash(
+        GetHashRequest.fromPartial({
+          configData: this.configData,
+          record: this.toProto()
+        })
+      )
       .then(res => {
         if (res.error) {
           throw res.error;
@@ -93,13 +53,13 @@ export class Record {
     const bridge = new BloockBridge();
 
     const req = SetProofRequest.fromPartial({
-      configData: NewConfigData(),
+      configData: this.configData,
       record: this.toProto(),
       proof: proof.toProto()
     });
 
     return bridge
-      .getProof()
+      .getRecord()
       .SetProof(req)
       .then(res => {
         if (res.error) {
@@ -122,60 +82,5 @@ export class RecordHeader {
 
   toProto(): proto.RecordHeader {
     return proto.RecordHeader.fromPartial({ ty: this.ty });
-  }
-}
-
-export class RecordReceipt {
-  anchor: number;
-  client: string;
-  record: string;
-  status: string;
-
-  constructor(anchor: number, client: string, record: string, status: string) {
-    this.anchor = anchor;
-    this.client = client;
-    this.record = record;
-    this.status = status;
-  }
-
-  static fromProto(r: proto.RecordReceipt): RecordReceipt {
-    return new RecordReceipt(r.anchor, r.client, r.record, r.status);
-  }
-
-  toProto(): proto.RecordReceipt {
-    return proto.RecordReceipt.fromPartial({
-      anchor: this.anchor,
-      client: this.client,
-      record: this.record,
-      status: this.status
-    });
-  }
-}
-
-export class KeyPair {
-  publicKey: string;
-  privateKey: string;
-
-  constructor(publicKey: string, privateKey: string) {
-    this.publicKey = publicKey;
-    this.privateKey = privateKey;
-  }
-}
-
-export class EcdsaKeyPair extends KeyPair {
-  static fromProto(k: proto.GenerateKeysResponse): KeyPair {
-    return new KeyPair(k.publicKey, k.privateKey);
-  }
-}
-
-export class RsaKeyPair extends KeyPair {
-  static fromProto(k: proto.GenerateRsaKeyPairResponse): KeyPair {
-    return new KeyPair(k.publicKey, k.privateKey);
-  }
-}
-
-export class EciesKeyPair extends KeyPair {
-  static fromProto(k: proto.GenerateEciesKeyPairResponse): KeyPair {
-    return new KeyPair(k.publicKey, k.privateKey);
   }
 }

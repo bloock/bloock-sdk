@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+message Anchor {
+    int64 id = 1;
+    repeated string block_roots = 2;
+    repeated AnchorNetwork networks = 3;
+    string root = 4;
+    string status = 5;
+}
+
+message AnchorNetwork {
+    string name = 1;
+    string state = 2;
+    string tx_hash = 3;
+}
+
+message Proof {
+    repeated string leaves = 1;
+    repeated string nodes = 2;
+    string depth = 3;
+    string bitmap = 4;
+    ProofAnchor anchor = 5;
+}
+
+message ProofAnchor {
+    int64 anchor_id = 1;
+    repeated AnchorNetwork networks = 2;
+    string root = 3;
+    string status = 4;
+}
+
+message RecordReceipt {
+    int64 anchor = 1;
+    string client = 2;
+    string record = 3;
+    string status = 4;
+}

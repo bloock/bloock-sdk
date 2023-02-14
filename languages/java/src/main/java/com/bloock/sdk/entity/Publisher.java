@@ -1,7 +1,7 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.AvailabilityEntities;
 
 public interface Publisher {
-  RecordOuterClass.Publisher toProto();
+  AvailabilityEntities.Publisher toProto();
 }

@@ -1,6 +1,4 @@
-import { BloockBridge } from "../bridge/bridge";
-import * as proto from "../bridge/proto/record";
-import { NewConfigData } from "../config/config";
+import * as proto from "../bridge/proto/authenticity_entities";
 
 export enum SignatureAlg {
   UNRECOGNIZED = -1,
@@ -55,24 +53,6 @@ export class Signature {
       header: this.header.toProto(),
       messageHash: this.messageHash
     });
-  }
-
-  async getCommonName(): Promise<string> {
-    const bridge = new BloockBridge();
-    return bridge
-      .getRecord()
-      .GetSignatureCommonName(
-        proto.SignatureCommonNameRequest.fromPartial({
-          configData: NewConfigData(),
-          signature: this.toProto()
-        })
-      )
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return res.commonName;
-      });
   }
 
   getAlg(): SignatureAlg {

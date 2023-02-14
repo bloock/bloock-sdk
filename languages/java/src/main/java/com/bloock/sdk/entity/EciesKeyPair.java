@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass.GenerateEciesKeyPairResponse;
+import com.bloock.sdk.bridge.proto.Encryption.GenerateEciesKeyPairResponse;
 
 public class EciesKeyPair extends KeyPair {
   EciesKeyPair(String publicKey, String privateKey) {

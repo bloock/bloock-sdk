@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+enum SignerAlg {
+    ES256K = 0;
+    ENS = 1;
+}
+
+message Signer {
+    SignerAlg alg = 1;
+    SignerArgs args = 2;
+}
+
+message SignerArgs {
+    optional string private_key = 1;
+    optional string common_name = 2;
+}
+
+message Signature {
+    string signature = 1;
+    string protected = 2;
+    SignatureHeader header = 3;
+    string message_hash = 4;
+}
+
+message SignatureHeader {
+    string alg = 1;
+    string kid = 2;
+}

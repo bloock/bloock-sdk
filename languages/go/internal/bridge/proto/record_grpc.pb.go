@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RecordServiceClient interface {
-	SendRecords(ctx context.Context, in *SendRecordsRequest, opts ...grpc.CallOption) (*SendRecordsResponse, error)
 	BuildRecordFromString(ctx context.Context, in *RecordBuilderFromStringRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromHex(ctx context.Context, in *RecordBuilderFromHexRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromJson(ctx context.Context, in *RecordBuilderFromJSONRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
@@ -30,14 +29,8 @@ type RecordServiceClient interface {
 	BuildRecordFromBytes(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromLoader(ctx context.Context, in *RecordBuilderFromLoaderRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
-	GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error)
-	GetSignatureCommonName(ctx context.Context, in *SignatureCommonNameRequest, opts ...grpc.CallOption) (*SignatureCommonNameResponse, error)
-	GetSignatures(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordSignatures, error)
-	GetEncryptionAlg(ctx context.Context, in *Record, opts ...grpc.CallOption) (*EncryptionAlgResponse, error)
-	GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error)
-	GenerateRsaKeyPair(ctx context.Context, in *GenerateRsaKeyPairRequest, opts ...grpc.CallOption) (*GenerateRsaKeyPairResponse, error)
-	GenerateEciesKeyPair(ctx context.Context, in *GenerateEciesKeyPairRequest, opts ...grpc.CallOption) (*GenerateEciesKeyPairResponse, error)
-	Publish(ctx context.Context, in *PublishRequest, opts ...grpc.CallOption) (*PublishResponse, error)
+	GetHash(ctx context.Context, in *GetHashRequest, opts ...grpc.CallOption) (*GetHashResponse, error)
+	SetProof(ctx context.Context, in *SetProofRequest, opts ...grpc.CallOption) (*SetProofResponse, error)
 }
 
 type recordServiceClient struct {
@@ -46,15 +39,6 @@ type recordServiceClient struct {
 
 func NewRecordServiceClient(cc grpc.ClientConnInterface) RecordServiceClient {
 	return &recordServiceClient{cc}
-}
-
-func (c *recordServiceClient) SendRecords(ctx context.Context, in *SendRecordsRequest, opts ...grpc.CallOption) (*SendRecordsResponse, error) {
-	out := new(SendRecordsResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/SendRecords", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *recordServiceClient) BuildRecordFromString(ctx context.Context, in *RecordBuilderFromStringRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error) {
@@ -120,8 +104,8 @@ func (c *recordServiceClient) BuildRecordFromLoader(ctx context.Context, in *Rec
 	return out, nil
 }
 
-func (c *recordServiceClient) GetHash(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordHash, error) {
-	out := new(RecordHash)
+func (c *recordServiceClient) GetHash(ctx context.Context, in *GetHashRequest, opts ...grpc.CallOption) (*GetHashResponse, error) {
+	out := new(GetHashResponse)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetHash", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -129,63 +113,9 @@ func (c *recordServiceClient) GetHash(ctx context.Context, in *Record, opts ...g
 	return out, nil
 }
 
-func (c *recordServiceClient) GetSignatureCommonName(ctx context.Context, in *SignatureCommonNameRequest, opts ...grpc.CallOption) (*SignatureCommonNameResponse, error) {
-	out := new(SignatureCommonNameResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetSignatureCommonName", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *recordServiceClient) GetSignatures(ctx context.Context, in *Record, opts ...grpc.CallOption) (*RecordSignatures, error) {
-	out := new(RecordSignatures)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetSignatures", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *recordServiceClient) GetEncryptionAlg(ctx context.Context, in *Record, opts ...grpc.CallOption) (*EncryptionAlgResponse, error) {
-	out := new(EncryptionAlgResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetEncryptionAlg", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *recordServiceClient) GenerateKeys(ctx context.Context, in *GenerateKeysRequest, opts ...grpc.CallOption) (*GenerateKeysResponse, error) {
-	out := new(GenerateKeysResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/GenerateKeys", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *recordServiceClient) GenerateRsaKeyPair(ctx context.Context, in *GenerateRsaKeyPairRequest, opts ...grpc.CallOption) (*GenerateRsaKeyPairResponse, error) {
-	out := new(GenerateRsaKeyPairResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/GenerateRsaKeyPair", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *recordServiceClient) GenerateEciesKeyPair(ctx context.Context, in *GenerateEciesKeyPairRequest, opts ...grpc.CallOption) (*GenerateEciesKeyPairResponse, error) {
-	out := new(GenerateEciesKeyPairResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/GenerateEciesKeyPair", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *recordServiceClient) Publish(ctx context.Context, in *PublishRequest, opts ...grpc.CallOption) (*PublishResponse, error) {
-	out := new(PublishResponse)
-	err := c.cc.Invoke(ctx, "/bloock.RecordService/Publish", in, out, opts...)
+func (c *recordServiceClient) SetProof(ctx context.Context, in *SetProofRequest, opts ...grpc.CallOption) (*SetProofResponse, error) {
+	out := new(SetProofResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/SetProof", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +126,6 @@ func (c *recordServiceClient) Publish(ctx context.Context, in *PublishRequest, o
 // All implementations must embed UnimplementedRecordServiceServer
 // for forward compatibility
 type RecordServiceServer interface {
-	SendRecords(context.Context, *SendRecordsRequest) (*SendRecordsResponse, error)
 	BuildRecordFromString(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromHex(context.Context, *RecordBuilderFromHexRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromJson(context.Context, *RecordBuilderFromJSONRequest) (*RecordBuilderResponse, error)
@@ -204,14 +133,8 @@ type RecordServiceServer interface {
 	BuildRecordFromBytes(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromLoader(context.Context, *RecordBuilderFromLoaderRequest) (*RecordBuilderResponse, error)
-	GetHash(context.Context, *Record) (*RecordHash, error)
-	GetSignatureCommonName(context.Context, *SignatureCommonNameRequest) (*SignatureCommonNameResponse, error)
-	GetSignatures(context.Context, *Record) (*RecordSignatures, error)
-	GetEncryptionAlg(context.Context, *Record) (*EncryptionAlgResponse, error)
-	GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error)
-	GenerateRsaKeyPair(context.Context, *GenerateRsaKeyPairRequest) (*GenerateRsaKeyPairResponse, error)
-	GenerateEciesKeyPair(context.Context, *GenerateEciesKeyPairRequest) (*GenerateEciesKeyPairResponse, error)
-	Publish(context.Context, *PublishRequest) (*PublishResponse, error)
+	GetHash(context.Context, *GetHashRequest) (*GetHashResponse, error)
+	SetProof(context.Context, *SetProofRequest) (*SetProofResponse, error)
 	mustEmbedUnimplementedRecordServiceServer()
 }
 
@@ -219,9 +142,6 @@ type RecordServiceServer interface {
 type UnimplementedRecordServiceServer struct {
 }
 
-func (UnimplementedRecordServiceServer) SendRecords(context.Context, *SendRecordsRequest) (*SendRecordsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendRecords not implemented")
-}
 func (UnimplementedRecordServiceServer) BuildRecordFromString(context.Context, *RecordBuilderFromStringRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromString not implemented")
 }
@@ -243,29 +163,11 @@ func (UnimplementedRecordServiceServer) BuildRecordFromRecord(context.Context, *
 func (UnimplementedRecordServiceServer) BuildRecordFromLoader(context.Context, *RecordBuilderFromLoaderRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromLoader not implemented")
 }
-func (UnimplementedRecordServiceServer) GetHash(context.Context, *Record) (*RecordHash, error) {
+func (UnimplementedRecordServiceServer) GetHash(context.Context, *GetHashRequest) (*GetHashResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
 }
-func (UnimplementedRecordServiceServer) GetSignatureCommonName(context.Context, *SignatureCommonNameRequest) (*SignatureCommonNameResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSignatureCommonName not implemented")
-}
-func (UnimplementedRecordServiceServer) GetSignatures(context.Context, *Record) (*RecordSignatures, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSignatures not implemented")
-}
-func (UnimplementedRecordServiceServer) GetEncryptionAlg(context.Context, *Record) (*EncryptionAlgResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEncryptionAlg not implemented")
-}
-func (UnimplementedRecordServiceServer) GenerateKeys(context.Context, *GenerateKeysRequest) (*GenerateKeysResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateKeys not implemented")
-}
-func (UnimplementedRecordServiceServer) GenerateRsaKeyPair(context.Context, *GenerateRsaKeyPairRequest) (*GenerateRsaKeyPairResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateRsaKeyPair not implemented")
-}
-func (UnimplementedRecordServiceServer) GenerateEciesKeyPair(context.Context, *GenerateEciesKeyPairRequest) (*GenerateEciesKeyPairResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateEciesKeyPair not implemented")
-}
-func (UnimplementedRecordServiceServer) Publish(context.Context, *PublishRequest) (*PublishResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Publish not implemented")
+func (UnimplementedRecordServiceServer) SetProof(context.Context, *SetProofRequest) (*SetProofResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetProof not implemented")
 }
 func (UnimplementedRecordServiceServer) mustEmbedUnimplementedRecordServiceServer() {}
 
@@ -278,24 +180,6 @@ type UnsafeRecordServiceServer interface {
 
 func RegisterRecordServiceServer(s grpc.ServiceRegistrar, srv RecordServiceServer) {
 	s.RegisterService(&RecordService_ServiceDesc, srv)
-}
-
-func _RecordService_SendRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendRecordsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).SendRecords(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/SendRecords",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).SendRecords(ctx, req.(*SendRecordsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _RecordService_BuildRecordFromString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -425,7 +309,7 @@ func _RecordService_BuildRecordFromLoader_Handler(srv interface{}, ctx context.C
 }
 
 func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Record)
+	in := new(GetHashRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -437,133 +321,25 @@ func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/bloock.RecordService/GetHash",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).GetHash(ctx, req.(*Record))
+		return srv.(RecordServiceServer).GetHash(ctx, req.(*GetHashRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RecordService_GetSignatureCommonName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SignatureCommonNameRequest)
+func _RecordService_SetProof_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetProofRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecordServiceServer).GetSignatureCommonName(ctx, in)
+		return srv.(RecordServiceServer).SetProof(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bloock.RecordService/GetSignatureCommonName",
+		FullMethod: "/bloock.RecordService/SetProof",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).GetSignatureCommonName(ctx, req.(*SignatureCommonNameRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RecordService_GetSignatures_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Record)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).GetSignatures(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/GetSignatures",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).GetSignatures(ctx, req.(*Record))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RecordService_GetEncryptionAlg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Record)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).GetEncryptionAlg(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/GetEncryptionAlg",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).GetEncryptionAlg(ctx, req.(*Record))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RecordService_GenerateKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateKeysRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).GenerateKeys(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/GenerateKeys",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).GenerateKeys(ctx, req.(*GenerateKeysRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RecordService_GenerateRsaKeyPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateRsaKeyPairRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).GenerateRsaKeyPair(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/GenerateRsaKeyPair",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).GenerateRsaKeyPair(ctx, req.(*GenerateRsaKeyPairRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RecordService_GenerateEciesKeyPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateEciesKeyPairRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).GenerateEciesKeyPair(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/GenerateEciesKeyPair",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).GenerateEciesKeyPair(ctx, req.(*GenerateEciesKeyPairRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RecordService_Publish_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PublishRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RecordServiceServer).Publish(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.RecordService/Publish",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecordServiceServer).Publish(ctx, req.(*PublishRequest))
+		return srv.(RecordServiceServer).SetProof(ctx, req.(*SetProofRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -575,10 +351,6 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "bloock.RecordService",
 	HandlerType: (*RecordServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "SendRecords",
-			Handler:    _RecordService_SendRecords_Handler,
-		},
 		{
 			MethodName: "BuildRecordFromString",
 			Handler:    _RecordService_BuildRecordFromString_Handler,
@@ -612,32 +384,8 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RecordService_GetHash_Handler,
 		},
 		{
-			MethodName: "GetSignatureCommonName",
-			Handler:    _RecordService_GetSignatureCommonName_Handler,
-		},
-		{
-			MethodName: "GetSignatures",
-			Handler:    _RecordService_GetSignatures_Handler,
-		},
-		{
-			MethodName: "GetEncryptionAlg",
-			Handler:    _RecordService_GetEncryptionAlg_Handler,
-		},
-		{
-			MethodName: "GenerateKeys",
-			Handler:    _RecordService_GenerateKeys_Handler,
-		},
-		{
-			MethodName: "GenerateRsaKeyPair",
-			Handler:    _RecordService_GenerateRsaKeyPair_Handler,
-		},
-		{
-			MethodName: "GenerateEciesKeyPair",
-			Handler:    _RecordService_GenerateEciesKeyPair_Handler,
-		},
-		{
-			MethodName: "Publish",
-			Handler:    _RecordService_Publish_Handler,
+			MethodName: "SetProof",
+			Handler:    _RecordService_SetProof_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

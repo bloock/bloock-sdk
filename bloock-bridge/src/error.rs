@@ -1,4 +1,3 @@
-use crate::items::Error as ProtoError;
 use bloock_core::error::BloockError;
 use thiserror::Error;
 
@@ -28,11 +27,4 @@ pub enum BridgeError {
     MissingAnchor,
     #[error("{0}")]
     BloockError(#[from] BloockError),
-}
-
-pub fn config_data_error() -> ProtoError {
-    ProtoError {
-        kind: BridgeError::InvalidArgument.to_string(),
-        message: "Invalid config data".to_string(),
-    }
 }

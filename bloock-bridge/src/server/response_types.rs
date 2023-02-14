@@ -1,45 +1,61 @@
+use crate::items::BloockServer;
+use crate::items::DecryptResponse;
+use crate::items::EncryptResponse;
 use crate::items::EncryptionAlgResponse;
+use crate::items::GenerateEcdsaKeysResponse;
 use crate::items::GenerateEciesKeyPairResponse;
-use crate::items::GenerateKeysResponse;
 use crate::items::GenerateRsaKeyPairResponse;
 use crate::items::GetAnchorResponse;
+use crate::items::GetHashResponse;
 use crate::items::GetProofResponse;
+use crate::items::GetSignaturesResponse;
 use crate::items::PublishResponse;
-use crate::items::Record;
 use crate::items::RecordBuilderResponse;
-use crate::items::RecordHash;
-use crate::items::RecordSignatures;
+use crate::items::RetrieveResponse;
 use crate::items::SendRecordsResponse;
 use crate::items::SetProofResponse;
+use crate::items::SignResponse;
 use crate::items::SignatureCommonNameResponse;
 use crate::items::ValidateRootResponse;
 use crate::items::VerifyProofResponse;
 use crate::items::VerifyRecordsResponse;
+use crate::items::VerifyResponse;
 use crate::items::VerifyWebhookSignatureResponse;
 use crate::items::WaitAnchorResponse;
 use crate::server::BridgeError;
+use async_trait::async_trait;
+use bloock_core::config::config_data::ConfigData;
+use bloock_core::event::entity::event::Event;
+use bloock_core::event::entity::event::LibraryInfo;
 use prost::Message;
+use serde_json::json;
+use serde_json::Value;
 
+#[allow(clippy::enum_variant_names)]
 pub enum ResponseType {
-    GetAnchor(GetAnchorResponse),
-    WaitAnchor(WaitAnchorResponse),
-    Record(Record),
-    SendRecords(SendRecordsResponse),
-    GetProof(GetProofResponse),
-    SetProof(SetProofResponse),
-    ValidateRoot(ValidateRootResponse),
-    VerifyProof(VerifyProofResponse),
-    VerifyRecords(VerifyRecordsResponse),
-    BuildRecord(RecordBuilderResponse),
-    GetHash(RecordHash),
-    GetSignatures(RecordSignatures),
-    GetSignatureCommonName(SignatureCommonNameResponse),
-    GenerateKeys(GenerateKeysResponse),
+    GetAnchorResponse(GetAnchorResponse),
+    WaitAnchorResponse(WaitAnchorResponse),
+    SendRecordsResponse(SendRecordsResponse),
+    GetProofResponse(GetProofResponse),
+    SetProofResponse(SetProofResponse),
+    ValidateRootResponse(ValidateRootResponse),
+    VerifyProofResponse(VerifyProofResponse),
+    VerifyRecordsResponse(VerifyRecordsResponse),
+    GenerateEcdsaKeysResponse(GenerateEcdsaKeysResponse),
+    SignResponse(SignResponse),
+    VerifyResponse(VerifyResponse),
+    GetSignaturesResponse(GetSignaturesResponse),
+    SignatureCommonNameResponse(SignatureCommonNameResponse),
     GenerateRsaKeyPairResponse(GenerateRsaKeyPairResponse),
     GenerateEciesKeyPairResponse(GenerateEciesKeyPairResponse),
-    Publish(PublishResponse),
-    VerifyWebhookSignature(VerifyWebhookSignatureResponse),
+    EncryptResponse(EncryptResponse),
+    DecryptResponse(DecryptResponse),
     EncryptionAlgResponse(EncryptionAlgResponse),
+    RecordBuilderResponse(RecordBuilderResponse),
+    GetHashResponse(GetHashResponse),
+    PublishResponse(PublishResponse),
+    RetrieveResponse(RetrieveResponse),
+    VerifyWebhookSignatureResponse(VerifyWebhookSignatureResponse),
 }
 
 impl ResponseType {
@@ -48,25 +64,29 @@ impl ResponseType {
         result_vec.reserve(self.len());
 
         match self {
-            ResponseType::GetAnchor(r) => r.encode(&mut result_vec),
-            ResponseType::WaitAnchor(r) => r.encode(&mut result_vec),
-            ResponseType::SendRecords(r) => r.encode(&mut result_vec),
-            ResponseType::GetProof(r) => r.encode(&mut result_vec),
-            ResponseType::SetProof(r) => r.encode(&mut result_vec),
-            ResponseType::ValidateRoot(r) => r.encode(&mut result_vec),
-            ResponseType::VerifyProof(r) => r.encode(&mut result_vec),
-            ResponseType::VerifyRecords(r) => r.encode(&mut result_vec),
-            ResponseType::Record(r) => r.encode(&mut result_vec),
-            ResponseType::BuildRecord(r) => r.encode(&mut result_vec),
-            ResponseType::GetHash(r) => r.encode(&mut result_vec),
-            ResponseType::GenerateKeys(r) => r.encode(&mut result_vec),
+            ResponseType::GetAnchorResponse(r) => r.encode(&mut result_vec),
+            ResponseType::WaitAnchorResponse(r) => r.encode(&mut result_vec),
+            ResponseType::SendRecordsResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetProofResponse(r) => r.encode(&mut result_vec),
+            ResponseType::SetProofResponse(r) => r.encode(&mut result_vec),
+            ResponseType::ValidateRootResponse(r) => r.encode(&mut result_vec),
+            ResponseType::VerifyProofResponse(r) => r.encode(&mut result_vec),
+            ResponseType::VerifyRecordsResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GenerateEcdsaKeysResponse(r) => r.encode(&mut result_vec),
+            ResponseType::SignResponse(r) => r.encode(&mut result_vec),
+            ResponseType::VerifyResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetSignaturesResponse(r) => r.encode(&mut result_vec),
+            ResponseType::SignatureCommonNameResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateRsaKeyPairResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateEciesKeyPairResponse(r) => r.encode(&mut result_vec),
-            ResponseType::Publish(r) => r.encode(&mut result_vec),
-            ResponseType::GetSignatures(r) => r.encode(&mut result_vec),
-            ResponseType::GetSignatureCommonName(r) => r.encode(&mut result_vec),
-            ResponseType::VerifyWebhookSignature(r) => r.encode(&mut result_vec),
+            ResponseType::EncryptResponse(r) => r.encode(&mut result_vec),
+            ResponseType::DecryptResponse(r) => r.encode(&mut result_vec),
             ResponseType::EncryptionAlgResponse(r) => r.encode(&mut result_vec),
+            ResponseType::RecordBuilderResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetHashResponse(r) => r.encode(&mut result_vec),
+            ResponseType::PublishResponse(r) => r.encode(&mut result_vec),
+            ResponseType::RetrieveResponse(r) => r.encode(&mut result_vec),
+            ResponseType::VerifyWebhookSignatureResponse(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -75,25 +95,88 @@ impl ResponseType {
 
     pub fn len(&self) -> usize {
         match self {
-            ResponseType::GetAnchor(r) => r.encoded_len(),
-            ResponseType::WaitAnchor(r) => r.encoded_len(),
-            ResponseType::SendRecords(r) => r.encoded_len(),
-            ResponseType::GetProof(r) => r.encoded_len(),
-            ResponseType::SetProof(r) => r.encoded_len(),
-            ResponseType::ValidateRoot(r) => r.encoded_len(),
-            ResponseType::VerifyProof(r) => r.encoded_len(),
-            ResponseType::VerifyRecords(r) => r.encoded_len(),
-            ResponseType::Record(r) => r.encoded_len(),
-            ResponseType::BuildRecord(r) => r.encoded_len(),
-            ResponseType::GetHash(r) => r.encoded_len(),
-            ResponseType::GenerateKeys(r) => r.encoded_len(),
+            ResponseType::GetAnchorResponse(r) => r.encoded_len(),
+            ResponseType::WaitAnchorResponse(r) => r.encoded_len(),
+            ResponseType::SendRecordsResponse(r) => r.encoded_len(),
+            ResponseType::GetProofResponse(r) => r.encoded_len(),
+            ResponseType::SetProofResponse(r) => r.encoded_len(),
+            ResponseType::ValidateRootResponse(r) => r.encoded_len(),
+            ResponseType::VerifyProofResponse(r) => r.encoded_len(),
+            ResponseType::VerifyRecordsResponse(r) => r.encoded_len(),
+            ResponseType::GenerateEcdsaKeysResponse(r) => r.encoded_len(),
+            ResponseType::SignResponse(r) => r.encoded_len(),
+            ResponseType::VerifyResponse(r) => r.encoded_len(),
+            ResponseType::GetSignaturesResponse(r) => r.encoded_len(),
+            ResponseType::SignatureCommonNameResponse(r) => r.encoded_len(),
             ResponseType::GenerateRsaKeyPairResponse(r) => r.encoded_len(),
             ResponseType::GenerateEciesKeyPairResponse(r) => r.encoded_len(),
-            ResponseType::Publish(r) => r.encoded_len(),
-            ResponseType::GetSignatures(r) => r.encoded_len(),
-            ResponseType::GetSignatureCommonName(r) => r.encoded_len(),
-            ResponseType::VerifyWebhookSignature(r) => r.encoded_len(),
+            ResponseType::EncryptResponse(r) => r.encoded_len(),
+            ResponseType::DecryptResponse(r) => r.encoded_len(),
             ResponseType::EncryptionAlgResponse(r) => r.encoded_len(),
+            ResponseType::RecordBuilderResponse(r) => r.encoded_len(),
+            ResponseType::GetHashResponse(r) => r.encoded_len(),
+            ResponseType::PublishResponse(r) => r.encoded_len(),
+            ResponseType::RetrieveResponse(r) => r.encoded_len(),
+            ResponseType::VerifyWebhookSignatureResponse(r) => r.encoded_len(),
+        }
+    }
+}
+
+#[async_trait(?Send)]
+pub trait ToResponseType<T> {
+    async fn to_response_type(self, req: &T) -> ResponseType;
+}
+
+pub trait RequestConfigData {
+    fn get_config_data(&self) -> Result<ConfigData, String>;
+}
+
+#[async_trait(?Send)]
+pub trait ResponseTypeError<R> {
+    fn build_error(err: String) -> Self;
+}
+
+#[async_trait(?Send)]
+pub trait ResponseTypeEvent<R>
+where
+    Self: Clone + ResponseTypeError<R>,
+    R: RequestConfigData,
+{
+    async fn new_success(request: &R, response: Self) -> Self {
+        let config = match request.get_config_data() {
+            Ok(config) => config,
+            Err(_) => return Self::build_error("Invalid config data".to_string()),
+        };
+        Self::send_event(&config, request, true).await;
+        response
+    }
+
+    async fn new_error(request: &R, err: String) -> Self {
+        let config = match request.get_config_data() {
+            Ok(config) => config,
+            Err(_) => return Self::build_error("Invalid config data".to_string()),
+        };
+        Self::send_event(&config, request, false).await;
+        Self::build_error(err)
+    }
+
+    fn get_event(_request: &R) -> Value {
+        json!({})
+    }
+
+    async fn send_event(config: &ConfigData, request: &R, success: bool) {
+        let event_attr = Self::get_event(request);
+        if !config.config.disable_analytics {
+            let event = Event::new(
+                LibraryInfo::new(config.clone().config.library_name),
+                &config.config.api_key,
+                BloockServer::AvailabilityServicePublish.as_str(),
+                success,
+                Some(event_attr),
+            );
+
+            let service = bloock_core::event::configure(config.clone());
+            let _ = service.send_event(event).await;
         }
     }
 }

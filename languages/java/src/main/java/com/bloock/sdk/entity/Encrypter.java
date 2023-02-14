@@ -1,7 +1,7 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.EncryptionEntities;
 
 public interface Encrypter {
-  RecordOuterClass.Encrypter toProto();
+  EncryptionEntities.Encrypter toProto();
 }

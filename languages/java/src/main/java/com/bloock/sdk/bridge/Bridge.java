@@ -1,34 +1,48 @@
 package com.bloock.sdk.bridge;
 
-import com.bloock.sdk.bridge.proto.AnchorServiceGrpc;
-import com.bloock.sdk.bridge.proto.ProofServiceGrpc;
+import com.bloock.sdk.bridge.proto.AuthenticityServiceGrpc;
+import com.bloock.sdk.bridge.proto.AvailabilityServiceGrpc;
+import com.bloock.sdk.bridge.proto.EncryptionServiceGrpc;
+import com.bloock.sdk.bridge.proto.IntegrityServiceGrpc;
 import com.bloock.sdk.bridge.proto.RecordServiceGrpc;
 import com.bloock.sdk.bridge.proto.WebhookServiceGrpc;
 
 public class Bridge {
-  private final AnchorServiceGrpc.AnchorServiceBlockingStub anchor;
+  private final AuthenticityServiceGrpc.AuthenticityServiceBlockingStub authenticity;
+  private final AvailabilityServiceGrpc.AvailabilityServiceBlockingStub availability;
+  private final EncryptionServiceGrpc.EncryptionServiceBlockingStub encryption;
+  private final IntegrityServiceGrpc.IntegrityServiceBlockingStub integrity;
   private final RecordServiceGrpc.RecordServiceBlockingStub record;
-  private final ProofServiceGrpc.ProofServiceBlockingStub proof;
   private final WebhookServiceGrpc.WebhookServiceBlockingStub webhook;
 
   public Bridge() {
     Connection conn = new Connection();
-    anchor = AnchorServiceGrpc.newBlockingStub(conn);
+    authenticity = AuthenticityServiceGrpc.newBlockingStub(conn);
+    availability = AvailabilityServiceGrpc.newBlockingStub(conn);
+    encryption = EncryptionServiceGrpc.newBlockingStub(conn);
+    integrity = IntegrityServiceGrpc.newBlockingStub(conn);
     record = RecordServiceGrpc.newBlockingStub(conn);
-    proof = ProofServiceGrpc.newBlockingStub(conn);
     webhook = WebhookServiceGrpc.newBlockingStub(conn);
   }
 
-  public AnchorServiceGrpc.AnchorServiceBlockingStub getAnchor() {
-    return this.anchor;
+  public AuthenticityServiceGrpc.AuthenticityServiceBlockingStub getAuthenticity() {
+    return this.authenticity;
+  }
+
+  public AvailabilityServiceGrpc.AvailabilityServiceBlockingStub getAvailability() {
+    return this.availability;
+  }
+
+  public EncryptionServiceGrpc.EncryptionServiceBlockingStub getEncryption() {
+    return this.encryption;
+  }
+
+  public IntegrityServiceGrpc.IntegrityServiceBlockingStub getIntegrity() {
+    return this.integrity;
   }
 
   public RecordServiceGrpc.RecordServiceBlockingStub getRecord() {
     return this.record;
-  }
-
-  public ProofServiceGrpc.ProofServiceBlockingStub getProof() {
-    return this.proof;
   }
 
   public WebhookServiceGrpc.WebhookServiceBlockingStub getWebhook() {

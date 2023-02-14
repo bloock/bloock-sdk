@@ -1,4 +1,4 @@
-use crate::anchor::entity::anchor::AnchorNetwork;
+use crate::integrity::entity::anchor::AnchorNetwork;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum Network {

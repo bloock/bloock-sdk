@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+enum DataAvailabilityType {
+    HOSTED = 0;
+    IPFS = 1;
+}
+
+message Publisher {
+    DataAvailabilityType type = 1;
+    PublisherArgs args = 2;
+}
+
+message PublisherArgs {}
+
+message Loader {
+    DataAvailabilityType type = 1;
+    LoaderArgs args = 2;
+}
+
+message LoaderArgs {
+    string id = 1;
+}

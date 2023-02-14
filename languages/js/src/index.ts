@@ -1,10 +1,7 @@
 import "./pollyfills";
 import { Bloock } from "./bloock";
-import { BloockClient } from "./client";
-import { Anchor } from "./bridge/proto/anchor";
 import { Network } from "./bridge/proto/config";
-import { RecordReceipt } from "./bridge/proto/record";
-import { RecordBuilder } from "./builder";
+import { RecordBuilder } from "./client/record";
 import { EcdsaSigner, EnsSigner } from "./entity/signer";
 import { AesEncrypter, EciesEncrypter, RsaEncrypter } from "./entity/encrypter";
 import { AesDecrypter, EciesDecrypter, RsaDecrypter } from "./entity/decrypter";
@@ -12,18 +9,34 @@ import { HostedPublisher, IpfsPublisher } from "./entity/publisher";
 import { HostedLoader, IpfsLoader } from "./entity/loader";
 import { Record } from "./entity/record";
 import { Proof, ProofAnchor } from "./entity/proof";
-import { AnchorNetwork } from "./entity/anchor";
+import { Anchor, AnchorNetwork } from "./entity/anchor";
 import { EncryptionAlg } from "./entity/encryption_alg";
 import { SignatureAlg } from "./entity/signature";
+import {
+  AuthenticityClient,
+  AvailabilityClient,
+  BloockClient,
+  EncryptionClient,
+  IntegrityClient,
+  RecordClient,
+  WebhookClient
+} from "./client";
+import { RecordReceipt } from "./entity/record_receipt";
 
 export {
   Bloock,
+  IntegrityClient,
+  AuthenticityClient,
+  AvailabilityClient,
+  EncryptionClient,
+  RecordClient,
+  RecordBuilder,
   BloockClient,
+  WebhookClient,
   Anchor,
   Network,
   Record,
   RecordReceipt,
-  RecordBuilder,
   EcdsaSigner,
   AesEncrypter,
   AesDecrypter,

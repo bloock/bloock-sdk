@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.AnchorOuterClass;
+import com.bloock.sdk.bridge.proto.IntegrityEntities;
 
 public class AnchorNetwork {
   String name;
@@ -13,12 +13,12 @@ public class AnchorNetwork {
     this.txHash = txHash;
   }
 
-  static AnchorNetwork fromProto(AnchorOuterClass.AnchorNetwork network) {
+  static AnchorNetwork fromProto(IntegrityEntities.AnchorNetwork network) {
     return new AnchorNetwork(network.getName(), network.getState(), network.getTxHash());
   }
 
-  AnchorOuterClass.AnchorNetwork toProto() {
-    return AnchorOuterClass.AnchorNetwork.newBuilder()
+  IntegrityEntities.AnchorNetwork toProto() {
+    return IntegrityEntities.AnchorNetwork.newBuilder()
         .setName(this.name)
         .setState(this.state)
         .setTxHash(this.txHash)

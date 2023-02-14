@@ -5,21 +5,16 @@ package bloock;
 option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "com.bloock.sdk.bridge.proto";
 
+import "authenticity_entities.proto";
+import "availability_entities.proto";
+import "encryption_entities.proto";
+import "integrity_entities.proto";
+import "record_entities.proto";
 import "shared.proto";
 import "config.proto";
 
-enum RecordTypes {
-	STRING = 0;
-	HEX = 1;
-	JSON = 2;
-	BYTES = 3;
-	FILE = 4;
-    RECORD = 5;
-    LOADER = 6;
-}
-
 service RecordService {
-    rpc SendRecords(SendRecordsRequest) returns (SendRecordsResponse);
+    
     rpc BuildRecordFromString(RecordBuilderFromStringRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromHex(RecordBuilderFromHexRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromJson(RecordBuilderFromJSONRequest) returns (RecordBuilderResponse);
@@ -27,126 +22,9 @@ service RecordService {
     rpc BuildRecordFromBytes(RecordBuilderFromBytesRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromLoader(RecordBuilderFromLoaderRequest) returns (RecordBuilderResponse);
-    rpc GetHash(Record) returns (RecordHash);
-    rpc GetSignatureCommonName(SignatureCommonNameRequest) returns (SignatureCommonNameResponse);
-    rpc GetSignatures(Record) returns (RecordSignatures);
-    rpc GetEncryptionAlg(Record) returns (EncryptionAlgResponse);
-    rpc GenerateKeys(GenerateKeysRequest) returns (GenerateKeysResponse);
-    rpc GenerateRsaKeyPair(GenerateRsaKeyPairRequest) returns (GenerateRsaKeyPairResponse);
-    rpc GenerateEciesKeyPair(GenerateEciesKeyPairRequest) returns (GenerateEciesKeyPairResponse);
-    rpc Publish(PublishRequest) returns (PublishResponse);
-}
 
-message GenerateKeysRequest {
-    ConfigData config_data = 1;
-}
-
-message GenerateKeysResponse {
-    string privateKey = 1;
-    string publicKey = 2;
-    optional Error error = 3;
-}
-
-message GenerateRsaKeyPairRequest {
-    ConfigData config_data = 1;
-}
-
-message GenerateRsaKeyPairResponse {
-    string privateKey = 1;
-    string publicKey = 2;
-    optional Error error = 3;
-}
-message GenerateEciesKeyPairRequest {
-    ConfigData config_data = 1;
-}
-
-message GenerateEciesKeyPairResponse {
-    string privateKey = 1;
-    string publicKey = 2;
-    optional Error error = 3;
-}
-
-message RecordHash {
-    string hash = 1;
-    optional Error error = 2;
-}
-
-message RecordSignatures {
-    repeated Signature signatures = 1;
-    optional Error error = 2;
-}
-
-message EncryptionAlgResponse {
-    EncryptionAlg alg = 1;
-    optional Error error = 2;
-}
-
-message RecordHeader {
-    string ty = 1;
-}
-
-message Record {
-    optional ConfigData config_data = 1;
-    bytes payload = 2;
-    string hash = 3;
-}
-
-enum SignerAlg {
-    ES256K = 0;
-    ENS = 1;
-}
-
-enum EncryptionAlg {
-    A256GCM = 0;
-    RSA = 1;
-    ECIES = 2;
-}
-
-message Signer {
-    SignerAlg alg = 1;
-    SignerArgs args = 2;
-}
-
-message SignerArgs {
-    optional string private_key = 1;
-    optional string common_name = 2;
-}
-
-message Encrypter {
-    EncryptionAlg alg = 1;
-    EncrypterArgs args = 2;
-}
-
-message EncrypterArgs {
-    string key = 1;
-}
-
-message Decrypter {
-    EncryptionAlg alg = 1;
-    DecrypterArgs args = 2;
-}
-
-message DecrypterArgs {
-    string key = 1;
-}
-
-message Signature {
-    string signature = 1;
-    string protected = 2;
-    SignatureHeader header = 3;
-    string message_hash = 4;
-}
-
-message SignatureHeader {
-    string alg = 1;
-    string kid = 2;
-}
-
-message RecordReceipt {
-    int64 anchor = 1;
-    string client = 2;
-    string record = 3;
-    string status = 4;
+    rpc GetHash(GetHashRequest) returns (GetHashResponse);
+    rpc SetProof(SetProofRequest) returns (SetProofResponse);
 }
 
 message RecordBuilderFromStringRequest {
@@ -202,30 +80,6 @@ message RecordBuilderResponse {
     optional Error error = 2;
 }
 
-message SendRecordsRequest {
-    ConfigData config_data = 1;
-    repeated Record records = 2;
-}
-
-message SendRecordsResponse {
-    repeated RecordReceipt records = 1;
-    optional Error error = 2;
-}
-
-enum DataAvailabilityType {
-    HOSTED = 0;
-    IPFS = 1;
-}
-
-message Loader {
-    DataAvailabilityType type = 1;
-    LoaderArgs args = 2;
-}
-
-message LoaderArgs {
-    string hash = 1;
-}
-
 message RecordBuilderFromLoaderRequest {
     ConfigData config_data = 1;
     Loader loader = 2;
@@ -234,31 +88,23 @@ message RecordBuilderFromLoaderRequest {
     optional Decrypter decrypter = 5;
 }
 
-message Publisher {
-    DataAvailabilityType type = 1;
-    PublisherArgs args = 2;
-}
-
-message PublisherArgs {}
-
-message PublishRequest {
+message GetHashRequest {
     ConfigData config_data = 1;
-    Publisher publisher = 2;
-    Record record = 3;
+    Record record = 2;
 }
 
-message PublishResponse {
+message GetHashResponse {
     string hash = 1;
     optional Error error = 2;
 }
 
-message SignatureCommonNameRequest {
+message SetProofRequest {
     ConfigData config_data = 1;
-    Signature signature = 2;
-    string hash = 3;
+    Record record = 2;
+    Proof proof = 3;
 }
 
-message SignatureCommonNameResponse {
-    string common_name = 1;
-    optional Error error = 2;
+message SetProofResponse {
+    optional Error error = 1;
+    optional Record record = 2;
 }

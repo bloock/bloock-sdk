@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.AuthenticityEntities;
 
 public class SignerArgs {
   String privateKey;
@@ -15,9 +15,9 @@ public class SignerArgs {
     this.commonName = commonName;
   }
 
-  RecordOuterClass.SignerArgs toProto() {
-    RecordOuterClass.SignerArgs.Builder builder =
-        RecordOuterClass.SignerArgs.newBuilder().setPrivateKey(privateKey);
+  AuthenticityEntities.SignerArgs toProto() {
+    AuthenticityEntities.SignerArgs.Builder builder =
+        AuthenticityEntities.SignerArgs.newBuilder().setPrivateKey(privateKey);
 
     if (commonName != null) {
       builder.setCommonName(commonName);

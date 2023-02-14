@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
+import com.bloock.sdk.bridge.proto.EncryptionEntities;
 
 public class DecrypterArgs {
   String key;
@@ -9,7 +9,7 @@ public class DecrypterArgs {
     this.key = key;
   }
 
-  RecordOuterClass.DecrypterArgs toProto() {
-    return RecordOuterClass.DecrypterArgs.newBuilder().setKey(this.key).build();
+  EncryptionEntities.DecrypterArgs toProto() {
+    return EncryptionEntities.DecrypterArgs.newBuilder().setKey(this.key).build();
   }
 }

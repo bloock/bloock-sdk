@@ -1,10 +1,11 @@
 from bloock._bridge.proto.config_pb2 import ConfigData, Configuration
 import bloock
+import os
 
 
 class Config:
     @staticmethod
-    def new() -> ConfigData:
+    def default() -> ConfigData:
         return ConfigData(
             config=Configuration(
                 library_name="Python",
@@ -14,3 +15,7 @@ class Config:
             ),
             networks_config=bloock.network_config,
         )
+
+    @staticmethod
+    def new(config_data: ConfigData) -> ConfigData:
+        return config_data

@@ -1,10 +1,10 @@
 package com.bloock.sdk.entity;
 
-import com.bloock.sdk.bridge.proto.RecordOuterClass;
-import com.bloock.sdk.bridge.proto.RecordOuterClass.SignerAlg;
+import com.bloock.sdk.bridge.proto.AuthenticityEntities;
+import com.bloock.sdk.bridge.proto.AuthenticityEntities.SignerAlg;
 
 public class EnsSigner implements Signer {
-  RecordOuterClass.SignerAlg alg;
+  AuthenticityEntities.SignerAlg alg;
   SignerArgs args;
 
   public EnsSigner(String privateKey) {
@@ -13,8 +13,8 @@ public class EnsSigner implements Signer {
   }
 
   @Override
-  public RecordOuterClass.Signer toProto() {
-    return RecordOuterClass.Signer.newBuilder()
+  public AuthenticityEntities.Signer toProto() {
+    return AuthenticityEntities.Signer.newBuilder()
         .setAlg(this.alg)
         .setArgs(this.args.toProto())
         .build();

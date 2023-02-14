@@ -1,8 +1,9 @@
-use crate::anchor::AnchorError;
+use crate::authenticity::AuthenticityError;
+use crate::availability::AvailabilityError;
 use crate::config::ConfigError;
+use crate::encryption::EncryptionError;
 use crate::event::EventError;
-use crate::proof::ProofError;
-use crate::publish::PublishError;
+use crate::integrity::IntegrityError;
 use crate::record::RecordError;
 use crate::webhook::WebhookError;
 use bloock_encrypter::EncrypterError;
@@ -21,22 +22,24 @@ pub type BloockResult<T> = Result<T, BloockError>;
 pub enum ErrorKind {
     #[error("Config error: {0}")]
     Config(#[from] ConfigError),
-    #[error("Anchor error: {0}")]
-    Anchor(#[from] AnchorError),
     #[error("Record error: {0}")]
     Record(#[from] RecordError),
-    #[error("Proof error: {0}")]
-    Proof(#[from] ProofError),
+    #[error("Integrity error: {0}")]
+    Integrity(#[from] IntegrityError),
+    #[error("Authenticity error: {0}")]
+    Authenticity(#[from] AuthenticityError),
     #[error("Publish error: {0}")]
-    Publish(#[from] PublishError),
+    Availability(#[from] AvailabilityError),
+    #[error("Encryption error: {0}")]
+    Encryption(#[from] EncryptionError),
+    #[error("Webhook error: {0}")]
+    Webhook(#[from] WebhookError),
     #[error("Event error: {0}")]
     Event(#[from] EventError),
     #[error("Infrastructure error: {0}")]
     Infrastructure(#[from] InfrastructureError),
     #[error("Operational error: {0}")]
     Operational(#[from] OperationalError),
-    #[error("Webhook error: {0}")]
-    Webhook(#[from] WebhookError),
 }
 
 #[derive(Debug, Clone, Serialize, Eq, PartialEq)]
