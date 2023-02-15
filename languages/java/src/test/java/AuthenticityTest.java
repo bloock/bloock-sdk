@@ -3,6 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.bloock.sdk.client.AuthenticityClient;
 import com.bloock.sdk.client.RecordClient;
 import com.bloock.sdk.entity.*;
+import com.bloock.sdk.entity.Record;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,8 @@ class AuthenticityTest {
     AuthenticityClient authenticityClient = new AuthenticityClient();
 
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
-    Signature signature = authenticityClient.sign(record, new EcdsaSigner(ecdsaKeyPair.getPrivateKey()));
+    Signature signature =
+        authenticityClient.sign(record, new EcdsaSigner(ecdsaKeyPair.getPrivateKey()));
 
     assertNotNull(signature);
   }
@@ -45,10 +47,11 @@ class AuthenticityTest {
 
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
 
-    Record record = recordClient
-        .fromString("Hello world")
-        .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
-        .build();
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
+            .build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -63,7 +66,8 @@ class AuthenticityTest {
     AuthenticityClient authenticityClient = new AuthenticityClient();
 
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
-    Signature signature = authenticityClient.sign(record, new EnsSigner(ecdsaKeyPair.getPrivateKey()));
+    Signature signature =
+        authenticityClient.sign(record, new EnsSigner(ecdsaKeyPair.getPrivateKey()));
 
     assertNotNull(signature);
   }
@@ -75,10 +79,11 @@ class AuthenticityTest {
 
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
 
-    Record record = recordClient
-        .fromString("Hello world")
-        .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
-        .build();
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
+            .build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -91,10 +96,11 @@ class AuthenticityTest {
 
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
 
-    Record record = recordClient
-        .fromString("Hello world")
-        .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
-        .build();
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
+            .build();
 
     List<Signature> signatures = authenticityClient.getSignatures(record);
 
@@ -110,10 +116,11 @@ class AuthenticityTest {
 
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
 
-    Record record = recordClient
-        .fromString("Hello world")
-        .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
-        .build();
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
+            .build();
 
     List<Signature> signatures = authenticityClient.getSignatures(record);
 
@@ -135,10 +142,11 @@ class AuthenticityTest {
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
 
     String commonName = "common_name";
-    Record record = recordClient
-        .fromString("Hello world")
-        .withSigner(new EcdsaSigner(new SignerArgs(ecdsaKeyPair.getPrivateKey(), commonName)))
-        .build();
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new EcdsaSigner(new SignerArgs(ecdsaKeyPair.getPrivateKey(), commonName)))
+            .build();
 
     List<Signature> signatures = authenticityClient.getSignatures(record);
 
@@ -153,10 +161,11 @@ class AuthenticityTest {
 
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
 
-    Record record = recordClient
-        .fromString("Hello world")
-        .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
-        .build();
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
+            .build();
 
     List<Signature> signatures = authenticityClient.getSignatures(record);
     Signature signature = signatures.get(0);

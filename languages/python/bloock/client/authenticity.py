@@ -1,7 +1,6 @@
 from typing import List
 
 from bloock._bridge import bridge
-import bloock._bridge.proto.record_pb2 as proto
 from bloock._bridge.proto.authenticity_pb2 import (
     GenerateEcdsaKeysRequest,
     SignatureCommonNameRequest,

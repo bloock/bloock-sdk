@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.bloock.sdk.client.EncryptionClient;
 import com.bloock.sdk.client.RecordClient;
 import com.bloock.sdk.entity.*;
-import org.junit.jupiter.api.*;
+import com.bloock.sdk.entity.Record;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

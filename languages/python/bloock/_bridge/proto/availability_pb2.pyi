@@ -37,8 +37,28 @@ class PublishRequest(google.protobuf.message.Message):
         record: record_entities_pb2.Record | None = ...,
         publisher: availability_entities_pb2.Publisher | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "publisher", b"publisher", "record", b"record"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "publisher", b"publisher", "record", b"record"]) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data",
+            b"config_data",
+            "publisher",
+            b"publisher",
+            "record",
+            b"record",
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data",
+            b"config_data",
+            "publisher",
+            b"publisher",
+            "record",
+            b"record",
+        ],
+    ) -> None: ...
 
 global___PublishRequest = PublishRequest
 
@@ -56,9 +76,19 @@ class PublishResponse(google.protobuf.message.Message):
         id: builtins.str = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "id", b"id"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "error", b"error", "id", b"id"
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
 
 global___PublishResponse = PublishResponse
 
@@ -77,8 +107,18 @@ class RetrieveRequest(google.protobuf.message.Message):
         config_data: config_pb2.ConfigData | None = ...,
         loader: availability_entities_pb2.Loader | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "loader", b"loader"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "loader", b"loader"]) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "loader", b"loader"
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data", b"config_data", "loader", b"loader"
+        ],
+    ) -> None: ...
 
 global___RetrieveRequest = RetrieveRequest
 
@@ -97,8 +137,20 @@ class RetrieveResponse(google.protobuf.message.Message):
         record: record_entities_pb2.Record | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "record", b"record"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "record", b"record"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "error", b"error", "record", b"record"
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "error", b"error", "record", b"record"
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
 
 global___RetrieveResponse = RetrieveResponse

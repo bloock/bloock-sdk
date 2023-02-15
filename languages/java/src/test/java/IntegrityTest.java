@@ -3,6 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.bloock.sdk.client.IntegrityClient;
 import com.bloock.sdk.client.RecordClient;
 import com.bloock.sdk.entity.*;
+import com.bloock.sdk.entity.Record;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;

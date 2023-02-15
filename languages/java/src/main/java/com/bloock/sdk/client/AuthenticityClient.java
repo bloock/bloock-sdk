@@ -36,7 +36,8 @@ public class AuthenticityClient {
   }
 
   public EcdsaKeyPair generateEcdsaKeyPair() throws Exception {
-    GenerateEcdsaKeysRequest request = GenerateEcdsaKeysRequest.newBuilder().setConfigData(this.configData).build();
+    GenerateEcdsaKeysRequest request =
+        GenerateEcdsaKeysRequest.newBuilder().setConfigData(this.configData).build();
 
     GenerateEcdsaKeysResponse response = this.bridge.getAuthenticity().generateEcdsaKeys(request);
 
@@ -48,11 +49,12 @@ public class AuthenticityClient {
   }
 
   public Signature sign(Record record, Signer signer) throws Exception {
-    SignRequest request = SignRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setRecord(record.toProto())
-        .setSigner(signer.toProto())
-        .build();
+    SignRequest request =
+        SignRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setRecord(record.toProto())
+            .setSigner(signer.toProto())
+            .build();
     SignResponse response = this.bridge.getAuthenticity().sign(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
@@ -63,10 +65,11 @@ public class AuthenticityClient {
   }
 
   public boolean verify(Record record) throws Exception {
-    VerifyRequest request = VerifyRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setRecord(record.toProto())
-        .build();
+    VerifyRequest request =
+        VerifyRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setRecord(record.toProto())
+            .build();
     VerifyResponse response = this.bridge.getAuthenticity().verify(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
@@ -77,10 +80,11 @@ public class AuthenticityClient {
   }
 
   public List<Signature> getSignatures(Record record) throws Exception {
-    GetSignaturesRequest req = GetSignaturesRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setRecord(record.toProto())
-        .build();
+    GetSignaturesRequest req =
+        GetSignaturesRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setRecord(record.toProto())
+            .build();
     GetSignaturesResponse recordSignatures = this.bridge.getAuthenticity().getSignatures(req);
 
     if (recordSignatures.getError() != Error.getDefaultInstance()) {
@@ -93,13 +97,14 @@ public class AuthenticityClient {
   }
 
   public String getSignatureCommonName(Signature signature) throws Exception {
-    SignatureCommonNameResponse res = this.bridge
-        .getAuthenticity()
-        .getSignatureCommonName(
-            SignatureCommonNameRequest.newBuilder()
-                .setConfigData(this.configData)
-                .setSignature(signature.toProto())
-                .build());
+    SignatureCommonNameResponse res =
+        this.bridge
+            .getAuthenticity()
+            .getSignatureCommonName(
+                SignatureCommonNameRequest.newBuilder()
+                    .setConfigData(this.configData)
+                    .setSignature(signature.toProto())
+                    .build());
 
     if (res.getError() != Error.getDefaultInstance()) {
       throw new Exception(res.getError().getMessage());

@@ -39,8 +39,24 @@ class VerifyWebhookSignatureRequest(google.protobuf.message.Message):
         secretKey: builtins.str = ...,
         enforceTolerance: builtins.bool = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "enforceTolerance", b"enforceTolerance", "header", b"header", "payload", b"payload", "secretKey", b"secretKey"]) -> None: ...
+    def HasField(
+        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "config_data",
+            b"config_data",
+            "enforceTolerance",
+            b"enforceTolerance",
+            "header",
+            b"header",
+            "payload",
+            b"payload",
+            "secretKey",
+            b"secretKey",
+        ],
+    ) -> None: ...
 
 global___VerifyWebhookSignatureRequest = VerifyWebhookSignatureRequest
 
@@ -58,8 +74,18 @@ class VerifyWebhookSignatureResponse(google.protobuf.message.Message):
         is_valid: builtins.bool = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "is_valid", b"is_valid"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "_error", b"_error", "error", b"error", "is_valid", b"is_valid"
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
+    ) -> typing_extensions.Literal["error"] | None: ...
 
 global___VerifyWebhookSignatureResponse = VerifyWebhookSignatureResponse

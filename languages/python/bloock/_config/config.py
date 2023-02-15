@@ -1,6 +1,5 @@
 from bloock._bridge.proto.config_pb2 import ConfigData, Configuration
 import bloock
-import os
 
 
 class Config:

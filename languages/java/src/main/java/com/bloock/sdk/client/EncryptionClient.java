@@ -12,6 +12,7 @@ import com.bloock.sdk.bridge.proto.Encryption.GenerateRsaKeyPairResponse;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
 import com.bloock.sdk.entity.*;
+import com.bloock.sdk.entity.Record;
 
 public class EncryptionClient {
   private Bridge bridge;

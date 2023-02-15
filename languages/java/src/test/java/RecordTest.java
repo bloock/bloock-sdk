@@ -2,6 +2,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.bloock.sdk.client.*;
 import com.bloock.sdk.entity.*;
+import com.bloock.sdk.entity.Record;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,7 +26,7 @@ class RecordTest {
   @Test
   void testFromBytes() throws Exception {
     RecordClient recordClient = new RecordClient();
-    Record record = recordClient.fromBytes(new byte[] { 1, 2, 3, 4, 5 }).build();
+    Record record = recordClient.fromBytes(new byte[] {1, 2, 3, 4, 5}).build();
     String hash = record.getHash();
     assertEquals(hash, "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4");
   }
@@ -49,7 +50,7 @@ class RecordTest {
   @Test
   void testFromFile() throws Exception {
     RecordClient recordClient = new RecordClient();
-    Record record = recordClient.fromFile(new byte[] { 2, 3, 4, 5, 6 }).build();
+    Record record = recordClient.fromFile(new byte[] {2, 3, 4, 5, 6}).build();
     String hash = record.getHash();
     assertEquals(hash, "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446");
   }
@@ -87,17 +88,19 @@ class RecordTest {
     String name = "Some name";
 
     RecordClient recordClient = new RecordClient();
-    Record signedRecord = recordClient
-        .fromString("Hello world 3")
-        .withSigner(new EcdsaSigner(new SignerArgs(ecdsaKeyPair.getPrivateKey(), name)))
-        .build();
+    Record signedRecord =
+        recordClient
+            .fromString("Hello world 3")
+            .withSigner(new EcdsaSigner(new SignerArgs(ecdsaKeyPair.getPrivateKey(), name)))
+            .build();
 
     EcdsaKeyPair ecdsaKeyPair2 = authenticityClient.generateEcdsaKeyPair();
 
-    Record recordWithMultipleSignatures = recordClient
-        .fromRecord(signedRecord)
-        .withSigner(new EcdsaSigner(ecdsaKeyPair2.getPrivateKey()))
-        .build();
+    Record recordWithMultipleSignatures =
+        recordClient
+            .fromRecord(signedRecord)
+            .withSigner(new EcdsaSigner(ecdsaKeyPair2.getPrivateKey()))
+            .build();
 
     List<Signature> signatures = authenticityClient.getSignatures(recordWithMultipleSignatures);
     assertEquals(signatures.size(), 2);
@@ -112,10 +115,11 @@ class RecordTest {
     EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
 
     RecordClient recordClient = new RecordClient();
-    Record record = recordClient
-        .fromString("Hello world 4")
-        .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
-        .build();
+    Record record =
+        recordClient
+            .fromString("Hello world 4")
+            .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
+            .build();
 
     List<Signature> signatures = authenticityClient.getSignatures(record);
     assertEquals(signatures.size(), 1);
@@ -136,7 +140,8 @@ class RecordTest {
     String payload = "Hello world 2";
     String password = "some_password";
     RecordClient recordClient = new RecordClient();
-    Record encryptedRecord = recordClient.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
+    Record encryptedRecord =
+        recordClient.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
 
     EncryptionClient encryptionClient = new EncryptionClient();
@@ -153,7 +158,8 @@ class RecordTest {
     }
     assertTrue(throwsException);
 
-    Record decryptedRecord = recordClient.fromRecord(encryptedRecord).withDecrypter(new AesDecrypter(password)).build();
+    Record decryptedRecord =
+        recordClient.fromRecord(encryptedRecord).withDecrypter(new AesDecrypter(password)).build();
 
     assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -167,18 +173,20 @@ class RecordTest {
     EncryptionClient encryptionClient = new EncryptionClient();
     RsaKeyPair keyPair = encryptionClient.generateRsaKeyPair();
     RecordClient recordClient = new RecordClient();
-    Record encryptedRecord = recordClient
-        .fromString(payload)
-        .withEncrypter(new RsaEncrypter(keyPair.getPublicKey()))
-        .build();
+    Record encryptedRecord =
+        recordClient
+            .fromString(payload)
+            .withEncrypter(new RsaEncrypter(keyPair.getPublicKey()))
+            .build();
 
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
     assertEquals(encryptionClient.getEncryptionAlg(encryptedRecord), EncryptionAlg.RSA);
 
-    Record decryptedRecord = recordClient
-        .fromRecord(encryptedRecord)
-        .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
-        .build();
+    Record decryptedRecord =
+        recordClient
+            .fromRecord(encryptedRecord)
+            .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
+            .build();
 
     assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -192,18 +200,20 @@ class RecordTest {
     EncryptionClient encryptionClient = new EncryptionClient();
     EciesKeyPair keyPair = encryptionClient.generateEciesKeyPair();
     RecordClient recordClient = new RecordClient();
-    Record encryptedRecord = recordClient
-        .fromString(payload)
-        .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-        .build();
+    Record encryptedRecord =
+        recordClient
+            .fromString(payload)
+            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
+            .build();
 
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
     assertEquals(encryptionClient.getEncryptionAlg(encryptedRecord), EncryptionAlg.ECIES);
 
-    Record decryptedRecord = recordClient
-        .fromRecord(encryptedRecord)
-        .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-        .build();
+    Record decryptedRecord =
+        recordClient
+            .fromRecord(encryptedRecord)
+            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
+            .build();
 
     assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -217,19 +227,21 @@ class RecordTest {
     EncryptionClient encryptionClient = new EncryptionClient();
     KeyPair keyPair = encryptionClient.generateEciesKeyPair();
     RecordClient recordClient = new RecordClient();
-    Record encryptedRecord = recordClient
-        .fromString(payload)
-        .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-        .build();
+    Record encryptedRecord =
+        recordClient
+            .fromString(payload)
+            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
+            .build();
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
     String result = availabilityClient.publish(encryptedRecord, new HostedPublisher());
 
-    Record loadedRecord = recordClient
-        .fromLoader(new HostedLoader(result))
-        .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-        .build();
+    Record loadedRecord =
+        recordClient
+            .fromLoader(new HostedLoader(result))
+            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
+            .build();
 
     assertArrayEquals(loadedRecord.retrieve(), payload.getBytes());
 
@@ -243,19 +255,21 @@ class RecordTest {
     EncryptionClient encryptionClient = new EncryptionClient();
     KeyPair keyPair = encryptionClient.generateEciesKeyPair();
     RecordClient recordClient = new RecordClient();
-    Record encryptedRecord = recordClient
-        .fromString(payload)
-        .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-        .build();
+    Record encryptedRecord =
+        recordClient
+            .fromString(payload)
+            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
+            .build();
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
     String result = availabilityClient.publish(encryptedRecord, new IpfsPublisher());
 
-    Record loadedRecord = recordClient
-        .fromLoader(new IpfsLoader(result))
-        .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-        .build();
+    Record loadedRecord =
+        recordClient
+            .fromLoader(new IpfsLoader(result))
+            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
+            .build();
 
     assertArrayEquals(loadedRecord.retrieve(), payload.getBytes());
 
@@ -268,22 +282,23 @@ class RecordTest {
     RecordClient recordClient = new RecordClient();
     Record record = recordClient.fromString("Hello world").build();
 
-    Proof originalProof = new Proof(
-        Collections.singletonList(
-            "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
-        Collections.singletonList(
-            "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
-        "1010101",
-        "0101010",
-        new ProofAnchor(
-            42L,
+    Proof originalProof =
+        new Proof(
             Collections.singletonList(
-                new AnchorNetwork(
-                    "Ethereum",
-                    "state",
-                    "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
-            "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
-            "succes"));
+                "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
+            Collections.singletonList(
+                "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
+            "1010101",
+            "0101010",
+            new ProofAnchor(
+                42L,
+                Collections.singletonList(
+                    new AnchorNetwork(
+                        "Ethereum",
+                        "state",
+                        "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
+                "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+                "succes"));
 
     record.setProof(originalProof);
 
