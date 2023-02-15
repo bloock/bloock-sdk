@@ -6,7 +6,6 @@ from google.protobuf.internal import builder as _builder
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database
-
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -18,36 +17,34 @@ from . import shared_pb2 as shared__pb2
 from . import config_pb2 as config__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x10\x65ncryption.proto\x12\x06\x62loock\x1a\x15record_entities.proto\x1a\x19\x65ncryption_entities.proto\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto"D\n\x19GenerateRsaKeyPairRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData"p\n\x1aGenerateRsaKeyPairResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"F\n\x1bGenerateEciesKeyPairRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData"r\n\x1cGenerateEciesKeyPairResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"\x7f\n\x0e\x45ncryptRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12$\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.Encrypter"^\n\x0f\x45ncryptResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"\x7f\n\x0e\x44\x65\x63ryptRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12$\n\tdecrypter\x18\x03 \x01(\x0b\x32\x11.bloock.Decrypter"^\n\x0f\x44\x65\x63ryptResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error"_\n\x14\x45ncryptionAlgRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record"h\n\x15\x45ncryptionAlgResponse\x12"\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlg\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\x9c\x03\n\x11\x45ncryptionService\x12[\n\x12GenerateRsaKeyPair\x12!.bloock.GenerateRsaKeyPairRequest\x1a".bloock.GenerateRsaKeyPairResponse\x12\x61\n\x14GenerateEciesKeyPair\x12#.bloock.GenerateEciesKeyPairRequest\x1a$.bloock.GenerateEciesKeyPairResponse\x12:\n\x07\x45ncrypt\x12\x16.bloock.EncryptRequest\x1a\x17.bloock.EncryptResponse\x12:\n\x07\x44\x65\x63rypt\x12\x16.bloock.DecryptRequest\x1a\x17.bloock.DecryptResponse\x12O\n\x10GetEncryptionAlg\x12\x1c.bloock.EncryptionAlgRequest\x1a\x1d.bloock.EncryptionAlgResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3'
-)
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10\x65ncryption.proto\x12\x06\x62loock\x1a\x15record_entities.proto\x1a\x19\x65ncryption_entities.proto\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\"D\n\x19GenerateRsaKeyPairRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\"p\n\x1aGenerateRsaKeyPairResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"F\n\x1bGenerateEciesKeyPairRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\"r\n\x1cGenerateEciesKeyPairResponse\x12\x12\n\nprivateKey\x18\x01 \x01(\t\x12\x11\n\tpublicKey\x18\x02 \x01(\t\x12!\n\x05\x65rror\x18\x03 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x7f\n\x0e\x45ncryptRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12$\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.Encrypter\"^\n\x0f\x45ncryptResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x7f\n\x0e\x44\x65\x63ryptRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12$\n\tdecrypter\x18\x03 \x01(\x0b\x32\x11.bloock.Decrypter\"^\n\x0f\x44\x65\x63ryptResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"_\n\x14\x45ncryptionAlgRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\"h\n\x15\x45ncryptionAlgResponse\x12\"\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlg\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\x9c\x03\n\x11\x45ncryptionService\x12[\n\x12GenerateRsaKeyPair\x12!.bloock.GenerateRsaKeyPairRequest\x1a\".bloock.GenerateRsaKeyPairResponse\x12\x61\n\x14GenerateEciesKeyPair\x12#.bloock.GenerateEciesKeyPairRequest\x1a$.bloock.GenerateEciesKeyPairResponse\x12:\n\x07\x45ncrypt\x12\x16.bloock.EncryptRequest\x1a\x17.bloock.EncryptResponse\x12:\n\x07\x44\x65\x63rypt\x12\x16.bloock.DecryptRequest\x1a\x17.bloock.DecryptResponse\x12O\n\x10GetEncryptionAlg\x12\x1c.bloock.EncryptionAlgRequest\x1a\x1d.bloock.EncryptionAlgResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "encryption_pb2", globals())
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'encryption_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
-    DESCRIPTOR._options = None
-    DESCRIPTOR._serialized_options = b"\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
-    _GENERATERSAKEYPAIRREQUEST._serialized_start = 106
-    _GENERATERSAKEYPAIRREQUEST._serialized_end = 174
-    _GENERATERSAKEYPAIRRESPONSE._serialized_start = 176
-    _GENERATERSAKEYPAIRRESPONSE._serialized_end = 288
-    _GENERATEECIESKEYPAIRREQUEST._serialized_start = 290
-    _GENERATEECIESKEYPAIRREQUEST._serialized_end = 360
-    _GENERATEECIESKEYPAIRRESPONSE._serialized_start = 362
-    _GENERATEECIESKEYPAIRRESPONSE._serialized_end = 476
-    _ENCRYPTREQUEST._serialized_start = 478
-    _ENCRYPTREQUEST._serialized_end = 605
-    _ENCRYPTRESPONSE._serialized_start = 607
-    _ENCRYPTRESPONSE._serialized_end = 701
-    _DECRYPTREQUEST._serialized_start = 703
-    _DECRYPTREQUEST._serialized_end = 830
-    _DECRYPTRESPONSE._serialized_start = 832
-    _DECRYPTRESPONSE._serialized_end = 926
-    _ENCRYPTIONALGREQUEST._serialized_start = 928
-    _ENCRYPTIONALGREQUEST._serialized_end = 1023
-    _ENCRYPTIONALGRESPONSE._serialized_start = 1025
-    _ENCRYPTIONALGRESPONSE._serialized_end = 1129
-    _ENCRYPTIONSERVICE._serialized_start = 1132
-    _ENCRYPTIONSERVICE._serialized_end = 1544
+  DESCRIPTOR._options = None
+  DESCRIPTOR._serialized_options = b'\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
+  _GENERATERSAKEYPAIRREQUEST._serialized_start=106
+  _GENERATERSAKEYPAIRREQUEST._serialized_end=174
+  _GENERATERSAKEYPAIRRESPONSE._serialized_start=176
+  _GENERATERSAKEYPAIRRESPONSE._serialized_end=288
+  _GENERATEECIESKEYPAIRREQUEST._serialized_start=290
+  _GENERATEECIESKEYPAIRREQUEST._serialized_end=360
+  _GENERATEECIESKEYPAIRRESPONSE._serialized_start=362
+  _GENERATEECIESKEYPAIRRESPONSE._serialized_end=476
+  _ENCRYPTREQUEST._serialized_start=478
+  _ENCRYPTREQUEST._serialized_end=605
+  _ENCRYPTRESPONSE._serialized_start=607
+  _ENCRYPTRESPONSE._serialized_end=701
+  _DECRYPTREQUEST._serialized_start=703
+  _DECRYPTREQUEST._serialized_end=830
+  _DECRYPTRESPONSE._serialized_start=832
+  _DECRYPTRESPONSE._serialized_end=926
+  _ENCRYPTIONALGREQUEST._serialized_start=928
+  _ENCRYPTIONALGREQUEST._serialized_end=1023
+  _ENCRYPTIONALGRESPONSE._serialized_start=1025
+  _ENCRYPTIONALGRESPONSE._serialized_end=1129
+  _ENCRYPTIONSERVICE._serialized_start=1132
+  _ENCRYPTIONSERVICE._serialized_end=1544
 # @@protoc_insertion_point(module_scope)

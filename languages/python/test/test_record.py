@@ -82,9 +82,7 @@ class TestRecord(unittest.TestCase):
             .build()
         )
 
-        signatures = authenticity_client.get_record_signatures(
-            record_with_multiple_signatures
-        )
+        signatures = authenticity_client.get_signatures(record_with_multiple_signatures)
         self.assertEqual(len(signatures), 2)
 
         self.assertEqual(
@@ -103,7 +101,7 @@ class TestRecord(unittest.TestCase):
             .build()
         )
 
-        signatures = authenticity_client.get_record_signatures(record)
+        signatures = authenticity_client.get_signatures(record)
         self.assertEqual(len(signatures), 1)
 
         signatures[

@@ -58,7 +58,7 @@ class AuthenticityClient:
 
         return res.valid
 
-    def get_record_signatures(self, record: Record) -> List[Signature]:
+    def get_signatures(self, record: Record) -> List[Signature]:
         client = bridge.BloockBridge()
         req = GetSignaturesRequest(
             config_data=self.config_data, record=record.to_proto()

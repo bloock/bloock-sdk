@@ -26,17 +26,9 @@ class Anchor(google.protobuf.message.Message):
     STATUS_FIELD_NUMBER: builtins.int
     id: builtins.int
     @property
-    def block_roots(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
-    ]: ...
+    def block_roots(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     @property
-    def networks(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___AnchorNetwork
-    ]: ...
+    def networks(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___AnchorNetwork]: ...
     root: builtins.str
     status: builtins.str
     def __init__(
@@ -48,21 +40,7 @@ class Anchor(google.protobuf.message.Message):
         root: builtins.str = ...,
         status: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "block_roots",
-            b"block_roots",
-            "id",
-            b"id",
-            "networks",
-            b"networks",
-            "root",
-            b"root",
-            "status",
-            b"status",
-        ],
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["block_roots", b"block_roots", "id", b"id", "networks", b"networks", "root", b"root", "status", b"status"]) -> None: ...
 
 global___Anchor = Anchor
 
@@ -82,12 +60,7 @@ class AnchorNetwork(google.protobuf.message.Message):
         state: builtins.str = ...,
         tx_hash: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "name", b"name", "state", b"state", "tx_hash", b"tx_hash"
-        ],
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["name", b"name", "state", b"state", "tx_hash", b"tx_hash"]) -> None: ...
 
 global___AnchorNetwork = AnchorNetwork
 
@@ -100,17 +73,9 @@ class Proof(google.protobuf.message.Message):
     BITMAP_FIELD_NUMBER: builtins.int
     ANCHOR_FIELD_NUMBER: builtins.int
     @property
-    def leaves(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
-    ]: ...
+    def leaves(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     @property
-    def nodes(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.str
-    ]: ...
+    def nodes(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     depth: builtins.str
     bitmap: builtins.str
     @property
@@ -124,24 +89,8 @@ class Proof(google.protobuf.message.Message):
         bitmap: builtins.str = ...,
         anchor: global___ProofAnchor | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["anchor", b"anchor"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "anchor",
-            b"anchor",
-            "bitmap",
-            b"bitmap",
-            "depth",
-            b"depth",
-            "leaves",
-            b"leaves",
-            "nodes",
-            b"nodes",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["anchor", b"anchor"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["anchor", b"anchor", "bitmap", b"bitmap", "depth", b"depth", "leaves", b"leaves", "nodes", b"nodes"]) -> None: ...
 
 global___Proof = Proof
 
@@ -154,11 +103,7 @@ class ProofAnchor(google.protobuf.message.Message):
     STATUS_FIELD_NUMBER: builtins.int
     anchor_id: builtins.int
     @property
-    def networks(
-        self,
-    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___AnchorNetwork
-    ]: ...
+    def networks(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___AnchorNetwork]: ...
     root: builtins.str
     status: builtins.str
     def __init__(
@@ -169,19 +114,7 @@ class ProofAnchor(google.protobuf.message.Message):
         root: builtins.str = ...,
         status: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "anchor_id",
-            b"anchor_id",
-            "networks",
-            b"networks",
-            "root",
-            b"root",
-            "status",
-            b"status",
-        ],
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["anchor_id", b"anchor_id", "networks", b"networks", "root", b"root", "status", b"status"]) -> None: ...
 
 global___ProofAnchor = ProofAnchor
 
@@ -204,18 +137,6 @@ class RecordReceipt(google.protobuf.message.Message):
         record: builtins.str = ...,
         status: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "anchor",
-            b"anchor",
-            "client",
-            b"client",
-            "record",
-            b"record",
-            "status",
-            b"status",
-        ],
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["anchor", b"anchor", "client", b"client", "record", b"record", "status", b"status"]) -> None: ...
 
 global___RecordReceipt = RecordReceipt

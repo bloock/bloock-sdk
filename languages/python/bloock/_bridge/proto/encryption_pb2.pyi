@@ -29,12 +29,8 @@ class GenerateRsaKeyPairRequest(google.protobuf.message.Message):
         *,
         config_data: config_pb2.ConfigData | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> None: ...
 
 global___GenerateRsaKeyPairRequest = GenerateRsaKeyPairRequest
 
@@ -55,26 +51,9 @@ class GenerateRsaKeyPairResponse(google.protobuf.message.Message):
         publicKey: builtins.str = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error",
-            b"_error",
-            "error",
-            b"error",
-            "privateKey",
-            b"privateKey",
-            "publicKey",
-            b"publicKey",
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "privateKey", b"privateKey", "publicKey", b"publicKey"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___GenerateRsaKeyPairResponse = GenerateRsaKeyPairResponse
 
@@ -89,12 +68,8 @@ class GenerateEciesKeyPairRequest(google.protobuf.message.Message):
         *,
         config_data: config_pb2.ConfigData | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["config_data", b"config_data"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> None: ...
 
 global___GenerateEciesKeyPairRequest = GenerateEciesKeyPairRequest
 
@@ -115,26 +90,9 @@ class GenerateEciesKeyPairResponse(google.protobuf.message.Message):
         publicKey: builtins.str = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error",
-            b"_error",
-            "error",
-            b"error",
-            "privateKey",
-            b"privateKey",
-            "publicKey",
-            b"publicKey",
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "privateKey", b"privateKey", "publicKey", b"publicKey"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___GenerateEciesKeyPairResponse = GenerateEciesKeyPairResponse
 
@@ -157,28 +115,8 @@ class EncryptRequest(google.protobuf.message.Message):
         record: record_entities_pb2.Record | None = ...,
         encrypter: encryption_entities_pb2.Encrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data",
-            b"config_data",
-            "encrypter",
-            b"encrypter",
-            "record",
-            b"record",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data",
-            b"config_data",
-            "encrypter",
-            b"encrypter",
-            "record",
-            b"record",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "encrypter", b"encrypter", "record", b"record"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "encrypter", b"encrypter", "record", b"record"]) -> None: ...
 
 global___EncryptRequest = EncryptRequest
 
@@ -197,21 +135,9 @@ class EncryptResponse(google.protobuf.message.Message):
         record: record_entities_pb2.Record | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "record", b"record"
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "record", b"record"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "record", b"record"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "record", b"record"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___EncryptResponse = EncryptResponse
 
@@ -234,28 +160,8 @@ class DecryptRequest(google.protobuf.message.Message):
         record: record_entities_pb2.Record | None = ...,
         decrypter: encryption_entities_pb2.Decrypter | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data",
-            b"config_data",
-            "decrypter",
-            b"decrypter",
-            "record",
-            b"record",
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data",
-            b"config_data",
-            "decrypter",
-            b"decrypter",
-            "record",
-            b"record",
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "decrypter", b"decrypter", "record", b"record"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "decrypter", b"decrypter", "record", b"record"]) -> None: ...
 
 global___DecryptRequest = DecryptRequest
 
@@ -274,21 +180,9 @@ class DecryptResponse(google.protobuf.message.Message):
         record: record_entities_pb2.Record | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "record", b"record"
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "error", b"error", "record", b"record"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "record", b"record"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "record", b"record"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___DecryptResponse = DecryptResponse
 
@@ -307,18 +201,8 @@ class EncryptionAlgRequest(google.protobuf.message.Message):
         config_data: config_pb2.ConfigData | None = ...,
         record: record_entities_pb2.Record | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data", b"config_data", "record", b"record"
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "config_data", b"config_data", "record", b"record"
-        ],
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "record", b"record"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "record", b"record"]) -> None: ...
 
 global___EncryptionAlgRequest = EncryptionAlgRequest
 
@@ -336,18 +220,8 @@ class EncryptionAlgResponse(google.protobuf.message.Message):
         alg: encryption_entities_pb2.EncryptionAlg.ValueType = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_error", b"_error", "alg", b"alg", "error", b"error"
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_error", b"_error"]
-    ) -> typing_extensions.Literal["error"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "alg", b"alg", "error", b"error"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___EncryptionAlgResponse = EncryptionAlgResponse

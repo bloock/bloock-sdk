@@ -69,7 +69,7 @@ class TestAuthenticity(unittest.TestCase):
         valid = authenticity_client.verify(record)
         self.assertTrue(valid)
 
-    def test_get_record_signatures(self):
+    def test_get_signatures(self):
         authenticity_client = AuthenticityClient()
         keys = authenticity_client.generate_ecdsa_keys()
 
@@ -80,7 +80,7 @@ class TestAuthenticity(unittest.TestCase):
             .build()
         )
 
-        signatures = authenticity_client.get_record_signatures(record)
+        signatures = authenticity_client.get_signatures(record)
         self.assertEqual(len(signatures), 1)
         self.assertEqual(signatures[0].header.alg, "ES256K")
 
@@ -95,7 +95,7 @@ class TestAuthenticity(unittest.TestCase):
             .build()
         )
 
-        signatures = authenticity_client.get_record_signatures(record)
+        signatures = authenticity_client.get_signatures(record)
 
         self.assertRaises(
             Exception, authenticity_client.get_signature_common_name, signatures[0]
@@ -113,7 +113,7 @@ class TestAuthenticity(unittest.TestCase):
             .build()
         )
 
-        signatures = authenticity_client.get_record_signatures(record)
+        signatures = authenticity_client.get_signatures(record)
 
         name = authenticity_client.get_signature_common_name(signatures[0])
         self.assertEqual(name, common_name)
@@ -129,7 +129,7 @@ class TestAuthenticity(unittest.TestCase):
             .build()
         )
 
-        signatures = authenticity_client.get_record_signatures(record)
+        signatures = authenticity_client.get_signatures(record)
         signatures[
             0
         ].signature = "66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601"

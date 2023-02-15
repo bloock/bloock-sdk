@@ -20,12 +20,7 @@ class _EncryptionAlg:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _EncryptionAlgEnumTypeWrapper(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[
-        _EncryptionAlg.ValueType
-    ],
-    builtins.type,
-):  # noqa: F821
+class _EncryptionAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_EncryptionAlg.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     A256GCM: _EncryptionAlg.ValueType  # 0
     RSA: _EncryptionAlg.ValueType  # 1
@@ -52,12 +47,8 @@ class Encrypter(google.protobuf.message.Message):
         alg: global___EncryptionAlg.ValueType = ...,
         args: global___EncrypterArgs | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["args", b"args"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
 
 global___Encrypter = Encrypter
 
@@ -71,9 +62,7 @@ class EncrypterArgs(google.protobuf.message.Message):
         *,
         key: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["key", b"key"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["key", b"key"]) -> None: ...
 
 global___EncrypterArgs = EncrypterArgs
 
@@ -91,12 +80,8 @@ class Decrypter(google.protobuf.message.Message):
         alg: global___EncryptionAlg.ValueType = ...,
         args: global___DecrypterArgs | None = ...,
     ) -> None: ...
-    def HasField(
-        self, field_name: typing_extensions.Literal["args", b"args"]
-    ) -> builtins.bool: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]
-    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
 
 global___Decrypter = Decrypter
 
@@ -110,8 +95,6 @@ class DecrypterArgs(google.protobuf.message.Message):
         *,
         key: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["key", b"key"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["key", b"key"]) -> None: ...
 
 global___DecrypterArgs = DecrypterArgs
