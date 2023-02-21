@@ -59,6 +59,10 @@ jobs:
     needs: [build_linux, build_darwin, build_windows]
     uses: ./.github/workflows/build_java.yml
 
+  build_php:
+    needs: [build_linux, build_darwin, build_windows]
+    uses: ./.github/workflows/build_php.yml
+
   build_js:
     needs: [build_wasm]
     uses: ./.github/workflows/build_js.yml
@@ -115,6 +119,19 @@ jobs:
       java-version: ${{ matrix.java-version }}
     secrets:
       api_host: ${{ secrets.API_HOST }}
+      api_key: ${{ secrets.API_KEY }}
+
+  test_php:
+    needs: [build_php]
+    uses: ./.github/workflows/test_php.yml
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        php-version: ["7.4", "8.0", "8.1", "8.2"]
+    with:
+      os: ${{ matrix.os }}
+      php-version: ${{ matrix.php-version }}
+    secrets:
       api_key: ${{ secrets.API_KEY }}
 
   test_js:

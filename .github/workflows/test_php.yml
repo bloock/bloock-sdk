@@ -14,7 +14,7 @@ on:
         required: true
 
 jobs:
-  test_java:
+  test_php:
     name: Test PHP ${{ inputs.php-version }} on ${{ inputs.os }}
     runs-on: ${{ inputs.os }}
     steps:
@@ -35,3 +35,5 @@ jobs:
       - name: Test
         run: vendor/bin/phpunit --configuration ./phpunit.xml
         working-directory: bloock_lib_php
+        env:
+          API_KEY: ${{ secrets.api_key }}
