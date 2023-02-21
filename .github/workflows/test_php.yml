@@ -1,0 +1,38 @@
+name: Test Java
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      php-version:
+        required: true
+        type: string
+    secrets:
+      api_key:
+        required: true
+
+jobs:
+  test_java:
+    name: Test java ${{ inputs.java-version }} on ${{ inputs.os }}
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download php package from package run
+        uses: actions/download-artifact@v1
+        with:
+          name: bloock_lib_php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+          coverage: none
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          working-directory: bloock_lib_php
+      - name: Test
+        run: vendor/bin/phpunit --configuration ./phpunit.xml
+        working-directory: bloock_lib_php
+        
