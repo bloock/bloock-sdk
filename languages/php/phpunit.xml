@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="false" backupStaticAttributes="false" beStrictAboutOutputDuringTests="true" beStrictAboutChangesToGlobalState="true" beStrictAboutTestsThatDoNotTestAnything="false" beStrictAboutTodoAnnotatedTests="true" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnError="true" stopOnFailure="true" stopOnIncomplete="false" stopOnSkipped="false" stopOnRisky="true" verbose="false">
+  <coverage>
+    <include>
+      <directory>Bloock</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="Bloock PHP Unit Test Suite">
+      <directory suffix="Test.php">tests</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

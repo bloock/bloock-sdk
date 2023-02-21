@@ -10,7 +10,7 @@ ifeq ($(UNAME_S),Linux)
 endif
 ifeq ($(UNAME_S),Darwin)
 	mkdir -p src/main/resources/macos
-	cp ../../bloock-bridge/build/native/x86_64-apple-darwin/* src/main/resources/macos/
+	cp ../../bloock-bridge/build/native/aarch64-apple-darwin/* src/main/resources/macos/
 endif
 
 dev: copy_lib

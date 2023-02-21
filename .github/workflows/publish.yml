@@ -54,16 +54,24 @@ jobs:
       pgp_secret: ${{ secrets.PGP_SECRET }}
       pgp_passphrase: ${{ secrets.PGP_PASSPHRASE }}
 
-  run_quickstarts:
-    needs: [publish_go, publish_python, publish_js, publish_java]
-    name: Run quickstarts.
-    runs-on: ubuntu-latest
-    steps:
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.REPO_API_TOKEN }}
-          repository: bloock/bloock-sdk-quickstart
-          event-type: run_quickstarts
-          client-payload: '{"version": "${{ github.event.inputs.version }}"}'
+  publish_php:
+    needs: [mark-latest]
+    uses: ./.github/workflows/publish_php.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      repo_api_token: ${{ secrets.REPO_API_TOKEN }}
+
+  # run_quickstarts:
+  #   needs: [publish_go, publish_python, publish_js, publish_java]
+  #   name: Run quickstarts.
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Repository Dispatch
+  #       uses: peter-evans/repository-dispatch@v1
+  #       with:
+  #         token: ${{ secrets.REPO_API_TOKEN }}
+  #         repository: bloock/bloock-sdk-quickstart
+  #         event-type: run_quickstarts
+  #         client-payload: '{"version": "${{ github.event.inputs.version }}"}'
 

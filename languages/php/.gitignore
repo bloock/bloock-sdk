@@ -1,0 +1,4 @@
+.idea
+Bloock/Ffi/native/*
+vendor/
+.phpunit.result.cache
