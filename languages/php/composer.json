@@ -1,0 +1,27 @@
+{
+  "name": "bloock/sdk",
+  "description": "PHP implementation for Bloock SDK",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "BLOOCK",
+      "email": "it@bloock.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "ext-ffi": "*",
+    "grpc/grpc": "^1.38",
+    "google/protobuf": "^3.17"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bloock\\": "Bloock",
+      "": "protobuf/"
+    }
+  }
+}
