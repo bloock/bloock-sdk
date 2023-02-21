@@ -1,6 +1,6 @@
 {
   "name": "bloock/sdk",
-  "description": "PHP implementation for Bloock SDK",
+  "description": "Bloock SDK for PHP",
   "type": "library",
   "license": "MIT",
   "authors": [
