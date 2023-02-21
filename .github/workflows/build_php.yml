@@ -15,7 +15,7 @@ jobs:
           name: bloock_core_lib_static
       - name: Copy library headers.
         run: |
-          mkdir -p languages/python/bloock/native
+          mkdir -p languages/php/Bloock/Ffi/native
           cp -r bloock_core_lib_static/bloock_bridge.h languages/php/Bloock/Ffi/native/bloock_bridge.h
       - name: Copy static library.
         if: runner.os == 'Linux'
