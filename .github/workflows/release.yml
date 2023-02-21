@@ -206,13 +206,6 @@ jobs:
           release_url: ${{ needs.create_release.outputs.release_url }}
           artifact: bloock_lib_php
 
-  release_php:
-    needs: [create_release]
-    uses: ./.github/workflows/release_php.yml
-    with:
-      version: ${{ needs.create_release.outputs.version }}
-      release_url: ${{ needs.create_release.outputs.release_url }}
-
   release_python:
     needs: [create_release]
     runs-on: ubuntu-latest
