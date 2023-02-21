@@ -71,6 +71,7 @@ jobs:
     needs: [build_linux, build_darwin, build_windows, build_wasm]
     uses: ./.github/workflows/test_rust.yml
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     with:
@@ -83,6 +84,7 @@ jobs:
     needs: [build_go]
     uses: ./.github/workflows/test_go.yml
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         go-version: ["1.18", "1.19"]
@@ -97,6 +99,7 @@ jobs:
     needs: [build_python]
     uses: ./.github/workflows/test_python.yml
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
@@ -111,6 +114,7 @@ jobs:
     needs: [build_java]
     uses: ./.github/workflows/test_java.yml
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         java-version: [8, 11, 17, 19]
@@ -125,6 +129,7 @@ jobs:
     needs: [build_php]
     uses: ./.github/workflows/test_php.yml
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         php-version: ["7.4", "8.0", "8.1", "8.2"]
@@ -138,6 +143,7 @@ jobs:
     needs: [build_js]
     uses: ./.github/workflows/test_js.yml
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         node-version: ["14", "16", "18"]
