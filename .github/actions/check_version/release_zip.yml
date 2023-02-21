@@ -1,0 +1,27 @@
+name: "Release Zip"
+description: "Upload lib to release"
+inputs:
+  release_url:
+    required: true
+  version:
+    required: true
+  artifact:
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Download lib
+      uses: actions/download-artifact@v1
+      with:
+        name: ${{ inputs.artifact }}
+    - name: Compress
+      run: zip -r ${{ inputs.artifact }}.zip ${{ inputs.artifact }}/
+    - name: Upload
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ inputs.release_url }}
+        asset_path: ./${{ inputs.artifact }}.zip
+        asset_name: ${{ inputs.artifact }}-${{ inputs.version }}.zip
+        asset_content_type: application/zip
