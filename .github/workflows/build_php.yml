@@ -9,26 +9,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Download static libs
+      - name: Download dylibs
         uses: actions/download-artifact@v1
         with:
-          name: bloock_core_lib_static
-      - name: Copy library headers.
+          name: bloock_core_lib_dynamic
+      - name: Copy libraries into php package.
         run: |
           mkdir -p languages/php/Bloock/Ffi/native
-          cp -r bloock_core_lib_static/bloock_bridge.h languages/php/Bloock/Ffi/native/bloock_bridge.h
-      - name: Copy static library.
-        if: runner.os == 'Linux'
-        run: |
-          cp -r bloock_core_lib_static/libbloock_bridge_x86_64-unknown-linux-musl.a languages/php/Bloock/Ffi/native/libbloock_bridge.a
-      - name: Copy static library.
-        if: runner.os == 'macOS'
-        run: |
-          cp -r bloock_core_lib_static/libbloock_bridge-fat.a languages/php/Bloock/Ffi/native/libbloock_bridge.a
-      - name: Copy static library.
-        if: runner.os == 'Windows'
-        run: |
-          cp -r bloock_core_lib_static/bloock_bridge_windows.lib languages/php/Bloock/Ffi/native/libbloock_bridge.lib
+          [[ -e bloock_core_lib_dynamic/bloock_bridge.h ]] && cp bloock_core_lib_dynamic/bloock_bridge.h languages/php/Bloock/Ffi/native/bloock_bridge.h
+          mkdir -p languages/php/Bloock/Ffi/native/x86_64_unknown_linux_musl
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so ]] && cp bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so languages/php/Bloock/Ffi/native/x86_64_unknown_linux_musl/libbloock_bridge.so
+          mkdir -p languages/php/Bloock/Ffi/native/x86_64_apple_darwin
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge_x86_64-apple-darwin.dylib ]] && cp bloock_core_lib_dynamic/libbloock_bridge_x86_64-apple-darwin.dylib languages/php/Bloock/Ffi/native/x86_64_apple_darwin/libbloock_bridge.dylib
+          mkdir -p languages/php/Bloock/Ffi/native/aarch64_apple_darwin
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge_aarch64-apple-darwin.dylib ]] && cp bloock_core_lib_dynamic/libbloock_bridge_aarch64-apple-darwin.dylib languages/php/Bloock/Ffi/native/aarch64_apple_darwin/libbloock_bridge.dylib
+          mkdir -p languages/php/Bloock/Ffi/native/x86_64_pc_windows_gnu
+          [[ -e bloock_core_lib_dynamic/bloock_bridge_windows.dll ]] && cp bloock_core_lib_dynamic/bloock_bridge_windows.dll languages/php/Bloock/Ffi/native/x86_64_pc_windows_gnu/libbloock_bridge.dll
+          rm languages/php/Makefile
       - name: Copy in readme
         run: |
           cp README.md languages/php/README.md

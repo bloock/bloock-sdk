@@ -1,4 +1,4 @@
-name: Test Java
+name: Test PHP
 
 on:
   workflow_call:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   test_java:
-    name: Test java ${{ inputs.java-version }} on ${{ inputs.os }}
+    name: Test PHP ${{ inputs.php-version }} on ${{ inputs.os }}
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v3
@@ -35,4 +35,3 @@ jobs:
       - name: Test
         run: vendor/bin/phpunit --configuration ./phpunit.xml
         working-directory: bloock_lib_php
-        
