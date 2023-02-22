@@ -3,10 +3,13 @@ description: "Upload lib to release"
 inputs:
   release_url:
     required: true
+    description: "Release URL"
   version:
     required: true
+    description: "Version number"
   artifact:
     required: true
+    description: "Artifact name"
 runs:
   using: "composite"
   steps:
@@ -15,6 +18,7 @@ runs:
       with:
         name: ${{ inputs.artifact }}
     - name: Compress
+      shell: bash
       run: zip -r ${{ inputs.artifact }}.zip ${{ inputs.artifact }}/
     - name: Upload
       uses: actions/upload-release-asset@v1

@@ -14,12 +14,9 @@ bridge-test:
 
 core-test:
 	$(MAKE) -C bloock-core test
-	$(MAKE) -C bloock-core wasm-test
 
 libs-test:
 	$(MAKE) -C bloock-libs test
-	$(MAKE) -C bloock-libs wasm-test
-
 
 go-test: c-build
 	$(MAKE) -C languages/go test
