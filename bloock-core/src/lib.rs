@@ -4,6 +4,7 @@ pub mod config;
 pub mod encryption;
 pub mod error;
 pub mod event;
+pub mod key;
 pub mod record;
 pub mod shared;
 pub mod webhook;

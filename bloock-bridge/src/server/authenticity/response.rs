@@ -1,31 +1,11 @@
-use async_trait::async_trait;
-
-use crate::items::{
-    GenerateEcdsaKeysRequest, GetSignaturesRequest, SignRequest, SignatureCommonNameRequest,
-    VerifyRequest,
-};
+use crate::items::{GetSignaturesRequest, SignRequest, SignatureCommonNameRequest, VerifyRequest};
 use crate::{
     error::BridgeError,
     items::{
-        Error, GenerateEcdsaKeysResponse, GetSignaturesResponse, SignResponse,
-        SignatureCommonNameResponse, VerifyResponse,
+        Error, GetSignaturesResponse, SignResponse, SignatureCommonNameResponse, VerifyResponse,
     },
     server::response_types::ResponseTypeError,
 };
-
-#[async_trait(?Send)]
-impl ResponseTypeError<GenerateEcdsaKeysRequest> for GenerateEcdsaKeysResponse {
-    fn build_error(err: String) -> Self {
-        Self {
-            private_key: "".to_string(),
-            public_key: "".to_string(),
-            error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
-                message: err,
-            }),
-        }
-    }
-}
 
 impl ResponseTypeError<SignRequest> for SignResponse {
     fn build_error(err: String) -> Self {

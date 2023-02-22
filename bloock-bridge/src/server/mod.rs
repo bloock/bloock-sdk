@@ -7,11 +7,13 @@ mod availability;
 pub mod config;
 mod encryption;
 mod integrity;
+mod keys;
 
 use self::authenticity::server::AuthenticityServer;
 use self::availability::server::AvailabilityServer;
 use self::encryption::server::EncryptionServer;
 use self::integrity::server::IntegrityServer;
+use self::keys::server::KeyServer;
 use self::record::server::RecordServer;
 use self::response_types::ToResponseType;
 use self::webhook::server::WebhookServer;
@@ -21,6 +23,7 @@ use crate::items::AvailabilityServiceHandler;
 use crate::items::BloockServer;
 use crate::items::EncryptionServiceHandler;
 use crate::items::IntegrityServiceHandler;
+use crate::items::KeyServiceHandler;
 use crate::items::RecordServiceHandler;
 use crate::items::WebhookServiceHandler;
 use crate::server::response_types::ResponseType;
@@ -31,6 +34,7 @@ pub struct Server {
     encryption: EncryptionServer,
     integrity: IntegrityServer,
     record: RecordServer,
+    key: KeyServer,
     webhook: WebhookServer,
 }
 
@@ -42,6 +46,7 @@ impl Server {
             encryption: EncryptionServer {},
             integrity: IntegrityServer {},
             record: RecordServer {},
+            key: KeyServer {},
             webhook: WebhookServer {},
         }
     }
@@ -65,15 +70,6 @@ impl Server {
     ) -> Result<ResponseType, BridgeError> {
         let server: BloockServer = BloockServer::from_str(request_type);
         match server {
-            BloockServer::AuthenticityServiceGenerateEcdsaKeys => {
-                let req = self.serialize_request(payload)?;
-                Ok(self
-                    .authenticity
-                    .generate_ecdsa_keys(&req)
-                    .await
-                    .to_response_type(&req)
-                    .await)
-            }
             BloockServer::AuthenticityServiceSign => {
                 let req = self.serialize_request(payload)?;
                 Ok(self
@@ -272,24 +268,6 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
-            BloockServer::EncryptionServiceGenerateRsaKeyPair => {
-                let req = self.serialize_request(payload)?;
-                Ok(self
-                    .encryption
-                    .generate_rsa_key_pair(&req)
-                    .await
-                    .to_response_type(&req)
-                    .await)
-            }
-            BloockServer::EncryptionServiceGenerateEciesKeyPair => {
-                let req = self.serialize_request(payload)?;
-                Ok(self
-                    .encryption
-                    .generate_ecies_key_pair(&req)
-                    .await
-                    .to_response_type(&req)
-                    .await)
-            }
             BloockServer::EncryptionServiceEncrypt => {
                 let req = self.serialize_request(payload)?;
                 Ok(self
@@ -313,6 +291,24 @@ impl Server {
                 Ok(self
                     .encryption
                     .get_encryption_alg(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceGenerateLocalKey => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .generate_local_key(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceGenerateManagedKey => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .generate_managed_key(&req)
                     .await
                     .to_response_type(&req)
                     .await)

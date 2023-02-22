@@ -3,8 +3,6 @@ use crate::{
     items::{
         DecryptRequest, DecryptResponse, EncryptRequest, EncryptResponse, EncryptionAlg,
         EncryptionAlgRequest, EncryptionAlgResponse, EncryptionServiceHandler,
-        GenerateEciesKeyPairRequest, GenerateEciesKeyPairResponse, GenerateRsaKeyPairRequest,
-        GenerateRsaKeyPairResponse,
     },
     server::response_types::RequestConfigData,
 };
@@ -19,32 +17,6 @@ pub struct EncryptionServer {}
 
 #[async_trait(?Send)]
 impl EncryptionServiceHandler for EncryptionServer {
-    async fn generate_rsa_key_pair(
-        &self,
-        _req: &GenerateRsaKeyPairRequest,
-    ) -> Result<GenerateRsaKeyPairResponse, String> {
-        let keypair = bloock_core::generate_rsa_key_pair().map_err(|e| e.to_string())?;
-
-        Ok(GenerateRsaKeyPairResponse {
-            public_key: keypair.public_key,
-            private_key: keypair.private_key,
-            error: None,
-        })
-    }
-
-    async fn generate_ecies_key_pair(
-        &self,
-        _req: &GenerateEciesKeyPairRequest,
-    ) -> Result<GenerateEciesKeyPairResponse, String> {
-        let keypair = bloock_core::generate_ecies_key_pair();
-
-        Ok(GenerateEciesKeyPairResponse {
-            public_key: keypair.public_key,
-            private_key: keypair.private_key,
-            error: None,
-        })
-    }
-
     async fn encrypt(&self, req: &EncryptRequest) -> Result<EncryptResponse, String> {
         let config_data = req.get_config_data()?;
 

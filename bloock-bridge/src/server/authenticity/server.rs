@@ -1,10 +1,9 @@
 use crate::{
     error::BridgeError,
     items::{
-        AuthenticityServiceHandler, GenerateEcdsaKeysRequest, GenerateEcdsaKeysResponse,
-        GetSignaturesRequest, GetSignaturesResponse, SignRequest, SignResponse, Signature,
-        SignatureCommonNameRequest, SignatureCommonNameResponse, SignerAlg, VerifyRequest,
-        VerifyResponse,
+        AuthenticityServiceHandler, GetSignaturesRequest, GetSignaturesResponse, SignRequest,
+        SignResponse, Signature, SignatureCommonNameRequest, SignatureCommonNameResponse,
+        SignerAlg, VerifyRequest, VerifyResponse,
     },
     server::response_types::RequestConfigData,
 };
@@ -13,25 +12,11 @@ use bloock_core::{
     authenticity, config::entity::network::Network, record::entity::record::Record as RecordCore,
     EcdsaSigner, EcdsaSignerArgs, EnsSigner, EnsSignerArgs, Signature as SignatureCore,
 };
-use bloock_keys::keys::ec::EcKey;
 
 pub struct AuthenticityServer {}
 
 #[async_trait(?Send)]
 impl AuthenticityServiceHandler for AuthenticityServer {
-    async fn generate_ecdsa_keys(
-        &self,
-        _req: &GenerateEcdsaKeysRequest,
-    ) -> Result<GenerateEcdsaKeysResponse, String> {
-        let keys = EcKey::new_ec_p256k();
-
-        Ok(GenerateEcdsaKeysResponse {
-            private_key: keys.private_key,
-            public_key: keys.public_key,
-            error: None,
-        })
-    }
-
     async fn sign(&self, req: &SignRequest) -> Result<SignResponse, String> {
         let config_data = req.get_config_data()?;
         let client = authenticity::configure(config_data);
