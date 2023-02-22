@@ -192,6 +192,7 @@ jobs:
           version: ${{ needs.create_release.outputs.version }}
           release_url: ${{ needs.create_release.outputs.release_url }}
           artifact: bloock_core_lib_dynamic
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_go:
     needs: [create_release]
@@ -203,6 +204,7 @@ jobs:
           version: ${{ needs.create_release.outputs.version }}
           release_url: ${{ needs.create_release.outputs.release_url }}
           artifact: bloock_lib_go
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_php:
     needs: [create_release]
@@ -214,6 +216,7 @@ jobs:
           version: ${{ needs.create_release.outputs.version }}
           release_url: ${{ needs.create_release.outputs.release_url }}
           artifact: bloock_lib_php
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_python:
     needs: [create_release]
@@ -225,6 +228,7 @@ jobs:
           version: ${{ needs.create_release.outputs.version }}
           release_url: ${{ needs.create_release.outputs.release_url }}
           artifact: bloock_lib_python
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_js:
     needs: [create_release]
@@ -236,6 +240,7 @@ jobs:
           version: ${{ needs.create_release.outputs.version }}
           release_url: ${{ needs.create_release.outputs.release_url }}
           artifact: bloock_lib_js
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_java:
     needs: [create_release]
@@ -247,3 +252,4 @@ jobs:
           version: ${{ needs.create_release.outputs.version }}
           release_url: ${{ needs.create_release.outputs.release_url }}
           artifact: bloock_lib_java
+          github_token: ${{ secrets.GITHUB_TOKEN }}
