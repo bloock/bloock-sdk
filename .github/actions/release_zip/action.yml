@@ -10,6 +10,9 @@ inputs:
   artifact:
     required: true
     description: "Artifact name"
+  github_token:
+    required: true
+    description: "Github token"
 runs:
   using: "composite"
   steps:
@@ -23,7 +26,7 @@ runs:
     - name: Upload
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
       with:
         upload_url: ${{ inputs.release_url }}
         asset_path: ./${{ inputs.artifact }}.zip
