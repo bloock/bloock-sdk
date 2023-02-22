@@ -12,32 +12,10 @@ import "config.proto";
 
 
 service EncryptionService {
-    rpc GenerateRsaKeyPair(GenerateRsaKeyPairRequest) returns (GenerateRsaKeyPairResponse);
-    rpc GenerateEciesKeyPair(GenerateEciesKeyPairRequest) returns (GenerateEciesKeyPairResponse);
-
     rpc Encrypt(EncryptRequest) returns (EncryptResponse);
     rpc Decrypt(DecryptRequest) returns (DecryptResponse);
 
     rpc GetEncryptionAlg(EncryptionAlgRequest) returns (EncryptionAlgResponse);
-}
-
-message GenerateRsaKeyPairRequest {
-    ConfigData config_data = 1;
-}
-
-message GenerateRsaKeyPairResponse {
-    string privateKey = 1;
-    string publicKey = 2;
-    optional Error error = 3;
-}
-message GenerateEciesKeyPairRequest {
-    ConfigData config_data = 1;
-}
-
-message GenerateEciesKeyPairResponse {
-    string privateKey = 1;
-    string publicKey = 2;
-    optional Error error = 3;
 }
 
 message EncryptRequest {

@@ -32,6 +32,7 @@ mod tests {
     use crate::record::document::Document;
     use crate::record::entity::record::Record;
     use bloock_http::MockClient;
+    use bloock_keys::keys::ec::EcKey;
     use bloock_signer::ecdsa::{EcdsaSigner, EcdsaSignerArgs};
     use bloock_signer::ens::{EnsSigner, EnsSignerArgs};
     use std::sync::Arc;
@@ -45,9 +46,9 @@ mod tests {
 
         let record = Record::new(Document::new(&payload).unwrap()).unwrap();
 
-        let key_pair = EcdsaSigner::generate_keys().unwrap();
+        let keys = EcKey::new_ec_p256k();
 
-        let signer = EcdsaSigner::new_boxed(EcdsaSignerArgs::new(&key_pair.0, None));
+        let signer = EcdsaSigner::new_boxed(EcdsaSignerArgs::new(&keys.private_key, None));
         let result = service.sign_ecdsa(record, signer).unwrap();
 
         assert_eq!(result.header.alg, "ES256K");
@@ -63,9 +64,9 @@ mod tests {
 
         let record = Record::new(Document::new(&payload).unwrap()).unwrap();
 
-        let key_pair = EcdsaSigner::generate_keys().unwrap();
+        let keys = EcKey::new_ec_p256k();
 
-        let signer = EnsSigner::new_boxed(EnsSignerArgs::new(&key_pair.0));
+        let signer = EnsSigner::new_boxed(EnsSignerArgs::new(&keys.private_key));
         let result = service.sign_ens(record, signer).unwrap();
 
         assert_eq!(result.header.alg, "ENS");

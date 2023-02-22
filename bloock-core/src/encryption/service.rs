@@ -73,6 +73,7 @@ mod tests {
         rsa::{RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs},
     };
     use bloock_http::MockClient;
+    use bloock_keys::keys::rsa::RsaKey;
     use std::sync::Arc;
 
     #[tokio::test]
@@ -121,11 +122,11 @@ mod tests {
 
         let record = Record::new(Document::new(&payload).unwrap()).unwrap();
 
-        let key_pair = bloock_encrypter::rsa::generate_rsa_key_pair().unwrap();
+        let keys = RsaKey::new_rsa_2048().unwrap();
         let encrypted = service
             .encrypt_rsa(
                 record.clone(),
-                RsaEncrypter::new(RsaEncrypterArgs::new(&key_pair.public_key)),
+                RsaEncrypter::new(RsaEncrypterArgs::new(&keys.public_key)),
             )
             .unwrap();
 
@@ -138,7 +139,7 @@ mod tests {
         let decrypted = service
             .decrypt_rsa(
                 encrypted,
-                RsaDecrypter::new(RsaDecrypterArgs::new(&key_pair.private_key)),
+                RsaDecrypter::new(RsaDecrypterArgs::new(&keys.private_key)),
             )
             .unwrap();
 

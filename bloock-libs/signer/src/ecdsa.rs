@@ -63,15 +63,6 @@ impl EcdsaSigner {
     pub fn new_boxed(args: EcdsaSignerArgs) -> Box<Self> {
         Box::new(Self::new(args))
     }
-
-    pub fn generate_keys() -> crate::Result<(String, String)> {
-        let secret_key = SecretKey::random(&mut rand::rngs::OsRng::default());
-        let public_key = PublicKey::from_secret_key(&secret_key);
-        Ok((
-            hex::encode(secret_key.serialize()),
-            hex::encode(public_key.serialize_compressed()),
-        ))
-    }
 }
 
 impl Signer for EcdsaSigner {
@@ -163,6 +154,7 @@ impl Verifier for EcdsaVerifier {
 #[cfg(test)]
 mod tests {
     use bloock_hasher::{sha256::Sha256, Hasher};
+    use bloock_keys::keys::ec::EcKey;
 
     use crate::{
         create_verifier_from_signature,
@@ -174,12 +166,12 @@ mod tests {
 
     #[test]
     fn test_sign_and_verify_ok() {
-        let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
+        let keys = EcKey::new_ec_p256k();
 
         let string_payload = "hello world";
 
         let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: pvk,
+            private_key: keys.private_key,
             common_name: None,
         });
 
@@ -197,12 +189,12 @@ mod tests {
 
     #[test]
     fn test_sign_and_verify_ok_set_common_name() {
-        let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
+        let keys = EcKey::new_ec_p256k();
 
         let string_payload = "hello world";
 
         let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: pvk,
+            private_key: keys.private_key,
             common_name: Some("a name".to_string()),
         });
 
@@ -221,12 +213,12 @@ mod tests {
 
     #[test]
     fn test_sign_and_verify_ok_get_common_name_without_set() {
-        let (pvk, _pb) = EcdsaSigner::generate_keys().unwrap();
+        let keys = EcKey::new_ec_p256k();
 
         let string_payload = "hello world";
 
         let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: pvk,
+            private_key: keys.private_key,
             common_name: None,
         });
 
@@ -322,12 +314,12 @@ mod tests {
 
     #[test]
     fn recover_public_key_ok() {
-        let (pvk, pb) = EcdsaSigner::generate_keys().unwrap();
+        let keys = EcKey::new_ec_p256k();
 
         let string_payload = "hello world";
 
         let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: pvk,
+            private_key: keys.private_key,
             common_name: None,
         });
 
@@ -337,6 +329,6 @@ mod tests {
             recover_public_key(&signature, Sha256::generate_hash(string_payload.as_bytes()))
                 .unwrap();
 
-        assert_eq!(hex::encode(result_key), pb);
+        assert_eq!(hex::encode(result_key), keys.public_key);
     }
 }

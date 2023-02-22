@@ -11,23 +11,11 @@ import "shared.proto";
 import "config.proto";
 
 service AuthenticityService {
-    rpc GenerateEcdsaKeys(GenerateEcdsaKeysRequest) returns (GenerateEcdsaKeysResponse);
-
     rpc Sign(SignRequest) returns (SignResponse);
     rpc Verify(VerifyRequest) returns (VerifyResponse);
     
     rpc GetSignatures(GetSignaturesRequest) returns (GetSignaturesResponse);
     rpc GetSignatureCommonName(SignatureCommonNameRequest) returns (SignatureCommonNameResponse);
-}
-
-message GenerateEcdsaKeysRequest {
-    ConfigData config_data = 1;
-}
-
-message GenerateEcdsaKeysResponse {
-    string privateKey = 1;
-    string publicKey = 2;
-    optional Error error = 3;
 }
 
 message SignRequest {

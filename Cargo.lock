@@ -291,6 +291,7 @@ dependencies = [
  "bloock-encrypter",
  "bloock-hasher",
  "bloock-http",
+ "bloock-keys",
  "bloock-metadata",
  "bloock-signer",
  "bloock-web3",
@@ -316,6 +317,7 @@ dependencies = [
  "aes-gcm",
  "base64",
  "base64-url",
+ "bloock-keys",
  "ecies",
  "getrandom",
  "hex",
@@ -372,6 +374,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "bloock-keys"
+version = "0.1.0"
+dependencies = [
+ "bloock-http",
+ "getrandom",
+ "hex",
+ "libsecp256k1",
+ "rand",
+ "rsa",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "wasm-bindgen-test",
+]
+
+[[package]]
 name = "bloock-metadata"
 version = "0.1.0"
 dependencies = [
@@ -389,6 +408,7 @@ version = "0.1.0"
 dependencies = [
  "base64-url",
  "bloock-hasher",
+ "bloock-keys",
  "bloock-web3",
  "getrandom",
  "hex",
@@ -426,6 +446,7 @@ dependencies = [
  "bloock-core",
  "bloock-encrypter",
  "bloock-executor",
+ "bloock-keys",
  "cbindgen",
  "convert_case",
  "diplomat",

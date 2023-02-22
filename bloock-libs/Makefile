@@ -15,7 +15,10 @@ web3-build:
 metadata-build:
 	cd metadata && cargo build --release
 
-test: hasher-test signer-test encrypter-test executor-test http-test web3-test
+keys-build:
+	cd keys && cargo build --release
+
+test: hasher-test signer-test encrypter-test executor-test http-test web3-test keys-test
 
 hasher-test:
 	cd hasher && cargo test --release
@@ -37,6 +40,9 @@ web3-test:
 
 metadata-test:
 	cd metadata && cargo test --release
+
+keys-test:
+	cd keys && cargo test --release
 
 wasm-test: http-wasm-test
 

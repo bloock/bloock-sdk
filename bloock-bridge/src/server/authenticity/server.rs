@@ -13,6 +13,7 @@ use bloock_core::{
     authenticity, config::entity::network::Network, record::entity::record::Record as RecordCore,
     EcdsaSigner, EcdsaSignerArgs, EnsSigner, EnsSignerArgs, Signature as SignatureCore,
 };
+use bloock_keys::keys::ec::EcKey;
 
 pub struct AuthenticityServer {}
 
@@ -22,11 +23,11 @@ impl AuthenticityServiceHandler for AuthenticityServer {
         &self,
         _req: &GenerateEcdsaKeysRequest,
     ) -> Result<GenerateEcdsaKeysResponse, String> {
-        let (private_key, public_key) = EcdsaSigner::generate_keys().map_err(|e| e.to_string())?;
+        let keys = EcKey::new_ec_p256k();
 
         Ok(GenerateEcdsaKeysResponse {
-            private_key,
-            public_key,
+            private_key: keys.private_key,
+            public_key: keys.public_key,
             error: None,
         })
     }
