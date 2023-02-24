@@ -30,7 +30,7 @@ pub struct ManagedKeyParams {
     pub name: Option<String>,
     pub key_type: KeyType,
     pub protection: ProtectionLevel,
-    pub expiration: Option<u64>,
+    pub expiration: Option<i64>,
 }
 
 pub struct ManagedKey {
@@ -39,6 +39,7 @@ pub struct ManagedKey {
     pub key_type: KeyType,
     pub public_key: String,
     pub protection: ProtectionLevel,
+    pub expiration: Option<i64>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -48,7 +49,7 @@ pub struct ManagedKeyRequest {
     pub key_curve: Option<String>,
     pub key_size: Option<u32>,
     pub protection_level: u8,
-    pub expiration: Option<u64>,
+    pub expiration: Option<i64>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -60,7 +61,7 @@ pub struct ManagedKeyResponse {
     pub key_size: u32,
     pub key_protection: u8,
     pub pub_key: String,
-    pub expiration: u64,
+    pub expiration: i64,
 }
 
 impl ManagedKey {
@@ -90,6 +91,7 @@ impl ManagedKey {
             key_type: KeyType::new(&res.key_type, Some(&res.key_curve), Some(res.key_size))?,
             public_key: res.pub_key,
             protection: res.key_protection.into(),
+            expiration: Some(res.expiration),
         })
     }
 }

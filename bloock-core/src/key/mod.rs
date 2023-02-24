@@ -12,7 +12,12 @@ use thiserror::Error;
 pub mod service;
 
 #[derive(Error, Debug, PartialEq, Eq, Clone, Serialize)]
-pub enum KeyError {}
+pub enum KeyError {
+    #[error("Error generating local key: {0}")]
+    GenerateLocalKeyError(String),
+    #[error("Error generating managed key: {0}")]
+    GenerateManagedKeyError(String),
+}
 
 impl From<KeyError> for BloockError {
     fn from(err: KeyError) -> Self {

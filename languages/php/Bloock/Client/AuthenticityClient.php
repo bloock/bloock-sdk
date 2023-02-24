@@ -5,12 +5,13 @@ namespace Bloock\Client;
 use Bloock\Bridge\Bridge;
 use Bloock\Config\Config;
 use Bloock\ConfigData;
-use Bloock\Entity\EcdsaKeyPair;
-use Bloock\Entity\Record;
-use Bloock\Entity\Signature;
-use Bloock\Entity\Signer;
-use Bloock\GenerateEcdsaKeysRequest;
+use Bloock\Entity\Authenticity\Signature;
+use Bloock\Entity\Authenticity\Signer;
+use Bloock\Entity\Key\EcdsaKeyPair;
+use Bloock\Entity\Record\Record;
+use Bloock\GenerateLocalKeyRequest;
 use Bloock\GetSignaturesRequest;
+use Bloock\KeyType;
 use Bloock\SignatureCommonNameRequest;
 use Bloock\SignRequest;
 use Bloock\VerifyRequest;
@@ -29,11 +30,15 @@ class AuthenticityClient
         }
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
+     */
     public function generateEcdsaKeyPair(): EcdsaKeyPair {
-        $req = new GenerateEcdsaKeysRequest();
+        $req = new GenerateLocalKeyRequest();
         $req->setConfigData($this->config);
+        $req->setKeyType(KeyType::EcP256k);
 
-        $res = $this->bridge->authenticity->GenerateEcdsaKeys($req);
+        $res = $this->bridge->key->GenerateLocalKey($req);
 
         if ($res->getError() != null) {
             throw new \Exception($res->getError()->getMessage());

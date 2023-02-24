@@ -57,9 +57,9 @@ final class RecordTest extends TestCase
         $payload = $record->retrieve();
 
         $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\HostedPublisher());
+        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\HostedPublisher());
 
-        $record = $recordClient->fromLoader(new \Bloock\Entity\HostedLoader($result))->build();
+        $record = $recordClient->fromLoader(new \Bloock\Entity\Availability\HostedLoader($result))->build();
         $this->assertEquals($payload, $record->retrieve());
     }
 
@@ -70,9 +70,9 @@ final class RecordTest extends TestCase
         $payload = $record->retrieve();
 
         $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\IpfsPublisher());
+        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\IpfsPublisher());
 
-        $record = $recordClient->fromLoader(new \Bloock\Entity\IpfsLoader($result))->build();
+        $record = $recordClient->fromLoader(new \Bloock\Entity\Availability\IpfsLoader($result))->build();
         $this->assertEquals($payload, $record->retrieve());
     }
 
@@ -84,19 +84,19 @@ final class RecordTest extends TestCase
 
         $recordClient = new \Bloock\Client\RecordClient();
         $signedRecord = $recordClient->fromString("Hello world")
-            ->withSigner(new \Bloock\Entity\EcdsaSigner($ecdsaKeyPair->getPrivateKey(), $name))
+            ->withSigner(new \Bloock\Entity\Authenticity\EcdsaSigner($ecdsaKeyPair->getPrivateKey(), $name))
             ->build();
 
         $ecdsaKeyPair2 = $authenticityClient->generateEcdsaKeyPair();
         $recordWithMultipleSignatures = $recordClient->fromRecord($signedRecord)
-            ->withSigner(new \Bloock\Entity\EcdsaSigner($ecdsaKeyPair2->getPrivateKey()))
+            ->withSigner(new \Bloock\Entity\Authenticity\EcdsaSigner($ecdsaKeyPair2->getPrivateKey()))
             ->build();
 
         $signatures = $authenticityClient->getSignatures($recordWithMultipleSignatures);
         $this->assertEquals(2, count($signatures));
 
         $this->assertEquals($name, $authenticityClient->getSignatureCommonName($signatures[0]));
-        $this->assertEquals(\Bloock\Entity\SignatureAlg::ECDSA, $signatures[0]->getAlg());
+        $this->assertEquals(\Bloock\Entity\Authenticity\SignatureAlg::ECDSA, $signatures[0]->getAlg());
     }
 
     public function testEnsSignature()
@@ -107,12 +107,12 @@ final class RecordTest extends TestCase
 
         $recordClient = new \Bloock\Client\RecordClient();
         $record = $recordClient->fromString("Hello world")
-            ->withSigner(new \Bloock\Entity\EnsSigner($ecdsaKeyPair->getPrivateKey(), $name))
+            ->withSigner(new \Bloock\Entity\Authenticity\EnsSigner($ecdsaKeyPair->getPrivateKey(), $name))
             ->build();
 
         $signatures = $authenticityClient->getSignatures($record);
         $this->assertEquals(1, count($signatures));
-        $this->assertEquals(\Bloock\Entity\SignatureAlg::ENS, $signatures[0]->getAlg());
+        $this->assertEquals(\Bloock\Entity\Authenticity\SignatureAlg::ENS, $signatures[0]->getAlg());
 
         $signatures[0]->setSignature("66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601");
         $signatures[0]->setMessageHash("7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6");
@@ -126,17 +126,17 @@ final class RecordTest extends TestCase
 
         $recordClient = new \Bloock\Client\RecordClient();
         $encryptedRecord = $recordClient->fromString($payload)
-            ->withEncrypter(new \Bloock\Entity\AesEncrypter($password))
+            ->withEncrypter(new \Bloock\Entity\Encryption\AesEncrypter($password))
             ->build();
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
 
         $encryptionClient = new \Bloock\Client\EncryptionClient();
-        $this->assertEquals(\Bloock\Entity\EncryptionAlg::AES256GCM, $encryptionClient->getEncryptionAlg($encryptedRecord));
+        $this->assertEquals(\Bloock\Entity\Encryption\EncryptionAlg::AES256GCM, $encryptionClient->getEncryptionAlg($encryptedRecord));
 
         $throwsException = false;
         try {
             $recordClient->fromRecord($encryptedRecord)
-                ->withDecrypter(new \Bloock\Entity\AesDecrypter("incorrect_password"))
+                ->withDecrypter(new \Bloock\Entity\Encryption\AesDecrypter("incorrect_password"))
                 ->build();
         } catch (Exception $e) {
             $throwsException = true;
@@ -145,7 +145,7 @@ final class RecordTest extends TestCase
         $this->assertTrue($throwsException);
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new \Bloock\Entity\AesDecrypter($password))
+            ->withDecrypter(new \Bloock\Entity\Encryption\AesDecrypter($password))
             ->build();
 
         $this->assertEquals($decryptedRecord->retrieve(), unpack("C*", $payload));
@@ -162,14 +162,14 @@ final class RecordTest extends TestCase
 
         $recordClient = new \Bloock\Client\RecordClient();
         $encryptedRecord = $recordClient->fromString($payload)
-            ->withEncrypter(new \Bloock\Entity\RsaEncrypter($keyPair->getPublicKey()))
+            ->withEncrypter(new \Bloock\Entity\Encryption\RsaEncrypter($keyPair->getPublicKey()))
             ->build();
 
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
-        $this->assertEquals(\Bloock\Entity\EncryptionAlg::RSA, $encryptionClient->getEncryptionAlg($encryptedRecord));
+        $this->assertEquals(\Bloock\Entity\Encryption\EncryptionAlg::RSA, $encryptionClient->getEncryptionAlg($encryptedRecord));
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new \Bloock\Entity\RsaDecrypter($keyPair->getPrivateKey()))
+            ->withDecrypter(new \Bloock\Entity\Encryption\RsaDecrypter($keyPair->getPrivateKey()))
             ->build();
 
         $this->assertEquals($decryptedRecord->retrieve(), unpack("C*", $payload));
@@ -190,7 +190,7 @@ final class RecordTest extends TestCase
             ->build();
 
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
-        $this->assertEquals(\Bloock\Entity\EncryptionAlg::ECIES, $encryptionClient->getEncryptionAlg($encryptedRecord));
+        $this->assertEquals(\Bloock\Entity\Encryption\EncryptionAlg::ECIES, $encryptionClient->getEncryptionAlg($encryptedRecord));
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
             ->withDecrypter(new \Bloock\Entity\EciesDecrypter($keyPair->getPrivateKey()))
@@ -216,9 +216,9 @@ final class RecordTest extends TestCase
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
 
         $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($encryptedRecord, new \Bloock\Entity\HostedPublisher());
+        $result = $availabilityClient->publish($encryptedRecord, new \Bloock\Entity\Availability\HostedPublisher());
 
-        $loadedRecord = $recordClient->fromLoader(new \Bloock\Entity\HostedLoader($result))
+        $loadedRecord = $recordClient->fromLoader(new \Bloock\Entity\Availability\HostedLoader($result))
             ->withDecrypter(new \Bloock\Entity\EciesDecrypter($keyPair->getPrivateKey()))
             ->build();
 
@@ -240,9 +240,9 @@ final class RecordTest extends TestCase
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
 
         $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($encryptedRecord, new \Bloock\Entity\IpfsPublisher());
+        $result = $availabilityClient->publish($encryptedRecord, new \Bloock\Entity\Availability\IpfsPublisher());
 
-        $loadedRecord = $recordClient->fromLoader(new \Bloock\Entity\IpfsLoader($result))
+        $loadedRecord = $recordClient->fromLoader(new \Bloock\Entity\Availability\IpfsLoader($result))
             ->withDecrypter(new \Bloock\Entity\EciesDecrypter($keyPair->getPrivateKey()))
             ->build();
 
@@ -255,14 +255,14 @@ final class RecordTest extends TestCase
         $recordClient = new \Bloock\Client\RecordClient();
         $record = $recordClient->fromString("Hello world")->build();
 
-        $originalProof = new \Bloock\Entity\Proof(
+        $originalProof = new \Bloock\Entity\Integrity\Proof(
             array("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
             array("ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
             "1010101",
             "0101010",
-            new \Bloock\Entity\ProofAnchor(
+            new \Bloock\Entity\Integrity\ProofAnchor(
                 42,
-                array(new \Bloock\Entity\AnchorNetwork("Ethereum", "state", "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
+                array(new \Bloock\Entity\Integrity\AnchorNetwork("Ethereum", "state", "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
                 "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
                 "success"
             )

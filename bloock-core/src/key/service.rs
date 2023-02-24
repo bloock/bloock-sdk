@@ -1,11 +1,13 @@
-use crate::{config::service::ConfigService, error::BloockResult, record::entity::record::Record};
-use bloock_encrypter::aes::{AesDecrypter, AesEncrypter};
+use crate::{config::service::ConfigService, error::BloockResult};
 use bloock_http::Client;
 use bloock_keys::{
     local::{LocalKey, LocalKeyParams},
-    managed::{ManagedKey, ManagedKeyParams},
+    managed::{ManagedKey, ManagedKeyParams, ProtectionLevel},
+    KeyType,
 };
 use std::sync::Arc;
+
+use super::KeyError;
 
 pub struct KeyService<H: Client> {
     pub http: Arc<H>,
@@ -13,31 +15,31 @@ pub struct KeyService<H: Client> {
 }
 
 impl<H: Client> KeyService<H> {
-    pub fn generate_local_key(
-        &self,
-        record: Record,
-        encrypter: Box<AesEncrypter>,
-    ) -> BloockResult<LocalKey> {
-        let params = LocalKeyParams { key_type: todo!() };
-        let key = LocalKey::new(&params);
+    pub fn generate_local_key(&self, key_type: KeyType) -> BloockResult<LocalKey> {
+        let params = LocalKeyParams { key_type };
+        LocalKey::new(&params).map_err(|e| KeyError::GenerateLocalKeyError(e.to_string()).into())
     }
 
-    pub fn generate_managed_key(
+    pub async fn generate_managed_key(
         &self,
-        record: Record,
-        decrypter: Box<AesDecrypter>,
+        name: Option<String>,
+        key_type: KeyType,
+        protection: ProtectionLevel,
+        expiration: Option<i64>,
     ) -> BloockResult<ManagedKey> {
         let params = ManagedKeyParams {
-            name: todo!(),
-            key_type: todo!(),
-            protection: todo!(),
-            expiration: todo!(),
+            name,
+            key_type,
+            protection,
+            expiration,
         };
-        let key = ManagedKey::new(
+        ManagedKey::new(
             &params,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-        );
+        )
+        .await
+        .map_err(|e| KeyError::GenerateManagedKeyError(e.to_string()).into())
     }
 }
 

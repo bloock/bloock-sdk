@@ -1,5 +1,4 @@
-import * as proto from "../bridge/proto/encryption";
-import * as authenticityProto from "../bridge/proto/authenticity";
+import * as keyProto from "../bridge/proto/keys";
 
 export class KeyPair {
   publicKey: string;
@@ -12,19 +11,19 @@ export class KeyPair {
 }
 
 export class EcdsaKeyPair extends KeyPair {
-  static fromProto(k: authenticityProto.GenerateEcdsaKeysResponse): KeyPair {
-    return new KeyPair(k.publicKey, k.privateKey);
+  static fromProto(k: keyProto.GenerateLocalKeyResponse): KeyPair {
+    return new KeyPair(k.localKey!.key, k.localKey!.privateKey!);
   }
 }
 
 export class RsaKeyPair extends KeyPair {
-  static fromProto(k: proto.GenerateRsaKeyPairResponse): KeyPair {
-    return new KeyPair(k.publicKey, k.privateKey);
+  static fromProto(k: keyProto.GenerateLocalKeyResponse): KeyPair {
+    return new KeyPair(k.localKey!.key, k.localKey!.privateKey!);
   }
 }
 
 export class EciesKeyPair extends KeyPair {
-  static fromProto(k: proto.GenerateEciesKeyPairResponse): KeyPair {
-    return new KeyPair(k.publicKey, k.privateKey);
+  static fromProto(k: keyProto.GenerateLocalKeyResponse): KeyPair {
+    return new KeyPair(k.localKey!.key, k.localKey!.privateKey!);
   }
 }

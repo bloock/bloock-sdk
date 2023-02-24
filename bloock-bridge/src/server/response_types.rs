@@ -21,6 +21,12 @@ use crate::items::VerifyRecordsResponse;
 use crate::items::VerifyResponse;
 use crate::items::VerifyWebhookSignatureResponse;
 use crate::items::WaitAnchorResponse;
+use crate::items::{
+    BuildSchemaResponse, CreateCredentialOfferResponse, CreateIdentityResponse,
+    CredentialFromJsonResponse, CredentialOfferFromJsonResponse, CredentialOfferRedeemResponse,
+    CredentialOfferToJsonResponse, CredentialToJsonResponse, GetSchemaResponse,
+    LoadIdentityResponse, RevokeCredentialResponse, VerifyCredentialResponse,
+};
 use crate::server::BridgeError;
 use async_trait::async_trait;
 use bloock_core::config::config_data::ConfigData;
@@ -53,6 +59,18 @@ pub enum ResponseType {
     RetrieveResponse(RetrieveResponse),
     GenerateLocalKeyResponse(GenerateLocalKeyResponse),
     GenerateManagedKeyResponse(GenerateManagedKeyResponse),
+    CreateIdentityResponse(CreateIdentityResponse),
+    LoadIdentityResponse(LoadIdentityResponse),
+    BuildSchemaResponse(BuildSchemaResponse),
+    GetSchemaResponse(GetSchemaResponse),
+    CreateCredentialOfferResponse(CreateCredentialOfferResponse),
+    CredentialOfferToJsonResponse(CredentialOfferToJsonResponse),
+    CredentialOfferFromJsonResponse(CredentialOfferFromJsonResponse),
+    CredentialOfferRedeemResponse(CredentialOfferRedeemResponse),
+    CredentialToJsonResponse(CredentialToJsonResponse),
+    CredentialFromJsonResponse(CredentialFromJsonResponse),
+    VerifyCredentialResponse(VerifyCredentialResponse),
+    RevokeCredentialResponse(RevokeCredentialResponse),
     VerifyWebhookSignatureResponse(VerifyWebhookSignatureResponse),
 }
 
@@ -84,6 +102,18 @@ impl ResponseType {
             ResponseType::GenerateLocalKeyResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateManagedKeyResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateIdentityResponse(r) => r.encode(&mut result_vec),
+            ResponseType::LoadIdentityResponse(r) => r.encode(&mut result_vec),
+            ResponseType::BuildSchemaResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetSchemaResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateCredentialOfferResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialOfferToJsonResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialOfferFromJsonResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialOfferRedeemResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialToJsonResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialFromJsonResponse(r) => r.encode(&mut result_vec),
+            ResponseType::VerifyCredentialResponse(r) => r.encode(&mut result_vec),
+            ResponseType::RevokeCredentialResponse(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -114,6 +144,18 @@ impl ResponseType {
             ResponseType::GenerateLocalKeyResponse(r) => r.encoded_len(),
             ResponseType::GenerateManagedKeyResponse(r) => r.encoded_len(),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encoded_len(),
+            ResponseType::CreateIdentityResponse(r) => r.encoded_len(),
+            ResponseType::LoadIdentityResponse(r) => r.encoded_len(),
+            ResponseType::BuildSchemaResponse(r) => r.encoded_len(),
+            ResponseType::GetSchemaResponse(r) => r.encoded_len(),
+            ResponseType::CreateCredentialOfferResponse(r) => r.encoded_len(),
+            ResponseType::CredentialOfferToJsonResponse(r) => r.encoded_len(),
+            ResponseType::CredentialOfferFromJsonResponse(r) => r.encoded_len(),
+            ResponseType::CredentialOfferRedeemResponse(r) => r.encoded_len(),
+            ResponseType::CredentialToJsonResponse(r) => r.encoded_len(),
+            ResponseType::CredentialFromJsonResponse(r) => r.encoded_len(),
+            ResponseType::VerifyCredentialResponse(r) => r.encoded_len(),
+            ResponseType::RevokeCredentialResponse(r) => r.encoded_len(),
         }
     }
 }

@@ -5,14 +5,11 @@ namespace Bloock\Client;
 use Bloock\Bridge\Bridge;
 use Bloock\Config\Config;
 use Bloock\ConfigData;
-use Bloock\Entity\Loader;
-use Bloock\Entity\Publisher;
-use Bloock\Entity\Record;
-use Bloock\Entity\Signature;
-use Bloock\Entity\Signer;
+use Bloock\Entity\Availability\Loader;
+use Bloock\Entity\Availability\Publisher;
+use Bloock\Entity\Record\Record;
 use Bloock\PublishRequest;
 use Bloock\RetrieveRequest;
-use Bloock\SignRequest;
 
 class AvailabilityClient
 {

@@ -17,9 +17,7 @@ service KeyService {
 
 message GenerateLocalKeyRequest {
     ConfigData config_data = 1;
-    string key_type = 2;
-    optional string key_curve = 3;
-    optional string key_size = 4;
+    KeyType key_type = 2;
 }
 
 message GenerateLocalKeyResponse {
@@ -29,11 +27,7 @@ message GenerateLocalKeyResponse {
 
 message GenerateManagedKeyRequest {
     ConfigData config_data = 1;
-    int32 protection = 2;
-    string key_type = 3;
-    optional string key_curve = 4;
-    optional string key_size = 5;
-    optional int64 expiration = 6;
+    ManagedKeyParams params = 2;
 }
 
 message GenerateManagedKeyResponse {

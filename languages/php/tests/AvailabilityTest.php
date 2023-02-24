@@ -18,7 +18,7 @@ final class AvailabilityTest extends TestCase
         $record = $recordClient->fromString($payload)->build();
 
         $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\HostedPublisher());
+        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\HostedPublisher());
 
         $this->assertNotNull($result);
     }
@@ -32,9 +32,9 @@ final class AvailabilityTest extends TestCase
         $recordHash = $record->getHash();
 
         $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\HostedPublisher());
+        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\HostedPublisher());
 
-        $result = $availabilityClient->retrieve(new \Bloock\Entity\HostedLoader($result));
+        $result = $availabilityClient->retrieve(new \Bloock\Entity\Availability\HostedLoader($result));
 
         $this->assertEquals($recordHash, $result->getHash());
     }
@@ -47,7 +47,7 @@ final class AvailabilityTest extends TestCase
         $record = $recordClient->fromString($payload)->build();
 
         $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\IpfsPublisher());
+        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\IpfsPublisher());
 
         $this->assertNotNull($result);
     }
@@ -61,9 +61,9 @@ final class AvailabilityTest extends TestCase
         $recordHash = $record->getHash();
 
         $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\IpfsPublisher());
+        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\IpfsPublisher());
 
-        $result = $availabilityClient->retrieve(new \Bloock\Entity\IpfsLoader($result));
+        $result = $availabilityClient->retrieve(new \Bloock\Entity\Availability\IpfsLoader($result));
 
         $this->assertEquals($recordHash, $result->getHash());
     }

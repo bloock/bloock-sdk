@@ -17,34 +17,6 @@ class EncryptionServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\GenerateRsaKeyPairRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function GenerateRsaKeyPair(\Bloock\GenerateRsaKeyPairRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.EncryptionService/GenerateRsaKeyPair',
-        $argument,
-        ['\Bloock\GenerateRsaKeyPairResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
-     * @param \Bloock\GenerateEciesKeyPairRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function GenerateEciesKeyPair(\Bloock\GenerateEciesKeyPairRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.EncryptionService/GenerateEciesKeyPair',
-        $argument,
-        ['\Bloock\GenerateEciesKeyPairResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
      * @param \Bloock\EncryptRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options

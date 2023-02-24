@@ -4,10 +4,10 @@ namespace Bloock\Client;
 
 use Bloock\Bridge\Bridge;
 use Bloock\ConfigData;
-use Bloock\Entity\Decrypter;
-use Bloock\Entity\Encrypter;
-use Bloock\Entity\Record;
-use Bloock\Entity\Signer;
+use Bloock\Entity\Authenticity\Signer;
+use Bloock\Entity\Encryption\Decrypter;
+use Bloock\Entity\Encryption\Encrypter;
+use Bloock\Entity\Record\Record;
 use Bloock\RecordBuilderFromBytesRequest;
 use Bloock\RecordBuilderFromFileRequest;
 use Bloock\RecordBuilderFromHexRequest;

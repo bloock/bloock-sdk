@@ -21,10 +21,10 @@ final class EncryptionTest extends TestCase
         $password = "some_password";
         $encryptionClient = new \Bloock\Client\EncryptionClient();
 
-        $encryptedRecord = $encryptionClient->encrypt($record, new \Bloock\Entity\AesEncrypter($password));
+        $encryptedRecord = $encryptionClient->encrypt($record, new \Bloock\Entity\Encryption\AesEncrypter($password));
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new \Bloock\Entity\AesDecrypter($password))
+            ->withDecrypter(new \Bloock\Entity\Encryption\AesDecrypter($password))
             ->build();
 
         $decryptedRecordHash = $decryptedRecord->getHash();
@@ -40,10 +40,10 @@ final class EncryptionTest extends TestCase
 
         $password = "some_password";
 
-        $encryptedRecord = $recordClient->fromString($payload)->withEncrypter(new \Bloock\Entity\AesEncrypter($password))->build();
+        $encryptedRecord = $recordClient->fromString($payload)->withEncrypter(new \Bloock\Entity\Encryption\AesEncrypter($password))->build();
         $encryptedRecordHash = $encryptedRecord->getHash();
 
-        $decryptedRecord = $encryptionClient->decrypt($encryptedRecord, new \Bloock\Entity\AesDecrypter($password));
+        $decryptedRecord = $encryptionClient->decrypt($encryptedRecord, new \Bloock\Entity\Encryption\AesDecrypter($password));
         $decryptedRecordHash = $decryptedRecord->getHash();
 
         $this->assertEquals($encryptedRecordHash, $decryptedRecordHash);
@@ -60,10 +60,10 @@ final class EncryptionTest extends TestCase
         $encryptionClient = new \Bloock\Client\EncryptionClient();
         $keys = $encryptionClient->generateRsaKeyPair();
 
-        $encryptedRecord = $encryptionClient->encrypt($record, new \Bloock\Entity\RsaEncrypter($keys->getPublicKey()));
+        $encryptedRecord = $encryptionClient->encrypt($record, new \Bloock\Entity\Encryption\RsaEncrypter($keys->getPublicKey()));
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new \Bloock\Entity\RsaDecrypter($keys->getPrivateKey()))
+            ->withDecrypter(new \Bloock\Entity\Encryption\RsaDecrypter($keys->getPrivateKey()))
             ->build();
 
         $decryptedRecordHash = $decryptedRecord->getHash();
@@ -79,49 +79,10 @@ final class EncryptionTest extends TestCase
 
         $keys = $encryptionClient->generateRsaKeyPair();
 
-        $encryptedRecord = $recordClient->fromString($payload)->withEncrypter(new \Bloock\Entity\RsaEncrypter($keys->getPublicKey()))->build();
+        $encryptedRecord = $recordClient->fromString($payload)->withEncrypter(new \Bloock\Entity\Encryption\RsaEncrypter($keys->getPublicKey()))->build();
         $encryptedRecordHash = $encryptedRecord->getHash();
 
-        $decryptedRecord = $encryptionClient->decrypt($encryptedRecord, new \Bloock\Entity\RsaDecrypter($keys->getPrivateKey()));
-        $decryptedRecordHash = $decryptedRecord->getHash();
-
-        $this->assertEquals($encryptedRecordHash, $decryptedRecordHash);
-    }
-
-    public function testEncryptEcies()
-    {
-        $payload = "Hello world";
-
-        $recordClient = new \Bloock\Client\RecordClient();
-        $record = $recordClient->fromString($payload)->build();
-        $recordHash = $record->getHash();
-
-        $encryptionClient = new \Bloock\Client\EncryptionClient();
-        $keys = $encryptionClient->generateEciesKeyPair();
-
-        $encryptedRecord = $encryptionClient->encrypt($record, new \Bloock\Entity\EciesEncrypter($keys->getPublicKey()));
-
-        $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new \Bloock\Entity\EciesDecrypter($keys->getPrivateKey()))
-            ->build();
-
-        $decryptedRecordHash = $decryptedRecord->getHash();
-        $this->assertEquals($recordHash, $decryptedRecordHash);
-    }
-
-    public function testDecryptEcies()
-    {
-        $payload = "Hello world";
-
-        $recordClient = new \Bloock\Client\RecordClient();
-        $encryptionClient = new \Bloock\Client\EncryptionClient();
-
-        $keys = $encryptionClient->generateEciesKeyPair();
-
-        $encryptedRecord = $recordClient->fromString($payload)->withEncrypter(new \Bloock\Entity\EciesEncrypter($keys->getPublicKey()))->build();
-        $encryptedRecordHash = $encryptedRecord->getHash();
-
-        $decryptedRecord = $encryptionClient->decrypt($encryptedRecord, new \Bloock\Entity\EciesDecrypter($keys->getPrivateKey()));
+        $decryptedRecord = $encryptionClient->decrypt($encryptedRecord, new \Bloock\Entity\Encryption\RsaDecrypter($keys->getPrivateKey()));
         $decryptedRecordHash = $decryptedRecord->getHash();
 
         $this->assertEquals($encryptedRecordHash, $decryptedRecordHash);
@@ -134,14 +95,14 @@ final class EncryptionTest extends TestCase
         $recordClient = new \Bloock\Client\RecordClient();
 
         $encryptionClient = new \Bloock\Client\EncryptionClient();
-        $keys = $encryptionClient->generateEciesKeyPair();
+        $keys = $encryptionClient->generateRsaKeyPair();
 
         $encryptedRecord = $recordClient->fromString($payload)
-            ->withEncrypter(new \Bloock\Entity\EciesEncrypter($keys->getPublicKey()))
+            ->withEncrypter(new \Bloock\Entity\Encryption\RsaEncrypter($keys->getPublicKey()))
             ->build();
 
         $alg = $encryptionClient->getEncryptionAlg($encryptedRecord);
-        $this->assertEquals(\Bloock\Entity\EncryptionAlg::ECIES, $alg);
+        $this->assertEquals(\Bloock\Entity\Encryption\EncryptionAlg::RSA, $alg);
     }
 
 

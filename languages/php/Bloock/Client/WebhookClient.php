@@ -5,9 +5,6 @@ namespace Bloock\Client;
 use Bloock\Bridge\Bridge;
 use Bloock\Config\Config;
 use Bloock\ConfigData;
-use Bloock\Entity\Network;
-use Bloock\Entity\Record;
-use Bloock\ValidateRootRequest;
 use Bloock\VerifyWebhookSignatureRequest;
 
 class WebhookClient

@@ -5,8 +5,8 @@ namespace Bloock\Client;
 use Bloock\Bridge\Bridge;
 use Bloock\Config\Config;
 use Bloock\ConfigData;
-use Bloock\Entity\Loader;
-use Bloock\Entity\Record;
+use Bloock\Entity\Availability\Loader;
+use Bloock\Entity\Record\Record;
 use Bloock\RecordTypes;
 
 class RecordClient
