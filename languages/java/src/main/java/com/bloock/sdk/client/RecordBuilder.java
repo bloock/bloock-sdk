@@ -16,10 +16,10 @@ import com.bloock.sdk.bridge.proto.Record.RecordBuilderResponse;
 import com.bloock.sdk.bridge.proto.RecordEntities;
 import com.bloock.sdk.bridge.proto.RecordEntities.RecordTypes;
 import com.bloock.sdk.bridge.proto.Shared.Error;
-import com.bloock.sdk.entity.Decrypter;
-import com.bloock.sdk.entity.Encrypter;
-import com.bloock.sdk.entity.Record;
-import com.bloock.sdk.entity.Signer;
+import com.bloock.sdk.entity.encryption.Decrypter;
+import com.bloock.sdk.entity.encryption.Encrypter;
+import com.bloock.sdk.entity.record.Record;
+import com.bloock.sdk.entity.authenticity.Signer;
 import com.google.protobuf.ByteString;
 
 public class RecordBuilder {

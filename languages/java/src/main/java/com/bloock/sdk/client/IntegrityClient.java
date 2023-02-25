@@ -18,11 +18,11 @@ import com.bloock.sdk.bridge.proto.Integrity.WaitAnchorRequest;
 import com.bloock.sdk.bridge.proto.Integrity.WaitAnchorResponse;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.Anchor;
-import com.bloock.sdk.entity.Network;
-import com.bloock.sdk.entity.Proof;
-import com.bloock.sdk.entity.Record;
-import com.bloock.sdk.entity.RecordReceipt;
+import com.bloock.sdk.entity.integrity.Anchor;
+import com.bloock.sdk.entity.integrity.Network;
+import com.bloock.sdk.entity.integrity.Proof;
+import com.bloock.sdk.entity.record.Record;
+import com.bloock.sdk.entity.integrity.RecordReceipt;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -37,25 +37,25 @@ class CredentialOfferBuilder
         return $this;
     }
 
-    public function withDateAttribute(string $key, bool $value): CredentialOfferBuilder {
+    public function withDateAttribute(string $key, int $value): CredentialOfferBuilder {
         $attribute = new DateAttribute($key, $value);
         $this->dateAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function withDatetimeAttribute(string $key, bool $value): CredentialOfferBuilder {
+    public function withDatetimeAttribute(string $key, int $value): CredentialOfferBuilder {
         $attribute = new DatetimeAttribute($key, $value);
         $this->datetimeAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function withMultichoiceAttribute(string $key, bool $value): CredentialOfferBuilder {
+    public function withMultichoiceAttribute(string $key, string $value): CredentialOfferBuilder {
         $attribute = new MultichoiceAttribute($key, $value);
         $this->multichoiceAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function withNumberAttribute(string $key, bool $value): CredentialOfferBuilder {
+    public function withNumberAttribute(string $key, int $value): CredentialOfferBuilder {
         $attribute = new NumberAttribute($key, $value);
         $this->numberAttributes[] = $attribute->toProto();
         return $this;

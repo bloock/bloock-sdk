@@ -2,10 +2,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.bloock.sdk.client.IntegrityClient;
 import com.bloock.sdk.client.RecordClient;
-import com.bloock.sdk.entity.*;
-import com.bloock.sdk.entity.Record;
+import com.bloock.sdk.entity.record.Record;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.bloock.sdk.entity.integrity.Anchor;
+import com.bloock.sdk.entity.integrity.Network;
+import com.bloock.sdk.entity.integrity.Proof;
+import com.bloock.sdk.entity.integrity.RecordReceipt;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

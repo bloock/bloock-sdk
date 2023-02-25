@@ -3,9 +3,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.bloock.sdk.client.AvailabilityClient;
 import com.bloock.sdk.client.RecordClient;
-import com.bloock.sdk.entity.*;
-import com.bloock.sdk.entity.HostedPublisher;
-import com.bloock.sdk.entity.Record;
+import com.bloock.sdk.entity.availability.HostedLoader;
+import com.bloock.sdk.entity.availability.HostedPublisher;
+import com.bloock.sdk.entity.record.Record;
+import com.bloock.sdk.entity.availability.IpfsLoader;
+import com.bloock.sdk.entity.availability.IpfsPublisher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

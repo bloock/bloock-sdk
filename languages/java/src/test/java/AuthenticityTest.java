@@ -2,9 +2,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.bloock.sdk.client.AuthenticityClient;
 import com.bloock.sdk.client.RecordClient;
-import com.bloock.sdk.entity.*;
-import com.bloock.sdk.entity.Record;
+import com.bloock.sdk.entity.key.EcdsaKeyPair;
+import com.bloock.sdk.entity.record.Record;
 import java.util.List;
+
+import com.bloock.sdk.entity.authenticity.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

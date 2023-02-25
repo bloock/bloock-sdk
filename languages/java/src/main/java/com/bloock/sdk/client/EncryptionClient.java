@@ -5,14 +5,15 @@ import com.bloock.sdk.bridge.proto.Config.ConfigData;
 import com.bloock.sdk.bridge.proto.Encryption;
 import com.bloock.sdk.bridge.proto.Encryption.EncryptionAlgRequest;
 import com.bloock.sdk.bridge.proto.Encryption.EncryptionAlgResponse;
-import com.bloock.sdk.bridge.proto.Encryption.GenerateEciesKeyPairRequest;
-import com.bloock.sdk.bridge.proto.Encryption.GenerateEciesKeyPairResponse;
-import com.bloock.sdk.bridge.proto.Encryption.GenerateRsaKeyPairRequest;
-import com.bloock.sdk.bridge.proto.Encryption.GenerateRsaKeyPairResponse;
+import com.bloock.sdk.bridge.proto.Keys;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.*;
-import com.bloock.sdk.entity.Record;
+import com.bloock.sdk.entity.key.KeyType;
+import com.bloock.sdk.entity.key.RsaKeyPair;
+import com.bloock.sdk.entity.record.Record;
+import com.bloock.sdk.entity.encryption.Decrypter;
+import com.bloock.sdk.entity.encryption.Encrypter;
+import com.bloock.sdk.entity.encryption.EncryptionAlg;
 
 public class EncryptionClient {
   private Bridge bridge;
@@ -28,30 +29,24 @@ public class EncryptionClient {
     this.configData = Config.newConfigData(configData);
   }
 
+  /**
+   * @deprecated
+   * Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
+   */
+  @Deprecated(forRemoval = true)
   public RsaKeyPair generateRsaKeyPair() throws Exception {
-    GenerateRsaKeyPairRequest request =
-        GenerateRsaKeyPairRequest.newBuilder().setConfigData(this.configData).build();
+    Keys.GenerateLocalKeyRequest request = Keys.GenerateLocalKeyRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setKeyType(KeyType.Rsa2048.toProto())
+            .build();
 
-    GenerateRsaKeyPairResponse response = bridge.getEncryption().generateRsaKeyPair(request);
+    Keys.GenerateLocalKeyResponse response = bridge.getKey().generateLocalKey(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 
     return RsaKeyPair.fromProto(response);
-  }
-
-  public EciesKeyPair generateEciesKeyPair() throws Exception {
-    GenerateEciesKeyPairRequest request =
-        GenerateEciesKeyPairRequest.newBuilder().setConfigData(this.configData).build();
-
-    GenerateEciesKeyPairResponse response = bridge.getEncryption().generateEciesKeyPair(request);
-
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
-    }
-
-    return EciesKeyPair.fromProto(response);
   }
 
   public Record encrypt(Record record, Encrypter encrypter) throws Exception {

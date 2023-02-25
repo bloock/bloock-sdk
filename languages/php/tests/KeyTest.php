@@ -66,7 +66,6 @@ final class KeyTest extends TestCase
     {
         $keyClient = new \Bloock\Client\KeyClient();
 
-        $keyName = "key_name";
         $keyProtection = \Bloock\Entity\Key\KeyProtectionLevel::SOFTWARE;
         $keyType = \Bloock\Entity\Key\KeyType::EcP256k;
 
