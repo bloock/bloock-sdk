@@ -4,7 +4,7 @@ from typing import Dict
 
 import bloock
 from bloock._bridge.proto.config_pb2 import NetworkConfig
-from bloock.entity.network import Network
+from bloock.entity.integrity.network import Network
 
 api_key = ""
 api_host = ""

@@ -24,7 +24,11 @@ import {
 import { RecordReceipt } from "./entity/record_receipt";
 import { IdentityClient } from "./client/identity";
 import { KeyClient } from "./client/key";
-import { KeyProtectionLevel } from "./entity/managed_key";
+import {
+  KeyProtectionLevel,
+  ManagedKeyParams,
+  ManagedKey
+} from "./entity/managed_key";
 import { CredentialOffer } from "./entity/credential_offer";
 import { Credential } from "./entity/credential";
 import { KeyType } from "./entity/key_type";
@@ -61,6 +65,8 @@ export {
   EncryptionAlg,
   SignatureAlg,
   KeyProtectionLevel,
+  ManagedKeyParams,
+  ManagedKey,
   KeyType,
   CredentialOffer,
   Credential

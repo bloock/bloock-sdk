@@ -72,7 +72,7 @@ final class KeyTest extends TestCase
         $params = new \Bloock\Entity\Key\ManagedKeyParams($keyProtection, $keyType);
         $key = $keyClient->newManagedKey($params);
 
-        $this->assertNull($key->name);
+        $this->assertEquals("", $key->name);
         $this->assertNotNull($key->key);
         $this->assertEquals($key->keyType, $keyType);
         $this->assertEquals($key->protection, $keyProtection);

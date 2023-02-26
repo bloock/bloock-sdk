@@ -8,17 +8,18 @@ class KeyProtectionLevel
     const HSM = "HSM";
     const UNRECOGNIZED = "UNRECOGNIZED";
 
-    public static function fromString(string $type): string {
+    public static function toProto(string $type): int {
         switch ($type) {
-            case "SOFTWARE":
-                return KeyProtectionLevel::SOFTWARE;
-            case "HSM":
-                return KeyProtectionLevel::HSM;
+            case KeyProtectionLevel::SOFTWARE:
+                return \Bloock\KeyProtectionLevel::SOFTWARE;
+            case KeyProtectionLevel::HSM:
+                return \Bloock\KeyProtectionLevel::HSM;
             default:
-                return KeyProtectionLevel::UNRECOGNIZED;
+                return \Bloock\KeyProtectionLevel::SOFTWARE;
         }
     }
-    public static function fromProto(\Bloock\KeyProtectionLevel $alg): string {
+
+    public static function fromProto(int $alg): string {
         switch ($alg) {
             case \Bloock\KeyProtectionLevel::SOFTWARE:
                 return KeyProtectionLevel::SOFTWARE;

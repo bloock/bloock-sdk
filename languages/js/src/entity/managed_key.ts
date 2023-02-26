@@ -49,6 +49,15 @@ export class ManagedKeyParams {
     this.name = name;
     this.expiration = expiration;
   }
+
+  public toProto(): keysEntitiesProto.ManagedKeyParams {
+    return keysEntitiesProto.ManagedKeyParams.fromPartial({
+      protection: KeyProtectionLevel.toProto(this.protection),
+      keyType: KeyType.toProto(this.keyType),
+      name: this.name,
+      expiration: this.expiration
+    });
+  }
 }
 
 export class ManagedKey {

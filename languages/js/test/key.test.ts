@@ -1,6 +1,11 @@
 import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
-import { KeyClient, KeyProtectionLevel, KeyType } from "../dist";
+import {
+  KeyClient,
+  KeyProtectionLevel,
+  KeyType,
+  ManagedKeyParams
+} from "../dist";
 
 describe("Key Tests", () => {
   test("generate local ecdsa", async () => {
@@ -30,11 +35,9 @@ describe("Key Tests", () => {
     let keyProtection = KeyProtectionLevel.SOFTWARE;
     let keyType = KeyType.EcP256k;
     let keyClient = new KeyClient();
-    let key = await keyClient.newManagedKey({
-      name: keyName,
-      protection: keyProtection,
-      keyType: keyType
-    });
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType, keyName)
+    );
 
     expect(key.name).toBe(keyName);
     expect(key.key).toBeDefined();
@@ -49,11 +52,9 @@ describe("Key Tests", () => {
     let keyProtection = KeyProtectionLevel.SOFTWARE;
     let keyType = KeyType.Rsa2048;
     let keyClient = new KeyClient();
-    let key = await keyClient.newManagedKey({
-      name: keyName,
-      protection: keyProtection,
-      keyType: keyType
-    });
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType, keyName)
+    );
 
     expect(key.name).toBe(keyName);
     expect(key.key).toBeDefined();
@@ -67,10 +68,9 @@ describe("Key Tests", () => {
     let keyProtection = KeyProtectionLevel.SOFTWARE;
     let keyType = KeyType.Rsa2048;
     let keyClient = new KeyClient();
-    let key = await keyClient.newManagedKey({
-      protection: keyProtection,
-      keyType: keyType
-    });
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType)
+    );
 
     expect(key.name).toBeNull();
     expect(key.key).toBeDefined();

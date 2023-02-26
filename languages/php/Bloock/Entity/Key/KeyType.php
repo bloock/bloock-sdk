@@ -11,10 +11,21 @@ class KeyType
     const UNRECOGNIZED = "UNRECOGNIZED";
 
     public static function toProto(string $type): int {
-        return \Bloock\KeyType::value($type);
+        switch ($type) {
+            case KeyType::EcP256k:
+                return \Bloock\KeyType::EcP256k;
+            case KeyType::Rsa2048:
+                return \Bloock\KeyType::Rsa2048;
+            case KeyType::Rsa3072:
+                return \Bloock\KeyType::Rsa3072;
+            case KeyType::Rsa4096:
+                return \Bloock\KeyType::Rsa4096;
+            default:
+                return \Bloock\KeyType::EcP256k;
+        }
     }
 
-    public static function fromProto(\Bloock\KeyType $alg): string {
+    public static function fromProto(int $alg): string {
         switch ($alg) {
             case \Bloock\KeyType::EcP256k:
                 return KeyType::EcP256k;

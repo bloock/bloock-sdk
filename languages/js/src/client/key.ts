@@ -4,11 +4,10 @@ import {
   GenerateLocalKeyRequest,
   GenerateManagedKeyRequest
 } from "../bridge/proto/keys";
-import { ManagedKeyParams } from "../bridge/proto/keys_entities";
 import { NewConfigData } from "../config/config";
 import { KeyType } from "../entity/key_type";
 import { LocalKey } from "../entity/local_key";
-import { ManagedKey } from "../entity/managed_key";
+import { ManagedKey, ManagedKeyParams } from "../entity/managed_key";
 
 export class KeyClient {
   private bridge: BloockBridge;
@@ -38,13 +37,9 @@ export class KeyClient {
   async newManagedKey(params: ManagedKeyParams): Promise<ManagedKey> {
     const request = GenerateManagedKeyRequest.fromPartial({
       configData: this.configData,
-      params: ManagedKeyParams.fromPartial({
-        protection: params.protection,
-        keyType: params.keyType,
-        name: params.name,
-        expiration: params.expiration
-      })
+      params: params.toProto()
     });
+    console.log("params", request);
     return this.bridge
       .getKey()
       .GenerateManagedKey(request)

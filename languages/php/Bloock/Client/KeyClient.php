@@ -47,7 +47,7 @@ class KeyClient
             throw new \Exception($res->getError()->getMessage());
         }
 
-        return LocalKey::fromProto($res);
+        return LocalKey::fromProto($res->getLocalKey());
     }
 
     public function newManagedKey(ManagedKeyParams $params): ManagedKey {
@@ -60,6 +60,6 @@ class KeyClient
             throw new \Exception($res->getError()->getMessage());
         }
 
-        return ManagedKey::fromProto($res);
+        return ManagedKey::fromProto($res->getManagedKey());
     }
 }

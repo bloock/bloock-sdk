@@ -23,7 +23,9 @@ export class FFIClient {
   public async request(type: string, payload: Uint8Array): Promise<Uint8Array> {
     await this.ready;
 
+    console.log("requesst", type, bytesToBase64(payload));
     let response = await request(type, bytesToBase64(payload));
+    console.log("repsonse", type, response);
     return base64ToBytes(response);
   }
 

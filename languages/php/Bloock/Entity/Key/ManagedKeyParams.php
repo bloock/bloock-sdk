@@ -5,17 +5,17 @@ namespace Bloock\Entity\Key;
 class ManagedKeyParams
 {
     public ?string $name;
-    public int $protection;
-    public int $keyType;
+    public string $protection;
+    public string $keyType;
     public ?int $expiration;
 
     /**
      * @param ?string $name
-     * @param int $protection
-     * @param int $keyType
+     * @param string $protection
+     * @param string $keyType
      * @param ?int $expiration
      */
-    public function __construct(int $protection, int $keyType, string $name = null, int $expiration = null)
+    public function __construct(string $protection, string $keyType, string $name = null, int $expiration = null)
     {
         $this->name = $name;
         $this->protection = $protection;
@@ -25,10 +25,16 @@ class ManagedKeyParams
 
     public function toProto(): \Bloock\ManagedKeyParams {
         $p = new \Bloock\ManagedKeyParams();
-        $p->setName($this->name);
-        $p->setProtection($this->protection);
-        $p->setKeyType($this->keyType);
-        $p->setExpiration($this->expiration);
+        $p->setProtection(KeyProtectionLevel::toProto($this->protection));
+        $p->setKeyType(KeyType::toProto($this->keyType));
+
+        if ($this->name != null) {
+            $p->setName($this->name);
+        }
+
+        if ($this->expiration != null) {
+            $p->setExpiration($this->expiration);
+        }
         return $p;
     }
 

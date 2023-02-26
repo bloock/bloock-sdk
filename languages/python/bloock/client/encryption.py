@@ -1,18 +1,21 @@
+from warnings import warn
+
 from bloock._bridge import bridge
 from bloock._bridge.proto.encryption_pb2 import (
-    GenerateRsaKeyPairRequest,
-    GenerateEciesKeyPairRequest,
     EncryptRequest,
     DecryptRequest,
     EncryptionAlgRequest,
 )
+from bloock._bridge.proto.keys_pb2 import GenerateLocalKeyRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock._config.config import Config
-from bloock.entity.decrypter import Decrypter
-from bloock.entity.encrypter import Encrypter
-from bloock.entity.encryption_alg import EncryptionAlg
-from bloock.entity.key_pair import KeyPair, RsaKeyPair, EciesKeyPair
-from bloock.entity.record import Record
+from bloock.entity.encryption.decrypter import Decrypter
+from bloock.entity.encryption.encrypter import Encrypter
+from bloock.entity.encryption.encryption_alg import EncryptionAlg
+from bloock.entity.key.key_pair import KeyPair
+from bloock.entity.key.rsa_key_pair import RsaKeyPair
+from bloock.entity.key.key_type import KeyType
+from bloock.entity.record.record import Record
 
 
 class EncryptionClient:
@@ -23,24 +26,17 @@ class EncryptionClient:
         self.config_data = config_data
 
     def generate_rsa_keypair(self) -> KeyPair:
-        res = self.bridge_client.encryption().GenerateRsaKeyPair(
-            GenerateRsaKeyPairRequest(config_data=self.config_data)
+        warn('Will be deleted in future versions. Use KeyClient.newLocalKey function instead.',
+             DeprecationWarning, stacklevel=2
+             )
+        res = self.bridge_client.key().GenerateLocalKey(
+            GenerateLocalKeyRequest(config_data=self.config_data, key_type=KeyType.Rsa2048.to_proto())
         )
 
         if res.error != Error():
             raise Exception(res.error.message)
 
         return RsaKeyPair.from_proto(res)
-
-    def generate_ecies_keypair(self) -> KeyPair:
-        res = self.bridge_client.encryption().GenerateEciesKeyPair(
-            GenerateEciesKeyPairRequest(config_data=self.config_data)
-        )
-
-        if res.error != Error():
-            raise Exception(res.error.message)
-
-        return EciesKeyPair.from_proto(res)
 
     def encrypt(self, record: Record, encrypter: Encrypter) -> Record:
         req = EncryptRequest(

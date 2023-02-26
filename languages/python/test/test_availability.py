@@ -2,8 +2,10 @@ import unittest
 
 from bloock.client.availability import AvailabilityClient
 from bloock.client.record import RecordClient
-from bloock.entity.loader import HostedLoader, IpfsLoader
-from bloock.entity.publisher import HostedPublisher, IpfsPublisher
+from bloock.entity.availability.hosted_loader import HostedLoader
+from bloock.entity.availability.hosted_publisher import HostedPublisher
+from bloock.entity.availability.ipfs_loader import IpfsLoader
+from bloock.entity.availability.ipfs_publisher import IpfsPublisher
 from test.util import init_sdk
 
 
