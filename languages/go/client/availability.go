@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/availability"
+	"github.com/bloock/bloock-sdk-go/v2/entity/record"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
@@ -29,7 +30,7 @@ func NewAvailabilityClientWithConfig(configData *proto.ConfigData) AvailabilityC
 	}
 }
 
-func (c *AvailabilityClient) Publish(r entity.Record, publisher entity.Publisher) (string, error) {
+func (c *AvailabilityClient) Publish(r record.Record, publisher availability.Publisher) (string, error) {
 	res, err := c.bridgeClient.Availability().Publish(context.Background(), &proto.PublishRequest{
 		ConfigData: c.configData,
 		Record:     r.ToProto(),
@@ -47,19 +48,19 @@ func (c *AvailabilityClient) Publish(r entity.Record, publisher entity.Publisher
 	return res.Id, nil
 }
 
-func (c *AvailabilityClient) Retrieve(loader entity.Loader) (entity.Record, error) {
+func (c *AvailabilityClient) Retrieve(loader availability.Loader) (record.Record, error) {
 	res, err := c.bridgeClient.Availability().Retrieve(context.Background(), &proto.RetrieveRequest{
 		ConfigData: c.configData,
 		Loader:     loader.ToProto(),
 	})
 
 	if err != nil {
-		return entity.Record{}, err
+		return record.Record{}, err
 	}
 
 	if res.Error != nil {
-		return entity.Record{}, errors.New(res.Error.Message)
+		return record.Record{}, errors.New(res.Error.Message)
 	}
 
-	return entity.NewRecordFromProto(res.Record, c.configData), nil
+	return record.NewRecordFromProto(res.Record, c.configData), nil
 }

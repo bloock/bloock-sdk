@@ -1,4 +1,4 @@
-package entity
+package integrity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 

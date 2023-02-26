@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthenticityServiceClient interface {
-	GenerateEcdsaKeys(ctx context.Context, in *GenerateEcdsaKeysRequest, opts ...grpc.CallOption) (*GenerateEcdsaKeysResponse, error)
 	Sign(ctx context.Context, in *SignRequest, opts ...grpc.CallOption) (*SignResponse, error)
 	Verify(ctx context.Context, in *VerifyRequest, opts ...grpc.CallOption) (*VerifyResponse, error)
 	GetSignatures(ctx context.Context, in *GetSignaturesRequest, opts ...grpc.CallOption) (*GetSignaturesResponse, error)
@@ -35,15 +34,6 @@ type authenticityServiceClient struct {
 
 func NewAuthenticityServiceClient(cc grpc.ClientConnInterface) AuthenticityServiceClient {
 	return &authenticityServiceClient{cc}
-}
-
-func (c *authenticityServiceClient) GenerateEcdsaKeys(ctx context.Context, in *GenerateEcdsaKeysRequest, opts ...grpc.CallOption) (*GenerateEcdsaKeysResponse, error) {
-	out := new(GenerateEcdsaKeysResponse)
-	err := c.cc.Invoke(ctx, "/bloock.AuthenticityService/GenerateEcdsaKeys", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *authenticityServiceClient) Sign(ctx context.Context, in *SignRequest, opts ...grpc.CallOption) (*SignResponse, error) {
@@ -86,7 +76,6 @@ func (c *authenticityServiceClient) GetSignatureCommonName(ctx context.Context, 
 // All implementations must embed UnimplementedAuthenticityServiceServer
 // for forward compatibility
 type AuthenticityServiceServer interface {
-	GenerateEcdsaKeys(context.Context, *GenerateEcdsaKeysRequest) (*GenerateEcdsaKeysResponse, error)
 	Sign(context.Context, *SignRequest) (*SignResponse, error)
 	Verify(context.Context, *VerifyRequest) (*VerifyResponse, error)
 	GetSignatures(context.Context, *GetSignaturesRequest) (*GetSignaturesResponse, error)
@@ -98,9 +87,6 @@ type AuthenticityServiceServer interface {
 type UnimplementedAuthenticityServiceServer struct {
 }
 
-func (UnimplementedAuthenticityServiceServer) GenerateEcdsaKeys(context.Context, *GenerateEcdsaKeysRequest) (*GenerateEcdsaKeysResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateEcdsaKeys not implemented")
-}
 func (UnimplementedAuthenticityServiceServer) Sign(context.Context, *SignRequest) (*SignResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Sign not implemented")
 }
@@ -124,24 +110,6 @@ type UnsafeAuthenticityServiceServer interface {
 
 func RegisterAuthenticityServiceServer(s grpc.ServiceRegistrar, srv AuthenticityServiceServer) {
 	s.RegisterService(&AuthenticityService_ServiceDesc, srv)
-}
-
-func _AuthenticityService_GenerateEcdsaKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateEcdsaKeysRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthenticityServiceServer).GenerateEcdsaKeys(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.AuthenticityService/GenerateEcdsaKeys",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthenticityServiceServer).GenerateEcdsaKeys(ctx, req.(*GenerateEcdsaKeysRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _AuthenticityService_Sign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -223,10 +191,6 @@ var AuthenticityService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "bloock.AuthenticityService",
 	HandlerType: (*AuthenticityServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GenerateEcdsaKeys",
-			Handler:    _AuthenticityService_GenerateEcdsaKeys_Handler,
-		},
 		{
 			MethodName: "Sign",
 			Handler:    _AuthenticityService_Sign_Handler,

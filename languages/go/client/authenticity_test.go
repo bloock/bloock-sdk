@@ -3,7 +3,7 @@ package client
 import (
 	"testing"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,7 +34,7 @@ func TestAuthenticity(t *testing.T) {
 		assert.NoError(t, err)
 
 		signature, err := authenticityClient.
-			Sign(record, entity.NewEcdsaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey}))
+			Sign(record, authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey}))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -49,7 +49,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(entity.NewEcdsaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey})).
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey})).
 			Build()
 		assert.NoError(t, err)
 
@@ -74,7 +74,7 @@ func TestAuthenticity(t *testing.T) {
 		assert.NoError(t, err)
 
 		signature, err := authenticityClient.
-			Sign(record, entity.NewEcdsaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey}))
+			Sign(record, authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey}))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature)
@@ -89,7 +89,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(entity.NewEnsSigner(entity.EnsArgs{
+			WithSigner(authenticity.NewEnsSigner(authenticity.EnsArgs{
 				PrivateKey: keys.PrivateKey,
 			})).
 			Build()
@@ -110,7 +110,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(entity.NewEcdsaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey})).
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey})).
 			Build()
 		assert.NoError(t, err)
 
@@ -118,7 +118,7 @@ func TestAuthenticity(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, 1, len(signatures))
-		assert.Equal(t, entity.ECDSA, entity.SignatureAlgFromProto[signatures[0].Header.Alg])
+		assert.Equal(t, authenticity.ECDSA, authenticity.SignatureAlgFromProto[signatures[0].Header.Alg])
 	})
 
 	t.Run("get empty signature common name ", func(t *testing.T) {
@@ -130,7 +130,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(entity.NewEcdsaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey})).
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey})).
 			Build()
 		assert.NoError(t, err)
 
@@ -151,7 +151,7 @@ func TestAuthenticity(t *testing.T) {
 		commonName := "common_name"
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(entity.NewEcdsaSigner(entity.SignerArgs{PrivateKey: keys.PrivateKey, CommonName: &commonName})).
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey, CommonName: &commonName})).
 			Build()
 		assert.NoError(t, err)
 
@@ -173,7 +173,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(entity.NewEnsSigner(entity.EnsArgs{
+			WithSigner(authenticity.NewEnsSigner(authenticity.EnsArgs{
 				PrivateKey: keys.PrivateKey,
 			})).
 			Build()

@@ -3,7 +3,7 @@ package client
 import (
 	"testing"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/encryption"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,11 +22,11 @@ func TestEncryption(t *testing.T) {
 		password := "some_password"
 		encryptionClient := NewEncryptionClient()
 
-		encryptedRecord, err := encryptionClient.Encrypt(record, entity.NewAesEncrypter(password))
+		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewAesEncrypter(password))
 		assert.NoError(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(entity.NewAesDecrypter(password)).
+			WithDecrypter(encryption.NewAesDecrypter(password)).
 			Build()
 		assert.NoError(t, err)
 
@@ -45,13 +45,13 @@ func TestEncryption(t *testing.T) {
 
 		encryptedRecord, err := recordClient.
 			FromString(payload).
-			WithEncrypter(entity.NewAesEncrypter(password)).
+			WithEncrypter(encryption.NewAesEncrypter(password)).
 			Build()
 		assert.NoError(t, err)
 		encryptedRecordHash, err := encryptedRecord.GetHash()
 		assert.NoError(t, err)
 
-		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, entity.NewAesDecrypter(password))
+		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewAesDecrypter(password))
 		assert.NoError(t, err)
 
 		decryptedRecordHash, err := decryptedRecord.GetHash()
@@ -73,11 +73,11 @@ func TestEncryption(t *testing.T) {
 		keys, err := encryptionClient.GenerateRsaKeyPair()
 		assert.NoError(t, err)
 
-		encryptedRecord, err := encryptionClient.Encrypt(record, entity.NewRsaEncrypter(keys.PublicKey))
+		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewRsaEncrypter(keys.PublicKey))
 		assert.NoError(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(entity.NewRsaDecrypter(keys.PrivateKey)).
+			WithDecrypter(encryption.NewRsaDecrypter(keys.PrivateKey)).
 			Build()
 		assert.NoError(t, err)
 
@@ -97,13 +97,13 @@ func TestEncryption(t *testing.T) {
 
 		encryptedRecord, err := recordClient.
 			FromString(payload).
-			WithEncrypter(entity.NewRsaEncrypter(keys.PublicKey)).
+			WithEncrypter(encryption.NewRsaEncrypter(keys.PublicKey)).
 			Build()
 		assert.NoError(t, err)
 		encryptedRecordHash, err := encryptedRecord.GetHash()
 		assert.NoError(t, err)
 
-		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, entity.NewRsaDecrypter(keys.PrivateKey))
+		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewRsaDecrypter(keys.PrivateKey))
 		assert.NoError(t, err)
 
 		decryptedRecordHash, err := decryptedRecord.GetHash()
@@ -113,74 +113,22 @@ func TestEncryption(t *testing.T) {
 		assert.NotEqual(t, encryptedRecord.Retrieve(), decryptedRecord.Retrieve())
 	})
 
-	t.Run("encrypt ecies", func(t *testing.T) {
-		payload := "Hello world"
-		recordClient := NewRecordClient()
-		record, err := recordClient.FromString(payload).Build()
-		assert.NoError(t, err)
-
-		recordHash, err := record.GetHash()
-		assert.NoError(t, err)
-
-		encryptionClient := NewEncryptionClient()
-		keys, err := encryptionClient.GenerateEciesKeyPair()
-		assert.NoError(t, err)
-
-		encryptedRecord, err := encryptionClient.Encrypt(record, entity.NewEciesEncrypter(keys.PublicKey))
-		assert.NoError(t, err)
-
-		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(entity.NewEciesDecrypter(keys.PrivateKey)).
-			Build()
-		assert.NoError(t, err)
-
-		decryptedRecordHash, err := decryptedRecord.GetHash()
-		assert.NoError(t, err)
-
-		assert.Equal(t, recordHash, decryptedRecordHash)
-	})
-
-	t.Run("decrypt ecies", func(t *testing.T) {
-		payload := "Hello world"
-		recordClient := NewRecordClient()
-
-		encryptionClient := NewEncryptionClient()
-		keys, err := encryptionClient.GenerateEciesKeyPair()
-		assert.NoError(t, err)
-
-		encryptedRecord, err := recordClient.
-			FromString(payload).
-			WithEncrypter(entity.NewEciesEncrypter(keys.PublicKey)).
-			Build()
-		assert.NoError(t, err)
-		encryptedRecordHash, err := encryptedRecord.GetHash()
-		assert.NoError(t, err)
-
-		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, entity.NewEciesDecrypter(keys.PrivateKey))
-		assert.NoError(t, err)
-
-		decryptedRecordHash, err := decryptedRecord.GetHash()
-		assert.NoError(t, err)
-
-		assert.Equal(t, encryptedRecordHash, decryptedRecordHash)
-	})
-
 	t.Run("get encryption alg", func(t *testing.T) {
 		payload := "Hello world"
 		recordClient := NewRecordClient()
 
 		encryptionClient := NewEncryptionClient()
-		keys, err := encryptionClient.GenerateEciesKeyPair()
+		keys, err := encryptionClient.GenerateRsaKeyPair()
 		assert.NoError(t, err)
 
 		encryptedRecord, err := recordClient.
 			FromString(payload).
-			WithEncrypter(entity.NewEciesEncrypter(keys.PublicKey)).
+			WithEncrypter(encryption.NewRsaEncrypter(keys.PublicKey)).
 			Build()
 		assert.NoError(t, err)
 
 		alg, err := encryptionClient.GetEncryptionAlg(encryptedRecord)
 		assert.NoError(t, err)
-		assert.Equal(t, entity.ECIES, alg)
+		assert.Equal(t, encryption.RSA, alg)
 	})
 }

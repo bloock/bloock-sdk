@@ -3,7 +3,7 @@ package client
 import (
 	"testing"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/availability"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -18,7 +18,7 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		result, err := availabilityClient.Publish(record, entity.NewHostedPublisher())
+		result, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
 		require.NoError(t, err)
 		assert.NotEmpty(t, result)
 	})
@@ -33,10 +33,10 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, err := availabilityClient.Publish(record, entity.NewHostedPublisher())
+		id, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
 		require.NoError(t, err)
 
-		result, err := availabilityClient.Retrieve(entity.NewHostedLoader(id))
+		result, err := availabilityClient.Retrieve(availability.NewHostedLoader(id))
 		require.NoError(t, err)
 
 		resultHash, err := result.GetHash()
@@ -51,7 +51,7 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		result, err := availabilityClient.Publish(record, entity.NewIpfsPublisher())
+		result, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 		assert.NotEmpty(t, result)
 	})
@@ -66,10 +66,10 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, err := availabilityClient.Publish(record, entity.NewIpfsPublisher())
+		id, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 
-		result, err := availabilityClient.Retrieve(entity.NewIpfsLoader(id))
+		result, err := availabilityClient.Retrieve(availability.NewIpfsLoader(id))
 		require.NoError(t, err)
 
 		resultHash, err := result.GetHash()

@@ -4,7 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/availability"
+	"github.com/bloock/bloock-sdk-go/v2/entity/encryption"
+	"github.com/bloock/bloock-sdk-go/v2/entity/record"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
@@ -29,11 +32,11 @@ func NewRecordClientWithConfig(configData *proto.ConfigData) RecordClient {
 	}
 }
 
-func (c RecordClient) FromRecord(record entity.Record) RecordBuilder {
+func (c RecordClient) FromRecord(record record.Record) RecordBuilder {
 	return newRecordBuilder(record.ToProto(), proto.RecordTypes_RECORD, c.configData)
 }
 
-func (c RecordClient) FromLoader(loader entity.Loader) RecordBuilder {
+func (c RecordClient) FromLoader(loader availability.Loader) RecordBuilder {
 	return newRecordBuilder(loader.ToProto(), proto.RecordTypes_LOADER, c.configData)
 }
 
@@ -74,7 +77,7 @@ func newRecordBuilder(payload interface{}, payloadType proto.RecordTypes, config
 	}
 }
 
-func (b RecordBuilder) WithSigner(signer entity.Signer) RecordBuilder {
+func (b RecordBuilder) WithSigner(signer authenticity.Signer) RecordBuilder {
 	b.signer = signer.ToProto()
 	return b
 }
@@ -86,17 +89,17 @@ func (b RecordBuilder) WithCommonName(name string) RecordBuilder {
 	return b
 }
 
-func (b RecordBuilder) WithEncrypter(encrypter entity.Encrypter) RecordBuilder {
+func (b RecordBuilder) WithEncrypter(encrypter encryption.Encrypter) RecordBuilder {
 	b.encrypter = encrypter.ToProto()
 	return b
 }
 
-func (b RecordBuilder) WithDecrypter(decrypter entity.Decrypter) RecordBuilder {
+func (b RecordBuilder) WithDecrypter(decrypter encryption.Decrypter) RecordBuilder {
 	b.decrypter = decrypter.ToProto()
 	return b
 }
 
-func (b RecordBuilder) Build() (entity.Record, error) {
+func (b RecordBuilder) Build() (record.Record, error) {
 	bridgeClient := bridge.NewBloockBridge()
 
 	var res *proto.RecordBuilderResponse
@@ -163,12 +166,12 @@ func (b RecordBuilder) Build() (entity.Record, error) {
 	}
 
 	if err != nil {
-		return entity.Record{}, err
+		return record.Record{}, err
 	}
 
 	if res.Error != nil {
-		return entity.Record{}, errors.New(res.Error.Message)
+		return record.Record{}, errors.New(res.Error.Message)
 	}
 
-	return entity.NewRecordFromProto(res.Record, b.configData), nil
+	return record.NewRecordFromProto(res.Record, b.configData), nil
 }

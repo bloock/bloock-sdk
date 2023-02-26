@@ -1,22 +1,7 @@
-package entity
+package authenticity
 
 import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
-)
-
-type SignatureAlg int32
-
-const (
-	ECDSA                      SignatureAlg = iota
-	ENS                        SignatureAlg = iota
-	UNRECOGNIZED_SIGNATURE_ALG SignatureAlg = -1
-)
-
-var (
-	SignatureAlgFromProto = map[string]SignatureAlg{
-		"ES256K": ECDSA,
-		"ENS":    ENS,
-	}
 )
 
 type Signature struct {
@@ -51,27 +36,5 @@ func (s Signature) ToProto() *proto.Signature {
 		Protected:   s.Protected,
 		Header:      s.Header.ToProto(),
 		MessageHash: s.MessageHash,
-	}
-}
-
-type SignatureHeader struct {
-	Alg string
-	Kid string
-}
-
-func NewSignatureHeaderFromProto(s *proto.SignatureHeader) SignatureHeader {
-	if s == nil {
-		return SignatureHeader{}
-	}
-	return SignatureHeader{
-		Alg: s.Alg,
-		Kid: s.Kid,
-	}
-}
-
-func (s SignatureHeader) ToProto() *proto.SignatureHeader {
-	return &proto.SignatureHeader{
-		Alg: s.Alg,
-		Kid: s.Kid,
 	}
 }

@@ -1,9 +1,10 @@
-package entity
+package record
 
 import (
 	"context"
 	"errors"
 
+	"github.com/bloock/bloock-sdk-go/v2/entity/integrity"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
@@ -53,7 +54,7 @@ func (r *Record) Retrieve() []byte {
 	return r.Payload
 }
 
-func (r *Record) SetProof(proof Proof) error {
+func (r *Record) SetProof(proof integrity.Proof) error {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().SetProof(context.Background(), &proto.SetProofRequest{
 		ConfigData: r.configData,
@@ -80,77 +81,4 @@ func MapRecordsToProto(records []Record) []*proto.Record {
 		recordsProto[i] = record.ToProto()
 	}
 	return recordsProto
-}
-
-type RecordHeader struct {
-	Ty string
-}
-
-func NewRecordHeaderFromProto(r *proto.RecordHeader) RecordHeader {
-	if r == nil {
-		return RecordHeader{}
-	}
-	return RecordHeader{
-		Ty: r.Ty,
-	}
-}
-
-func (rh RecordHeader) ToProto() *proto.RecordHeader {
-	return &proto.RecordHeader{
-		Ty: rh.Ty,
-	}
-}
-
-type RecordReceipt struct {
-	Anchor int64
-	Client string
-	Record string
-	Status string
-}
-
-func NewRecordReceiptFromProto(r *proto.RecordReceipt) RecordReceipt {
-	if r == nil {
-		return RecordReceipt{}
-	}
-	return RecordReceipt{
-		Anchor: r.Anchor,
-		Client: r.Client,
-		Record: r.Record,
-		Status: r.Status,
-	}
-}
-
-type KeyPair struct {
-	PublicKey  string
-	PrivateKey string
-}
-
-func NewKeysFromProto(k *proto.GenerateEcdsaKeysResponse) KeyPair {
-	if k == nil {
-		return KeyPair{}
-	}
-	return KeyPair{
-		PublicKey:  k.PublicKey,
-		PrivateKey: k.PrivateKey,
-	}
-}
-
-func NewRsaKeyPairFromProto(k *proto.GenerateRsaKeyPairResponse) KeyPair {
-	if k == nil {
-		return KeyPair{}
-	}
-	return KeyPair{
-		PublicKey:  k.PublicKey,
-		PrivateKey: k.PrivateKey,
-	}
-}
-
-func NewEciesKeyPairFromProto(k *proto.GenerateEciesKeyPairResponse) KeyPair {
-	if k == nil {
-		return KeyPair{}
-	}
-	return KeyPair{
-		PublicKey:  k.PublicKey,
-		PrivateKey: k.PrivateKey,
-	}
 }
