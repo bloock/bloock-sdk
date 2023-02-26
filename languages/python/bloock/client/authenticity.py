@@ -16,7 +16,7 @@ from bloock.entity.authenticity.signer import Signer
 from bloock.entity.key.key_pair import KeyPair
 from bloock.entity.key.ecdsa_key_pair import EcdsaKeys
 from bloock.entity.key.key_type import KeyType
-from bloock.entity.record import Record
+from bloock.entity.record.record import Record
 
 
 class AuthenticityClient:

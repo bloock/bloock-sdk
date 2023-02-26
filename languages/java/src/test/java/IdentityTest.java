@@ -6,6 +6,8 @@ import com.bloock.sdk.entity.key.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class IdentityTest {
@@ -44,7 +46,13 @@ class IdentityTest {
     IdentityClient identityClient = new IdentityClient();
 
     try {
-      identityClient.buildSchema("", "").build();
+      identityClient.buildSchema("", "")
+              .addBooleanAttribute("", "", "")
+              .addDateAttribute("", "", "")
+              .addDatetimeAttribute("", "", "")
+              .addMultichoiceAttribute("", "", List.of(new String[]{"a", "b", "c"}), "")
+              .addNumberAttribute("", "", "")
+              .build();
       fail("Exception was not thrown");
     } catch (Exception e) {
       assertEquals(e.getMessage(), "not implemented");
@@ -68,7 +76,13 @@ class IdentityTest {
     IdentityClient identityClient = new IdentityClient();
 
     try {
-      identityClient.buildOffer("", "").build();
+      identityClient.buildOffer("", "")
+              .withBooleanAttribute("", true)
+              .withDateAttribute("", 123L)
+              .withDatetimeAttribute("", 123L)
+              .withMultichoiceAttribute("", "a")
+              .withNumberAttribute("", 123L)
+              .build();
       fail("Exception was not thrown");
     } catch (Exception e) {
       assertEquals(e.getMessage(), "not implemented");

@@ -50,13 +50,13 @@ class SchemaBuilder
         return $this;
     }
 
-    public function addMultichoiceAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder {
-        $attribute = new MultichoiceAttributeDescriptor($name, $technicalName, $description);
+    public function addMultichoiceAttribute(string $name, string $technicalName, array $allowedValues, ?string $description): SchemaBuilder {
+        $attribute = new MultichoiceAttributeDescriptor($name, $technicalName, $allowedValues, $description);
         $this->multichoiceAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function addNumberAttribute(string $name, string $technicalName, array $allowedValues, ?string $description): SchemaBuilder {
+    public function addNumberAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder {
         $attribute = new NumberAttributeDescriptor($name, $technicalName, $description);
         $this->numberAttributes[] = $attribute->toProto();
         return $this;

@@ -6,7 +6,7 @@ type NumberAttribute struct {
 	Attribute
 }
 
-func NewNumberAttribute(key string, value int) NumberAttribute {
+func NewNumberAttribute(key string, value int64) NumberAttribute {
 	a := Attribute{
 		Id:    key,
 		Value: value,

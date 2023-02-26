@@ -53,7 +53,7 @@ func (c CredentialOfferBuilder) WithMultichoiceAttribute(key string, value strin
 	return c
 }
 
-func (c CredentialOfferBuilder) WithNumberAttribute(key string, value int) CredentialOfferBuilder {
+func (c CredentialOfferBuilder) WithNumberAttribute(key string, value int64) CredentialOfferBuilder {
 	c.numberAttribute = append(c.numberAttribute, NewNumberAttribute(key, value))
 	return c
 }

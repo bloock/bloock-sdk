@@ -26,7 +26,13 @@ func TestIdentity(t *testing.T) {
 
 	t.Run("build schema", func(t *testing.T) {
 		identityClient := NewIdentityClient()
-		_, err := identityClient.BuildSchema("", "").Build()
+		_, err := identityClient.BuildSchema("", "").
+			AddBooleanAttribute("", "", "").
+			AddDateAttribute("", "", "").
+			AddDatetimeAttribute("", "", "").
+			AddMultichoiceAttribute("", "", []string{"a", "b", "c"}, "").
+			AddNumberAttribute("", "", "").
+			Build()
 		assert.Error(t, err)
 		assert.Equal(t, err.Error(), "not implemented")
 	})
@@ -40,7 +46,13 @@ func TestIdentity(t *testing.T) {
 
 	t.Run("credential offer builder", func(t *testing.T) {
 		identityClient := NewIdentityClient()
-		_, err := identityClient.BuildOffer("", "").Build()
+		_, err := identityClient.BuildOffer("", "").
+			WithBooleanAttribute("", true).
+			WithDateAttribute("", 123).
+			WithDatetimeAttribute("", 123).
+			WithMultichoiceAttribute("", "a").
+			WithNumberAttribute("", 123).
+			Build()
 		assert.Error(t, err)
 		assert.Equal(t, err.Error(), "not implemented")
 	})

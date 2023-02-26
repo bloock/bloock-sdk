@@ -301,6 +301,7 @@ export const ManagedKey = {
     const message = createBaseManagedKey();
     while (reader.pos < end) {
       const tag = reader.uint32();
+      console.log(tag >>> 3, reader.pos, reader.len);
       switch (tag >>> 3) {
         case 1:
           message.key = reader.string();

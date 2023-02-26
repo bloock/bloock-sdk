@@ -29,7 +29,14 @@ describe("Identity Tests", () => {
 
     expect.assertions(1);
     try {
-      await identityClient.buildSchema("", "").build();
+      await identityClient
+        .buildSchema("", "")
+        .addBooleanAttribute("", "", "")
+        .addDateAttribute("", "", "")
+        .addDateTimeAttribute("", "", "")
+        .addMultichoiceAttribute("", "", ["a", "b", "c"], "")
+        .addNumberAttribute("", "", "")
+        .build();
     } catch (e) {
       expect((e as any).message).toBe("not implemented");
     }
@@ -51,7 +58,14 @@ describe("Identity Tests", () => {
 
     expect.assertions(1);
     try {
-      await identityClient.buildOffer("", "").build();
+      await identityClient
+        .buildOffer("", "")
+        .withBoleanAttribute("", true)
+        .withDateAttribute("", new Date())
+        .withDateTimeAttribute("", new Date())
+        .withMultichoiceAttribute("", "a")
+        .withNumberAttribute("", 123)
+        .build();
     } catch (e) {
       expect((e as any).message).toBe("not implemented");
     }

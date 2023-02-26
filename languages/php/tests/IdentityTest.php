@@ -43,7 +43,13 @@ final class IdentityTest extends TestCase
         $identityClient = new IdentityClient();
 
         try {
-            $identityClient->buildSchema("display_name", "technical_name")->build();
+            $identityClient->buildSchema("display_name", "technical_name")
+                ->addBooleanAttribute("", "", "")
+                ->addDateAttribute("", "", "")
+                ->addDateTimeAttribute("", "", "")
+                ->addMultichoiceAttribute("", "", ["a", "b", "c"], "")
+                ->addNumberAttribute("", "", "")
+                ->build();
             $this->fail('Exception was not thrown');
         } catch (Exception $e) {
             $this->assertSame("not implemented", $e->getMessage());
@@ -67,7 +73,13 @@ final class IdentityTest extends TestCase
         $identityClient = new IdentityClient();
 
         try {
-            $identityClient->buildOffer("id", "")->build();
+            $identityClient->buildOffer("id", "")
+                ->withBooleanAttribute("", true)
+                ->withDateAttribute("", 123)
+                ->withDatetimeAttribute("", 123)
+                ->withMultichoiceAttribute("", "a")
+                ->withNumberAttribute("", 123)
+                ->build();
             $this->fail('Exception was not thrown');
         } catch (Exception $e) {
             $this->assertSame("not implemented", $e->getMessage());
