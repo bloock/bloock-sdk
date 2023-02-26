@@ -39,7 +39,7 @@ export class KeyClient {
       configData: this.configData,
       params: params.toProto()
     });
-    console.log("params", request);
+
     return this.bridge
       .getKey()
       .GenerateManagedKey(request)
