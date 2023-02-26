@@ -23,6 +23,6 @@ public class MultichoiceAttributeDescriptor extends AttributeDescriptor {
     }
 
     public static MultichoiceAttributeDescriptor fromProto(IdentityEntities.MultiChoiceAttributeDefinition res) {
-        return new MultichoiceAttributeDescriptor(res.getDisplayName(), res.getId(), res.getAllowedValuesList().stream().toList(), res.getDescription());
+        return new MultichoiceAttributeDescriptor(res.getDisplayName(), res.getId(), res.getAllowedValuesList(), res.getDescription());
     }
 }
