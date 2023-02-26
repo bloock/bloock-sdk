@@ -29,7 +29,7 @@ proto:
 	sed -i 's/\\Grpc\\BaseStub/\\Bloock\\Bridge\\Connection/' protobuf/Bloock/*.php
 	sed -i 's/\\Grpc\\UnaryCall/mixed/' protobuf/Bloock/*.php
 
-test: copy_lib
+test: proto copy_lib
 	php ./vendor/bin/phpunit --configuration ./phpunit.xml
 
 fmt:
