@@ -10,22 +10,32 @@ public enum KeyType {
   UNRECOGNIZED;
 
   public static KeyType fromProto(KeysEntities.KeyType type) {
-    return switch (type) {
-      case EcP256k -> KeyType.EcP256k;
-      case Rsa2048 -> KeyType.Rsa2048;
-      case Rsa3072 -> KeyType.Rsa3072;
-      case Rsa4096 -> KeyType.Rsa4096;
-      default -> KeyType.UNRECOGNIZED;
-    };
+    switch (type) {
+      case EcP256k:
+        return KeyType.EcP256k;
+      case Rsa2048:
+        return KeyType.Rsa2048;
+      case Rsa3072:
+        return KeyType.Rsa3072;
+      case Rsa4096:
+        return KeyType.Rsa4096;
+      default:
+        return KeyType.UNRECOGNIZED;
+    }
   }
 
   public KeysEntities.KeyType toProto() {
-    return switch (this) {
-      case EcP256k -> KeysEntities.KeyType.EcP256k;
-      case Rsa2048 -> KeysEntities.KeyType.Rsa2048;
-      case Rsa3072 -> KeysEntities.KeyType.Rsa3072;
-      case Rsa4096 -> KeysEntities.KeyType.Rsa4096;
-      default -> KeysEntities.KeyType.UNRECOGNIZED;
-    };
+    switch (this) {
+      case EcP256k:
+        return KeysEntities.KeyType.EcP256k;
+      case Rsa2048:
+        return KeysEntities.KeyType.Rsa2048;
+      case Rsa3072:
+        return KeysEntities.KeyType.Rsa3072;
+      case Rsa4096:
+        return KeysEntities.KeyType.Rsa4096;
+      default:
+        return KeysEntities.KeyType.UNRECOGNIZED;
+    }
   }
 }

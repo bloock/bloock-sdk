@@ -8,18 +8,24 @@ public enum KeyProtectionLevel {
   UNRECOGNIZED;
 
   public KeysEntities.KeyProtectionLevel toProto() {
-    return switch (this) {
-      case SOFTWARE -> KeysEntities.KeyProtectionLevel.SOFTWARE;
-      case HSM -> KeysEntities.KeyProtectionLevel.HSM;
-      default -> KeysEntities.KeyProtectionLevel.UNRECOGNIZED;
-    };
+    switch (this) {
+      case SOFTWARE:
+        return KeysEntities.KeyProtectionLevel.SOFTWARE;
+      case HSM:
+        return KeysEntities.KeyProtectionLevel.HSM;
+      default:
+        return KeysEntities.KeyProtectionLevel.UNRECOGNIZED;
+    }
   }
 
   public static KeyProtectionLevel fromProto(KeysEntities.KeyProtectionLevel protection) {
-    return switch (protection) {
-      case SOFTWARE -> KeyProtectionLevel.SOFTWARE;
-      case HSM -> KeyProtectionLevel.HSM;
-      default -> KeyProtectionLevel.UNRECOGNIZED;
-    };
+    switch (protection) {
+      case SOFTWARE:
+        return KeyProtectionLevel.SOFTWARE;
+      case HSM:
+        return KeyProtectionLevel.HSM;
+      default:
+        return KeyProtectionLevel.UNRECOGNIZED;
+    }
   }
 }
