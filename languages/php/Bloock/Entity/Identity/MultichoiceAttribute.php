@@ -7,7 +7,7 @@ class MultichoiceAttribute extends Attribute
     public function toProto(): \Bloock\MultichoiceAttribute {
         $p = new \Bloock\MultichoiceAttribute();
         $p->setId($this->id);
-        $p->setValue($this->id);
+        $p->setValue($this->value);
         return $p;
     }
 

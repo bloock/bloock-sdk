@@ -7,7 +7,7 @@ class DateAttribute extends Attribute
     public function toProto(): \Bloock\DateAttribute {
         $p = new \Bloock\DateAttribute();
         $p->setId($this->id);
-        $p->setValue($this->id);
+        $p->setValue($this->value);
         return $p;
     }
 
