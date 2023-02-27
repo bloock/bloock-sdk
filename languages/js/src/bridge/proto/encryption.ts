@@ -5,26 +5,6 @@ import { Decrypter, Encrypter, EncryptionAlg, encryptionAlgFromJSON, encryptionA
 import { Record } from "./record_entities";
 import { Error } from "./shared";
 
-export interface GenerateRsaKeyPairRequest {
-  configData?: ConfigData;
-}
-
-export interface GenerateRsaKeyPairResponse {
-  privateKey: string;
-  publicKey: string;
-  error?: Error | undefined;
-}
-
-export interface GenerateEciesKeyPairRequest {
-  configData?: ConfigData;
-}
-
-export interface GenerateEciesKeyPairResponse {
-  privateKey: string;
-  publicKey: string;
-  error?: Error | undefined;
-}
-
 export interface EncryptRequest {
   configData?: ConfigData;
   record?: Record;
@@ -56,240 +36,6 @@ export interface EncryptionAlgResponse {
   alg: EncryptionAlg;
   error?: Error | undefined;
 }
-
-function createBaseGenerateRsaKeyPairRequest(): GenerateRsaKeyPairRequest {
-  return { configData: undefined };
-}
-
-export const GenerateRsaKeyPairRequest = {
-  encode(message: GenerateRsaKeyPairRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.configData !== undefined) {
-      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateRsaKeyPairRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGenerateRsaKeyPairRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GenerateRsaKeyPairRequest {
-    return { configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined };
-  },
-
-  toJSON(message: GenerateRsaKeyPairRequest): unknown {
-    const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<GenerateRsaKeyPairRequest>, I>>(object: I): GenerateRsaKeyPairRequest {
-    const message = createBaseGenerateRsaKeyPairRequest();
-    message.configData = (object.configData !== undefined && object.configData !== null)
-      ? ConfigData.fromPartial(object.configData)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseGenerateRsaKeyPairResponse(): GenerateRsaKeyPairResponse {
-  return { privateKey: "", publicKey: "", error: undefined };
-}
-
-export const GenerateRsaKeyPairResponse = {
-  encode(message: GenerateRsaKeyPairResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.privateKey !== "") {
-      writer.uint32(10).string(message.privateKey);
-    }
-    if (message.publicKey !== "") {
-      writer.uint32(18).string(message.publicKey);
-    }
-    if (message.error !== undefined) {
-      Error.encode(message.error, writer.uint32(26).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateRsaKeyPairResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGenerateRsaKeyPairResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.privateKey = reader.string();
-          break;
-        case 2:
-          message.publicKey = reader.string();
-          break;
-        case 3:
-          message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GenerateRsaKeyPairResponse {
-    return {
-      privateKey: isSet(object.privateKey) ? String(object.privateKey) : "",
-      publicKey: isSet(object.publicKey) ? String(object.publicKey) : "",
-      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
-    };
-  },
-
-  toJSON(message: GenerateRsaKeyPairResponse): unknown {
-    const obj: any = {};
-    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
-    message.publicKey !== undefined && (obj.publicKey = message.publicKey);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<GenerateRsaKeyPairResponse>, I>>(object: I): GenerateRsaKeyPairResponse {
-    const message = createBaseGenerateRsaKeyPairResponse();
-    message.privateKey = object.privateKey ?? "";
-    message.publicKey = object.publicKey ?? "";
-    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
-    return message;
-  },
-};
-
-function createBaseGenerateEciesKeyPairRequest(): GenerateEciesKeyPairRequest {
-  return { configData: undefined };
-}
-
-export const GenerateEciesKeyPairRequest = {
-  encode(message: GenerateEciesKeyPairRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.configData !== undefined) {
-      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateEciesKeyPairRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGenerateEciesKeyPairRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GenerateEciesKeyPairRequest {
-    return { configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined };
-  },
-
-  toJSON(message: GenerateEciesKeyPairRequest): unknown {
-    const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<GenerateEciesKeyPairRequest>, I>>(object: I): GenerateEciesKeyPairRequest {
-    const message = createBaseGenerateEciesKeyPairRequest();
-    message.configData = (object.configData !== undefined && object.configData !== null)
-      ? ConfigData.fromPartial(object.configData)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseGenerateEciesKeyPairResponse(): GenerateEciesKeyPairResponse {
-  return { privateKey: "", publicKey: "", error: undefined };
-}
-
-export const GenerateEciesKeyPairResponse = {
-  encode(message: GenerateEciesKeyPairResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.privateKey !== "") {
-      writer.uint32(10).string(message.privateKey);
-    }
-    if (message.publicKey !== "") {
-      writer.uint32(18).string(message.publicKey);
-    }
-    if (message.error !== undefined) {
-      Error.encode(message.error, writer.uint32(26).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateEciesKeyPairResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGenerateEciesKeyPairResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.privateKey = reader.string();
-          break;
-        case 2:
-          message.publicKey = reader.string();
-          break;
-        case 3:
-          message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GenerateEciesKeyPairResponse {
-    return {
-      privateKey: isSet(object.privateKey) ? String(object.privateKey) : "",
-      publicKey: isSet(object.publicKey) ? String(object.publicKey) : "",
-      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
-    };
-  },
-
-  toJSON(message: GenerateEciesKeyPairResponse): unknown {
-    const obj: any = {};
-    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
-    message.publicKey !== undefined && (obj.publicKey = message.publicKey);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<GenerateEciesKeyPairResponse>, I>>(object: I): GenerateEciesKeyPairResponse {
-    const message = createBaseGenerateEciesKeyPairResponse();
-    message.privateKey = object.privateKey ?? "";
-    message.publicKey = object.publicKey ?? "";
-    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
-    return message;
-  },
-};
 
 function createBaseEncryptRequest(): EncryptRequest {
   return { configData: undefined, record: undefined, encrypter: undefined };
@@ -683,8 +429,6 @@ export const EncryptionAlgResponse = {
 };
 
 export interface EncryptionService {
-  GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse>;
-  GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse>;
   Encrypt(request: EncryptRequest): Promise<EncryptResponse>;
   Decrypt(request: DecryptRequest): Promise<DecryptResponse>;
   GetEncryptionAlg(request: EncryptionAlgRequest): Promise<EncryptionAlgResponse>;
@@ -694,24 +438,10 @@ export class EncryptionServiceClientImpl implements EncryptionService {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
-    this.GenerateRsaKeyPair = this.GenerateRsaKeyPair.bind(this);
-    this.GenerateEciesKeyPair = this.GenerateEciesKeyPair.bind(this);
     this.Encrypt = this.Encrypt.bind(this);
     this.Decrypt = this.Decrypt.bind(this);
     this.GetEncryptionAlg = this.GetEncryptionAlg.bind(this);
   }
-  GenerateRsaKeyPair(request: GenerateRsaKeyPairRequest): Promise<GenerateRsaKeyPairResponse> {
-    const data = GenerateRsaKeyPairRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.EncryptionService", "GenerateRsaKeyPair", data);
-    return promise.then((data) => GenerateRsaKeyPairResponse.decode(new _m0.Reader(data)));
-  }
-
-  GenerateEciesKeyPair(request: GenerateEciesKeyPairRequest): Promise<GenerateEciesKeyPairResponse> {
-    const data = GenerateEciesKeyPairRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.EncryptionService", "GenerateEciesKeyPair", data);
-    return promise.then((data) => GenerateEciesKeyPairResponse.decode(new _m0.Reader(data)));
-  }
-
   Encrypt(request: EncryptRequest): Promise<EncryptResponse> {
     const data = EncryptRequest.encode(request).finish();
     const promise = this.rpc.request("bloock.EncryptionService", "Encrypt", data);
@@ -736,22 +466,6 @@ export const EncryptionServiceDefinition = {
   name: "EncryptionService",
   fullName: "bloock.EncryptionService",
   methods: {
-    generateRsaKeyPair: {
-      name: "GenerateRsaKeyPair",
-      requestType: GenerateRsaKeyPairRequest,
-      requestStream: false,
-      responseType: GenerateRsaKeyPairResponse,
-      responseStream: false,
-      options: {},
-    },
-    generateEciesKeyPair: {
-      name: "GenerateEciesKeyPair",
-      requestType: GenerateEciesKeyPairRequest,
-      requestStream: false,
-      responseType: GenerateEciesKeyPairResponse,
-      responseStream: false,
-      options: {},
-    },
     encrypt: {
       name: "Encrypt",
       requestType: EncryptRequest,

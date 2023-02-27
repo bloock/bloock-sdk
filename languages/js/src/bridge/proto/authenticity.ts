@@ -5,16 +5,6 @@ import { ConfigData } from "./config";
 import { Record } from "./record_entities";
 import { Error } from "./shared";
 
-export interface GenerateEcdsaKeysRequest {
-  configData?: ConfigData;
-}
-
-export interface GenerateEcdsaKeysResponse {
-  privateKey: string;
-  publicKey: string;
-  error?: Error | undefined;
-}
-
 export interface SignRequest {
   configData?: ConfigData;
   record?: Record;
@@ -56,123 +46,6 @@ export interface GetSignaturesResponse {
   signatures: Signature[];
   error?: Error | undefined;
 }
-
-function createBaseGenerateEcdsaKeysRequest(): GenerateEcdsaKeysRequest {
-  return { configData: undefined };
-}
-
-export const GenerateEcdsaKeysRequest = {
-  encode(message: GenerateEcdsaKeysRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.configData !== undefined) {
-      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateEcdsaKeysRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGenerateEcdsaKeysRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GenerateEcdsaKeysRequest {
-    return { configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined };
-  },
-
-  toJSON(message: GenerateEcdsaKeysRequest): unknown {
-    const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<GenerateEcdsaKeysRequest>, I>>(object: I): GenerateEcdsaKeysRequest {
-    const message = createBaseGenerateEcdsaKeysRequest();
-    message.configData = (object.configData !== undefined && object.configData !== null)
-      ? ConfigData.fromPartial(object.configData)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseGenerateEcdsaKeysResponse(): GenerateEcdsaKeysResponse {
-  return { privateKey: "", publicKey: "", error: undefined };
-}
-
-export const GenerateEcdsaKeysResponse = {
-  encode(message: GenerateEcdsaKeysResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.privateKey !== "") {
-      writer.uint32(10).string(message.privateKey);
-    }
-    if (message.publicKey !== "") {
-      writer.uint32(18).string(message.publicKey);
-    }
-    if (message.error !== undefined) {
-      Error.encode(message.error, writer.uint32(26).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): GenerateEcdsaKeysResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGenerateEcdsaKeysResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.privateKey = reader.string();
-          break;
-        case 2:
-          message.publicKey = reader.string();
-          break;
-        case 3:
-          message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GenerateEcdsaKeysResponse {
-    return {
-      privateKey: isSet(object.privateKey) ? String(object.privateKey) : "",
-      publicKey: isSet(object.publicKey) ? String(object.publicKey) : "",
-      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
-    };
-  },
-
-  toJSON(message: GenerateEcdsaKeysResponse): unknown {
-    const obj: any = {};
-    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
-    message.publicKey !== undefined && (obj.publicKey = message.publicKey);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<GenerateEcdsaKeysResponse>, I>>(object: I): GenerateEcdsaKeysResponse {
-    const message = createBaseGenerateEcdsaKeysResponse();
-    message.privateKey = object.privateKey ?? "";
-    message.publicKey = object.publicKey ?? "";
-    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
-    return message;
-  },
-};
 
 function createBaseSignRequest(): SignRequest {
   return { configData: undefined, record: undefined, signer: undefined };
@@ -687,7 +560,6 @@ export const GetSignaturesResponse = {
 };
 
 export interface AuthenticityService {
-  GenerateEcdsaKeys(request: GenerateEcdsaKeysRequest): Promise<GenerateEcdsaKeysResponse>;
   Sign(request: SignRequest): Promise<SignResponse>;
   Verify(request: VerifyRequest): Promise<VerifyResponse>;
   GetSignatures(request: GetSignaturesRequest): Promise<GetSignaturesResponse>;
@@ -698,18 +570,11 @@ export class AuthenticityServiceClientImpl implements AuthenticityService {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
-    this.GenerateEcdsaKeys = this.GenerateEcdsaKeys.bind(this);
     this.Sign = this.Sign.bind(this);
     this.Verify = this.Verify.bind(this);
     this.GetSignatures = this.GetSignatures.bind(this);
     this.GetSignatureCommonName = this.GetSignatureCommonName.bind(this);
   }
-  GenerateEcdsaKeys(request: GenerateEcdsaKeysRequest): Promise<GenerateEcdsaKeysResponse> {
-    const data = GenerateEcdsaKeysRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.AuthenticityService", "GenerateEcdsaKeys", data);
-    return promise.then((data) => GenerateEcdsaKeysResponse.decode(new _m0.Reader(data)));
-  }
-
   Sign(request: SignRequest): Promise<SignResponse> {
     const data = SignRequest.encode(request).finish();
     const promise = this.rpc.request("bloock.AuthenticityService", "Sign", data);
@@ -740,14 +605,6 @@ export const AuthenticityServiceDefinition = {
   name: "AuthenticityService",
   fullName: "bloock.AuthenticityService",
   methods: {
-    generateEcdsaKeys: {
-      name: "GenerateEcdsaKeys",
-      requestType: GenerateEcdsaKeysRequest,
-      requestStream: false,
-      responseType: GenerateEcdsaKeysResponse,
-      responseStream: false,
-      options: {},
-    },
     sign: {
       name: "Sign",
       requestType: SignRequest,

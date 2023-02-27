@@ -1,6 +1,6 @@
 [package]
 name = "bloock-core"
-version = "2.4.1-beta.1"
+version = "2.4.1-beta.2"
 edition = "2021"
 
 [lib]
@@ -20,6 +20,7 @@ async-std = "1.12.0"
 hmac = "0.12.1"
 sha2 = "0.10.6"
 bloock-hasher = { path = "../bloock-libs/hasher" }
+bloock-keys = { path = "../bloock-libs/keys" }
 bloock-signer = { path = "../bloock-libs/signer" }
 bloock-encrypter = { path = "../bloock-libs/encrypter" }
 bloock-metadata = { path = "../bloock-libs/metadata" }

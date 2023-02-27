@@ -8,14 +8,14 @@ use Bloock\ConfigData;
 use Bloock\DecryptRequest;
 use Bloock\EncryptionAlgRequest;
 use Bloock\EncryptRequest;
-use Bloock\Entity\Decrypter;
 use Bloock\Entity\EciesKeyPair;
-use Bloock\Entity\Encrypter;
-use Bloock\Entity\EncryptionAlg;
-use Bloock\Entity\Record;
-use Bloock\Entity\RsaKeyPair;
-use Bloock\GenerateEciesKeyPairRequest;
-use Bloock\GenerateRsaKeyPairRequest;
+use Bloock\Entity\Encryption\Decrypter;
+use Bloock\Entity\Encryption\Encrypter;
+use Bloock\Entity\Encryption\EncryptionAlg;
+use Bloock\Entity\Key\RsaKeyPair;
+use Bloock\Entity\Record\Record;
+use Bloock\GenerateLocalKeyRequest;
+use Bloock\KeyType;
 
 class EncryptionClient
 {
@@ -31,30 +31,21 @@ class EncryptionClient
         }
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
+     */
     public function generateRsaKeyPair(): RsaKeyPair {
-        $req = new GenerateRsaKeyPairRequest();
+        $req = new GenerateLocalKeyRequest();
         $req->setConfigData($this->config);
+        $req->setKeyType(KeyType::Rsa2048);
 
-        $res = $this->bridge->encryption->GenerateRsaKeyPair($req);
+        $res = $this->bridge->key->GenerateLocalKey($req);
 
         if ($res->getError() != null) {
             throw new \Exception($res->getError()->getMessage());
         }
 
         return RsaKeyPair::fromProto($res);
-    }
-
-    public function generateEciesKeyPair(): EciesKeyPair {
-        $req = new GenerateEciesKeyPairRequest();
-        $req->setConfigData($this->config);
-
-        $res = $this->bridge->encryption->GenerateEciesKeyPair($req);
-
-        if ($res->getError() != null) {
-            throw new \Exception($res->getError()->getMessage());
-        }
-
-        return EciesKeyPair::fromProto($res);
     }
 
     public function encrypt(Record $record, Encrypter $encrypter): Record {

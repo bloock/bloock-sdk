@@ -20,7 +20,7 @@ class Channel(grpc.Channel):
         pass
 
     def stream_stream(
-        self, method, request_serializer=None, response_deserializer=None
+            self, method, request_serializer=None, response_deserializer=None
     ):
         pass
 
@@ -51,36 +51,36 @@ class _UnaryCallable(grpc.UnaryUnaryMultiCallable):
         self._response_deserializer = response_deserializer
 
     def __call__(
-        self,
-        request,
-        timeout=None,
-        metadata=None,
-        credentials=None,
-        wait_for_ready=None,
-        compression=None,
+            self,
+            request,
+            timeout=None,
+            metadata=None,
+            credentials=None,
+            wait_for_ready=None,
+            compression=None,
     ):
         serialized_request = _transform(request, self._request_serializer)
         response = FfiRequest(self._method, serialized_request)
         return _transform(response, self._response_deserializer)
 
     def with_call(
-        self,
-        request,
-        timeout=None,
-        metadata=None,
-        credentials=None,
-        wait_for_ready=None,
-        compression=None,
+            self,
+            request,
+            timeout=None,
+            metadata=None,
+            credentials=None,
+            wait_for_ready=None,
+            compression=None,
     ):
         pass
 
     def future(
-        self,
-        request,
-        timeout=None,
-        metadata=None,
-        credentials=None,
-        wait_for_ready=None,
-        compression=None,
+            self,
+            request,
+            timeout=None,
+            metadata=None,
+            credentials=None,
+            wait_for_ready=None,
+            compression=None,
     ):
         pass

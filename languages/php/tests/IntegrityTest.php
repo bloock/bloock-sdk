@@ -33,11 +33,11 @@ final class IntegrityTest extends TestCase
         $this->assertNotEquals("", $root);
         $this->assertNotNull($root);
 
-        $timestampValidateRoot = $integrityClient->validateRoot($root, \Bloock\Entity\Network::BLOOCK_CHAIN);
+        $timestampValidateRoot = $integrityClient->validateRoot($root, \Bloock\Entity\Integrity\Network::BLOOCK_CHAIN);
 
         $this->assertTrue($timestampValidateRoot > 0);
 
-        $timestampVerifyRecords = $integrityClient->verifyRecords($records, \Bloock\Entity\Network::BLOOCK_CHAIN);
+        $timestampVerifyRecords = $integrityClient->verifyRecords($records, \Bloock\Entity\Integrity\Network::BLOOCK_CHAIN);
 
         $this->assertTrue($timestampValidateRoot > 0);
         $this->assertEquals($timestampValidateRoot, $timestampVerifyRecords);

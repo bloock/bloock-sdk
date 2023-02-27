@@ -8,9 +8,12 @@ import (
 type BloockClient struct {
 	configData *proto.ConfigData
 
-	IntegrityClient    IntegrityClient
 	AuthenticityClient AuthenticityClient
+	AvailabilityClient AvailabilityClient
 	EncryptionClient   EncryptionClient
+	IdentityClient     IdentityClient
+	IntegrityClient    IntegrityClient
+	KeyClient          KeyClient
 	RecordClient       RecordClient
 	WebhookClient      WebhookClient
 }
@@ -21,9 +24,12 @@ func NewBloockClient(apiKey string) BloockClient {
 	return BloockClient{
 		configData: configData,
 
-		IntegrityClient:    NewIntegrityClientWithConfig(configData),
 		AuthenticityClient: NewAuthenticityClientWithConfig(configData),
+		AvailabilityClient: NewAvailabilityClientWithConfig(configData),
 		EncryptionClient:   NewEncryptionClientWithConfig(configData),
+		IdentityClient:     NewIdentityClientWithConfig(configData),
+		IntegrityClient:    NewIntegrityClientWithConfig(configData),
+		KeyClient:          NewKeyClientWithConfig(configData),
 		RecordClient:       NewRecordClientWithConfig(configData),
 		WebhookClient:      NewWebhookClientWithConfig(configData),
 	}

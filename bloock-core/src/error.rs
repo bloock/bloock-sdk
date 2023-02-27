@@ -4,6 +4,7 @@ use crate::config::ConfigError;
 use crate::encryption::EncryptionError;
 use crate::event::EventError;
 use crate::integrity::IntegrityError;
+use crate::key::KeyError;
 use crate::record::RecordError;
 use crate::webhook::WebhookError;
 use bloock_encrypter::EncrypterError;
@@ -32,6 +33,8 @@ pub enum ErrorKind {
     Availability(#[from] AvailabilityError),
     #[error("Encryption error: {0}")]
     Encryption(#[from] EncryptionError),
+    #[error("Key error: {0}")]
+    Key(#[from] KeyError),
     #[error("Webhook error: {0}")]
     Webhook(#[from] WebhookError),
     #[error("Event error: {0}")]

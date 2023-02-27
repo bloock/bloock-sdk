@@ -12,7 +12,7 @@ class WebhookClient:
         self.config_data = config_data
 
     def verify_webhook_signature(
-        self, payload: bytes, header: str, secret_key: str, enforce_tolerance: bool
+            self, payload: bytes, header: str, secret_key: str, enforce_tolerance: bool
     ) -> int:
         res = self.bridge_client.webhook().VerifyWebhookSignature(
             VerifyWebhookSignatureRequest(

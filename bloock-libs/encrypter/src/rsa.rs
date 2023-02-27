@@ -1,33 +1,10 @@
 use crate::{Decrypter, Encrypter, EncrypterError, Result};
 use rsa::{
-    pkcs8::{DecodePrivateKey, DecodePublicKey, EncodePrivateKey, EncodePublicKey, LineEnding},
+    pkcs8::{DecodePrivateKey, DecodePublicKey},
     PaddingScheme, PublicKey, RsaPrivateKey, RsaPublicKey,
 };
 
 pub const RSA_ALG: &str = "RSA";
-
-pub struct RsaKeyPair {
-    pub public_key: String,
-    pub private_key: String,
-}
-
-pub fn generate_rsa_key_pair() -> Result<RsaKeyPair> {
-    let mut rng = rand::thread_rng();
-    let private_key = RsaPrivateKey::new(&mut rng, 2048)
-        .map_err(|err| EncrypterError::ErrorGeneratingRsaKeyPair(err.to_string()))?;
-
-    let public_key = RsaPublicKey::from(&private_key);
-
-    Ok(RsaKeyPair {
-        public_key: public_key
-            .to_public_key_pem(LineEnding::default())
-            .map_err(|err| EncrypterError::ErrorGeneratingRsaKeyPair(err.to_string()))?,
-        private_key: private_key
-            .to_pkcs8_pem(LineEnding::default())
-            .map_err(|err| EncrypterError::ErrorGeneratingRsaKeyPair(err.to_string()))?
-            .to_string(),
-    })
-}
 
 pub struct RsaEncrypterArgs {
     public_key: String,
@@ -105,10 +82,10 @@ impl Decrypter for RsaDecrypter {
 
 #[cfg(test)]
 mod tests {
+    use bloock_keys::keys::rsa::RsaKey;
+
     use crate::{
-        rsa::{
-            generate_rsa_key_pair, RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
-        },
+        rsa::{RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs},
         Decrypter, Encrypter,
     };
 
@@ -116,13 +93,13 @@ mod tests {
     fn test_rsa_encryption() {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
-        let key_pair = generate_rsa_key_pair().unwrap();
-        let encrypter = RsaEncrypter::new(RsaEncrypterArgs::new(&key_pair.public_key));
+        let keys = RsaKey::new_rsa_2048().unwrap();
+        let encrypter = RsaEncrypter::new(RsaEncrypterArgs::new(&keys.public_key));
 
         let ciphertext = encrypter.encrypt(payload.as_bytes()).unwrap();
         assert_ne!(ciphertext, payload.as_bytes());
 
-        let decrypter = RsaDecrypter::new(RsaDecrypterArgs::new(&key_pair.private_key));
+        let decrypter = RsaDecrypter::new(RsaDecrypterArgs::new(&keys.private_key));
 
         let decrypted_payload_bytes = decrypter.decrypt(&ciphertext).unwrap();
         let decrypted_payload = std::str::from_utf8(&decrypted_payload_bytes).unwrap();
@@ -136,9 +113,9 @@ mod tests {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
 
-        let key_pair = generate_rsa_key_pair().unwrap();
+        let keys = RsaKey::new_rsa_2048().unwrap();
 
-        let encrypter = RsaEncrypter::new(RsaEncrypterArgs::new(&key_pair.public_key));
+        let encrypter = RsaEncrypter::new(RsaEncrypterArgs::new(&keys.public_key));
 
         let ciphertext = encrypter.encrypt(payload_bytes).unwrap();
 

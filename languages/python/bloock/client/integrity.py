@@ -1,4 +1,5 @@
 from typing import List, Optional
+
 from bloock._bridge import bridge
 from bloock._bridge.proto.integrity_pb2 import (
     SendRecordsRequest,
@@ -10,12 +11,12 @@ from bloock._bridge.proto.integrity_pb2 import (
     ValidateRootRequest,
 )
 from bloock._bridge.proto.shared_pb2 import Error
-from bloock.entity.anchor import Anchor
-from bloock.entity.network import Network
 from bloock._config.config import Config
-from bloock.entity.proof import Proof
-from bloock.entity.record import Record
-from bloock.entity.record_receipt import RecordReceipt
+from bloock.entity.integrity.anchor import Anchor
+from bloock.entity.integrity.network import Network
+from bloock.entity.integrity.proof import Proof
+from bloock.entity.integrity.record_receipt import RecordReceipt
+from bloock.entity.record.record import Record
 
 
 class IntegrityClient:
@@ -83,7 +84,7 @@ class IntegrityClient:
         return res.record
 
     def verify_records(
-        self, records: List[Record], network: Optional[Network] = None
+            self, records: List[Record], network: Optional[Network] = None
     ) -> int:
         res = self.bridge_client.integrity().VerifyRecords(
             VerifyRecordsRequest(

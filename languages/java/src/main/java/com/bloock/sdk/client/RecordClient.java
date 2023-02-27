@@ -3,8 +3,8 @@ package com.bloock.sdk.client;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
 import com.bloock.sdk.bridge.proto.RecordEntities.RecordTypes;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.Loader;
-import com.bloock.sdk.entity.Record;
+import com.bloock.sdk.entity.availability.Loader;
+import com.bloock.sdk.entity.record.Record;
 
 public class RecordClient {
   private ConfigData configData;

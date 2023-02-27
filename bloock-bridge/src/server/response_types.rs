@@ -2,9 +2,8 @@ use crate::items::BloockServer;
 use crate::items::DecryptResponse;
 use crate::items::EncryptResponse;
 use crate::items::EncryptionAlgResponse;
-use crate::items::GenerateEcdsaKeysResponse;
-use crate::items::GenerateEciesKeyPairResponse;
-use crate::items::GenerateRsaKeyPairResponse;
+use crate::items::GenerateLocalKeyResponse;
+use crate::items::GenerateManagedKeyResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetHashResponse;
 use crate::items::GetProofResponse;
@@ -22,6 +21,12 @@ use crate::items::VerifyRecordsResponse;
 use crate::items::VerifyResponse;
 use crate::items::VerifyWebhookSignatureResponse;
 use crate::items::WaitAnchorResponse;
+use crate::items::{
+    BuildSchemaResponse, CreateCredentialOfferResponse, CreateIdentityResponse,
+    CredentialFromJsonResponse, CredentialOfferFromJsonResponse, CredentialOfferRedeemResponse,
+    CredentialOfferToJsonResponse, CredentialToJsonResponse, GetSchemaResponse,
+    LoadIdentityResponse, RevokeCredentialResponse, VerifyCredentialResponse,
+};
 use crate::server::BridgeError;
 use async_trait::async_trait;
 use bloock_core::config::config_data::ConfigData;
@@ -41,13 +46,10 @@ pub enum ResponseType {
     ValidateRootResponse(ValidateRootResponse),
     VerifyProofResponse(VerifyProofResponse),
     VerifyRecordsResponse(VerifyRecordsResponse),
-    GenerateEcdsaKeysResponse(GenerateEcdsaKeysResponse),
     SignResponse(SignResponse),
     VerifyResponse(VerifyResponse),
     GetSignaturesResponse(GetSignaturesResponse),
     SignatureCommonNameResponse(SignatureCommonNameResponse),
-    GenerateRsaKeyPairResponse(GenerateRsaKeyPairResponse),
-    GenerateEciesKeyPairResponse(GenerateEciesKeyPairResponse),
     EncryptResponse(EncryptResponse),
     DecryptResponse(DecryptResponse),
     EncryptionAlgResponse(EncryptionAlgResponse),
@@ -55,6 +57,20 @@ pub enum ResponseType {
     GetHashResponse(GetHashResponse),
     PublishResponse(PublishResponse),
     RetrieveResponse(RetrieveResponse),
+    GenerateLocalKeyResponse(GenerateLocalKeyResponse),
+    GenerateManagedKeyResponse(GenerateManagedKeyResponse),
+    CreateIdentityResponse(CreateIdentityResponse),
+    LoadIdentityResponse(LoadIdentityResponse),
+    BuildSchemaResponse(BuildSchemaResponse),
+    GetSchemaResponse(GetSchemaResponse),
+    CreateCredentialOfferResponse(CreateCredentialOfferResponse),
+    CredentialOfferToJsonResponse(CredentialOfferToJsonResponse),
+    CredentialOfferFromJsonResponse(CredentialOfferFromJsonResponse),
+    CredentialOfferRedeemResponse(CredentialOfferRedeemResponse),
+    CredentialToJsonResponse(CredentialToJsonResponse),
+    CredentialFromJsonResponse(CredentialFromJsonResponse),
+    VerifyCredentialResponse(VerifyCredentialResponse),
+    RevokeCredentialResponse(RevokeCredentialResponse),
     VerifyWebhookSignatureResponse(VerifyWebhookSignatureResponse),
 }
 
@@ -72,13 +88,10 @@ impl ResponseType {
             ResponseType::ValidateRootResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyProofResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyRecordsResponse(r) => r.encode(&mut result_vec),
-            ResponseType::GenerateEcdsaKeysResponse(r) => r.encode(&mut result_vec),
             ResponseType::SignResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetSignaturesResponse(r) => r.encode(&mut result_vec),
             ResponseType::SignatureCommonNameResponse(r) => r.encode(&mut result_vec),
-            ResponseType::GenerateRsaKeyPairResponse(r) => r.encode(&mut result_vec),
-            ResponseType::GenerateEciesKeyPairResponse(r) => r.encode(&mut result_vec),
             ResponseType::EncryptResponse(r) => r.encode(&mut result_vec),
             ResponseType::DecryptResponse(r) => r.encode(&mut result_vec),
             ResponseType::EncryptionAlgResponse(r) => r.encode(&mut result_vec),
@@ -86,7 +99,21 @@ impl ResponseType {
             ResponseType::GetHashResponse(r) => r.encode(&mut result_vec),
             ResponseType::PublishResponse(r) => r.encode(&mut result_vec),
             ResponseType::RetrieveResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GenerateLocalKeyResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GenerateManagedKeyResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateIdentityResponse(r) => r.encode(&mut result_vec),
+            ResponseType::LoadIdentityResponse(r) => r.encode(&mut result_vec),
+            ResponseType::BuildSchemaResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetSchemaResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateCredentialOfferResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialOfferToJsonResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialOfferFromJsonResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialOfferRedeemResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialToJsonResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialFromJsonResponse(r) => r.encode(&mut result_vec),
+            ResponseType::VerifyCredentialResponse(r) => r.encode(&mut result_vec),
+            ResponseType::RevokeCredentialResponse(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -103,13 +130,10 @@ impl ResponseType {
             ResponseType::ValidateRootResponse(r) => r.encoded_len(),
             ResponseType::VerifyProofResponse(r) => r.encoded_len(),
             ResponseType::VerifyRecordsResponse(r) => r.encoded_len(),
-            ResponseType::GenerateEcdsaKeysResponse(r) => r.encoded_len(),
             ResponseType::SignResponse(r) => r.encoded_len(),
             ResponseType::VerifyResponse(r) => r.encoded_len(),
             ResponseType::GetSignaturesResponse(r) => r.encoded_len(),
             ResponseType::SignatureCommonNameResponse(r) => r.encoded_len(),
-            ResponseType::GenerateRsaKeyPairResponse(r) => r.encoded_len(),
-            ResponseType::GenerateEciesKeyPairResponse(r) => r.encoded_len(),
             ResponseType::EncryptResponse(r) => r.encoded_len(),
             ResponseType::DecryptResponse(r) => r.encoded_len(),
             ResponseType::EncryptionAlgResponse(r) => r.encoded_len(),
@@ -117,7 +141,21 @@ impl ResponseType {
             ResponseType::GetHashResponse(r) => r.encoded_len(),
             ResponseType::PublishResponse(r) => r.encoded_len(),
             ResponseType::RetrieveResponse(r) => r.encoded_len(),
+            ResponseType::GenerateLocalKeyResponse(r) => r.encoded_len(),
+            ResponseType::GenerateManagedKeyResponse(r) => r.encoded_len(),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encoded_len(),
+            ResponseType::CreateIdentityResponse(r) => r.encoded_len(),
+            ResponseType::LoadIdentityResponse(r) => r.encoded_len(),
+            ResponseType::BuildSchemaResponse(r) => r.encoded_len(),
+            ResponseType::GetSchemaResponse(r) => r.encoded_len(),
+            ResponseType::CreateCredentialOfferResponse(r) => r.encoded_len(),
+            ResponseType::CredentialOfferToJsonResponse(r) => r.encoded_len(),
+            ResponseType::CredentialOfferFromJsonResponse(r) => r.encoded_len(),
+            ResponseType::CredentialOfferRedeemResponse(r) => r.encoded_len(),
+            ResponseType::CredentialToJsonResponse(r) => r.encoded_len(),
+            ResponseType::CredentialFromJsonResponse(r) => r.encoded_len(),
+            ResponseType::VerifyCredentialResponse(r) => r.encoded_len(),
+            ResponseType::RevokeCredentialResponse(r) => r.encoded_len(),
         }
     }
 }

@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/key"
+	"github.com/bloock/bloock-sdk-go/v2/entity/record"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
@@ -29,23 +31,25 @@ func NewAuthenticityClientWithConfig(configData *proto.ConfigData) AuthenticityC
 	}
 }
 
-func (c *AuthenticityClient) GenerateEcdsaKeys() (entity.KeyPair, error) {
-	res, err := c.bridgeClient.Authenticity().GenerateEcdsaKeys(context.Background(), &proto.GenerateEcdsaKeysRequest{
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
+func (c *AuthenticityClient) GenerateEcdsaKeys() (key.KeyPair, error) {
+	res, err := c.bridgeClient.Key().GenerateLocalKey(context.Background(), &proto.GenerateLocalKeyRequest{
 		ConfigData: c.configData,
+		KeyType:    key.KeyTypeToProto[key.EcP256k],
 	})
 
 	if err != nil {
-		return entity.KeyPair{}, err
+		return key.KeyPair{}, err
 	}
 
 	if res.Error != nil {
-		return entity.KeyPair{}, errors.New(res.Error.Message)
+		return key.KeyPair{}, errors.New(res.Error.Message)
 	}
 
-	return entity.NewKeysFromProto(res), nil
+	return key.NewEcdsaKeysFromProto(res), nil
 }
 
-func (c *AuthenticityClient) Sign(r entity.Record, s entity.Signer) (entity.Signature, error) {
+func (c *AuthenticityClient) Sign(r record.Record, s authenticity.Signer) (authenticity.Signature, error) {
 	res, err := c.bridgeClient.Authenticity().Sign(context.Background(), &proto.SignRequest{
 		ConfigData: c.configData,
 		Record:     r.ToProto(),
@@ -53,17 +57,17 @@ func (c *AuthenticityClient) Sign(r entity.Record, s entity.Signer) (entity.Sign
 	})
 
 	if err != nil {
-		return entity.Signature{}, err
+		return authenticity.Signature{}, err
 	}
 
 	if res.Error != nil {
-		return entity.Signature{}, errors.New(res.Error.Message)
+		return authenticity.Signature{}, errors.New(res.Error.Message)
 	}
 
-	return entity.NewSignatureFromProto(res.Signature), nil
+	return authenticity.NewSignatureFromProto(res.Signature), nil
 }
 
-func (c *AuthenticityClient) Verify(r entity.Record) (bool, error) {
+func (c *AuthenticityClient) Verify(r record.Record) (bool, error) {
 	res, err := c.bridgeClient.Authenticity().Verify(context.Background(), &proto.VerifyRequest{
 		ConfigData: c.configData,
 		Record:     r.ToProto(),
@@ -80,26 +84,26 @@ func (c *AuthenticityClient) Verify(r entity.Record) (bool, error) {
 	return res.Valid, nil
 }
 
-func (c *AuthenticityClient) GetSignatures(r entity.Record) ([]entity.Signature, error) {
+func (c *AuthenticityClient) GetSignatures(r record.Record) ([]authenticity.Signature, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Authenticity().GetSignatures(context.Background(), &proto.GetSignaturesRequest{ConfigData: c.configData, Record: r.ToProto()})
 
 	if err != nil {
-		return []entity.Signature{}, err
+		return []authenticity.Signature{}, err
 	}
 
 	if res.Error != nil {
-		return []entity.Signature{}, errors.New(res.Error.Message)
+		return []authenticity.Signature{}, errors.New(res.Error.Message)
 	}
 
-	signatures := make([]entity.Signature, len(res.Signatures))
+	signatures := make([]authenticity.Signature, len(res.Signatures))
 	for i, signature := range res.Signatures {
-		signatures[i] = entity.NewSignatureFromProto(signature)
+		signatures[i] = authenticity.NewSignatureFromProto(signature)
 	}
 	return signatures, nil
 }
 
-func (c *AuthenticityClient) GetSignatureCommonName(signature entity.Signature) (string, error) {
+func (c *AuthenticityClient) GetSignatureCommonName(signature authenticity.Signature) (string, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Authenticity().GetSignatureCommonName(context.Background(), &proto.SignatureCommonNameRequest{
 		ConfigData: c.configData,

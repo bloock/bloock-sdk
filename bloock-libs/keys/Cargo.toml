@@ -1,0 +1,24 @@
+[package]
+name = "bloock-keys"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+bench = false
+
+[dependencies]
+thiserror = "1.0.31"
+serde = { version = "1.0.123", features = ["std", "derive"] }
+serde_json = "1.0.82"
+bloock-http = { path = "../http" }
+getrandom = {version = "0.2.7", features = ["js"]}
+rand = "0.8.5"
+hex = "0.4.3"
+libsecp256k1 = "0.7.1"
+rsa = "0.7.2"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tokio = { version = "1.19.2", features = ["rt", "macros"] }
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3.32"

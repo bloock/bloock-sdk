@@ -3,8 +3,6 @@ import { initSdk } from "./util";
 import {
   AesDecrypter,
   AesEncrypter,
-  EciesDecrypter,
-  EciesEncrypter,
   EncryptionAlg,
   EncryptionClient,
   RecordClient,
@@ -121,60 +119,6 @@ describe("Encryptions Tests", () => {
     expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
   });
 
-  test("encrypt ecies", async () => {
-    initSdk();
-
-    let payload = "Hello world";
-    let recordClient = new RecordClient();
-    let record = await recordClient.fromString(payload).build();
-    let recordHash = await record.getHash();
-
-    let encryptionClient = new EncryptionClient();
-
-    let keys = await encryptionClient.generateEciesKeyPair();
-    let encryptedRecord = await encryptionClient.encrypt(
-      record,
-      new EciesEncrypter(keys.publicKey)
-    );
-
-    let decryptedRecord = await recordClient
-      .fromRecord(encryptedRecord)
-      .withDecrypter(new EciesDecrypter(keys.privateKey))
-      .build();
-
-    let decryptedRecordHash = await decryptedRecord.getHash();
-
-    expect(decryptedRecordHash).toBe(recordHash);
-    expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
-  });
-
-  test("decrypt ecies", async () => {
-    initSdk();
-
-    let payload = "Hello world";
-    let recordClient = new RecordClient();
-
-    let encryptionClient = new EncryptionClient();
-    let keys = await encryptionClient.generateEciesKeyPair();
-
-    let encryptedRecord = await recordClient
-      .fromString(payload)
-      .withEncrypter(new EciesEncrypter(keys.publicKey))
-      .build();
-
-    let encryptedRecordHash = await encryptedRecord.getHash();
-
-    let decryptedRecord = await encryptionClient.decrypt(
-      encryptedRecord,
-      new EciesDecrypter(keys.privateKey)
-    );
-
-    let decryptedRecordHash = await decryptedRecord.getHash();
-
-    expect(decryptedRecordHash).toBe(encryptedRecordHash);
-    expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
-  });
-
   test("get encryption alg", async () => {
     initSdk();
 
@@ -182,14 +126,14 @@ describe("Encryptions Tests", () => {
     let recordClient = new RecordClient();
 
     let encryptionClient = new EncryptionClient();
-    let keys = await encryptionClient.generateEciesKeyPair();
+    let keys = await encryptionClient.generateRsaKeyPair();
 
     let encryptedRecord = await recordClient
       .fromString(payload)
-      .withEncrypter(new EciesEncrypter(keys.publicKey))
+      .withEncrypter(new RsaEncrypter(keys.publicKey))
       .build();
 
     let alg = await encryptionClient.getEncryptionAlg(encryptedRecord);
-    expect(alg).toBe(EncryptionAlg.ECIES);
+    expect(alg).toBe(EncryptionAlg.RSA);
   });
 });

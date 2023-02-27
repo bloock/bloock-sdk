@@ -1,8 +1,6 @@
 package com.bloock.sdk.client;
 
 import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.Authenticity.GenerateEcdsaKeysRequest;
-import com.bloock.sdk.bridge.proto.Authenticity.GenerateEcdsaKeysResponse;
 import com.bloock.sdk.bridge.proto.Authenticity.GetSignaturesRequest;
 import com.bloock.sdk.bridge.proto.Authenticity.GetSignaturesResponse;
 import com.bloock.sdk.bridge.proto.Authenticity.SignRequest;
@@ -12,12 +10,14 @@ import com.bloock.sdk.bridge.proto.Authenticity.SignatureCommonNameResponse;
 import com.bloock.sdk.bridge.proto.Authenticity.VerifyRequest;
 import com.bloock.sdk.bridge.proto.Authenticity.VerifyResponse;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
+import com.bloock.sdk.bridge.proto.Keys;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.EcdsaKeyPair;
-import com.bloock.sdk.entity.Record;
-import com.bloock.sdk.entity.Signature;
-import com.bloock.sdk.entity.Signer;
+import com.bloock.sdk.entity.key.EcdsaKeyPair;
+import com.bloock.sdk.entity.key.KeyType;
+import com.bloock.sdk.entity.record.Record;
+import com.bloock.sdk.entity.authenticity.Signature;
+import com.bloock.sdk.entity.authenticity.Signer;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,11 +35,18 @@ public class AuthenticityClient {
     this.configData = Config.newConfigData(configData);
   }
 
+  /**
+   * @deprecated
+   * Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
+   */
+  @Deprecated(forRemoval = true)
   public EcdsaKeyPair generateEcdsaKeyPair() throws Exception {
-    GenerateEcdsaKeysRequest request =
-        GenerateEcdsaKeysRequest.newBuilder().setConfigData(this.configData).build();
+    Keys.GenerateLocalKeyRequest request = Keys.GenerateLocalKeyRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setKeyType(KeyType.EcP256k.toProto())
+            .build();
 
-    GenerateEcdsaKeysResponse response = this.bridge.getAuthenticity().generateEcdsaKeys(request);
+    Keys.GenerateLocalKeyResponse response = this.bridge.getKey().generateLocalKey(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());

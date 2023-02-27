@@ -8,7 +8,7 @@ copy-lib:
 proto:
 	node scripts/proto.js
 
-build: proto copy-lib
+build: copy-lib
 	yarn build
 
 dev: build

@@ -21,10 +21,7 @@ class _RecordTypes:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _RecordTypesEnumTypeWrapper(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RecordTypes.ValueType],
-    builtins.type,
-):  # noqa: F821
+class _RecordTypesEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RecordTypes.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     STRING: _RecordTypes.ValueType  # 0
     HEX: _RecordTypes.ValueType  # 1
@@ -55,9 +52,7 @@ class RecordHeader(google.protobuf.message.Message):
         *,
         ty: builtins.str = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["ty", b"ty"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["ty", b"ty"]) -> None: ...
 
 global___RecordHeader = RecordHeader
 
@@ -78,27 +73,8 @@ class Record(google.protobuf.message.Message):
         payload: builtins.bytes = ...,
         hash: builtins.str = ...,
     ) -> None: ...
-    def HasField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_config_data", b"_config_data", "config_data", b"config_data"
-        ],
-    ) -> builtins.bool: ...
-    def ClearField(
-        self,
-        field_name: typing_extensions.Literal[
-            "_config_data",
-            b"_config_data",
-            "config_data",
-            b"config_data",
-            "hash",
-            b"hash",
-            "payload",
-            b"payload",
-        ],
-    ) -> None: ...
-    def WhichOneof(
-        self, oneof_group: typing_extensions.Literal["_config_data", b"_config_data"]
-    ) -> typing_extensions.Literal["config_data"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_config_data", b"_config_data", "config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_config_data", b"_config_data", "config_data", b"config_data", "hash", b"hash", "payload", b"payload"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_config_data", b"_config_data"]) -> typing_extensions.Literal["config_data"] | None: ...
 
 global___Record = Record

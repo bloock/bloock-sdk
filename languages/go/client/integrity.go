@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/integrity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/record"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
@@ -29,46 +30,46 @@ func NewIntegrityClientWithConfig(configData *proto.ConfigData) IntegrityClient 
 	}
 }
 
-func (c *IntegrityClient) SendRecords(records []entity.Record) ([]entity.RecordReceipt, error) {
+func (c *IntegrityClient) SendRecords(records []record.Record) ([]integrity.RecordReceipt, error) {
 	res, err := c.bridgeClient.Integrity().SendRecords(context.Background(), &proto.SendRecordsRequest{
 		ConfigData: c.configData,
-		Records:    entity.MapRecordsToProto(records),
+		Records:    record.MapRecordsToProto(records),
 	})
 
 	if err != nil {
-		return []entity.RecordReceipt{}, err
+		return []integrity.RecordReceipt{}, err
 	}
 
 	if res.Error != nil {
-		return []entity.RecordReceipt{}, errors.New(res.Error.Message)
+		return []integrity.RecordReceipt{}, errors.New(res.Error.Message)
 	}
 
-	receipts := make([]entity.RecordReceipt, len(res.Records))
+	receipts := make([]integrity.RecordReceipt, len(res.Records))
 	for i, record := range res.Records {
-		receipts[i] = entity.NewRecordReceiptFromProto(record)
+		receipts[i] = integrity.NewRecordReceiptFromProto(record)
 	}
 
 	return receipts, nil
 }
 
-func (c *IntegrityClient) GetAnchor(anchorID int64) (entity.Anchor, error) {
+func (c *IntegrityClient) GetAnchor(anchorID int64) (integrity.Anchor, error) {
 	res, err := c.bridgeClient.Integrity().GetAnchor(context.Background(), &proto.GetAnchorRequest{
 		ConfigData: c.configData,
 		AnchorId:   anchorID,
 	})
 
 	if err != nil {
-		return entity.Anchor{}, err
+		return integrity.Anchor{}, err
 	}
 
 	if res.Error != nil {
-		return entity.Anchor{}, errors.New(res.Error.Message)
+		return integrity.Anchor{}, errors.New(res.Error.Message)
 	}
 
-	return entity.NewAnchorFromProto(res.Anchor), nil
+	return integrity.NewAnchorFromProto(res.Anchor), nil
 }
 
-func (c *IntegrityClient) WaitAnchor(anchorID int64, params entity.AnchorParams) (entity.Anchor, error) {
+func (c *IntegrityClient) WaitAnchor(anchorID int64, params integrity.AnchorParams) (integrity.Anchor, error) {
 	if params.Timeout == 0 {
 		params.Timeout = int64(120000)
 	}
@@ -80,34 +81,34 @@ func (c *IntegrityClient) WaitAnchor(anchorID int64, params entity.AnchorParams)
 	})
 
 	if err != nil {
-		return entity.Anchor{}, err
+		return integrity.Anchor{}, err
 	}
 
 	if res.Error != nil {
-		return entity.Anchor{}, errors.New(res.Error.Message)
+		return integrity.Anchor{}, errors.New(res.Error.Message)
 	}
 
-	return entity.NewAnchorFromProto(res.Anchor), nil
+	return integrity.NewAnchorFromProto(res.Anchor), nil
 }
 
-func (c *IntegrityClient) GetProof(records []entity.Record) (entity.Proof, error) {
+func (c *IntegrityClient) GetProof(records []record.Record) (integrity.Proof, error) {
 	res, err := c.bridgeClient.Integrity().GetProof(context.Background(), &proto.GetProofRequest{
 		ConfigData: c.configData,
-		Records:    entity.MapRecordsToProto(records),
+		Records:    record.MapRecordsToProto(records),
 	})
 
 	if err != nil {
-		return entity.Proof{}, err
+		return integrity.Proof{}, err
 	}
 
 	if res.Error != nil {
-		return entity.Proof{}, errors.New(res.Error.Message)
+		return integrity.Proof{}, errors.New(res.Error.Message)
 	}
 
-	return entity.NewProofFromProto(res.Proof), nil
+	return integrity.NewProofFromProto(res.Proof), nil
 }
 
-func (c *IntegrityClient) VerifyProof(proof entity.Proof) (string, error) {
+func (c *IntegrityClient) VerifyProof(proof integrity.Proof) (string, error) {
 	res, err := c.bridgeClient.Integrity().VerifyProof(context.Background(), &proto.VerifyProofRequest{
 		ConfigData: c.configData,
 		Proof:      proof.ToProto(),
@@ -124,11 +125,11 @@ func (c *IntegrityClient) VerifyProof(proof entity.Proof) (string, error) {
 	return *res.Record, nil
 }
 
-func (c *IntegrityClient) VerifyRecords(records []entity.Record, params entity.NetworkParams) (uint64, error) {
+func (c *IntegrityClient) VerifyRecords(records []record.Record, params integrity.NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Integrity().VerifyRecords(context.Background(), &proto.VerifyRecordsRequest{
 		ConfigData: c.configData,
-		Records:    entity.MapRecordsToProto(records),
-		Network:    entity.NetworkToProto(params.Network),
+		Records:    record.MapRecordsToProto(records),
+		Network:    integrity.NetworkToProto(params.Network),
 	})
 
 	if err != nil {
@@ -142,11 +143,11 @@ func (c *IntegrityClient) VerifyRecords(records []entity.Record, params entity.N
 	return res.Timestamp, nil
 }
 
-func (c *IntegrityClient) ValidateRoot(root string, network entity.Network) (uint64, error) {
+func (c *IntegrityClient) ValidateRoot(root string, params integrity.NetworkParams) (uint64, error) {
 	res, err := c.bridgeClient.Integrity().ValidateRoot(context.Background(), &proto.ValidateRootRequest{
 		ConfigData: c.configData,
 		Root:       root,
-		Network:    network,
+		Network:    *integrity.NetworkToProto(params.Network),
 	})
 
 	if err != nil {

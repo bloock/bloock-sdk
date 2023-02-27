@@ -5,15 +5,20 @@ from bloock.client.availability import AvailabilityClient
 from bloock.client.encryption import EncryptionClient
 from bloock.client.integrity import IntegrityClient
 from bloock.client.record import RecordClient
-from bloock.entity.anchor import AnchorNetwork
-from bloock.entity.decrypter import AesDecrypter, RsaDecrypter, EciesDecrypter
-from bloock.entity.encrypter import AesEncrypter, RsaEncrypter, EciesEncrypter
-from bloock.entity.encryption_alg import EncryptionAlg
-from bloock.entity.loader import HostedLoader, IpfsLoader
-from bloock.entity.proof import Proof, ProofAnchor
-from bloock.entity.publisher import HostedPublisher, IpfsPublisher
-from bloock.entity.signature import SignatureAlg
-from bloock.entity.signer import EcdsaSigner, EnsSigner
+from bloock.entity.authenticity.ecdsa_signer import EcdsaSigner
+from bloock.entity.authenticity.ens_signer import EnsSigner
+from bloock.entity.availability.hosted_loader import HostedLoader
+from bloock.entity.availability.hosted_publisher import HostedPublisher
+from bloock.entity.availability.ipfs_loader import IpfsLoader
+from bloock.entity.availability.ipfs_publisher import IpfsPublisher
+from bloock.entity.encryption.aes_decrypter import AesDecrypter
+from bloock.entity.encryption.aes_encrypter import AesEncrypter
+from bloock.entity.encryption.rsa_decrypter import RsaDecrypter
+from bloock.entity.encryption.rsa_encrypter import RsaEncrypter
+from bloock.entity.integrity.anchor import AnchorNetwork
+from bloock.entity.encryption.encryption_alg import EncryptionAlg
+from bloock.entity.integrity.proof import Proof, ProofAnchor
+from bloock.entity.authenticity.signature import SignatureAlg
 from test.util import init_sdk
 
 
@@ -205,97 +210,6 @@ class TestRecord(unittest.TestCase):
         self.assertEqual(payload, record.payload.decode())
 
         hash = record.get_hash()
-        self.assertEqual(
-            "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
-        )
-
-    def test_ecies_encryption(self):
-        payload = "Hello world 2"
-        encryption_client = EncryptionClient()
-        keys = encryption_client.generate_ecies_keypair()
-
-        record_client = RecordClient()
-        encrypted_record = (
-            record_client.from_string(payload)
-            .with_encrypter(EciesEncrypter(keys.public_key))
-            .build()
-        )
-
-        self.assertNotEqual(payload.encode(), encrypted_record.payload)
-
-        self.assertEqual(
-            encryption_client.get_encryption_alg(encrypted_record), EncryptionAlg.ECIES
-        )
-
-        record = (
-            record_client.from_record(encrypted_record)
-            .with_decrypter(EciesDecrypter(keys.private_key))
-            .build()
-        )
-
-        self.assertEqual(payload, record.payload.decode())
-
-        hash = record.get_hash()
-        self.assertEqual(
-            "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
-        )
-
-    def test_ecies_encryption_hosted(self):
-        payload = "Hello world 2"
-        encryption_client = EncryptionClient()
-        keys = encryption_client.generate_ecies_keypair()
-
-        record_client = RecordClient()
-        encrypted_record = (
-            record_client.from_string(payload)
-            .with_encrypter(EciesEncrypter(keys.public_key))
-            .build()
-        )
-
-        self.assertNotEqual(payload.encode(), encrypted_record.payload)
-
-        availability_client = AvailabilityClient()
-        result = availability_client.publish(encrypted_record, HostedPublisher())
-
-        loaded_record = (
-            record_client.from_loader(HostedLoader(hash=result))
-            .with_decrypter(EciesDecrypter(keys.private_key))
-            .build()
-        )
-
-        self.assertEqual(payload, loaded_record.payload.decode())
-
-        hash = loaded_record.get_hash()
-        self.assertEqual(
-            "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
-        )
-
-    def test_ecies_encryption_ipfs(self):
-        payload = "Hello world 2"
-        encryption_client = EncryptionClient()
-        keys = encryption_client.generate_ecies_keypair()
-
-        record_client = RecordClient()
-        encrypted_record = (
-            record_client.from_string(payload)
-            .with_encrypter(EciesEncrypter(keys.public_key))
-            .build()
-        )
-
-        self.assertNotEqual(payload.encode(), encrypted_record.payload)
-
-        availability_client = AvailabilityClient()
-        result = availability_client.publish(encrypted_record, IpfsPublisher())
-
-        loaded_record = (
-            record_client.from_loader(IpfsLoader(hash=result))
-            .with_decrypter(EciesDecrypter(keys.private_key))
-            .build()
-        )
-
-        self.assertEqual(payload, loaded_record.payload.decode())
-
-        hash = loaded_record.get_hash()
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
         )

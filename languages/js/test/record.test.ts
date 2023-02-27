@@ -6,8 +6,6 @@ import {
   AnchorNetwork,
   AuthenticityClient,
   EcdsaSigner,
-  EciesDecrypter,
-  EciesEncrypter,
   EncryptionAlg,
   EncryptionClient,
   EnsSigner,
@@ -242,40 +240,6 @@ describe("Record Tests", () => {
     let decrypted_record = await recordClient
       .fromRecord(encrypted_record)
       .withDecrypter(new RsaDecrypter(keypair.privateKey))
-      .build();
-
-    expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
-
-    let hash = await decrypted_record.getHash();
-    expect(hash).toEqual(
-      "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
-    );
-  });
-
-  test("record with ecies encrypter", async () => {
-    initSdk();
-
-    let payload = "Hello world 2";
-    let encryptionClient = new EncryptionClient();
-    let keypair = await encryptionClient.generateEciesKeyPair();
-
-    let recordClient = new RecordClient();
-    let encrypted_record = await recordClient
-      .fromString(payload)
-      .withEncrypter(new EciesEncrypter(keypair.publicKey))
-      .build();
-
-    expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
-      payload
-    );
-
-    expect(await encryptionClient.getEncryptionAlg(encrypted_record)).toEqual(
-      EncryptionAlg.ECIES
-    );
-
-    let decrypted_record = await recordClient
-      .fromRecord(encrypted_record)
-      .withDecrypter(new EciesDecrypter(keypair.privateKey))
       .build();
 
     expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);

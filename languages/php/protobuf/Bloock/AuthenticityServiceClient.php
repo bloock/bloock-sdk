@@ -17,20 +17,6 @@ class AuthenticityServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\GenerateEcdsaKeysRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function GenerateEcdsaKeys(\Bloock\GenerateEcdsaKeysRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.AuthenticityService/GenerateEcdsaKeys',
-        $argument,
-        ['\Bloock\GenerateEcdsaKeysResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
      * @param \Bloock\SignRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options

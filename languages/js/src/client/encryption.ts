@@ -1,11 +1,9 @@
 import { BloockBridge } from "../bridge/bridge";
 import { ConfigData } from "../bridge/proto/config";
-import { EciesKeyPair, KeyPair, RsaKeyPair } from "../entity/keys";
+import { KeyPair, RsaKeyPair } from "../entity/keys";
 import { Record } from "../entity/record";
 import { NewConfigData } from "../config/config";
 import {
-  GenerateRsaKeyPairRequest,
-  GenerateEciesKeyPairRequest,
   EncryptionAlgRequest,
   EncryptRequest,
   DecryptRequest
@@ -13,6 +11,8 @@ import {
 import { EncryptionAlg } from "../entity/encryption_alg";
 import { Encrypter } from "../entity/encrypter";
 import { Decrypter } from "../entity/decrypter";
+import { GenerateLocalKeyRequest } from "../bridge/proto/keys";
+import { KeyType } from "../bridge/proto/keys_entities";
 
 export class EncryptionClient {
   private bridge: BloockBridge;
@@ -26,40 +26,22 @@ export class EncryptionClient {
   /**
    * It generates a public and a private key for RSA encryption
    * @returns {Promise<KeyPair>} An object containing both the public and the private key
+   * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
    */
   public async generateRsaKeyPair(): Promise<KeyPair> {
-    let request = GenerateRsaKeyPairRequest.fromPartial({
-      configData: this.configData
+    let request = GenerateLocalKeyRequest.fromPartial({
+      configData: this.configData,
+      keyType: KeyType.Rsa2048
     });
 
     return this.bridge
-      .getEncryption()
-      .GenerateRsaKeyPair(request)
+      .getKey()
+      .GenerateLocalKey(request)
       .then(res => {
         if (res.error) {
           throw res.error;
         }
         return RsaKeyPair.fromProto(res);
-      });
-  }
-
-  /**
-   * It generates a public and a private key for ECIES encryption
-   * @returns {Promise<KeyPair>} An object containing both the public and the private key
-   */
-  public async generateEciesKeyPair(): Promise<KeyPair> {
-    let request = GenerateEciesKeyPairRequest.fromPartial({
-      configData: this.configData
-    });
-
-    return this.bridge
-      .getEncryption()
-      .GenerateEciesKeyPair(request)
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return EciesKeyPair.fromProto(res);
       });
   }
 

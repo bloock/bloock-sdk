@@ -3,8 +3,8 @@ import { Bloock } from "./bloock";
 import { Network } from "./bridge/proto/config";
 import { RecordBuilder } from "./client/record";
 import { EcdsaSigner, EnsSigner } from "./entity/signer";
-import { AesEncrypter, EciesEncrypter, RsaEncrypter } from "./entity/encrypter";
-import { AesDecrypter, EciesDecrypter, RsaDecrypter } from "./entity/decrypter";
+import { AesEncrypter, RsaEncrypter } from "./entity/encrypter";
+import { AesDecrypter, RsaDecrypter } from "./entity/decrypter";
 import { HostedPublisher, IpfsPublisher } from "./entity/publisher";
 import { HostedLoader, IpfsLoader } from "./entity/loader";
 import { Record } from "./entity/record";
@@ -22,6 +22,16 @@ import {
   WebhookClient
 } from "./client";
 import { RecordReceipt } from "./entity/record_receipt";
+import { IdentityClient } from "./client/identity";
+import { KeyClient } from "./client/key";
+import {
+  KeyProtectionLevel,
+  ManagedKeyParams,
+  ManagedKey
+} from "./entity/managed_key";
+import { CredentialOffer } from "./entity/credential_offer";
+import { Credential } from "./entity/credential";
+import { KeyType } from "./entity/key_type";
 
 export {
   Bloock,
@@ -32,6 +42,8 @@ export {
   RecordClient,
   RecordBuilder,
   BloockClient,
+  KeyClient,
+  IdentityClient,
   WebhookClient,
   Anchor,
   Network,
@@ -42,8 +54,6 @@ export {
   AesDecrypter,
   RsaEncrypter,
   RsaDecrypter,
-  EciesEncrypter,
-  EciesDecrypter,
   HostedLoader,
   HostedPublisher,
   Proof,
@@ -53,5 +63,11 @@ export {
   IpfsLoader,
   EnsSigner,
   EncryptionAlg,
-  SignatureAlg
+  SignatureAlg,
+  KeyProtectionLevel,
+  ManagedKeyParams,
+  ManagedKey,
+  KeyType,
+  CredentialOffer,
+  Credential
 };

@@ -22,8 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EncryptionServiceClient interface {
-	GenerateRsaKeyPair(ctx context.Context, in *GenerateRsaKeyPairRequest, opts ...grpc.CallOption) (*GenerateRsaKeyPairResponse, error)
-	GenerateEciesKeyPair(ctx context.Context, in *GenerateEciesKeyPairRequest, opts ...grpc.CallOption) (*GenerateEciesKeyPairResponse, error)
 	Encrypt(ctx context.Context, in *EncryptRequest, opts ...grpc.CallOption) (*EncryptResponse, error)
 	Decrypt(ctx context.Context, in *DecryptRequest, opts ...grpc.CallOption) (*DecryptResponse, error)
 	GetEncryptionAlg(ctx context.Context, in *EncryptionAlgRequest, opts ...grpc.CallOption) (*EncryptionAlgResponse, error)
@@ -35,24 +33,6 @@ type encryptionServiceClient struct {
 
 func NewEncryptionServiceClient(cc grpc.ClientConnInterface) EncryptionServiceClient {
 	return &encryptionServiceClient{cc}
-}
-
-func (c *encryptionServiceClient) GenerateRsaKeyPair(ctx context.Context, in *GenerateRsaKeyPairRequest, opts ...grpc.CallOption) (*GenerateRsaKeyPairResponse, error) {
-	out := new(GenerateRsaKeyPairResponse)
-	err := c.cc.Invoke(ctx, "/bloock.EncryptionService/GenerateRsaKeyPair", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *encryptionServiceClient) GenerateEciesKeyPair(ctx context.Context, in *GenerateEciesKeyPairRequest, opts ...grpc.CallOption) (*GenerateEciesKeyPairResponse, error) {
-	out := new(GenerateEciesKeyPairResponse)
-	err := c.cc.Invoke(ctx, "/bloock.EncryptionService/GenerateEciesKeyPair", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *encryptionServiceClient) Encrypt(ctx context.Context, in *EncryptRequest, opts ...grpc.CallOption) (*EncryptResponse, error) {
@@ -86,8 +66,6 @@ func (c *encryptionServiceClient) GetEncryptionAlg(ctx context.Context, in *Encr
 // All implementations must embed UnimplementedEncryptionServiceServer
 // for forward compatibility
 type EncryptionServiceServer interface {
-	GenerateRsaKeyPair(context.Context, *GenerateRsaKeyPairRequest) (*GenerateRsaKeyPairResponse, error)
-	GenerateEciesKeyPair(context.Context, *GenerateEciesKeyPairRequest) (*GenerateEciesKeyPairResponse, error)
 	Encrypt(context.Context, *EncryptRequest) (*EncryptResponse, error)
 	Decrypt(context.Context, *DecryptRequest) (*DecryptResponse, error)
 	GetEncryptionAlg(context.Context, *EncryptionAlgRequest) (*EncryptionAlgResponse, error)
@@ -98,12 +76,6 @@ type EncryptionServiceServer interface {
 type UnimplementedEncryptionServiceServer struct {
 }
 
-func (UnimplementedEncryptionServiceServer) GenerateRsaKeyPair(context.Context, *GenerateRsaKeyPairRequest) (*GenerateRsaKeyPairResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateRsaKeyPair not implemented")
-}
-func (UnimplementedEncryptionServiceServer) GenerateEciesKeyPair(context.Context, *GenerateEciesKeyPairRequest) (*GenerateEciesKeyPairResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateEciesKeyPair not implemented")
-}
 func (UnimplementedEncryptionServiceServer) Encrypt(context.Context, *EncryptRequest) (*EncryptResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Encrypt not implemented")
 }
@@ -124,42 +96,6 @@ type UnsafeEncryptionServiceServer interface {
 
 func RegisterEncryptionServiceServer(s grpc.ServiceRegistrar, srv EncryptionServiceServer) {
 	s.RegisterService(&EncryptionService_ServiceDesc, srv)
-}
-
-func _EncryptionService_GenerateRsaKeyPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateRsaKeyPairRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EncryptionServiceServer).GenerateRsaKeyPair(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.EncryptionService/GenerateRsaKeyPair",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EncryptionServiceServer).GenerateRsaKeyPair(ctx, req.(*GenerateRsaKeyPairRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _EncryptionService_GenerateEciesKeyPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateEciesKeyPairRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EncryptionServiceServer).GenerateEciesKeyPair(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.EncryptionService/GenerateEciesKeyPair",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EncryptionServiceServer).GenerateEciesKeyPair(ctx, req.(*GenerateEciesKeyPairRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _EncryptionService_Encrypt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -223,14 +159,6 @@ var EncryptionService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "bloock.EncryptionService",
 	HandlerType: (*EncryptionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GenerateRsaKeyPair",
-			Handler:    _EncryptionService_GenerateRsaKeyPair_Handler,
-		},
-		{
-			MethodName: "GenerateEciesKeyPair",
-			Handler:    _EncryptionService_GenerateEciesKeyPair_Handler,
-		},
 		{
 			MethodName: "Encrypt",
 			Handler:    _EncryptionService_Encrypt_Handler,

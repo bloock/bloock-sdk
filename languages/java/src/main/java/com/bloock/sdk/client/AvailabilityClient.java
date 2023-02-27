@@ -8,9 +8,9 @@ import com.bloock.sdk.bridge.proto.Availability.RetrieveResponse;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.Loader;
-import com.bloock.sdk.entity.Publisher;
-import com.bloock.sdk.entity.Record;
+import com.bloock.sdk.entity.availability.Loader;
+import com.bloock.sdk.entity.availability.Publisher;
+import com.bloock.sdk.entity.record.Record;
 
 public class AvailabilityClient {
   private Bridge bridge;

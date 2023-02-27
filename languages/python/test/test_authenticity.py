@@ -2,7 +2,8 @@ import unittest
 
 from bloock.client.authenticity import AuthenticityClient
 from bloock.client.record import RecordClient
-from bloock.entity.signer import EcdsaSigner, EnsSigner
+from bloock.entity.authenticity.ecdsa_signer import EcdsaSigner
+from bloock.entity.authenticity.ens_signer import EnsSigner
 from test.util import init_sdk
 
 

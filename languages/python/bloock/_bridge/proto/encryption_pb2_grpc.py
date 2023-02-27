@@ -14,246 +14,119 @@ class EncryptionServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GenerateRsaKeyPair = channel.unary_unary(
-            "/bloock.EncryptionService/GenerateRsaKeyPair",
-            request_serializer=encryption__pb2.GenerateRsaKeyPairRequest.SerializeToString,
-            response_deserializer=encryption__pb2.GenerateRsaKeyPairResponse.FromString,
-        )
-        self.GenerateEciesKeyPair = channel.unary_unary(
-            "/bloock.EncryptionService/GenerateEciesKeyPair",
-            request_serializer=encryption__pb2.GenerateEciesKeyPairRequest.SerializeToString,
-            response_deserializer=encryption__pb2.GenerateEciesKeyPairResponse.FromString,
-        )
         self.Encrypt = channel.unary_unary(
-            "/bloock.EncryptionService/Encrypt",
-            request_serializer=encryption__pb2.EncryptRequest.SerializeToString,
-            response_deserializer=encryption__pb2.EncryptResponse.FromString,
-        )
+                '/bloock.EncryptionService/Encrypt',
+                request_serializer=encryption__pb2.EncryptRequest.SerializeToString,
+                response_deserializer=encryption__pb2.EncryptResponse.FromString,
+                )
         self.Decrypt = channel.unary_unary(
-            "/bloock.EncryptionService/Decrypt",
-            request_serializer=encryption__pb2.DecryptRequest.SerializeToString,
-            response_deserializer=encryption__pb2.DecryptResponse.FromString,
-        )
+                '/bloock.EncryptionService/Decrypt',
+                request_serializer=encryption__pb2.DecryptRequest.SerializeToString,
+                response_deserializer=encryption__pb2.DecryptResponse.FromString,
+                )
         self.GetEncryptionAlg = channel.unary_unary(
-            "/bloock.EncryptionService/GetEncryptionAlg",
-            request_serializer=encryption__pb2.EncryptionAlgRequest.SerializeToString,
-            response_deserializer=encryption__pb2.EncryptionAlgResponse.FromString,
-        )
+                '/bloock.EncryptionService/GetEncryptionAlg',
+                request_serializer=encryption__pb2.EncryptionAlgRequest.SerializeToString,
+                response_deserializer=encryption__pb2.EncryptionAlgResponse.FromString,
+                )
 
 
 class EncryptionServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GenerateRsaKeyPair(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
-
-    def GenerateEciesKeyPair(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
-
     def Encrypt(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def Decrypt(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetEncryptionAlg(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_EncryptionServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "GenerateRsaKeyPair": grpc.unary_unary_rpc_method_handler(
-            servicer.GenerateRsaKeyPair,
-            request_deserializer=encryption__pb2.GenerateRsaKeyPairRequest.FromString,
-            response_serializer=encryption__pb2.GenerateRsaKeyPairResponse.SerializeToString,
-        ),
-        "GenerateEciesKeyPair": grpc.unary_unary_rpc_method_handler(
-            servicer.GenerateEciesKeyPair,
-            request_deserializer=encryption__pb2.GenerateEciesKeyPairRequest.FromString,
-            response_serializer=encryption__pb2.GenerateEciesKeyPairResponse.SerializeToString,
-        ),
-        "Encrypt": grpc.unary_unary_rpc_method_handler(
-            servicer.Encrypt,
-            request_deserializer=encryption__pb2.EncryptRequest.FromString,
-            response_serializer=encryption__pb2.EncryptResponse.SerializeToString,
-        ),
-        "Decrypt": grpc.unary_unary_rpc_method_handler(
-            servicer.Decrypt,
-            request_deserializer=encryption__pb2.DecryptRequest.FromString,
-            response_serializer=encryption__pb2.DecryptResponse.SerializeToString,
-        ),
-        "GetEncryptionAlg": grpc.unary_unary_rpc_method_handler(
-            servicer.GetEncryptionAlg,
-            request_deserializer=encryption__pb2.EncryptionAlgRequest.FromString,
-            response_serializer=encryption__pb2.EncryptionAlgResponse.SerializeToString,
-        ),
+            'Encrypt': grpc.unary_unary_rpc_method_handler(
+                    servicer.Encrypt,
+                    request_deserializer=encryption__pb2.EncryptRequest.FromString,
+                    response_serializer=encryption__pb2.EncryptResponse.SerializeToString,
+            ),
+            'Decrypt': grpc.unary_unary_rpc_method_handler(
+                    servicer.Decrypt,
+                    request_deserializer=encryption__pb2.DecryptRequest.FromString,
+                    response_serializer=encryption__pb2.DecryptResponse.SerializeToString,
+            ),
+            'GetEncryptionAlg': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetEncryptionAlg,
+                    request_deserializer=encryption__pb2.EncryptionAlgRequest.FromString,
+                    response_serializer=encryption__pb2.EncryptionAlgResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "bloock.EncryptionService", rpc_method_handlers
-    )
+            'bloock.EncryptionService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class EncryptionService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GenerateRsaKeyPair(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def Encrypt(request,
             target,
-            "/bloock.EncryptionService/GenerateRsaKeyPair",
-            encryption__pb2.GenerateRsaKeyPairRequest.SerializeToString,
-            encryption__pb2.GenerateRsaKeyPairResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
-
-    @staticmethod
-    def GenerateEciesKeyPair(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            "/bloock.EncryptionService/GenerateEciesKeyPair",
-            encryption__pb2.GenerateEciesKeyPairRequest.SerializeToString,
-            encryption__pb2.GenerateEciesKeyPairResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
-
-    @staticmethod
-    def Encrypt(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            "/bloock.EncryptionService/Encrypt",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.EncryptionService/Encrypt',
             encryption__pb2.EncryptRequest.SerializeToString,
             encryption__pb2.EncryptResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Decrypt(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def Decrypt(request,
             target,
-            "/bloock.EncryptionService/Decrypt",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.EncryptionService/Decrypt',
             encryption__pb2.DecryptRequest.SerializeToString,
             encryption__pb2.DecryptResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetEncryptionAlg(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def GetEncryptionAlg(request,
             target,
-            "/bloock.EncryptionService/GetEncryptionAlg",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.EncryptionService/GetEncryptionAlg',
             encryption__pb2.EncryptionAlgRequest.SerializeToString,
             encryption__pb2.EncryptionAlgResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

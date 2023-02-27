@@ -1,10 +1,9 @@
 use crate::{
     error::BridgeError,
     items::{
-        AuthenticityServiceHandler, GenerateEcdsaKeysRequest, GenerateEcdsaKeysResponse,
-        GetSignaturesRequest, GetSignaturesResponse, SignRequest, SignResponse, Signature,
-        SignatureCommonNameRequest, SignatureCommonNameResponse, SignerAlg, VerifyRequest,
-        VerifyResponse,
+        AuthenticityServiceHandler, GetSignaturesRequest, GetSignaturesResponse, SignRequest,
+        SignResponse, Signature, SignatureCommonNameRequest, SignatureCommonNameResponse,
+        SignerAlg, VerifyRequest, VerifyResponse,
     },
     server::response_types::RequestConfigData,
 };
@@ -18,19 +17,6 @@ pub struct AuthenticityServer {}
 
 #[async_trait(?Send)]
 impl AuthenticityServiceHandler for AuthenticityServer {
-    async fn generate_ecdsa_keys(
-        &self,
-        _req: &GenerateEcdsaKeysRequest,
-    ) -> Result<GenerateEcdsaKeysResponse, String> {
-        let (private_key, public_key) = EcdsaSigner::generate_keys().map_err(|e| e.to_string())?;
-
-        Ok(GenerateEcdsaKeysResponse {
-            private_key,
-            public_key,
-            error: None,
-        })
-    }
-
     async fn sign(&self, req: &SignRequest) -> Result<SignResponse, String> {
         let config_data = req.get_config_data()?;
         let client = authenticity::configure(config_data);

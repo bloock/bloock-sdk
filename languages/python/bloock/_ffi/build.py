@@ -1,8 +1,9 @@
-from cffi import FFI
-from typing import List
-import sys
 import os
 import platform
+import sys
+from typing import List
+
+from cffi import FFI
 
 ffi_builder = FFI()
 
@@ -19,7 +20,6 @@ else:
         lib_dirs = "bloock/_ffi/native/x86_64-apple-darwin"
     else:
         lib_dirs = "bloock/_ffi/native/aarch64-apple-darwin"
-
 
 include_dir = "bloock/_ffi/native"
 
@@ -54,7 +54,6 @@ ffi_builder.set_source(
 with open(f"{include_dir}/bloock_bridge.h") as f:
     header = f.read()
     ffi_builder.cdef(header)
-
 
 if __name__ == "__main__":  # not when running with setuptools
     ffi_builder.compile(verbose=True)

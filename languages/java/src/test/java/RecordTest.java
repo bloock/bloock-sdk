@@ -1,10 +1,22 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.bloock.sdk.client.*;
-import com.bloock.sdk.entity.*;
-import com.bloock.sdk.entity.Record;
+import com.bloock.sdk.entity.key.EcdsaKeyPair;
+import com.bloock.sdk.entity.key.KeyPair;
+import com.bloock.sdk.entity.key.RsaKeyPair;
+import com.bloock.sdk.entity.record.Record;
 import java.util.Collections;
 import java.util.List;
+
+import com.bloock.sdk.entity.authenticity.*;
+import com.bloock.sdk.entity.availability.HostedLoader;
+import com.bloock.sdk.entity.availability.HostedPublisher;
+import com.bloock.sdk.entity.availability.IpfsLoader;
+import com.bloock.sdk.entity.availability.IpfsPublisher;
+import com.bloock.sdk.entity.encryption.*;
+import com.bloock.sdk.entity.integrity.AnchorNetwork;
+import com.bloock.sdk.entity.integrity.Proof;
+import com.bloock.sdk.entity.integrity.ProofAnchor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -191,89 +203,6 @@ class RecordTest {
     assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
 
     String hash = decryptedRecord.getHash();
-    assertEquals(hash, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
-  }
-
-  @Test
-  void testEciesEncryption() throws Exception {
-    String payload = "Hello world 2";
-    EncryptionClient encryptionClient = new EncryptionClient();
-    EciesKeyPair keyPair = encryptionClient.generateEciesKeyPair();
-    RecordClient recordClient = new RecordClient();
-    Record encryptedRecord =
-        recordClient
-            .fromString(payload)
-            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-            .build();
-
-    assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
-    assertEquals(encryptionClient.getEncryptionAlg(encryptedRecord), EncryptionAlg.ECIES);
-
-    Record decryptedRecord =
-        recordClient
-            .fromRecord(encryptedRecord)
-            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-            .build();
-
-    assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
-
-    String hash = decryptedRecord.getHash();
-    assertEquals(hash, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
-  }
-
-  @Test
-  void testEciesEncryptionHosted() throws Exception {
-    String payload = "Hello world 2";
-    EncryptionClient encryptionClient = new EncryptionClient();
-    KeyPair keyPair = encryptionClient.generateEciesKeyPair();
-    RecordClient recordClient = new RecordClient();
-    Record encryptedRecord =
-        recordClient
-            .fromString(payload)
-            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-            .build();
-    assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
-
-    AvailabilityClient availabilityClient = new AvailabilityClient();
-    String result = availabilityClient.publish(encryptedRecord, new HostedPublisher());
-
-    Record loadedRecord =
-        recordClient
-            .fromLoader(new HostedLoader(result))
-            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-            .build();
-
-    assertArrayEquals(loadedRecord.retrieve(), payload.getBytes());
-
-    String hash = loadedRecord.getHash();
-    assertEquals(hash, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
-  }
-
-  @Test
-  void testEciesEncryptionIpfs() throws Exception {
-    String payload = "Hello world 2";
-    EncryptionClient encryptionClient = new EncryptionClient();
-    KeyPair keyPair = encryptionClient.generateEciesKeyPair();
-    RecordClient recordClient = new RecordClient();
-    Record encryptedRecord =
-        recordClient
-            .fromString(payload)
-            .withEncrypter(new EciesEncrypter(keyPair.getPublicKey()))
-            .build();
-    assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
-
-    AvailabilityClient availabilityClient = new AvailabilityClient();
-    String result = availabilityClient.publish(encryptedRecord, new IpfsPublisher());
-
-    Record loadedRecord =
-        recordClient
-            .fromLoader(new IpfsLoader(result))
-            .withDecrypter(new EciesDecrypter(keyPair.getPrivateKey()))
-            .build();
-
-    assertArrayEquals(loadedRecord.retrieve(), payload.getBytes());
-
-    String hash = loadedRecord.getHash();
     assertEquals(hash, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
   }
 

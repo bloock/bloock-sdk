@@ -5,13 +5,14 @@ import { NewConfigData } from "../config/config";
 import { Signature } from "../entity/signature";
 import { Record } from "../entity/record";
 import {
-  GenerateEcdsaKeysRequest,
   GetSignaturesRequest,
   SignRequest,
   SignatureCommonNameRequest,
   VerifyRequest
 } from "../bridge/proto/authenticity";
 import { Signer } from "../entity/signer";
+import { GenerateLocalKeyRequest } from "../bridge/proto/keys";
+import { KeyType } from "../bridge/proto/keys_entities";
 
 export class AuthenticityClient {
   private bridge: BloockBridge;
@@ -25,15 +26,17 @@ export class AuthenticityClient {
   /**
    * It generates a public and a private key
    * @returns {Promise<KeyPair>} An object containing both the public and the private key
+   * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
    */
   public async generateEcdsaKeyPair(): Promise<KeyPair> {
-    let request = GenerateEcdsaKeysRequest.fromPartial({
-      configData: this.configData
+    let request = GenerateLocalKeyRequest.fromPartial({
+      configData: this.configData,
+      keyType: KeyType.EcP256k
     });
 
     return this.bridge
-      .getAuthenticity()
-      .GenerateEcdsaKeys(request)
+      .getKey()
+      .GenerateLocalKey(request)
       .then(res => {
         if (res.error) {
           throw res.error;

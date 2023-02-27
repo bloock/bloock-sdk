@@ -1,7 +1,7 @@
 package com.bloock.sdk;
 
 import com.bloock.sdk.bridge.proto.Config.NetworkConfig;
-import com.bloock.sdk.entity.Network;
+import com.bloock.sdk.entity.integrity.Network;
 import java.util.HashMap;
 import java.util.Map;
 
