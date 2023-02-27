@@ -19,17 +19,14 @@ jobs:
         with:
           ref: "v${{ github.event.inputs.version }}"
       - run: |
-          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" $(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s https://api.github.com/repos/bloock/bloock-sdk/releases/tags/v${{ github.event.inputs.version }} | jq -r '.assets[] | select(.name == "bloock_lib_js-${{ github.event.inputs.version }}.tgz") | .url') --output bloock_lib_js-${{ github.event.inputs.version }}.tgz
-      - name: Extract gzipped archive
-        run: |
-          mkdir -p bloock_lib_js-${{ github.event.inputs.version }}
-          tar -xzf bloock_lib_js-${{ github.event.inputs.version }}.tgz -C bloock_lib_js-${{ github.event.inputs.version }} --strip-components=1
+          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" $(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s https://api.github.com/repos/bloock/bloock-sdk/releases/tags/v${{ github.event.inputs.version }} | jq -r '.assets[] | select(.name == "bloock_lib_js-${{ github.event.inputs.version }}.zip") | .url') --output bloock_lib_js-${{ github.event.inputs.version }}.zip
+      - run: unzip bloock_lib_js-${{ github.event.inputs.version }}.zip -d bloock_lib_js-${{ github.event.inputs.version }}
       - name: Use Node.js 16
         uses: actions/setup-node@v1
         with:
           node-version: "16"
       - name: Set up .npmrc
-        working-directory: "bloock_lib_js-${{ github.event.inputs.version }}"
+        working-directory: "bloock_lib_js-${{ github.event.inputs.version }}/bloock_lib_js"
         run: echo '//registry.npmjs.org/:_authToken=${{ secrets.npm_auth_token }}' > .npmrc
       - run: npm publish
-        working-directory: "bloock_lib_js-${{ github.event.inputs.version }}"
+        working-directory: "bloock_lib_js-${{ github.event.inputs.version }}/bloock_lib_js"

@@ -1,6 +1,6 @@
 [package]
 name = "bloock_bridge"
-version = "2.4.1-beta.2"
+version = "2.4.1-beta.3"
 edition = "2021"
 
 [lib]
