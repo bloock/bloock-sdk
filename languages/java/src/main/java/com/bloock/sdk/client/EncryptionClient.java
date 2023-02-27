@@ -31,14 +31,15 @@ public class EncryptionClient {
 
   /**
    * @deprecated
-   * Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
+   *             Will be deleted in future versions. Use KeyClient.newLocalKey
+   *             function instead.
    */
-  @Deprecated(forRemoval = true)
+  @Deprecated
   public RsaKeyPair generateRsaKeyPair() throws Exception {
     Keys.GenerateLocalKeyRequest request = Keys.GenerateLocalKeyRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setKeyType(KeyType.Rsa2048.toProto())
-            .build();
+        .setConfigData(this.configData)
+        .setKeyType(KeyType.Rsa2048.toProto())
+        .build();
 
     Keys.GenerateLocalKeyResponse response = bridge.getKey().generateLocalKey(request);
 
@@ -50,12 +51,11 @@ public class EncryptionClient {
   }
 
   public Record encrypt(Record record, Encrypter encrypter) throws Exception {
-    Encryption.EncryptRequest request =
-        Encryption.EncryptRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setRecord(record.toProto())
-            .setEncrypter(encrypter.toProto())
-            .build();
+    Encryption.EncryptRequest request = Encryption.EncryptRequest.newBuilder()
+        .setConfigData(this.configData)
+        .setRecord(record.toProto())
+        .setEncrypter(encrypter.toProto())
+        .build();
 
     Encryption.EncryptResponse response = bridge.getEncryption().encrypt(request);
 
@@ -67,12 +67,11 @@ public class EncryptionClient {
   }
 
   public Record decrypt(Record record, Decrypter decrypter) throws Exception {
-    Encryption.DecryptRequest request =
-        Encryption.DecryptRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setRecord(record.toProto())
-            .setDecrypter(decrypter.toProto())
-            .build();
+    Encryption.DecryptRequest request = Encryption.DecryptRequest.newBuilder()
+        .setConfigData(this.configData)
+        .setRecord(record.toProto())
+        .setDecrypter(decrypter.toProto())
+        .build();
 
     Encryption.DecryptResponse response = bridge.getEncryption().decrypt(request);
 
@@ -86,11 +85,10 @@ public class EncryptionClient {
   public EncryptionAlg getEncryptionAlg(Record record) throws Exception {
     Bridge bridge = new Bridge();
 
-    EncryptionAlgRequest req =
-        EncryptionAlgRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setRecord(record.toProto())
-            .build();
+    EncryptionAlgRequest req = EncryptionAlgRequest.newBuilder()
+        .setConfigData(this.configData)
+        .setRecord(record.toProto())
+        .build();
     EncryptionAlgResponse res = bridge.getEncryption().getEncryptionAlg(req);
 
     if (res.getError() != Error.getDefaultInstance()) {
