@@ -6,6 +6,7 @@ import com.bloock.sdk.entity.key.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,7 +51,7 @@ class IdentityTest {
               .addBooleanAttribute("", "", "")
               .addDateAttribute("", "", "")
               .addDatetimeAttribute("", "", "")
-              .addMultichoiceAttribute("", "", List.of(new String[]{"a", "b", "c"}), "")
+              .addMultichoiceAttribute("", "", Arrays.asList("a", "b", "c"), "")
               .addNumberAttribute("", "", "")
               .build();
       fail("Exception was not thrown");
