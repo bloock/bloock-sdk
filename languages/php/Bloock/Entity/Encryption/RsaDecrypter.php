@@ -7,12 +7,14 @@ class RsaDecrypter implements Decrypter
     public $alg;
     public $args;
 
-    public function __construct(string $publicKey) {
+    public function __construct(string $publicKey)
+    {
         $this->alg = \Bloock\EncryptionAlg::RSA;
         $this->args = new DecrypterArgs($publicKey);
     }
 
-    public function toProto(): \Bloock\Decrypter {
+    public function toProto(): \Bloock\Decrypter
+    {
         $p = new \Bloock\Decrypter();
         $p->setAlg($this->alg);
         $p->setArgs($this->args->toProto());

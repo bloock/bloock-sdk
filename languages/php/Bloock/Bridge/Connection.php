@@ -3,15 +3,14 @@
 namespace Bloock\Bridge;
 
 use Bloock\Ffi\Ffi;
-use Grpc\BaseStub;
-use Grpc\UnaryCall;
 
 class Connection
 {
     private $opts;
     private $ffi;
 
-    public function __construct($hostname, $opts, $channel = null) {
+    public function __construct($hostname, $opts, $channel = null)
+    {
         $this->ffi = new Ffi();
         $this->opts = [
             'credentials' => null,
@@ -25,7 +24,8 @@ class Connection
         $deserialize,
         array $metadata = [],
         array $options = []
-    ) {
+    )
+    {
         $payload = $argument->serializeToString();
         $res = $this->ffi->request($method, $payload);
 

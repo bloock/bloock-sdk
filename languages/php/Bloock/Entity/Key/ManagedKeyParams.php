@@ -23,7 +23,18 @@ class ManagedKeyParams
         $this->expiration = $expiration;
     }
 
-    public function toProto(): \Bloock\ManagedKeyParams {
+    public static function fromProto(\Bloock\ManagedKeyParams $res): ManagedKeyParams
+    {
+        return new ManagedKeyParams(
+            $res->getName(),
+            $res->getProtection(),
+            $res->getKeyType(),
+            $res->getExpiration()
+        );
+    }
+
+    public function toProto(): \Bloock\ManagedKeyParams
+    {
         $p = new \Bloock\ManagedKeyParams();
         $p->setProtection(KeyProtectionLevel::toProto($this->protection));
         $p->setKeyType(KeyType::toProto($this->keyType));
@@ -36,14 +47,5 @@ class ManagedKeyParams
             $p->setExpiration($this->expiration);
         }
         return $p;
-    }
-
-    public static function fromProto(\Bloock\ManagedKeyParams $res): ManagedKeyParams {
-        return new ManagedKeyParams(
-            $res->getName(),
-            $res->getProtection(),
-            $res->getKeyType(),
-            $res->getExpiration()
-        );
     }
 }

@@ -11,7 +11,8 @@ class RsaKeyPair extends KeyPair
         parent::__construct($publicKey, $privateKey);
     }
 
-    public static function fromProto(GenerateLocalKeyResponse $res): RsaKeyPair {
+    public static function fromProto(GenerateLocalKeyResponse $res): RsaKeyPair
+    {
         return new RsaKeyPair($res->getLocalKey()->getKey(), $res->getLocalKey()->getPrivateKey());
     }
 }

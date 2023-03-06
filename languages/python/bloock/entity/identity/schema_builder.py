@@ -4,18 +4,12 @@ from typing import List
 
 from bloock._bridge import BloockBridge
 from bloock._bridge.proto.config_pb2 import ConfigData
-from bloock._bridge.proto.identity_pb2 import CreateCredentialOfferRequest, BuildSchemaRequest
+from bloock._bridge.proto.identity_pb2 import BuildSchemaRequest
 from bloock._bridge.proto.shared_pb2 import Error
-from bloock.entity.identity.boolean_attribute import BooleanAttribute
 from bloock.entity.identity.boolean_attribute_descriptor import BooleanAttributeDescriptor
-from bloock.entity.identity.credential_offer import CredentialOffer
-from bloock.entity.identity.date_attribute import DateAttribute
 from bloock.entity.identity.date_attribute_descriptor import DateAttributeDescriptor
-from bloock.entity.identity.datetime_attribute import DatetimeAttribute
 from bloock.entity.identity.datetime_attribute_descriptor import DatetimeAttributeDescriptor
-from bloock.entity.identity.multichoice_attribute import MultichoiceAttribute
 from bloock.entity.identity.multichoice_attribute_descriptor import MultichoiceAttributeDescriptor
-from bloock.entity.identity.number_attribute import NumberAttribute
 from bloock.entity.identity.number_attribute_descriptor import NumberAttributeDescriptor
 from bloock.entity.identity.schema import Schema
 
@@ -44,8 +38,10 @@ class SchemaBuilder:
         self.datetime_attributes.append(DatetimeAttributeDescriptor(name, technical_name, description))
         return self
 
-    def add_multichoice_attribute(self, name: str, technical_name: str, allowed_values: List[str], description: str) -> SchemaBuilder:
-        self.multichoice_attributes.append(MultichoiceAttributeDescriptor(name, technical_name, allowed_values, description))
+    def add_multichoice_attribute(self, name: str, technical_name: str, allowed_values: List[str],
+                                  description: str) -> SchemaBuilder:
+        self.multichoice_attributes.append(
+            MultichoiceAttributeDescriptor(name, technical_name, allowed_values, description))
         return self
 
     def add_number_attribute(self, name: str, technical_name: str, description: str) -> SchemaBuilder:

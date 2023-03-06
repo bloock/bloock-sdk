@@ -3,13 +3,13 @@ package com.bloock.sdk.entity.encryption;
 import com.bloock.sdk.bridge.proto.EncryptionEntities;
 
 class EncrypterArgs {
-  String key;
+    String key;
 
-  EncrypterArgs(String key) {
-    this.key = key;
-  }
+    EncrypterArgs(String key) {
+        this.key = key;
+    }
 
-  EncryptionEntities.EncrypterArgs toProto() {
-    return EncryptionEntities.EncrypterArgs.newBuilder().setKey(this.key).build();
-  }
+    EncryptionEntities.EncrypterArgs toProto() {
+        return EncryptionEntities.EncrypterArgs.newBuilder().setKey(this.key).build();
+    }
 }

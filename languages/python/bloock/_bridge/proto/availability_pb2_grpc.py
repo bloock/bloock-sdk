@@ -15,15 +15,15 @@ class AvailabilityServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Publish = channel.unary_unary(
-                '/bloock.AvailabilityService/Publish',
-                request_serializer=availability__pb2.PublishRequest.SerializeToString,
-                response_deserializer=availability__pb2.PublishResponse.FromString,
-                )
+            '/bloock.AvailabilityService/Publish',
+            request_serializer=availability__pb2.PublishRequest.SerializeToString,
+            response_deserializer=availability__pb2.PublishResponse.FromString,
+        )
         self.Retrieve = channel.unary_unary(
-                '/bloock.AvailabilityService/Retrieve',
-                request_serializer=availability__pb2.RetrieveRequest.SerializeToString,
-                response_deserializer=availability__pb2.RetrieveResponse.FromString,
-                )
+            '/bloock.AvailabilityService/Retrieve',
+            request_serializer=availability__pb2.RetrieveRequest.SerializeToString,
+            response_deserializer=availability__pb2.RetrieveResponse.FromString,
+        )
 
 
 class AvailabilityServiceServicer(object):
@@ -44,56 +44,56 @@ class AvailabilityServiceServicer(object):
 
 def add_AvailabilityServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Publish': grpc.unary_unary_rpc_method_handler(
-                    servicer.Publish,
-                    request_deserializer=availability__pb2.PublishRequest.FromString,
-                    response_serializer=availability__pb2.PublishResponse.SerializeToString,
-            ),
-            'Retrieve': grpc.unary_unary_rpc_method_handler(
-                    servicer.Retrieve,
-                    request_deserializer=availability__pb2.RetrieveRequest.FromString,
-                    response_serializer=availability__pb2.RetrieveResponse.SerializeToString,
-            ),
+        'Publish': grpc.unary_unary_rpc_method_handler(
+            servicer.Publish,
+            request_deserializer=availability__pb2.PublishRequest.FromString,
+            response_serializer=availability__pb2.PublishResponse.SerializeToString,
+        ),
+        'Retrieve': grpc.unary_unary_rpc_method_handler(
+            servicer.Retrieve,
+            request_deserializer=availability__pb2.RetrieveRequest.FromString,
+            response_serializer=availability__pb2.RetrieveResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'bloock.AvailabilityService', rpc_method_handlers)
+        'bloock.AvailabilityService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class AvailabilityService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def Publish(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+                target,
+                options=(),
+                channel_credentials=None,
+                call_credentials=None,
+                insecure=False,
+                compression=None,
+                wait_for_ready=None,
+                timeout=None,
+                metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.AvailabilityService/Publish',
-            availability__pb2.PublishRequest.SerializeToString,
-            availability__pb2.PublishResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+                                             availability__pb2.PublishRequest.SerializeToString,
+                                             availability__pb2.PublishResponse.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Retrieve(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+                 target,
+                 options=(),
+                 channel_credentials=None,
+                 call_credentials=None,
+                 insecure=False,
+                 compression=None,
+                 wait_for_ready=None,
+                 timeout=None,
+                 metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.AvailabilityService/Retrieve',
-            availability__pb2.RetrieveRequest.SerializeToString,
-            availability__pb2.RetrieveResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+                                             availability__pb2.RetrieveRequest.SerializeToString,
+                                             availability__pb2.RetrieveResponse.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

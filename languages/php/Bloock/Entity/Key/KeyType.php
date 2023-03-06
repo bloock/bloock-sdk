@@ -10,7 +10,8 @@ class KeyType
     const Rsa4096 = "Rsa4096";
     const UNRECOGNIZED = "UNRECOGNIZED";
 
-    public static function toProto(string $type): int {
+    public static function toProto(string $type): int
+    {
         switch ($type) {
             case KeyType::EcP256k:
                 return \Bloock\KeyType::EcP256k;
@@ -25,7 +26,8 @@ class KeyType
         }
     }
 
-    public static function fromProto(int $alg): string {
+    public static function fromProto(int $alg): string
+    {
         switch ($alg) {
             case \Bloock\KeyType::EcP256k:
                 return KeyType::EcP256k;

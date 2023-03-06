@@ -1,19 +1,24 @@
 <?php
 
+use Bloock\Bloock;
+use Bloock\Client\KeyClient;
+use Bloock\Entity\Key\KeyProtectionLevel;
+use Bloock\Entity\Key\KeyType;
+use Bloock\Entity\Key\ManagedKeyParams;
 use PHPUnit\Framework\TestCase;
 
 final class KeyTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        \Bloock\Bloock::$apiKey = getenv("API_KEY");
-        \Bloock\Bloock::$disableAnalytics = true;
+        Bloock::$apiKey = getenv("API_KEY");
+        Bloock::$disableAnalytics = true;
     }
 
     public function testGenerateLocalEcdsa()
     {
-        $keyClient = new \Bloock\Client\KeyClient();
-        $key = $keyClient->newLocalKey(\Bloock\Entity\Key\KeyType::EcP256k);
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
         $this->assertNotNull($key->key);
         $this->assertNotNull($key->privateKey);
@@ -21,8 +26,8 @@ final class KeyTest extends TestCase
 
     public function testGenerateLocalRsa()
     {
-        $keyClient = new \Bloock\Client\KeyClient();
-        $key = $keyClient->newLocalKey(\Bloock\Entity\Key\KeyType::Rsa2048);
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Rsa2048);
 
         $this->assertNotNull($key->key);
         $this->assertNotNull($key->privateKey);
@@ -30,13 +35,13 @@ final class KeyTest extends TestCase
 
     public function testGenerateManagedEcdsa()
     {
-        $keyClient = new \Bloock\Client\KeyClient();
+        $keyClient = new KeyClient();
 
         $keyName = "key_name";
-        $keyProtection = \Bloock\Entity\Key\KeyProtectionLevel::SOFTWARE;
-        $keyType = \Bloock\Entity\Key\KeyType::EcP256k;
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::EcP256k;
 
-        $params = new \Bloock\Entity\Key\ManagedKeyParams($keyProtection, $keyType, $keyName);
+        $params = new ManagedKeyParams($keyProtection, $keyType, $keyName);
         $key = $keyClient->newManagedKey($params);
 
         $this->assertEquals($key->name, $keyName);
@@ -47,13 +52,13 @@ final class KeyTest extends TestCase
 
     public function testGenerateManagedRsa()
     {
-        $keyClient = new \Bloock\Client\KeyClient();
+        $keyClient = new KeyClient();
 
         $keyName = "key_name";
-        $keyProtection = \Bloock\Entity\Key\KeyProtectionLevel::SOFTWARE;
-        $keyType = \Bloock\Entity\Key\KeyType::Rsa2048;
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::Rsa2048;
 
-        $params = new \Bloock\Entity\Key\ManagedKeyParams($keyProtection, $keyType, $keyName);
+        $params = new ManagedKeyParams($keyProtection, $keyType, $keyName);
         $key = $keyClient->newManagedKey($params);
 
         $this->assertEquals($key->name, $keyName);
@@ -64,12 +69,12 @@ final class KeyTest extends TestCase
 
     public function testGenerateManagedWithoutName()
     {
-        $keyClient = new \Bloock\Client\KeyClient();
+        $keyClient = new KeyClient();
 
-        $keyProtection = \Bloock\Entity\Key\KeyProtectionLevel::SOFTWARE;
-        $keyType = \Bloock\Entity\Key\KeyType::EcP256k;
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::EcP256k;
 
-        $params = new \Bloock\Entity\Key\ManagedKeyParams($keyProtection, $keyType);
+        $params = new ManagedKeyParams($keyProtection, $keyType);
         $key = $keyClient->newManagedKey($params);
 
         $this->assertEquals("", $key->name);

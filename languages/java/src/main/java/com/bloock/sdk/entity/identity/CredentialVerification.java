@@ -13,15 +13,15 @@ public class CredentialVerification {
         this.revocation = revocation;
     }
 
+    public static CredentialVerification fromProto(IdentityEntities.CredentialVerification res) {
+        return new CredentialVerification(res.getTimestamp(), res.getIssuer(), res.getRevocation());
+    }
+
     public IdentityEntities.CredentialVerification toProto() {
         return IdentityEntities.CredentialVerification.newBuilder()
                 .setTimestamp(this.timestamp)
                 .setIssuer(this.issuer)
                 .setRevocation(this.revocation)
                 .build();
-    }
-
-    public static CredentialVerification fromProto(IdentityEntities.CredentialVerification res) {
-        return new CredentialVerification(res.getTimestamp(), res.getIssuer(), res.getRevocation());
     }
 }

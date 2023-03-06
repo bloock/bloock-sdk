@@ -4,10 +4,11 @@ isort:skip_file
 """
 import builtins
 import collections.abc
+import sys
+
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
-import sys
 
 if sys.version_info >= (3, 8):
     import typing as typing_extensions
@@ -15,6 +16,7 @@ else:
     import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+
 
 class Identity(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -25,16 +27,21 @@ class Identity(google.protobuf.message.Message):
     mnemonic: builtins.str
     key: builtins.str
     private_key: builtins.str
+
     def __init__(
-        self,
-        *,
-        mnemonic: builtins.str = ...,
-        key: builtins.str = ...,
-        private_key: builtins.str = ...,
+            self,
+            *,
+            mnemonic: builtins.str = ...,
+            key: builtins.str = ...,
+            private_key: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["key", b"key", "mnemonic", b"mnemonic", "private_key", b"private_key"]) -> None: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "key", b"key", "mnemonic", b"mnemonic", "private_key", b"private_key"]) -> None: ...
+
 
 global___Identity = Identity
+
 
 class BooleanAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -45,16 +52,21 @@ class BooleanAttributeDefinition(google.protobuf.message.Message):
     display_name: builtins.str
     id: builtins.str
     description: builtins.str
+
     def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
+            self,
+            *,
+            display_name: builtins.str = ...,
+            id: builtins.str = ...,
+            description: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
 
 global___BooleanAttributeDefinition = BooleanAttributeDefinition
+
 
 class DateAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -65,16 +77,21 @@ class DateAttributeDefinition(google.protobuf.message.Message):
     display_name: builtins.str
     id: builtins.str
     description: builtins.str
+
     def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
+            self,
+            *,
+            display_name: builtins.str = ...,
+            id: builtins.str = ...,
+            description: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
 
 global___DateAttributeDefinition = DateAttributeDefinition
+
 
 class DateTimeAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -85,16 +102,21 @@ class DateTimeAttributeDefinition(google.protobuf.message.Message):
     display_name: builtins.str
     id: builtins.str
     description: builtins.str
+
     def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
+            self,
+            *,
+            display_name: builtins.str = ...,
+            id: builtins.str = ...,
+            description: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
 
 global___DateTimeAttributeDefinition = DateTimeAttributeDefinition
+
 
 class MultiChoiceAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -106,19 +128,25 @@ class MultiChoiceAttributeDefinition(google.protobuf.message.Message):
     display_name: builtins.str
     id: builtins.str
     description: builtins.str
+
     @property
     def allowed_values(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+
     def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
-        allowed_values: collections.abc.Iterable[builtins.str] | None = ...,
+            self,
+            *,
+            display_name: builtins.str = ...,
+            id: builtins.str = ...,
+            description: builtins.str = ...,
+            allowed_values: collections.abc.Iterable[builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["allowed_values", b"allowed_values", "description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "allowed_values", b"allowed_values", "description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
 
 global___MultiChoiceAttributeDefinition = MultiChoiceAttributeDefinition
+
 
 class NumberAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -129,16 +157,21 @@ class NumberAttributeDefinition(google.protobuf.message.Message):
     display_name: builtins.str
     id: builtins.str
     description: builtins.str
+
     def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
+            self,
+            *,
+            display_name: builtins.str = ...,
+            id: builtins.str = ...,
+            description: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+
 
 global___NumberAttributeDefinition = NumberAttributeDefinition
+
 
 class BooleanAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -147,15 +180,19 @@ class BooleanAttribute(google.protobuf.message.Message):
     VALUE_FIELD_NUMBER: builtins.int
     id: builtins.str
     value: builtins.bool
+
     def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.bool = ...,
+            self,
+            *,
+            id: builtins.str = ...,
+            value: builtins.bool = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
 
+
 global___BooleanAttribute = BooleanAttribute
+
 
 class DateAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -164,15 +201,19 @@ class DateAttribute(google.protobuf.message.Message):
     VALUE_FIELD_NUMBER: builtins.int
     id: builtins.str
     value: builtins.int
+
     def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.int = ...,
+            self,
+            *,
+            id: builtins.str = ...,
+            value: builtins.int = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
 
+
 global___DateAttribute = DateAttribute
+
 
 class DateTimeAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -181,15 +222,19 @@ class DateTimeAttribute(google.protobuf.message.Message):
     VALUE_FIELD_NUMBER: builtins.int
     id: builtins.str
     value: builtins.int
+
     def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.int = ...,
+            self,
+            *,
+            id: builtins.str = ...,
+            value: builtins.int = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
 
+
 global___DateTimeAttribute = DateTimeAttribute
+
 
 class MultiChoiceAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -198,15 +243,19 @@ class MultiChoiceAttribute(google.protobuf.message.Message):
     VALUE_FIELD_NUMBER: builtins.int
     id: builtins.str
     value: builtins.str
+
     def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.str = ...,
+            self,
+            *,
+            id: builtins.str = ...,
+            value: builtins.str = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
 
+
 global___MultiChoiceAttribute = MultiChoiceAttribute
+
 
 class NumberAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -215,15 +264,19 @@ class NumberAttribute(google.protobuf.message.Message):
     VALUE_FIELD_NUMBER: builtins.int
     id: builtins.str
     value: builtins.int
+
     def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.int = ...,
+            self,
+            *,
+            id: builtins.str = ...,
+            value: builtins.int = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
 
+
 global___NumberAttribute = NumberAttribute
+
 
 class Schema(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -232,43 +285,55 @@ class Schema(google.protobuf.message.Message):
     JSON_LD_FIELD_NUMBER: builtins.int
     id: builtins.str
     json_ld: builtins.str
+
     def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        json_ld: builtins.str = ...,
+            self,
+            *,
+            id: builtins.str = ...,
+            json_ld: builtins.str = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "json_ld", b"json_ld"]) -> None: ...
 
+
 global___Schema = Schema
+
 
 class CredentialOffer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     JSON_FIELD_NUMBER: builtins.int
     json: builtins.str
+
     def __init__(
-        self,
-        *,
-        json: builtins.str = ...,
+            self,
+            *,
+            json: builtins.str = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["json", b"json"]) -> None: ...
 
+
 global___CredentialOffer = CredentialOffer
+
 
 class Credential(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     JSON_FIELD_NUMBER: builtins.int
     json: builtins.str
+
     def __init__(
-        self,
-        *,
-        json: builtins.str = ...,
+            self,
+            *,
+            json: builtins.str = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["json", b"json"]) -> None: ...
 
+
 global___Credential = Credential
+
 
 class CredentialVerification(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -279,27 +344,35 @@ class CredentialVerification(google.protobuf.message.Message):
     timestamp: builtins.int
     issuer: builtins.str
     revocation: builtins.int
+
     def __init__(
-        self,
-        *,
-        timestamp: builtins.int = ...,
-        issuer: builtins.str = ...,
-        revocation: builtins.int = ...,
+            self,
+            *,
+            timestamp: builtins.int = ...,
+            issuer: builtins.str = ...,
+            revocation: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["issuer", b"issuer", "revocation", b"revocation", "timestamp", b"timestamp"]) -> None: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "issuer", b"issuer", "revocation", b"revocation", "timestamp", b"timestamp"]) -> None: ...
+
 
 global___CredentialVerification = CredentialVerification
+
 
 class CredentialRevocation(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     TIMESTAMP_FIELD_NUMBER: builtins.int
     timestamp: builtins.int
+
     def __init__(
-        self,
-        *,
-        timestamp: builtins.int = ...,
+            self,
+            *,
+            timestamp: builtins.int = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["timestamp", b"timestamp"]) -> None: ...
+
 
 global___CredentialRevocation = CredentialRevocation

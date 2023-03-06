@@ -11,7 +11,8 @@ class EcdsaKeyPair extends KeyPair
         parent::__construct($publicKey, $privateKey);
     }
 
-    public static function fromProto(GenerateLocalKeyResponse $res): EcdsaKeyPair {
+    public static function fromProto(GenerateLocalKeyResponse $res): EcdsaKeyPair
+    {
         return new EcdsaKeyPair($res->getLocalKey()->getKey(), $res->getLocalKey()->getPrivateKey());
     }
 }

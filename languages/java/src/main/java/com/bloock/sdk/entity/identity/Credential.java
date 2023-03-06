@@ -9,21 +9,21 @@ public class Credential {
         this.json = json;
     }
 
-    public String toJson() {
-        return this.json;
-    }
-
     public static Credential fromJson(String json) {
         return new Credential(json);
+    }
+
+    public static Credential fromProto(IdentityEntities.Credential res) {
+        return new Credential(res.getJson());
+    }
+
+    public String toJson() {
+        return this.json;
     }
 
     public IdentityEntities.Credential toProto() {
         return IdentityEntities.Credential.newBuilder()
                 .setJson(this.json)
                 .build();
-    }
-
-    public static Credential fromProto(IdentityEntities.Credential res) {
-        return new Credential(res.getJson());
     }
 }

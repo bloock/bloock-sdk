@@ -31,12 +31,12 @@ class TestIdentity(unittest.TestCase):
         identity_client = IdentityClient()
 
         with self.assertRaises(Exception) as exc:
-            c = identity_client.build_schema("", "")\
-                .add_boolean_attribute("", "", "")\
-                .add_date_attribute("", "", "")\
-                .add_datetime_attribute("", "", "")\
-                .add_multichoice_attribute("", "", ["a", "b", "c"], "")\
-                .add_number_attribute("", "", "")\
+            c = identity_client.build_schema("", "") \
+                .add_boolean_attribute("", "", "") \
+                .add_date_attribute("", "", "") \
+                .add_datetime_attribute("", "", "") \
+                .add_multichoice_attribute("", "", ["a", "b", "c"], "") \
+                .add_number_attribute("", "", "") \
                 .build()
 
         self.assertEqual(str(exc.exception), "not implemented")
@@ -53,12 +53,12 @@ class TestIdentity(unittest.TestCase):
         identity_client = IdentityClient()
 
         with self.assertRaises(Exception) as exc:
-            c = identity_client.build_offer("", "")\
-                .with_boolean_attribute("", True)\
-                .with_date_attribute("", 1234)\
-                .with_datetime_attribute("", 1234)\
-                .with_multichoice_attribute("", "")\
-                .with_number_attribute("", 1)\
+            c = identity_client.build_offer("", "") \
+                .with_boolean_attribute("", True) \
+                .with_date_attribute("", 1234) \
+                .with_datetime_attribute("", 1234) \
+                .with_multichoice_attribute("", "") \
+                .with_number_attribute("", 1) \
                 .build()
 
         self.assertEqual(str(exc.exception), "not implemented")

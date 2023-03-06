@@ -3,11 +3,12 @@
 isort:skip_file
 """
 import builtins
+import sys
+import typing
+
 import google.protobuf.descriptor
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
-import sys
-import typing
 
 if sys.version_info >= (3, 10):
     import typing as typing_extensions
@@ -16,20 +17,26 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+
 class _SignerAlg:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _SignerAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_SignerAlg.ValueType], builtins.type):  # noqa: F821
+
+class _SignerAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_SignerAlg.ValueType],
+                                builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ES256K: _SignerAlg.ValueType  # 0
     ENS: _SignerAlg.ValueType  # 1
 
+
 class SignerAlg(_SignerAlg, metaclass=_SignerAlgEnumTypeWrapper): ...
+
 
 ES256K: SignerAlg.ValueType  # 0
 ENS: SignerAlg.ValueType  # 1
 global___SignerAlg = SignerAlg
+
 
 class Signer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -37,18 +44,24 @@ class Signer(google.protobuf.message.Message):
     ALG_FIELD_NUMBER: builtins.int
     ARGS_FIELD_NUMBER: builtins.int
     alg: global___SignerAlg.ValueType
+
     @property
     def args(self) -> global___SignerArgs: ...
+
     def __init__(
-        self,
-        *,
-        alg: global___SignerAlg.ValueType = ...,
-        args: global___SignerArgs | None = ...,
+            self,
+            *,
+            alg: global___SignerAlg.ValueType = ...,
+            args: global___SignerArgs | None = ...,
     ) -> None: ...
+
     def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
 
+
 global___Signer = Signer
+
 
 class SignerArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -57,20 +70,31 @@ class SignerArgs(google.protobuf.message.Message):
     COMMON_NAME_FIELD_NUMBER: builtins.int
     private_key: builtins.str
     common_name: builtins.str
+
     def __init__(
-        self,
-        *,
-        private_key: builtins.str | None = ...,
-        common_name: builtins.str | None = ...,
+            self,
+            *,
+            private_key: builtins.str | None = ...,
+            common_name: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_common_name", b"_common_name", "_private_key", b"_private_key", "common_name", b"common_name", "private_key", b"private_key"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_common_name", b"_common_name", "_private_key", b"_private_key", "common_name", b"common_name", "private_key", b"private_key"]) -> None: ...
+
+    def HasField(self, field_name: typing_extensions.Literal[
+        "_common_name", b"_common_name", "_private_key", b"_private_key", "common_name", b"common_name", "private_key", b"private_key"]) -> builtins.bool: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "_common_name", b"_common_name", "_private_key", b"_private_key", "common_name", b"common_name", "private_key", b"private_key"]) -> None: ...
+
     @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_common_name", b"_common_name"]) -> typing_extensions.Literal["common_name"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_common_name", b"_common_name"]) -> \
+    typing_extensions.Literal["common_name"] | None: ...
+
     @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_private_key", b"_private_key"]) -> typing_extensions.Literal["private_key"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_private_key", b"_private_key"]) -> \
+    typing_extensions.Literal["private_key"] | None: ...
+
 
 global___SignerArgs = SignerArgs
+
 
 class Signature(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -81,21 +105,29 @@ class Signature(google.protobuf.message.Message):
     MESSAGE_HASH_FIELD_NUMBER: builtins.int
     signature: builtins.str
     protected: builtins.str
+
     @property
     def header(self) -> global___SignatureHeader: ...
+
     message_hash: builtins.str
+
     def __init__(
-        self,
-        *,
-        signature: builtins.str = ...,
-        protected: builtins.str = ...,
-        header: global___SignatureHeader | None = ...,
-        message_hash: builtins.str = ...,
+            self,
+            *,
+            signature: builtins.str = ...,
+            protected: builtins.str = ...,
+            header: global___SignatureHeader | None = ...,
+            message_hash: builtins.str = ...,
     ) -> None: ...
+
     def HasField(self, field_name: typing_extensions.Literal["header", b"header"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["header", b"header", "message_hash", b"message_hash", "protected", b"protected", "signature", b"signature"]) -> None: ...
+
+    def ClearField(self, field_name: typing_extensions.Literal[
+        "header", b"header", "message_hash", b"message_hash", "protected", b"protected", "signature", b"signature"]) -> None: ...
+
 
 global___Signature = Signature
+
 
 class SignatureHeader(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -104,12 +136,15 @@ class SignatureHeader(google.protobuf.message.Message):
     KID_FIELD_NUMBER: builtins.int
     alg: builtins.str
     kid: builtins.str
+
     def __init__(
-        self,
-        *,
-        alg: builtins.str = ...,
-        kid: builtins.str = ...,
+            self,
+            *,
+            alg: builtins.str = ...,
+            kid: builtins.str = ...,
     ) -> None: ...
+
     def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "kid", b"kid"]) -> None: ...
+
 
 global___SignatureHeader = SignatureHeader

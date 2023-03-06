@@ -13,11 +13,13 @@ class KeyPair
         $this->privateKey = $privateKey;
     }
 
-    public function getPublicKey(): string {
+    public function getPublicKey(): string
+    {
         return $this->publicKey;
     }
 
-    public function getPrivateKey(): string {
+    public function getPrivateKey(): string
+    {
         return $this->privateKey;
     }
 }

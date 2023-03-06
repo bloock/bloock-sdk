@@ -13,6 +13,10 @@ public class MultichoiceAttributeDescriptor extends AttributeDescriptor {
         this.allowedValues = allowedValues;
     }
 
+    public static MultichoiceAttributeDescriptor fromProto(IdentityEntities.MultiChoiceAttributeDefinition res) {
+        return new MultichoiceAttributeDescriptor(res.getDisplayName(), res.getId(), res.getAllowedValuesList(), res.getDescription());
+    }
+
     public IdentityEntities.MultiChoiceAttributeDefinition toProto() {
         return IdentityEntities.MultiChoiceAttributeDefinition.newBuilder()
                 .setDisplayName(this.displayName)
@@ -20,9 +24,5 @@ public class MultichoiceAttributeDescriptor extends AttributeDescriptor {
                 .setDescription(this.description)
                 .addAllAllowedValues(this.allowedValues)
                 .build();
-    }
-
-    public static MultichoiceAttributeDescriptor fromProto(IdentityEntities.MultiChoiceAttributeDefinition res) {
-        return new MultichoiceAttributeDescriptor(res.getDisplayName(), res.getId(), res.getAllowedValuesList(), res.getDescription());
     }
 }

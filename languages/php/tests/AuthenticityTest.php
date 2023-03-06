@@ -1,18 +1,24 @@
 <?php
 
+use Bloock\Bloock;
+use Bloock\Client\AuthenticityClient;
+use Bloock\Client\RecordClient;
+use Bloock\Entity\Authenticity\EcdsaSigner;
+use Bloock\Entity\Authenticity\EnsSigner;
+use Bloock\Entity\Authenticity\SignatureAlg;
 use PHPUnit\Framework\TestCase;
 
 final class AuthenticityTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        \Bloock\Bloock::$apiKey = getenv("API_KEY");
-        \Bloock\Bloock::$disableAnalytics = true;
+        Bloock::$apiKey = getenv("API_KEY");
+        Bloock::$disableAnalytics = true;
     }
 
     public function testGenerateEcdsaKeys()
     {
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $authenticityClient = new AuthenticityClient();
 
         $keys = $authenticityClient->generateEcdsaKeyPair();
 
@@ -22,26 +28,26 @@ final class AuthenticityTest extends TestCase
 
     public function testSignEcdsa()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
+        $recordClient = new RecordClient();
 
         $record = $recordClient->fromString("Hello world")->build();
 
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $authenticityClient = new AuthenticityClient();
 
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
-        $signature = $authenticityClient->sign($record, new \Bloock\Entity\Authenticity\EcdsaSigner($ecdsaKeyPair->getPrivateKey()));
+        $signature = $authenticityClient->sign($record, new EcdsaSigner($ecdsaKeyPair->getPrivateKey()));
 
         $this->assertNotNull($signature);
     }
 
     public function testVerifyEcdsa()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
 
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new \Bloock\Entity\Authenticity\EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -49,26 +55,26 @@ final class AuthenticityTest extends TestCase
 
     public function testSignEns()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
+        $recordClient = new RecordClient();
 
         $record = $recordClient->fromString("Hello world")->build();
 
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $authenticityClient = new AuthenticityClient();
 
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
-        $signature = $authenticityClient->sign($record, new \Bloock\Entity\Authenticity\EnsSigner($ecdsaKeyPair->getPrivateKey()));
+        $signature = $authenticityClient->sign($record, new EnsSigner($ecdsaKeyPair->getPrivateKey()));
 
         $this->assertNotNull($signature);
     }
 
     public function testVerifyEns()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
 
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new \Bloock\Entity\Authenticity\EnsSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EnsSigner($ecdsaKeyPair->getPrivateKey()))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -76,27 +82,27 @@ final class AuthenticityTest extends TestCase
 
     public function testGetSignatures()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
 
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new \Bloock\Entity\Authenticity\EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
 
         $this->assertEquals(1, count($signatures));
-        $this->assertEquals(\Bloock\Entity\Authenticity\SignatureAlg::ECDSA, \Bloock\Entity\Authenticity\SignatureAlg::fromString($signatures[0]->getHeader()->getAlg()));
+        $this->assertEquals(SignatureAlg::ECDSA, SignatureAlg::fromString($signatures[0]->getHeader()->getAlg()));
     }
 
     public function testGetEmptySignatureCommonName()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
 
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new \Bloock\Entity\Authenticity\EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
 
@@ -112,13 +118,13 @@ final class AuthenticityTest extends TestCase
 
     public function testGetEcdsaSignatureCommonName()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
 
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
 
         $commonName = "common_name";
-        $record = $recordClient->fromString("Hello world")->withSigner(new \Bloock\Entity\Authenticity\EcdsaSigner($ecdsaKeyPair->getPrivateKey(), $commonName))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey(), $commonName))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
 
@@ -129,12 +135,12 @@ final class AuthenticityTest extends TestCase
 
     public function testGetEnsSignatureCommonName()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
-        $authenticityClient = new \Bloock\Client\AuthenticityClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
 
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new \Bloock\Entity\Authenticity\EnsSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EnsSigner($ecdsaKeyPair->getPrivateKey()))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
         $signature = $signatures[0];

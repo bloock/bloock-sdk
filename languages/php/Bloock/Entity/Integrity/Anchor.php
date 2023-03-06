@@ -12,7 +12,8 @@ class Anchor
     private string $root;
     private string $status;
 
-    public function __construct(int $id, RepeatedField $blockRoots, RepeatedField $networks, string $root, string $status) {
+    public function __construct(int $id, RepeatedField $blockRoots, RepeatedField $networks, string $root, string $status)
+    {
         $this->id = $id;
         $this->blockRoots = $blockRoots;
         $this->networks = $networks;
@@ -20,21 +21,9 @@ class Anchor
         $this->status = $status;
     }
 
-    public static function fromProto(\Bloock\Anchor $anchor): Anchor {
+    public static function fromProto(\Bloock\Anchor $anchor): Anchor
+    {
         return new Anchor($anchor->getId(), $anchor->getBlockRoots(), $anchor->getNetworks(), $anchor->getRoot(), $anchor->getStatus());
-    }
-
-    public function toProto(): \Bloock\Anchor {
-        $p = new \Bloock\Anchor();
-        $p->setId($this->id);
-        $p->setBlockRoots($this->blockRoots);
-
-        $n = [];
-        foreach ($this->networks->getIterator() as $network) {
-            $n[] = $network->toProto();
-        }
-        $p->setNetworks($n);
-        return $p;
     }
 
     /**
@@ -75,5 +64,19 @@ class Anchor
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    public function toProto(): \Bloock\Anchor
+    {
+        $p = new \Bloock\Anchor();
+        $p->setId($this->id);
+        $p->setBlockRoots($this->blockRoots);
+
+        $n = [];
+        foreach ($this->networks->getIterator() as $network) {
+            $n[] = $network->toProto();
+        }
+        $p->setNetworks($n);
+        return $p;
     }
 }

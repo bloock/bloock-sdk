@@ -8,93 +8,92 @@ import com.bloock.sdk.bridge.proto.Encryption.EncryptionAlgResponse;
 import com.bloock.sdk.bridge.proto.Keys;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.key.KeyType;
-import com.bloock.sdk.entity.key.RsaKeyPair;
-import com.bloock.sdk.entity.record.Record;
 import com.bloock.sdk.entity.encryption.Decrypter;
 import com.bloock.sdk.entity.encryption.Encrypter;
 import com.bloock.sdk.entity.encryption.EncryptionAlg;
+import com.bloock.sdk.entity.key.KeyType;
+import com.bloock.sdk.entity.key.RsaKeyPair;
+import com.bloock.sdk.entity.record.Record;
 
 public class EncryptionClient {
-  private Bridge bridge;
-  private ConfigData configData;
+    private Bridge bridge;
+    private ConfigData configData;
 
-  public EncryptionClient() {
-    this.bridge = new Bridge();
-    this.configData = Config.newConfigDataDefault();
-  }
-
-  public EncryptionClient(ConfigData configData) {
-    this.bridge = new Bridge();
-    this.configData = Config.newConfigData(configData);
-  }
-
-  /**
-   * @deprecated
-   *             Will be deleted in future versions. Use KeyClient.newLocalKey
-   *             function instead.
-   */
-  @Deprecated
-  public RsaKeyPair generateRsaKeyPair() throws Exception {
-    Keys.GenerateLocalKeyRequest request = Keys.GenerateLocalKeyRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setKeyType(KeyType.Rsa2048.toProto())
-        .build();
-
-    Keys.GenerateLocalKeyResponse response = bridge.getKey().generateLocalKey(request);
-
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
+    public EncryptionClient() {
+        this.bridge = new Bridge();
+        this.configData = Config.newConfigDataDefault();
     }
 
-    return RsaKeyPair.fromProto(response);
-  }
-
-  public Record encrypt(Record record, Encrypter encrypter) throws Exception {
-    Encryption.EncryptRequest request = Encryption.EncryptRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setRecord(record.toProto())
-        .setEncrypter(encrypter.toProto())
-        .build();
-
-    Encryption.EncryptResponse response = bridge.getEncryption().encrypt(request);
-
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
+    public EncryptionClient(ConfigData configData) {
+        this.bridge = new Bridge();
+        this.configData = Config.newConfigData(configData);
     }
 
-    return Record.fromProto(response.getRecord(), this.configData);
-  }
+    /**
+     * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey
+     * function instead.
+     */
+    @Deprecated
+    public RsaKeyPair generateRsaKeyPair() throws Exception {
+        Keys.GenerateLocalKeyRequest request = Keys.GenerateLocalKeyRequest.newBuilder()
+                .setConfigData(this.configData)
+                .setKeyType(KeyType.Rsa2048.toProto())
+                .build();
 
-  public Record decrypt(Record record, Decrypter decrypter) throws Exception {
-    Encryption.DecryptRequest request = Encryption.DecryptRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setRecord(record.toProto())
-        .setDecrypter(decrypter.toProto())
-        .build();
+        Keys.GenerateLocalKeyResponse response = bridge.getKey().generateLocalKey(request);
 
-    Encryption.DecryptResponse response = bridge.getEncryption().decrypt(request);
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
 
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
+        return RsaKeyPair.fromProto(response);
     }
 
-    return Record.fromProto(response.getRecord(), this.configData);
-  }
+    public Record encrypt(Record record, Encrypter encrypter) throws Exception {
+        Encryption.EncryptRequest request = Encryption.EncryptRequest.newBuilder()
+                .setConfigData(this.configData)
+                .setRecord(record.toProto())
+                .setEncrypter(encrypter.toProto())
+                .build();
 
-  public EncryptionAlg getEncryptionAlg(Record record) throws Exception {
-    Bridge bridge = new Bridge();
+        Encryption.EncryptResponse response = bridge.getEncryption().encrypt(request);
 
-    EncryptionAlgRequest req = EncryptionAlgRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setRecord(record.toProto())
-        .build();
-    EncryptionAlgResponse res = bridge.getEncryption().getEncryptionAlg(req);
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
 
-    if (res.getError() != Error.getDefaultInstance()) {
-      throw new Exception(res.getError().getMessage());
+        return Record.fromProto(response.getRecord(), this.configData);
     }
 
-    return EncryptionAlg.fromProto(res.getAlg());
-  }
+    public Record decrypt(Record record, Decrypter decrypter) throws Exception {
+        Encryption.DecryptRequest request = Encryption.DecryptRequest.newBuilder()
+                .setConfigData(this.configData)
+                .setRecord(record.toProto())
+                .setDecrypter(decrypter.toProto())
+                .build();
+
+        Encryption.DecryptResponse response = bridge.getEncryption().decrypt(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return Record.fromProto(response.getRecord(), this.configData);
+    }
+
+    public EncryptionAlg getEncryptionAlg(Record record) throws Exception {
+        Bridge bridge = new Bridge();
+
+        EncryptionAlgRequest req = EncryptionAlgRequest.newBuilder()
+                .setConfigData(this.configData)
+                .setRecord(record.toProto())
+                .build();
+        EncryptionAlgResponse res = bridge.getEncryption().getEncryptionAlg(req);
+
+        if (res.getError() != Error.getDefaultInstance()) {
+            throw new Exception(res.getError().getMessage());
+        }
+
+        return EncryptionAlg.fromProto(res.getAlg());
+    }
 }

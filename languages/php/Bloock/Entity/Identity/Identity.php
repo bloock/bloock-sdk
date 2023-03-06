@@ -20,15 +20,17 @@ class Identity
         $this->privateKey = $privateKey;
     }
 
-    public function toProto(): \Bloock\Identity {
+    public static function fromProto(\Bloock\Identity $res): Identity
+    {
+        return new Identity($res->getMnemonic(), $res->getKey(), $res->getPrivateKey());
+    }
+
+    public function toProto(): \Bloock\Identity
+    {
         $p = new \Bloock\Identity();
         $p->setMnemonic($this->mnemonic);
         $p->setKey($this->key);
         $p->setPrivateKey($this->privateKey);
         return $p;
-    }
-
-    public static function fromProto(\Bloock\Identity $res): Identity {
-        return new Identity($res->getMnemonic(), $res->getKey(), $res->getPrivateKey());
     }
 }

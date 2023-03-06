@@ -7,20 +7,15 @@ class SignatureHeader
     private string $alg;
     private string $kid;
 
-    public function __construct(string $alg, string $kid) {
+    public function __construct(string $alg, string $kid)
+    {
         $this->alg = $alg;
         $this->kid = $kid;
     }
 
-    public static function fromProto(\Bloock\SignatureHeader $header): SignatureHeader {
+    public static function fromProto(\Bloock\SignatureHeader $header): SignatureHeader
+    {
         return new SignatureHeader($header->getAlg(), $header->getKid());
-    }
-
-    public function toProto(): \Bloock\SignatureHeader {
-        $p = new \Bloock\SignatureHeader();
-        $p->setAlg($this->alg);
-        $p->setKid($this->kid);
-        return $p;
     }
 
     /**
@@ -37,5 +32,13 @@ class SignatureHeader
     public function getKid(): string
     {
         return $this->kid;
+    }
+
+    public function toProto(): \Bloock\SignatureHeader
+    {
+        $p = new \Bloock\SignatureHeader();
+        $p->setAlg($this->alg);
+        $p->setKid($this->kid);
+        return $p;
     }
 }

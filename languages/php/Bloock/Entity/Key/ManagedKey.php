@@ -27,7 +27,13 @@ class ManagedKey
         $this->key = $key;
     }
 
-    public function toProto(): \Bloock\ManagedKey {
+    public static function fromProto(\Bloock\ManagedKey $res): ManagedKey
+    {
+        return new ManagedKey($res->getName(), KeyProtectionLevel::fromProto($res->getProtection()), KeyType::fromProto($res->getKeyType()), $res->getExpiration(), $res->getKey());
+    }
+
+    public function toProto(): \Bloock\ManagedKey
+    {
         $p = new \Bloock\ManagedKey();
         $p->setName($this->name);
         $p->setProtection(KeyProtectionLevel::toProto($this->protection));
@@ -35,9 +41,5 @@ class ManagedKey
         $p->setExpiration($this->expiration);
         $p->setKey($this->key);
         return $p;
-    }
-
-    public static function fromProto(\Bloock\ManagedKey $res): ManagedKey {
-        return new ManagedKey($res->getName(), KeyProtectionLevel::fromProto($res->getProtection()), KeyType::fromProto($res->getKeyType()), $res->getExpiration(), $res->getKey());
     }
 }

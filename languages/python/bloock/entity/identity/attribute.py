@@ -1,4 +1,3 @@
-
 class Attribute:
     def __init__(
             self, id: str, value

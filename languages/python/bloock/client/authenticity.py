@@ -13,8 +13,8 @@ from bloock._bridge.proto.shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.authenticity.signature import Signature
 from bloock.entity.authenticity.signer import Signer
-from bloock.entity.key.key_pair import KeyPair
 from bloock.entity.key.ecdsa_key_pair import EcdsaKeys
+from bloock.entity.key.key_pair import KeyPair
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.record.record import Record
 

@@ -7,18 +7,18 @@ from bloock.client.integrity import IntegrityClient
 from bloock.client.record import RecordClient
 from bloock.entity.authenticity.ecdsa_signer import EcdsaSigner
 from bloock.entity.authenticity.ens_signer import EnsSigner
+from bloock.entity.authenticity.signature import SignatureAlg
 from bloock.entity.availability.hosted_loader import HostedLoader
 from bloock.entity.availability.hosted_publisher import HostedPublisher
 from bloock.entity.availability.ipfs_loader import IpfsLoader
 from bloock.entity.availability.ipfs_publisher import IpfsPublisher
 from bloock.entity.encryption.aes_decrypter import AesDecrypter
 from bloock.entity.encryption.aes_encrypter import AesEncrypter
+from bloock.entity.encryption.encryption_alg import EncryptionAlg
 from bloock.entity.encryption.rsa_decrypter import RsaDecrypter
 from bloock.entity.encryption.rsa_encrypter import RsaEncrypter
 from bloock.entity.integrity.anchor import AnchorNetwork
-from bloock.entity.encryption.encryption_alg import EncryptionAlg
 from bloock.entity.integrity.proof import Proof, ProofAnchor
-from bloock.entity.authenticity.signature import SignatureAlg
 from test.util import init_sdk
 
 
