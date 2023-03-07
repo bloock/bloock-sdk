@@ -59,8 +59,7 @@ impl Encrypter for ManagedRsaEncrypter {
             .await
             .map_err(|e| EncrypterError::FailedToEncrypt(e.to_string()))?;
 
-        println!("{}", res.cipher);
-        Ok(base64_url::decode(&res.cipher).map_err(|_| EncrypterError::InvalidBase64())?)
+        Ok(res.cipher.into_bytes())
     }
 
     fn get_alg(&self) -> &str {
@@ -92,7 +91,7 @@ impl Decrypter for ManagedRsaDecrypter {
         let req = DecryptRequest {
             key_id: self.managed_key.id.clone(),
             algorithm: "RSA1_5".to_string(),
-            cipher: base64_url::encode(cipher_text),
+            cipher: String::from_utf8_lossy(cipher_text).to_string(),
         };
         let res: DecryptResponse = http
             .post_json(format!("{}/keys/v1/decrypt", self.api_host), req, None)

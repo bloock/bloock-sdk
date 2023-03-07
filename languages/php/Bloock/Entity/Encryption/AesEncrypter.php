@@ -4,20 +4,28 @@ namespace Bloock\Entity\Encryption;
 
 class AesEncrypter implements Encrypter
 {
-    public $alg;
-    public $args;
+    public int $alg;
+    public EncrypterArgs $args;
 
-    public function __construct(string $password)
+    public function __construct(EncrypterArgs $args)
     {
         $this->alg = \Bloock\EncryptionAlg::A256GCM;
-        $this->args = new EncrypterArgs($password);
+        $this->args = $args;
     }
 
     public function toProto(): \Bloock\Encrypter
     {
         $p = new \Bloock\Encrypter();
         $p->setAlg($this->alg);
-        $p->setArgs($this->args->toProto());
+
+        if ($this->args->localKey != null) {
+            $p->setLocalKey($this->args->localKey->toProto());
+        }
+
+        if ($this->args->managedKey != null) {
+            $p->setManagedKey($this->args->managedKey->toProto());
+        }
+
         return $p;
     }
 }

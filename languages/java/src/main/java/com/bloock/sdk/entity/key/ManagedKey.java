@@ -3,13 +3,15 @@ package com.bloock.sdk.entity.key;
 import com.bloock.sdk.bridge.proto.KeysEntities;
 
 public class ManagedKey {
+    String id;
     String name;
     KeyProtectionLevel protection;
     KeyType keyType;
     long expiration;
     String key;
 
-    public ManagedKey(String name, KeyProtectionLevel protection, KeyType keyType, long expiration, String key) {
+    public ManagedKey(String id, String name, KeyProtectionLevel protection, KeyType keyType, long expiration, String key) {
+        this.id = id;
         this.name = name;
         this.protection = protection;
         this.keyType = keyType;
@@ -19,6 +21,7 @@ public class ManagedKey {
 
     public static ManagedKey fromProto(KeysEntities.ManagedKey key) {
         return new ManagedKey(
+                key.getId(),
                 key.getName(),
                 KeyProtectionLevel.fromProto(key.getProtection()),
                 KeyType.fromProto(key.getKeyType()),
@@ -29,12 +32,17 @@ public class ManagedKey {
 
     public KeysEntities.ManagedKey toProto() {
         return KeysEntities.ManagedKey.newBuilder()
+                .setId(this.id)
                 .setName(this.key)
                 .setProtection(this.protection.toProto())
                 .setKeyType(this.keyType.toProto())
                 .setExpiration(this.expiration)
                 .setKey(this.key)
                 .build();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {

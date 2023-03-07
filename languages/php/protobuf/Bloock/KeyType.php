@@ -27,12 +27,22 @@ class KeyType
      * Generated from protobuf enum <code>Rsa4096 = 3;</code>
      */
     const Rsa4096 = 3;
+    /**
+     * Generated from protobuf enum <code>Aes128 = 4;</code>
+     */
+    const Aes128 = 4;
+    /**
+     * Generated from protobuf enum <code>Aes256 = 5;</code>
+     */
+    const Aes256 = 5;
 
     private static $valueToName = [
         self::EcP256k => 'EcP256k',
         self::Rsa2048 => 'Rsa2048',
         self::Rsa3072 => 'Rsa3072',
         self::Rsa4096 => 'Rsa4096',
+        self::Aes128 => 'Aes128',
+        self::Aes256 => 'Aes256',
     ];
 
     public static function name($value)

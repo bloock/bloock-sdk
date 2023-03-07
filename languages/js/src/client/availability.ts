@@ -2,8 +2,7 @@ import { BloockBridge } from "../bridge/bridge";
 import { PublishRequest, RetrieveRequest } from "../bridge/proto/availability";
 import { ConfigData } from "../bridge/proto/config";
 import { NewConfigData } from "../config/config";
-import { Loader } from "../entity/loader";
-import { Publisher } from "../entity/publisher";
+import { Publisher, Loader } from "../entity/availability";
 import { Record } from "../entity/record";
 
 export class AvailabilityClient {

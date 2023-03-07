@@ -5,22 +5,27 @@ use Bloock\Client\AuthenticityClient;
 use Bloock\Client\AvailabilityClient;
 use Bloock\Client\EncryptionClient;
 use Bloock\Client\IntegrityClient;
+use Bloock\Client\KeyClient;
 use Bloock\Client\RecordClient;
 use Bloock\Entity\Authenticity\EcdsaSigner;
 use Bloock\Entity\Authenticity\EnsSigner;
 use Bloock\Entity\Authenticity\SignatureAlg;
+use Bloock\Entity\Authenticity\SignerArgs;
 use Bloock\Entity\Availability\HostedLoader;
 use Bloock\Entity\Availability\HostedPublisher;
 use Bloock\Entity\Availability\IpfsLoader;
 use Bloock\Entity\Availability\IpfsPublisher;
 use Bloock\Entity\Encryption\AesDecrypter;
 use Bloock\Entity\Encryption\AesEncrypter;
+use Bloock\Entity\Encryption\DecrypterArgs;
+use Bloock\Entity\Encryption\EncrypterArgs;
 use Bloock\Entity\Encryption\EncryptionAlg;
 use Bloock\Entity\Encryption\RsaDecrypter;
 use Bloock\Entity\Encryption\RsaEncrypter;
 use Bloock\Entity\Integrity\AnchorNetwork;
 use Bloock\Entity\Integrity\Proof;
 use Bloock\Entity\Integrity\ProofAnchor;
+use Bloock\Entity\Key\KeyType;
 use PHPUnit\Framework\TestCase;
 
 final class RecordTest extends TestCase
@@ -97,20 +102,26 @@ final class RecordTest extends TestCase
         $this->assertEquals($payload, $record->retrieve());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testEcdsaSignature()
     {
         $authenticityClient = new AuthenticityClient();
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
         $name = "Some name";
 
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
+
         $recordClient = new RecordClient();
         $signedRecord = $recordClient->fromString("Hello world")
-            ->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey(), $name))
+            ->withSigner(new EcdsaSigner(new SignerArgs($key, $name)))
             ->build();
 
-        $ecdsaKeyPair2 = $authenticityClient->generateEcdsaKeyPair();
+        $key2 = $keyClient->newLocalKey(KeyType::EcP256k);
         $recordWithMultipleSignatures = $recordClient->fromRecord($signedRecord)
-            ->withSigner(new EcdsaSigner($ecdsaKeyPair2->getPrivateKey()))
+            ->withSigner(new EcdsaSigner(new SignerArgs($key2)))
             ->build();
 
         $signatures = $authenticityClient->getSignatures($recordWithMultipleSignatures);
@@ -126,9 +137,12 @@ final class RecordTest extends TestCase
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
         $name = "Some name";
 
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
+
         $recordClient = new RecordClient();
         $record = $recordClient->fromString("Hello world")
-            ->withSigner(new EnsSigner($ecdsaKeyPair->getPrivateKey(), $name))
+            ->withSigner(new EnsSigner(new SignerArgs($key, $name)))
             ->build();
 
         $signatures = $authenticityClient->getSignatures($record);
@@ -140,24 +154,30 @@ final class RecordTest extends TestCase
         $this->assertEquals("vitalik.eth", $authenticityClient->getSignatureCommonName($signatures[0]));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testAesEncryption()
     {
         $payload = "Hello world 2";
-        $password = "some_password";
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Aes256);
 
         $recordClient = new RecordClient();
         $encryptedRecord = $recordClient->fromString($payload)
-            ->withEncrypter(new AesEncrypter($password))
+            ->withEncrypter(new AesEncrypter(new EncrypterArgs($key)))
             ->build();
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
 
         $encryptionClient = new EncryptionClient();
         $this->assertEquals(EncryptionAlg::AES256GCM, $encryptionClient->getEncryptionAlg($encryptedRecord));
 
+        $invalidKey = $keyClient->newLocalKey(KeyType::Aes256);
         $throwsException = false;
         try {
             $recordClient->fromRecord($encryptedRecord)
-                ->withDecrypter(new AesDecrypter("incorrect_password"))
+                ->withDecrypter(new AesDecrypter(new DecrypterArgs($invalidKey)))
                 ->build();
         } catch (Exception $e) {
             $throwsException = true;
@@ -166,7 +186,7 @@ final class RecordTest extends TestCase
         $this->assertTrue($throwsException);
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new AesDecrypter($password))
+            ->withDecrypter(new AesDecrypter(new DecrypterArgs($key)))
             ->build();
 
         $this->assertEquals($decryptedRecord->retrieve(), unpack("C*", $payload));
@@ -175,22 +195,27 @@ final class RecordTest extends TestCase
         $this->assertEquals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", $hash);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRsaEncryption()
     {
         $payload = "Hello world 2";
         $encryptionClient = new EncryptionClient();
-        $keyPair = $encryptionClient->generateRsaKeyPair();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Rsa2048);
 
         $recordClient = new RecordClient();
         $encryptedRecord = $recordClient->fromString($payload)
-            ->withEncrypter(new RsaEncrypter($keyPair->getPublicKey()))
+            ->withEncrypter(new RsaEncrypter(new EncrypterArgs($key)))
             ->build();
 
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
         $this->assertEquals(EncryptionAlg::RSA, $encryptionClient->getEncryptionAlg($encryptedRecord));
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new RsaDecrypter($keyPair->getPrivateKey()))
+            ->withDecrypter(new RsaDecrypter(new DecrypterArgs($key)))
             ->build();
 
         $this->assertEquals($decryptedRecord->retrieve(), unpack("C*", $payload));

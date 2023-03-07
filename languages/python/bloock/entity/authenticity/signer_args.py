@@ -1,12 +1,18 @@
 import bloock._bridge.proto.authenticity_entities_pb2 as proto
+from bloock.entity.key.local_key import LocalKey
+from bloock.entity.key.managed_key import ManagedKey
 
 
 class SignerArgs:
-    def __init__(self, private_key: str, common_name=None) -> None:
-        self.private_key = private_key
-        self.common_name = common_name
+    local_key = None
+    managed_key = None
 
-    def to_proto(self) -> proto.SignerArgs:
-        return proto.SignerArgs(
-            private_key=self.private_key, common_name=self.common_name
-        )
+    def __init__(self, key, common_name=None) -> None:
+        if isinstance(key, LocalKey):
+            self.local_key = key
+        elif isinstance(key, ManagedKey):
+            self.managed_key = key
+        else:
+            raise Exception("Invalid key provided. Must be of type LocalKey or ManagedKey")
+
+        self.common_name = common_name

@@ -1,5 +1,5 @@
 use crate::{
-    entity::alg::ENS_ALG,
+    entity::alg::Algorithms,
     local::ecdsa::{self},
     Result, Signature, Signer, SignerError, Verifier,
 };
@@ -73,7 +73,7 @@ impl Signer for ManagedEnsSigner {
             self.api_key.clone(),
         );
         let mut signature = ecdsa_signer.sign(payload).await?;
-        signature.header.alg = ENS_ALG.to_string();
+        signature.header.alg = Algorithms::EnsM.to_string();
         Ok(signature)
     }
 }

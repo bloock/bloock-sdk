@@ -2,26 +2,29 @@
 
 namespace Bloock\Entity\Authenticity;
 
+use Bloock\Entity\Key\LocalKey;
+use Bloock\Entity\Key\ManagedKey;
+use Exception;
+
 class SignerArgs
 {
-    public string $privateKey;
+    public ?LocalKey $localKey = null;
+    public ?ManagedKey $managedKey = null;
     public string $commonName;
 
-    public function __construct(string $privateKey, string $commonName = "")
+    /**
+     * @throws Exception
+     */
+    public function __construct($key, string $commonName = "")
     {
-        $this->privateKey = $privateKey;
-        $this->commonName = $commonName;
-    }
-
-    public function toProto(): \Bloock\SignerArgs
-    {
-        $p = new \Bloock\SignerArgs();
-        $p->setPrivateKey($this->privateKey);
-
-        if ($this->commonName != "") {
-            $p->setCommonName($this->commonName);
+        if ($key instanceof LocalKey) {
+            $this->localKey = $key;
+        } else if ($key instanceof ManagedKey) {
+            $this->managedKey = $key;
+        } else {
+            throw new Exception("Invalid $key provided. Must be of type LocalKey or ManagedKey");
         }
 
-        return $p;
+        $this->commonName = $commonName;
     }
 }

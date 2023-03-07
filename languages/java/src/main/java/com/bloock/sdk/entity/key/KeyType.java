@@ -7,6 +7,8 @@ public enum KeyType {
     Rsa2048,
     Rsa3072,
     Rsa4096,
+    Aes128,
+    Aes256,
     UNRECOGNIZED;
 
     public static KeyType fromProto(KeysEntities.KeyType type) {
@@ -19,6 +21,10 @@ public enum KeyType {
                 return KeyType.Rsa3072;
             case Rsa4096:
                 return KeyType.Rsa4096;
+            case Aes128:
+                return KeyType.Aes128;
+            case Aes256:
+                return KeyType.Aes256;
             default:
                 return KeyType.UNRECOGNIZED;
         }
@@ -34,6 +40,10 @@ public enum KeyType {
                 return KeysEntities.KeyType.Rsa3072;
             case Rsa4096:
                 return KeysEntities.KeyType.Rsa4096;
+            case Aes128:
+                return KeysEntities.KeyType.Aes128;
+            case Aes256:
+                return KeysEntities.KeyType.Aes256;
             default:
                 return KeysEntities.KeyType.UNRECOGNIZED;
         }

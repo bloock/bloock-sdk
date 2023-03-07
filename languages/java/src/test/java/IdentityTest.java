@@ -3,11 +3,8 @@ import com.bloock.sdk.entity.identity.Credential;
 import com.bloock.sdk.entity.identity.CredentialOffer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class IdentityTest {
 
@@ -20,72 +17,47 @@ class IdentityTest {
     void createIdentity() throws Exception {
         IdentityClient identityClient = new IdentityClient();
 
-        try {
-            identityClient.createIdentity();
-            fail("Exception was not thrown");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "not implemented");
-        }
+        identityClient.createIdentity();
     }
 
     @Test
     void loadIdentity() throws Exception {
         IdentityClient identityClient = new IdentityClient();
 
-        try {
-            identityClient.loadIdentity("mnemonic");
-            fail("Exception was not thrown");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "not implemented");
-        }
+        identityClient.loadIdentity("mnemonic");
     }
 
     @Test
     void buildSchema() throws Exception {
         IdentityClient identityClient = new IdentityClient();
 
-        try {
-            identityClient.buildSchema("", "")
-                    .addBooleanAttribute("", "", "")
-                    .addDateAttribute("", "", "")
-                    .addDatetimeAttribute("", "", "")
-                    .addMultichoiceAttribute("", "", Arrays.asList("a", "b", "c"), "")
-                    .addNumberAttribute("", "", "")
-                    .build();
-            fail("Exception was not thrown");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "not implemented");
-        }
+        identityClient.buildSchema("", "")
+                .addBooleanAttribute("", "", "")
+                .addDateAttribute("", "", "")
+                .addDatetimeAttribute("", "", "")
+                .addMultichoiceAttribute("", "", Arrays.asList("a", "b", "c"), "")
+                .addNumberAttribute("", "", "")
+                .build();
     }
 
     @Test
     void getSchema() throws Exception {
         IdentityClient identityClient = new IdentityClient();
 
-        try {
-            identityClient.getSchema("id");
-            fail("Exception was not thrown");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "not implemented");
-        }
+        identityClient.getSchema("id");
     }
 
     @Test
     void credentialOfferBuilder() throws Exception {
         IdentityClient identityClient = new IdentityClient();
 
-        try {
-            identityClient.buildOffer("", "")
-                    .withBooleanAttribute("", true)
-                    .withDateAttribute("", 123L)
-                    .withDatetimeAttribute("", 123L)
-                    .withMultichoiceAttribute("", "a")
-                    .withNumberAttribute("", 123L)
-                    .build();
-            fail("Exception was not thrown");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "not implemented");
-        }
+        identityClient.buildOffer("", "")
+                .withBooleanAttribute("", true)
+                .withDateAttribute("", 123L)
+                .withDatetimeAttribute("", 123L)
+                .withMultichoiceAttribute("", "a")
+                .withNumberAttribute("", 123L)
+                .build();
     }
 
     @Test
@@ -104,13 +76,8 @@ class IdentityTest {
     void credentialOfferRedeem() throws Exception {
         IdentityClient identityClient = new IdentityClient();
 
-        try {
-            CredentialOffer credentialOffer = CredentialOffer.fromJson("{}");
-            identityClient.redeemOffer(credentialOffer, "");
-            fail("Exception was not thrown");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "not implemented");
-        }
+        CredentialOffer credentialOffer = CredentialOffer.fromJson("{}");
+        identityClient.redeemOffer(credentialOffer, "");
     }
 
     @Test
@@ -129,25 +96,15 @@ class IdentityTest {
     void verifyCredential() throws Exception {
         IdentityClient identityClient = new IdentityClient();
 
-        try {
-            Credential credential = Credential.fromJson("{}");
-            identityClient.verifyCredential(credential);
-            fail("Exception was not thrown");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "not implemented");
-        }
+        Credential credential = Credential.fromJson("{}");
+        identityClient.verifyCredential(credential);
     }
 
     @Test
     void revokeCredential() throws Exception {
         IdentityClient identityClient = new IdentityClient();
 
-        try {
-            Credential credential = Credential.fromJson("{}");
-            identityClient.revokeCredential(credential);
-            fail("Exception was not thrown");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "not implemented");
-        }
+        Credential credential = Credential.fromJson("{}");
+        identityClient.revokeCredential(credential);
     }
 }

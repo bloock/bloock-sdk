@@ -33,6 +33,15 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->privateKey);
     }
 
+    public function testGenerateLocalAes()
+    {
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Aes256);
+
+        $this->assertNotNull($key->key);
+        $this->assertEquals($key->privateKey, "");
+    }
+
     public function testGenerateManagedEcdsa()
     {
         $keyClient = new KeyClient();

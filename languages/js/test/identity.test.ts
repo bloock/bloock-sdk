@@ -5,70 +5,45 @@ describe("Identity Tests", () => {
   test("test create identity", async () => {
     const identityClient = new IdentityClient();
 
-    expect.assertions(1);
-    try {
-      await identityClient.createIdentity();
-    } catch (e) {
-      expect((e as any).message).toBe("not implemented");
-    }
+    await identityClient.createIdentity();
   });
 
   test("test load identity", async () => {
     const identityClient = new IdentityClient();
 
-    expect.assertions(1);
-    try {
-      await identityClient.loadIdentity("mnemonic");
-    } catch (e) {
-      expect((e as any).message).toBe("not implemented");
-    }
+    await identityClient.loadIdentity("mnemonic");
   });
 
   test("test build schema", async () => {
     const identityClient = new IdentityClient();
 
-    expect.assertions(1);
-    try {
-      await identityClient
-        .buildSchema("", "")
-        .addBooleanAttribute("", "", "")
-        .addDateAttribute("", "", "")
-        .addDateTimeAttribute("", "", "")
-        .addMultichoiceAttribute("", "", ["a", "b", "c"], "")
-        .addNumberAttribute("", "", "")
-        .build();
-    } catch (e) {
-      expect((e as any).message).toBe("not implemented");
-    }
+    await identityClient
+      .buildSchema("", "")
+      .addBooleanAttribute("", "", "")
+      .addDateAttribute("", "", "")
+      .addDateTimeAttribute("", "", "")
+      .addMultichoiceAttribute("", "", ["a", "b", "c"], "")
+      .addNumberAttribute("", "", "")
+      .build();
   });
 
   test("test get schema", async () => {
     const identityClient = new IdentityClient();
 
-    expect.assertions(1);
-    try {
-      await identityClient.getSchema("");
-    } catch (e) {
-      expect((e as any).message).toBe("not implemented");
-    }
+    await identityClient.getSchema("");
   });
 
   test("test create credential offer", async () => {
     const identityClient = new IdentityClient();
 
-    expect.assertions(1);
-    try {
-      await identityClient
-        .buildOffer("", "")
-        .withBoleanAttribute("", true)
-        .withDateAttribute("", new Date())
-        .withDateTimeAttribute("", new Date())
-        .withMultichoiceAttribute("", "a")
-        .withNumberAttribute("", 123)
-        .build();
-    } catch (e) {
-      expect((e as any).message).toBe("not implemented");
-    }
+    await identityClient
+      .buildOffer("", "")
+      .withBoleanAttribute("", true)
+      .withDateAttribute("", new Date())
+      .withDateTimeAttribute("", new Date())
+      .withMultichoiceAttribute("", "a")
+      .withNumberAttribute("", 123)
+      .build();
   });
 
   test("test credential offer from json", async () => {
@@ -84,13 +59,8 @@ describe("Identity Tests", () => {
   test("test credential offer redeem", async () => {
     const identityClient = new IdentityClient();
 
-    expect.assertions(1);
-    try {
-      let offer = CredentialOffer.fromJSON("");
-      await identityClient.redeemOffer(offer, "");
-    } catch (e) {
-      expect((e as any).message).toBe("not implemented");
-    }
+    let offer = CredentialOffer.fromJSON("");
+    await identityClient.redeemOffer(offer, "");
   });
 
   test("test credential from json", async () => {
@@ -106,24 +76,14 @@ describe("Identity Tests", () => {
   test("test verify credential", async () => {
     const identityClient = new IdentityClient();
 
-    expect.assertions(1);
-    try {
-      let credential = Credential.fromJSON("");
-      await identityClient.verifyCredential(credential);
-    } catch (e) {
-      expect((e as any).message).toBe("not implemented");
-    }
+    let credential = Credential.fromJSON("");
+    await identityClient.verifyCredential(credential);
   });
 
   test("test revoke credential", async () => {
     const identityClient = new IdentityClient();
 
-    expect.assertions(1);
-    try {
-      let credential = Credential.fromJSON("");
-      await identityClient.revokeCredential(credential);
-    } catch (e) {
-      expect((e as any).message).toBe("not implemented");
-    }
+    let credential = Credential.fromJSON("");
+    await identityClient.revokeCredential(credential);
   });
 });

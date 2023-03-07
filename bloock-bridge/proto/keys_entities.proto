@@ -32,12 +32,11 @@ message ManagedKeyParams {
     optional int64 expiration = 4;
 }
 
-
 message ManagedKey {
     string id = 1;
     string key = 2;
     KeyProtectionLevel protection = 3;
     KeyType key_type = 4;
-    optional string name = 5;
-    optional int64 expiration = 6;
+    string name = 5;
+    int64 expiration = 6;
 }

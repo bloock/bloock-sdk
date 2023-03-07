@@ -1,18 +1,9 @@
-import { AuthenticityClient } from "./authenticity";
-import { AvailabilityClient } from "./availability";
-import { BloockClient } from "./bloock";
-import { EncryptionClient } from "./encryption";
-import { IntegrityClient } from "./integrity";
-import { RecordBuilder, RecordClient } from "./record";
-import { WebhookClient } from "./webhook";
-
-export {
-  AuthenticityClient,
-  AvailabilityClient,
-  EncryptionClient,
-  BloockClient,
-  IntegrityClient,
-  RecordBuilder,
-  RecordClient,
-  WebhookClient
-};
+export * from "./authenticity";
+export * from "./availability";
+export * from "./encryption";
+export * from "./bloock";
+export * from "./identity";
+export * from "./integrity";
+export * from "./key";
+export * from "./record";
+export * from "./webhook";

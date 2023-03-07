@@ -5,9 +5,9 @@ import {
   GenerateManagedKeyRequest
 } from "../bridge/proto/keys";
 import { NewConfigData } from "../config/config";
-import { KeyType } from "../entity/key_type";
-import { LocalKey } from "../entity/local_key";
-import { ManagedKey, ManagedKeyParams } from "../entity/managed_key";
+import { KeyType } from "../entity/key";
+import { LocalKey } from "../entity/key";
+import { ManagedKey, ManagedKeyParams } from "../entity/key";
 
 export class KeyClient {
   private bridge: BloockBridge;

@@ -19,15 +19,10 @@ class EncryptionAlg
      * Generated from protobuf enum <code>RSA = 1;</code>
      */
     const RSA = 1;
-    /**
-     * Generated from protobuf enum <code>ECIES = 2;</code>
-     */
-    const ECIES = 2;
 
     private static $valueToName = [
         self::A256GCM => 'A256GCM',
         self::RSA => 'RSA',
-        self::ECIES => 'ECIES',
     ];
 
     public static function name($value)

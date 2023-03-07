@@ -2,19 +2,26 @@
 
 namespace Bloock\Entity\Encryption;
 
+use Bloock\Entity\Key\LocalKey;
+use Bloock\Entity\Key\ManagedKey;
+use Exception;
+
 class EncrypterArgs
 {
-    public $key;
+    public ?LocalKey $localKey = null;
+    public ?ManagedKey $managedKey = null;
 
-    public function __construct(string $key)
+    /**
+     * @throws Exception
+     */
+    public function __construct($key)
     {
-        $this->key = $key;
-    }
-
-    public function toProto(): \Bloock\EncrypterArgs
-    {
-        $p = new \Bloock\EncrypterArgs();
-        $p->setKey($this->key);
-        return $p;
+        if ($key instanceof LocalKey) {
+            $this->localKey = $key;
+        } else if ($key instanceof ManagedKey) {
+            $this->managedKey = $key;
+        } else {
+            throw new Exception("Invalid $key provided. Must be of type LocalKey or ManagedKey");
+        }
     }
 }

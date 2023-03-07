@@ -2,10 +2,15 @@
 
 use Bloock\Bloock;
 use Bloock\Client\AuthenticityClient;
+use Bloock\Client\KeyClient;
 use Bloock\Client\RecordClient;
 use Bloock\Entity\Authenticity\EcdsaSigner;
 use Bloock\Entity\Authenticity\EnsSigner;
 use Bloock\Entity\Authenticity\SignatureAlg;
+use Bloock\Entity\Authenticity\SignerArgs;
+use Bloock\Entity\Key\KeyProtectionLevel;
+use Bloock\Entity\Key\KeyType;
+use Bloock\Entity\Key\ManagedKeyParams;
 use PHPUnit\Framework\TestCase;
 
 final class AuthenticityTest extends TestCase
@@ -26,7 +31,10 @@ final class AuthenticityTest extends TestCase
         $this->assertNotNull($keys->getPrivateKey());
     }
 
-    public function testSignEcdsa()
+    /**
+     * @throws Exception
+     */
+    public function testSignLocalEcdsa()
     {
         $recordClient = new RecordClient();
 
@@ -34,26 +42,17 @@ final class AuthenticityTest extends TestCase
 
         $authenticityClient = new AuthenticityClient();
 
-        $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
-        $signature = $authenticityClient->sign($record, new EcdsaSigner($ecdsaKeyPair->getPrivateKey()));
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
+        $signature = $authenticityClient->sign($record, new EcdsaSigner(new SignerArgs($key)));
 
         $this->assertNotNull($signature);
     }
 
-    public function testVerifyEcdsa()
-    {
-        $recordClient = new RecordClient();
-        $authenticityClient = new AuthenticityClient();
-
-        $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
-
-        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
-
-        $valid = $authenticityClient->verify($record);
-        $this->assertTrue($valid);
-    }
-
-    public function testSignEns()
+    /**
+     * @throws Exception
+     */
+    public function testSignManagedEcdsa()
     {
         $recordClient = new RecordClient();
 
@@ -61,48 +60,148 @@ final class AuthenticityTest extends TestCase
 
         $authenticityClient = new AuthenticityClient();
 
-        $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
-        $signature = $authenticityClient->sign($record, new EnsSigner($ecdsaKeyPair->getPrivateKey()));
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
+        $signature = $authenticityClient->sign($record, new EcdsaSigner(new SignerArgs($key)));
 
         $this->assertNotNull($signature);
     }
 
-    public function testVerifyEns()
+    /**
+     * @throws Exception
+     */
+    public function testVerifyLocalEcdsa()
     {
         $recordClient = new RecordClient();
         $authenticityClient = new AuthenticityClient();
 
-        $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new EnsSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner(new SignerArgs($key)))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
     }
 
+    /**
+     * @throws Exception
+     */
+    public function testVerifyManagedEcdsa()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
+
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner(new SignerArgs($key)))->build();
+
+        $valid = $authenticityClient->verify($record);
+        $this->assertTrue($valid);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSignLocalEns()
+    {
+        $recordClient = new RecordClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
+        $signature = $authenticityClient->sign($record, new EnsSigner(new SignerArgs($key)));
+
+        $this->assertNotNull($signature);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSignManagedEns()
+    {
+        $recordClient = new RecordClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
+        $signature = $authenticityClient->sign($record, new EnsSigner(new SignerArgs($key)));
+
+        $this->assertNotNull($signature);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testVerifyLocalEns()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
+
+        $record = $recordClient->fromString("Hello world")->withSigner(new EnsSigner(new SignerArgs($key)))->build();
+
+        $valid = $authenticityClient->verify($record);
+        $this->assertTrue($valid);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testVerifyManagedEns()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
+
+        $record = $recordClient->fromString("Hello world")->withSigner(new EnsSigner(new SignerArgs($key)))->build();
+
+        $valid = $authenticityClient->verify($record);
+        $this->assertTrue($valid);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testGetSignatures()
     {
         $recordClient = new RecordClient();
         $authenticityClient = new AuthenticityClient();
 
-        $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner(new SignerArgs($key)))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
 
-        $this->assertEquals(1, count($signatures));
+        $this->assertCount(1, $signatures);
         $this->assertEquals(SignatureAlg::ECDSA, SignatureAlg::fromString($signatures[0]->getHeader()->getAlg()));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetEmptySignatureCommonName()
     {
         $recordClient = new RecordClient();
         $authenticityClient = new AuthenticityClient();
 
-        $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner(new SignerArgs($key)))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
 
@@ -116,15 +215,19 @@ final class AuthenticityTest extends TestCase
         $this->assertTrue($throwsException);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetEcdsaSignatureCommonName()
     {
         $recordClient = new RecordClient();
         $authenticityClient = new AuthenticityClient();
 
-        $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
         $commonName = "common_name";
-        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner($ecdsaKeyPair->getPrivateKey(), $commonName))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner(new SignerArgs($key, $commonName)))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
 
@@ -133,14 +236,18 @@ final class AuthenticityTest extends TestCase
         $this->assertEquals($commonName, $name);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetEnsSignatureCommonName()
     {
         $recordClient = new RecordClient();
         $authenticityClient = new AuthenticityClient();
 
-        $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new EnsSigner($ecdsaKeyPair->getPrivateKey()))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new EnsSigner(new SignerArgs($key)))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
         $signature = $signatures[0];

@@ -28,7 +28,7 @@ class IdentityClient:
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Identity.from_proto(res)
+        return Identity.from_proto(res.identity)
 
     def load_identity(self, mnemonic: str) -> Identity:
         res = self.bridge_client.identity().LoadIdentity(
@@ -40,7 +40,7 @@ class IdentityClient:
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Identity.from_proto(res)
+        return Identity.from_proto(res.identity)
 
     def build_schema(self, display_name: str, technical_name: str) -> SchemaBuilder:
         return SchemaBuilder(display_name, technical_name, self.config_data)
@@ -55,7 +55,7 @@ class IdentityClient:
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Schema.from_proto(res)
+        return Schema.from_proto(res.schema)
 
     def build_offer(self, schema_id: str, holder_key: str) -> CredentialOfferBuilder:
         return CredentialOfferBuilder(schema_id=schema_id, holder_key=holder_key, config_data=self.config_data)
@@ -71,7 +71,7 @@ class IdentityClient:
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Credential.from_proto(res)
+        return Credential.from_proto(res.credential)
 
     def verify_credential(self, credential: Credential) -> CredentialVerification:
         res = self.bridge_client.identity().VerifyCredential(
@@ -83,7 +83,7 @@ class IdentityClient:
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return CredentialVerification.from_proto(res.get_result())
+        return CredentialVerification.from_proto(res.result)
 
     def revoke_credential(self, credential: Credential) -> int:
         res = self.bridge_client.identity().RevokeCredential(
@@ -95,4 +95,4 @@ class IdentityClient:
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return res.get_result().get_timestamp()
+        return res.result.timestamp

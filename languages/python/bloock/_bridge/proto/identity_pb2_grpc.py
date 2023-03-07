@@ -15,65 +15,65 @@ class IdentityServiceStub(object):
             channel: A grpc.Channel.
         """
         self.CreateIdentity = channel.unary_unary(
-            '/bloock.IdentityService/CreateIdentity',
-            request_serializer=identity__pb2.CreateIdentityRequest.SerializeToString,
-            response_deserializer=identity__pb2.CreateIdentityResponse.FromString,
-        )
+                '/bloock.IdentityService/CreateIdentity',
+                request_serializer=identity__pb2.CreateIdentityRequest.SerializeToString,
+                response_deserializer=identity__pb2.CreateIdentityResponse.FromString,
+                )
         self.LoadIdentity = channel.unary_unary(
-            '/bloock.IdentityService/LoadIdentity',
-            request_serializer=identity__pb2.LoadIdentityRequest.SerializeToString,
-            response_deserializer=identity__pb2.LoadIdentityResponse.FromString,
-        )
+                '/bloock.IdentityService/LoadIdentity',
+                request_serializer=identity__pb2.LoadIdentityRequest.SerializeToString,
+                response_deserializer=identity__pb2.LoadIdentityResponse.FromString,
+                )
         self.BuildSchema = channel.unary_unary(
-            '/bloock.IdentityService/BuildSchema',
-            request_serializer=identity__pb2.BuildSchemaRequest.SerializeToString,
-            response_deserializer=identity__pb2.BuildSchemaResponse.FromString,
-        )
+                '/bloock.IdentityService/BuildSchema',
+                request_serializer=identity__pb2.BuildSchemaRequest.SerializeToString,
+                response_deserializer=identity__pb2.BuildSchemaResponse.FromString,
+                )
         self.GetSchema = channel.unary_unary(
-            '/bloock.IdentityService/GetSchema',
-            request_serializer=identity__pb2.GetSchemaRequest.SerializeToString,
-            response_deserializer=identity__pb2.GetSchemaResponse.FromString,
-        )
+                '/bloock.IdentityService/GetSchema',
+                request_serializer=identity__pb2.GetSchemaRequest.SerializeToString,
+                response_deserializer=identity__pb2.GetSchemaResponse.FromString,
+                )
         self.CreateCredentialOffer = channel.unary_unary(
-            '/bloock.IdentityService/CreateCredentialOffer',
-            request_serializer=identity__pb2.CreateCredentialOfferRequest.SerializeToString,
-            response_deserializer=identity__pb2.CreateCredentialOfferResponse.FromString,
-        )
+                '/bloock.IdentityService/CreateCredentialOffer',
+                request_serializer=identity__pb2.CreateCredentialOfferRequest.SerializeToString,
+                response_deserializer=identity__pb2.CreateCredentialOfferResponse.FromString,
+                )
         self.CredentialOfferToJson = channel.unary_unary(
-            '/bloock.IdentityService/CredentialOfferToJson',
-            request_serializer=identity__pb2.CredentialOfferToJsonRequest.SerializeToString,
-            response_deserializer=identity__pb2.CredentialOfferToJsonResponse.FromString,
-        )
+                '/bloock.IdentityService/CredentialOfferToJson',
+                request_serializer=identity__pb2.CredentialOfferToJsonRequest.SerializeToString,
+                response_deserializer=identity__pb2.CredentialOfferToJsonResponse.FromString,
+                )
         self.CredentialOfferFromJson = channel.unary_unary(
-            '/bloock.IdentityService/CredentialOfferFromJson',
-            request_serializer=identity__pb2.CredentialOfferFromJsonRequest.SerializeToString,
-            response_deserializer=identity__pb2.CredentialOfferFromJsonResponse.FromString,
-        )
+                '/bloock.IdentityService/CredentialOfferFromJson',
+                request_serializer=identity__pb2.CredentialOfferFromJsonRequest.SerializeToString,
+                response_deserializer=identity__pb2.CredentialOfferFromJsonResponse.FromString,
+                )
         self.CredentialOfferRedeem = channel.unary_unary(
-            '/bloock.IdentityService/CredentialOfferRedeem',
-            request_serializer=identity__pb2.CredentialOfferRedeemRequest.SerializeToString,
-            response_deserializer=identity__pb2.CredentialOfferRedeemResponse.FromString,
-        )
+                '/bloock.IdentityService/CredentialOfferRedeem',
+                request_serializer=identity__pb2.CredentialOfferRedeemRequest.SerializeToString,
+                response_deserializer=identity__pb2.CredentialOfferRedeemResponse.FromString,
+                )
         self.CredentialToJson = channel.unary_unary(
-            '/bloock.IdentityService/CredentialToJson',
-            request_serializer=identity__pb2.CredentialToJsonRequest.SerializeToString,
-            response_deserializer=identity__pb2.CredentialToJsonResponse.FromString,
-        )
+                '/bloock.IdentityService/CredentialToJson',
+                request_serializer=identity__pb2.CredentialToJsonRequest.SerializeToString,
+                response_deserializer=identity__pb2.CredentialToJsonResponse.FromString,
+                )
         self.CredentialFromJson = channel.unary_unary(
-            '/bloock.IdentityService/CredentialFromJson',
-            request_serializer=identity__pb2.CredentialFromJsonRequest.SerializeToString,
-            response_deserializer=identity__pb2.CredentialFromJsonResponse.FromString,
-        )
+                '/bloock.IdentityService/CredentialFromJson',
+                request_serializer=identity__pb2.CredentialFromJsonRequest.SerializeToString,
+                response_deserializer=identity__pb2.CredentialFromJsonResponse.FromString,
+                )
         self.VerifyCredential = channel.unary_unary(
-            '/bloock.IdentityService/VerifyCredential',
-            request_serializer=identity__pb2.VerifyCredentialRequest.SerializeToString,
-            response_deserializer=identity__pb2.VerifyCredentialResponse.FromString,
-        )
+                '/bloock.IdentityService/VerifyCredential',
+                request_serializer=identity__pb2.VerifyCredentialRequest.SerializeToString,
+                response_deserializer=identity__pb2.VerifyCredentialResponse.FromString,
+                )
         self.RevokeCredential = channel.unary_unary(
-            '/bloock.IdentityService/RevokeCredential',
-            request_serializer=identity__pb2.RevokeCredentialRequest.SerializeToString,
-            response_deserializer=identity__pb2.RevokeCredentialResponse.FromString,
-        )
+                '/bloock.IdentityService/RevokeCredential',
+                request_serializer=identity__pb2.RevokeCredentialRequest.SerializeToString,
+                response_deserializer=identity__pb2.RevokeCredentialResponse.FromString,
+                )
 
 
 class IdentityServiceServicer(object):
@@ -154,276 +154,276 @@ class IdentityServiceServicer(object):
 
 def add_IdentityServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        'CreateIdentity': grpc.unary_unary_rpc_method_handler(
-            servicer.CreateIdentity,
-            request_deserializer=identity__pb2.CreateIdentityRequest.FromString,
-            response_serializer=identity__pb2.CreateIdentityResponse.SerializeToString,
-        ),
-        'LoadIdentity': grpc.unary_unary_rpc_method_handler(
-            servicer.LoadIdentity,
-            request_deserializer=identity__pb2.LoadIdentityRequest.FromString,
-            response_serializer=identity__pb2.LoadIdentityResponse.SerializeToString,
-        ),
-        'BuildSchema': grpc.unary_unary_rpc_method_handler(
-            servicer.BuildSchema,
-            request_deserializer=identity__pb2.BuildSchemaRequest.FromString,
-            response_serializer=identity__pb2.BuildSchemaResponse.SerializeToString,
-        ),
-        'GetSchema': grpc.unary_unary_rpc_method_handler(
-            servicer.GetSchema,
-            request_deserializer=identity__pb2.GetSchemaRequest.FromString,
-            response_serializer=identity__pb2.GetSchemaResponse.SerializeToString,
-        ),
-        'CreateCredentialOffer': grpc.unary_unary_rpc_method_handler(
-            servicer.CreateCredentialOffer,
-            request_deserializer=identity__pb2.CreateCredentialOfferRequest.FromString,
-            response_serializer=identity__pb2.CreateCredentialOfferResponse.SerializeToString,
-        ),
-        'CredentialOfferToJson': grpc.unary_unary_rpc_method_handler(
-            servicer.CredentialOfferToJson,
-            request_deserializer=identity__pb2.CredentialOfferToJsonRequest.FromString,
-            response_serializer=identity__pb2.CredentialOfferToJsonResponse.SerializeToString,
-        ),
-        'CredentialOfferFromJson': grpc.unary_unary_rpc_method_handler(
-            servicer.CredentialOfferFromJson,
-            request_deserializer=identity__pb2.CredentialOfferFromJsonRequest.FromString,
-            response_serializer=identity__pb2.CredentialOfferFromJsonResponse.SerializeToString,
-        ),
-        'CredentialOfferRedeem': grpc.unary_unary_rpc_method_handler(
-            servicer.CredentialOfferRedeem,
-            request_deserializer=identity__pb2.CredentialOfferRedeemRequest.FromString,
-            response_serializer=identity__pb2.CredentialOfferRedeemResponse.SerializeToString,
-        ),
-        'CredentialToJson': grpc.unary_unary_rpc_method_handler(
-            servicer.CredentialToJson,
-            request_deserializer=identity__pb2.CredentialToJsonRequest.FromString,
-            response_serializer=identity__pb2.CredentialToJsonResponse.SerializeToString,
-        ),
-        'CredentialFromJson': grpc.unary_unary_rpc_method_handler(
-            servicer.CredentialFromJson,
-            request_deserializer=identity__pb2.CredentialFromJsonRequest.FromString,
-            response_serializer=identity__pb2.CredentialFromJsonResponse.SerializeToString,
-        ),
-        'VerifyCredential': grpc.unary_unary_rpc_method_handler(
-            servicer.VerifyCredential,
-            request_deserializer=identity__pb2.VerifyCredentialRequest.FromString,
-            response_serializer=identity__pb2.VerifyCredentialResponse.SerializeToString,
-        ),
-        'RevokeCredential': grpc.unary_unary_rpc_method_handler(
-            servicer.RevokeCredential,
-            request_deserializer=identity__pb2.RevokeCredentialRequest.FromString,
-            response_serializer=identity__pb2.RevokeCredentialResponse.SerializeToString,
-        ),
+            'CreateIdentity': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateIdentity,
+                    request_deserializer=identity__pb2.CreateIdentityRequest.FromString,
+                    response_serializer=identity__pb2.CreateIdentityResponse.SerializeToString,
+            ),
+            'LoadIdentity': grpc.unary_unary_rpc_method_handler(
+                    servicer.LoadIdentity,
+                    request_deserializer=identity__pb2.LoadIdentityRequest.FromString,
+                    response_serializer=identity__pb2.LoadIdentityResponse.SerializeToString,
+            ),
+            'BuildSchema': grpc.unary_unary_rpc_method_handler(
+                    servicer.BuildSchema,
+                    request_deserializer=identity__pb2.BuildSchemaRequest.FromString,
+                    response_serializer=identity__pb2.BuildSchemaResponse.SerializeToString,
+            ),
+            'GetSchema': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSchema,
+                    request_deserializer=identity__pb2.GetSchemaRequest.FromString,
+                    response_serializer=identity__pb2.GetSchemaResponse.SerializeToString,
+            ),
+            'CreateCredentialOffer': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateCredentialOffer,
+                    request_deserializer=identity__pb2.CreateCredentialOfferRequest.FromString,
+                    response_serializer=identity__pb2.CreateCredentialOfferResponse.SerializeToString,
+            ),
+            'CredentialOfferToJson': grpc.unary_unary_rpc_method_handler(
+                    servicer.CredentialOfferToJson,
+                    request_deserializer=identity__pb2.CredentialOfferToJsonRequest.FromString,
+                    response_serializer=identity__pb2.CredentialOfferToJsonResponse.SerializeToString,
+            ),
+            'CredentialOfferFromJson': grpc.unary_unary_rpc_method_handler(
+                    servicer.CredentialOfferFromJson,
+                    request_deserializer=identity__pb2.CredentialOfferFromJsonRequest.FromString,
+                    response_serializer=identity__pb2.CredentialOfferFromJsonResponse.SerializeToString,
+            ),
+            'CredentialOfferRedeem': grpc.unary_unary_rpc_method_handler(
+                    servicer.CredentialOfferRedeem,
+                    request_deserializer=identity__pb2.CredentialOfferRedeemRequest.FromString,
+                    response_serializer=identity__pb2.CredentialOfferRedeemResponse.SerializeToString,
+            ),
+            'CredentialToJson': grpc.unary_unary_rpc_method_handler(
+                    servicer.CredentialToJson,
+                    request_deserializer=identity__pb2.CredentialToJsonRequest.FromString,
+                    response_serializer=identity__pb2.CredentialToJsonResponse.SerializeToString,
+            ),
+            'CredentialFromJson': grpc.unary_unary_rpc_method_handler(
+                    servicer.CredentialFromJson,
+                    request_deserializer=identity__pb2.CredentialFromJsonRequest.FromString,
+                    response_serializer=identity__pb2.CredentialFromJsonResponse.SerializeToString,
+            ),
+            'VerifyCredential': grpc.unary_unary_rpc_method_handler(
+                    servicer.VerifyCredential,
+                    request_deserializer=identity__pb2.VerifyCredentialRequest.FromString,
+                    response_serializer=identity__pb2.VerifyCredentialResponse.SerializeToString,
+            ),
+            'RevokeCredential': grpc.unary_unary_rpc_method_handler(
+                    servicer.RevokeCredential,
+                    request_deserializer=identity__pb2.RevokeCredentialRequest.FromString,
+                    response_serializer=identity__pb2.RevokeCredentialResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        'bloock.IdentityService', rpc_method_handlers)
+            'bloock.IdentityService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class IdentityService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def CreateIdentity(request,
-                       target,
-                       options=(),
-                       channel_credentials=None,
-                       call_credentials=None,
-                       insecure=False,
-                       compression=None,
-                       wait_for_ready=None,
-                       timeout=None,
-                       metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/CreateIdentity',
-                                             identity__pb2.CreateIdentityRequest.SerializeToString,
-                                             identity__pb2.CreateIdentityResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.CreateIdentityRequest.SerializeToString,
+            identity__pb2.CreateIdentityResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def LoadIdentity(request,
-                     target,
-                     options=(),
-                     channel_credentials=None,
-                     call_credentials=None,
-                     insecure=False,
-                     compression=None,
-                     wait_for_ready=None,
-                     timeout=None,
-                     metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/LoadIdentity',
-                                             identity__pb2.LoadIdentityRequest.SerializeToString,
-                                             identity__pb2.LoadIdentityResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.LoadIdentityRequest.SerializeToString,
+            identity__pb2.LoadIdentityResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def BuildSchema(request,
-                    target,
-                    options=(),
-                    channel_credentials=None,
-                    call_credentials=None,
-                    insecure=False,
-                    compression=None,
-                    wait_for_ready=None,
-                    timeout=None,
-                    metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/BuildSchema',
-                                             identity__pb2.BuildSchemaRequest.SerializeToString,
-                                             identity__pb2.BuildSchemaResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.BuildSchemaRequest.SerializeToString,
+            identity__pb2.BuildSchemaResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def GetSchema(request,
-                  target,
-                  options=(),
-                  channel_credentials=None,
-                  call_credentials=None,
-                  insecure=False,
-                  compression=None,
-                  wait_for_ready=None,
-                  timeout=None,
-                  metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/GetSchema',
-                                             identity__pb2.GetSchemaRequest.SerializeToString,
-                                             identity__pb2.GetSchemaResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.GetSchemaRequest.SerializeToString,
+            identity__pb2.GetSchemaResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def CreateCredentialOffer(request,
-                              target,
-                              options=(),
-                              channel_credentials=None,
-                              call_credentials=None,
-                              insecure=False,
-                              compression=None,
-                              wait_for_ready=None,
-                              timeout=None,
-                              metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/CreateCredentialOffer',
-                                             identity__pb2.CreateCredentialOfferRequest.SerializeToString,
-                                             identity__pb2.CreateCredentialOfferResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.CreateCredentialOfferRequest.SerializeToString,
+            identity__pb2.CreateCredentialOfferResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def CredentialOfferToJson(request,
-                              target,
-                              options=(),
-                              channel_credentials=None,
-                              call_credentials=None,
-                              insecure=False,
-                              compression=None,
-                              wait_for_ready=None,
-                              timeout=None,
-                              metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/CredentialOfferToJson',
-                                             identity__pb2.CredentialOfferToJsonRequest.SerializeToString,
-                                             identity__pb2.CredentialOfferToJsonResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.CredentialOfferToJsonRequest.SerializeToString,
+            identity__pb2.CredentialOfferToJsonResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def CredentialOfferFromJson(request,
-                                target,
-                                options=(),
-                                channel_credentials=None,
-                                call_credentials=None,
-                                insecure=False,
-                                compression=None,
-                                wait_for_ready=None,
-                                timeout=None,
-                                metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/CredentialOfferFromJson',
-                                             identity__pb2.CredentialOfferFromJsonRequest.SerializeToString,
-                                             identity__pb2.CredentialOfferFromJsonResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.CredentialOfferFromJsonRequest.SerializeToString,
+            identity__pb2.CredentialOfferFromJsonResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def CredentialOfferRedeem(request,
-                              target,
-                              options=(),
-                              channel_credentials=None,
-                              call_credentials=None,
-                              insecure=False,
-                              compression=None,
-                              wait_for_ready=None,
-                              timeout=None,
-                              metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/CredentialOfferRedeem',
-                                             identity__pb2.CredentialOfferRedeemRequest.SerializeToString,
-                                             identity__pb2.CredentialOfferRedeemResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.CredentialOfferRedeemRequest.SerializeToString,
+            identity__pb2.CredentialOfferRedeemResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def CredentialToJson(request,
-                         target,
-                         options=(),
-                         channel_credentials=None,
-                         call_credentials=None,
-                         insecure=False,
-                         compression=None,
-                         wait_for_ready=None,
-                         timeout=None,
-                         metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/CredentialToJson',
-                                             identity__pb2.CredentialToJsonRequest.SerializeToString,
-                                             identity__pb2.CredentialToJsonResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.CredentialToJsonRequest.SerializeToString,
+            identity__pb2.CredentialToJsonResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def CredentialFromJson(request,
-                           target,
-                           options=(),
-                           channel_credentials=None,
-                           call_credentials=None,
-                           insecure=False,
-                           compression=None,
-                           wait_for_ready=None,
-                           timeout=None,
-                           metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/CredentialFromJson',
-                                             identity__pb2.CredentialFromJsonRequest.SerializeToString,
-                                             identity__pb2.CredentialFromJsonResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.CredentialFromJsonRequest.SerializeToString,
+            identity__pb2.CredentialFromJsonResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def VerifyCredential(request,
-                         target,
-                         options=(),
-                         channel_credentials=None,
-                         call_credentials=None,
-                         insecure=False,
-                         compression=None,
-                         wait_for_ready=None,
-                         timeout=None,
-                         metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/VerifyCredential',
-                                             identity__pb2.VerifyCredentialRequest.SerializeToString,
-                                             identity__pb2.VerifyCredentialResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.VerifyCredentialRequest.SerializeToString,
+            identity__pb2.VerifyCredentialResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def RevokeCredential(request,
-                         target,
-                         options=(),
-                         channel_credentials=None,
-                         call_credentials=None,
-                         insecure=False,
-                         compression=None,
-                         wait_for_ready=None,
-                         timeout=None,
-                         metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/RevokeCredential',
-                                             identity__pb2.RevokeCredentialRequest.SerializeToString,
-                                             identity__pb2.RevokeCredentialResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            identity__pb2.RevokeCredentialRequest.SerializeToString,
+            identity__pb2.RevokeCredentialResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -4,6 +4,10 @@ import {
   AuthenticityClient,
   EcdsaSigner,
   EnsSigner,
+  KeyClient,
+  KeyProtectionLevel,
+  KeyType,
+  ManagedKeyParams,
   RecordClient
 } from "../dist";
 
@@ -19,70 +23,138 @@ describe("Authenticity Tests", () => {
     expect(keys.publicKey).toBeTruthy();
   });
 
-  test("sign ecdsa", async () => {
+  test("sign local ecdsa", async () => {
     initSdk();
 
     let recordClient = new RecordClient();
-
     let record = await recordClient.fromString("Hello world").build();
 
-    let authenticityClient = new AuthenticityClient();
-    let keys = await authenticityClient.generateEcdsaKeyPair();
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.EcP256k);
 
-    let signature = await authenticityClient.sign(
-      record,
-      new EcdsaSigner(keys.privateKey)
-    );
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new EcdsaSigner(key));
 
     expect(signature.signature).toBeTruthy();
   });
 
-  test("verify ecdsa", async () => {
+  test("sign managed ecdsa", async () => {
     initSdk();
 
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k)
+    );
+
     let authenticityClient = new AuthenticityClient();
-    let keys = await authenticityClient.generateEcdsaKeyPair();
+    let signature = await authenticityClient.sign(record, new EcdsaSigner(key));
+
+    expect(signature.signature).toBeTruthy();
+  });
+
+  test("verify local ecdsa", async () => {
+    initSdk();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.EcP256k);
 
     let recordClient = new RecordClient();
     let record = await recordClient
       .fromString("Hello world")
-      .withSigner(new EcdsaSigner(keys.privateKey))
+      .withSigner(new EcdsaSigner(key))
       .build();
 
+    let authenticityClient = new AuthenticityClient();
     let valid = await authenticityClient.verify(record);
     expect(valid).toBeTruthy();
   });
 
-  test("sign ens", async () => {
+  test("verify managed ecdsa", async () => {
     initSdk();
 
-    let recordClient = new RecordClient();
-
-    let record = await recordClient.fromString("Hello world").build();
-
-    let authenticityClient = new AuthenticityClient();
-    let keys = await authenticityClient.generateEcdsaKeyPair();
-
-    let signature = await authenticityClient.sign(
-      record,
-      new EnsSigner(keys.privateKey)
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k)
     );
-
-    expect(signature.signature).toBeTruthy();
-  });
-
-  test("verify ens", async () => {
-    initSdk();
-
-    let authenticityClient = new AuthenticityClient();
-    let keys = await authenticityClient.generateEcdsaKeyPair();
 
     let recordClient = new RecordClient();
     let record = await recordClient
       .fromString("Hello world")
-      .withSigner(new EcdsaSigner(keys.privateKey))
+      .withSigner(new EcdsaSigner(key))
       .build();
 
+    let authenticityClient = new AuthenticityClient();
+    let valid = await authenticityClient.verify(record);
+    expect(valid).toBeTruthy();
+  });
+
+  test("sign local ens", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.EcP256k);
+
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new EnsSigner(key));
+
+    expect(signature.signature).toBeTruthy();
+  });
+
+  test("sign managed ens", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k)
+    );
+
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new EnsSigner(key));
+
+    expect(signature.signature).toBeTruthy();
+  });
+
+  test("verify local ens", async () => {
+    initSdk();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.EcP256k);
+
+    let recordClient = new RecordClient();
+    let record = await recordClient
+      .fromString("Hello world")
+      .withSigner(new EcdsaSigner(key))
+      .build();
+
+    let authenticityClient = new AuthenticityClient();
+    let valid = await authenticityClient.verify(record);
+    expect(valid).toBeTruthy();
+  });
+
+  test("verify managed ens", async () => {
+    initSdk();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k)
+    );
+
+    let recordClient = new RecordClient();
+    let record = await recordClient
+      .fromString("Hello world")
+      .withSigner(new EcdsaSigner(key))
+      .build();
+
+    let authenticityClient = new AuthenticityClient();
     let valid = await authenticityClient.verify(record);
     expect(valid).toBeTruthy();
   });
@@ -90,15 +162,16 @@ describe("Authenticity Tests", () => {
   test("get record signatures", async () => {
     initSdk();
 
-    let authenticityClient = new AuthenticityClient();
-    let keys = await authenticityClient.generateEcdsaKeyPair();
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.EcP256k);
 
     let recordClient = new RecordClient();
     let record = await recordClient
       .fromString("Hello world")
-      .withSigner(new EcdsaSigner(keys.privateKey))
+      .withSigner(new EcdsaSigner(key))
       .build();
 
+    let authenticityClient = new AuthenticityClient();
     let signatures = await authenticityClient.getSignatures(record);
     expect(signatures.length).toBe(1);
     expect(signatures[0].header.alg).toBe("ES256K");
@@ -107,15 +180,16 @@ describe("Authenticity Tests", () => {
   test("get empty signature common name", async () => {
     initSdk();
 
-    let authenticityClient = new AuthenticityClient();
-    let keys = await authenticityClient.generateEcdsaKeyPair();
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.EcP256k);
 
     let recordClient = new RecordClient();
     let record = await recordClient
       .fromString("Hello world")
-      .withSigner(new EcdsaSigner(keys.privateKey))
+      .withSigner(new EcdsaSigner(key))
       .build();
 
+    let authenticityClient = new AuthenticityClient();
     let signatures = await authenticityClient.getSignatures(record);
 
     expect.assertions(1);
@@ -129,16 +203,18 @@ describe("Authenticity Tests", () => {
   test("get ecdsa signature common name", async () => {
     initSdk();
 
-    let authenticityClient = new AuthenticityClient();
-    let keys = await authenticityClient.generateEcdsaKeyPair();
-
     let commonName = "common name";
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.EcP256k);
+
     let recordClient = new RecordClient();
     let record = await recordClient
       .fromString("Hello world")
-      .withSigner(new EcdsaSigner(keys.privateKey, { commonName }))
+      .withSigner(new EcdsaSigner(key, { commonName }))
       .build();
 
+    let authenticityClient = new AuthenticityClient();
     let signatures = await authenticityClient.getSignatures(record);
     let name = await authenticityClient.getSignatureCommonName(signatures[0]);
     expect(name).toBe(commonName);
@@ -147,15 +223,16 @@ describe("Authenticity Tests", () => {
   test("get ens signature common name", async () => {
     initSdk();
 
-    let authenticityClient = new AuthenticityClient();
-    let keys = await authenticityClient.generateEcdsaKeyPair();
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.EcP256k);
 
     let recordClient = new RecordClient();
     let record = await recordClient
       .fromString("Hello world")
-      .withSigner(new EnsSigner(keys.privateKey))
+      .withSigner(new EnsSigner(key))
       .build();
 
+    let authenticityClient = new AuthenticityClient();
     let signatures = await authenticityClient.getSignatures(record);
     signatures[0].signature =
       "66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601";

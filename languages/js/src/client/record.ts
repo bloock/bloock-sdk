@@ -10,10 +10,10 @@ import {
 } from "../bridge/proto/record";
 
 import { Record } from "../entity/record";
-import { Signer } from "../entity/signer";
-import { Encrypter } from "../entity/encrypter";
-import { Decrypter } from "../entity/decrypter";
-import { Loader } from "../entity/loader";
+import { Signer } from "../entity/authenticity";
+import { Encrypter } from "../entity/encryption";
+import { Decrypter } from "../entity/encryption";
+import { Loader } from "../entity/availability";
 import { NewConfigData } from "../config/config";
 import { ConfigData } from "../bridge/proto/config";
 import { RecordTypes } from "../bridge/proto/record_entities";

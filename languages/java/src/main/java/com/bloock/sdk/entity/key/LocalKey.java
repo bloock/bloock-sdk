@@ -6,7 +6,7 @@ public class LocalKey {
     String key;
     String privateKey;
 
-    LocalKey(String key, String privateKey) {
+    public LocalKey(String key, String privateKey) {
         this.key = key;
         this.privateKey = privateKey;
     }
@@ -19,10 +19,12 @@ public class LocalKey {
     }
 
     public KeysEntities.LocalKey toProto() {
-        return KeysEntities.LocalKey.newBuilder()
-                .setKey(this.key)
-                .setPrivateKey(this.privateKey)
-                .build();
+        KeysEntities.LocalKey.Builder builder =  KeysEntities.LocalKey.newBuilder();
+
+        if (this.key != null) builder.setKey(this.key);
+        if (this.privateKey != null) builder.setPrivateKey(this.privateKey);
+
+        return builder.build();
     }
 
     public String getKey() {

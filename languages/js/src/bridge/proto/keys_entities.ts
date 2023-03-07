@@ -7,7 +7,9 @@ export enum KeyType {
   Rsa2048 = 1,
   Rsa3072 = 2,
   Rsa4096 = 3,
-  UNRECOGNIZED = -1
+  Aes128 = 4,
+  Aes256 = 5,
+  UNRECOGNIZED = -1,
 }
 
 export function keyTypeFromJSON(object: any): KeyType {
@@ -24,6 +26,12 @@ export function keyTypeFromJSON(object: any): KeyType {
     case 3:
     case "Rsa4096":
       return KeyType.Rsa4096;
+    case 4:
+    case "Aes128":
+      return KeyType.Aes128;
+    case 5:
+    case "Aes256":
+      return KeyType.Aes256;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -41,6 +49,10 @@ export function keyTypeToJSON(object: KeyType): string {
       return "Rsa3072";
     case KeyType.Rsa4096:
       return "Rsa4096";
+    case KeyType.Aes128:
+      return "Aes128";
+    case KeyType.Aes256:
+      return "Aes256";
     case KeyType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -50,7 +62,7 @@ export function keyTypeToJSON(object: KeyType): string {
 export enum KeyProtectionLevel {
   SOFTWARE = 0,
   HSM = 1,
-  UNRECOGNIZED = -1
+  UNRECOGNIZED = -1,
 }
 
 export function keyProtectionLevelFromJSON(object: any): KeyProtectionLevel {
@@ -94,11 +106,12 @@ export interface ManagedKeyParams {
 }
 
 export interface ManagedKey {
+  id: string;
   key: string;
   protection: KeyProtectionLevel;
   keyType: KeyType;
-  name?: string | undefined;
-  expiration?: number | undefined;
+  name: string;
+  expiration: number;
 }
 
 function createBaseLocalKey(): LocalKey {
@@ -106,10 +119,7 @@ function createBaseLocalKey(): LocalKey {
 }
 
 export const LocalKey = {
-  encode(
-    message: LocalKey,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: LocalKey, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.key !== "") {
       writer.uint32(10).string(message.key);
     }
@@ -150,17 +160,14 @@ export const LocalKey = {
     return {
       key: isSet(object.key) ? String(object.key) : "",
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
-      privateKey: isSet(object.privateKey)
-        ? String(object.privateKey)
-        : undefined
+      privateKey: isSet(object.privateKey) ? String(object.privateKey) : undefined,
     };
   },
 
   toJSON(message: LocalKey): unknown {
     const obj: any = {};
     message.key !== undefined && (obj.key = message.key);
-    message.keyType !== undefined &&
-      (obj.keyType = keyTypeToJSON(message.keyType));
+    message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
     message.privateKey !== undefined && (obj.privateKey = message.privateKey);
     return obj;
   },
@@ -171,7 +178,7 @@ export const LocalKey = {
     message.keyType = object.keyType ?? 0;
     message.privateKey = object.privateKey ?? undefined;
     return message;
-  }
+  },
 };
 
 function createBaseManagedKeyParams(): ManagedKeyParams {
@@ -179,10 +186,7 @@ function createBaseManagedKeyParams(): ManagedKeyParams {
 }
 
 export const ManagedKeyParams = {
-  encode(
-    message: ManagedKeyParams,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: ManagedKeyParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.protection !== 0) {
       writer.uint32(8).int32(message.protection);
     }
@@ -227,70 +231,55 @@ export const ManagedKeyParams = {
 
   fromJSON(object: any): ManagedKeyParams {
     return {
-      protection: isSet(object.protection)
-        ? keyProtectionLevelFromJSON(object.protection)
-        : 0,
+      protection: isSet(object.protection) ? keyProtectionLevelFromJSON(object.protection) : 0,
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
       name: isSet(object.name) ? String(object.name) : undefined,
-      expiration: isSet(object.expiration)
-        ? Number(object.expiration)
-        : undefined
+      expiration: isSet(object.expiration) ? Number(object.expiration) : undefined,
     };
   },
 
   toJSON(message: ManagedKeyParams): unknown {
     const obj: any = {};
-    message.protection !== undefined &&
-      (obj.protection = keyProtectionLevelToJSON(message.protection));
-    message.keyType !== undefined &&
-      (obj.keyType = keyTypeToJSON(message.keyType));
+    message.protection !== undefined && (obj.protection = keyProtectionLevelToJSON(message.protection));
+    message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
     message.name !== undefined && (obj.name = message.name);
-    message.expiration !== undefined &&
-      (obj.expiration = Math.round(message.expiration));
+    message.expiration !== undefined && (obj.expiration = Math.round(message.expiration));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<ManagedKeyParams>, I>>(
-    object: I
-  ): ManagedKeyParams {
+  fromPartial<I extends Exact<DeepPartial<ManagedKeyParams>, I>>(object: I): ManagedKeyParams {
     const message = createBaseManagedKeyParams();
     message.protection = object.protection ?? 0;
     message.keyType = object.keyType ?? 0;
     message.name = object.name ?? undefined;
     message.expiration = object.expiration ?? undefined;
     return message;
-  }
+  },
 };
 
 function createBaseManagedKey(): ManagedKey {
-  return {
-    key: "",
-    protection: 0,
-    keyType: 0,
-    name: undefined,
-    expiration: undefined
-  };
+  return { id: "", key: "", protection: 0, keyType: 0, name: "", expiration: 0 };
 }
 
 export const ManagedKey = {
-  encode(
-    message: ManagedKey,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: ManagedKey, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
     if (message.key !== "") {
-      writer.uint32(10).string(message.key);
+      writer.uint32(18).string(message.key);
     }
     if (message.protection !== 0) {
-      writer.uint32(16).int32(message.protection);
+      writer.uint32(24).int32(message.protection);
     }
     if (message.keyType !== 0) {
-      writer.uint32(24).int32(message.keyType);
+      writer.uint32(32).int32(message.keyType);
     }
-    if (message.name !== undefined) {
-      writer.uint32(34).string(message.name);
+    if (message.name !== "") {
+      writer.uint32(42).string(message.name);
     }
-    if (message.expiration !== undefined) {
-      writer.uint32(40).int64(message.expiration);
+    if (message.expiration !== 0) {
+      writer.uint32(48).int64(message.expiration);
     }
     return writer;
   },
@@ -301,21 +290,23 @@ export const ManagedKey = {
     const message = createBaseManagedKey();
     while (reader.pos < end) {
       const tag = reader.uint32();
-      console.log(tag >>> 3, reader.pos, reader.len);
       switch (tag >>> 3) {
         case 1:
-          message.key = reader.string();
+          message.id = reader.string();
           break;
         case 2:
-          message.protection = reader.int32() as any;
+          message.key = reader.string();
           break;
         case 3:
-          message.keyType = reader.int32() as any;
+          message.protection = reader.int32() as any;
           break;
         case 4:
-          message.name = reader.string();
+          message.keyType = reader.int32() as any;
           break;
         case 5:
+          message.name = reader.string();
+          break;
+        case 6:
           message.expiration = longToNumber(reader.int64() as Long);
           break;
         default:
@@ -328,42 +319,36 @@ export const ManagedKey = {
 
   fromJSON(object: any): ManagedKey {
     return {
+      id: isSet(object.id) ? String(object.id) : "",
       key: isSet(object.key) ? String(object.key) : "",
-      protection: isSet(object.protection)
-        ? keyProtectionLevelFromJSON(object.protection)
-        : 0,
+      protection: isSet(object.protection) ? keyProtectionLevelFromJSON(object.protection) : 0,
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
-      name: isSet(object.name) ? String(object.name) : undefined,
-      expiration: isSet(object.expiration)
-        ? Number(object.expiration)
-        : undefined
+      name: isSet(object.name) ? String(object.name) : "",
+      expiration: isSet(object.expiration) ? Number(object.expiration) : 0,
     };
   },
 
   toJSON(message: ManagedKey): unknown {
     const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
     message.key !== undefined && (obj.key = message.key);
-    message.protection !== undefined &&
-      (obj.protection = keyProtectionLevelToJSON(message.protection));
-    message.keyType !== undefined &&
-      (obj.keyType = keyTypeToJSON(message.keyType));
+    message.protection !== undefined && (obj.protection = keyProtectionLevelToJSON(message.protection));
+    message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
     message.name !== undefined && (obj.name = message.name);
-    message.expiration !== undefined &&
-      (obj.expiration = Math.round(message.expiration));
+    message.expiration !== undefined && (obj.expiration = Math.round(message.expiration));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<ManagedKey>, I>>(
-    object: I
-  ): ManagedKey {
+  fromPartial<I extends Exact<DeepPartial<ManagedKey>, I>>(object: I): ManagedKey {
     const message = createBaseManagedKey();
+    message.id = object.id ?? "";
     message.key = object.key ?? "";
     message.protection = object.protection ?? 0;
     message.keyType = object.keyType ?? 0;
-    message.name = object.name ?? undefined;
-    message.expiration = object.expiration ?? undefined;
+    message.name = object.name ?? "";
+    message.expiration = object.expiration ?? 0;
     return message;
-  }
+  },
 };
 
 declare var self: any | undefined;
@@ -385,31 +370,16 @@ var globalThis: any = (() => {
   throw "Unable to locate global object";
 })();
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type Exact<P, I extends P> = P extends Builtin
-  ? P
-  : P &
-      { [K in keyof P]: Exact<P[K], I[K]> } &
-      { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {

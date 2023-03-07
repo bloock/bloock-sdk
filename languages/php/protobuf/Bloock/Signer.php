@@ -18,9 +18,17 @@ class Signer extends \Google\Protobuf\Internal\Message
      */
     protected $alg = 0;
     /**
-     * Generated from protobuf field <code>.bloock.SignerArgs args = 2;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
      */
-    protected $args = null;
+    protected $local_key = null;
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     */
+    protected $managed_key = null;
+    /**
+     * Generated from protobuf field <code>optional string common_name = 4;</code>
+     */
+    protected $common_name = null;
 
     /**
      * Constructor.
@@ -29,7 +37,9 @@ class Signer extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type int $alg
-     *     @type \Bloock\SignerArgs $args
+     *     @type \Bloock\LocalKey $local_key
+     *     @type \Bloock\ManagedKey $managed_key
+     *     @type string $common_name
      * }
      */
     public function __construct($data = NULL) {
@@ -60,33 +70,97 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.SignerArgs args = 2;</code>
-     * @return \Bloock\SignerArgs|null
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
+     * @return \Bloock\LocalKey|null
      */
-    public function getArgs()
+    public function getLocalKey()
     {
-        return $this->args;
+        return $this->local_key;
     }
 
-    public function hasArgs()
+    public function hasLocalKey()
     {
-        return isset($this->args);
+        return isset($this->local_key);
     }
 
-    public function clearArgs()
+    public function clearLocalKey()
     {
-        unset($this->args);
+        unset($this->local_key);
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.SignerArgs args = 2;</code>
-     * @param \Bloock\SignerArgs $var
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
+     * @param \Bloock\LocalKey $var
      * @return $this
      */
-    public function setArgs($var)
+    public function setLocalKey($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\SignerArgs::class);
-        $this->args = $var;
+        GPBUtil::checkMessage($var, \Bloock\LocalKey::class);
+        $this->local_key = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     * @return \Bloock\ManagedKey|null
+     */
+    public function getManagedKey()
+    {
+        return $this->managed_key;
+    }
+
+    public function hasManagedKey()
+    {
+        return isset($this->managed_key);
+    }
+
+    public function clearManagedKey()
+    {
+        unset($this->managed_key);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     * @param \Bloock\ManagedKey $var
+     * @return $this
+     */
+    public function setManagedKey($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\ManagedKey::class);
+        $this->managed_key = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string common_name = 4;</code>
+     * @return string
+     */
+    public function getCommonName()
+    {
+        return isset($this->common_name) ? $this->common_name : '';
+    }
+
+    public function hasCommonName()
+    {
+        return isset($this->common_name);
+    }
+
+    public function clearCommonName()
+    {
+        unset($this->common_name);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string common_name = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setCommonName($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->common_name = $var;
 
         return $this;
     }

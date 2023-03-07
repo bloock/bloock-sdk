@@ -9,6 +9,8 @@ import com.bloock.sdk.entity.integrity.AnchorNetwork;
 import com.bloock.sdk.entity.integrity.Proof;
 import com.bloock.sdk.entity.integrity.ProofAnchor;
 import com.bloock.sdk.entity.key.EcdsaKeyPair;
+import com.bloock.sdk.entity.key.KeyType;
+import com.bloock.sdk.entity.key.LocalKey;
 import com.bloock.sdk.entity.key.RsaKeyPair;
 import com.bloock.sdk.entity.record.Record;
 import org.junit.jupiter.api.BeforeAll;
@@ -95,14 +97,15 @@ class RecordTest {
     @Test
     void testEcdsaSignature() throws Exception {
         AuthenticityClient authenticityClient = new AuthenticityClient();
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
         String name = "Some name";
 
         RecordClient recordClient = new RecordClient();
         Record signedRecord =
                 recordClient
                         .fromString("Hello world 3")
-                        .withSigner(new EcdsaSigner(new SignerArgs(ecdsaKeyPair.getPrivateKey(), name)))
+                        .withSigner(new EcdsaSigner(new SignerArgs(localKey, name)))
                         .build();
 
         EcdsaKeyPair ecdsaKeyPair2 = authenticityClient.generateEcdsaKeyPair();
@@ -110,7 +113,7 @@ class RecordTest {
         Record recordWithMultipleSignatures =
                 recordClient
                         .fromRecord(signedRecord)
-                        .withSigner(new EcdsaSigner(ecdsaKeyPair2.getPrivateKey()))
+                        .withSigner(new EcdsaSigner(new SignerArgs(localKey)))
                         .build();
 
         List<Signature> signatures = authenticityClient.getSignatures(recordWithMultipleSignatures);
@@ -123,13 +126,14 @@ class RecordTest {
     @Test
     void testEnsSignature() throws Exception {
         AuthenticityClient authenticityClient = new AuthenticityClient();
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
         RecordClient recordClient = new RecordClient();
         Record record =
                 recordClient
                         .fromString("Hello world 4")
-                        .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
+                        .withSigner(new EnsSigner(new SignerArgs(localKey)))
                         .build();
 
         List<Signature> signatures = authenticityClient.getSignatures(record);
@@ -182,12 +186,15 @@ class RecordTest {
     void testRsaEncryption() throws Exception {
         String payload = "Hello world 2";
         EncryptionClient encryptionClient = new EncryptionClient();
-        RsaKeyPair keyPair = encryptionClient.generateRsaKeyPair();
+
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
+
         RecordClient recordClient = new RecordClient();
         Record encryptedRecord =
                 recordClient
                         .fromString(payload)
-                        .withEncrypter(new RsaEncrypter(keyPair.getPublicKey()))
+                        .withEncrypter(new RsaEncrypter(localKey))
                         .build();
 
         assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
@@ -196,7 +203,7 @@ class RecordTest {
         Record decryptedRecord =
                 recordClient
                         .fromRecord(encryptedRecord)
-                        .withDecrypter(new RsaDecrypter(keyPair.getPrivateKey()))
+                        .withDecrypter(new RsaDecrypter(localKey))
                         .build();
 
         assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());

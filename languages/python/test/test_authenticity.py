@@ -1,9 +1,12 @@
 import unittest
 
 from bloock.client.authenticity import AuthenticityClient
+from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
 from bloock.entity.authenticity.ecdsa_signer import EcdsaSigner
 from bloock.entity.authenticity.ens_signer import EnsSigner
+from bloock.entity.authenticity.signer_args import SignerArgs
+from bloock.entity.key.key_type import KeyType
 from test.util import init_sdk
 
 
@@ -20,50 +23,55 @@ class TestAuthenticity(unittest.TestCase):
         self.assertNotEqual(keys.public_key, "")
         self.assertNotEqual(keys.private_key, "")
 
-    def test_sign_ecdsa(self):
+    def test_sign_local_ecdsa(self):
         record_client = RecordClient()
 
         record = record_client.from_string("Hello world").build()
 
-        authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
-        signature = authenticity_client.sign(record, EcdsaSigner(keys.private_key))
+        authenticity_client = AuthenticityClient()
+        signature = authenticity_client.sign(record, EcdsaSigner(SignerArgs(key)))
         self.assertNotEqual(signature, "")
 
-    def test_verify_ecdsa(self):
+    def test_verify_local_ecdsa(self):
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(EcdsaSigner(keys.private_key))
+            .with_signer(EcdsaSigner(SignerArgs(key)))
             .build()
         )
 
         valid = authenticity_client.verify(record)
         self.assertTrue(valid)
 
-    def test_sign_ens(self):
+    def test_sign_local_ens(self):
         record_client = RecordClient()
 
         record = record_client.from_string("Hello world").build()
 
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
-        signature = authenticity_client.sign(record, EnsSigner(keys.private_key))
+        signature = authenticity_client.sign(record, EnsSigner(SignerArgs(key)))
         self.assertNotEqual(signature, "")
 
-    def test_verify_ens(self):
+    def test_verify_local_ens(self):
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(EnsSigner(keys.private_key))
+            .with_signer(EnsSigner(SignerArgs(key)))
             .build()
         )
 
@@ -72,12 +80,13 @@ class TestAuthenticity(unittest.TestCase):
 
     def test_get_signatures(self):
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(EcdsaSigner(keys.private_key))
+            .with_signer(EcdsaSigner(SignerArgs(key)))
             .build()
         )
 
@@ -87,12 +96,13 @@ class TestAuthenticity(unittest.TestCase):
 
     def test_get_empty_signature_common_name(self):
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(EcdsaSigner(keys.private_key))
+            .with_signer(EcdsaSigner(SignerArgs(key)))
             .build()
         )
 
@@ -104,13 +114,14 @@ class TestAuthenticity(unittest.TestCase):
 
     def test_get_ecdsa_signature_common_name(self):
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
         record_client = RecordClient()
         common_name = "common_name"
         record = (
             record_client.from_string("Hello world")
-            .with_signer(EcdsaSigner(keys.private_key, common_name))
+            .with_signer(EcdsaSigner(SignerArgs(key, common_name)))
             .build()
         )
 
@@ -121,12 +132,13 @@ class TestAuthenticity(unittest.TestCase):
 
     def test_get_ens_signature_common_name(self):
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(EnsSigner(keys.private_key))
+            .with_signer(EnsSigner(SignerArgs(key)))
             .build()
         )
 

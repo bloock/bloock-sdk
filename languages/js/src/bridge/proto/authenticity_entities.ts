@@ -1,5 +1,6 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
+import { LocalKey, ManagedKey } from "./keys_entities";
 
 export enum SignerAlg {
   ES256K = 0,
@@ -36,11 +37,8 @@ export function signerAlgToJSON(object: SignerAlg): string {
 
 export interface Signer {
   alg: SignerAlg;
-  args?: SignerArgs;
-}
-
-export interface SignerArgs {
-  privateKey?: string | undefined;
+  localKey?: LocalKey | undefined;
+  managedKey?: ManagedKey | undefined;
   commonName?: string | undefined;
 }
 
@@ -57,7 +55,7 @@ export interface SignatureHeader {
 }
 
 function createBaseSigner(): Signer {
-  return { alg: 0, args: undefined };
+  return { alg: 0, localKey: undefined, managedKey: undefined, commonName: undefined };
 }
 
 export const Signer = {
@@ -65,8 +63,14 @@ export const Signer = {
     if (message.alg !== 0) {
       writer.uint32(8).int32(message.alg);
     }
-    if (message.args !== undefined) {
-      SignerArgs.encode(message.args, writer.uint32(18).fork()).ldelim();
+    if (message.localKey !== undefined) {
+      LocalKey.encode(message.localKey, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.managedKey !== undefined) {
+      ManagedKey.encode(message.managedKey, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.commonName !== undefined) {
+      writer.uint32(34).string(message.commonName);
     }
     return writer;
   },
@@ -82,7 +86,13 @@ export const Signer = {
           message.alg = reader.int32() as any;
           break;
         case 2:
-          message.args = SignerArgs.decode(reader, reader.uint32());
+          message.localKey = LocalKey.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.managedKey = ManagedKey.decode(reader, reader.uint32());
+          break;
+        case 4:
+          message.commonName = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -95,80 +105,31 @@ export const Signer = {
   fromJSON(object: any): Signer {
     return {
       alg: isSet(object.alg) ? signerAlgFromJSON(object.alg) : 0,
-      args: isSet(object.args) ? SignerArgs.fromJSON(object.args) : undefined,
+      localKey: isSet(object.localKey) ? LocalKey.fromJSON(object.localKey) : undefined,
+      managedKey: isSet(object.managedKey) ? ManagedKey.fromJSON(object.managedKey) : undefined,
+      commonName: isSet(object.commonName) ? String(object.commonName) : undefined,
     };
   },
 
   toJSON(message: Signer): unknown {
     const obj: any = {};
     message.alg !== undefined && (obj.alg = signerAlgToJSON(message.alg));
-    message.args !== undefined && (obj.args = message.args ? SignerArgs.toJSON(message.args) : undefined);
+    message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
+    message.managedKey !== undefined &&
+      (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
+    message.commonName !== undefined && (obj.commonName = message.commonName);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Signer>, I>>(object: I): Signer {
     const message = createBaseSigner();
     message.alg = object.alg ?? 0;
-    message.args = (object.args !== undefined && object.args !== null)
-      ? SignerArgs.fromPartial(object.args)
+    message.localKey = (object.localKey !== undefined && object.localKey !== null)
+      ? LocalKey.fromPartial(object.localKey)
       : undefined;
-    return message;
-  },
-};
-
-function createBaseSignerArgs(): SignerArgs {
-  return { privateKey: undefined, commonName: undefined };
-}
-
-export const SignerArgs = {
-  encode(message: SignerArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.privateKey !== undefined) {
-      writer.uint32(10).string(message.privateKey);
-    }
-    if (message.commonName !== undefined) {
-      writer.uint32(18).string(message.commonName);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): SignerArgs {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSignerArgs();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.privateKey = reader.string();
-          break;
-        case 2:
-          message.commonName = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): SignerArgs {
-    return {
-      privateKey: isSet(object.privateKey) ? String(object.privateKey) : undefined,
-      commonName: isSet(object.commonName) ? String(object.commonName) : undefined,
-    };
-  },
-
-  toJSON(message: SignerArgs): unknown {
-    const obj: any = {};
-    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
-    message.commonName !== undefined && (obj.commonName = message.commonName);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<SignerArgs>, I>>(object: I): SignerArgs {
-    const message = createBaseSignerArgs();
-    message.privateKey = object.privateKey ?? undefined;
+    message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
+      ? ManagedKey.fromPartial(object.managedKey)
+      : undefined;
     message.commonName = object.commonName ?? undefined;
     return message;
   },

@@ -15,15 +15,15 @@ class KeyServiceStub(object):
             channel: A grpc.Channel.
         """
         self.GenerateLocalKey = channel.unary_unary(
-            '/bloock.KeyService/GenerateLocalKey',
-            request_serializer=keys__pb2.GenerateLocalKeyRequest.SerializeToString,
-            response_deserializer=keys__pb2.GenerateLocalKeyResponse.FromString,
-        )
+                '/bloock.KeyService/GenerateLocalKey',
+                request_serializer=keys__pb2.GenerateLocalKeyRequest.SerializeToString,
+                response_deserializer=keys__pb2.GenerateLocalKeyResponse.FromString,
+                )
         self.GenerateManagedKey = channel.unary_unary(
-            '/bloock.KeyService/GenerateManagedKey',
-            request_serializer=keys__pb2.GenerateManagedKeyRequest.SerializeToString,
-            response_deserializer=keys__pb2.GenerateManagedKeyResponse.FromString,
-        )
+                '/bloock.KeyService/GenerateManagedKey',
+                request_serializer=keys__pb2.GenerateManagedKeyRequest.SerializeToString,
+                response_deserializer=keys__pb2.GenerateManagedKeyResponse.FromString,
+                )
 
 
 class KeyServiceServicer(object):
@@ -44,56 +44,56 @@ class KeyServiceServicer(object):
 
 def add_KeyServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        'GenerateLocalKey': grpc.unary_unary_rpc_method_handler(
-            servicer.GenerateLocalKey,
-            request_deserializer=keys__pb2.GenerateLocalKeyRequest.FromString,
-            response_serializer=keys__pb2.GenerateLocalKeyResponse.SerializeToString,
-        ),
-        'GenerateManagedKey': grpc.unary_unary_rpc_method_handler(
-            servicer.GenerateManagedKey,
-            request_deserializer=keys__pb2.GenerateManagedKeyRequest.FromString,
-            response_serializer=keys__pb2.GenerateManagedKeyResponse.SerializeToString,
-        ),
+            'GenerateLocalKey': grpc.unary_unary_rpc_method_handler(
+                    servicer.GenerateLocalKey,
+                    request_deserializer=keys__pb2.GenerateLocalKeyRequest.FromString,
+                    response_serializer=keys__pb2.GenerateLocalKeyResponse.SerializeToString,
+            ),
+            'GenerateManagedKey': grpc.unary_unary_rpc_method_handler(
+                    servicer.GenerateManagedKey,
+                    request_deserializer=keys__pb2.GenerateManagedKeyRequest.FromString,
+                    response_serializer=keys__pb2.GenerateManagedKeyResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        'bloock.KeyService', rpc_method_handlers)
+            'bloock.KeyService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class KeyService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def GenerateLocalKey(request,
-                         target,
-                         options=(),
-                         channel_credentials=None,
-                         call_credentials=None,
-                         insecure=False,
-                         compression=None,
-                         wait_for_ready=None,
-                         timeout=None,
-                         metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.KeyService/GenerateLocalKey',
-                                             keys__pb2.GenerateLocalKeyRequest.SerializeToString,
-                                             keys__pb2.GenerateLocalKeyResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            keys__pb2.GenerateLocalKeyRequest.SerializeToString,
+            keys__pb2.GenerateLocalKeyResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def GenerateManagedKey(request,
-                           target,
-                           options=(),
-                           channel_credentials=None,
-                           call_credentials=None,
-                           insecure=False,
-                           compression=None,
-                           wait_for_ready=None,
-                           timeout=None,
-                           metadata=None):
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(request, target, '/bloock.KeyService/GenerateManagedKey',
-                                             keys__pb2.GenerateManagedKeyRequest.SerializeToString,
-                                             keys__pb2.GenerateManagedKeyResponse.FromString,
-                                             options, channel_credentials,
-                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            keys__pb2.GenerateManagedKeyRequest.SerializeToString,
+            keys__pb2.GenerateManagedKeyResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

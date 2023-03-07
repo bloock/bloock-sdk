@@ -3,12 +3,12 @@
 isort:skip_file
 """
 import builtins
-import sys
-import typing
-
 import google.protobuf.descriptor
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
+import keys_entities_pb2
+import sys
+import typing
 
 if sys.version_info >= (3, 10):
     import typing as typing_extensions
@@ -17,110 +17,71 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-
 class _EncryptionAlg:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-
-class _EncryptionAlgEnumTypeWrapper(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_EncryptionAlg.ValueType], builtins.type):  # noqa: F821
+class _EncryptionAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_EncryptionAlg.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     A256GCM: _EncryptionAlg.ValueType  # 0
     RSA: _EncryptionAlg.ValueType  # 1
-    ECIES: _EncryptionAlg.ValueType  # 2
-
 
 class EncryptionAlg(_EncryptionAlg, metaclass=_EncryptionAlgEnumTypeWrapper): ...
 
-
 A256GCM: EncryptionAlg.ValueType  # 0
 RSA: EncryptionAlg.ValueType  # 1
-ECIES: EncryptionAlg.ValueType  # 2
 global___EncryptionAlg = EncryptionAlg
-
 
 class Encrypter(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ALG_FIELD_NUMBER: builtins.int
-    ARGS_FIELD_NUMBER: builtins.int
+    LOCAL_KEY_FIELD_NUMBER: builtins.int
+    MANAGED_KEY_FIELD_NUMBER: builtins.int
     alg: global___EncryptionAlg.ValueType
-
     @property
-    def args(self) -> global___EncrypterArgs: ...
-
+    def local_key(self) -> keys_entities_pb2.LocalKey: ...
+    @property
+    def managed_key(self) -> keys_entities_pb2.ManagedKey: ...
     def __init__(
-            self,
-            *,
-            alg: global___EncryptionAlg.ValueType = ...,
-            args: global___EncrypterArgs | None = ...,
+        self,
+        *,
+        alg: global___EncryptionAlg.ValueType = ...,
+        local_key: keys_entities_pb2.LocalKey | None = ...,
+        managed_key: keys_entities_pb2.ManagedKey | None = ...,
     ) -> None: ...
-
-    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
-
-    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
-
+    def HasField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "local_key", b"local_key", "managed_key", b"managed_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "alg", b"alg", "local_key", b"local_key", "managed_key", b"managed_key"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_local_key", b"_local_key"]) -> typing_extensions.Literal["local_key"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
 
 global___Encrypter = Encrypter
-
-
-class EncrypterArgs(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    KEY_FIELD_NUMBER: builtins.int
-    key: builtins.str
-
-    def __init__(
-            self,
-            *,
-            key: builtins.str = ...,
-    ) -> None: ...
-
-    def ClearField(self, field_name: typing_extensions.Literal["key", b"key"]) -> None: ...
-
-
-global___EncrypterArgs = EncrypterArgs
-
 
 class Decrypter(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ALG_FIELD_NUMBER: builtins.int
-    ARGS_FIELD_NUMBER: builtins.int
+    LOCAL_KEY_FIELD_NUMBER: builtins.int
+    MANAGED_KEY_FIELD_NUMBER: builtins.int
     alg: global___EncryptionAlg.ValueType
-
     @property
-    def args(self) -> global___DecrypterArgs: ...
-
+    def local_key(self) -> keys_entities_pb2.LocalKey: ...
+    @property
+    def managed_key(self) -> keys_entities_pb2.ManagedKey: ...
     def __init__(
-            self,
-            *,
-            alg: global___EncryptionAlg.ValueType = ...,
-            args: global___DecrypterArgs | None = ...,
+        self,
+        *,
+        alg: global___EncryptionAlg.ValueType = ...,
+        local_key: keys_entities_pb2.LocalKey | None = ...,
+        managed_key: keys_entities_pb2.ManagedKey | None = ...,
     ) -> None: ...
-
-    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
-
-    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
-
+    def HasField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "local_key", b"local_key", "managed_key", b"managed_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "alg", b"alg", "local_key", b"local_key", "managed_key", b"managed_key"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_local_key", b"_local_key"]) -> typing_extensions.Literal["local_key"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
 
 global___Decrypter = Decrypter
-
-
-class DecrypterArgs(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    KEY_FIELD_NUMBER: builtins.int
-    key: builtins.str
-
-    def __init__(
-            self,
-            *,
-            key: builtins.str = ...,
-    ) -> None: ...
-
-    def ClearField(self, field_name: typing_extensions.Literal["key", b"key"]) -> None: ...
-
-
-global___DecrypterArgs = DecrypterArgs

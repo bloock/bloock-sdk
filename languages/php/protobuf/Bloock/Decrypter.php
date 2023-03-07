@@ -18,9 +18,13 @@ class Decrypter extends \Google\Protobuf\Internal\Message
      */
     protected $alg = 0;
     /**
-     * Generated from protobuf field <code>.bloock.DecrypterArgs args = 2;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
      */
-    protected $args = null;
+    protected $local_key = null;
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     */
+    protected $managed_key = null;
 
     /**
      * Constructor.
@@ -29,7 +33,8 @@ class Decrypter extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type int $alg
-     *     @type \Bloock\DecrypterArgs $args
+     *     @type \Bloock\LocalKey $local_key
+     *     @type \Bloock\ManagedKey $managed_key
      * }
      */
     public function __construct($data = NULL) {
@@ -60,33 +65,65 @@ class Decrypter extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.DecrypterArgs args = 2;</code>
-     * @return \Bloock\DecrypterArgs|null
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
+     * @return \Bloock\LocalKey|null
      */
-    public function getArgs()
+    public function getLocalKey()
     {
-        return $this->args;
+        return $this->local_key;
     }
 
-    public function hasArgs()
+    public function hasLocalKey()
     {
-        return isset($this->args);
+        return isset($this->local_key);
     }
 
-    public function clearArgs()
+    public function clearLocalKey()
     {
-        unset($this->args);
+        unset($this->local_key);
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.DecrypterArgs args = 2;</code>
-     * @param \Bloock\DecrypterArgs $var
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
+     * @param \Bloock\LocalKey $var
      * @return $this
      */
-    public function setArgs($var)
+    public function setLocalKey($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\DecrypterArgs::class);
-        $this->args = $var;
+        GPBUtil::checkMessage($var, \Bloock\LocalKey::class);
+        $this->local_key = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     * @return \Bloock\ManagedKey|null
+     */
+    public function getManagedKey()
+    {
+        return $this->managed_key;
+    }
+
+    public function hasManagedKey()
+    {
+        return isset($this->managed_key);
+    }
+
+    public function clearManagedKey()
+    {
+        unset($this->managed_key);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     * @param \Bloock\ManagedKey $var
+     * @return $this
+     */
+    public function setManagedKey($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\ManagedKey::class);
+        $this->managed_key = $var;
 
         return $this;
     }

@@ -4,21 +4,26 @@ from bloock.client.authenticity import AuthenticityClient
 from bloock.client.availability import AvailabilityClient
 from bloock.client.encryption import EncryptionClient
 from bloock.client.integrity import IntegrityClient
+from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
 from bloock.entity.authenticity.ecdsa_signer import EcdsaSigner
 from bloock.entity.authenticity.ens_signer import EnsSigner
 from bloock.entity.authenticity.signature import SignatureAlg
+from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.availability.hosted_loader import HostedLoader
 from bloock.entity.availability.hosted_publisher import HostedPublisher
 from bloock.entity.availability.ipfs_loader import IpfsLoader
 from bloock.entity.availability.ipfs_publisher import IpfsPublisher
 from bloock.entity.encryption.aes_decrypter import AesDecrypter
 from bloock.entity.encryption.aes_encrypter import AesEncrypter
+from bloock.entity.encryption.decrypter_args import DecrypterArgs
+from bloock.entity.encryption.encrypter_args import EncrypterArgs
 from bloock.entity.encryption.encryption_alg import EncryptionAlg
 from bloock.entity.encryption.rsa_decrypter import RsaDecrypter
 from bloock.entity.encryption.rsa_encrypter import RsaEncrypter
 from bloock.entity.integrity.anchor import AnchorNetwork
 from bloock.entity.integrity.proof import Proof, ProofAnchor
+from bloock.entity.key.key_type import KeyType
 from test.util import init_sdk
 
 
@@ -69,21 +74,20 @@ class TestRecord(unittest.TestCase):
 
     def test_ecdsa_signature(self):
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
         name = "some name"
 
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world 3")
-            .with_signer(EcdsaSigner(keys.private_key, common_name=name))
+            .with_signer(EcdsaSigner(SignerArgs(key, name)))
             .build()
         )
 
-        keys = authenticity_client.generate_ecdsa_keys()
-
         record_with_multiple_signatures = (
             record_client.from_record(record)
-            .with_signer(EcdsaSigner(keys.private_key))
+            .with_signer(EcdsaSigner(SignerArgs(key)))
             .build()
         )
 
@@ -97,12 +101,13 @@ class TestRecord(unittest.TestCase):
 
     def test_ens_signature(self):
         authenticity_client = AuthenticityClient()
-        keys = authenticity_client.generate_ecdsa_keys()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.EcP256k)
 
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world 4")
-            .with_signer(EnsSigner(keys.private_key))
+            .with_signer(EnsSigner(SignerArgs(key)))
             .build()
         )
 
@@ -149,11 +154,12 @@ class TestRecord(unittest.TestCase):
 
     def test_aes_encryption(self):
         payload = "Hello world 2"
-        password = "some_password"
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.Aes256)
         record_client = RecordClient()
         encrypted_record = (
             record_client.from_string(payload)
-            .with_encrypter(AesEncrypter(password))
+            .with_encrypter(AesEncrypter(EncrypterArgs(key)))
             .build()
         )
 
@@ -165,14 +171,16 @@ class TestRecord(unittest.TestCase):
             EncryptionAlg.AES256GCM,
         )
 
+        invalid_key = key_client.new_local_key(KeyType.Aes256)
+
         with self.assertRaises(Exception) as _:
             record_client.from_record(encrypted_record).with_decrypter(
-                AesDecrypter("incorrect_password")
+                AesDecrypter(DecrypterArgs(invalid_key))
             ).build()
 
         decrypted_record = (
             record_client.from_record(encrypted_record)
-            .with_decrypter(AesDecrypter(password))
+            .with_decrypter(AesDecrypter(DecrypterArgs(key)))
             .build()
         )
 
@@ -186,12 +194,13 @@ class TestRecord(unittest.TestCase):
     def test_rsa_encryption(self):
         payload = "Hello world 2"
         encryption_client = EncryptionClient()
-        keys = encryption_client.generate_rsa_keypair()
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.Rsa2048)
 
         record_client = RecordClient()
         encrypted_record = (
             record_client.from_string(payload)
-            .with_encrypter(RsaEncrypter(keys.public_key))
+            .with_encrypter(RsaEncrypter(EncrypterArgs(key)))
             .build()
         )
 
@@ -203,7 +212,7 @@ class TestRecord(unittest.TestCase):
 
         record = (
             record_client.from_record(encrypted_record)
-            .with_decrypter(RsaDecrypter(keys.private_key))
+            .with_decrypter(RsaDecrypter(DecrypterArgs(key)))
             .build()
         )
 

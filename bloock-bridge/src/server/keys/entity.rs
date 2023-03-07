@@ -58,8 +58,14 @@ impl From<ManagedKey> for CoreManagedKey {
             public_key: key.key,
             protection: key_protection.into(),
             key_type: key_type.into(),
-            name: key.name,
-            expiration: key.expiration,
+            name: match key.name.as_str() {
+                "" => None,
+                _ => Some(key.name),
+            },
+            expiration: match key.expiration {
+                0 => None,
+                _ => Some(key.expiration),
+            },
         }
     }
 }
@@ -74,8 +80,8 @@ impl From<CoreManagedKey> for ManagedKey {
             key: key.public_key,
             protection: key_protection.into(),
             key_type: key_type.into(),
-            name: key.name,
-            expiration: key.expiration,
+            name: key.name.unwrap_or("".to_string()),
+            expiration: key.expiration.unwrap_or(0),
         }
     }
 }

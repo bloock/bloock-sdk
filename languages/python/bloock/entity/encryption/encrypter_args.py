@@ -1,9 +1,16 @@
 import bloock._bridge.proto.encryption_entities_pb2 as proto
+from bloock.entity.key.local_key import LocalKey
+from bloock.entity.key.managed_key import ManagedKey
 
 
 class EncrypterArgs:
-    def __init__(self, key: str) -> None:
-        self.key = key
+    local_key = None
+    managed_key = None
 
-    def to_proto(self) -> proto.EncrypterArgs:
-        return proto.EncrypterArgs(key=self.key)
+    def __init__(self, key) -> None:
+        if isinstance(key, LocalKey):
+            self.local_key = key
+        elif isinstance(key, ManagedKey):
+            self.managed_key = key
+        else:
+            raise Exception("Invalid key provided. Must be of type LocalKey or ManagedKey")

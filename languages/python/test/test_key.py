@@ -26,6 +26,13 @@ class TestKey(unittest.TestCase):
         self.assertNotEqual(local_key.key, "")
         self.assertNotEqual(local_key.private_key, "")
 
+    def test_generate_local_aes(self):
+        key_client = KeyClient()
+        local_key = key_client.new_local_key(KeyType.Aes256)
+
+        self.assertNotEqual(local_key.key, "")
+        self.assertEqual(local_key.private_key, "")
+
     def test_generate_managed_ecdsa(self):
         key_client = KeyClient()
         protection = KeyProtectionLevel.SOFTWARE

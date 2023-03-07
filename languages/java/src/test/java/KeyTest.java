@@ -3,8 +3,7 @@ import com.bloock.sdk.entity.key.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class KeyTest {
 
@@ -29,6 +28,15 @@ class KeyTest {
 
         assertNotNull(localKey.getKey());
         assertNotNull(localKey.getPrivateKey());
+    }
+
+    @Test
+    void generateLocalAes() throws Exception {
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Aes256);
+
+        assertNotNull(localKey.getKey());
+        assertEquals(localKey.getPrivateKey(), "");
     }
 
     @Test

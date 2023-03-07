@@ -7,11 +7,6 @@ public class EcdsaSigner implements Signer {
     AuthenticityEntities.SignerAlg alg;
     SignerArgs args;
 
-    public EcdsaSigner(String privateKey) {
-        this.alg = SignerAlg.ES256K;
-        this.args = new SignerArgs(privateKey);
-    }
-
     public EcdsaSigner(SignerArgs args) {
         this.alg = SignerAlg.ES256K;
         this.args = args;
@@ -19,9 +14,21 @@ public class EcdsaSigner implements Signer {
 
     @Override
     public AuthenticityEntities.Signer toProto() {
-        return AuthenticityEntities.Signer.newBuilder()
-                .setAlg(this.alg)
-                .setArgs(this.args.toProto())
-                .build();
+        AuthenticityEntities.Signer.Builder builder = AuthenticityEntities.Signer.newBuilder()
+                .setAlg(this.alg);
+
+        if (this.args.localKey != null) {
+            builder.setLocalKey(this.args.localKey.toProto());
+        }
+
+        if (this.args.managedKey != null) {
+            builder.setManagedKey(this.args.managedKey.toProto());
+        }
+
+        if (this.args.commonName != null) {
+            builder.setCommonName(this.args.commonName);
+        }
+
+        return builder.build();
     }
 }

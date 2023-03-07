@@ -86,4 +86,4 @@ class SchemaBuilder:
         if res.error != Error():
             raise Exception(res.error.message)
 
-        return Schema.from_proto(res)
+        return Schema.from_proto(res.schema)

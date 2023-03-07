@@ -1,7 +1,8 @@
 import com.bloock.sdk.client.AuthenticityClient;
+import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.client.RecordClient;
 import com.bloock.sdk.entity.authenticity.*;
-import com.bloock.sdk.entity.key.EcdsaKeyPair;
+import com.bloock.sdk.entity.key.*;
 import com.bloock.sdk.entity.record.Record;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,31 +29,47 @@ class AuthenticityTest {
     }
 
     @Test
-    void signEcdsa() throws Exception {
+    void signLocalEcdsa() throws Exception {
         RecordClient recordClient = new RecordClient();
-
         Record record = recordClient.fromString("Hello world").build();
 
-        AuthenticityClient authenticityClient = new AuthenticityClient();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        AuthenticityClient authenticityClient = new AuthenticityClient();
         Signature signature =
-                authenticityClient.sign(record, new EcdsaSigner(ecdsaKeyPair.getPrivateKey()));
+                authenticityClient.sign(record, new EcdsaSigner(new SignerArgs(localKey)));
 
         assertNotNull(signature);
     }
 
     @Test
-    void verifyEcdsa() throws Exception {
+    void signManagedEcdsa() throws Exception {
+        RecordClient recordClient = new RecordClient();
+        Record record = recordClient.fromString("Hello world").build();
+
+        KeyClient keyClient = new KeyClient();
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
+
+        AuthenticityClient authenticityClient = new AuthenticityClient();
+        Signature signature =
+                authenticityClient.sign(record, new EcdsaSigner(new SignerArgs(managedKey)));
+
+        assertNotNull(signature);
+    }
+
+    @Test
+    void verifyLocalEcdsa() throws Exception {
         RecordClient recordClient = new RecordClient();
         AuthenticityClient authenticityClient = new AuthenticityClient();
 
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
         Record record =
                 recordClient
                         .fromString("Hello world")
-                        .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
+                        .withSigner(new EcdsaSigner(new SignerArgs(localKey)))
                         .build();
 
         boolean valid = authenticityClient.verify(record);
@@ -60,31 +77,83 @@ class AuthenticityTest {
     }
 
     @Test
-    void signEns() throws Exception {
+    void verifyManagedEcdsa() throws Exception {
         RecordClient recordClient = new RecordClient();
-
-        Record record = recordClient.fromString("Hello world").build();
-
         AuthenticityClient authenticityClient = new AuthenticityClient();
 
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
+
+        Record record =
+                recordClient
+                        .fromString("Hello world")
+                        .withSigner(new EcdsaSigner(new SignerArgs(managedKey)))
+                        .build();
+
+        boolean valid = authenticityClient.verify(record);
+        assertTrue(valid);
+    }
+
+    @Test
+    void signLocalEns() throws Exception {
+        RecordClient recordClient = new RecordClient();
+        Record record = recordClient.fromString("Hello world").build();
+
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
+
+        AuthenticityClient authenticityClient = new AuthenticityClient();
         Signature signature =
-                authenticityClient.sign(record, new EnsSigner(ecdsaKeyPair.getPrivateKey()));
+                authenticityClient.sign(record, new EnsSigner(new SignerArgs(localKey)));
 
         assertNotNull(signature);
     }
 
     @Test
-    void verifyEns() throws Exception {
+    void signManagedEns() throws Exception {
+        RecordClient recordClient = new RecordClient();
+        Record record = recordClient.fromString("Hello world").build();
+
+        KeyClient keyClient = new KeyClient();
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
+
+        AuthenticityClient authenticityClient = new AuthenticityClient();
+        Signature signature =
+                authenticityClient.sign(record, new EnsSigner(new SignerArgs(managedKey)));
+
+        assertNotNull(signature);
+    }
+
+    @Test
+    void verifyLocalEns() throws Exception {
         RecordClient recordClient = new RecordClient();
         AuthenticityClient authenticityClient = new AuthenticityClient();
 
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
         Record record =
                 recordClient
                         .fromString("Hello world")
-                        .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
+                        .withSigner(new EnsSigner(new SignerArgs(localKey)))
+                        .build();
+
+        boolean valid = authenticityClient.verify(record);
+        assertTrue(valid);
+    }
+
+    @Test
+    void verifyManagedEns() throws Exception {
+        RecordClient recordClient = new RecordClient();
+        AuthenticityClient authenticityClient = new AuthenticityClient();
+
+        KeyClient keyClient = new KeyClient();
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
+
+        Record record =
+                recordClient
+                        .fromString("Hello world")
+                        .withSigner(new EnsSigner(new SignerArgs(managedKey)))
                         .build();
 
         boolean valid = authenticityClient.verify(record);
@@ -96,12 +165,13 @@ class AuthenticityTest {
         RecordClient recordClient = new RecordClient();
         AuthenticityClient authenticityClient = new AuthenticityClient();
 
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
         Record record =
                 recordClient
                         .fromString("Hello world")
-                        .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
+                        .withSigner(new EcdsaSigner(new SignerArgs(localKey)))
                         .build();
 
         List<Signature> signatures = authenticityClient.getSignatures(record);
@@ -116,12 +186,13 @@ class AuthenticityTest {
         RecordClient recordClient = new RecordClient();
         AuthenticityClient authenticityClient = new AuthenticityClient();
 
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
         Record record =
                 recordClient
                         .fromString("Hello world")
-                        .withSigner(new EcdsaSigner(ecdsaKeyPair.getPrivateKey()))
+                        .withSigner(new EcdsaSigner(new SignerArgs(localKey)))
                         .build();
 
         List<Signature> signatures = authenticityClient.getSignatures(record);
@@ -141,13 +212,14 @@ class AuthenticityTest {
         RecordClient recordClient = new RecordClient();
         AuthenticityClient authenticityClient = new AuthenticityClient();
 
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
         String commonName = "common_name";
         Record record =
                 recordClient
                         .fromString("Hello world")
-                        .withSigner(new EcdsaSigner(new SignerArgs(ecdsaKeyPair.getPrivateKey(), commonName)))
+                        .withSigner(new EcdsaSigner(new SignerArgs(localKey, commonName)))
                         .build();
 
         List<Signature> signatures = authenticityClient.getSignatures(record);
@@ -161,12 +233,13 @@ class AuthenticityTest {
         RecordClient recordClient = new RecordClient();
         AuthenticityClient authenticityClient = new AuthenticityClient();
 
-        EcdsaKeyPair ecdsaKeyPair = authenticityClient.generateEcdsaKeyPair();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
         Record record =
                 recordClient
                         .fromString("Hello world")
-                        .withSigner(new EnsSigner(ecdsaKeyPair.getPrivateKey()))
+                        .withSigner(new EnsSigner(new SignerArgs(localKey)))
                         .build();
 
         List<Signature> signatures = authenticityClient.getSignatures(record);

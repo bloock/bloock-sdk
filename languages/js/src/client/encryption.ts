@@ -1,16 +1,15 @@
 import { BloockBridge } from "../bridge/bridge";
 import { ConfigData } from "../bridge/proto/config";
-import { KeyPair, RsaKeyPair } from "../entity/keys";
-import { Record } from "../entity/record";
+import { KeyPair, RsaKeyPair } from "../entity/key";
+import { Record } from "../entity/record/record";
 import { NewConfigData } from "../config/config";
 import {
   EncryptionAlgRequest,
   EncryptRequest,
   DecryptRequest
 } from "../bridge/proto/encryption";
-import { EncryptionAlg } from "../entity/encryption_alg";
-import { Encrypter } from "../entity/encrypter";
-import { Decrypter } from "../entity/decrypter";
+import { EncryptionAlg, Encrypter } from "../entity/encryption";
+import { Decrypter } from "../entity/encryption";
 import { GenerateLocalKeyRequest } from "../bridge/proto/keys";
 import { KeyType } from "../bridge/proto/keys_entities";
 
