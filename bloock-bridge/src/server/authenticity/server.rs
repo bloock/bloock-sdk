@@ -10,7 +10,8 @@ use crate::{
 use async_trait::async_trait;
 use bloock_core::{
     authenticity, config::entity::network::Network, record::entity::record::Record as RecordCore,
-    EcdsaSigner, EcdsaSignerArgs, EnsSigner, EnsSignerArgs, Signature as SignatureCore,
+    LocalEcdsaSigner, LocalEnsSigner, ManagedEcdsaSigner, ManagedEnsSigner,
+    Signature as SignatureCore, Signer,
 };
 
 pub struct AuthenticityServer {}
@@ -19,7 +20,7 @@ pub struct AuthenticityServer {}
 impl AuthenticityServiceHandler for AuthenticityServer {
     async fn sign(&self, req: &SignRequest) -> Result<SignResponse, String> {
         let config_data = req.get_config_data()?;
-        let client = authenticity::configure(config_data);
+        let client = authenticity::configure(config_data.clone());
 
         let req_record = req
             .clone()
@@ -35,31 +36,42 @@ impl AuthenticityServiceHandler for AuthenticityServer {
             .signer
             .ok_or_else(|| "no signer provided".to_string())?;
 
-        let signer_arguments = signer
-            .args
-            .ok_or_else(|| "no arguments provided".to_string())?;
-
-        let private_key = signer_arguments
-            .private_key
-            .ok_or_else(|| "no private key provided".to_string())?;
-
         let signer_alg = SignerAlg::from_i32(signer.alg);
 
-        let signature: SignatureCore = match signer_alg {
-            Some(SignerAlg::Es256k) => {
-                let signer = EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                    &private_key,
-                    signer_arguments.common_name,
-                ));
-                client.sign_ecdsa(record, signer)
+        let local_key = signer.local_key;
+        let managed_key = signer.managed_key;
+
+        let signer: Box<dyn Signer> = if let Some(key) = managed_key {
+            match signer_alg {
+                Some(SignerAlg::Es256k) => ManagedEcdsaSigner::new_boxed(
+                    key.into(),
+                    signer.common_name,
+                    config_data.config.host,
+                    config_data.config.api_key,
+                ),
+                Some(SignerAlg::Ens) => ManagedEnsSigner::new_boxed(
+                    key.into(),
+                    config_data.config.host,
+                    config_data.config.api_key,
+                ),
+                None => return Err("invalid signer provided".to_string()),
             }
-            Some(SignerAlg::Ens) => {
-                let signer = EnsSigner::new_boxed(EnsSignerArgs::new(&private_key));
-                client.sign_ens(record, signer)
+        } else if let Some(key) = local_key {
+            match signer_alg {
+                Some(SignerAlg::Es256k) => {
+                    LocalEcdsaSigner::new_boxed(key.into(), signer.common_name)
+                }
+                Some(SignerAlg::Ens) => LocalEnsSigner::new_boxed(key.into()),
+                None => return Err("invalid signer provided".to_string()),
             }
-            None => return Err("invalid signer provided".to_string()),
-        }
-        .map_err(|e| e.to_string())?;
+        } else {
+            return Err("invalid key provided".to_string());
+        };
+
+        let signature: SignatureCore = client
+            .sign(record, signer)
+            .await
+            .map_err(|e| e.to_string())?;
 
         Ok(SignResponse {
             signature: Some(signature.into()),
@@ -68,16 +80,19 @@ impl AuthenticityServiceHandler for AuthenticityServer {
     }
 
     async fn verify(&self, req: &VerifyRequest) -> Result<VerifyResponse, String> {
+        let config_data = req.get_config_data()?;
+        let client = authenticity::configure(config_data);
+
         let req_record = req
             .clone()
             .record
             .ok_or_else(|| "no record provided".to_string())?;
 
-        let mut record: RecordCore = req_record
+        let record: RecordCore = req_record
             .try_into()
             .map_err(|e: BridgeError| e.to_string())?;
 
-        let valid = record.verify().map_err(|e| e.to_string())?;
+        let valid = client.verify(record).await.map_err(|e| e.to_string())?;
 
         Ok(VerifyResponse { valid, error: None })
     }

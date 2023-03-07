@@ -13,12 +13,14 @@ pub mod service;
 
 #[derive(Error, Debug, PartialEq, Eq, Clone, Serialize)]
 pub enum EncryptionError {
-    #[error("Unable to parse data to publish")]
-    PayloadParseError(),
-    #[error("Publish error - {0}")]
-    PublishError(String),
-    #[error("Load error - {0}")]
-    LoadError(String),
+    #[error("No payload found")]
+    PayloadNotFoundError(),
+    #[error("Error happened while encrypting: {0}")]
+    EncryptionError(String),
+    #[error("Error happened while decrypting: {0}")]
+    DecryptionError(String),
+    #[error("Couldn't decrypt because record is not encrypted")]
+    NotEncryptedError(),
 }
 
 impl From<EncryptionError> for BloockError {

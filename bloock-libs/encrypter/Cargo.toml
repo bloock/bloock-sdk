@@ -8,6 +8,8 @@ bench = false
 
 [dependencies]
 bloock-keys = { path = "../keys" }
+bloock-http = { path = "../http" }
+async-trait = "0.1.57"
 serde = { version = "1.0.123", features = ["std", "derive"] }
 thiserror = "1.0.31"
 aes-gcm = "0.10"
@@ -21,3 +23,9 @@ pbkdf2 = "0.11.0"
 hmac = "0.12.1"
 sha2 = "0.10.6"
 ecies = {version = "0.2", default-features = false, features = ["pure"]}
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tokio = { version = "1.24.1", features = ["rt", "macros"] }
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3.32"

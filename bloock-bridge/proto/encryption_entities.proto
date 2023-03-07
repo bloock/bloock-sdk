@@ -5,26 +5,21 @@ package bloock;
 option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "com.bloock.sdk.bridge.proto";
 
+import "keys_entities.proto";
+
 enum EncryptionAlg {
     A256GCM = 0;
     RSA = 1;
-    ECIES = 2;
 }
 
 message Encrypter {
     EncryptionAlg alg = 1;
-    EncrypterArgs args = 2;
-}
-
-message EncrypterArgs {
-    string key = 1;
+    optional LocalKey local_key = 2;
+    optional ManagedKey managed_key = 3;
 }
 
 message Decrypter {
     EncryptionAlg alg = 1;
-    DecrypterArgs args = 2;
-}
-
-message DecrypterArgs {
-    string key = 1;
+    optional LocalKey local_key = 2;
+    optional ManagedKey managed_key = 3;
 }

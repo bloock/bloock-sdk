@@ -10,7 +10,7 @@ pub struct RsaKey {
     pub private_key: String,
 }
 
-impl From<RsaKey> for LocalKey {
+impl From<RsaKey> for LocalKey<String> {
     fn from(value: RsaKey) -> Self {
         let key_type = match value.bit_size {
             2048 => KeyType::Rsa2048,

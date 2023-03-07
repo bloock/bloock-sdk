@@ -198,12 +198,16 @@ impl<H: Client> IntegrityService<H> {
             };
 
             for signature in signatures {
-                let verifier = bloock_signer::create_verifier_from_signature(signature)
+                let verifier = bloock_signer::create_verifier_from_signature(
+                    signature,
+                    self.config_service.get_api_base_url(),
+                    self.config_service.get_api_key(),
+                )
+                .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
+                let verification_response = verifier
+                    .verify(&document.payload, signature.clone())
+                    .await
                     .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
-                let verification_response =
-                    verifier
-                        .verify(&document.payload, signature.clone())
-                        .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
                 if !verification_response {
                     return Err(IntegrityError::InvalidVerification.into());
                 }
@@ -370,6 +374,7 @@ mod tests {
             .send_records(Vec::from([RecordService::from_string("Some String")
                 .unwrap()
                 .build()
+                .await
                 .unwrap()]))
             .await
             .unwrap();
@@ -522,6 +527,7 @@ mod tests {
             .get_proof(vec![RecordService::from_string("Some String")
                 .unwrap()
                 .build()
+                .await
                 .unwrap()])
             .await
             .unwrap();

@@ -67,7 +67,7 @@ impl AvailabilityServiceHandler for AvailabilityServer {
 
         let builder = RecordService::from_file(payload).map_err(|e| e.to_string())?;
 
-        let record = builder.build().map_err(|e| e.to_string())?;
+        let record = builder.build().await.map_err(|e| e.to_string())?;
 
         let res: Record = record.try_into().map_err(|e: BridgeError| e.to_string())?;
 

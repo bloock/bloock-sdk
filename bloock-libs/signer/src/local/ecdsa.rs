@@ -1,12 +1,10 @@
+use crate::entity::alg::Algorithms;
+use crate::entity::signature::{ProtectedHeader, Signature, SignatureHeader};
+use crate::{Result, Signer, SignerError, Verifier};
+use async_trait::async_trait;
 use bloock_hasher::{keccak::Keccak256, sha256::Sha256, Hasher, H256};
+use bloock_keys::local::LocalKey;
 use libsecp256k1::{Message, PublicKey, RecoveryId, SecretKey};
-
-use crate::{Algorithms, ProtectedHeader, Result, Signature, SignerError, Verifier};
-
-use super::Signer;
-use std::str;
-
-pub const ECDSA_ALG: &str = "ES256K";
 
 pub fn get_common_name(signature: &Signature) -> Result<String> {
     ProtectedHeader::deserialize(&signature.protected)
@@ -37,43 +35,41 @@ pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<V
         .to_vec())
 }
 
-pub struct EcdsaSignerArgs {
-    pub private_key: String,
-    pub common_name: Option<String>,
+pub struct LocalEcdsaSigner<S: ToString> {
+    local_key: LocalKey<S>,
+    common_name: Option<String>,
 }
 
-impl EcdsaSignerArgs {
-    pub fn new(private_key: &str, common_name: Option<String>) -> Self {
+impl<S: ToString> LocalEcdsaSigner<S> {
+    pub fn new(key: LocalKey<S>, common_name: Option<String>) -> Self {
         Self {
-            private_key: private_key.to_string(),
+            local_key: key,
             common_name,
         }
     }
-}
 
-pub struct EcdsaSigner {
-    args: EcdsaSignerArgs,
-}
-
-impl EcdsaSigner {
-    pub fn new(args: EcdsaSignerArgs) -> Self {
-        Self { args }
-    }
-
-    pub fn new_boxed(args: EcdsaSignerArgs) -> Box<Self> {
-        Box::new(Self::new(args))
+    pub fn new_boxed(key: LocalKey<S>, common_name: Option<String>) -> Box<Self> {
+        Box::new(Self::new(key, common_name))
     }
 }
 
-impl Signer for EcdsaSigner {
-    fn sign(&self, payload: &[u8]) -> crate::Result<Signature> {
-        let secret_key_hex = hex::decode(self.args.private_key.as_bytes())
-            .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
+#[async_trait(?Send)]
+impl<S: ToString + AsRef<[u8]> + Clone> Signer for LocalEcdsaSigner<S> {
+    async fn sign(&self, payload: &[u8]) -> crate::Result<Signature> {
+        let private_key =
+            self.local_key
+                .private_key
+                .clone()
+                .ok_or(SignerError::InvalidSecretKey(
+                    "no private key found".to_string(),
+                ))?;
+        let secret_key_hex =
+            hex::decode(private_key).map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let secret_key = SecretKey::parse_slice(&secret_key_hex)
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let public_key = PublicKey::from_secret_key(&secret_key);
 
-        let protected = match self.args.common_name.clone() {
+        let protected = match self.common_name.clone() {
             Some(common_name) => ProtectedHeader {
                 common_name: Some(common_name),
             }
@@ -105,8 +101,8 @@ impl Signer for EcdsaSigner {
         let signature = Signature {
             protected,
             signature: hex::encode(buffer),
-            header: crate::SignatureHeader {
-                alg: Algorithms::Ecdsa.to_string(),
+            header: SignatureHeader {
+                alg: Algorithms::Es256k.to_string(),
                 kid: hex::encode(public_key.serialize_compressed()),
             },
             message_hash: hex::encode(Keccak256::generate_hash(payload)),
@@ -117,10 +113,11 @@ impl Signer for EcdsaSigner {
 }
 
 #[derive(Default)]
-pub struct EcdsaVerifier {}
+pub struct LocalEcdsaVerifier {}
 
-impl Verifier for EcdsaVerifier {
-    fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
+#[async_trait(?Send)]
+impl Verifier for LocalEcdsaVerifier {
+    async fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
         let public_key_hex = hex::decode(signature.header.kid.as_bytes())
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
@@ -154,95 +151,109 @@ impl Verifier for EcdsaVerifier {
 #[cfg(test)]
 mod tests {
     use bloock_hasher::{sha256::Sha256, Hasher};
-    use bloock_keys::keys::ec::EcKey;
-
-    use crate::{
-        create_verifier_from_signature,
-        ecdsa::{get_common_name, EcdsaSigner, EcdsaSignerArgs},
-        Signature, SignatureHeader, Signer,
-    };
+    use bloock_keys::local::LocalKey;
 
     use super::recover_public_key;
+    use crate::entity::signature::{Signature, SignatureHeader};
+    use crate::{
+        create_verifier_from_signature,
+        local::ecdsa::{get_common_name, LocalEcdsaSigner},
+        Signer,
+    };
 
-    #[test]
-    fn test_sign_and_verify_ok() {
-        let keys = EcKey::new_ec_p256k();
+    #[tokio::test]
+    async fn test_sign_and_verify_ok() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let local_key_params = bloock_keys::local::LocalKeyParams {
+            key_type: bloock_keys::KeyType::EcP256k,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
 
         let string_payload = "hello world";
 
-        let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: keys.private_key,
-            common_name: None,
-        });
+        let c = LocalEcdsaSigner::new(local_key, None);
 
-        let signature = c.sign(string_payload.as_bytes()).unwrap();
+        let signature = c.sign(string_payload.as_bytes()).await.unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
 
-        let result = create_verifier_from_signature(&signature)
+        let result = create_verifier_from_signature(&signature, api_host, api_key)
             .unwrap()
             .verify(string_payload.as_bytes(), signature)
+            .await
             .unwrap();
 
         assert!(result);
     }
 
-    #[test]
-    fn test_sign_and_verify_ok_set_common_name() {
-        let keys = EcKey::new_ec_p256k();
+    #[tokio::test]
+    async fn test_sign_and_verify_ok_set_common_name() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let local_key_params = bloock_keys::local::LocalKeyParams {
+            key_type: bloock_keys::KeyType::EcP256k,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
 
         let string_payload = "hello world";
 
-        let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: keys.private_key,
-            common_name: Some("a name".to_string()),
-        });
+        let c = LocalEcdsaSigner::new(local_key, Some("a name".to_string()));
 
-        let signature = c.sign(string_payload.as_bytes()).unwrap();
+        let signature = c.sign(string_payload.as_bytes()).await.unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
         assert_eq!(get_common_name(&signature).unwrap().as_str(), "a name");
 
-        let result = create_verifier_from_signature(&signature)
+        let result = create_verifier_from_signature(&signature, api_host, api_key)
             .unwrap()
             .verify(string_payload.as_bytes(), signature)
+            .await
             .unwrap();
 
         assert!(result);
     }
 
-    #[test]
-    fn test_sign_and_verify_ok_get_common_name_without_set() {
-        let keys = EcKey::new_ec_p256k();
+    #[tokio::test]
+    async fn test_sign_and_verify_ok_get_common_name_without_set() {
+        let local_key_params = bloock_keys::local::LocalKeyParams {
+            key_type: bloock_keys::KeyType::EcP256k,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
 
         let string_payload = "hello world";
 
-        let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: keys.private_key,
-            common_name: None,
-        });
+        let c = LocalEcdsaSigner::new(local_key, None);
 
-        let signature = c.sign(string_payload.as_bytes()).unwrap();
+        let signature = c.sign(string_payload.as_bytes()).await.unwrap();
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
         assert!(get_common_name(&signature).is_err());
     }
 
-    #[test]
-    fn test_sign_invalid_private_key() {
+    #[tokio::test]
+    async fn test_sign_invalid_private_key() {
         let string_payload = "hello world";
-        let pvk = "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945";
+        let local_key = LocalKey {
+            key_type: bloock_keys::KeyType::EcP256k,
+            key: "".to_string(),
+            private_key: Some(
+                "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            ),
+        };
 
-        let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: pvk.to_string(),
-            common_name: None,
-        });
-        let result = c.sign(string_payload.as_bytes());
+        let c = LocalEcdsaSigner::new(local_key, None);
+        let result = c.sign(string_payload.as_bytes()).await;
         assert!(result.is_err());
     }
 
-    #[test]
-    fn test_verify_invalid_signature() {
+    #[tokio::test]
+    async fn test_verify_invalid_signature() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
         let string_payload = "hello world";
 
         let json_header = SignatureHeader {
@@ -257,16 +268,20 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
+            .await
             .unwrap();
 
         assert!(!result);
     }
 
-    #[test]
-    fn test_verify_invalid_public_key() {
+    #[tokio::test]
+    async fn test_verify_invalid_public_key() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
         let string_payload = "hello world";
 
         let json_header = SignatureHeader {
@@ -281,15 +296,19 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
             .unwrap()
-            .verify(string_payload.as_bytes(), json_signature);
+            .verify(string_payload.as_bytes(), json_signature)
+            .await;
 
         assert!(result.is_err());
     }
 
-    #[test]
-    fn test_verify_invalid_payload() {
+    #[tokio::test]
+    async fn test_verify_invalid_payload() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
         let string_payload = "end world";
 
         let json_header = SignatureHeader {
@@ -304,31 +323,32 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
+            .await
             .unwrap();
 
         assert!(!result);
     }
 
-    #[test]
-    fn recover_public_key_ok() {
-        let keys = EcKey::new_ec_p256k();
+    #[tokio::test]
+    async fn recover_public_key_ok() {
+        let local_key_params = bloock_keys::local::LocalKeyParams {
+            key_type: bloock_keys::KeyType::EcP256k,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
 
         let string_payload = "hello world";
 
-        let c = EcdsaSigner::new(EcdsaSignerArgs {
-            private_key: keys.private_key,
-            common_name: None,
-        });
+        let c = LocalEcdsaSigner::new(local_key.clone(), None);
 
-        let signature = c.sign(string_payload.as_bytes()).unwrap();
+        let signature = c.sign(string_payload.as_bytes()).await.unwrap();
 
         let result_key =
             recover_public_key(&signature, Sha256::generate_hash(string_payload.as_bytes()))
                 .unwrap();
 
-        assert_eq!(hex::encode(result_key), keys.public_key);
+        assert_eq!(hex::encode(result_key), local_key.key);
     }
 }

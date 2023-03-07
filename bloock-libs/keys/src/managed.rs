@@ -33,6 +33,7 @@ pub struct ManagedKeyParams {
     pub expiration: Option<i64>,
 }
 
+#[derive(Clone)]
 pub struct ManagedKey {
     pub id: String,
     pub name: Option<String>,

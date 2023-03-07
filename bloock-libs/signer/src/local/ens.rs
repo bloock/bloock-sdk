@@ -1,15 +1,13 @@
-use bloock_hasher::{keccak::Keccak256, Hasher, H256};
-use libsecp256k1::{PublicKey, PublicKeyFormat};
-
+use super::ecdsa::LocalEcdsaSigner;
 use crate::{
-    ecdsa::{self, EcdsaSigner, EcdsaSignerArgs, EcdsaVerifier},
-    Result, SignerError, Verifier,
+    entity::alg::ENS_ALG,
+    local::ecdsa::{self, LocalEcdsaVerifier},
+    Result, Signature, Signer, SignerError, Verifier,
 };
-
-use super::{Signature, Signer};
-use std::str;
-
-pub const ENS_ALG: &str = "ENS";
+use async_trait::async_trait;
+use bloock_hasher::{keccak::Keccak256, Hasher, H256};
+use bloock_keys::local::LocalKey;
+use libsecp256k1::{PublicKey, PublicKeyFormat};
 
 pub async fn get_common_name(
     signature: &Signature,
@@ -44,64 +42,48 @@ fn derive_eth_address(mut public_key: Vec<u8>) -> Result<String> {
     Ok(hex::encode(&Keccak256::generate_hash(&public_key)[12..]))
 }
 
-#[derive(Clone)]
-pub struct EnsSignerArgs {
-    pub private_key: String,
+pub struct LocalEnsSigner {
+    local_key: LocalKey<String>,
 }
 
-impl EnsSignerArgs {
-    pub fn new(private_key: &str) -> Self {
-        Self {
-            private_key: private_key.to_string(),
-        }
+impl LocalEnsSigner {
+    pub fn new(key: LocalKey<String>) -> Self {
+        Self { local_key: key }
+    }
+
+    pub fn new_boxed(key: LocalKey<String>) -> Box<Self> {
+        Box::new(Self::new(key))
     }
 }
 
-impl From<EnsSignerArgs> for EcdsaSignerArgs {
-    fn from(args: EnsSignerArgs) -> Self {
-        EcdsaSignerArgs {
-            private_key: args.private_key,
-            common_name: None,
-        }
-    }
-}
-
-pub struct EnsSigner {
-    signer: EcdsaSigner,
-}
-
-impl EnsSigner {
-    pub fn new(args: EnsSignerArgs) -> Self {
-        Self {
-            signer: EcdsaSigner::new(args.into()),
-        }
-    }
-
-    pub fn new_boxed(args: EnsSignerArgs) -> Box<Self> {
-        Box::new(Self::new(args))
-    }
-}
-
-impl Signer for EnsSigner {
-    fn sign(&self, payload: &[u8]) -> Result<Signature> {
-        let mut signature = self.signer.sign(payload)?;
+#[async_trait(?Send)]
+impl Signer for LocalEnsSigner {
+    async fn sign(&self, payload: &[u8]) -> Result<Signature> {
+        let ecdsa_signer = LocalEcdsaSigner::new(self.local_key.clone(), None);
+        let mut signature = ecdsa_signer.sign(payload).await?;
         signature.header.alg = ENS_ALG.to_string();
         Ok(signature)
     }
 }
 
 #[derive(Default)]
-pub struct EnsVerifier {}
+pub struct LocalEnsVerifier {}
 
-impl Verifier for EnsVerifier {
-    fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool> {
-        EcdsaVerifier::default().verify(payload, signature)
+#[async_trait(?Send)]
+impl Verifier for LocalEnsVerifier {
+    async fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool> {
+        LocalEcdsaVerifier::default()
+            .verify(payload, signature)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{Algorithms, Signature};
+    use crate::{
+        entity::{alg::Algorithms, signature::SignatureHeader},
+        Signature,
+    };
 
     use super::{derive_eth_address, get_common_name};
 
@@ -126,7 +108,7 @@ mod tests {
     async fn get_common_name_ens_ok() {
         let provider = "https://ethereum.bloock.com".to_string();
         let signature = Signature {
-            header: crate::SignatureHeader {
+            header: SignatureHeader {
                 alg: Algorithms::Ens.to_string(),
                 kid: "".to_string(),
             },

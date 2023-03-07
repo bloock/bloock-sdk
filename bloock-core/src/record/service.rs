@@ -47,25 +47,30 @@ mod tests {
     };
 
     use super::*;
-    use bloock_encrypter::aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs};
+    use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_hasher::{keccak::Keccak256, Hasher};
+    use bloock_keys::local::LocalKey;
     use bloock_signer::{
-        ecdsa::{EcdsaSigner, EcdsaSignerArgs, ECDSA_ALG},
-        ens::{EnsSigner, EnsSignerArgs, ENS_ALG},
-        Signature, SignatureHeader,
+        entity::{
+            alg::{ECDSA_ALG, ENS_ALG},
+            signature::{Signature, SignatureHeader},
+        },
+        local::{ecdsa::LocalEcdsaSigner, ens::LocalEnsSigner},
     };
 
-    #[test]
-    fn test_from_record() {
+    #[tokio::test]
+    async fn test_from_record() {
         let payload = "Hello world".to_string();
 
         let r = RecordService::from_string(payload)
             .unwrap()
             .build()
+            .await
             .unwrap();
         let r2 = RecordService::from_record(r.clone())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         assert_eq!(
@@ -85,12 +90,13 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_from_string() {
+    #[tokio::test]
+    async fn test_from_string() {
         let payload = "Hello world".to_string();
         let r = RecordService::from_string(payload.clone())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         let document = r.document.unwrap();
@@ -102,12 +108,13 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_from_hex() {
+    #[tokio::test]
+    async fn test_from_hex() {
         let payload = "1234567890abcdef".to_string();
         let r = RecordService::from_hex(payload.clone())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         let document = r.document.unwrap();
@@ -120,12 +127,13 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_from_json() {
+    #[tokio::test]
+    async fn test_from_json() {
         let payload = "{\"hello\":\"world\"}".to_string();
         let r = RecordService::from_json(payload.clone())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         let document = r.document.unwrap();
@@ -138,12 +146,13 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_from_file() {
+    #[tokio::test]
+    async fn test_from_file() {
         let payload = vec![1, 2, 3, 4, 5];
         let r = RecordService::from_file(payload.clone())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         let document = r.document.unwrap();
@@ -155,12 +164,13 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_from_bytes() {
+    #[tokio::test]
+    async fn test_from_bytes() {
         let payload = vec![1, 2, 3, 4, 5];
         let r = RecordService::from_bytes(payload.clone())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         let document = r.document.unwrap();
@@ -176,6 +186,7 @@ mod tests {
         let response = RecordService::from_string(content.to_string())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         let result_payload = String::from_utf8(response.serialize().unwrap()).unwrap();
@@ -184,13 +195,20 @@ mod tests {
 
     #[tokio::test]
     async fn test_build_record_from_string_set_signature() {
-        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let local_key = LocalKey {
+            key_type: bloock_keys::KeyType::EcP256k,
+            key: "".to_string(),
+            private_key: Some(
+                "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
+            ),
+        };
         let content = "hello world!";
 
         let record = RecordService::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
+            .with_signer(LocalEcdsaSigner::new_boxed(local_key, None))
             .build()
+            .await
             .unwrap();
 
         let document = Document::new(&record.clone().serialize().unwrap()).unwrap();
@@ -215,13 +233,20 @@ mod tests {
 
     #[tokio::test]
     async fn test_build_record_from_string_set_ens_signature() {
-        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
+        let local_key = LocalKey {
+            key_type: bloock_keys::KeyType::EcP256k,
+            key: "".to_string(),
+            private_key: Some(
+                "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
+            ),
+        };
         let content = "hello world!";
 
         let record = RecordService::from_string(content.to_string())
             .unwrap()
-            .with_signer(EnsSigner::new_boxed(EnsSignerArgs::new(private)))
+            .with_signer(LocalEnsSigner::new_boxed(local_key))
             .build()
+            .await
             .unwrap();
 
         let document = Document::new(&record.clone().serialize().unwrap()).unwrap();
@@ -246,23 +271,37 @@ mod tests {
 
     #[tokio::test]
     async fn test_build_record_from_string_set_signature_and_encryption() {
-        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let password = "some_password";
+        let local_key = LocalKey {
+            key_type: bloock_keys::KeyType::EcP256k,
+            key: "".to_string(),
+            private_key: Some(
+                "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
+            ),
+        };
+
+        let local_aes_key = LocalKey {
+            key_type: bloock_keys::KeyType::Aes128,
+            key: "some_password".to_string(),
+            private_key: None,
+        };
+
         let content = "hello world!";
 
         let record = RecordService::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(local_key, None))
+            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
             .build()
+            .await
             .unwrap();
 
         assert_ne!(content.as_bytes(), record.clone().serialize().unwrap());
 
         let unencrypted_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
             .build()
+            .await
             .unwrap();
 
         let result_signature = unencrypted_record.get_signatures().unwrap();
@@ -275,29 +314,43 @@ mod tests {
 
     #[tokio::test]
     async fn test_build_record_from_pdf_set_encryption() {
-        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let password = "some_password";
+        let local_key = LocalKey {
+            key_type: bloock_keys::KeyType::EcP256k,
+            key: "".to_string(),
+            private_key: Some(
+                "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
+            ),
+        };
+
+        let local_aes_key = LocalKey {
+            key_type: bloock_keys::KeyType::Aes128,
+            key: "some_password".to_string(),
+            private_key: None,
+        };
         let payload = include_bytes!("./document/assets/dummy.pdf");
 
         let default_record = RecordService::from_file(payload.to_vec())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
+            .with_signer(LocalEcdsaSigner::new_boxed(local_key.clone(), None))
             .build()
+            .await
             .unwrap();
 
         let encrypted_record = RecordService::from_file(payload.to_vec())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(local_key, None))
+            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(default_record.get_hash(), encrypted_record.get_hash());
 
         let unencrypted_record = RecordService::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
             .build()
+            .await
             .unwrap();
 
         let expected_signatures = vec![
@@ -321,13 +374,19 @@ mod tests {
 
     #[tokio::test]
     async fn test_build_record_with_encryption_and_decryption() {
-        let password = "some_password";
+        let local_aes_key = LocalKey {
+            key_type: bloock_keys::KeyType::Aes128,
+            key: "some_password".to_string(),
+            private_key: None,
+        };
+
         let content = "hello world!";
 
         let encrypted_record = RecordService::from_string(content.to_string())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
             .build()
+            .await
             .unwrap();
 
         assert_ne!(
@@ -337,8 +396,9 @@ mod tests {
 
         let record = RecordService::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(content.as_bytes(), record.get_payload().unwrap());
@@ -346,21 +406,33 @@ mod tests {
 
     #[tokio::test]
     async fn test_build_record_set_signature_encryption_and_decryption() {
-        let private = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-        let password = "some_password";
+        let local_key = LocalKey {
+            key_type: bloock_keys::KeyType::EcP256k,
+            key: "".to_string(),
+            private_key: Some(
+                "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
+            ),
+        };
+        let local_aes_key = LocalKey {
+            key_type: bloock_keys::KeyType::Aes128,
+            key: "some_password".to_string(),
+            private_key: None,
+        };
         let content = "hello world!";
 
         let record = RecordService::from_string(content.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(private, None)))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(local_key, None))
+            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
             .build()
+            .await
             .unwrap();
 
         let record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(content.as_bytes(), record.get_payload().unwrap());
@@ -368,12 +440,18 @@ mod tests {
 
     #[tokio::test]
     async fn test_build_record_set_proof_encryption_and_decryption() {
-        let password = "some_password";
+        let local_aes_key = LocalKey {
+            key_type: bloock_keys::KeyType::Aes128,
+            key: "some_password".to_string(),
+            private_key: None,
+        };
+
         let content = "hello world!";
 
         let mut record = RecordService::from_string(content.to_string())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         record
@@ -400,8 +478,9 @@ mod tests {
 
         let encrypted_record = RecordService::from_record(record.clone())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(encrypted_record.get_proof(), None);
@@ -409,8 +488,9 @@ mod tests {
 
         let record = RecordService::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(content.as_bytes(), record.get_payload().unwrap());
@@ -423,6 +503,7 @@ mod tests {
         RecordService::from_hex(content.to_string())
             .unwrap()
             .build()
+            .await
             .unwrap();
     }
 
@@ -433,6 +514,7 @@ mod tests {
         RecordService::from_json(content.to_string())
             .unwrap()
             .build()
+            .await
             .unwrap();
     }
 
@@ -443,6 +525,7 @@ mod tests {
         let record = RecordService::from_file(content.as_bytes().to_vec())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
@@ -457,6 +540,7 @@ mod tests {
         let record = RecordService::from_bytes(content.as_bytes().to_vec())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
@@ -471,9 +555,14 @@ mod tests {
         let record = RecordService::from_string(content.to_string())
             .unwrap()
             .build()
+            .await
             .unwrap();
 
-        let record = RecordService::from_record(record).unwrap().build().unwrap();
+        let record = RecordService::from_record(record)
+            .unwrap()
+            .build()
+            .await
+            .unwrap();
 
         let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
 
@@ -489,9 +578,10 @@ mod hash_tests {
     };
 
     use super::RecordService;
-    use bloock_encrypter::aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs};
+    use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_hasher::{keccak::Keccak256, Hasher};
-    use bloock_signer::ecdsa::{EcdsaSigner, EcdsaSignerArgs};
+    use bloock_keys::local::LocalKey;
+    use bloock_signer::local::ecdsa::LocalEcdsaSigner;
 
     const PAYLOAD: &str = "hello world";
     const HASH_PAYLOAD: &str = "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad";
@@ -500,8 +590,23 @@ mod hash_tests {
     const HASH_DOUBLY_SIGNED_PAYLOAD: &str =
         "5f9064051ec1994a53119ccbeb6ad1a2c04754a8a9faf8b0d951b931376b9332";
 
-    const PRIVATE_KEY: &str = "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb";
-    const PRIVATE_KEY2: &str = "694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547";
+    const LOCAL_KEY: LocalKey<&str> = LocalKey {
+        key_type: bloock_keys::KeyType::EcP256k,
+        key: "",
+        private_key: Some("8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb"),
+    };
+
+    const LOCAL_KEY_2: LocalKey<&str> = LocalKey {
+        key_type: bloock_keys::KeyType::EcP256k,
+        key: "",
+        private_key: Some("694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547"),
+    };
+
+    const LOCAL_AES_KEY: LocalKey<&str> = LocalKey {
+        key_type: bloock_keys::KeyType::Aes256,
+        key: "some_password",
+        private_key: None,
+    };
 
     fn get_test_proof(hash: &str) -> Proof {
         Proof {
@@ -522,22 +627,24 @@ mod hash_tests {
         }
     }
 
-    #[test]
-    fn build_plain_record() {
+    #[tokio::test]
+    async fn build_plain_record() {
         let record = RecordService::from_string(PAYLOAD)
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         assert_eq!(record.get_hash(), HASH_PAYLOAD);
     }
 
-    #[test]
-    fn build_plain_record_with_encrypter() {
+    #[tokio::test]
+    async fn build_plain_record_with_encrypter() {
         let record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
@@ -549,15 +656,13 @@ mod hash_tests {
         assert_eq!(record.get_hash(), HASH_PAYLOAD);
     }
 
-    #[test]
-    fn build_plain_record_with_signer() {
+    #[tokio::test]
+    async fn build_plain_record_with_signer() {
         let record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         let expected_hash = hex::encode(Keccak256::generate_hash(
@@ -569,38 +674,36 @@ mod hash_tests {
         assert_eq!(record.get_hash(), expected_hash);
     }
 
-    #[test]
-    fn build_plain_record_with_signer_and_encrypter() {
+    #[tokio::test]
+    async fn build_plain_record_with_signer_and_encrypter() {
         let record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
         assert_eq!(record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_encrypted_record() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_encrypted_record() {
         let encrypted_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(encrypted_record.is_encrypted());
 
         let record = RecordService::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(!record.is_encrypted());
@@ -612,23 +715,23 @@ mod hash_tests {
         assert_eq!(record.get_hash(), HASH_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_encrypted_record_decrypt_and_encrypt() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_encrypted_record_decrypt_and_encrypt() {
         let encrypted_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(encrypted_record.is_encrypted());
 
         let final_record = RecordService::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -640,26 +743,23 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_encrypted_record_decrypt_and_sign() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_encrypted_record_decrypt_and_sign() {
         let encrypted_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(encrypted_record.is_encrypted());
 
         let final_record = RecordService::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         assert!(!final_record.is_encrypted());
@@ -667,27 +767,24 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_encrypted_record_decrypt_and_sign_and_encrypt() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_encrypted_record_decrypt_and_sign_and_encrypt() {
         let encrypted_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(encrypted_record.is_encrypted());
 
         let final_record = RecordService::from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -695,40 +792,38 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_signed_record() {
+    #[tokio::test]
+    async fn build_from_signed_record() {
         let signed_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         let final_record = RecordService::from_record(signed_record)
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_signed_record_and_encrypt() {
+    #[tokio::test]
+    async fn build_from_signed_record_and_encrypt() {
         let signed_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         let final_record = RecordService::from_record(signed_record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -736,48 +831,40 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_signed_record_and_sign() {
+    #[tokio::test]
+    async fn build_from_signed_record_and_sign() {
         let signed_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         let final_record = RecordService::from_record(signed_record)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY2,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY_2, None))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_signed_record_and_sign_and_encrypt() {
+    #[tokio::test]
+    async fn build_from_signed_record_and_sign_and_encrypt() {
         let signed_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         let final_record = RecordService::from_record(signed_record)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY2,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY_2, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -785,52 +872,46 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_signed_and_encrypted_record() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_signed_and_encrypted_record() {
         let record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_signed_and_encrypted_record_and_encrypt() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_signed_and_encrypted_record_and_encrypt() {
         let record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record.clone())
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
@@ -838,28 +919,22 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_signed_and_encrypted_record_and_sign() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_signed_and_encrypted_record_and_sign() {
         let signed_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         let final_record = RecordService::from_record(signed_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new("password", &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY2,
-                None,
-            )))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY_2, None))
             .build()
+            .await
             .unwrap();
 
         assert!(!final_record.is_encrypted());
@@ -867,29 +942,23 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_signed_and_encrypted_record_and_sign_and_encrypt() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_signed_and_encrypted_record_and_sign_and_encrypt() {
         let signed_record = RecordService::from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         let final_record = RecordService::from_record(signed_record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new("password", &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY2,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY_2, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -897,33 +966,40 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof() {
+    #[tokio::test]
+    async fn build_from_record_with_proof() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
             .build()
-            .unwrap();
-
-        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
-
-        let final_record = RecordService::from_record(record).unwrap().build().unwrap();
-
-        assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
-    }
-
-    #[test]
-    fn build_from_record_with_proof_and_encrypt() {
-        let mut record = RecordService::from_string(PAYLOAD)
-            .unwrap()
-            .build()
+            .await
             .unwrap();
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
             .build()
+            .await
+            .unwrap();
+
+        assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
+    }
+
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_encrypt() {
+        let mut record = RecordService::from_string(PAYLOAD)
+            .unwrap()
+            .build()
+            .await
+            .unwrap();
+
+        record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
+
+        let final_record = RecordService::from_record(record)
+            .unwrap()
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -931,11 +1007,12 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_sign() {
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_sign() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
@@ -944,11 +1021,9 @@ mod hash_tests {
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.get_proof().is_none());
@@ -956,11 +1031,12 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_sign_and_encrypt() {
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_sign_and_encrypt() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
@@ -969,12 +1045,10 @@ mod hash_tests {
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.get_proof().is_none());
@@ -983,12 +1057,12 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_encrpted_record_with_proof() {
-        let password = "password";
+    #[tokio::test]
+    async fn build_from_encrpted_record_with_proof() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
@@ -997,27 +1071,29 @@ mod hash_tests {
 
         record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_encrpted_record_with_proof_and_encrypt() {
-        let password = "password";
+    #[tokio::test]
+    async fn build_from_encrpted_record_with_proof_and_encrypt() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
@@ -1026,28 +1102,30 @@ mod hash_tests {
 
         record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_encrpted_record_with_proof_and_sign() {
-        let password = "password";
+    #[tokio::test]
+    async fn build_from_encrpted_record_with_proof_and_sign() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
@@ -1056,31 +1134,30 @@ mod hash_tests {
 
         record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_encrpted_record_with_proof_and_sign_and_encrypt() {
-        let password = "password";
+    #[tokio::test]
+    async fn build_from_encrpted_record_with_proof_and_sign_and_encrypt() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
             .build()
+            .await
             .unwrap();
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
@@ -1089,35 +1166,32 @@ mod hash_tests {
 
         record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_signature() {
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_signature() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         record
@@ -1126,22 +1200,24 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
-        let final_record = RecordService::from_record(record).unwrap().build().unwrap();
+        let final_record = RecordService::from_record(record)
+            .unwrap()
+            .build()
+            .await
+            .unwrap();
 
         assert!(final_record.get_proof().is_some());
 
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_signature_and_encrypt() {
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_signature_and_encrypt() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         record
@@ -1152,8 +1228,9 @@ mod hash_tests {
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -1161,15 +1238,13 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_signature_and_sign() {
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_signature_and_sign() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         record
@@ -1180,11 +1255,9 @@ mod hash_tests {
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY2,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY_2, None))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.get_proof().is_none());
@@ -1192,15 +1265,13 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_signature_and_sign_and_encrypt() {
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_signature_and_sign_and_encrypt() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         record
@@ -1211,12 +1282,10 @@ mod hash_tests {
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY2,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new("password", &[])))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY_2, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -1224,17 +1293,13 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_signature_and_is_encrypted() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_signature_and_is_encrypted() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         record
@@ -1243,32 +1308,30 @@ mod hash_tests {
 
         record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_signature_and_is_encrypted_and_encrypt() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_signature_and_is_encrypted_and_encrypt() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         record
@@ -1277,17 +1340,19 @@ mod hash_tests {
 
         record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());
@@ -1295,17 +1360,13 @@ mod hash_tests {
         assert_eq!(final_record.get_hash(), HASH_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_signature_and_is_encrypted_and_sign() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_signature_and_is_encrypted_and_sign() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         record
@@ -1314,36 +1375,31 @@ mod hash_tests {
 
         record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY2,
-                None,
-            )))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY_2, None))
             .build()
+            .await
             .unwrap();
 
         assert_eq!(final_record.get_hash(), HASH_DOUBLY_SIGNED_PAYLOAD);
     }
 
-    #[test]
-    fn build_from_record_with_proof_and_signature_and_is_encrypted_and_sign_and_encrypt() {
-        let password = "password";
-
+    #[tokio::test]
+    async fn build_from_record_with_proof_and_signature_and_is_encrypted_and_sign_and_encrypt() {
         let mut record = RecordService::from_string(PAYLOAD)
             .unwrap()
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY,
-                None,
-            )))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY, None))
             .build()
+            .await
             .unwrap();
 
         record
@@ -1352,21 +1408,20 @@ mod hash_tests {
 
         record = RecordService::from_record(record)
             .unwrap()
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(record.is_encrypted());
 
         let final_record = RecordService::from_record(record)
             .unwrap()
-            .with_decrypter(AesDecrypter::new(AesDecrypterArgs::new(password, &[])))
-            .with_signer(EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                PRIVATE_KEY2,
-                None,
-            )))
-            .with_encrypter(AesEncrypter::new(AesEncrypterArgs::new(password, &[])))
+            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_signer(LocalEcdsaSigner::new_boxed(LOCAL_KEY_2, None))
+            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
             .build()
+            .await
             .unwrap();
 
         assert!(final_record.is_encrypted());

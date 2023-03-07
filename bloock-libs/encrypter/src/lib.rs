@@ -1,53 +1,22 @@
-use std::fmt;
-
-use crate::aes::AES_ALG;
-use crate::ecies::ECIES_ALG;
-use crate::rsa::RSA_ALG;
+use async_trait::async_trait;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
-pub mod aes;
-pub mod ecies;
-pub mod rsa;
+pub mod entity;
+pub mod local;
+pub mod managed;
 
 pub type Result<T> = std::result::Result<T, EncrypterError>;
 
-pub enum EncryptionAlg {
-    A256gcm,
-    Rsa,
-    Ecies,
-}
-
-impl TryFrom<&str> for EncryptionAlg {
-    type Error = EncrypterError;
-
-    fn try_from(value: &str) -> Result<Self> {
-        match value {
-            AES_ALG => Ok(Self::A256gcm),
-            RSA_ALG => Ok(Self::Rsa),
-            ECIES_ALG => Ok(Self::Ecies),
-            _ => Err(EncrypterError::InvalidAlgorithm()),
-        }
-    }
-}
-
-impl fmt::Display for EncryptionAlg {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            EncryptionAlg::A256gcm => write!(f, "{AES_ALG}"),
-            EncryptionAlg::Rsa => write!(f, "{RSA_ALG}"),
-            EncryptionAlg::Ecies => write!(f, "{ECIES_ALG}"),
-        }
-    }
-}
-
+#[async_trait(?Send)]
 pub trait Encrypter {
-    fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>>;
+    async fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>>;
     fn get_alg(&self) -> &str;
 }
 
+#[async_trait(?Send)]
 pub trait Decrypter {
-    fn decrypt(&self, cipher_text: &[u8]) -> Result<Vec<u8>>;
+    async fn decrypt(&self, cipher_text: &[u8]) -> Result<Vec<u8>>;
 }
 
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]

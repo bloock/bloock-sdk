@@ -2,9 +2,9 @@ use crate::{
     error::{BloockResult, InfrastructureError},
     integrity::entity::proof::Proof,
 };
-use bloock_encrypter::{EncrypterError, EncryptionAlg};
+use bloock_encrypter::{entity::alg::EncryptionAlg, EncrypterError};
 use bloock_metadata::{FileParser, MetadataParser};
-use bloock_signer::Signature;
+use bloock_signer::entity::signature::Signature;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
@@ -68,7 +68,7 @@ impl Document {
         Ok(self)
     }
 
-    pub fn set_encryption(mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<Self> {
+    pub fn set_encryption(&mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<&mut Self> {
         self.update_parser(ciphertext)?;
         self.update_payload()?;
 
@@ -207,25 +207,32 @@ mod tests {
         record::entity::record::Record,
     };
     use bloock_encrypter::{
-        aes::{AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs},
+        local::aes::{LocalAesDecrypter, LocalAesEncrypter},
         Decrypter, Encrypter,
     };
     use bloock_hasher::{keccak::Keccak256, Hasher};
+    use bloock_keys::{
+        local::{LocalKey, LocalKeyParams},
+        KeyType,
+    };
     use bloock_signer::{
-        ecdsa::{EcdsaSigner, EcdsaSignerArgs},
-        SignatureHeader, Signer,
+        entity::signature::SignatureHeader, local::ecdsa::LocalEcdsaSigner, Signer,
     };
 
     #[tokio::test]
     async fn test_signed_pdf() {
         let payload = include_bytes!("./assets/dummy.pdf");
-        let signer = EcdsaSigner::new(EcdsaSignerArgs::new(
-            "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457",
-            None,
-        ));
+        let local_key = LocalKey {
+            key_type: bloock_keys::KeyType::EcP256k,
+            key: "".to_string(),
+            private_key: Some(
+                "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457".to_string(),
+            ),
+        };
+        let signer = LocalEcdsaSigner::new(local_key, None);
 
         let mut document = Document::new(payload).unwrap();
-        let signature = signer.sign(payload).unwrap();
+        let signature = signer.sign(payload).await.unwrap();
         document.add_signature(signature.clone()).unwrap();
         let built_doc = document.build().unwrap();
         let signed_doc = Document::new(&built_doc).unwrap();
@@ -235,23 +242,30 @@ mod tests {
     #[tokio::test]
     async fn test_encrypted_pdf() {
         let payload = include_bytes!("./assets/dummy.pdf");
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", &[]));
+        let local_key_params = LocalKeyParams {
+            key_type: KeyType::Aes128,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
+        let encrypter = LocalAesEncrypter::new(local_key.clone());
 
         let mut document = Document::new(payload).unwrap();
         let expected_payload = document.build().unwrap();
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document = document
+        let ciphertext = encrypter.encrypt(&document.build().unwrap()).await.unwrap();
+        document
             .set_encryption(ciphertext, encrypter.get_alg())
             .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", &[]));
-        let decrypted_payload = decrypter.decrypt(&encrypted_doc.get_payload()).unwrap();
+        let decrypter = LocalAesDecrypter::new(local_key);
+        let decrypted_payload = decrypter
+            .decrypt(&encrypted_doc.get_payload())
+            .await
+            .unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
 
@@ -263,7 +277,11 @@ mod tests {
     #[tokio::test]
     async fn test_encrypted_pdf_with_proof() {
         let payload = include_bytes!("./assets/dummy.pdf");
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", &[]));
+        let local_key_params = LocalKeyParams {
+            key_type: KeyType::Aes128,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
+        let encrypter = LocalAesEncrypter::new(local_key.clone());
 
         let mut document = Document::new(payload).unwrap();
 
@@ -290,16 +308,19 @@ mod tests {
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document = document
+        let ciphertext = encrypter.encrypt(&document.build().unwrap()).await.unwrap();
+        document
             .set_encryption(ciphertext, encrypter.get_alg())
             .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", &[]));
-        let decrypted_payload = decrypter.decrypt(&encrypted_doc.get_payload()).unwrap();
+        let decrypter = LocalAesDecrypter::new(local_key);
+        let decrypted_payload = decrypter
+            .decrypt(&encrypted_doc.get_payload())
+            .await
+            .unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
 
@@ -313,7 +334,13 @@ mod tests {
     #[tokio::test]
     async fn test_encrypted_pdf_with_proof_and_signatures() {
         let payload = include_bytes!("./assets/dummy.pdf");
-        let encrypter = AesEncrypter::new(AesEncrypterArgs::new("some_password", &[]));
+
+        let local_key_params = LocalKeyParams {
+            key_type: KeyType::Aes128,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
+
+        let encrypter = LocalAesEncrypter::new(local_key.clone());
 
         let mut document = Document::new(payload).unwrap();
 
@@ -352,16 +379,19 @@ mod tests {
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        let ciphertext = encrypter.encrypt(&document.build().unwrap()).unwrap();
-        document = document
+        let ciphertext = encrypter.encrypt(&document.build().unwrap()).await.unwrap();
+        document
             .set_encryption(ciphertext, encrypter.get_alg())
             .unwrap();
 
         let built_doc = document.build().unwrap();
         let encrypted_doc = Document::new(&built_doc).unwrap();
 
-        let decrypter = AesDecrypter::new(AesDecrypterArgs::new("some_password", &[]));
-        let decrypted_payload = decrypter.decrypt(&encrypted_doc.get_payload()).unwrap();
+        let decrypter = LocalAesDecrypter::new(local_key);
+        let decrypted_payload = decrypter
+            .decrypt(&encrypted_doc.get_payload())
+            .await
+            .unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
 

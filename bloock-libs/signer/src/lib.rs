@@ -1,127 +1,39 @@
-use std::{fmt, str::from_utf8};
-
-use bloock_hasher::H256;
-use ecdsa::{EcdsaVerifier, ECDSA_ALG};
-use ens::{EnsVerifier, ENS_ALG};
-use serde::{Deserialize, Serialize};
+use crate::entity::signature::Signature;
+use async_trait::async_trait;
+use entity::alg::Algorithms;
+use local::ecdsa::LocalEcdsaVerifier;
+use local::ens::LocalEnsVerifier;
+use managed::ecdsa::ManagedEcdsaVerifier;
+use managed::ens::ManagedEnsVerifier;
+use serde::Serialize;
 use thiserror::Error as ThisError;
 
-pub mod ecdsa;
-pub mod ens;
+pub mod entity;
+pub mod local;
+pub mod managed;
 
 pub type Result<T> = std::result::Result<T, SignerError>;
 
-enum Algorithms {
-    Ecdsa,
-    Ens,
-}
-
-impl fmt::Display for Algorithms {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Algorithms::Ecdsa => write!(f, "{ECDSA_ALG}"),
-            Algorithms::Ens => write!(f, "{ENS_ALG}"),
-        }
-    }
-}
-
-impl TryFrom<&str> for Algorithms {
-    type Error = SignerError;
-
-    fn try_from(value: &str) -> Result<Self> {
-        match value {
-            ECDSA_ALG => Ok(Self::Ecdsa),
-            ENS_ALG => Ok(Self::Ens),
-            _ => Err(SignerError::InvalidSignatureAlg()),
-        }
-    }
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct JWSignatures {
-    pub signatures: Vec<Signature>,
-    pub payload: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Signature {
-    pub header: SignatureHeader,
-    pub protected: String,
-    pub signature: String,
-    pub message_hash: String,
-}
-
-impl Signature {
-    pub async fn get_common_name(&self, ens_provider: String, api_key: String) -> Result<String> {
-        let alg = Algorithms::try_from(self.header.alg.as_str())?;
-        match alg {
-            Algorithms::Ecdsa => ecdsa::get_common_name(self),
-            Algorithms::Ens => ens::get_common_name(self, ens_provider, api_key).await,
-        }
-    }
-
-    pub fn recover_public_key(&self, message_hash: H256) -> Result<Vec<u8>> {
-        let alg = Algorithms::try_from(self.header.alg.as_str())?;
-        match alg {
-            Algorithms::Ecdsa => ecdsa::recover_public_key(self, message_hash),
-            Algorithms::Ens => ens::recover_public_key(self, message_hash),
-        }
-    }
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct SignatureHeader {
-    pub alg: String,
-    pub kid: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProtectedHeader {
-    pub common_name: Option<String>,
-}
-
-impl ProtectedHeader {
-    fn serialize(&self) -> Result<String> {
-        Ok(base64_url::encode(&serde_json::to_string(self).map_err(
-            |err| SignerError::GeneralSerializeError(err.to_string()),
-        )?))
-    }
-
-    fn deserialize(protected: &str) -> Result<Self> {
-        serde_json::from_str(
-            from_utf8(
-                &base64_url::decode(&protected)
-                    .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
-            )
-            .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
-        )
-        .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))
-    }
-}
-
+#[async_trait(?Send)]
 pub trait Signer {
-    fn sign(&self, payload: &[u8]) -> Result<Signature>;
+    async fn sign(&self, payload: &[u8]) -> Result<Signature>;
 }
 
+#[async_trait(?Send)]
 pub trait Verifier {
-    fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool>;
+    async fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool>;
 }
 
-pub fn create_verifier_from_signature(signature: &Signature) -> Result<Box<dyn Verifier>> {
+pub fn create_verifier_from_signature(
+    signature: &Signature,
+    api_host: String,
+    api_key: String,
+) -> Result<Box<dyn Verifier>> {
     match Algorithms::try_from(signature.header.alg.as_str())? {
-        Algorithms::Ecdsa => Ok(Box::<EcdsaVerifier>::default()),
-        Algorithms::Ens => Ok(Box::<EnsVerifier>::default()),
-    }
-}
-
-impl From<JWSignatures> for Signature {
-    fn from(s: JWSignatures) -> Self {
-        Self {
-            protected: s.signatures[0].protected.clone(),
-            signature: s.signatures[0].signature.clone(),
-            header: s.signatures[0].header.clone(),
-            message_hash: s.signatures[0].message_hash.clone(),
-        }
+        Algorithms::Es256k => Ok(Box::<LocalEcdsaVerifier>::default()),
+        Algorithms::Ens => Ok(Box::<LocalEnsVerifier>::default()),
+        Algorithms::Es256kM => Ok(ManagedEcdsaVerifier::new_boxed(api_host, api_key)),
+        Algorithms::EnsM => Ok(ManagedEnsVerifier::new_boxed(api_host, api_key)),
     }
 }
 

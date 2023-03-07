@@ -48,7 +48,7 @@ impl Builder {
         self
     }
 
-    pub fn build(mut self) -> BloockResult<Record> {
+    pub async fn build(mut self) -> BloockResult<Record> {
         if let Some(decrypter) = &self.decrypter {
             if !self.document.is_encrypted() {
                 Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
@@ -58,6 +58,7 @@ impl Builder {
 
             let decrypted_payload = decrypter
                 .decrypt(&payload)
+                .await
                 .map_err(InfrastructureError::EncrypterError)?;
 
             self.document = self.document.remove_encryption(decrypted_payload)?;
@@ -68,6 +69,7 @@ impl Builder {
 
             let signature = signer
                 .sign(&payload)
+                .await
                 .map_err(InfrastructureError::SignerError)?;
 
             self.document.add_signature(signature)?;
@@ -76,7 +78,13 @@ impl Builder {
         let mut record = Record::new(self.document)?;
 
         if let Some(encrypter) = self.encrypter {
-            record = record.encrypt(encrypter)?;
+            let payload = record.clone().serialize()?;
+            let ciphertext = encrypter
+                .encrypt(&payload)
+                .await
+                .map_err(InfrastructureError::EncrypterError)?;
+
+            record.set_encryption(ciphertext, encrypter.get_alg())?;
         }
 
         Ok(record)
