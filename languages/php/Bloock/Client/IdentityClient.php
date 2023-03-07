@@ -46,7 +46,7 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return Identity::fromProto($res);
+        return Identity::fromProto($res->getIdentity());
     }
 
     public function loadIdentity(string $mnemonic): Identity
@@ -60,7 +60,7 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return Identity::fromProto($res);
+        return Identity::fromProto($res->getIdentity());
     }
 
     public function buildSchema(string $displayName, string $technicalName): SchemaBuilder
@@ -79,7 +79,7 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return Schema::fromProto($res);
+        return Schema::fromProto($res->getSchema());
     }
 
     public function buildOffer(string $schemaId, string $holderKey): CredentialOfferBuilder
@@ -87,7 +87,7 @@ class IdentityClient
         return new CredentialOfferBuilder($schemaId, $holderKey, $this->config);
     }
 
-    public function redeemOffer(CredentialOffer $offer, string $holderPrivateKey): CredentialOffer
+    public function redeemOffer(CredentialOffer $offer, string $holderPrivateKey): Credential
     {
         $req = new CredentialOfferRedeemRequest();
         $req->setConfigData($this->config)->setCredentialOffer($offer->toProto())->setIdentityPrivateKey($holderPrivateKey);
@@ -98,7 +98,7 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return CredentialOffer::fromProto($res);
+        return Credential::fromProto($res->getCredential());
     }
 
     public function verifyCredential(Credential $credential): CredentialVerification
@@ -112,7 +112,7 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return CredentialVerification::fromProto($res);
+        return CredentialVerification::fromProto($res->getResult());
     }
 
     public function revokeCredential(Credential $credential): int
@@ -126,6 +126,6 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return $res->getTimestamp();
+        return $res->getResult()->getTimestamp();
     }
 }

@@ -87,6 +87,6 @@ class CredentialOfferBuilder
             throw new Exception($res->getError()->getMessage());
         }
 
-        return CredentialOffer::fromProto($res);
+        return CredentialOffer::fromProto($res->getCredentialOffer());
     }
 }
