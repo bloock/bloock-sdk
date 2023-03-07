@@ -1,15 +1,17 @@
 package com.bloock.sdk.entity.encryption;
 
 import com.bloock.sdk.bridge.proto.EncryptionEntities;
+import com.bloock.sdk.entity.key.LocalKey;
+import com.bloock.sdk.entity.key.ManagedKey;
 
 public class DecrypterArgs {
-  String key;
+    LocalKey localKey;
+    ManagedKey managedKey;
 
-  DecrypterArgs(String key) {
-    this.key = key;
-  }
-
-  EncryptionEntities.DecrypterArgs toProto() {
-    return EncryptionEntities.DecrypterArgs.newBuilder().setKey(this.key).build();
-  }
+    public DecrypterArgs(LocalKey localKey) {
+        this.localKey = localKey;
+    }
+    public DecrypterArgs(ManagedKey managedKey) {
+        this.managedKey = managedKey;
+    }
 }

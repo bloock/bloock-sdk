@@ -1,9 +1,5 @@
-import com.bloock.sdk.client.EncryptionClient;
 import com.bloock.sdk.client.KeyClient;
-import com.bloock.sdk.client.RecordClient;
-import com.bloock.sdk.entity.encryption.*;
 import com.bloock.sdk.entity.key.*;
-import com.bloock.sdk.entity.record.Record;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -11,74 +7,83 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class KeyTest {
 
-  @BeforeAll
-  static void beforeAll() {
-    Utils.initSdk();
-  }
+    @BeforeAll
+    static void beforeAll() {
+        Utils.initSdk();
+    }
 
-  @Test
-  void generateLocalEcdsa() throws Exception {
-    KeyClient keyClient = new KeyClient();
-    LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
+    @Test
+    void generateLocalEcdsa() throws Exception {
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
-    assertNotNull(localKey.getKey());
-    assertNotNull(localKey.getPrivateKey());
-  }
+        assertNotNull(localKey.getKey());
+        assertNotNull(localKey.getPrivateKey());
+    }
 
-  @Test
-  void generateLocalRsa() throws Exception {
-    KeyClient keyClient = new KeyClient();
-    LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
+    @Test
+    void generateLocalRsa() throws Exception {
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
 
-    assertNotNull(localKey.getKey());
-    assertNotNull(localKey.getPrivateKey());
-  }
+        assertNotNull(localKey.getKey());
+        assertNotNull(localKey.getPrivateKey());
+    }
 
-  @Test
-  void generateManagedEcdsa() throws Exception {
-    KeyClient keyClient = new KeyClient();
+    @Test
+    void generateLocalAes() throws Exception {
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Aes256);
 
-    String name = "key_name";
-    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
-    KeyType keyType = KeyType.EcP256k;
+        assertNotNull(localKey.getKey());
+        assertEquals(localKey.getPrivateKey(), "");
+    }
 
-    ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType, name));
+    @Test
+    void generateManagedEcdsa() throws Exception {
+        KeyClient keyClient = new KeyClient();
 
-    assertEquals(managedKey.getName(), name);
-    assertNotNull(managedKey.getKey());
-    assertEquals(managedKey.getKeyType(), keyType);
-    assertEquals(managedKey.getProtection(), keyProtectionLevel);
-  }
+        String name = "key_name";
+        KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+        KeyType keyType = KeyType.EcP256k;
 
-  @Test
-  void generateManagedRsa() throws Exception {
-    KeyClient keyClient = new KeyClient();
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType, name));
 
-    String name = "key_name";
-    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
-    KeyType keyType = KeyType.Rsa2048;
+        assertEquals(managedKey.getName(), name);
+        assertNotNull(managedKey.getKey());
+        assertEquals(managedKey.getKeyType(), keyType);
+        assertEquals(managedKey.getProtection(), keyProtectionLevel);
+    }
 
-    ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType, name));
+    @Test
+    void generateManagedRsa() throws Exception {
+        KeyClient keyClient = new KeyClient();
 
-    assertEquals(managedKey.getName(), name);
-    assertNotNull(managedKey.getKey());
-    assertEquals(managedKey.getKeyType(), keyType);
-    assertEquals(managedKey.getProtection(), keyProtectionLevel);
-  }
+        String name = "key_name";
+        KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+        KeyType keyType = KeyType.Rsa2048;
 
-  @Test
-  void generateManagedWithoutName() throws Exception {
-    KeyClient keyClient = new KeyClient();
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType, name));
 
-    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
-    KeyType keyType = KeyType.Rsa2048;
+        assertEquals(managedKey.getName(), name);
+        assertNotNull(managedKey.getKey());
+        assertEquals(managedKey.getKeyType(), keyType);
+        assertEquals(managedKey.getProtection(), keyProtectionLevel);
+    }
 
-    ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+    @Test
+    void generateManagedWithoutName() throws Exception {
+        KeyClient keyClient = new KeyClient();
 
-    assertEquals(managedKey.getName(), "");
-    assertNotNull(managedKey.getKey());
-    assertEquals(managedKey.getKeyType(), keyType);
-    assertEquals(managedKey.getProtection(), keyProtectionLevel);
-  }
+        KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+        KeyType keyType = KeyType.Rsa2048;
+
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+
+        assertEquals(managedKey.getName(), "");
+        assertNotNull(managedKey.getKey());
+        assertEquals(managedKey.getKeyType(), keyType);
+        assertEquals(managedKey.getProtection(), keyProtectionLevel);
+    }
 
 }

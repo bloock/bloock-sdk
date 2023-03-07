@@ -18,72 +18,47 @@ final class IdentityTest extends TestCase
     {
         $identityClient = new IdentityClient();
 
-        try {
-            $identityClient->createIdentity();
-            $this->fail('Exception was not thrown');
-        } catch (Exception $e) {
-            $this->assertSame("not implemented", $e->getMessage());
-        }
+        $identityClient->createIdentity();
     }
 
     public function testLoadIdentity()
     {
         $identityClient = new IdentityClient();
 
-        try {
-            $identityClient->loadIdentity("mnemonic");
-            $this->fail('Exception was not thrown');
-        } catch (Exception $e) {
-            $this->assertSame("not implemented", $e->getMessage());
-        }
+        $identityClient->loadIdentity("mnemonic");
     }
 
     public function testBuildSchema()
     {
         $identityClient = new IdentityClient();
 
-        try {
-            $identityClient->buildSchema("display_name", "technical_name")
-                ->addBooleanAttribute("", "", "")
-                ->addDateAttribute("", "", "")
-                ->addDateTimeAttribute("", "", "")
-                ->addMultichoiceAttribute("", "", ["a", "b", "c"], "")
-                ->addNumberAttribute("", "", "")
-                ->build();
-            $this->fail('Exception was not thrown');
-        } catch (Exception $e) {
-            $this->assertSame("not implemented", $e->getMessage());
-        }
+        $identityClient->buildSchema("display_name", "technical_name")
+            ->addBooleanAttribute("", "", "")
+            ->addDateAttribute("", "", "")
+            ->addDateTimeAttribute("", "", "")
+            ->addMultichoiceAttribute("", "", ["a", "b", "c"], "")
+            ->addNumberAttribute("", "", "")
+            ->build();
     }
 
     public function testGetSchema()
     {
         $identityClient = new IdentityClient();
 
-        try {
-            $identityClient->getSchema("id");
-            $this->fail('Exception was not thrown');
-        } catch (Exception $e) {
-            $this->assertSame("not implemented", $e->getMessage());
-        }
+        $identityClient->getSchema("id");
     }
 
     public function testCredentialOfferBuilder()
     {
         $identityClient = new IdentityClient();
 
-        try {
-            $identityClient->buildOffer("id", "")
-                ->withBooleanAttribute("", true)
-                ->withDateAttribute("", 123)
-                ->withDatetimeAttribute("", 123)
-                ->withMultichoiceAttribute("", "a")
-                ->withNumberAttribute("", 123)
-                ->build();
-            $this->fail('Exception was not thrown');
-        } catch (Exception $e) {
-            $this->assertSame("not implemented", $e->getMessage());
-        }
+        $identityClient->buildOffer("id", "")
+            ->withBooleanAttribute("", true)
+            ->withDateAttribute("", 123)
+            ->withDatetimeAttribute("", 123)
+            ->withMultichoiceAttribute("", "a")
+            ->withNumberAttribute("", 123)
+            ->build();
     }
 
     public function testCredentialOfferToJson()
@@ -96,13 +71,8 @@ final class IdentityTest extends TestCase
     {
         $identityClient = new IdentityClient();
 
-        try {
-            $credentialOffer = CredentialOffer::fromJSON("");
-            $identityClient->redeemOffer($credentialOffer, "");
-            $this->fail('Exception was not thrown');
-        } catch (Exception $e) {
-            $this->assertSame("not implemented", $e->getMessage());
-        }
+        $credentialOffer = CredentialOffer::fromJSON("");
+        $identityClient->redeemOffer($credentialOffer, "");
     }
 
     public function testCredentialToJson()
@@ -121,25 +91,15 @@ final class IdentityTest extends TestCase
     {
         $identityClient = new IdentityClient();
 
-        try {
-            $credential = Credential::fromJson("");
-            $identityClient->verifyCredential($credential);
-            $this->fail('Exception was not thrown');
-        } catch (Exception $e) {
-            $this->assertSame("not implemented", $e->getMessage());
-        }
+        $credential = Credential::fromJson("");
+        $identityClient->verifyCredential($credential);
     }
 
     public function testRevokeCredential()
     {
         $identityClient = new IdentityClient();
 
-        try {
-            $credential = Credential::fromJson("");
-            $identityClient->revokeCredential($credential);
-            $this->fail('Exception was not thrown');
-        } catch (Exception $e) {
-            $this->assertSame("not implemented", $e->getMessage());
-        }
+        $credential = Credential::fromJson("");
+        $identityClient->revokeCredential($credential);
     }
 }

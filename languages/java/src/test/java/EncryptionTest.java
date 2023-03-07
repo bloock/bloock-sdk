@@ -1,122 +1,180 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.bloock.sdk.client.EncryptionClient;
+import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.client.RecordClient;
-import com.bloock.sdk.entity.key.RsaKeyPair;
-import com.bloock.sdk.entity.record.Record;
 import com.bloock.sdk.entity.encryption.*;
+import com.bloock.sdk.entity.key.*;
+import com.bloock.sdk.entity.record.Record;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class EncryptionTest {
 
-  @BeforeAll
-  static void beforeAll() {
-    Utils.initSdk();
-  }
+    @BeforeAll
+    static void beforeAll() {
+        Utils.initSdk();
+    }
 
-  @Test
-  void encryptAes() throws Exception {
-    String payload = "Hello world";
+    @Test
+    void encryptLocalAes() throws Exception {
+        String payload = "Hello world";
 
-    RecordClient recordClient = new RecordClient();
-    Record record = recordClient.fromString(payload).build();
-    String recordHash = record.getHash();
+        RecordClient recordClient = new RecordClient();
+        Record record = recordClient.fromString(payload).build();
+        String recordHash = record.getHash();
 
-    String password = "some_password";
-    EncryptionClient encryptionClient = new EncryptionClient();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Aes256);
 
-    Record encryptedRecord = encryptionClient.encrypt(record, new AesEncrypter(password));
+        EncryptionClient encryptionClient = new EncryptionClient();
 
-    Record decryptedRecord =
-        recordClient.fromRecord(encryptedRecord).withDecrypter(new AesDecrypter(password)).build();
+        Record encryptedRecord = encryptionClient.encrypt(record, new AesEncrypter(localKey));
 
-    String decryptedRecordHash = decryptedRecord.getHash();
-    assertEquals(recordHash, decryptedRecordHash);
-  }
+        Record decryptedRecord =
+                recordClient.fromRecord(encryptedRecord).withDecrypter(new AesDecrypter(localKey)).build();
 
-  @Test
-  void decryptAes() throws Exception {
-    String payload = "Hello world";
+        String decryptedRecordHash = decryptedRecord.getHash();
+        assertEquals(recordHash, decryptedRecordHash);
+    }
 
-    RecordClient recordClient = new RecordClient();
+    @Test
+    void decryptLocalAes() throws Exception {
+        String payload = "Hello world";
 
-    EncryptionClient encryptionClient = new EncryptionClient();
-    String password = "some_password";
+        RecordClient recordClient = new RecordClient();
 
-    Record encryptedRecord =
-        recordClient.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
-    String encryptedRecordHash = encryptedRecord.getHash();
+        EncryptionClient encryptionClient = new EncryptionClient();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Aes256);
 
-    Record decryptedRecord = encryptionClient.decrypt(encryptedRecord, new AesDecrypter(password));
-    String decryptedRecordHash = decryptedRecord.getHash();
+        Record encryptedRecord =
+                recordClient.fromString(payload).withEncrypter(new AesEncrypter(localKey)).build();
+        String encryptedRecordHash = encryptedRecord.getHash();
 
-    assertEquals(encryptedRecordHash, decryptedRecordHash);
-  }
+        Record decryptedRecord = encryptionClient.decrypt(encryptedRecord, new AesDecrypter(localKey));
+        String decryptedRecordHash = decryptedRecord.getHash();
 
-  @Test
-  void encryptRsa() throws Exception {
-    String payload = "Hello world";
+        assertEquals(encryptedRecordHash, decryptedRecordHash);
+    }
 
-    RecordClient recordClient = new RecordClient();
-    Record record = recordClient.fromString(payload).build();
-    String recordHash = record.getHash();
+    @Test
+    void encryptLocalRsa() throws Exception {
+        String payload = "Hello world";
 
-    EncryptionClient encryptionClient = new EncryptionClient();
+        RecordClient recordClient = new RecordClient();
+        Record record = recordClient.fromString(payload).build();
+        String recordHash = record.getHash();
 
-    RsaKeyPair keys = encryptionClient.generateRsaKeyPair();
-    Record encryptedRecord =
-        encryptionClient.encrypt(record, new RsaEncrypter(keys.getPublicKey()));
+        EncryptionClient encryptionClient = new EncryptionClient();
 
-    Record decryptedRecord =
-        recordClient
-            .fromRecord(encryptedRecord)
-            .withDecrypter(new RsaDecrypter(keys.getPrivateKey()))
-            .build();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
 
-    String decryptedRecordHash = decryptedRecord.getHash();
-    assertEquals(recordHash, decryptedRecordHash);
-  }
+        Record encryptedRecord =
+                encryptionClient.encrypt(record, new RsaEncrypter(localKey));
 
-  @Test
-  void decryptRsa() throws Exception {
-    String payload = "Hello world";
+        Record decryptedRecord =
+                recordClient
+                        .fromRecord(encryptedRecord)
+                        .withDecrypter(new RsaDecrypter(localKey))
+                        .build();
 
-    RecordClient recordClient = new RecordClient();
+        String decryptedRecordHash = decryptedRecord.getHash();
+        assertEquals(recordHash, decryptedRecordHash);
+    }
 
-    EncryptionClient encryptionClient = new EncryptionClient();
-    RsaKeyPair keys = encryptionClient.generateRsaKeyPair();
+    @Test
+    void decryptLocalRsa() throws Exception {
+        String payload = "Hello world";
 
-    Record encryptedRecord =
-        recordClient
-            .fromString(payload)
-            .withEncrypter(new RsaEncrypter(keys.getPublicKey()))
-            .build();
-    String encryptedRecordHash = encryptedRecord.getHash();
+        RecordClient recordClient = new RecordClient();
 
-    Record decryptedRecord =
-        encryptionClient.decrypt(encryptedRecord, new RsaDecrypter(keys.getPrivateKey()));
-    String decryptedRecordHash = decryptedRecord.getHash();
+        EncryptionClient encryptionClient = new EncryptionClient();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
 
-    assertEquals(encryptedRecordHash, decryptedRecordHash);
-  }
+        Record encryptedRecord =
+                recordClient
+                        .fromString(payload)
+                        .withEncrypter(new RsaEncrypter(localKey))
+                        .build();
+        String encryptedRecordHash = encryptedRecord.getHash();
 
-  @Test
-  void getEncryptionAlg() throws Exception {
-    String payload = "Hello world";
+        Record decryptedRecord =
+                encryptionClient.decrypt(encryptedRecord, new RsaDecrypter(localKey));
+        String decryptedRecordHash = decryptedRecord.getHash();
 
-    RecordClient recordClient = new RecordClient();
+        assertEquals(encryptedRecordHash, decryptedRecordHash);
+    }
 
-    EncryptionClient encryptionClient = new EncryptionClient();
-    RsaKeyPair keys = encryptionClient.generateRsaKeyPair();
+    @Test
+    void encryptManagedRsa() throws Exception {
+        String payload = "Hello world";
 
-    Record encryptedRecord =
-        recordClient
-            .fromString(payload)
-            .withEncrypter(new RsaEncrypter(keys.getPublicKey()))
-            .build();
+        RecordClient recordClient = new RecordClient();
+        Record record = recordClient.fromString(payload).build();
+        String recordHash = record.getHash();
 
-    EncryptionAlg alg = encryptionClient.getEncryptionAlg(encryptedRecord);
-    assertEquals(alg, EncryptionAlg.RSA);
-  }
+        EncryptionClient encryptionClient = new EncryptionClient();
+
+        KeyClient keyClient = new KeyClient();
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
+
+        Record encryptedRecord =
+                encryptionClient.encrypt(record, new RsaEncrypter(managedKey));
+
+        Record decryptedRecord =
+                recordClient
+                        .fromRecord(encryptedRecord)
+                        .withDecrypter(new RsaDecrypter(managedKey))
+                        .build();
+
+        String decryptedRecordHash = decryptedRecord.getHash();
+        assertEquals(recordHash, decryptedRecordHash);
+    }
+
+    @Test
+    void decryptManagedRsa() throws Exception {
+        String payload = "Hello world";
+
+        RecordClient recordClient = new RecordClient();
+
+        EncryptionClient encryptionClient = new EncryptionClient();
+        KeyClient keyClient = new KeyClient();
+        ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
+
+        Record encryptedRecord =
+                recordClient
+                        .fromString(payload)
+                        .withEncrypter(new RsaEncrypter(managedKey))
+                        .build();
+        String encryptedRecordHash = encryptedRecord.getHash();
+
+        Record decryptedRecord =
+                encryptionClient.decrypt(encryptedRecord, new RsaDecrypter(managedKey));
+        String decryptedRecordHash = decryptedRecord.getHash();
+
+        assertEquals(encryptedRecordHash, decryptedRecordHash);
+    }
+
+    @Test
+    void getEncryptionAlg() throws Exception {
+        String payload = "Hello world";
+
+        RecordClient recordClient = new RecordClient();
+
+        EncryptionClient encryptionClient = new EncryptionClient();
+        KeyClient keyClient = new KeyClient();
+        LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
+
+        Record encryptedRecord =
+                recordClient
+                        .fromString(payload)
+                        .withEncrypter(new RsaEncrypter(localKey))
+                        .build();
+
+        EncryptionAlg alg = encryptionClient.getEncryptionAlg(encryptedRecord);
+        assertEquals(alg, EncryptionAlg.RSA);
+    }
 }

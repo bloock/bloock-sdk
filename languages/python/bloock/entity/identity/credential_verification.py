@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import bloock._bridge.proto.identity_entities_pb2 as proto
-from bloock.entity.authenticity.signature_alg import SignatureAlg
-from bloock.entity.authenticity.signature_header import SignatureHeader
 
 
 class CredentialVerification:
@@ -25,4 +23,3 @@ class CredentialVerification:
             issuer=self.issuer,
             revocation=self.revocation,
         )
-

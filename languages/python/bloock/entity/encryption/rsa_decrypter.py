@@ -4,8 +4,20 @@ from bloock.entity.encryption.decrypter_args import DecrypterArgs
 
 
 class RsaDecrypter(Decrypter):
-    def __init__(self, private_key: str) -> None:
-        super().__init__(alg=proto.RSA, args=DecrypterArgs(private_key))
+    def __init__(self, args: DecrypterArgs) -> None:
+        super().__init__(alg=proto.RSA, args=args)
 
     def to_proto(self) -> proto.Decrypter:
-        return proto.Decrypter(alg=self.alg, args=self.args.to_proto())
+        local_key = None
+        if self.args.local_key is not None:
+            local_key = self.args.local_key.to_proto()
+
+        managed_key = None
+        if self.args.managed_key is not None:
+            managed_key = self.args.managed_key.to_proto()
+
+        return proto.Decrypter(
+            alg=self.alg,
+            local_key=local_key,
+            managed_key=managed_key,
+        )

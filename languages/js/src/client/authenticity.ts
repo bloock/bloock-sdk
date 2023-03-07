@@ -1,8 +1,8 @@
 import { BloockBridge } from "../bridge/bridge";
 import { ConfigData } from "../bridge/proto/config";
-import { EcdsaKeyPair, KeyPair } from "../entity/keys";
+import { EcdsaKeyPair, KeyPair } from "../entity/key";
 import { NewConfigData } from "../config/config";
-import { Signature } from "../entity/signature";
+import { Signature } from "../entity/authenticity";
 import { Record } from "../entity/record";
 import {
   GetSignaturesRequest,
@@ -10,7 +10,7 @@ import {
   SignatureCommonNameRequest,
   VerifyRequest
 } from "../bridge/proto/authenticity";
-import { Signer } from "../entity/signer";
+import { Signer } from "../entity/authenticity/signer";
 import { GenerateLocalKeyRequest } from "../bridge/proto/keys";
 import { KeyType } from "../bridge/proto/keys_entities";
 

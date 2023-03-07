@@ -14,25 +14,29 @@ use Google\Protobuf\Internal\GPBUtil;
 class ManagedKey extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>string key = 1;</code>
+     * Generated from protobuf field <code>string id = 1;</code>
+     */
+    protected $id = '';
+    /**
+     * Generated from protobuf field <code>string key = 2;</code>
      */
     protected $key = '';
     /**
-     * Generated from protobuf field <code>.bloock.KeyProtectionLevel protection = 2;</code>
+     * Generated from protobuf field <code>.bloock.KeyProtectionLevel protection = 3;</code>
      */
     protected $protection = 0;
     /**
-     * Generated from protobuf field <code>.bloock.KeyType key_type = 3;</code>
+     * Generated from protobuf field <code>.bloock.KeyType key_type = 4;</code>
      */
     protected $key_type = 0;
     /**
-     * Generated from protobuf field <code>optional string name = 4;</code>
+     * Generated from protobuf field <code>string name = 5;</code>
      */
-    protected $name = null;
+    protected $name = '';
     /**
-     * Generated from protobuf field <code>optional int64 expiration = 5;</code>
+     * Generated from protobuf field <code>int64 expiration = 6;</code>
      */
-    protected $expiration = null;
+    protected $expiration = 0;
 
     /**
      * Constructor.
@@ -40,6 +44,7 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
+     *     @type string $id
      *     @type string $key
      *     @type int $protection
      *     @type int $key_type
@@ -53,7 +58,29 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string key = 1;</code>
+     * Generated from protobuf field <code>string id = 1;</code>
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Generated from protobuf field <code>string id = 1;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setId($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->id = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string key = 2;</code>
      * @return string
      */
     public function getKey()
@@ -62,7 +89,7 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string key = 1;</code>
+     * Generated from protobuf field <code>string key = 2;</code>
      * @param string $var
      * @return $this
      */
@@ -75,7 +102,7 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.KeyProtectionLevel protection = 2;</code>
+     * Generated from protobuf field <code>.bloock.KeyProtectionLevel protection = 3;</code>
      * @return int
      */
     public function getProtection()
@@ -84,7 +111,7 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.KeyProtectionLevel protection = 2;</code>
+     * Generated from protobuf field <code>.bloock.KeyProtectionLevel protection = 3;</code>
      * @param int $var
      * @return $this
      */
@@ -97,7 +124,7 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.KeyType key_type = 3;</code>
+     * Generated from protobuf field <code>.bloock.KeyType key_type = 4;</code>
      * @return int
      */
     public function getKeyType()
@@ -106,7 +133,7 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.KeyType key_type = 3;</code>
+     * Generated from protobuf field <code>.bloock.KeyType key_type = 4;</code>
      * @param int $var
      * @return $this
      */
@@ -119,26 +146,16 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional string name = 4;</code>
+     * Generated from protobuf field <code>string name = 5;</code>
      * @return string
      */
     public function getName()
     {
-        return isset($this->name) ? $this->name : '';
-    }
-
-    public function hasName()
-    {
-        return isset($this->name);
-    }
-
-    public function clearName()
-    {
-        unset($this->name);
+        return $this->name;
     }
 
     /**
-     * Generated from protobuf field <code>optional string name = 4;</code>
+     * Generated from protobuf field <code>string name = 5;</code>
      * @param string $var
      * @return $this
      */
@@ -151,26 +168,16 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional int64 expiration = 5;</code>
+     * Generated from protobuf field <code>int64 expiration = 6;</code>
      * @return int|string
      */
     public function getExpiration()
     {
-        return isset($this->expiration) ? $this->expiration : 0;
-    }
-
-    public function hasExpiration()
-    {
-        return isset($this->expiration);
-    }
-
-    public function clearExpiration()
-    {
-        unset($this->expiration);
+        return $this->expiration;
     }
 
     /**
-     * Generated from protobuf field <code>optional int64 expiration = 5;</code>
+     * Generated from protobuf field <code>int64 expiration = 6;</code>
      * @param int|string $var
      * @return $this
      */

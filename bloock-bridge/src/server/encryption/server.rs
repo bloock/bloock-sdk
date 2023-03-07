@@ -8,9 +8,9 @@ use crate::{
 };
 use async_trait::async_trait;
 use bloock_core::{
-    encryption, record::entity::record::Record as RecordCore, AesDecrypter, AesDecrypterArgs,
-    AesEncrypter, AesEncrypterArgs, EciesDecrypter, EciesDecrypterArgs, EciesEncrypter,
-    EciesEncrypterArgs, RsaDecrypter, RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs,
+    encryption, record::entity::record::Record as RecordCore, Decrypter, Encrypter,
+    LocalAesDecrypter, LocalAesEncrypter, LocalRsaDecrypter, LocalRsaEncrypter,
+    ManagedRsaDecrypter, ManagedRsaEncrypter,
 };
 
 pub struct EncryptionServer {}
@@ -19,15 +19,12 @@ pub struct EncryptionServer {}
 impl EncryptionServiceHandler for EncryptionServer {
     async fn encrypt(&self, req: &EncryptRequest) -> Result<EncryptResponse, String> {
         let config_data = req.get_config_data()?;
+        let client = encryption::configure(config_data.clone());
 
         let encrypter = req
             .clone()
             .encrypter
             .ok_or_else(|| "invalid encrypter provided".to_string())?;
-
-        let args = encrypter
-            .args
-            .ok_or_else(|| "no arguments provided".to_string())?;
 
         let req_record = req
             .clone()
@@ -38,24 +35,37 @@ impl EncryptionServiceHandler for EncryptionServer {
             .try_into()
             .map_err(|e: BridgeError| e.to_string())?;
 
-        let client = encryption::configure(config_data);
-        let result: RecordCore = match EncryptionAlg::from_i32(encrypter.alg) {
-            Some(alg) => match alg {
-                EncryptionAlg::A256gcm => client.encrypt_aes(
-                    record,
-                    AesEncrypter::new(AesEncrypterArgs::new(&args.key, &[])),
-                ),
-                EncryptionAlg::Rsa => {
-                    client.encrypt_rsa(record, RsaEncrypter::new(RsaEncrypterArgs::new(&args.key)))
+        let encrypter_alg = EncryptionAlg::from_i32(encrypter.alg);
+
+        let local_key = encrypter.local_key;
+        let managed_key = encrypter.managed_key;
+
+        let encrypter: Box<dyn Encrypter> = if let Some(key) = managed_key {
+            match encrypter_alg {
+                Some(EncryptionAlg::A256gcm) => {
+                    return Err("AES encryption is not yet supported for managed keys".to_string())
                 }
-                EncryptionAlg::Ecies => client.encrypt_ecies(
-                    record,
-                    EciesEncrypter::new(EciesEncrypterArgs::new(args.key)),
+                Some(EncryptionAlg::Rsa) => ManagedRsaEncrypter::new(
+                    key.into(),
+                    config_data.config.host.clone(),
+                    config_data.config.api_key.clone(),
                 ),
-            },
-            None => return Err("invalid encrypter provided".to_string()),
-        }
-        .map_err(|e| e.to_string())?;
+                None => return Err("invalid encrypter provided".to_string()),
+            }
+        } else if let Some(key) = local_key {
+            match encrypter_alg {
+                Some(EncryptionAlg::A256gcm) => LocalAesEncrypter::new(key.into()),
+                Some(EncryptionAlg::Rsa) => LocalRsaEncrypter::new(key.into()),
+                None => return Err("invalid encrypter provided".to_string()),
+            }
+        } else {
+            return Err("invalid key provided".to_string());
+        };
+
+        let result = client
+            .encrypt(record, encrypter)
+            .await
+            .map_err(|e| e.to_string())?;
 
         let final_record = result.try_into().map_err(|e: BridgeError| e.to_string())?;
 
@@ -67,15 +77,12 @@ impl EncryptionServiceHandler for EncryptionServer {
 
     async fn decrypt(&self, req: &DecryptRequest) -> Result<DecryptResponse, String> {
         let config_data = req.get_config_data()?;
+        let client = encryption::configure(config_data.clone());
 
         let decrypter = req
             .clone()
             .decrypter
             .ok_or_else(|| "invalid decrypter provided".to_string())?;
-
-        let args = decrypter
-            .args
-            .ok_or_else(|| "no arguments provided".to_string())?;
 
         let req_record = req
             .clone()
@@ -86,24 +93,37 @@ impl EncryptionServiceHandler for EncryptionServer {
             .try_into()
             .map_err(|e: BridgeError| e.to_string())?;
 
-        let client = encryption::configure(config_data);
-        let result: RecordCore = match EncryptionAlg::from_i32(decrypter.alg) {
-            Some(alg) => match alg {
-                EncryptionAlg::A256gcm => client.decrypt_aes(
-                    record,
-                    AesDecrypter::new(AesDecrypterArgs::new(&args.key, &[])),
-                ),
-                EncryptionAlg::Rsa => {
-                    client.decrypt_rsa(record, RsaDecrypter::new(RsaDecrypterArgs::new(&args.key)))
+        let decrypter_alg = EncryptionAlg::from_i32(decrypter.alg);
+
+        let local_key = decrypter.local_key;
+        let managed_key = decrypter.managed_key;
+
+        let decrypter: Box<dyn Decrypter> = if let Some(key) = managed_key {
+            match decrypter_alg {
+                Some(EncryptionAlg::A256gcm) => {
+                    return Err("AES decryption is not yet supported for managed keys".to_string())
                 }
-                EncryptionAlg::Ecies => client.decrypt_ecies(
-                    record,
-                    EciesDecrypter::new(EciesDecrypterArgs::new(args.key)),
+                Some(EncryptionAlg::Rsa) => ManagedRsaDecrypter::new(
+                    key.into(),
+                    config_data.config.host.clone(),
+                    config_data.config.api_key.clone(),
                 ),
-            },
-            None => return Err("invalid encrypter provided".to_string()),
-        }
-        .map_err(|e| e.to_string())?;
+                None => return Err("invalid decrypter provided".to_string()),
+            }
+        } else if let Some(key) = local_key {
+            match decrypter_alg {
+                Some(EncryptionAlg::A256gcm) => LocalAesDecrypter::new(key.into()),
+                Some(EncryptionAlg::Rsa) => LocalRsaDecrypter::new(key.into()),
+                None => return Err("invalid decrypter provided".to_string()),
+            }
+        } else {
+            return Err("invalid key provided".to_string());
+        };
+
+        let result = client
+            .decrypt(record, decrypter)
+            .await
+            .map_err(|e| e.to_string())?;
 
         let final_record = result.try_into().map_err(|e: BridgeError| e.to_string())?;
 

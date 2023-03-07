@@ -13,6 +13,8 @@ pub enum KeyType {
     Rsa2048,
     Rsa3072,
     Rsa4096,
+    Aes128,
+    Aes256,
 }
 
 impl KeyType {
@@ -38,6 +40,8 @@ impl KeyType {
             KeyType::Rsa2048 => "RSA".to_string(),
             KeyType::Rsa3072 => "RSA".to_string(),
             KeyType::Rsa4096 => "RSA".to_string(),
+            KeyType::Aes128 => "AES".to_string(),
+            KeyType::Aes256 => "AES".to_string(),
         }
     }
 
@@ -47,6 +51,8 @@ impl KeyType {
             KeyType::Rsa2048 => None,
             KeyType::Rsa3072 => None,
             KeyType::Rsa4096 => None,
+            KeyType::Aes128 => None,
+            KeyType::Aes256 => None,
         }
     }
 
@@ -56,6 +62,8 @@ impl KeyType {
             KeyType::Rsa2048 => Some(2048),
             KeyType::Rsa3072 => Some(3072),
             KeyType::Rsa4096 => Some(4096),
+            KeyType::Aes128 => Some(128),
+            KeyType::Aes256 => Some(256),
         }
     }
 }

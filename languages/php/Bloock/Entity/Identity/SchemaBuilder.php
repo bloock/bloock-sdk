@@ -5,7 +5,7 @@ namespace Bloock\Entity\Identity;
 use Bloock\Bridge\Bridge;
 use Bloock\BuildSchemaRequest;
 use Bloock\ConfigData;
-use Bloock\CreateCredentialOfferRequest;
+use Exception;
 
 class SchemaBuilder
 {
@@ -32,37 +32,43 @@ class SchemaBuilder
         $this->numberAttributes = [];
     }
 
-    public function addBooleanAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder {
+    public function addBooleanAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder
+    {
         $attribute = new BooleanAttributeDescriptor($name, $technicalName, $description);
         $this->booleanAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function addDateAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder {
+    public function addDateAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder
+    {
         $attribute = new DateAttributeDescriptor($name, $technicalName, $description);
         $this->dateAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function addDateTimeAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder {
+    public function addDateTimeAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder
+    {
         $attribute = new DatetimeAttributeDescriptor($name, $technicalName, $description);
         $this->datetimeAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function addMultichoiceAttribute(string $name, string $technicalName, array $allowedValues, ?string $description): SchemaBuilder {
+    public function addMultichoiceAttribute(string $name, string $technicalName, array $allowedValues, ?string $description): SchemaBuilder
+    {
         $attribute = new MultichoiceAttributeDescriptor($name, $technicalName, $allowedValues, $description);
         $this->multichoiceAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function addNumberAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder {
+    public function addNumberAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder
+    {
         $attribute = new NumberAttributeDescriptor($name, $technicalName, $description);
         $this->numberAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function build(): Schema {
+    public function build(): Schema
+    {
         $bridge = new Bridge();
 
         $req = new BuildSchemaRequest();
@@ -78,7 +84,7 @@ class SchemaBuilder
         $res = $bridge->identity->BuildSchema($req);
 
         if ($res->getError() != null) {
-            throw new \Exception($res->getError()->getMessage());
+            throw new Exception($res->getError()->getMessage());
         }
 
         return Schema::fromProto($res->getSchema());

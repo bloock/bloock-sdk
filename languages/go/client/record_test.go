@@ -162,7 +162,7 @@ func TestRecord(t *testing.T) {
 		recordClient := NewRecordClient()
 		record, err := recordClient.
 			FromString("Hello world 4").
-			WithSigner(authenticity.NewEnsSigner(authenticity.EnsArgs{
+			WithSigner(authenticity.NewEnsSigner(authenticity.SignerArgs{
 				PrivateKey: keypair.PrivateKey,
 			})).
 			Build()
@@ -188,19 +188,25 @@ func TestRecord(t *testing.T) {
 		password := "some_password"
 		recordClient := NewRecordClient()
 		encryptedRecord, err := recordClient.FromString(payload).
-			WithEncrypter(encryption.NewAesEncrypter(password)).
+			WithEncrypter(encryption.NewAesEncrypter(encryption.EncrypterArgs{
+				Key: password,
+			})).
 			Build()
 
 		require.NoError(t, err)
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
 		_, err = recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewAesDecrypter("incorrect_password")).
+			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
+				Key: "incorrect_password",
+			})).
 			Build()
 		require.Error(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewAesDecrypter(password)).
+			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
+				Key: password,
+			})).
 			Build()
 
 		require.NoError(t, err)
@@ -219,14 +225,18 @@ func TestRecord(t *testing.T) {
 
 		recordClient := NewRecordClient()
 		encryptedRecord, err := recordClient.FromString(payload).
-			WithEncrypter(encryption.NewRsaEncrypter(keypair.PublicKey)).
+			WithEncrypter(encryption.NewRsaEncrypter(encryption.EncrypterArgs{
+				Key: keypair.PublicKey,
+			})).
 			Build()
 
 		require.NoError(t, err)
 		assert.NotEqual(t, payload, string(encryptedRecord.Payload))
 
 		record, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewRsaDecrypter(keypair.PrivateKey)).
+			WithDecrypter(encryption.NewRsaDecrypter(encryption.DecrypterArgs{
+				Key: keypair.PrivateKey,
+			})).
 			Build()
 
 		require.NoError(t, err)
@@ -243,7 +253,9 @@ func TestRecord(t *testing.T) {
 
 		recordClient := NewRecordClient()
 		encryptedRecord, err := recordClient.FromString(payload).
-			WithEncrypter(encryption.NewAesEncrypter(password)).
+			WithEncrypter(encryption.NewAesEncrypter(encryption.EncrypterArgs{
+				Key: password,
+			})).
 			Build()
 		assert.NoError(t, err)
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
@@ -253,7 +265,9 @@ func TestRecord(t *testing.T) {
 		require.NoError(t, err)
 
 		loadedRecord, err := recordClient.FromLoader(availability.NewHostedLoader(result)).
-			WithDecrypter(encryption.NewAesDecrypter(password)).
+			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
+				Key: password,
+			})).
 			Build()
 		require.NoError(t, err)
 
@@ -270,7 +284,9 @@ func TestRecord(t *testing.T) {
 
 		recordClient := NewRecordClient()
 		encryptedRecord, err := recordClient.FromString(payload).
-			WithEncrypter(encryption.NewAesEncrypter(password)).
+			WithEncrypter(encryption.NewAesEncrypter(encryption.EncrypterArgs{
+				Key: password,
+			})).
 			Build()
 		assert.NoError(t, err)
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
@@ -280,7 +296,9 @@ func TestRecord(t *testing.T) {
 		require.NoError(t, err)
 
 		loadedRecord, err := recordClient.FromLoader(availability.NewIpfsLoader(result)).
-			WithDecrypter(encryption.NewAesDecrypter(password)).
+			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
+				Key: password,
+			})).
 			Build()
 		require.NoError(t, err)
 

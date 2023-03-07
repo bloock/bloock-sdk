@@ -9,24 +9,17 @@ class RecordReceipt
     private string $record;
     private string $status;
 
-    public function __construct(int $anchor, string $client, string $record, string $status) {
+    public function __construct(int $anchor, string $client, string $record, string $status)
+    {
         $this->anchor = $anchor;
         $this->client = $client;
         $this->record = $record;
         $this->status = $status;
     }
 
-    public static function fromProto(\Bloock\RecordReceipt $receipt): RecordReceipt {
+    public static function fromProto(\Bloock\RecordReceipt $receipt): RecordReceipt
+    {
         return new RecordReceipt($receipt->getAnchor(), $receipt->getClient(), $receipt->getRecord(), $receipt->getStatus());
-    }
-
-    public function toProto(): \Bloock\RecordReceipt {
-        $p = new \Bloock\RecordReceipt();
-        $p->setAnchor($this->anchor);
-        $p->setClient($this->client);
-        $p->setRecord($this->record);
-        $p->setStatus($this->status);
-        return $p;
     }
 
     /**
@@ -59,5 +52,15 @@ class RecordReceipt
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    public function toProto(): \Bloock\RecordReceipt
+    {
+        $p = new \Bloock\RecordReceipt();
+        $p->setAnchor($this->anchor);
+        $p->setClient($this->client);
+        $p->setRecord($this->record);
+        $p->setStatus($this->status);
+        return $p;
     }
 }

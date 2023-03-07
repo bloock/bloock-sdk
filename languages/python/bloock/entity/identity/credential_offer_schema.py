@@ -82,4 +82,4 @@ class CredentialOfferBuilder:
         if res.error != Error():
             raise Exception(res.error.message)
 
-        return CredentialOffer.from_proto(res)
+        return CredentialOffer.from_proto(res.credential_offer)

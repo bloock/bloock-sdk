@@ -22,7 +22,8 @@ class Bridge
     public RecordServiceClient $record;
     public WebhookServiceClient $webhook;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->authenticity = new AuthenticityServiceClient("", []);
         $this->availability = new AvailabilityServiceClient("", []);
         $this->encryption = new EncryptionServiceClient("", []);

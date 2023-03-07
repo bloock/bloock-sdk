@@ -13,47 +13,47 @@ import com.bloock.sdk.entity.availability.Publisher;
 import com.bloock.sdk.entity.record.Record;
 
 public class AvailabilityClient {
-  private Bridge bridge;
-  private ConfigData configData;
+    private Bridge bridge;
+    private ConfigData configData;
 
-  public AvailabilityClient() {
-    this.bridge = new Bridge();
-    this.configData = Config.newConfigDataDefault();
-  }
-
-  public AvailabilityClient(ConfigData configData) {
-    this.bridge = new Bridge();
-    this.configData = Config.newConfigData(configData);
-  }
-
-  public String publish(Record record, Publisher publisher) throws Exception {
-    PublishRequest req =
-        PublishRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setRecord(record.toProto())
-            .setPublisher(publisher.toProto())
-            .build();
-
-    PublishResponse response = this.bridge.getAvailability().publish(req);
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
+    public AvailabilityClient() {
+        this.bridge = new Bridge();
+        this.configData = Config.newConfigDataDefault();
     }
 
-    return response.getId();
-  }
-
-  public Record retrieve(Loader loader) throws Exception {
-    RetrieveRequest req =
-        RetrieveRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setLoader(loader.toProto())
-            .build();
-
-    RetrieveResponse response = this.bridge.getAvailability().retrieve(req);
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
+    public AvailabilityClient(ConfigData configData) {
+        this.bridge = new Bridge();
+        this.configData = Config.newConfigData(configData);
     }
 
-    return Record.fromProto(response.getRecord(), this.configData);
-  }
+    public String publish(Record record, Publisher publisher) throws Exception {
+        PublishRequest req =
+                PublishRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setRecord(record.toProto())
+                        .setPublisher(publisher.toProto())
+                        .build();
+
+        PublishResponse response = this.bridge.getAvailability().publish(req);
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return response.getId();
+    }
+
+    public Record retrieve(Loader loader) throws Exception {
+        RetrieveRequest req =
+                RetrieveRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setLoader(loader.toProto())
+                        .build();
+
+        RetrieveResponse response = this.bridge.getAvailability().retrieve(req);
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return Record.fromProto(response.getRecord(), this.configData);
+    }
 }

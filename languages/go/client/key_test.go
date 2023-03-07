@@ -28,6 +28,15 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, localKey.PrivateKey)
 	})
 
+	t.Run("generate local aes", func(t *testing.T) {
+		keyClient := NewKeyClient()
+		localKey, err := keyClient.NewLocalKey(key.Aes128)
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, localKey.Key)
+		assert.Empty(t, localKey.PrivateKey)
+	})
+
 	t.Run("generate managed ecdsa", func(t *testing.T) {
 		keyClient := NewKeyClient()
 

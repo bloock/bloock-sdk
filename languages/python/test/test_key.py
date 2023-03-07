@@ -1,13 +1,6 @@
 import unittest
 
-from bloock.client.encryption import EncryptionClient
 from bloock.client.key import KeyClient
-from bloock.client.record import RecordClient
-from bloock.entity.encryption.aes_decrypter import AesDecrypter
-from bloock.entity.encryption.aes_encrypter import AesEncrypter
-from bloock.entity.encryption.encryption_alg import EncryptionAlg
-from bloock.entity.encryption.rsa_decrypter import RsaDecrypter
-from bloock.entity.encryption.rsa_encrypter import RsaEncrypter
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed_key_params import ManagedKeyParams
@@ -32,6 +25,13 @@ class TestKey(unittest.TestCase):
 
         self.assertNotEqual(local_key.key, "")
         self.assertNotEqual(local_key.private_key, "")
+
+    def test_generate_local_aes(self):
+        key_client = KeyClient()
+        local_key = key_client.new_local_key(KeyType.Aes256)
+
+        self.assertNotEqual(local_key.key, "")
+        self.assertEqual(local_key.private_key, "")
 
     def test_generate_managed_ecdsa(self):
         key_client = KeyClient()

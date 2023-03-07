@@ -5,13 +5,17 @@ import {
   AesEncrypter,
   EncryptionAlg,
   EncryptionClient,
+  KeyClient,
+  KeyProtectionLevel,
+  KeyType,
+  ManagedKeyParams,
   RecordClient,
   RsaDecrypter,
   RsaEncrypter
 } from "../dist";
 
 describe("Encryptions Tests", () => {
-  test("encrypt aes", async () => {
+  test("encrypt local aes", async () => {
     initSdk();
 
     let payload = "Hello world";
@@ -19,17 +23,19 @@ describe("Encryptions Tests", () => {
     let record = await recordClient.fromString(payload).build();
     let recordHash = await record.getHash();
 
-    let password = "some_password";
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Aes256);
+
     let encryptionClient = new EncryptionClient();
 
     let encryptedRecord = await encryptionClient.encrypt(
       record,
-      new AesEncrypter(password)
+      new AesEncrypter(key)
     );
 
     let decryptedRecord = await recordClient
       .fromRecord(encryptedRecord)
-      .withDecrypter(new AesDecrypter(password))
+      .withDecrypter(new AesDecrypter(key))
       .build();
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -38,25 +44,27 @@ describe("Encryptions Tests", () => {
     expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
   });
 
-  test("decrypt aes", async () => {
+  test("decrypt local aes", async () => {
     initSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
 
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Aes256);
+
     let encryptionClient = new EncryptionClient();
-    let password = "some_password";
 
     let encryptedRecord = await recordClient
       .fromString(payload)
-      .withEncrypter(new AesEncrypter(password))
+      .withEncrypter(new AesEncrypter(key))
       .build();
 
     let encryptedRecordHash = await encryptedRecord.getHash();
 
     let decryptedRecord = await encryptionClient.decrypt(
       encryptedRecord,
-      new AesDecrypter(password)
+      new AesDecrypter(key)
     );
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -65,7 +73,7 @@ describe("Encryptions Tests", () => {
     expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
   });
 
-  test("encrypt rsa", async () => {
+  test("encrypt local rsa", async () => {
     initSdk();
 
     let payload = "Hello world";
@@ -73,17 +81,18 @@ describe("Encryptions Tests", () => {
     let record = await recordClient.fromString(payload).build();
     let recordHash = await record.getHash();
 
-    let encryptionClient = new EncryptionClient();
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Rsa2048);
 
-    let keys = await encryptionClient.generateRsaKeyPair();
+    let encryptionClient = new EncryptionClient();
     let encryptedRecord = await encryptionClient.encrypt(
       record,
-      new RsaEncrypter(keys.publicKey)
+      new RsaEncrypter(key)
     );
 
     let decryptedRecord = await recordClient
       .fromRecord(encryptedRecord)
-      .withDecrypter(new RsaDecrypter(keys.privateKey))
+      .withDecrypter(new RsaDecrypter(key))
       .build();
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -92,25 +101,86 @@ describe("Encryptions Tests", () => {
     expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
   });
 
-  test("decrypt rsa", async () => {
+  test("encrypt managed rsa", async () => {
+    initSdk();
+
+    let payload = "Hello world";
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString(payload).build();
+    let recordHash = await record.getHash();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048)
+    );
+
+    let encryptionClient = new EncryptionClient();
+    let encryptedRecord = await encryptionClient.encrypt(
+      record,
+      new RsaEncrypter(key)
+    );
+
+    let decryptedRecord = await recordClient
+      .fromRecord(encryptedRecord)
+      .withDecrypter(new RsaDecrypter(key))
+      .build();
+
+    let decryptedRecordHash = await decryptedRecord.getHash();
+
+    expect(decryptedRecordHash).toBe(recordHash);
+    expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
+  });
+
+  test("decrypt local rsa", async () => {
     initSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
 
-    let encryptionClient = new EncryptionClient();
-    let keys = await encryptionClient.generateRsaKeyPair();
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Rsa2048);
 
+    let encryptionClient = new EncryptionClient();
     let encryptedRecord = await recordClient
       .fromString(payload)
-      .withEncrypter(new RsaEncrypter(keys.publicKey))
+      .withEncrypter(new RsaEncrypter(key))
       .build();
 
     let encryptedRecordHash = await encryptedRecord.getHash();
 
     let decryptedRecord = await encryptionClient.decrypt(
       encryptedRecord,
-      new RsaDecrypter(keys.privateKey)
+      new RsaDecrypter(key)
+    );
+
+    let decryptedRecordHash = await decryptedRecord.getHash();
+
+    expect(decryptedRecordHash).toBe(encryptedRecordHash);
+    expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
+  });
+
+  test("decrypt managed rsa", async () => {
+    initSdk();
+
+    let payload = "Hello world";
+    let recordClient = new RecordClient();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048)
+    );
+
+    let encryptionClient = new EncryptionClient();
+    let encryptedRecord = await recordClient
+      .fromString(payload)
+      .withEncrypter(new RsaEncrypter(key))
+      .build();
+
+    let encryptedRecordHash = await encryptedRecord.getHash();
+
+    let decryptedRecord = await encryptionClient.decrypt(
+      encryptedRecord,
+      new RsaDecrypter(key)
     );
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -125,12 +195,13 @@ describe("Encryptions Tests", () => {
     let payload = "Hello world";
     let recordClient = new RecordClient();
 
-    let encryptionClient = new EncryptionClient();
-    let keys = await encryptionClient.generateRsaKeyPair();
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Rsa2048);
 
+    let encryptionClient = new EncryptionClient();
     let encryptedRecord = await recordClient
       .fromString(payload)
-      .withEncrypter(new RsaEncrypter(keys.publicKey))
+      .withEncrypter(new RsaEncrypter(key))
       .build();
 
     let alg = await encryptionClient.getEncryptionAlg(encryptedRecord);

@@ -8,9 +8,12 @@ class KeyType
     const Rsa2048 = "Rsa2048";
     const Rsa3072 = "Rsa3072";
     const Rsa4096 = "Rsa4096";
+    const Aes128 = "Aes128";
+    const Aes256 = "Aes256";
     const UNRECOGNIZED = "UNRECOGNIZED";
 
-    public static function toProto(string $type): int {
+    public static function toProto(string $type): int
+    {
         switch ($type) {
             case KeyType::EcP256k:
                 return \Bloock\KeyType::EcP256k;
@@ -20,12 +23,17 @@ class KeyType
                 return \Bloock\KeyType::Rsa3072;
             case KeyType::Rsa4096:
                 return \Bloock\KeyType::Rsa4096;
+            case KeyType::Aes128:
+                return \Bloock\KeyType::Aes128;
+            case KeyType::Aes256:
+                return \Bloock\KeyType::Aes256;
             default:
                 return \Bloock\KeyType::EcP256k;
         }
     }
 
-    public static function fromProto(int $alg): string {
+    public static function fromProto(int $alg): string
+    {
         switch ($alg) {
             case \Bloock\KeyType::EcP256k:
                 return KeyType::EcP256k;
@@ -35,6 +43,10 @@ class KeyType
                 return KeyType::Rsa3072;
             case \Bloock\KeyType::Rsa4096:
                 return KeyType::Rsa4096;
+            case \Bloock\KeyType::Aes128:
+                return KeyType::Aes128;
+            case \Bloock\KeyType::Aes256:
+                return KeyType::Aes256;
             default:
                 return KeyType::UNRECOGNIZED;
         }

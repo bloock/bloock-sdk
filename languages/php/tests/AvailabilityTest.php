@@ -1,24 +1,31 @@
 <?php
 
+use Bloock\Bloock;
+use Bloock\Client\AvailabilityClient;
+use Bloock\Client\RecordClient;
+use Bloock\Entity\Availability\HostedLoader;
+use Bloock\Entity\Availability\HostedPublisher;
+use Bloock\Entity\Availability\IpfsLoader;
+use Bloock\Entity\Availability\IpfsPublisher;
 use PHPUnit\Framework\TestCase;
 
 final class AvailabilityTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        \Bloock\Bloock::$apiKey = getenv("API_KEY");
-        \Bloock\Bloock::$disableAnalytics = true;
+        Bloock::$apiKey = getenv("API_KEY");
+        Bloock::$disableAnalytics = true;
     }
 
     public function testPublishHosted()
     {
         $payload = "Hello world";
-        $recordClient = new \Bloock\Client\RecordClient();
+        $recordClient = new RecordClient();
 
         $record = $recordClient->fromString($payload)->build();
 
-        $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\HostedPublisher());
+        $availabilityClient = new AvailabilityClient();
+        $result = $availabilityClient->publish($record, new HostedPublisher());
 
         $this->assertNotNull($result);
     }
@@ -26,15 +33,15 @@ final class AvailabilityTest extends TestCase
     public function testRetrieveHosted()
     {
         $payload = "Hello world";
-        $recordClient = new \Bloock\Client\RecordClient();
+        $recordClient = new RecordClient();
 
         $record = $recordClient->fromString($payload)->build();
         $recordHash = $record->getHash();
 
-        $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\HostedPublisher());
+        $availabilityClient = new AvailabilityClient();
+        $result = $availabilityClient->publish($record, new HostedPublisher());
 
-        $result = $availabilityClient->retrieve(new \Bloock\Entity\Availability\HostedLoader($result));
+        $result = $availabilityClient->retrieve(new HostedLoader($result));
 
         $this->assertEquals($recordHash, $result->getHash());
     }
@@ -42,12 +49,12 @@ final class AvailabilityTest extends TestCase
     public function testPublishIpfs()
     {
         $payload = "Hello world";
-        $recordClient = new \Bloock\Client\RecordClient();
+        $recordClient = new RecordClient();
 
         $record = $recordClient->fromString($payload)->build();
 
-        $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\IpfsPublisher());
+        $availabilityClient = new AvailabilityClient();
+        $result = $availabilityClient->publish($record, new IpfsPublisher());
 
         $this->assertNotNull($result);
     }
@@ -55,15 +62,15 @@ final class AvailabilityTest extends TestCase
     public function testRetrieveIpfs()
     {
         $payload = "Hello world";
-        $recordClient = new \Bloock\Client\RecordClient();
+        $recordClient = new RecordClient();
 
         $record = $recordClient->fromString($payload)->build();
         $recordHash = $record->getHash();
 
-        $availabilityClient = new \Bloock\Client\AvailabilityClient();
-        $result = $availabilityClient->publish($record, new \Bloock\Entity\Availability\IpfsPublisher());
+        $availabilityClient = new AvailabilityClient();
+        $result = $availabilityClient->publish($record, new IpfsPublisher());
 
-        $result = $availabilityClient->retrieve(new \Bloock\Entity\Availability\IpfsLoader($result));
+        $result = $availabilityClient->retrieve(new IpfsLoader($result));
 
         $this->assertEquals($recordHash, $result->getHash());
     }

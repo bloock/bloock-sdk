@@ -7,15 +7,15 @@ public class DatetimeAttributeDescriptor extends AttributeDescriptor {
         super(displayName, technicalName, description);
     }
 
+    public static DatetimeAttributeDescriptor fromProto(IdentityEntities.DateTimeAttributeDefinition res) {
+        return new DatetimeAttributeDescriptor(res.getDisplayName(), res.getId(), res.getDescription());
+    }
+
     public IdentityEntities.DateTimeAttributeDefinition toProto() {
         return IdentityEntities.DateTimeAttributeDefinition.newBuilder()
                 .setDisplayName(this.displayName)
                 .setId(this.technicalName)
                 .setDescription(this.description)
                 .build();
-    }
-
-    public static DatetimeAttributeDescriptor fromProto(IdentityEntities.DateTimeAttributeDefinition res) {
-        return new DatetimeAttributeDescriptor(res.getDisplayName(), res.getId(), res.getDescription());
     }
 }

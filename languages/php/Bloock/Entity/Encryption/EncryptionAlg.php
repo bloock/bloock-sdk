@@ -9,7 +9,8 @@ class EncryptionAlg
     const ECIES = "ECIES";
     const UNRECOGNIZED = "UNRECOGNIZED";
 
-    public static function fromProto(int $alg): string {
+    public static function fromProto(int $alg): string
+    {
         switch ($alg) {
             case \Bloock\EncryptionAlg::A256GCM:
                 return EncryptionAlg::AES256GCM;

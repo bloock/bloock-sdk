@@ -11,14 +11,14 @@ public class Schema {
         this.json = json;
     }
 
+    public static Schema fromProto(IdentityEntities.Schema res) {
+        return new Schema(res.getId(), res.getJsonLd());
+    }
+
     public IdentityEntities.Schema toProto() {
         return IdentityEntities.Schema.newBuilder()
                 .setId(this.id)
                 .setJsonLd(this.json)
                 .build();
-    }
-
-    public static Schema fromProto(IdentityEntities.Schema res) {
-        return new Schema(res.getId(), res.getJsonLd());
     }
 }

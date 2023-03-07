@@ -1,13 +1,12 @@
-use libsecp256k1::{PublicKey, SecretKey};
-
 use crate::local::LocalKey;
+use libsecp256k1::{PublicKey, SecretKey};
 
 pub struct EcKey {
     pub public_key: String,
     pub private_key: String,
 }
 
-impl From<EcKey> for LocalKey {
+impl From<EcKey> for LocalKey<String> {
     fn from(value: EcKey) -> Self {
         Self {
             key_type: crate::KeyType::EcP256k,

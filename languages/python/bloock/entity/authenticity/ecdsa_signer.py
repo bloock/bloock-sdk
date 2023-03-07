@@ -4,8 +4,25 @@ from bloock.entity.authenticity.signer_args import SignerArgs
 
 
 class EcdsaSigner(Signer):
-    def __init__(self, private_key: str, common_name=None) -> None:
-        super().__init__(alg=proto.ES256K, args=SignerArgs(private_key, common_name))
+    def __init__(self, args: SignerArgs) -> None:
+        super().__init__(alg=proto.ES256K, args=args)
 
     def to_proto(self) -> proto.Signer:
-        return proto.Signer(alg=self.alg, args=self.args.to_proto())
+        local_key = None
+        if self.args.local_key is not None:
+            local_key = self.args.local_key.to_proto()
+
+        managed_key = None
+        if self.args.managed_key is not None:
+            managed_key = self.args.managed_key.to_proto()
+
+        common_name = None
+        if self.args.common_name is not None:
+            common_name = self.args.common_name
+
+        return proto.Signer(
+            alg=self.alg,
+            local_key=local_key,
+            managed_key=managed_key,
+            common_name=common_name
+        )

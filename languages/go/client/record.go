@@ -84,7 +84,7 @@ func (b RecordBuilder) WithSigner(signer authenticity.Signer) RecordBuilder {
 
 func (b RecordBuilder) WithCommonName(name string) RecordBuilder {
 	if b.signer != nil {
-		b.signer.Args.CommonName = &name
+		b.signer.CommonName = &name
 	}
 	return b
 }

@@ -6,6 +6,7 @@ import builtins
 import google.protobuf.descriptor
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
+import keys_entities_pb2
 import sys
 import typing
 
@@ -35,42 +36,33 @@ class Signer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ALG_FIELD_NUMBER: builtins.int
-    ARGS_FIELD_NUMBER: builtins.int
+    LOCAL_KEY_FIELD_NUMBER: builtins.int
+    MANAGED_KEY_FIELD_NUMBER: builtins.int
+    COMMON_NAME_FIELD_NUMBER: builtins.int
     alg: global___SignerAlg.ValueType
     @property
-    def args(self) -> global___SignerArgs: ...
-    def __init__(
-        self,
-        *,
-        alg: global___SignerAlg.ValueType = ...,
-        args: global___SignerArgs | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["args", b"args"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "args", b"args"]) -> None: ...
-
-global___Signer = Signer
-
-class SignerArgs(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    PRIVATE_KEY_FIELD_NUMBER: builtins.int
-    COMMON_NAME_FIELD_NUMBER: builtins.int
-    private_key: builtins.str
+    def local_key(self) -> keys_entities_pb2.LocalKey: ...
+    @property
+    def managed_key(self) -> keys_entities_pb2.ManagedKey: ...
     common_name: builtins.str
     def __init__(
         self,
         *,
-        private_key: builtins.str | None = ...,
+        alg: global___SignerAlg.ValueType = ...,
+        local_key: keys_entities_pb2.LocalKey | None = ...,
+        managed_key: keys_entities_pb2.ManagedKey | None = ...,
         common_name: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_common_name", b"_common_name", "_private_key", b"_private_key", "common_name", b"common_name", "private_key", b"private_key"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_common_name", b"_common_name", "_private_key", b"_private_key", "common_name", b"common_name", "private_key", b"private_key"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_common_name", b"_common_name", "_local_key", b"_local_key", "_managed_key", b"_managed_key", "common_name", b"common_name", "local_key", b"local_key", "managed_key", b"managed_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_common_name", b"_common_name", "_local_key", b"_local_key", "_managed_key", b"_managed_key", "alg", b"alg", "common_name", b"common_name", "local_key", b"local_key", "managed_key", b"managed_key"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_common_name", b"_common_name"]) -> typing_extensions.Literal["common_name"] | None: ...
     @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_private_key", b"_private_key"]) -> typing_extensions.Literal["private_key"] | None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_local_key", b"_local_key"]) -> typing_extensions.Literal["local_key"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
 
-global___SignerArgs = SignerArgs
+global___Signer = Signer
 
 class Signature(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor

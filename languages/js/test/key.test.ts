@@ -1,6 +1,11 @@
 import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
-import { KeyClient, KeyType } from "../dist";
+import {
+  KeyClient,
+  KeyProtectionLevel,
+  KeyType,
+  ManagedKeyParams
+} from "../dist";
 
 describe("Key Tests", () => {
   test("generate local ecdsa", async () => {
@@ -23,53 +28,63 @@ describe("Key Tests", () => {
     expect(key.privateKey).toBeDefined();
   });
 
-  // test("generate managed ecdsa", async () => {
-  //   initSdk();
+  test("generate local aes", async () => {
+    initSdk();
 
-  //   let keyName = "key_name";
-  //   let keyProtection = KeyProtectionLevel.SOFTWARE;
-  //   let keyType = KeyType.EcP256k;
-  //   let keyClient = new KeyClient();
-  //   let key = await keyClient.newManagedKey(
-  //     new ManagedKeyParams(keyProtection, keyType, keyName)
-  //   );
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Aes128);
 
-  //   expect(key.name).toBe(keyName);
-  //   expect(key.key).toBeDefined();
-  //   expect(key.keyType).toBe(keyType);
-  //   expect(key.protection).toBe(keyProtection);
-  // });
+    expect(key.key).toBeDefined();
+    expect(key.privateKey).toBeUndefined();
+  });
 
-  // test("generate managed rsa", async () => {
-  //   initSdk();
+  test("generate managed ecdsa", async () => {
+    initSdk();
 
-  //   let keyName = "key_name";
-  //   let keyProtection = KeyProtectionLevel.SOFTWARE;
-  //   let keyType = KeyType.Rsa2048;
-  //   let keyClient = new KeyClient();
-  //   let key = await keyClient.newManagedKey(
-  //     new ManagedKeyParams(keyProtection, keyType, keyName)
-  //   );
+    let keyName = "key_name";
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.EcP256k;
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType, keyName)
+    );
 
-  //   expect(key.name).toBe(keyName);
-  //   expect(key.key).toBeDefined();
-  //   expect(key.keyType).toBe(keyType);
-  //   expect(key.protection).toBe(keyProtection);
-  // });
+    expect(key.name).toBe(keyName);
+    expect(key.key).toBeDefined();
+    expect(key.keyType).toBe(keyType);
+    expect(key.protection).toBe(keyProtection);
+  });
 
-  // test("generate managed without name", async () => {
-  //   initSdk();
+  test("generate managed rsa", async () => {
+    initSdk();
 
-  //   let keyProtection = KeyProtectionLevel.SOFTWARE;
-  //   let keyType = KeyType.Rsa2048;
-  //   let keyClient = new KeyClient();
-  //   let key = await keyClient.newManagedKey(
-  //     new ManagedKeyParams(keyProtection, keyType)
-  //   );
+    let keyName = "key_name";
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.Rsa2048;
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType, keyName)
+    );
 
-  //   expect(key.name).toBeNull();
-  //   expect(key.key).toBeDefined();
-  //   expect(key.keyType).toBe(keyType);
-  //   expect(key.protection).toBe(keyProtection);
-  // });
+    expect(key.name).toBe(keyName);
+    expect(key.key).toBeDefined();
+    expect(key.keyType).toBe(keyType);
+    expect(key.protection).toBe(keyProtection);
+  });
+
+  test("generate managed without name", async () => {
+    initSdk();
+
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.Rsa2048;
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType)
+    );
+
+    expect(key.name).toBe("");
+    expect(key.key).toBeDefined();
+    expect(key.keyType).toBe(keyType);
+    expect(key.protection).toBe(keyProtection);
+  });
 });

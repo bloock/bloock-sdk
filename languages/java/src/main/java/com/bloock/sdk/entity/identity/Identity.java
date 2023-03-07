@@ -13,15 +13,15 @@ public class Identity {
         this.privateKey = privateKey;
     }
 
+    public static Identity fromProto(IdentityEntities.Identity res) {
+        return new Identity(res.getMnemonic(), res.getKey(), res.getPrivateKey());
+    }
+
     public IdentityEntities.Identity toProto() {
         return IdentityEntities.Identity.newBuilder()
                 .setMnemonic(this.mnemonic)
                 .setKey(this.key)
                 .setPrivateKey(this.privateKey)
                 .build();
-    }
-
-    public static Identity fromProto(IdentityEntities.Identity res) {
-        return new Identity(res.getMnemonic(), res.getKey(), res.getPrivateKey());
     }
 }

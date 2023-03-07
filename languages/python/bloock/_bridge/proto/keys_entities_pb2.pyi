@@ -26,6 +26,8 @@ class _KeyTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTy
     Rsa2048: _KeyType.ValueType  # 1
     Rsa3072: _KeyType.ValueType  # 2
     Rsa4096: _KeyType.ValueType  # 3
+    Aes128: _KeyType.ValueType  # 4
+    Aes256: _KeyType.ValueType  # 5
 
 class KeyType(_KeyType, metaclass=_KeyTypeEnumTypeWrapper): ...
 
@@ -33,6 +35,8 @@ EcP256k: KeyType.ValueType  # 0
 Rsa2048: KeyType.ValueType  # 1
 Rsa3072: KeyType.ValueType  # 2
 Rsa4096: KeyType.ValueType  # 3
+Aes128: KeyType.ValueType  # 4
+Aes256: KeyType.ValueType  # 5
 global___KeyType = KeyType
 
 class _KeyProtectionLevel:
@@ -103,11 +107,13 @@ global___ManagedKeyParams = ManagedKeyParams
 class ManagedKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    ID_FIELD_NUMBER: builtins.int
     KEY_FIELD_NUMBER: builtins.int
     PROTECTION_FIELD_NUMBER: builtins.int
     KEY_TYPE_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     EXPIRATION_FIELD_NUMBER: builtins.int
+    id: builtins.str
     key: builtins.str
     protection: global___KeyProtectionLevel.ValueType
     key_type: global___KeyType.ValueType
@@ -116,17 +122,13 @@ class ManagedKey(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        id: builtins.str = ...,
         key: builtins.str = ...,
         protection: global___KeyProtectionLevel.ValueType = ...,
         key_type: global___KeyType.ValueType = ...,
-        name: builtins.str | None = ...,
-        expiration: builtins.int | None = ...,
+        name: builtins.str = ...,
+        expiration: builtins.int = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_expiration", b"_expiration", "_name", b"_name", "expiration", b"expiration", "name", b"name"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_expiration", b"_expiration", "_name", b"_name", "expiration", b"expiration", "key", b"key", "key_type", b"key_type", "name", b"name", "protection", b"protection"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_expiration", b"_expiration"]) -> typing_extensions.Literal["expiration"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_name", b"_name"]) -> typing_extensions.Literal["name"] | None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["expiration", b"expiration", "id", b"id", "key", b"key", "key_type", b"key_type", "name", b"name", "protection", b"protection"]) -> None: ...
 
 global___ManagedKey = ManagedKey

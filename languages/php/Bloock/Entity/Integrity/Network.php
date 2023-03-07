@@ -9,7 +9,8 @@ class Network
     const GNOSIS_CHAIN = "GNOSIS_CHAIN";
     const BLOOCK_CHAIN = "BLOOCK_CHAIN";
 
-    public static function fromProto(\Bloock\Network $network): string {
+    public static function fromProto(\Bloock\Network $network): string
+    {
         switch ($network) {
             case \Bloock\Network::ETHEREUM_GOERLI:
                 return Network::ETHEREUM_GOERLI;
@@ -22,7 +23,8 @@ class Network
         }
     }
 
-    public static function toProto(string $network): int {
+    public static function toProto(string $network): int
+    {
         switch ($network) {
             case Network::ETHEREUM_GOERLI:
                 return \Bloock\Network::ETHEREUM_GOERLI;

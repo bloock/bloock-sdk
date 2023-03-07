@@ -5,6 +5,7 @@ namespace Bloock\Entity\Identity;
 use Bloock\Bridge\Bridge;
 use Bloock\ConfigData;
 use Bloock\CreateCredentialOfferRequest;
+use Exception;
 
 class CredentialOfferBuilder
 {
@@ -31,37 +32,43 @@ class CredentialOfferBuilder
         $this->numberAttributes = [];
     }
 
-    public function withBooleanAttribute(string $key, bool $value): CredentialOfferBuilder {
+    public function withBooleanAttribute(string $key, bool $value): CredentialOfferBuilder
+    {
         $attribute = new BooleanAttribute($key, $value);
         $this->booleanAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function withDateAttribute(string $key, int $value): CredentialOfferBuilder {
+    public function withDateAttribute(string $key, int $value): CredentialOfferBuilder
+    {
         $attribute = new DateAttribute($key, $value);
         $this->dateAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function withDatetimeAttribute(string $key, int $value): CredentialOfferBuilder {
+    public function withDatetimeAttribute(string $key, int $value): CredentialOfferBuilder
+    {
         $attribute = new DatetimeAttribute($key, $value);
         $this->datetimeAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function withMultichoiceAttribute(string $key, string $value): CredentialOfferBuilder {
+    public function withMultichoiceAttribute(string $key, string $value): CredentialOfferBuilder
+    {
         $attribute = new MultichoiceAttribute($key, $value);
         $this->multichoiceAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function withNumberAttribute(string $key, int $value): CredentialOfferBuilder {
+    public function withNumberAttribute(string $key, int $value): CredentialOfferBuilder
+    {
         $attribute = new NumberAttribute($key, $value);
         $this->numberAttributes[] = $attribute->toProto();
         return $this;
     }
 
-    public function build(): CredentialOffer {
+    public function build(): CredentialOffer
+    {
         $bridge = new Bridge();
 
         $req = new CreateCredentialOfferRequest();
@@ -77,9 +84,9 @@ class CredentialOfferBuilder
         $res = $bridge->identity->CreateCredentialOffer($req);
 
         if ($res->getError() != null) {
-            throw new \Exception($res->getError()->getMessage());
+            throw new Exception($res->getError()->getMessage());
         }
 
-        return CredentialOffer::fromProto($res);
+        return CredentialOffer::fromProto($res->getCredentialOffer());
     }
 }

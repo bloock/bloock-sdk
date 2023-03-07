@@ -32,7 +32,7 @@ func NewKeyClientWithConfig(configData *proto.ConfigData) KeyClient {
 func (c *KeyClient) NewLocalKey(keyType key.KeyType) (key.LocalKey, error) {
 	res, err := c.bridgeClient.Key().GenerateLocalKey(context.Background(), &proto.GenerateLocalKeyRequest{
 		ConfigData: c.configData,
-		KeyType:    key.KeyTypeToProto[key.Rsa2048],
+		KeyType:    key.KeyTypeToProto[keyType],
 	})
 
 	if err != nil {

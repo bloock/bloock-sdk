@@ -10,7 +10,8 @@ class Proof
     private string $bitmap;
     private ProofAnchor $anchor;
 
-    public function __construct(array $leaves, array $nodes, string $depth, string $bitmap, ProofAnchor $anchor) {
+    public function __construct(array $leaves, array $nodes, string $depth, string $bitmap, ProofAnchor $anchor)
+    {
         $this->leaves = $leaves;
         $this->nodes = $nodes;
         $this->depth = $depth;
@@ -18,7 +19,8 @@ class Proof
         $this->anchor = $anchor;
     }
 
-    public static function fromProto(\Bloock\Proof $proof): Proof {
+    public static function fromProto(\Bloock\Proof $proof): Proof
+    {
         $leaves = [];
         foreach ($proof->getLeaves()->getIterator() as $item) {
             $leaves[] = $item;
@@ -29,16 +31,6 @@ class Proof
             $nodes[] = $item;
         }
         return new Proof($leaves, $nodes, $proof->getDepth(), $proof->getBitmap(), ProofAnchor::fromProto($proof->getAnchor()));
-    }
-
-    public function toProto(): \Bloock\Proof {
-        $p = new \Bloock\Proof();
-        $p->setLeaves($this->leaves);
-        $p->setNodes($this->nodes);
-        $p->setDepth($this->depth);
-        $p->setBitmap($this->bitmap);
-        $p->setAnchor($this->anchor->toProto());
-        return $p;
     }
 
     /**
@@ -79,5 +71,16 @@ class Proof
     public function getAnchor(): ProofAnchor
     {
         return $this->anchor;
+    }
+
+    public function toProto(): \Bloock\Proof
+    {
+        $p = new \Bloock\Proof();
+        $p->setLeaves($this->leaves);
+        $p->setNodes($this->nodes);
+        $p->setDepth($this->depth);
+        $p->setBitmap($this->bitmap);
+        $p->setAnchor($this->anchor->toProto());
+        return $p;
     }
 }

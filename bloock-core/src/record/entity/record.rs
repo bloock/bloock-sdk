@@ -1,14 +1,12 @@
-use std::cmp::Ordering;
-
-use bloock_encrypter::{Decrypter, Encrypter, EncrypterError, EncryptionAlg};
-use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
-use bloock_signer::{Signature, Signer};
-
 use crate::{
     error::{BloockError, BloockResult, InfrastructureError, OperationalError},
     integrity::{entity::proof::Proof, IntegrityError},
     record::{document::Document, RecordError},
 };
+use bloock_encrypter::entity::alg::EncryptionAlg;
+use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
+use bloock_signer::entity::signature::Signature;
+use std::cmp::Ordering;
 
 #[derive(Debug, Clone, Eq)]
 pub struct Record {
@@ -49,86 +47,98 @@ impl Record {
         }
     }
 
-    pub fn encrypt(mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<Self> {
-        let mut doc = match self.document {
-            Some(doc) => doc,
-            None => return Err(RecordError::DocumentNotFound.into()),
-        };
-
-        let payload = doc.build()?;
-        let ciphertext = encrypter
-            .encrypt(&payload)
-            .map_err(InfrastructureError::EncrypterError)?;
-
-        doc = doc.set_encryption(ciphertext, encrypter.get_alg())?;
-
-        self.document = Some(doc);
-        Ok(self)
-    }
-
-    pub fn decrypt(mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<Self> {
-        let mut doc = match self.document {
-            Some(doc) => doc,
-            None => return Err(RecordError::DocumentNotFound.into()),
-        };
-
-        if !doc.is_encrypted() {
-            Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
-        }
-
-        let payload = doc.get_payload();
-
-        let decrypted_payload = decrypter
-            .decrypt(&payload)
-            .map_err(InfrastructureError::EncrypterError)?;
-
-        doc = doc.remove_encryption(decrypted_payload)?;
-
-        self.document = Some(doc);
-        Ok(self)
-    }
-
-    pub fn sign(&mut self, signer: Box<dyn Signer>) -> BloockResult<Signature> {
+    pub fn set_encryption(&mut self, cipher_text: Vec<u8>, alg: &str) -> BloockResult<()> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
 
-        let payload = doc.get_payload();
-
-        let signature = signer
-            .sign(&payload)
-            .map_err(InfrastructureError::SignerError)?;
-
-        doc.add_signature(signature.clone())?;
-
-        Ok(signature)
+        doc.set_encryption(cipher_text, alg)?;
+        Ok(())
     }
 
-    pub fn verify(&mut self) -> BloockResult<bool> {
-        let signatures = match self.get_signatures() {
-            Some(s) => s,
-            None => return Err(IntegrityError::InvalidVerification.into()),
-        };
+    // pub fn encrypt(mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<Self> {
+    //     let mut doc = match self.document {
+    //         Some(doc) => doc,
+    //         None => return Err(RecordError::DocumentNotFound.into()),
+    //     };
 
-        let payload = match self.get_payload() {
-            Some(s) => s,
-            None => return Err(IntegrityError::InvalidVerification.into()),
-        };
+    //     let payload = doc.build()?;
+    //     let ciphertext = encrypter
+    //         .encrypt(&payload)
+    //         .map_err(InfrastructureError::EncrypterError)?;
 
-        for signature in signatures {
-            let verifier = bloock_signer::create_verifier_from_signature(&signature)
-                .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
-            let verification_response = verifier
-                .verify(payload, signature.clone())
-                .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
-            if !verification_response {
-                return Ok(false);
-            }
-        }
+    //     doc = doc.set_encryption(ciphertext, encrypter.get_alg())?;
 
-        Ok(true)
-    }
+    //     self.document = Some(doc);
+    //     Ok(self)
+    // }
+
+    // pub fn decrypt(mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<Self> {
+    //     let mut doc = match self.document {
+    //         Some(doc) => doc,
+    //         None => return Err(RecordError::DocumentNotFound.into()),
+    //     };
+
+    //     if !doc.is_encrypted() {
+    //         Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
+    //     }
+
+    //     let payload = doc.get_payload();
+
+    //     let decrypted_payload = decrypter
+    //         .decrypt(&payload)
+    //         .map_err(InfrastructureError::EncrypterError)?;
+
+    //     doc = doc.remove_encryption(decrypted_payload)?;
+
+    //     self.document = Some(doc);
+    //     Ok(self)
+    // }
+
+    // pub async fn sign(&mut self, signer: Box<dyn Signer>) -> BloockResult<Signature> {
+    //     let doc = match &mut self.document {
+    //         Some(doc) => doc,
+    //         None => return Err(RecordError::DocumentNotFound.into()),
+    //     };
+
+    //     let payload = doc.get_payload();
+
+    //     let signature = signer
+    //         .sign(&payload)
+    //         .await
+    //         .map_err(InfrastructureError::SignerError)?;
+
+    //     doc.add_signature(signature.clone())?;
+
+    //     Ok(signature)
+    // }
+
+    // pub async fn verify(&mut self) -> BloockResult<bool> {
+    //     let signatures = match self.get_signatures() {
+    //         Some(s) => s,
+    //         None => return Err(IntegrityError::InvalidVerification.into()),
+    //     };
+
+    //     let payload = match self.get_payload() {
+    //         Some(s) => s,
+    //         None => return Err(IntegrityError::InvalidVerification.into()),
+    //     };
+
+    //     for signature in signatures {
+    //         let verifier = bloock_signer::create_verifier_from_signature(&signature)
+    //             .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
+    //         let verification_response = verifier
+    //             .verify(payload, signature.clone())
+    //             .await
+    //             .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
+    //         if !verification_response {
+    //             return Ok(false);
+    //         }
+    //     }
+
+    //     Ok(true)
+    // }
 
     pub fn get_hash(&self) -> String {
         hex::encode(self.hash)
@@ -230,7 +240,7 @@ mod tests {
     use crate::integrity::entity::proof::ProofAnchor;
 
     use super::*;
-    use bloock_signer::SignatureHeader;
+    use bloock_signer::entity::signature::SignatureHeader;
 
     #[test]
     fn new_record() {

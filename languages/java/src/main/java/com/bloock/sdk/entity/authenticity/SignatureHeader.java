@@ -3,30 +3,30 @@ package com.bloock.sdk.entity.authenticity;
 import com.bloock.sdk.bridge.proto.AuthenticityEntities;
 
 public class SignatureHeader {
-  public String getAlg() {
-    return alg;
-  }
+    String alg;
+    String kid;
 
-  public String getKid() {
-    return kid;
-  }
+    SignatureHeader(String alg, String kid) {
+        this.alg = alg;
+        this.kid = kid;
+    }
 
-  String alg;
-  String kid;
+    public static SignatureHeader fromProto(AuthenticityEntities.SignatureHeader header) {
+        return new SignatureHeader(header.getAlg(), header.getKid());
+    }
 
-  SignatureHeader(String alg, String kid) {
-    this.alg = alg;
-    this.kid = kid;
-  }
+    public String getAlg() {
+        return alg;
+    }
 
-  public static SignatureHeader fromProto(AuthenticityEntities.SignatureHeader header) {
-    return new SignatureHeader(header.getAlg(), header.getKid());
-  }
+    public String getKid() {
+        return kid;
+    }
 
-  public AuthenticityEntities.SignatureHeader toProto() {
-    return AuthenticityEntities.SignatureHeader.newBuilder()
-        .setAlg(this.alg)
-        .setKid(this.kid)
-        .build();
-  }
+    public AuthenticityEntities.SignatureHeader toProto() {
+        return AuthenticityEntities.SignatureHeader.newBuilder()
+                .setAlg(this.alg)
+                .setKid(this.kid)
+                .build();
+    }
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +21,7 @@ func TestAuthenticity(t *testing.T) {
 		assert.NotEmpty(t, keys.PublicKey)
 	})
 
-	t.Run("sign ecdsa", func(t *testing.T) {
+	t.Run("sign local ecdsa", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
 		record, err := recordClient.
@@ -28,28 +29,52 @@ func TestAuthenticity(t *testing.T) {
 			Build()
 		assert.NoError(t, err)
 
-		authenticityClient := NewAuthenticityClient()
-
-		keys, err := authenticityClient.GenerateEcdsaKeys()
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.EcP256k)
 		assert.NoError(t, err)
 
+		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey}))
+			Sign(record, authenticity.NewEcdsaSigner(authenticity.SignerArgs{LocalKey: &key}))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
 	})
 
-	t.Run("verify ecdsa", func(t *testing.T) {
+	t.Run("sign managed ecdsa", func(t *testing.T) {
 		recordClient := NewRecordClient()
-
-		authenticityClient := NewAuthenticityClient()
-		keys, err := authenticityClient.GenerateEcdsaKeys()
-		assert.NoError(t, err)
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey})).
+			Build()
+		assert.NoError(t, err)
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.EcP256k,
+		})
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewEcdsaSigner(authenticity.SignerArgs{ManagedKey: &key}))
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, signature.Signature)
+	})
+
+	t.Run("verify local ecdsa", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.EcP256k)
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		record, err := recordClient.
+			FromString("Hello world").
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{LocalKey: &key})).
 			Build()
 		assert.NoError(t, err)
 
@@ -57,10 +82,33 @@ func TestAuthenticity(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.True(t, valid)
-
 	})
 
-	t.Run("sign ens", func(t *testing.T) {
+	t.Run("verify managed ecdsa", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.EcP256k,
+		})
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{ManagedKey: &key})).
+			Build()
+		assert.NoError(t, err)
+
+		valid, err := authenticityClient.Verify(record)
+		assert.NoError(t, err)
+
+		assert.True(t, valid)
+	})
+
+	t.Run("sign local ens", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
 		record, err := recordClient.
@@ -68,30 +116,76 @@ func TestAuthenticity(t *testing.T) {
 			Build()
 		assert.NoError(t, err)
 
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.EcP256k)
+		assert.NoError(t, err)
+
 		authenticityClient := NewAuthenticityClient()
-
-		keys, err := authenticityClient.GenerateEcdsaKeys()
-		assert.NoError(t, err)
-
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey}))
+			Sign(record, authenticity.NewEnsSigner(authenticity.SignerArgs{LocalKey: &key}))
 		assert.NoError(t, err)
 
-		assert.NotEmpty(t, signature)
+		assert.NotEmpty(t, signature.Signature)
 	})
 
-	t.Run("verify ens", func(t *testing.T) {
+	t.Run("sign managed ens", func(t *testing.T) {
 		recordClient := NewRecordClient()
-
-		authenticityClient := NewAuthenticityClient()
-		keys, err := authenticityClient.GenerateEcdsaKeys()
-		assert.NoError(t, err)
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewEnsSigner(authenticity.EnsArgs{
-				PrivateKey: keys.PrivateKey,
-			})).
+			Build()
+		assert.NoError(t, err)
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.EcP256k,
+		})
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewEnsSigner(authenticity.SignerArgs{ManagedKey: &key}))
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, signature.Signature)
+	})
+
+	t.Run("verify local ens", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.EcP256k)
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		record, err := recordClient.
+			FromString("Hello world").
+			WithSigner(authenticity.NewEnsSigner(authenticity.SignerArgs{LocalKey: &key})).
+			Build()
+		assert.NoError(t, err)
+
+		valid, err := authenticityClient.Verify(record)
+		assert.NoError(t, err)
+
+		assert.True(t, valid)
+	})
+
+	t.Run("verify managed ens", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.EcP256k,
+		})
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			WithSigner(authenticity.NewEnsSigner(authenticity.SignerArgs{ManagedKey: &key})).
 			Build()
 		assert.NoError(t, err)
 
@@ -104,13 +198,15 @@ func TestAuthenticity(t *testing.T) {
 	t.Run("get record signatures", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
-		authenticityClient := NewAuthenticityClient()
-		keys, err := authenticityClient.GenerateEcdsaKeys()
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.EcP256k)
 		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey})).
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{LocalKey: &key})).
 			Build()
 		assert.NoError(t, err)
 
@@ -124,13 +220,15 @@ func TestAuthenticity(t *testing.T) {
 	t.Run("get empty signature common name ", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
-		authenticityClient := NewAuthenticityClient()
-		keys, err := authenticityClient.GenerateEcdsaKeys()
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.EcP256k)
 		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey})).
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{LocalKey: &key})).
 			Build()
 		assert.NoError(t, err)
 
@@ -144,14 +242,16 @@ func TestAuthenticity(t *testing.T) {
 	t.Run("get ecdsa signature common name ", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
-		authenticityClient := NewAuthenticityClient()
-		keys, err := authenticityClient.GenerateEcdsaKeys()
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.EcP256k)
 		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
 
 		commonName := "common_name"
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keys.PrivateKey, CommonName: &commonName})).
+			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{LocalKey: &key, CommonName: &commonName})).
 			Build()
 		assert.NoError(t, err)
 
@@ -167,14 +267,16 @@ func TestAuthenticity(t *testing.T) {
 	t.Run("get ens signature common name", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
-		authenticityClient := NewAuthenticityClient()
-		keys, err := authenticityClient.GenerateEcdsaKeys()
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.EcP256k)
 		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewEnsSigner(authenticity.EnsArgs{
-				PrivateKey: keys.PrivateKey,
+			WithSigner(authenticity.NewEnsSigner(authenticity.SignerArgs{
+				LocalKey: &key,
 			})).
 			Build()
 		assert.NoError(t, err)

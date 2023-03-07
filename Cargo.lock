@@ -282,7 +282,7 @@ dependencies = [
 
 [[package]]
 name = "bloock-core"
-version = "2.4.1-beta.3"
+version = "2.4.1-beta.4"
 dependencies = [
  "async-std",
  "base64",
@@ -315,8 +315,10 @@ name = "bloock-encrypter"
 version = "0.1.0"
 dependencies = [
  "aes-gcm",
+ "async-trait",
  "base64",
  "base64-url",
+ "bloock-http",
  "bloock-keys",
  "ecies",
  "getrandom",
@@ -328,6 +330,8 @@ dependencies = [
  "serde",
  "sha2 0.10.6",
  "thiserror",
+ "tokio",
+ "wasm-bindgen-test",
 ]
 
 [[package]]
@@ -406,8 +410,10 @@ dependencies = [
 name = "bloock-signer"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "base64-url",
  "bloock-hasher",
+ "bloock-http",
  "bloock-keys",
  "bloock-web3",
  "getrandom",
@@ -439,7 +445,7 @@ dependencies = [
 
 [[package]]
 name = "bloock_bridge"
-version = "2.4.1-beta.3"
+version = "2.4.1-beta.4"
 dependencies = [
  "async-trait",
  "base64",

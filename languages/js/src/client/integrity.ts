@@ -1,9 +1,9 @@
 import { BloockBridge } from "../bridge/bridge";
 import { ConfigData, Network } from "../bridge/proto/config";
-import { Proof } from "../entity/proof";
-import { Anchor } from "../entity/anchor";
+import { Proof } from "../entity/integrity";
+import { Anchor } from "../entity/integrity/anchor";
 import { Record } from "../entity/record";
-import { RecordReceipt } from "../entity/record_receipt";
+import { RecordReceipt } from "../entity/integrity";
 import { NewConfigData } from "../config/config";
 import {
   SendRecordsRequest,

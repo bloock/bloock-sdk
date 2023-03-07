@@ -17,14 +17,16 @@ class LocalKey
         $this->privateKey = $privateKey;
     }
 
-    public function toProto(): \Bloock\LocalKey {
+    public static function fromProto(\Bloock\LocalKey $res): LocalKey
+    {
+        return new LocalKey($res->getKey(), $res->getPrivateKey());
+    }
+
+    public function toProto(): \Bloock\LocalKey
+    {
         $p = new \Bloock\LocalKey();
         $p->setKey($this->key);
         $p->setPrivateKey($this->privateKey);
         return $p;
-    }
-
-    public static function fromProto(\Bloock\LocalKey $res): LocalKey {
-        return new LocalKey($res->getKey(), $res->getPrivateKey());
     }
 }

@@ -1,13 +1,15 @@
 <?php
 
+use Bloock\Bloock;
+use Bloock\Client\WebhookClient;
 use PHPUnit\Framework\TestCase;
 
 final class WebhookTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        \Bloock\Bloock::$apiKey = getenv("API_KEY");
-        \Bloock\Bloock::$disableAnalytics = true;
+        Bloock::$apiKey = getenv("API_KEY");
+        Bloock::$disableAnalytics = true;
     }
 
     public function testVerifyWebhookSignatureOk()
@@ -16,7 +18,7 @@ final class WebhookTest extends TestCase
         $header = "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29";
         $secret = "NHJTAE6ikKBccSaeCSBSWGdp7NmixXy7";
 
-        $webhookClient = new \Bloock\Client\WebhookClient();
+        $webhookClient = new WebhookClient();
         $isValid = $webhookClient->verifyWebhookSignature($payload, $header, $secret, false);
 
         $this->assertTrue($isValid);
@@ -28,7 +30,7 @@ final class WebhookTest extends TestCase
         $header = "t=1672909660,v1=955e726c98d606ff5534d325f68854173411be61698ef7c5c466a5485f979a29";
         $secret = "asdf";
 
-        $webhookClient = new \Bloock\Client\WebhookClient();
+        $webhookClient = new WebhookClient();
         $isValid = $webhookClient->verifyWebhookSignature($payload, $header, $secret, false);
 
         $this->assertFalse($isValid);

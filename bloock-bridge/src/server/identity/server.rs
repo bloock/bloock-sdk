@@ -1,12 +1,13 @@
 use crate::items::{
     BuildSchemaRequest, BuildSchemaResponse, CreateCredentialOfferRequest,
-    CreateCredentialOfferResponse, CreateIdentityRequest, CreateIdentityResponse,
-    CredentialFromJsonRequest, CredentialFromJsonResponse, CredentialOfferFromJsonRequest,
-    CredentialOfferFromJsonResponse, CredentialOfferRedeemRequest, CredentialOfferRedeemResponse,
-    CredentialOfferToJsonRequest, CredentialOfferToJsonResponse, CredentialToJsonRequest,
-    CredentialToJsonResponse, GetSchemaRequest, GetSchemaResponse, IdentityServiceHandler,
+    CreateCredentialOfferResponse, CreateIdentityRequest, CreateIdentityResponse, Credential,
+    CredentialFromJsonRequest, CredentialFromJsonResponse, CredentialOffer,
+    CredentialOfferFromJsonRequest, CredentialOfferFromJsonResponse, CredentialOfferRedeemRequest,
+    CredentialOfferRedeemResponse, CredentialOfferToJsonRequest, CredentialOfferToJsonResponse,
+    CredentialRevocation, CredentialToJsonRequest, CredentialToJsonResponse,
+    CredentialVerification, GetSchemaRequest, GetSchemaResponse, Identity, IdentityServiceHandler,
     LoadIdentityRequest, LoadIdentityResponse, RevokeCredentialRequest, RevokeCredentialResponse,
-    VerifyCredentialRequest, VerifyCredentialResponse,
+    Schema, VerifyCredentialRequest, VerifyCredentialResponse,
 };
 use async_trait::async_trait;
 
@@ -16,71 +17,131 @@ pub struct IdentityServer {}
 impl IdentityServiceHandler for IdentityServer {
     async fn create_identity(
         &self,
-        input: &CreateIdentityRequest,
+        _: &CreateIdentityRequest,
     ) -> Result<CreateIdentityResponse, String> {
-        Err("not implemented".to_string())
+        Ok(CreateIdentityResponse {
+            identity: Some(Identity {
+                mnemonic: "buzz price absent crack usual theme fault credit arena toast thrive pattern wine rough hidden".to_string(),
+                key: "1ABC7154748D1CE5144478CDEB574AE244B939B5 ".to_string(),
+                private_key: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457"
+                    .to_string(),
+            }),
+            error: None,
+        })
     }
-    async fn load_identity(
-        &self,
-        input: &LoadIdentityRequest,
-    ) -> Result<LoadIdentityResponse, String> {
-        Err("not implemented".to_string())
+    async fn load_identity(&self, _: &LoadIdentityRequest) -> Result<LoadIdentityResponse, String> {
+        Ok(LoadIdentityResponse {
+            identity: Some(Identity {
+                mnemonic: "buzz price absent crack usual theme fault credit arena toast thrive pattern wine rough hidden".to_string(),
+                key: "1ABC7154748D1CE5144478CDEB574AE244B939B5".to_string(),
+                private_key: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457"
+                    .to_string(),
+            }),
+            error: None,
+        })
     }
-    async fn build_schema(
-        &self,
-        input: &BuildSchemaRequest,
-    ) -> Result<BuildSchemaResponse, String> {
-        Err("not implemented".to_string())
+    async fn build_schema(&self, _: &BuildSchemaRequest) -> Result<BuildSchemaResponse, String> {
+        Ok(BuildSchemaResponse {
+            schema: Some(Schema {
+                id: "74f75365-edb5-41db-b579-00bd4e3b0e4a".to_string(),
+                json_ld: "{}".to_string(),
+            }),
+            error: None,
+        })
     }
-    async fn get_schema(&self, input: &GetSchemaRequest) -> Result<GetSchemaResponse, String> {
-        Err("not implemented".to_string())
+    async fn get_schema(&self, _: &GetSchemaRequest) -> Result<GetSchemaResponse, String> {
+        Ok(GetSchemaResponse {
+            schema: Some(Schema {
+                id: "74f75365-edb5-41db-b579-00bd4e3b0e4a".to_string(),
+                json_ld: "{}".to_string(),
+            }),
+            error: None,
+        })
     }
     async fn create_credential_offer(
         &self,
-        input: &CreateCredentialOfferRequest,
+        _: &CreateCredentialOfferRequest,
     ) -> Result<CreateCredentialOfferResponse, String> {
-        Err("not implemented".to_string())
+        Ok(CreateCredentialOfferResponse {
+            credential_offer: Some(CredentialOffer {
+                json: "{}".to_string(),
+            }),
+            error: None,
+        })
     }
     async fn credential_offer_to_json(
         &self,
-        input: &CredentialOfferToJsonRequest,
+        _: &CredentialOfferToJsonRequest,
     ) -> Result<CredentialOfferToJsonResponse, String> {
-        Err("not implemented".to_string())
+        Ok(CredentialOfferToJsonResponse {
+            json: "{}".to_string(),
+            error: None,
+        })
     }
     async fn credential_offer_from_json(
         &self,
-        input: &CredentialOfferFromJsonRequest,
+        _: &CredentialOfferFromJsonRequest,
     ) -> Result<CredentialOfferFromJsonResponse, String> {
-        Err("not implemented".to_string())
+        Ok(CredentialOfferFromJsonResponse {
+            credential_offer: Some(CredentialOffer {
+                json: "{}".to_string(),
+            }),
+            error: None,
+        })
     }
     async fn credential_offer_redeem(
         &self,
-        input: &CredentialOfferRedeemRequest,
+        _: &CredentialOfferRedeemRequest,
     ) -> Result<CredentialOfferRedeemResponse, String> {
-        Err("not implemented".to_string())
+        Ok(CredentialOfferRedeemResponse {
+            credential: Some(Credential {
+                json: "{}".to_string(),
+            }),
+            error: None,
+        })
     }
     async fn credential_to_json(
         &self,
-        input: &CredentialToJsonRequest,
+        _: &CredentialToJsonRequest,
     ) -> Result<CredentialToJsonResponse, String> {
-        Err("not implemented".to_string())
+        Ok(CredentialToJsonResponse {
+            json: "{}".to_string(),
+            error: None,
+        })
     }
     async fn credential_from_json(
         &self,
-        input: &CredentialFromJsonRequest,
+        _: &CredentialFromJsonRequest,
     ) -> Result<CredentialFromJsonResponse, String> {
-        Err("not implemented".to_string())
+        Ok(CredentialFromJsonResponse {
+            credential: Some(Credential {
+                json: "{}".to_string(),
+            }),
+            error: None,
+        })
     }
     async fn verify_credential(
         &self,
-        input: &VerifyCredentialRequest,
+        _: &VerifyCredentialRequest,
     ) -> Result<VerifyCredentialResponse, String> {
-        Err("not implemented".to_string())
+        Ok(VerifyCredentialResponse {
+            result: Some(CredentialVerification {
+                timestamp: 1678220074,
+                issuer: "1ABC7154748D1CE5144478CDEB574AE244B939B5".to_string(),
+                revocation: 0,
+            }),
+            error: None,
+        })
     }
     async fn revoke_credential(
         &self,
-        input: &RevokeCredentialRequest,
+        _: &RevokeCredentialRequest,
     ) -> Result<RevokeCredentialResponse, String> {
-        Err("not implemented".to_string())
+        Ok(RevokeCredentialResponse {
+            result: Some(CredentialRevocation {
+                timestamp: 1678220074,
+            }),
+            error: None,
+        })
     }
 }

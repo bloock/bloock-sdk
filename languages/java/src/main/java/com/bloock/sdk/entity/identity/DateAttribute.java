@@ -7,14 +7,14 @@ public class DateAttribute extends Attribute<Long> {
         super(id, value);
     }
 
+    public static DateAttribute fromProto(IdentityEntities.DateAttribute res) {
+        return new DateAttribute(res.getId(), res.getValue());
+    }
+
     public IdentityEntities.DateAttribute toProto() {
         return IdentityEntities.DateAttribute.newBuilder()
                 .setId(this.id)
                 .setValue(this.value)
                 .build();
-    }
-
-    public static DateAttribute fromProto(IdentityEntities.DateAttribute res) {
-        return new DateAttribute(res.getId(), res.getValue());
     }
 }

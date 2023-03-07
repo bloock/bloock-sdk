@@ -8,7 +8,8 @@ use Bloock\Configuration;
 
 class Config
 {
-    public static function newConfigDataDefault(): ConfigData {
+    public static function newConfigDataDefault(): ConfigData
+    {
         $configuration = new Configuration();
         $configuration->setLibraryName("PHP");
         $configuration->setHost(Bloock::$apiHost);
@@ -22,7 +23,8 @@ class Config
         return $config;
     }
 
-    public static function newConfigData(ConfigData $configData): ConfigData {
+    public static function newConfigData(ConfigData $configData): ConfigData
+    {
         return $configData;
     }
 }

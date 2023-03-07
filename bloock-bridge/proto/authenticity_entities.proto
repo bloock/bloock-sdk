@@ -5,6 +5,8 @@ package bloock;
 option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "com.bloock.sdk.bridge.proto";
 
+import "keys_entities.proto";
+
 enum SignerAlg {
     ES256K = 0;
     ENS = 1;
@@ -12,12 +14,9 @@ enum SignerAlg {
 
 message Signer {
     SignerAlg alg = 1;
-    SignerArgs args = 2;
-}
-
-message SignerArgs {
-    optional string private_key = 1;
-    optional string common_name = 2;
+    optional LocalKey local_key = 2;
+    optional ManagedKey managed_key = 3;
+    optional string common_name = 4;
 }
 
 message Signature {

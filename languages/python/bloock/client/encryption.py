@@ -13,8 +13,8 @@ from bloock.entity.encryption.decrypter import Decrypter
 from bloock.entity.encryption.encrypter import Encrypter
 from bloock.entity.encryption.encryption_alg import EncryptionAlg
 from bloock.entity.key.key_pair import KeyPair
-from bloock.entity.key.rsa_key_pair import RsaKeyPair
 from bloock.entity.key.key_type import KeyType
+from bloock.entity.key.rsa_key_pair import RsaKeyPair
 from bloock.entity.record.record import Record
 
 

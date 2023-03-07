@@ -7,14 +7,14 @@ public class NumberAttribute extends Attribute<Long> {
         super(id, value);
     }
 
+    public static NumberAttribute fromProto(IdentityEntities.NumberAttribute res) {
+        return new NumberAttribute(res.getId(), res.getValue());
+    }
+
     public IdentityEntities.NumberAttribute toProto() {
         return IdentityEntities.NumberAttribute.newBuilder()
                 .setId(this.id)
                 .setValue(this.value)
                 .build();
-    }
-
-    public static NumberAttribute fromProto(IdentityEntities.NumberAttribute res) {
-        return new NumberAttribute(res.getId(), res.getValue());
     }
 }

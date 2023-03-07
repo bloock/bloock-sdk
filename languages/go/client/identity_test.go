@@ -13,15 +13,13 @@ func TestIdentity(t *testing.T) {
 	t.Run("create identity", func(t *testing.T) {
 		identityClient := NewIdentityClient()
 		_, err := identityClient.CreateIdentity()
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "not implemented")
+		assert.NoError(t, err)
 	})
 
 	t.Run("load identity", func(t *testing.T) {
 		identityClient := NewIdentityClient()
 		_, err := identityClient.LoadIdentity("mnemonic")
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "not implemented")
+		assert.NoError(t, err)
 	})
 
 	t.Run("build schema", func(t *testing.T) {
@@ -33,15 +31,13 @@ func TestIdentity(t *testing.T) {
 			AddMultichoiceAttribute("", "", []string{"a", "b", "c"}, "").
 			AddNumberAttribute("", "", "").
 			Build()
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "not implemented")
+		assert.NoError(t, err)
 	})
 
 	t.Run("get schema", func(t *testing.T) {
 		identityClient := NewIdentityClient()
 		_, err := identityClient.GetSchema("")
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "not implemented")
+		assert.NoError(t, err)
 	})
 
 	t.Run("credential offer builder", func(t *testing.T) {
@@ -53,8 +49,7 @@ func TestIdentity(t *testing.T) {
 			WithMultichoiceAttribute("", "a").
 			WithNumberAttribute("", 123).
 			Build()
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "not implemented")
+		assert.NoError(t, err)
 	})
 
 	t.Run("credential offer to json", func(t *testing.T) {
@@ -70,8 +65,7 @@ func TestIdentity(t *testing.T) {
 	t.Run("credential offer redeem", func(t *testing.T) {
 		identityClient := NewIdentityClient()
 		_, err := identityClient.CreateIdentity()
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "not implemented")
+		assert.NoError(t, err)
 	})
 
 	t.Run("credential to json", func(t *testing.T) {
@@ -88,15 +82,13 @@ func TestIdentity(t *testing.T) {
 		identityClient := NewIdentityClient()
 		credential := identity.NewCredentialFromJson("{}")
 		_, err := identityClient.VerifyCredential(credential)
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "not implemented")
+		assert.NoError(t, err)
 	})
 
 	t.Run("revoke credential", func(t *testing.T) {
 		identityClient := NewIdentityClient()
 		credential := identity.NewCredentialFromJson("{}")
 		_, err := identityClient.RevokeCredential(credential)
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "not implemented")
+		assert.NoError(t, err)
 	})
 }

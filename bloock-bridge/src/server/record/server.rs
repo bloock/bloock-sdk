@@ -9,13 +9,13 @@ use crate::{
 };
 use async_trait::async_trait;
 use bloock_core::{
+    config::config_data::ConfigData,
     integrity::entity::proof::Proof,
     record::entity::record::Record as RecordCore,
     record::{builder::Builder, service::RecordService},
-    AesDecrypter, AesDecrypterArgs, AesEncrypter, AesEncrypterArgs, Decrypter as DecrypterCore,
-    EcdsaSigner, EcdsaSignerArgs, EciesDecrypter, EciesDecrypterArgs, EciesEncrypter,
-    EciesEncrypterArgs, Encrypter as EncrypterCore, EnsSigner, EnsSignerArgs, RsaDecrypter,
-    RsaDecrypterArgs, RsaEncrypter, RsaEncrypterArgs, Signer as SignerCore,
+    Decrypter as DecrypterCore, Encrypter as EncrypterCore, LocalAesDecrypter, LocalAesEncrypter,
+    LocalEcdsaSigner, LocalEnsSigner, LocalRsaDecrypter, LocalRsaEncrypter, ManagedEcdsaSigner,
+    ManagedEnsSigner, ManagedRsaDecrypter, ManagedRsaEncrypter, Signer as SignerCore,
 };
 use std::convert::TryInto;
 
@@ -27,12 +27,14 @@ impl RecordServiceHandler for RecordServer {
         &self,
         req: &crate::items::RecordBuilderFromStringRequest,
     ) -> Result<RecordBuilderResponse, String> {
+        let config_data = req.get_config_data()?;
         let builder = RecordService::from_string(req.clone().payload).map_err(|e| e.to_string())?;
         match build_record(
             builder,
             req.clone().signer,
             req.clone().encrypter,
             req.clone().decrypter,
+            config_data,
         )
         .await
         {
@@ -48,6 +50,7 @@ impl RecordServiceHandler for RecordServer {
         &self,
         req: &crate::items::RecordBuilderFromHexRequest,
     ) -> Result<RecordBuilderResponse, String> {
+        let config_data = req.get_config_data()?;
         let builder = RecordService::from_hex(req.clone().payload).map_err(|e| e.to_string())?;
 
         match build_record(
@@ -55,6 +58,7 @@ impl RecordServiceHandler for RecordServer {
             req.clone().signer,
             req.clone().encrypter,
             req.clone().decrypter,
+            config_data,
         )
         .await
         {
@@ -70,6 +74,7 @@ impl RecordServiceHandler for RecordServer {
         &self,
         req: &crate::items::RecordBuilderFromJsonRequest,
     ) -> Result<RecordBuilderResponse, String> {
+        let config_data = req.get_config_data()?;
         let builder = RecordService::from_json(req.clone().payload).map_err(|e| e.to_string())?;
 
         match build_record(
@@ -77,6 +82,7 @@ impl RecordServiceHandler for RecordServer {
             req.clone().signer,
             req.clone().encrypter,
             req.clone().decrypter,
+            config_data,
         )
         .await
         {
@@ -92,6 +98,7 @@ impl RecordServiceHandler for RecordServer {
         &self,
         req: &crate::items::RecordBuilderFromFileRequest,
     ) -> Result<RecordBuilderResponse, String> {
+        let config_data = req.get_config_data()?;
         let builder = RecordService::from_file(req.clone().payload).map_err(|e| e.to_string())?;
 
         match build_record(
@@ -99,6 +106,7 @@ impl RecordServiceHandler for RecordServer {
             req.clone().signer,
             req.clone().encrypter,
             req.clone().decrypter,
+            config_data,
         )
         .await
         {
@@ -114,6 +122,7 @@ impl RecordServiceHandler for RecordServer {
         &self,
         req: &crate::items::RecordBuilderFromBytesRequest,
     ) -> Result<RecordBuilderResponse, String> {
+        let config_data = req.get_config_data()?;
         let builder = RecordService::from_bytes(req.clone().payload).map_err(|e| e.to_string())?;
 
         match build_record(
@@ -121,6 +130,7 @@ impl RecordServiceHandler for RecordServer {
             req.clone().signer,
             req.clone().encrypter,
             req.clone().decrypter,
+            config_data,
         )
         .await
         {
@@ -136,6 +146,7 @@ impl RecordServiceHandler for RecordServer {
         &self,
         req: &crate::items::RecordBuilderFromRecordRequest,
     ) -> Result<RecordBuilderResponse, String> {
+        let config_data = req.get_config_data()?;
         let payload: RecordCore = req
             .clone()
             .payload
@@ -150,6 +161,7 @@ impl RecordServiceHandler for RecordServer {
             req.clone().signer,
             req.clone().encrypter,
             req.clone().decrypter,
+            config_data,
         )
         .await
         {
@@ -193,6 +205,7 @@ impl RecordServiceHandler for RecordServer {
             req.clone().signer,
             req.clone().encrypter,
             req.clone().decrypter,
+            config_data,
         )
         .await
         {
@@ -248,75 +261,106 @@ async fn build_record(
     signer: Option<Signer>,
     encrypter: Option<Encrypter>,
     decrypter: Option<Decrypter>,
+    config_data: ConfigData,
 ) -> Result<Record, String> {
     if let Some(signer) = signer {
         let signer_alg = SignerAlg::from_i32(signer.alg);
-        let signer: Box<dyn SignerCore> = match signer_alg {
-            Some(SignerAlg::Es256k) => {
-                let signer_arguments = signer
-                    .args
-                    .ok_or_else(|| "no arguments provided".to_string())?;
 
-                let private_key = signer_arguments
-                    .private_key
-                    .ok_or_else(|| "no private key provided".to_string())?;
+        let local_key = signer.local_key;
+        let managed_key = signer.managed_key;
 
-                EcdsaSigner::new_boxed(EcdsaSignerArgs::new(
-                    &private_key,
-                    signer_arguments.common_name,
-                ))
+        let signer: Box<dyn SignerCore> = if let Some(key) = managed_key {
+            match signer_alg {
+                Some(SignerAlg::Es256k) => ManagedEcdsaSigner::new_boxed(
+                    key.into(),
+                    signer.common_name,
+                    config_data.config.host.clone(),
+                    config_data.config.api_key.clone(),
+                ),
+                Some(SignerAlg::Ens) => ManagedEnsSigner::new_boxed(
+                    key.into(),
+                    config_data.config.host.clone(),
+                    config_data.config.api_key.clone(),
+                ),
+                None => return Err("invalid signer provided".to_string()),
             }
-            Some(SignerAlg::Ens) => {
-                let signer_arguments = signer
-                    .args
-                    .ok_or_else(|| "no arguments provided".to_string())?;
-
-                let private_key = signer_arguments
-                    .private_key
-                    .ok_or_else(|| "no private key provided".to_string())?;
-
-                EnsSigner::new_boxed(EnsSignerArgs::new(&private_key))
+        } else if let Some(key) = local_key {
+            match signer_alg {
+                Some(SignerAlg::Es256k) => {
+                    LocalEcdsaSigner::new_boxed(key.into(), signer.common_name)
+                }
+                Some(SignerAlg::Ens) => LocalEnsSigner::new_boxed(key.into()),
+                None => return Err("invalid signer provided".to_string()),
             }
-            None => return Err("invalid signer provided".to_string()),
+        } else {
+            return Err("invalid key provided".to_string());
         };
         builder = builder.with_signer(signer);
     }
 
     if let Some(encrypt) = encrypter {
-        let args = encrypt
-            .args
-            .ok_or_else(|| "no arguments provided".to_string())?;
+        let encrypter_alg = EncryptionAlg::from_i32(encrypt.alg);
 
-        let encrypter: Box<dyn EncrypterCore> = match EncryptionAlg::from_i32(encrypt.alg) {
-            Some(alg) => match alg {
-                EncryptionAlg::A256gcm => AesEncrypter::new(AesEncrypterArgs::new(&args.key, &[])),
-                EncryptionAlg::Rsa => RsaEncrypter::new(RsaEncrypterArgs::new(&args.key)),
-                EncryptionAlg::Ecies => EciesEncrypter::new(EciesEncrypterArgs::new(args.key)),
-            },
-            None => return Err("invalid encrypter provided".to_string()),
+        let local_key = encrypt.local_key;
+        let managed_key = encrypt.managed_key;
+
+        let encrypter: Box<dyn EncrypterCore> = if let Some(key) = managed_key {
+            match encrypter_alg {
+                Some(EncryptionAlg::A256gcm) => {
+                    return Err("AES encryption is not yet supported for managed keys".to_string())
+                }
+                Some(EncryptionAlg::Rsa) => ManagedRsaEncrypter::new(
+                    key.into(),
+                    config_data.config.host.clone(),
+                    config_data.config.api_key.clone(),
+                ),
+                None => return Err("invalid encrypter provided".to_string()),
+            }
+        } else if let Some(key) = local_key {
+            match encrypter_alg {
+                Some(EncryptionAlg::A256gcm) => LocalAesEncrypter::new(key.into()),
+                Some(EncryptionAlg::Rsa) => LocalRsaEncrypter::new(key.into()),
+                None => return Err("invalid encrypter provided".to_string()),
+            }
+        } else {
+            return Err("invalid key provided".to_string());
         };
+
         builder = builder.with_encrypter(encrypter);
     }
 
     if let Some(decrypt) = decrypter {
-        let args = match decrypt.args {
-            Some(decrypter_arguments) => decrypter_arguments,
-            None => return Err("no arguments provided".to_string()),
-        };
+        let decrypter_alg = EncryptionAlg::from_i32(decrypt.alg);
 
-        let decrypter: Box<dyn DecrypterCore> = match EncryptionAlg::from_i32(decrypt.alg) {
-            Some(alg) => match alg {
-                EncryptionAlg::A256gcm => AesDecrypter::new(AesDecrypterArgs::new(&args.key, &[])),
-                EncryptionAlg::Rsa => RsaDecrypter::new(RsaDecrypterArgs::new(&args.key)),
-                EncryptionAlg::Ecies => EciesDecrypter::new(EciesDecrypterArgs::new(args.key)),
-            },
-            None => return Err("invalid decrypter provided".to_string()),
+        let local_key = decrypt.local_key;
+        let managed_key = decrypt.managed_key;
+
+        let decrypter: Box<dyn DecrypterCore> = if let Some(key) = managed_key {
+            match decrypter_alg {
+                Some(EncryptionAlg::A256gcm) => {
+                    return Err("AES decryption is not yet supported for managed keys".to_string())
+                }
+                Some(EncryptionAlg::Rsa) => ManagedRsaDecrypter::new(
+                    key.into(),
+                    config_data.config.host.clone(),
+                    config_data.config.api_key.clone(),
+                ),
+                None => return Err("invalid decrypter provided".to_string()),
+            }
+        } else if let Some(key) = local_key {
+            match decrypter_alg {
+                Some(EncryptionAlg::A256gcm) => LocalAesDecrypter::new(key.into()),
+                Some(EncryptionAlg::Rsa) => LocalRsaDecrypter::new(key.into()),
+                None => return Err("invalid decrypter provided".to_string()),
+            }
+        } else {
+            return Err("invalid key provided".to_string());
         };
 
         builder = builder.with_decrypter(decrypter);
     }
 
-    match builder.build() {
+    match builder.build().await {
         Ok(record) => record.try_into().map_err(|e: BridgeError| e.to_string()),
         Err(e) => Err(e.to_string()),
     }

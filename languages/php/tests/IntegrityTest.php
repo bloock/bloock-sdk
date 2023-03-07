@@ -1,22 +1,26 @@
 <?php
 
+use Bloock\Bloock;
+use Bloock\Client\IntegrityClient;
+use Bloock\Client\RecordClient;
+use Bloock\Entity\Integrity\Network;
 use PHPUnit\Framework\TestCase;
 
 final class IntegrityTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        \Bloock\Bloock::$apiKey = getenv("API_KEY");
-        \Bloock\Bloock::$disableAnalytics = true;
+        Bloock::$apiKey = getenv("API_KEY");
+        Bloock::$disableAnalytics = true;
     }
 
     public function testIntegrityEndToEnd()
     {
-        $recordClient = new \Bloock\Client\RecordClient();
+        $recordClient = new RecordClient();
         $record = $recordClient->fromString("Hello world")->build();
         $records = array($record);
 
-        $integrityClient = new \Bloock\Client\IntegrityClient();
+        $integrityClient = new IntegrityClient();
         $receipts = $integrityClient->sendRecords($records);
 
         $this->assertNotEmpty($receipts);
@@ -33,11 +37,11 @@ final class IntegrityTest extends TestCase
         $this->assertNotEquals("", $root);
         $this->assertNotNull($root);
 
-        $timestampValidateRoot = $integrityClient->validateRoot($root, \Bloock\Entity\Integrity\Network::BLOOCK_CHAIN);
+        $timestampValidateRoot = $integrityClient->validateRoot($root, Network::BLOOCK_CHAIN);
 
         $this->assertTrue($timestampValidateRoot > 0);
 
-        $timestampVerifyRecords = $integrityClient->verifyRecords($records, \Bloock\Entity\Integrity\Network::BLOOCK_CHAIN);
+        $timestampVerifyRecords = $integrityClient->verifyRecords($records, Network::BLOOCK_CHAIN);
 
         $this->assertTrue($timestampValidateRoot > 0);
         $this->assertEquals($timestampValidateRoot, $timestampVerifyRecords);

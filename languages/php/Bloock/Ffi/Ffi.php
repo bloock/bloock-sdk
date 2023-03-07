@@ -2,25 +2,23 @@
 
 namespace Bloock\Ffi;
 
+use Exception;
+
 final class Ffi
 {
     private $ffi;
 
-    public function __construct() {
+    public function __construct()
+    {
         $headers = $this->getHeaders();
         $this->ffi = \FFI::cdef($headers, $this->getBinaryPath());
     }
 
-    public function request(string $requestType, string $payload): string {
-        $requestPayload = base64_encode($payload);
-        $response = $this->ffi->request($requestType, $requestPayload);
-        return base64_decode($response);
-    }
-
-    private function getHeaders(): string {
+    private function getHeaders(): string
+    {
         $content = file_get_contents(dirname(__FILE__) . '/native/bloock_bridge.h');
         if (!$content) {
-            throw new \Exception("couldn't load header file");
+            throw new Exception("couldn't load header file");
         }
         return $content;
     }
@@ -40,9 +38,16 @@ final class Ffi
         } else if (PHP_OS_FAMILY == 'Windows') {
             $libDirs = $libDirs . '/native/x86_64_pc_windows_gnu/libbloock_bridge.dll';
         } else {
-            throw new \Exception("Not supported platform or OS");
+            throw new Exception("Not supported platform or OS");
         }
 
         return $libDirs;
+    }
+
+    public function request(string $requestType, string $payload): string
+    {
+        $requestPayload = base64_encode($payload);
+        $response = $this->ffi->request($requestType, $requestPayload);
+        return base64_decode($response);
     }
 }

@@ -9,13 +9,13 @@ import {
   VerifyCredentialRequest
 } from "../bridge/proto/identity";
 import { NewConfigData } from "../config/config";
-import { Credential } from "../entity/credential";
-import { CredentialOffer } from "../entity/credential_offer";
-import { CredentialOfferBuilder } from "../entity/credential_offer_builder";
-import { CredentialVerification } from "../entity/credential_verification";
+import { Credential } from "../entity/identity";
+import { CredentialOffer } from "../entity/identity";
+import { CredentialOfferBuilder } from "../entity/identity";
+import { CredentialVerification } from "../entity/identity";
 import { Identity } from "../entity/identity";
-import { Schema } from "../entity/schema";
-import { SchemaBuilder } from "../entity/schema_builder";
+import { Schema } from "../entity/identity";
+import { SchemaBuilder } from "../entity/identity";
 
 export class IdentityClient {
   private bridge: BloockBridge;

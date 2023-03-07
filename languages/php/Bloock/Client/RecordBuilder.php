@@ -16,6 +16,7 @@ use Bloock\RecordBuilderFromLoaderRequest;
 use Bloock\RecordBuilderFromRecordRequest;
 use Bloock\RecordBuilderFromStringRequest;
 use Bloock\RecordTypes;
+use Exception;
 
 class RecordBuilder
 {
@@ -26,28 +27,33 @@ class RecordBuilder
     private ?\Bloock\Encrypter $encrypter = null;
     private ?\Bloock\Decrypter $decrypter = null;
 
-    public function __construct($payload, int $recordTypes, ConfigData $configData) {
+    public function __construct($payload, int $recordTypes, ConfigData $configData)
+    {
         $this->payload = $payload;
         $this->type = $recordTypes;
         $this->configData = $configData;
     }
 
-    public function withSigner(Signer $signer): RecordBuilder {
+    public function withSigner(Signer $signer): RecordBuilder
+    {
         $this->signer = $signer->toProto();
         return $this;
     }
 
-    public function withEncrypter(Encrypter $encrypter): RecordBuilder {
+    public function withEncrypter(Encrypter $encrypter): RecordBuilder
+    {
         $this->encrypter = $encrypter->toProto();
         return $this;
     }
 
-    public function withDecrypter(Decrypter $decrypter): RecordBuilder {
+    public function withDecrypter(Decrypter $decrypter): RecordBuilder
+    {
         $this->decrypter = $decrypter->toProto();
         return $this;
     }
 
-    public function build(): Record {
+    public function build(): Record
+    {
         $bridge = new Bridge();
 
         $res = null;
@@ -179,11 +185,11 @@ class RecordBuilder
                 $res = $bridge->record->BuildRecordFromLoader($req);
                 break;
             default:
-                throw new \Exception("Invalid type");
+                throw new Exception("Invalid type");
         }
 
         if ($res->getError() != null) {
-            throw new \Exception($res->getError()->getMessage());
+            throw new Exception($res->getError()->getMessage());
         }
 
         return Record::fromProto($res->getRecord(), $this->configData);

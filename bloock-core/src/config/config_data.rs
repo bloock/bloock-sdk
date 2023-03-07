@@ -4,7 +4,7 @@ use std::string::String;
 use crate::config::entity::config::{Configuration, NetworkConfiguration};
 use crate::config::entity::network::Network;
 
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConfigData {
     pub config: Configuration,
     pub networks_config: HashMap<Network, NetworkConfiguration>,

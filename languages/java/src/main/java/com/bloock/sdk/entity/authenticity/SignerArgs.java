@@ -1,28 +1,29 @@
 package com.bloock.sdk.entity.authenticity;
 
 import com.bloock.sdk.bridge.proto.AuthenticityEntities;
+import com.bloock.sdk.entity.key.LocalKey;
+import com.bloock.sdk.entity.key.ManagedKey;
 
 public class SignerArgs {
-  String privateKey;
-  String commonName;
 
-  public SignerArgs(String privateKey) {
-    this.privateKey = privateKey;
-  }
+    LocalKey localKey;
+    ManagedKey managedKey;
+    String commonName;
 
-  public SignerArgs(String privateKey, String commonName) {
-    this.privateKey = privateKey;
-    this.commonName = commonName;
-  }
-
-  AuthenticityEntities.SignerArgs toProto() {
-    AuthenticityEntities.SignerArgs.Builder builder =
-        AuthenticityEntities.SignerArgs.newBuilder().setPrivateKey(privateKey);
-
-    if (commonName != null) {
-      builder.setCommonName(commonName);
+    public SignerArgs(LocalKey localKey) {
+        this.localKey = localKey;
     }
 
-    return builder.build();
-  }
+    public SignerArgs(LocalKey localKey, String commonName) {
+        this.localKey = localKey;
+        this.commonName = commonName;
+    }
+    public SignerArgs(ManagedKey managedKey) {
+        this.managedKey = managedKey;
+    }
+
+    public SignerArgs(ManagedKey managedKey, String commonName) {
+        this.managedKey = managedKey;
+        this.commonName = commonName;
+    }
 }

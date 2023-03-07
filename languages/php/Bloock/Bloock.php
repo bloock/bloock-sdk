@@ -9,7 +9,8 @@ class Bloock
     public static bool $disableAnalytics = false;
     public static array $networkConfig = [];
 
-    public static function setProvider(Network $network, string $provider) {
+    public static function setProvider(Network $network, string $provider)
+    {
         if (Bloock::$networkConfig[Network::value($network)] != null) {
             Bloock::$networkConfig[Network::value($network)] =
                 Bloock::$networkConfig[Network::value($network)]->setHttpProvider($provider);
@@ -20,7 +21,8 @@ class Bloock
         }
     }
 
-    public static function setContractAddress(Network $network, string $contractAddress) {
+    public static function setContractAddress(Network $network, string $contractAddress)
+    {
         if (Bloock::$networkConfig[Network::value($network)] != null) {
             Bloock::$networkConfig[Network::value($network)] =
                 Bloock::$networkConfig[Network::value($network)]->setContractAddress($contractAddress);
