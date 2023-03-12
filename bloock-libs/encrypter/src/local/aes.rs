@@ -183,6 +183,7 @@ mod tests {
             key_type: bloock_keys::KeyType::Aes256,
             key: "invalid_password".to_string(),
             private_key: None,
+            mnemonic: None,
         };
         let decrypter = LocalAesDecrypter::new(invalid_key);
 

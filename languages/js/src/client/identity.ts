@@ -3,15 +3,15 @@ import { ConfigData } from "../bridge/proto/config";
 import {
   CreateIdentityRequest,
   CredentialOfferRedeemRequest,
+  GetOfferRequest,
   GetSchemaRequest,
   LoadIdentityRequest,
   RevokeCredentialRequest,
   VerifyCredentialRequest
 } from "../bridge/proto/identity";
 import { NewConfigData } from "../config/config";
-import { Credential } from "../entity/identity";
+import { Credential, CredentialBuilder } from "../entity/identity";
 import { CredentialOffer } from "../entity/identity";
-import { CredentialOfferBuilder } from "../entity/identity";
 import { CredentialVerification } from "../entity/identity";
 import { Identity } from "../entity/identity";
 import { Schema } from "../entity/identity";
@@ -83,11 +83,28 @@ export class IdentityClient {
       });
   }
 
-  public buildOffer(
+  public buildCredential(
     schemaId: string,
     holderKey: string
-  ): CredentialOfferBuilder {
-    return new CredentialOfferBuilder(schemaId, holderKey, this.configData);
+  ): CredentialBuilder {
+    return new CredentialBuilder(schemaId, holderKey, this.configData);
+  }
+
+  public getOffer(id: string): Promise<CredentialOffer> {
+    const request = GetOfferRequest.fromPartial({
+      configData: this.configData,
+      id: id
+    });
+
+    return this.bridge
+      .getIdentity()
+      .GetOffer(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return CredentialOffer.fromProto(res.offer!);
+      });
   }
 
   public redeemOffer(

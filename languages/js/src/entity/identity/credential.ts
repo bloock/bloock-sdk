@@ -1,27 +1,23 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import { CredentialBody } from "./credential_body";
 
 export class Credential {
-  json: string;
+  threadId: string;
+  body: CredentialBody;
 
-  constructor(json: string) {
-    this.json = json;
-  }
-
-  public static fromJSON(json: string): Credential {
-    return new Credential(json);
-  }
-
-  public toJSON(): string {
-    return this.json;
+  constructor(threadId: string, body: CredentialBody) {
+    this.threadId = threadId;
+    this.body = body;
   }
 
   public toProto(): identityEntitiesProto.Credential {
     return identityEntitiesProto.Credential.fromPartial({
-      json: this.json
+      threadId: this.threadId,
+      body: this.body.toProto()
     });
   }
 
   static fromProto(r: identityEntitiesProto.Credential): Credential {
-    return new Credential(r.json);
+    return new Credential(r.threadId, CredentialBody.fromProto(r.body!));
   }
 }

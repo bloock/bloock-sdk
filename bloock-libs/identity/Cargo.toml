@@ -1,0 +1,22 @@
+[package]
+name = "bloock-identity"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+bench = false
+
+[dependencies]
+bloock-hasher = { path = "../hasher" }
+thiserror = "1.0.31"
+serde = { version = "1.0.123", features = ["std", "derive"] }
+serde_json = "1.0.82"
+libsecp256k1 = "0.7.1"
+hex = "0.4.3"
+bs58 = "0.4.0"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tokio = { version = "1.19.2", features = ["rt", "macros"] }
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3.32"

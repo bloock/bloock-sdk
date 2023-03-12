@@ -3,9 +3,9 @@ package identity
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 type CredentialVerification struct {
-	Timestamp  int64
+	Timestamp  uint64
 	Issuer     string
-	Revocation int64
+	Revocation uint64
 }
 
 func NewCredentialVerificationFromProto(s *proto.CredentialVerification) CredentialVerification {

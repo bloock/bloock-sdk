@@ -22,6 +22,7 @@ impl From<RsaKey> for LocalKey<String> {
             key_type: key_type,
             key: value.public_key,
             private_key: Some(value.private_key),
+            mnemonic: None,
         }
     }
 }

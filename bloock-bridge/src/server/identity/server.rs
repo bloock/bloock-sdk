@@ -1,15 +1,23 @@
-use crate::items::{
-    BuildSchemaRequest, BuildSchemaResponse, CreateCredentialOfferRequest,
-    CreateCredentialOfferResponse, CreateIdentityRequest, CreateIdentityResponse, Credential,
-    CredentialFromJsonRequest, CredentialFromJsonResponse, CredentialOffer,
-    CredentialOfferFromJsonRequest, CredentialOfferFromJsonResponse, CredentialOfferRedeemRequest,
-    CredentialOfferRedeemResponse, CredentialOfferToJsonRequest, CredentialOfferToJsonResponse,
-    CredentialRevocation, CredentialToJsonRequest, CredentialToJsonResponse,
-    CredentialVerification, GetSchemaRequest, GetSchemaResponse, Identity, IdentityServiceHandler,
-    LoadIdentityRequest, LoadIdentityResponse, RevokeCredentialRequest, RevokeCredentialResponse,
-    Schema, VerifyCredentialRequest, VerifyCredentialResponse,
+use crate::{
+    error::BridgeError,
+    items::{
+        BuildSchemaRequest, BuildSchemaResponse, CreateCredentialRequest, CreateCredentialResponse,
+        CreateIdentityRequest, CreateIdentityResponse, CredentialFromJsonRequest,
+        CredentialFromJsonResponse, CredentialOfferFromJsonRequest,
+        CredentialOfferFromJsonResponse, CredentialOfferRedeemRequest,
+        CredentialOfferRedeemResponse, CredentialOfferToJsonRequest, CredentialOfferToJsonResponse,
+        CredentialReceipt, CredentialRevocation, CredentialToJsonRequest, CredentialToJsonResponse,
+        CredentialVerification, GetOfferRequest, GetOfferResponse, GetSchemaRequest,
+        GetSchemaResponse, Identity, IdentityServiceHandler, LoadIdentityRequest,
+        LoadIdentityResponse, RevokeCredentialRequest, RevokeCredentialResponse, Schema,
+        VerifyCredentialRequest, VerifyCredentialResponse,
+    },
+    server::response_types::RequestConfigData,
 };
 use async_trait::async_trait;
+use bloock_core::identity;
+use bloock_core::identity::entity::credential::Credential as CoreCredential;
+use bloock_core::identity::entity::credential_offer::CredentialOffer as CoreCredentialOffer;
 
 pub struct IdentityServer {}
 
@@ -17,129 +25,335 @@ pub struct IdentityServer {}
 impl IdentityServiceHandler for IdentityServer {
     async fn create_identity(
         &self,
-        _: &CreateIdentityRequest,
+        req: &CreateIdentityRequest,
     ) -> Result<CreateIdentityResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+        let key = client.create_identity().await.map_err(|e| e.to_string())?;
+
         Ok(CreateIdentityResponse {
             identity: Some(Identity {
-                mnemonic: "buzz price absent crack usual theme fault credit arena toast thrive pattern wine rough hidden".to_string(),
-                key: "1ABC7154748D1CE5144478CDEB574AE244B939B5 ".to_string(),
-                private_key: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457"
-                    .to_string(),
+                mnemonic: key.mnemonic,
+                key: key.key,
+                private_key: key.private_key,
             }),
             error: None,
         })
     }
-    async fn load_identity(&self, _: &LoadIdentityRequest) -> Result<LoadIdentityResponse, String> {
+    async fn load_identity(
+        &self,
+        req: &LoadIdentityRequest,
+    ) -> Result<LoadIdentityResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+        let key = client
+            .load_identity(req.mnemonic.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
         Ok(LoadIdentityResponse {
             identity: Some(Identity {
-                mnemonic: "buzz price absent crack usual theme fault credit arena toast thrive pattern wine rough hidden".to_string(),
-                key: "1ABC7154748D1CE5144478CDEB574AE244B939B5".to_string(),
-                private_key: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457"
-                    .to_string(),
+                mnemonic: key.mnemonic,
+                key: key.key,
+                private_key: key.private_key,
             }),
             error: None,
         })
     }
-    async fn build_schema(&self, _: &BuildSchemaRequest) -> Result<BuildSchemaResponse, String> {
+    async fn build_schema(&self, req: &BuildSchemaRequest) -> Result<BuildSchemaResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+
+        let boolean_attr = req
+            .boolean_attributes
+            .iter()
+            .map(|a| a.id.clone())
+            .collect::<Vec<String>>();
+
+        let date_attr = req
+            .date_attributes
+            .iter()
+            .map(|a| a.id.clone())
+            .collect::<Vec<String>>();
+
+        let datetime_attr = req
+            .datetime_attributes
+            .iter()
+            .map(|a| a.id.clone())
+            .collect::<Vec<String>>();
+
+        let multichoice_attr = req
+            .multichoice_attributes
+            .iter()
+            .map(|a| a.id.clone())
+            .collect::<Vec<String>>();
+
+        let number_attr = req
+            .number_attributes
+            .iter()
+            .map(|a| a.id.clone())
+            .collect::<Vec<String>>();
+
+        let attributes: Vec<String> = boolean_attr
+            .into_iter()
+            .chain(date_attr.into_iter())
+            .chain(datetime_attr.into_iter())
+            .chain(multichoice_attr.into_iter())
+            .chain(number_attr.into_iter())
+            .collect();
+
+        let schema = client
+            .build_schema(
+                req.display_name.clone(),
+                req.technical_name.clone(),
+                attributes,
+            )
+            .await
+            .map_err(|e| e.to_string())?;
+
         Ok(BuildSchemaResponse {
             schema: Some(Schema {
-                id: "74f75365-edb5-41db-b579-00bd4e3b0e4a".to_string(),
-                json_ld: "{}".to_string(),
+                id: schema.cid,
+                json_ld: schema.json,
             }),
             error: None,
         })
     }
-    async fn get_schema(&self, _: &GetSchemaRequest) -> Result<GetSchemaResponse, String> {
+    async fn get_schema(&self, req: &GetSchemaRequest) -> Result<GetSchemaResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+
+        let schema = client
+            .get_schema(req.id.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
         Ok(GetSchemaResponse {
             schema: Some(Schema {
-                id: "74f75365-edb5-41db-b579-00bd4e3b0e4a".to_string(),
-                json_ld: "{}".to_string(),
+                id: schema.cid,
+                json_ld: schema.json,
             }),
             error: None,
         })
     }
-    async fn create_credential_offer(
+    async fn create_credential(
         &self,
-        _: &CreateCredentialOfferRequest,
-    ) -> Result<CreateCredentialOfferResponse, String> {
-        Ok(CreateCredentialOfferResponse {
-            credential_offer: Some(CredentialOffer {
-                json: "{}".to_string(),
+        req: &CreateCredentialRequest,
+    ) -> Result<CreateCredentialResponse, String> {
+        let config_data = req.get_config_data()?;
+        let client = identity::configure(config_data.clone());
+
+        let boolean_attr = req
+            .boolean_attributes
+            .iter()
+            .map(|a| (a.id.clone(), a.value as i64))
+            .collect::<Vec<(String, i64)>>();
+
+        let date_attr = req
+            .date_attributes
+            .iter()
+            .map(|a| (a.id.clone(), a.value))
+            .collect::<Vec<(String, i64)>>();
+
+        let datetime_attr = req
+            .datetime_attributes
+            .iter()
+            .map(|a| (a.id.clone(), a.value))
+            .collect::<Vec<(String, i64)>>();
+
+        let multichoice_attr = req
+            .multichoice_attributes
+            .iter()
+            .map(|a| (a.id.clone(), 0))
+            .collect::<Vec<(String, i64)>>();
+
+        let number_attr = req
+            .number_attributes
+            .iter()
+            .map(|a| (a.id.clone(), a.value))
+            .collect::<Vec<(String, i64)>>();
+
+        let attributes: Vec<(String, i64)> = boolean_attr
+            .into_iter()
+            .chain(date_attr.into_iter())
+            .chain(datetime_attr.into_iter())
+            .chain(multichoice_attr.into_iter())
+            .chain(number_attr.into_iter())
+            .collect();
+
+        let receipt = client
+            .create_credential(req.schema_id.clone(), req.holder_key.clone(), attributes)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(CreateCredentialResponse {
+            credential_receipt: Some(CredentialReceipt {
+                id: receipt.id,
+                anchor_id: receipt.anchor_id,
             }),
+            error: None,
+        })
+    }
+
+    async fn get_offer(&self, req: &GetOfferRequest) -> Result<GetOfferResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+
+        let offer = client
+            .get_offer(req.id.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(GetOfferResponse {
+            offer: Some(offer.into()),
             error: None,
         })
     }
     async fn credential_offer_to_json(
         &self,
-        _: &CredentialOfferToJsonRequest,
+        req: &CredentialOfferToJsonRequest,
     ) -> Result<CredentialOfferToJsonResponse, String> {
-        Ok(CredentialOfferToJsonResponse {
-            json: "{}".to_string(),
-            error: None,
-        })
+        let offer: CoreCredentialOffer = req
+            .credential_offer
+            .clone()
+            .ok_or("invalid credential offer provided")?
+            .try_into()
+            .map_err(|e: BridgeError| e.to_string())?;
+
+        let json =
+            serde_json::to_string(&offer).map_err(|_| "couldn't serialize credential offer")?;
+
+        Ok(CredentialOfferToJsonResponse { json, error: None })
     }
     async fn credential_offer_from_json(
         &self,
-        _: &CredentialOfferFromJsonRequest,
+        req: &CredentialOfferFromJsonRequest,
     ) -> Result<CredentialOfferFromJsonResponse, String> {
+        let offer: CoreCredentialOffer = serde_json::from_str(&req.json)
+            .map_err(|e| format!("couldn't deserialize credential offer: {}", e.to_string()))?;
+
         Ok(CredentialOfferFromJsonResponse {
-            credential_offer: Some(CredentialOffer {
-                json: "{}".to_string(),
-            }),
+            credential_offer: Some(offer.into()),
             error: None,
         })
     }
     async fn credential_offer_redeem(
         &self,
-        _: &CredentialOfferRedeemRequest,
+        req: &CredentialOfferRedeemRequest,
     ) -> Result<CredentialOfferRedeemResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+
+        let offer: CoreCredentialOffer = req
+            .credential_offer
+            .clone()
+            .ok_or("invalid credential offer provided")?
+            .try_into()
+            .map_err(|e: BridgeError| e.to_string())?;
+
+        let id = offer
+            .body
+            .credentials
+            .get(0)
+            .ok_or("invalid credential offer provided")?
+            .id
+            .clone();
+
+        let credential = client
+            .redeem_credential(id, offer.thid, req.identity_private_key.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
         Ok(CredentialOfferRedeemResponse {
-            credential: Some(Credential {
-                json: "{}".to_string(),
-            }),
+            credential: Some(credential.into()),
             error: None,
         })
     }
     async fn credential_to_json(
         &self,
-        _: &CredentialToJsonRequest,
+        req: &CredentialToJsonRequest,
     ) -> Result<CredentialToJsonResponse, String> {
-        Ok(CredentialToJsonResponse {
-            json: "{}".to_string(),
-            error: None,
-        })
+        let offer: CoreCredential = req
+            .credential
+            .clone()
+            .ok_or("invalid credential provided")?
+            .try_into()
+            .map_err(|e: BridgeError| e.to_string())?;
+
+        let json = serde_json::to_string(&offer).map_err(|_| "couldn't serialize credential")?;
+
+        Ok(CredentialToJsonResponse { json, error: None })
     }
     async fn credential_from_json(
         &self,
-        _: &CredentialFromJsonRequest,
+        req: &CredentialFromJsonRequest,
     ) -> Result<CredentialFromJsonResponse, String> {
+        let credential: CoreCredential = serde_json::from_str(&req.json)
+            .map_err(|e| format!("couldn't deserialize credential: {}", e.to_string()))?;
+
         Ok(CredentialFromJsonResponse {
-            credential: Some(Credential {
-                json: "{}".to_string(),
-            }),
+            credential: Some(credential.into()),
             error: None,
         })
     }
     async fn verify_credential(
         &self,
-        _: &VerifyCredentialRequest,
+        req: &VerifyCredentialRequest,
     ) -> Result<VerifyCredentialResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+
+        let credential: CoreCredential = req
+            .credential
+            .clone()
+            .ok_or("invalid credential offer provided")?
+            .try_into()
+            .map_err(|e: BridgeError| e.to_string())?;
+
+        let verification = client
+            .verify_credential(credential)
+            .await
+            .map_err(|e| e.to_string())?;
+
         Ok(VerifyCredentialResponse {
             result: Some(CredentialVerification {
-                timestamp: 1678220074,
-                issuer: "1ABC7154748D1CE5144478CDEB574AE244B939B5".to_string(),
-                revocation: 0,
+                timestamp: verification.timestamp as u64,
+                issuer: verification.issuer,
+                revocation: verification.revocation as u64,
             }),
             error: None,
         })
     }
     async fn revoke_credential(
         &self,
-        _: &RevokeCredentialRequest,
+        req: &RevokeCredentialRequest,
     ) -> Result<RevokeCredentialResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+
+        let credential: CoreCredential = req
+            .credential
+            .clone()
+            .ok_or("invalid credential offer provided")?
+            .try_into()
+            .map_err(|e: BridgeError| e.to_string())?;
+
+        let revocation = client
+            .revoke_credential(credential)
+            .await
+            .map_err(|e| e.to_string())?;
+
         Ok(RevokeCredentialResponse {
             result: Some(CredentialRevocation {
-                timestamp: 1678220074,
+                timestamp: revocation.timestamp as u64,
             }),
             error: None,
         })

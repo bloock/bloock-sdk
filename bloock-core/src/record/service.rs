@@ -201,6 +201,7 @@ mod tests {
             private_key: Some(
                 "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
             ),
+            mnemonic: None,
         };
         let content = "hello world!";
 
@@ -239,6 +240,7 @@ mod tests {
             private_key: Some(
                 "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
             ),
+            mnemonic: None,
         };
         let content = "hello world!";
 
@@ -277,12 +279,14 @@ mod tests {
             private_key: Some(
                 "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
             ),
+            mnemonic: None,
         };
 
         let local_aes_key = LocalKey {
             key_type: bloock_keys::KeyType::Aes128,
             key: "some_password".to_string(),
             private_key: None,
+            mnemonic: None,
         };
 
         let content = "hello world!";
@@ -320,12 +324,14 @@ mod tests {
             private_key: Some(
                 "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
             ),
+            mnemonic: None,
         };
 
         let local_aes_key = LocalKey {
             key_type: bloock_keys::KeyType::Aes128,
             key: "some_password".to_string(),
             private_key: None,
+            mnemonic: None,
         };
         let payload = include_bytes!("./document/assets/dummy.pdf");
 
@@ -378,6 +384,7 @@ mod tests {
             key_type: bloock_keys::KeyType::Aes128,
             key: "some_password".to_string(),
             private_key: None,
+            mnemonic: None,
         };
 
         let content = "hello world!";
@@ -412,11 +419,13 @@ mod tests {
             private_key: Some(
                 "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
             ),
+            mnemonic: None,
         };
         let local_aes_key = LocalKey {
             key_type: bloock_keys::KeyType::Aes128,
             key: "some_password".to_string(),
             private_key: None,
+            mnemonic: None,
         };
         let content = "hello world!";
 
@@ -444,6 +453,7 @@ mod tests {
             key_type: bloock_keys::KeyType::Aes128,
             key: "some_password".to_string(),
             private_key: None,
+            mnemonic: None,
         };
 
         let content = "hello world!";
@@ -594,18 +604,21 @@ mod hash_tests {
         key_type: bloock_keys::KeyType::EcP256k,
         key: "",
         private_key: Some("8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb"),
+        mnemonic: None,
     };
 
     const LOCAL_KEY_2: LocalKey<&str> = LocalKey {
         key_type: bloock_keys::KeyType::EcP256k,
         key: "",
         private_key: Some("694d2e2c735f7d19fa1104576983176a6d7327f48cd33a5e0bc8efc5587e3547"),
+        mnemonic: None,
     };
 
     const LOCAL_AES_KEY: LocalKey<&str> = LocalKey {
         key_type: bloock_keys::KeyType::Aes256,
         key: "some_password",
         private_key: None,
+        mnemonic: None,
     };
 
     fn get_test_proof(hash: &str) -> Proof {

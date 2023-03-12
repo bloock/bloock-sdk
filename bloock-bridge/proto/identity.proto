@@ -16,7 +16,9 @@ service IdentityService {
     rpc BuildSchema(BuildSchemaRequest) returns (BuildSchemaResponse);
     rpc GetSchema(GetSchemaRequest) returns (GetSchemaResponse);
 
-    rpc CreateCredentialOffer(CreateCredentialOfferRequest) returns (CreateCredentialOfferResponse);
+    rpc CreateCredential(CreateCredentialRequest) returns (CreateCredentialResponse);
+    rpc GetOffer(GetOfferRequest) returns (GetOfferResponse);
+
     rpc CredentialOfferToJson(CredentialOfferToJsonRequest) returns (CredentialOfferToJsonResponse);
     rpc CredentialOfferFromJson(CredentialOfferFromJsonRequest) returns (CredentialOfferFromJsonResponse);
     rpc CredentialOfferRedeem(CredentialOfferRedeemRequest) returns (CredentialOfferRedeemResponse);
@@ -74,7 +76,7 @@ message GetSchemaResponse {
     optional Error error = 2;
 }
 
-message CreateCredentialOfferRequest {
+message CreateCredentialRequest {
     ConfigData config_data = 1;
     string schema_id = 2;
     string holder_key = 3;
@@ -85,8 +87,18 @@ message CreateCredentialOfferRequest {
     repeated NumberAttribute number_attributes = 8;
 }
 
-message CreateCredentialOfferResponse {
-    CredentialOffer credential_offer = 1;
+message CreateCredentialResponse {
+    CredentialReceipt credential_receipt = 1;
+    optional Error error = 2;
+}
+
+message GetOfferRequest {
+    ConfigData config_data = 1;
+    string id = 2;
+}
+
+message GetOfferResponse {
+    CredentialOffer offer = 1;
     optional Error error = 2;
 }
 

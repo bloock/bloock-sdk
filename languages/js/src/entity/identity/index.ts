@@ -10,7 +10,7 @@ export * from "./date_attribute";
 export * from "./datetime_attribute";
 export * from "./multichoice_attribute";
 export * from "./number_attribute";
-export * from "./credential_offer_builder";
+export * from "./credential_builder";
 export * from "./credential_offer";
 export * from "./credential_verification";
 export * from "./credential";

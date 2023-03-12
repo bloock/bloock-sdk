@@ -1,4 +1,4 @@
-use crate::error::BloockResult;
+use crate::error::{BloockError, BloockResult, OperationalError};
 use crate::integrity::IntegrityError;
 use bloock_hasher::H256;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
@@ -6,6 +6,7 @@ use serde::{de::Error, Deserialize, Deserializer};
 use std::convert::TryInto;
 
 use super::anchor::AnchorNetwork;
+use super::dto::proof_retrieve_response::ProofRetrieveResponse;
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ProofAnchor {
@@ -58,6 +59,42 @@ impl Proof {
         } else {
             Ok(self.leaves[0])
         }
+    }
+}
+
+impl TryFrom<ProofRetrieveResponse> for Proof {
+    type Error = BloockError;
+
+    fn try_from(value: ProofRetrieveResponse) -> Result<Self, Self::Error> {
+        let leaves = value
+            .leaves
+            .iter()
+            .map(|leaf| match hex::decode(leaf) {
+                Ok(leaf) => leaf
+                    .try_into()
+                    .map_err(|_| OperationalError::InvalidHash().into()),
+                Err(_) => Err(OperationalError::InvalidHash().into()),
+            })
+            .collect::<BloockResult<Vec<H256>>>()?;
+
+        let nodes = value
+            .nodes
+            .iter()
+            .map(|node| match hex::decode(node) {
+                Ok(node) => node
+                    .try_into()
+                    .map_err(|_| OperationalError::InvalidHash().into()),
+                Err(_) => Err(OperationalError::InvalidHash().into()),
+            })
+            .collect::<BloockResult<Vec<H256>>>()?;
+
+        Ok(Proof {
+            anchor: value.anchor,
+            leaves,
+            nodes,
+            depth: value.depth,
+            bitmap: value.bitmap,
+        })
     }
 }
 

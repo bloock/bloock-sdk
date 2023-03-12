@@ -26,6 +26,7 @@ bloock-encrypter = { path = "../bloock-libs/encrypter" }
 bloock-metadata = { path = "../bloock-libs/metadata" }
 bloock-http = { path = "../bloock-libs/http" }
 bloock-web3 = { path = "../bloock-libs/web3" }
+bloock-identity = { path = "../bloock-libs/identity" }
 
 [dev-dependencies]
 mockall = "0.11.2"

@@ -6,6 +6,7 @@ use crate::items::GenerateLocalKeyResponse;
 use crate::items::GenerateManagedKeyResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetHashResponse;
+use crate::items::GetOfferResponse;
 use crate::items::GetProofResponse;
 use crate::items::GetSignaturesResponse;
 use crate::items::PublishResponse;
@@ -22,7 +23,7 @@ use crate::items::VerifyResponse;
 use crate::items::VerifyWebhookSignatureResponse;
 use crate::items::WaitAnchorResponse;
 use crate::items::{
-    BuildSchemaResponse, CreateCredentialOfferResponse, CreateIdentityResponse,
+    BuildSchemaResponse, CreateCredentialResponse, CreateIdentityResponse,
     CredentialFromJsonResponse, CredentialOfferFromJsonResponse, CredentialOfferRedeemResponse,
     CredentialOfferToJsonResponse, CredentialToJsonResponse, GetSchemaResponse,
     LoadIdentityResponse, RevokeCredentialResponse, VerifyCredentialResponse,
@@ -63,7 +64,8 @@ pub enum ResponseType {
     LoadIdentityResponse(LoadIdentityResponse),
     BuildSchemaResponse(BuildSchemaResponse),
     GetSchemaResponse(GetSchemaResponse),
-    CreateCredentialOfferResponse(CreateCredentialOfferResponse),
+    CreateCredentialResponse(CreateCredentialResponse),
+    GetOfferResponse(GetOfferResponse),
     CredentialOfferToJsonResponse(CredentialOfferToJsonResponse),
     CredentialOfferFromJsonResponse(CredentialOfferFromJsonResponse),
     CredentialOfferRedeemResponse(CredentialOfferRedeemResponse),
@@ -106,7 +108,8 @@ impl ResponseType {
             ResponseType::LoadIdentityResponse(r) => r.encode(&mut result_vec),
             ResponseType::BuildSchemaResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetSchemaResponse(r) => r.encode(&mut result_vec),
-            ResponseType::CreateCredentialOfferResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateCredentialResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetOfferResponse(r) => r.encode(&mut result_vec),
             ResponseType::CredentialOfferToJsonResponse(r) => r.encode(&mut result_vec),
             ResponseType::CredentialOfferFromJsonResponse(r) => r.encode(&mut result_vec),
             ResponseType::CredentialOfferRedeemResponse(r) => r.encode(&mut result_vec),
@@ -148,7 +151,8 @@ impl ResponseType {
             ResponseType::LoadIdentityResponse(r) => r.encoded_len(),
             ResponseType::BuildSchemaResponse(r) => r.encoded_len(),
             ResponseType::GetSchemaResponse(r) => r.encoded_len(),
-            ResponseType::CreateCredentialOfferResponse(r) => r.encoded_len(),
+            ResponseType::CreateCredentialResponse(r) => r.encoded_len(),
+            ResponseType::GetOfferResponse(r) => r.encoded_len(),
             ResponseType::CredentialOfferToJsonResponse(r) => r.encoded_len(),
             ResponseType::CredentialOfferFromJsonResponse(r) => r.encoded_len(),
             ResponseType::CredentialOfferRedeemResponse(r) => r.encoded_len(),

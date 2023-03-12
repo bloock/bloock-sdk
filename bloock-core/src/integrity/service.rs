@@ -16,7 +16,7 @@ use crate::{
         entity::network::{self, Network},
         service::ConfigService,
     },
-    error::{BloockResult, InfrastructureError, OperationalError},
+    error::{BloockResult, InfrastructureError},
     record::entity::record::Record,
     shared::util,
 };
@@ -150,35 +150,7 @@ impl<H: Client> IntegrityService<H> {
             }
         };
 
-        let leaves = response
-            .leaves
-            .iter()
-            .map(|leaf| match hex::decode(leaf) {
-                Ok(leaf) => leaf
-                    .try_into()
-                    .map_err(|_| OperationalError::InvalidHash().into()),
-                Err(_) => Err(OperationalError::InvalidHash().into()),
-            })
-            .collect::<BloockResult<Vec<H256>>>()?;
-
-        let nodes = response
-            .nodes
-            .iter()
-            .map(|node| match hex::decode(node) {
-                Ok(node) => node
-                    .try_into()
-                    .map_err(|_| OperationalError::InvalidHash().into()),
-                Err(_) => Err(OperationalError::InvalidHash().into()),
-            })
-            .collect::<BloockResult<Vec<H256>>>()?;
-
-        Ok(Proof {
-            anchor: response.anchor,
-            leaves,
-            nodes,
-            depth: response.depth,
-            bitmap: response.bitmap,
-        })
+        response.try_into()
     }
 
     pub async fn verify_records(

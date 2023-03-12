@@ -83,8 +83,25 @@ func (c *IdentityClient) GetSchema(id string) (identity.Schema, error) {
 	return identity.NewSchemaFromProto(res.GetSchema()), nil
 }
 
-func (c *IdentityClient) BuildOffer(schemaId string, holderKey string) identity.CredentialOfferBuilder {
-	return identity.NewCredentialOfferBuilder(schemaId, holderKey, c.configData)
+func (c *IdentityClient) BuildCredential(schemaId string, holderKey string) identity.CredentialBuilder {
+	return identity.NewCredentialBuilder(schemaId, holderKey, c.configData)
+}
+
+func (c *IdentityClient) GetOffer(id string) (identity.CredentialOffer, error) {
+	res, err := c.bridgeClient.Identity().GetOffer(context.Background(), &proto.GetOfferRequest{
+		ConfigData: c.configData,
+		Id:         id,
+	})
+
+	if err != nil {
+		return identity.CredentialOffer{}, err
+	}
+
+	if res.Error != nil {
+		return identity.CredentialOffer{}, errors.New(res.Error.Message)
+	}
+
+	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
 }
 
 func (c *IdentityClient) RedeemOffer(credentialOffer identity.CredentialOffer, holderPrivateKey string) (identity.Credential, error) {
@@ -122,7 +139,7 @@ func (c *IdentityClient) VerifyCredential(credential identity.Credential) (ident
 	return identity.NewCredentialVerificationFromProto(res.GetResult()), nil
 }
 
-func (c *IdentityClient) RevokeCredential(credential identity.Credential) (int64, error) {
+func (c *IdentityClient) RevokeCredential(credential identity.Credential) (uint64, error) {
 	res, err := c.bridgeClient.Identity().RevokeCredential(context.Background(), &proto.RevokeCredentialRequest{
 		ConfigData: c.configData,
 		Credential: credential.ToProto(),

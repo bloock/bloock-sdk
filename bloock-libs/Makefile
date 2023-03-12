@@ -18,7 +18,10 @@ metadata-build:
 keys-build:
 	cd keys && cargo build --release
 
-test: hasher-test signer-test encrypter-test executor-test http-test web3-test keys-test
+identity-build:
+	cd identity && cargo build --release
+
+test: hasher-test signer-test encrypter-test executor-test http-test web3-test keys-test identity-test
 
 hasher-test:
 	cd hasher && cargo test --release
@@ -43,6 +46,9 @@ metadata-test:
 
 keys-test:
 	cd keys && cargo test --release
+
+identity-test:
+	cd identity && cargo test --release
 
 wasm-test: http-wasm-test
 

@@ -1,14 +1,14 @@
 import { BloockBridge } from "../../bridge/bridge";
 import { ConfigData } from "../../bridge/proto/config";
-import { CreateCredentialOfferRequest } from "../../bridge/proto/identity";
+import { CreateCredentialRequest } from "../../bridge/proto/identity";
 import { BooleanAttribute } from "./boolean_attribute";
-import { CredentialOffer } from "./credential_offer";
+import { CredentialReceipt } from "./credential_receipt";
 import { DateAttribute } from "./date_attribute";
 import { DateTimeAttribute } from "./datetime_attribute";
 import { MultichoiceAttribute } from "./multichoice_attribute";
 import { NumberAttribute } from "./number_attribute";
 
-export class CredentialOfferBuilder {
+export class CredentialBuilder {
   schemaId: string;
   holderKey: string;
   configData: ConfigData;
@@ -31,23 +31,17 @@ export class CredentialOfferBuilder {
     this.numberAttributes = [];
   }
 
-  public withBoleanAttribute(
-    key: string,
-    value: boolean
-  ): CredentialOfferBuilder {
+  public withBoleanAttribute(key: string, value: boolean): CredentialBuilder {
     this.booleanAttributes.push(new BooleanAttribute(key, value));
     return this;
   }
 
-  public withDateAttribute(key: string, value: Date): CredentialOfferBuilder {
+  public withDateAttribute(key: string, value: Date): CredentialBuilder {
     this.dateAttributes.push(new DateAttribute(key, value.getTime()));
     return this;
   }
 
-  public withDateTimeAttribute(
-    key: string,
-    value: Date
-  ): CredentialOfferBuilder {
+  public withDateTimeAttribute(key: string, value: Date): CredentialBuilder {
     this.dateTimeAttributes.push(new DateTimeAttribute(key, value.getTime()));
     return this;
   }
@@ -55,23 +49,20 @@ export class CredentialOfferBuilder {
   public withMultichoiceAttribute(
     key: string,
     value: string
-  ): CredentialOfferBuilder {
+  ): CredentialBuilder {
     this.multichoiceAttributes.push(new MultichoiceAttribute(key, value));
     return this;
   }
 
-  public withNumberAttribute(
-    key: string,
-    value: number
-  ): CredentialOfferBuilder {
+  public withNumberAttribute(key: string, value: number): CredentialBuilder {
     this.numberAttributes.push(new NumberAttribute(key, value));
     return this;
   }
 
-  async build(): Promise<CredentialOffer> {
+  async build(): Promise<CredentialReceipt> {
     const bridge = new BloockBridge();
 
-    const req = CreateCredentialOfferRequest.fromPartial({
+    const req = CreateCredentialRequest.fromPartial({
       configData: this.configData,
       schemaId: this.schemaId,
       holderKey: this.holderKey,
@@ -84,12 +75,12 @@ export class CredentialOfferBuilder {
 
     return bridge
       .getIdentity()
-      .CreateCredentialOffer(req)
+      .CreateCredential(req)
       .then(res => {
         if (res.error) {
           throw res.error;
         }
-        return CredentialOffer.fromProto(res.credentialOffer!);
+        return CredentialReceipt.fromProto(res.credentialReceipt!);
       });
   }
 }

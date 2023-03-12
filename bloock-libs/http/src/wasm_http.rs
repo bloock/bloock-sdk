@@ -230,7 +230,7 @@ impl JsError {
     pub fn to_string(&self) -> String {
         match serde_wasm_bindgen::from_value(self.0.clone()) {
             Ok(s) => s,
-            Err(e) => format!("Unknown error"),
+            Err(_) => format!("Unknown error"),
         }
     }
 }

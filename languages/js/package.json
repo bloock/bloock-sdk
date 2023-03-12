@@ -19,7 +19,7 @@
     "fs": false
   },
   "scripts": {
-    "start": "tsdx watch",
+    "start": "node dist/index.cjs.development.js",
     "build": "tsdx build --format cjs,esm --name index",
     "test": "jest ./test --testTimeout=60000",
     "lint": "tsdx lint src test",

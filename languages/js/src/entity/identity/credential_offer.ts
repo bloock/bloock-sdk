@@ -1,27 +1,54 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import { CredentialOfferBody } from "./credential_offer_body";
 
 export class CredentialOffer {
-  json: string;
+  id: string;
+  typ: string;
+  type: string;
+  thid: string;
+  body: CredentialOfferBody;
+  from: string;
+  to: string;
 
-  constructor(json: string) {
-    this.json = json;
-  }
-
-  public toJSON(): string {
-    return this.json;
-  }
-
-  static fromJSON(json: string): CredentialOffer {
-    return new CredentialOffer(json);
+  constructor(
+    id: string,
+    typ: string,
+    type: string,
+    thid: string,
+    body: CredentialOfferBody,
+    from: string,
+    to: string
+  ) {
+    this.id = id;
+    this.typ = typ;
+    this.type = type;
+    this.thid = thid;
+    this.body = body;
+    this.from = from;
+    this.to = to;
   }
 
   public toProto(): identityEntitiesProto.CredentialOffer {
     return identityEntitiesProto.CredentialOffer.fromPartial({
-      json: this.json
+      id: this.id,
+      typ: this.typ,
+      type: this.type,
+      thid: this.thid,
+      body: this.body.toProto(),
+      from: this.from,
+      to: this.to
     });
   }
 
   static fromProto(r: identityEntitiesProto.CredentialOffer): CredentialOffer {
-    return new CredentialOffer(r.json);
+    return new CredentialOffer(
+      r.id,
+      r.typ,
+      r.type,
+      r.thid,
+      CredentialOfferBody.fromProto(r.body!),
+      r.from,
+      r.to
+    );
   }
 }
