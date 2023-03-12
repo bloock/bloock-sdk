@@ -14,9 +14,13 @@ use Google\Protobuf\Internal\GPBUtil;
 class Credential extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>string json = 1;</code>
+     * Generated from protobuf field <code>string thread_id = 1;</code>
      */
-    protected $json = '';
+    protected $thread_id = '';
+    /**
+     * Generated from protobuf field <code>.bloock.CredentialBody body = 2;</code>
+     */
+    protected $body = null;
 
     /**
      * Constructor.
@@ -24,7 +28,8 @@ class Credential extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type string $json
+     *     @type string $thread_id
+     *     @type \Bloock\CredentialBody $body
      * }
      */
     public function __construct($data = NULL) {
@@ -33,23 +38,55 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string json = 1;</code>
+     * Generated from protobuf field <code>string thread_id = 1;</code>
      * @return string
      */
-    public function getJson()
+    public function getThreadId()
     {
-        return $this->json;
+        return $this->thread_id;
     }
 
     /**
-     * Generated from protobuf field <code>string json = 1;</code>
+     * Generated from protobuf field <code>string thread_id = 1;</code>
      * @param string $var
      * @return $this
      */
-    public function setJson($var)
+    public function setThreadId($var)
     {
         GPBUtil::checkString($var, True);
-        $this->json = $var;
+        $this->thread_id = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.CredentialBody body = 2;</code>
+     * @return \Bloock\CredentialBody|null
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    public function hasBody()
+    {
+        return isset($this->body);
+    }
+
+    public function clearBody()
+    {
+        unset($this->body);
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.CredentialBody body = 2;</code>
+     * @param \Bloock\CredentialBody $var
+     * @return $this
+     */
+    public function setBody($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\CredentialBody::class);
+        $this->body = $var;
 
         return $this;
     }

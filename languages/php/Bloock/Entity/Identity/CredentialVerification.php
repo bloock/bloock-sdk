@@ -33,4 +33,28 @@ class CredentialVerification
         $p->setRevocation($this->revocation);
         return $p;
     }
+
+    /**
+     * @return int
+     */
+    public function getTimestamp(): int
+    {
+        return $this->timestamp;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIssuer(): string
+    {
+        return $this->issuer;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRevocation(): int
+    {
+        return $this->revocation;
+    }
 }

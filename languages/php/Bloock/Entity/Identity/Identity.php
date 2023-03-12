@@ -33,4 +33,28 @@ class Identity
         $p->setPrivateKey($this->privateKey);
         return $p;
     }
+
+    /**
+     * @return string
+     */
+    public function getMnemonic(): string
+    {
+        return $this->mnemonic;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrivateKey(): string
+    {
+        return $this->privateKey;
+    }
 }

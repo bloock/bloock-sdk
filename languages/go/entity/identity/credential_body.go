@@ -5,6 +5,7 @@ import (
 )
 
 type CredentialBody struct {
+	Context           []string
 	Id                string
 	Type              []string
 	IssuanceDate      string
@@ -20,6 +21,7 @@ func NewCredentialBodyFromProto(s *proto.CredentialBody) CredentialBody {
 		return CredentialBody{}
 	}
 	return CredentialBody{
+		Context:           s.Context,
 		Id:                s.Id,
 		Type:              s.Type,
 		IssuanceDate:      s.IssuanceDate,
@@ -33,6 +35,7 @@ func NewCredentialBodyFromProto(s *proto.CredentialBody) CredentialBody {
 
 func (c CredentialBody) ToProto() *proto.CredentialBody {
 	return &proto.CredentialBody{
+		Context:           c.Context,
 		Id:                c.Id,
 		Type:              c.Type,
 		IssuanceDate:      c.IssuanceDate,

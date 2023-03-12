@@ -14,7 +14,7 @@ use Google\Protobuf\Internal\GPBUtil;
 class CredentialRevocation extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
+     * Generated from protobuf field <code>uint64 timestamp = 1;</code>
      */
     protected $timestamp = 0;
 
@@ -33,7 +33,7 @@ class CredentialRevocation extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
+     * Generated from protobuf field <code>uint64 timestamp = 1;</code>
      * @return int|string
      */
     public function getTimestamp()
@@ -42,13 +42,13 @@ class CredentialRevocation extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
+     * Generated from protobuf field <code>uint64 timestamp = 1;</code>
      * @param int|string $var
      * @return $this
      */
     public function setTimestamp($var)
     {
-        GPBUtil::checkInt64($var);
+        GPBUtil::checkUint64($var);
         $this->timestamp = $var;
 
         return $this;

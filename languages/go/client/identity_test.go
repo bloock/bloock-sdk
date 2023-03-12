@@ -31,20 +31,20 @@ func TestIdentity(t *testing.T) {
 		offer, err := identity.NewCredentialOfferFromJson(credentialOfferJson)
 		assert.NoError(t, err)
 
-		offerJson, err := offer.ToJson()
+		json, err := offer.ToJson()
 		assert.NoError(t, err)
 
-		assert.Equal(t, credentialOfferJson, offerJson)
+		assert.Equal(t, credentialOfferJson, json)
 	})
 
 	t.Run("credential to/from json", func(t *testing.T) {
 		credential, err := identity.NewCredentialFromJson(credentialJson)
 		assert.NoError(t, err)
 
-		credentialJson, err := credential.ToJson()
+		json, err := credential.ToJson()
 		assert.NoError(t, err)
 
-		assert.Equal(t, credentialJson, credentialJson)
+		assert.Equal(t, credentialJson, json)
 	})
 
 	t.Run("identity end to end", func(t *testing.T) {
