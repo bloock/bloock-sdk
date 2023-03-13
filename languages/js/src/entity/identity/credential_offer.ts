@@ -29,8 +29,8 @@ export class CredentialOffer {
     return identityEntitiesProto.CredentialOffer.fromPartial({
       thid: this.thid,
       body: this.body.toProto(),
-      from: this.from,
-      to: this.to
+      From: this.from,
+      To: this.to
     });
   }
 
@@ -38,8 +38,8 @@ export class CredentialOffer {
     return new CredentialOffer(
       r.thid,
       CredentialOfferBody.fromProto(r.body!),
-      r.from,
-      r.to
+      r.From,
+      r.To
     );
   }
 

@@ -18,7 +18,7 @@ class IdentityEntities
         \GPBMetadata\IntegrityEntities::initOnce();
         $pool->internalAddGeneratedFile(
             '
-Ÿ
+¡
 identity_entities.protobloockintegrity_entities.proto">
 Identity
 mnemonic (	
@@ -73,13 +73,12 @@ class IdentityEntities
 Schema
 
 id (	
-json_ld (	"d
+json_ld (	"f
 CredentialOffer
 thid (	)
-body (2.bloock.CredentialOfferBody
-from (	
-
-to (	"_
+body (2.bloock.CredentialOfferBody
+_from (	
+_to (	"_
 CredentialOfferBody
 url (	;
 credentials (2&.bloock.CredentialOfferBodyCredentials"A

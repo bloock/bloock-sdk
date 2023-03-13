@@ -1,3 +1,4 @@
+use crate::config::entity::network::Network;
 use crate::error::BloockResult;
 use crate::integrity::entity::proof::Proof;
 use crate::integrity::service::IntegrityService;
@@ -250,11 +251,17 @@ impl<H: Client> IdentityService<H> {
     }
 
     pub async fn verify_credential_integrity(&self, proof: Proof) -> BloockResult<u128> {
+        let network: Network = proof
+            .anchor
+            .networks
+            .get(0)
+            .ok_or(IdentityError::InvalidProofError())?
+            .name
+            .clone()
+            .into();
+
         let root = self.integrity_service.verify_proof(proof)?;
-        let timestamp = self
-            .integrity_service
-            .validate_root(root, crate::config::entity::network::Network::GnosisChain)
-            .await?;
+        let timestamp = self.integrity_service.validate_root(root, network).await?;
         Ok(timestamp)
     }
 

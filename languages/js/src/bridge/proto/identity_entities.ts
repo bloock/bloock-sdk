@@ -74,8 +74,8 @@ export interface Schema {
 export interface CredentialOffer {
   thid: string;
   body?: CredentialOfferBody;
-  from: string;
-  to: string;
+  From: string;
+  To: string;
 }
 
 export interface CredentialOfferBody {
@@ -887,7 +887,7 @@ export const Schema = {
 };
 
 function createBaseCredentialOffer(): CredentialOffer {
-  return { thid: "", body: undefined, from: "", to: "" };
+  return { thid: "", body: undefined, From: "", To: "" };
 }
 
 export const CredentialOffer = {
@@ -898,11 +898,11 @@ export const CredentialOffer = {
     if (message.body !== undefined) {
       CredentialOfferBody.encode(message.body, writer.uint32(18).fork()).ldelim();
     }
-    if (message.from !== "") {
-      writer.uint32(26).string(message.from);
+    if (message.From !== "") {
+      writer.uint32(26).string(message.From);
     }
-    if (message.to !== "") {
-      writer.uint32(34).string(message.to);
+    if (message.To !== "") {
+      writer.uint32(34).string(message.To);
     }
     return writer;
   },
@@ -921,10 +921,10 @@ export const CredentialOffer = {
           message.body = CredentialOfferBody.decode(reader, reader.uint32());
           break;
         case 3:
-          message.from = reader.string();
+          message.From = reader.string();
           break;
         case 4:
-          message.to = reader.string();
+          message.To = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -938,8 +938,8 @@ export const CredentialOffer = {
     return {
       thid: isSet(object.thid) ? String(object.thid) : "",
       body: isSet(object.body) ? CredentialOfferBody.fromJSON(object.body) : undefined,
-      from: isSet(object.from) ? String(object.from) : "",
-      to: isSet(object.to) ? String(object.to) : "",
+      From: isSet(object.From) ? String(object.From) : "",
+      To: isSet(object.To) ? String(object.To) : "",
     };
   },
 
@@ -947,8 +947,8 @@ export const CredentialOffer = {
     const obj: any = {};
     message.thid !== undefined && (obj.thid = message.thid);
     message.body !== undefined && (obj.body = message.body ? CredentialOfferBody.toJSON(message.body) : undefined);
-    message.from !== undefined && (obj.from = message.from);
-    message.to !== undefined && (obj.to = message.to);
+    message.From !== undefined && (obj.From = message.From);
+    message.To !== undefined && (obj.To = message.To);
     return obj;
   },
 
@@ -958,8 +958,8 @@ export const CredentialOffer = {
     message.body = (object.body !== undefined && object.body !== null)
       ? CredentialOfferBody.fromPartial(object.body)
       : undefined;
-    message.from = object.from ?? "";
-    message.to = object.to ?? "";
+    message.From = object.From ?? "";
+    message.To = object.To ?? "";
     return message;
   },
 };

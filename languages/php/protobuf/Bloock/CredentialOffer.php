@@ -22,13 +22,13 @@ class CredentialOffer extends \Google\Protobuf\Internal\Message
      */
     protected $body = null;
     /**
-     * Generated from protobuf field <code>string from = 3;</code>
+     * Generated from protobuf field <code>string _from = 3;</code>
      */
-    protected $from = '';
+    protected $_from = '';
     /**
-     * Generated from protobuf field <code>string to = 4;</code>
+     * Generated from protobuf field <code>string _to = 4;</code>
      */
-    protected $to = '';
+    protected $_to = '';
 
     /**
      * Constructor.
@@ -38,8 +38,8 @@ class CredentialOffer extends \Google\Protobuf\Internal\Message
      *
      *     @type string $thid
      *     @type \Bloock\CredentialOfferBody $body
-     *     @type string $from
-     *     @type string $to
+     *     @type string $_from
+     *     @type string $_to
      * }
      */
     public function __construct($data = NULL) {
@@ -102,45 +102,45 @@ class CredentialOffer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string from = 3;</code>
+     * Generated from protobuf field <code>string _from = 3;</code>
      * @return string
      */
     public function getFrom()
     {
-        return $this->from;
+        return $this->_from;
     }
 
     /**
-     * Generated from protobuf field <code>string from = 3;</code>
+     * Generated from protobuf field <code>string _from = 3;</code>
      * @param string $var
      * @return $this
      */
     public function setFrom($var)
     {
         GPBUtil::checkString($var, True);
-        $this->from = $var;
+        $this->_from = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>string to = 4;</code>
+     * Generated from protobuf field <code>string _to = 4;</code>
      * @return string
      */
     public function getTo()
     {
-        return $this->to;
+        return $this->_to;
     }
 
     /**
-     * Generated from protobuf field <code>string to = 4;</code>
+     * Generated from protobuf field <code>string _to = 4;</code>
      * @param string $var
      * @return $this
      */
     public function setTo($var)
     {
         GPBUtil::checkString($var, True);
-        $this->to = $var;
+        $this->_to = $var;
 
         return $this;
     }

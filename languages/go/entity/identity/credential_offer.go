@@ -23,17 +23,17 @@ func NewCredentialOfferFromProto(s *proto.CredentialOffer) CredentialOffer {
 	return CredentialOffer{
 		Thid: s.Thid,
 		Body: NewCredentialOfferBodyFromProto(s.Body),
-		From: s.From,
-		To:   s.To,
+		From: s.XFrom,
+		To:   s.XTo,
 	}
 }
 
 func (c CredentialOffer) ToProto() *proto.CredentialOffer {
 	return &proto.CredentialOffer{
-		Thid: c.Thid,
-		Body: c.Body.ToProto(),
-		From: c.From,
-		To:   c.To,
+		Thid:  c.Thid,
+		Body:  c.Body.ToProto(),
+		XFrom: c.From,
+		XTo:   c.To,
 	}
 }
 

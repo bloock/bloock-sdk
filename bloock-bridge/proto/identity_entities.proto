@@ -78,8 +78,8 @@ message Schema {
 message CredentialOffer {
     string thid = 1;
     CredentialOfferBody body = 2;
-    string from = 3;
-    string to = 4;
+    string _from = 3;
+    string _to = 4;
 }
 
 message CredentialOfferBody {

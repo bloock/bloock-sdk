@@ -9,11 +9,11 @@ from bloock.entity.identity.credential_offer_body import CredentialOfferBody
 
 
 class CredentialOffer:
-    def __init__(self, thid: str, body: CredentialOfferBody, _from: str, to: str) -> None:
+    def __init__(self, thid: str, body: CredentialOfferBody, _from: str, _to: str) -> None:
         self.thid = thid
         self.body = body
         self._from = _from
-        self.to = to
+        self._to = _to
 
     @staticmethod
     def from_json(json: str) -> CredentialOffer:
@@ -49,12 +49,14 @@ class CredentialOffer:
         return CredentialOffer(
             thid=c.thid,
             body=CredentialOfferBody.from_proto(c.body),
-            to=c.to
+            _to=c._to,
+            _from=c._from
         )
 
     def to_proto(self) -> proto.CredentialOffer:
         return proto.CredentialOffer(
             thid=self.thid,
             body=self.body.to_proto(),
-            to=self.to
+            _to=self._to,
+            _from=self._from
         )

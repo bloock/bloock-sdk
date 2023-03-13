@@ -249,21 +249,23 @@ class CredentialOffer(google.protobuf.message.Message):
 
     THID_FIELD_NUMBER: builtins.int
     BODY_FIELD_NUMBER: builtins.int
-    FROM_FIELD_NUMBER: builtins.int
-    TO_FIELD_NUMBER: builtins.int
+    _FROM_FIELD_NUMBER: builtins.int
+    _TO_FIELD_NUMBER: builtins.int
     thid: builtins.str
     @property
     def body(self) -> global___CredentialOfferBody: ...
-    to: builtins.str
+    _from: builtins.str
+    _to: builtins.str
     def __init__(
         self,
         *,
         thid: builtins.str = ...,
         body: global___CredentialOfferBody | None = ...,
-        to: builtins.str = ...,
+        _from: builtins.str = ...,
+        _to: builtins.str = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["body", b"body"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["body", b"body", "from", b"from", "thid", b"thid", "to", b"to"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_from", b"_from", "_to", b"_to", "body", b"body", "thid", b"thid"]) -> None: ...
 
 global___CredentialOffer = CredentialOffer
 
