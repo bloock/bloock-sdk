@@ -97,7 +97,7 @@ class IdentityClient:
             raise Exception(res.error.message)
         return CredentialVerification.from_proto(res.result)
 
-    def revoke_credential(self, credential: Credential) -> int:
+    def revoke_credential(self, credential: Credential) -> bool:
         res = self.bridge_client.identity().RevokeCredential(
             RevokeCredentialRequest(
                 config_data=self.config_data,
@@ -107,4 +107,4 @@ class IdentityClient:
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return res.result.timestamp
+        return res.result.success

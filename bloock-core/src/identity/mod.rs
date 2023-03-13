@@ -40,6 +40,8 @@ pub enum IdentityError {
     InvalidSignatureError(),
     #[error("Invalid credential provided")]
     InvalidCredentialError(),
+    #[error("Error while revoking credential: {0}")]
+    RevokeCredentialError(String),
 }
 
 impl From<IdentityError> for BloockError {

@@ -86,7 +86,7 @@ describe("Identity Tests", () => {
     expect(verification.issuer).not.toBe("");
     expect(verification.revocation).toBe(0);
 
-    // const revocation = await identityClient.revokeCredential(credential);
-    // expect(revocation).toBeGreaterThan(0);
+    const revocation = await identityClient.revokeCredential(credential);
+    expect(revocation).toBeTruthy();
   }, 120000);
 });

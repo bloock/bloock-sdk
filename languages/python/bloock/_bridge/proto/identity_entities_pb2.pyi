@@ -464,13 +464,13 @@ global___CredentialVerification = CredentialVerification
 class CredentialRevocation(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    TIMESTAMP_FIELD_NUMBER: builtins.int
-    timestamp: builtins.int
+    SUCCESS_FIELD_NUMBER: builtins.int
+    success: builtins.bool
     def __init__(
         self,
         *,
-        timestamp: builtins.int = ...,
+        success: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["timestamp", b"timestamp"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["success", b"success"]) -> None: ...
 
 global___CredentialRevocation = CredentialRevocation

@@ -96,5 +96,5 @@ class TestIdentity(unittest.TestCase):
         self.assertNotEqual(verification.issuer, "")
         self.assertEqual(verification.revocation, 0)
 
-        # revocation = identity_client.revoke_credential(credential)
-        # self.assertGreater(revocation, 0)
+        revocation = identity_client.revoke_credential(credential)
+        self.assertTrue(revocation)

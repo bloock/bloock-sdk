@@ -304,7 +304,7 @@ impl<H: Client> IdentityService<H> {
             .http
             .post_json(
                 format!(
-                    "{}/revocation/v1/{}/claims/revoke/{}",
+                    "{}/identity/v1/{}/claims/revoke/{}",
                     self.config_service.get_api_base_url(),
                     credential.body.issuer,
                     credential.body.credential_status.revocation_nonce
@@ -313,10 +313,10 @@ impl<H: Client> IdentityService<H> {
                 None,
             )
             .await
-            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
+            .map_err(|e| IdentityError::RevokeCredentialError(e.to_string()))?;
 
         Ok(RevocationResult {
-            timestamp: res.timestamp,
+            success: res.success,
         })
     }
 }

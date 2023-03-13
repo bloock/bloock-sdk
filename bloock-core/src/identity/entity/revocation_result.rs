@@ -1,3 +1,3 @@
 pub struct RevocationResult {
-    pub timestamp: i64,
+    pub success: bool,
 }

@@ -137,5 +137,5 @@ message CredentialVerification {
 }
 
 message CredentialRevocation {
-    uint64 timestamp = 1;
+    bool success = 1;
 }

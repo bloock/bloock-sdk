@@ -130,7 +130,7 @@ class IdentityClient
         return CredentialVerification::fromProto($res->getResult());
     }
 
-    public function revokeCredential(Credential $credential): int
+    public function revokeCredential(Credential $credential): bool
     {
         $req = new RevokeCredentialRequest();
         $req->setConfigData($this->config)->setCredential($credential->toProto());
@@ -141,6 +141,6 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return $res->getResult()->getTimestamp();
+        return $res->getResult()->getSuccess();
     }
 }

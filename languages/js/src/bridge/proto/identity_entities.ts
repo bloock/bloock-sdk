@@ -133,7 +133,7 @@ export interface CredentialVerification {
 }
 
 export interface CredentialRevocation {
-  timestamp: number;
+  success: boolean;
 }
 
 function createBaseIdentity(): Identity {
@@ -1607,13 +1607,13 @@ export const CredentialVerification = {
 };
 
 function createBaseCredentialRevocation(): CredentialRevocation {
-  return { timestamp: 0 };
+  return { success: false };
 }
 
 export const CredentialRevocation = {
   encode(message: CredentialRevocation, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.timestamp !== 0) {
-      writer.uint32(8).uint64(message.timestamp);
+    if (message.success === true) {
+      writer.uint32(8).bool(message.success);
     }
     return writer;
   },
@@ -1626,7 +1626,7 @@ export const CredentialRevocation = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.timestamp = longToNumber(reader.uint64() as Long);
+          message.success = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1637,18 +1637,18 @@ export const CredentialRevocation = {
   },
 
   fromJSON(object: any): CredentialRevocation {
-    return { timestamp: isSet(object.timestamp) ? Number(object.timestamp) : 0 };
+    return { success: isSet(object.success) ? Boolean(object.success) : false };
   },
 
   toJSON(message: CredentialRevocation): unknown {
     const obj: any = {};
-    message.timestamp !== undefined && (obj.timestamp = Math.round(message.timestamp));
+    message.success !== undefined && (obj.success = message.success);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<CredentialRevocation>, I>>(object: I): CredentialRevocation {
     const message = createBaseCredentialRevocation();
-    message.timestamp = object.timestamp ?? 0;
+    message.success = object.success ?? false;
     return message;
   },
 };

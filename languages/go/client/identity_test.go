@@ -103,8 +103,8 @@ func TestIdentity(t *testing.T) {
 		assert.Equal(t, verification.Revocation, uint64(0))
 		assert.NotEmpty(t, verification.Issuer)
 
-		// revocation, err := identityClient.RevokeCredential(credential)
-		// assert.NoError(t, err)
-		// assert.Greater(t, revocation, uint64(0))
+		revocation, err := identityClient.RevokeCredential(credential)
+		assert.NoError(t, err)
+		assert.True(t, revocation)
 	})
 }

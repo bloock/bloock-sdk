@@ -119,7 +119,7 @@ public class IdentityClient {
         return CredentialVerification.fromProto(response.getResult());
     }
 
-    public long revokeCredential(Credential credential) throws Exception {
+    public boolean revokeCredential(Credential credential) throws Exception {
         Identity.RevokeCredentialRequest request = Identity.RevokeCredentialRequest.newBuilder()
                 .setConfigData(this.configData)
                 .setCredential(credential.toProto())
@@ -131,7 +131,7 @@ public class IdentityClient {
             throw new Exception(response.getError().getMessage());
         }
 
-        return response.getResult().getTimestamp();
+        return response.getResult().getSuccess();
     }
 
 }

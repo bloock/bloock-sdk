@@ -139,19 +139,19 @@ func (c *IdentityClient) VerifyCredential(credential identity.Credential) (ident
 	return identity.NewCredentialVerificationFromProto(res.GetResult()), nil
 }
 
-func (c *IdentityClient) RevokeCredential(credential identity.Credential) (uint64, error) {
+func (c *IdentityClient) RevokeCredential(credential identity.Credential) (bool, error) {
 	res, err := c.bridgeClient.Identity().RevokeCredential(context.Background(), &proto.RevokeCredentialRequest{
 		ConfigData: c.configData,
 		Credential: credential.ToProto(),
 	})
 
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
 	if res.Error != nil {
-		return 0, errors.New(res.Error.Message)
+		return false, errors.New(res.Error.Message)
 	}
 
-	return res.Result.GetTimestamp(), nil
+	return res.Result.GetSuccess(), nil
 }

@@ -18,7 +18,7 @@ class IdentityEntities
         \GPBMetadata\IntegrityEntities::initOnce();
         $pool->internalAddGeneratedFile(
             '
-¡
+Ÿ
 identity_entities.protobloockintegrity_entities.proto">
 Identity
 mnemonic (	
@@ -121,9 +121,9 @@ Credential
 	timestamp (
 issuer (	
 
-revocation (")
-CredentialRevocation
-	timestamp (BW
+revocation ("\'
+CredentialRevocation
+success (BW
 com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protobproto3'
         , true);
 

@@ -83,7 +83,7 @@ final class IdentityTest extends TestCase
         $this->assertEquals(0, $verification->getRevocation());
         $this->assertNotEmpty($verification->getIssuer());
 
-        // $revocation = $identityClient->revokeCredential($credential);
-        // $this->assertGreaterThan(0, $revocation);
+        $revocation = $identityClient->revokeCredential($credential);
+        $this->assertTrue($revocation);
     }
 }

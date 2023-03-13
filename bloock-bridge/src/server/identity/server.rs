@@ -353,7 +353,7 @@ impl IdentityServiceHandler for IdentityServer {
 
         Ok(RevokeCredentialResponse {
             result: Some(CredentialRevocation {
-                timestamp: revocation.timestamp as u64,
+                success: revocation.success,
             }),
             error: None,
         })

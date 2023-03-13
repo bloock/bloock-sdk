@@ -147,7 +147,7 @@ export class IdentityClient {
       });
   }
 
-  public revokeCredential(credential: Credential): Promise<number> {
+  public revokeCredential(credential: Credential): Promise<boolean> {
     const request = RevokeCredentialRequest.fromPartial({
       configData: this.configData,
       credential: credential.toProto()
@@ -160,7 +160,7 @@ export class IdentityClient {
         if (res.error) {
           throw res.error;
         }
-        return res.result!.timestamp!;
+        return res.result!.success!;
       });
   }
 }
