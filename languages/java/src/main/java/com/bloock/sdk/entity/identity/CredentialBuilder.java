@@ -9,7 +9,7 @@ import com.bloock.sdk.bridge.proto.Shared;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CredentialOfferBuilder {
+public class CredentialBuilder {
     private String schemaId;
     private String holderKey;
     private Config.ConfigData configData;
@@ -20,7 +20,7 @@ public class CredentialOfferBuilder {
     private List<IdentityEntities.MultiChoiceAttribute> multichoiceAttributes;
     private List<IdentityEntities.NumberAttribute> numberAttributes;
 
-    public CredentialOfferBuilder(String schemaId, String holderKey, Config.ConfigData configData) {
+    public CredentialBuilder(String schemaId, String holderKey, Config.ConfigData configData) {
         this.schemaId = schemaId;
         this.holderKey = holderKey;
         this.configData = configData;
@@ -32,35 +32,35 @@ public class CredentialOfferBuilder {
         this.numberAttributes = new ArrayList<>();
     }
 
-    public CredentialOfferBuilder withBooleanAttribute(String key, boolean value) {
+    public CredentialBuilder withBooleanAttribute(String key, boolean value) {
         this.booleanAttributes.add(new BooleanAttribute(key, value).toProto());
         return this;
     }
 
-    public CredentialOfferBuilder withDateAttribute(String key, Long value) {
+    public CredentialBuilder withDateAttribute(String key, Long value) {
         this.dateAttributes.add(new DateAttribute(key, value).toProto());
         return this;
     }
 
-    public CredentialOfferBuilder withDatetimeAttribute(String key, Long value) {
+    public CredentialBuilder withDatetimeAttribute(String key, Long value) {
         this.datetimeAttributes.add(new DatetimeAttribute(key, value).toProto());
         return this;
     }
 
-    public CredentialOfferBuilder withMultichoiceAttribute(String key, String value) {
+    public CredentialBuilder withMultichoiceAttribute(String key, String value) {
         this.multichoiceAttributes.add(new MultichoiceAttribute(key, value).toProto());
         return this;
     }
 
-    public CredentialOfferBuilder withNumberAttribute(String key, Long value) {
+    public CredentialBuilder withNumberAttribute(String key, Long value) {
         this.numberAttributes.add(new NumberAttribute(key, value).toProto());
         return this;
     }
 
-    public CredentialOffer build() throws Exception {
+    public CredentialReceipt build() throws Exception {
         Bridge bridge = new Bridge();
 
-        Identity.CreateCredentialOfferRequest req = Identity.CreateCredentialOfferRequest.newBuilder()
+        Identity.CreateCredentialRequest req = Identity.CreateCredentialRequest.newBuilder()
                 .setConfigData(this.configData)
                 .setSchemaId(this.schemaId)
                 .setHolderKey(this.holderKey)
@@ -71,12 +71,12 @@ public class CredentialOfferBuilder {
                 .addAllNumberAttributes(this.numberAttributes)
                 .build();
 
-        Identity.CreateCredentialOfferResponse response = bridge.getIdentity().createCredentialOffer(req);
+        Identity.CreateCredentialResponse response = bridge.getIdentity().createCredential(req);
 
         if (response.getError() != Shared.Error.getDefaultInstance()) {
             throw new Exception(response.getError().getMessage());
         }
 
-        return CredentialOffer.fromProto(response.getCredentialOffer());
+        return CredentialReceipt.fromProto(response.getCredentialReceipt());
     }
 }

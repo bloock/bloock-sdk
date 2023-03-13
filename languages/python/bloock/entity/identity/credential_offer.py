@@ -1,28 +1,60 @@
 from __future__ import annotations
 
 import bloock._bridge.proto.identity_entities_pb2 as proto
+from bloock._bridge import BloockBridge
+from bloock._bridge.proto.identity_pb2 import CredentialOfferFromJsonRequest, CredentialOfferToJsonRequest
+from bloock._bridge.proto.shared_pb2 import Error
+from bloock._config.config import Config
+from bloock.entity.identity.credential_offer_body import CredentialOfferBody
 
 
 class CredentialOffer:
-    def __init__(self, json: str) -> None:
-        self.json = json
+    def __init__(self, thid: str, body: CredentialOfferBody, _from: str, to: str) -> None:
+        self.thid = thid
+        self.body = body
+        self._from = _from
+        self.to = to
 
     @staticmethod
     def from_json(json: str) -> CredentialOffer:
-        return CredentialOffer(
-            json=json,
+        bridge = BloockBridge()
+
+        req = CredentialOfferFromJsonRequest(
+            config_data=Config.default(),
+            json=json
         )
 
+        res = bridge.identity().CredentialOfferFromJson(req)
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return CredentialOffer.from_proto(res.credential_offer)
+
     def to_json(self) -> str:
-        return self.json
+        bridge = BloockBridge()
+
+        req = CredentialOfferToJsonRequest(
+            config_data=Config.default(),
+            credential_offer=self.to_proto()
+        )
+
+        res = bridge.identity().CredentialOfferToJson(req)
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return res.json
 
     @staticmethod
     def from_proto(c: proto.CredentialOffer) -> CredentialOffer:
         return CredentialOffer(
-            json=c.json,
+            thid=c.thid,
+            body=CredentialOfferBody.from_proto(c.body),
+            to=c.to
         )
 
     def to_proto(self) -> proto.CredentialOffer:
         return proto.CredentialOffer(
-            json=self.json,
+            thid=self.thid,
+            body=self.body.to_proto(),
+            to=self.to
         )

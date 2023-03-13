@@ -24,4 +24,16 @@ public class Identity {
                 .setPrivateKey(this.privateKey)
                 .build();
     }
+
+    public String getMnemonic() {
+        return mnemonic;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
 }

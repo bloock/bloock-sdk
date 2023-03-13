@@ -1,27 +1,24 @@
+import { BloockBridge } from "../../bridge/bridge";
+import {
+  CredentialOfferToJsonRequest,
+  CredentialOfferFromJsonRequest
+} from "../../bridge/proto/identity";
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import { NewConfigData } from "../../config/config";
 import { CredentialOfferBody } from "./credential_offer_body";
 
 export class CredentialOffer {
-  id: string;
-  typ: string;
-  type: string;
   thid: string;
   body: CredentialOfferBody;
   from: string;
   to: string;
 
   constructor(
-    id: string,
-    typ: string,
-    type: string,
     thid: string,
     body: CredentialOfferBody,
     from: string,
     to: string
   ) {
-    this.id = id;
-    this.typ = typ;
-    this.type = type;
     this.thid = thid;
     this.body = body;
     this.from = from;
@@ -30,9 +27,6 @@ export class CredentialOffer {
 
   public toProto(): identityEntitiesProto.CredentialOffer {
     return identityEntitiesProto.CredentialOffer.fromPartial({
-      id: this.id,
-      typ: this.typ,
-      type: this.type,
       thid: this.thid,
       body: this.body.toProto(),
       from: this.from,
@@ -42,13 +36,48 @@ export class CredentialOffer {
 
   static fromProto(r: identityEntitiesProto.CredentialOffer): CredentialOffer {
     return new CredentialOffer(
-      r.id,
-      r.typ,
-      r.type,
       r.thid,
       CredentialOfferBody.fromProto(r.body!),
       r.from,
       r.to
     );
+  }
+
+  public toJson(): Promise<string> {
+    const bridge = new BloockBridge();
+
+    const req = CredentialOfferToJsonRequest.fromPartial({
+      configData: NewConfigData(undefined),
+      credentialOffer: this.toProto()
+    });
+
+    return bridge
+      .getIdentity()
+      .CredentialOfferToJson(req)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.json;
+      });
+  }
+
+  static fromJson(json: string): Promise<CredentialOffer> {
+    const bridge = new BloockBridge();
+
+    const req = CredentialOfferFromJsonRequest.fromPartial({
+      configData: NewConfigData(undefined),
+      json: json
+    });
+
+    return bridge
+      .getIdentity()
+      .CredentialOfferFromJson(req)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return CredentialOffer.fromProto(res.credentialOffer!);
+      });
   }
 }

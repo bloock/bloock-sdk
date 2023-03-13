@@ -24,4 +24,16 @@ public class CredentialVerification {
                 .setRevocation(this.revocation)
                 .build();
     }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getIssuer() {
+        return issuer;
+    }
+
+    public Long getRevocation() {
+        return revocation;
+    }
 }

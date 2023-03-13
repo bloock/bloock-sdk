@@ -26,7 +26,7 @@ public class Anchor {
                 anchor.getId(),
                 anchor.getBlockRootsList(),
                 anchor.getNetworksList().stream()
-                        .map(x -> AnchorNetwork.fromProto(x))
+                        .map(AnchorNetwork::fromProto)
                         .collect(Collectors.toList()),
                 anchor.getRoot(),
                 anchor.getStatus());
@@ -36,7 +36,7 @@ public class Anchor {
         return IntegrityEntities.Anchor.newBuilder()
                 .setId(this.id)
                 .addAllBlockRoots(this.blockRoots)
-                .addAllNetworks(this.networks.stream().map(x -> x.toProto()).collect(Collectors.toList()))
+                .addAllNetworks(this.networks.stream().map(AnchorNetwork::toProto).collect(Collectors.toList()))
                 .build();
     }
 

@@ -1,11 +1,11 @@
 from bloock._bridge import bridge
 from bloock._bridge.proto.identity_pb2 import CreateIdentityRequest, LoadIdentityRequest, GetSchemaRequest, \
-    CredentialOfferRedeemRequest, VerifyCredentialRequest, RevokeCredentialRequest
+    CredentialOfferRedeemRequest, VerifyCredentialRequest, RevokeCredentialRequest, GetOfferRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.identity.credential import Credential
+from bloock.entity.identity.credential_builder import CredentialBuilder
 from bloock.entity.identity.credential_offer import CredentialOffer
-from bloock.entity.identity.credential_offer_schema import CredentialOfferBuilder
 from bloock.entity.identity.credential_verification import CredentialVerification
 from bloock.entity.identity.identity import Identity
 from bloock.entity.identity.schema import Schema
@@ -57,8 +57,20 @@ class IdentityClient:
             raise Exception(res.error.message)
         return Schema.from_proto(res.schema)
 
-    def build_offer(self, schema_id: str, holder_key: str) -> CredentialOfferBuilder:
-        return CredentialOfferBuilder(schema_id=schema_id, holder_key=holder_key, config_data=self.config_data)
+    def build_credential(self, schema_id: str, holder_key: str) -> CredentialBuilder:
+        return CredentialBuilder(schema_id=schema_id, holder_key=holder_key, config_data=self.config_data)
+
+    def get_offer(self, id: str) -> CredentialOffer:
+        res = self.bridge_client.identity().GetOffer(
+            GetOfferRequest(
+                config_data=self.config_data,
+                id=id,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return CredentialOffer.from_proto(res.offer)
 
     def redeem_offer(self, offer: CredentialOffer, holder_private_key: str) -> Credential:
         res = self.bridge_client.identity().CredentialOfferRedeem(

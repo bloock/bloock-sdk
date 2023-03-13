@@ -21,4 +21,12 @@ public class Schema {
                 .setJsonLd(this.json)
                 .build();
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getJson() {
+        return json;
+    }
 }

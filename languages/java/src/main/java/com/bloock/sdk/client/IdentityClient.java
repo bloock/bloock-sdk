@@ -69,8 +69,23 @@ public class IdentityClient {
         return Schema.fromProto(response.getSchema());
     }
 
-    public CredentialOfferBuilder buildOffer(String schemaId, String holderKey) throws Exception {
-        return new CredentialOfferBuilder(schemaId, holderKey, this.configData);
+    public CredentialBuilder buildCredential(String schemaId, String holderKey) throws Exception {
+        return new CredentialBuilder(schemaId, holderKey, this.configData);
+    }
+
+    public CredentialOffer getOffer(String id) throws Exception {
+        Identity.GetOfferRequest request = Identity.GetOfferRequest.newBuilder()
+                .setConfigData(this.configData)
+                .setId(id)
+                .build();
+
+        Identity.GetOfferResponse response = bridge.getIdentity().getOffer(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return CredentialOffer.fromProto(response.getOffer());
     }
 
     public Credential redeemOffer(CredentialOffer credentialOffer, String holderPrivateKey) throws Exception {
