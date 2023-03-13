@@ -3,9 +3,9 @@ package com.bloock.sdk.entity.identity;
 import com.bloock.sdk.bridge.proto.IdentityEntities;
 
 public class CredentialVerification {
-    private Long timestamp;
-    private String issuer;
-    private Long revocation;
+    private final Long timestamp;
+    private final String issuer;
+    private final Long revocation;
 
     public CredentialVerification(Long timestamp, String issuer, Long revocation) {
         this.timestamp = timestamp;

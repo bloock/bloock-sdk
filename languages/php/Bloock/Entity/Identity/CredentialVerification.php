@@ -25,15 +25,6 @@ class CredentialVerification
         return new CredentialVerification($res->getTimestamp(), $res->getIssuer(), $res->getRevocation());
     }
 
-    public function toProto(): \Bloock\CredentialVerification
-    {
-        $p = new \Bloock\CredentialVerification();
-        $p->setTimestamp($this->timestamp);
-        $p->setIssuer($this->issuer);
-        $p->setRevocation($this->revocation);
-        return $p;
-    }
-
     /**
      * @return int
      */
@@ -56,5 +47,14 @@ class CredentialVerification
     public function getRevocation(): int
     {
         return $this->revocation;
+    }
+
+    public function toProto(): \Bloock\CredentialVerification
+    {
+        $p = new \Bloock\CredentialVerification();
+        $p->setTimestamp($this->timestamp);
+        $p->setIssuer($this->issuer);
+        $p->setRevocation($this->revocation);
+        return $p;
     }
 }

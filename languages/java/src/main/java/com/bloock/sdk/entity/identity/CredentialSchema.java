@@ -3,8 +3,8 @@ package com.bloock.sdk.entity.identity;
 import com.bloock.sdk.bridge.proto.IdentityEntities;
 
 public class CredentialSchema {
-    private String id;
-    private String type;
+    private final String id;
+    private final String type;
 
     public CredentialSchema(String id, String type) {
         this.id = id;

@@ -1,6 +1,5 @@
 package com.bloock.sdk.entity.authenticity;
 
-import com.bloock.sdk.bridge.proto.AuthenticityEntities;
 import com.bloock.sdk.entity.key.LocalKey;
 import com.bloock.sdk.entity.key.ManagedKey;
 
@@ -18,6 +17,7 @@ public class SignerArgs {
         this.localKey = localKey;
         this.commonName = commonName;
     }
+
     public SignerArgs(ManagedKey managedKey) {
         this.managedKey = managedKey;
     }

@@ -337,7 +337,6 @@ version = "2.4.1-beta.5"
 dependencies = [
  "async-std",
  "base64",
- "base64-url",
  "bitvec",
  "bloock-encrypter",
  "bloock-hasher",
@@ -347,7 +346,6 @@ dependencies = [
  "bloock-metadata",
  "bloock-signer",
  "bloock-web3",
- "cfg-if",
  "hex",
  "hmac 0.12.1",
  "js-sys",
@@ -357,9 +355,7 @@ dependencies = [
  "sha2 0.10.6",
  "thiserror",
  "tokio",
- "uuid",
  "wasm-bindgen-futures",
- "web-sys",
 ]
 
 [[package]]
@@ -368,13 +364,10 @@ version = "0.1.0"
 dependencies = [
  "aes-gcm",
  "async-trait",
- "base64",
  "base64-url",
  "bloock-http",
  "bloock-keys",
- "ecies",
  "getrandom 0.2.7",
- "hex",
  "hmac 0.12.1",
  "pbkdf2",
  "rand 0.8.5",
@@ -411,7 +404,6 @@ name = "bloock-http"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "getrandom 0.2.7",
  "infer",
  "js-sys",
  "mime",
@@ -438,7 +430,6 @@ dependencies = [
  "hex",
  "libsecp256k1 0.7.1",
  "serde",
- "serde_json",
  "thiserror",
  "tokio",
  "wasm-bindgen-test",
@@ -456,7 +447,6 @@ dependencies = [
  "rand 0.8.5",
  "rsa",
  "serde",
- "serde_json",
  "thiserror",
  "tiny-bip39",
  "tiny-hderive",
@@ -486,10 +476,8 @@ dependencies = [
  "bloock-http",
  "bloock-keys",
  "bloock-web3",
- "getrandom 0.2.7",
  "hex",
  "libsecp256k1 0.7.1",
- "rand 0.8.5",
  "serde",
  "serde_json",
  "thiserror",
@@ -501,7 +489,6 @@ dependencies = [
 name = "bloock-web3"
 version = "0.1.0"
 dependencies = [
- "bloock-hasher",
  "bloock-http",
  "ethabi",
  "hex",
@@ -536,7 +523,6 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-bindgen-test",
- "web-sys",
 ]
 
 [[package]]
@@ -950,21 +936,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ecies"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "374125c18bfe63716aae1b6b4ee0243e6264f1766056b5efdd4f257732aa3543"
-dependencies = [
- "aes-gcm",
- "getrandom 0.2.7",
- "hkdf",
- "libsecp256k1 0.7.1",
- "rand 0.8.5",
- "sha2 0.10.6",
- "typenum",
-]
-
-[[package]]
 name = "either"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1339,15 +1310,6 @@ name = "hex"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
-
-[[package]]
-name = "hkdf"
-version = "0.12.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "791a029f6b9fc27657f6f188ec6e5e43f6911f6f878e0dc5501396e09809d437"
-dependencies = [
- "hmac 0.12.1",
-]
 
 [[package]]
 name = "hmac"
@@ -2045,6 +2007,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "prettyplease"
+version = "0.1.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ebcd279d20a4a0a2404a33056388e950504d891c855c7975b9a8fef75f3bf04"
+dependencies = [
+ "proc-macro2",
+ "syn",
+]
+
+[[package]]
 name = "primitive-types"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2085,9 +2057,9 @@ dependencies = [
 
 [[package]]
 name = "prost"
-version = "0.11.0"
+version = "0.11.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "399c3c31cdec40583bb68f0b18403400d01ec4289c383aa047560439952c4dd7"
+checksum = "e48e50df39172a3e7eb17e14642445da64996989bc212b583015435d39a58537"
 dependencies = [
  "bytes",
  "prost-derive",
@@ -2095,9 +2067,9 @@ dependencies = [
 
 [[package]]
 name = "prost-build"
-version = "0.11.1"
+version = "0.11.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f835c582e6bd972ba8347313300219fed5bfa52caf175298d860b61ff6069bb"
+checksum = "2c828f93f5ca4826f97fedcbd3f9a536c16b12cff3dbbb4a007f932bbad95b12"
 dependencies = [
  "bytes",
  "heck 0.4.0",
@@ -2106,18 +2078,20 @@ dependencies = [
  "log",
  "multimap",
  "petgraph",
+ "prettyplease",
  "prost",
  "prost-types",
  "regex",
+ "syn",
  "tempfile",
  "which",
 ]
 
 [[package]]
 name = "prost-derive"
-version = "0.11.0"
+version = "0.11.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7345d5f0e08c0536d7ac7229952590239e77abf0a0100a1b1d890add6ea96364"
+checksum = "4ea9b0f8cbe5e15a8a042d030bd96668db28ecb567ec37d691971ff5731d2b1b"
 dependencies = [
  "anyhow",
  "itertools",
@@ -2128,11 +2102,10 @@ dependencies = [
 
 [[package]]
 name = "prost-types"
-version = "0.11.1"
+version = "0.11.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4dfaa718ad76a44b3415e6c4d53b17c8f99160dcb3a99b10470fce8ad43f6e3e"
+checksum = "379119666929a1afd7a043aa6cf96fa67a6dce9af60c88095a4686dbce4c9c88"
 dependencies = [
- "bytes",
  "prost",
 ]
 
@@ -2962,10 +2935,6 @@ name = "uuid"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "feb41e78f93363bb2df8b0e86a2ca30eed7806ea16ea0c790d757cf93f79be83"
-dependencies = [
- "getrandom 0.2.7",
- "wasm-bindgen",
-]
 
 [[package]]
 name = "value-bag"

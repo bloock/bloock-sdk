@@ -25,14 +25,6 @@ class CredentialProof
         return new CredentialProof(Proof::fromProto($res->getBloockProof()), Signature::fromProto($res->getSignatureProof()));
     }
 
-    public function toProto(): \Bloock\CredentialProof
-    {
-        $p = new \Bloock\CredentialProof();
-        $p->setBloockProof($this->bloockProof->toProto());
-        $p->setSignatureProof($this->signatureProof->toProto());
-        return $p;
-    }
-
     /**
      * @return Proof
      */
@@ -47,5 +39,13 @@ class CredentialProof
     public function getSignatureProof(): Signature
     {
         return $this->signatureProof;
+    }
+
+    public function toProto(): \Bloock\CredentialProof
+    {
+        $p = new \Bloock\CredentialProof();
+        $p->setBloockProof($this->bloockProof->toProto());
+        $p->setSignatureProof($this->signatureProof->toProto());
+        return $p;
     }
 }

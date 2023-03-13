@@ -7,10 +7,10 @@ import com.bloock.sdk.bridge.proto.Shared;
 import com.bloock.sdk.config.Config;
 
 public class CredentialOffer {
-    private String thid;
-    private CredentialOfferBody body;
-    private String from;
-    private String to;
+    private final String thid;
+    private final CredentialOfferBody body;
+    private final String from;
+    private final String to;
 
     public CredentialOffer(String thid, CredentialOfferBody body, String from, String to) {
         this.thid = thid;
@@ -21,15 +21,6 @@ public class CredentialOffer {
 
     public static CredentialOffer fromProto(IdentityEntities.CredentialOffer res) {
         return new CredentialOffer(res.getThid(), CredentialOfferBody.fromProto(res.getBody()), res.getFrom(), res.getTo());
-    }
-
-    public IdentityEntities.CredentialOffer toProto() {
-        return IdentityEntities.CredentialOffer.newBuilder()
-                .setThid(this.thid)
-                .setBody(this.body.toProto())
-                .setFrom(this.from)
-                .setTo(this.to)
-                .build();
     }
 
     public static CredentialOffer fromJson(String json) throws Exception {
@@ -47,6 +38,15 @@ public class CredentialOffer {
         }
 
         return CredentialOffer.fromProto(response.getCredentialOffer());
+    }
+
+    public IdentityEntities.CredentialOffer toProto() {
+        return IdentityEntities.CredentialOffer.newBuilder()
+                .setThid(this.thid)
+                .setBody(this.body.toProto())
+                .setFrom(this.from)
+                .setTo(this.to)
+                .build();
     }
 
     public String toJson() throws Exception {

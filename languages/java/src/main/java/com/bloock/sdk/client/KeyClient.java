@@ -11,8 +11,8 @@ import com.bloock.sdk.entity.key.ManagedKey;
 import com.bloock.sdk.entity.key.ManagedKeyParams;
 
 public class KeyClient {
-    private Bridge bridge;
-    private ConfigData configData;
+    private final Bridge bridge;
+    private final ConfigData configData;
 
     public KeyClient() {
         this.bridge = new Bridge();

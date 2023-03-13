@@ -9,7 +9,9 @@ from bloock.entity.identity.credential_status import CredentialStatus
 
 
 class CredentialBody:
-    def __init__(self, context: List[str], id: str, type: List[str], issuance_date: str, credential_subject: str, credential_status: CredentialStatus, issuer: str, credential_schema: CredentialSchema, proof: CredentialProof) -> None:
+    def __init__(self, context: List[str], id: str, type: List[str], issuance_date: str, credential_subject: str,
+                 credential_status: CredentialStatus, issuer: str, credential_schema: CredentialSchema,
+                 proof: CredentialProof) -> None:
         self.context = context
         self.id = id
         self.type = type

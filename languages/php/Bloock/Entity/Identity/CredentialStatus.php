@@ -25,15 +25,6 @@ class CredentialStatus
         return new CredentialStatus($res->getId(), $res->getRevocationNonce(), $res->getType());
     }
 
-    public function toProto(): \Bloock\CredentialStatus
-    {
-        $p = new \Bloock\CredentialStatus();
-        $p->setId($this->id);
-        $p->setRevocationNonce($this->revocationNonce);
-        $p->setType($this->type);
-        return $p;
-    }
-
     /**
      * @return string
      */
@@ -56,5 +47,14 @@ class CredentialStatus
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function toProto(): \Bloock\CredentialStatus
+    {
+        $p = new \Bloock\CredentialStatus();
+        $p->setId($this->id);
+        $p->setRevocationNonce($this->revocationNonce);
+        $p->setType($this->type);
+        return $p;
     }
 }

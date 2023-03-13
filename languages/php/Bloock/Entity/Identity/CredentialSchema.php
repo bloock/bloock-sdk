@@ -22,14 +22,6 @@ class CredentialSchema
         return new CredentialSchema($res->getId(), $res->getType());
     }
 
-    public function toProto(): \Bloock\CredentialSchema
-    {
-        $p = new \Bloock\CredentialSchema();
-        $p->setId($this->id);
-        $p->setType($this->type);
-        return $p;
-    }
-
     /**
      * @return string
      */
@@ -44,5 +36,13 @@ class CredentialSchema
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function toProto(): \Bloock\CredentialSchema
+    {
+        $p = new \Bloock\CredentialSchema();
+        $p->setId($this->id);
+        $p->setType($this->type);
+        return $p;
     }
 }

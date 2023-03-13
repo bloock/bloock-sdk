@@ -4,7 +4,6 @@ namespace Bloock\Entity\Identity;
 
 use Bloock\Bridge\Bridge;
 use Bloock\ConfigData;
-use Bloock\CreateCredentialOfferRequest;
 use Bloock\CreateCredentialRequest;
 use Exception;
 

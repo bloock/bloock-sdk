@@ -2,6 +2,7 @@
 
 use Bloock\Bloock;
 use Bloock\Client\IdentityClient;
+use Bloock\Client\IntegrityClient;
 use Bloock\Entity\Identity\Credential;
 use Bloock\Entity\Identity\CredentialOffer;
 use PHPUnit\Framework\TestCase;
@@ -62,7 +63,7 @@ final class IdentityTest extends TestCase
             ->withBooleanAttribute("BoolAttr", true)
             ->build();
 
-        $integrityClient = new \Bloock\Client\IntegrityClient();
+        $integrityClient = new IntegrityClient();
         $integrityClient->waitAnchor($receipt->getAnchorId());
 
         $offer = $identityClient->getOffer($receipt->getId());

@@ -8,8 +8,8 @@ import com.bloock.sdk.config.Config;
 import com.bloock.sdk.entity.identity.*;
 
 public class IdentityClient {
-    private Bridge bridge;
-    private ConfigData configData;
+    private final Bridge bridge;
+    private final ConfigData configData;
 
     public IdentityClient() {
         this.bridge = new Bridge();

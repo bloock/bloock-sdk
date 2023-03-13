@@ -24,14 +24,6 @@ class CredentialOfferBody
         return new CredentialOfferBody($res->getUrl(), $res->getCredentials());
     }
 
-    public function toProto(): \Bloock\CredentialOfferBody
-    {
-        $p = new \Bloock\CredentialOfferBody();
-        $p->setUrl($this->url);
-        $p->setCredentials($this->credentials);
-        return $p;
-    }
-
     /**
      * @return string
      */
@@ -46,5 +38,13 @@ class CredentialOfferBody
     public function getCredentials(): RepeatedField
     {
         return $this->credentials;
+    }
+
+    public function toProto(): \Bloock\CredentialOfferBody
+    {
+        $p = new \Bloock\CredentialOfferBody();
+        $p->setUrl($this->url);
+        $p->setCredentials($this->credentials);
+        return $p;
     }
 }

@@ -7,11 +7,11 @@ import com.bloock.sdk.config.Config;
 public class BloockClient {
     private ConfigData configData;
 
-    private IntegrityClient integrityClient;
-    private AuthenticityClient authenticityClient;
-    private EncryptionClient encryptionClient;
-    private RecordClient recordClient;
-    private WebhookClient webhookClient;
+    private final IntegrityClient integrityClient;
+    private final AuthenticityClient authenticityClient;
+    private final EncryptionClient encryptionClient;
+    private final RecordClient recordClient;
+    private final WebhookClient webhookClient;
 
     public BloockClient(String apiKey) {
         ConfigData configData = Config.newConfigDataDefault();

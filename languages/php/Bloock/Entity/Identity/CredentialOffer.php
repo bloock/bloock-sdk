@@ -29,21 +29,6 @@ class CredentialOffer
         $this->to = $to;
     }
 
-    public static function fromProto(\Bloock\CredentialOffer $res): CredentialOffer
-    {
-        return new CredentialOffer($res->getThid(), CredentialOfferBody::fromProto($res->getBody()), $res->getFrom(), $res->getTo());
-    }
-
-    public function toProto(): \Bloock\CredentialOffer
-    {
-        $p = new \Bloock\CredentialOffer();
-        $p->setThid($this->thid);
-        $p->setBody($this->body->toProto());
-        $p->setFrom($this->from);
-        $p->setTo($this->to);
-        return $p;
-    }
-
     /**
      * @throws Exception
      */
@@ -64,6 +49,11 @@ class CredentialOffer
         return CredentialOffer::fromProto($res->getCredentialOffer());
     }
 
+    public static function fromProto(\Bloock\CredentialOffer $res): CredentialOffer
+    {
+        return new CredentialOffer($res->getThid(), CredentialOfferBody::fromProto($res->getBody()), $res->getFrom(), $res->getTo());
+    }
+
     /**
      * @throws Exception
      */
@@ -82,5 +72,15 @@ class CredentialOffer
         }
 
         return $res->getJson();
+    }
+
+    public function toProto(): \Bloock\CredentialOffer
+    {
+        $p = new \Bloock\CredentialOffer();
+        $p->setThid($this->thid);
+        $p->setBody($this->body->toProto());
+        $p->setFrom($this->from);
+        $p->setTo($this->to);
+        return $p;
     }
 }

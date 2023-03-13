@@ -55,21 +55,6 @@ class CredentialBody
         );
     }
 
-    public function toProto(): \Bloock\CredentialBody
-    {
-        $p = new \Bloock\CredentialBody();
-        $p->setContext($this->context);
-        $p->setId($this->id);
-        $p->setType($this->type);
-        $p->setIssuanceDate($this->issuanceDate);
-        $p->setCredentialSubject($this->credentialSubject);
-        $p->setCredentialStatus($this->credentialStatus->toProto());
-        $p->setIssuer($this->issuer);
-        $p->setCredentialSchema($this->credentialSchema->toProto());
-        $p->setProof($this->credentialProof->toProto());
-        return $p;
-    }
-
     /**
      * @return RepeatedField
      */
@@ -132,6 +117,21 @@ class CredentialBody
     public function getCredentialSchema(): CredentialSchema
     {
         return $this->credentialSchema;
+    }
+
+    public function toProto(): \Bloock\CredentialBody
+    {
+        $p = new \Bloock\CredentialBody();
+        $p->setContext($this->context);
+        $p->setId($this->id);
+        $p->setType($this->type);
+        $p->setIssuanceDate($this->issuanceDate);
+        $p->setCredentialSubject($this->credentialSubject);
+        $p->setCredentialStatus($this->credentialStatus->toProto());
+        $p->setIssuer($this->issuer);
+        $p->setCredentialSchema($this->credentialSchema->toProto());
+        $p->setProof($this->credentialProof->toProto());
+        return $p;
     }
 
     /**

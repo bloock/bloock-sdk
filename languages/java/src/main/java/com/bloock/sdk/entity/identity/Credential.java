@@ -8,8 +8,8 @@ import com.bloock.sdk.config.Config;
 
 public class Credential {
 
-    private String threadId;
-    private CredentialBody body;
+    private final String threadId;
+    private final CredentialBody body;
 
     public Credential(String threadId, CredentialBody body) {
         this.threadId = threadId;
@@ -18,13 +18,6 @@ public class Credential {
 
     public static Credential fromProto(IdentityEntities.Credential res) {
         return new Credential(res.getThreadId(), CredentialBody.fromProto(res.getBody()));
-    }
-
-    public IdentityEntities.Credential toProto() {
-        return IdentityEntities.Credential.newBuilder()
-                .setThreadId(this.threadId)
-                .setBody(this.body.toProto())
-                .build();
     }
 
     public static Credential fromJson(String json) throws Exception {
@@ -42,6 +35,13 @@ public class Credential {
         }
 
         return Credential.fromProto(response.getCredential());
+    }
+
+    public IdentityEntities.Credential toProto() {
+        return IdentityEntities.Credential.newBuilder()
+                .setThreadId(this.threadId)
+                .setBody(this.body.toProto())
+                .build();
     }
 
     public String toJson() throws Exception {

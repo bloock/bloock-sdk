@@ -9,8 +9,8 @@ import com.bloock.sdk.config.Config;
 import com.google.protobuf.ByteString;
 
 public class WebhookClient {
-    private Bridge bridge;
-    private ConfigData configData;
+    private final Bridge bridge;
+    private final ConfigData configData;
 
     public WebhookClient() {
         this.bridge = new Bridge();

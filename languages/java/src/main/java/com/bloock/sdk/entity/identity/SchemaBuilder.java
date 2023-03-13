@@ -10,15 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SchemaBuilder {
-    private String displayName;
-    private String technicalName;
-    private Config.ConfigData configData;
+    private final String displayName;
+    private final String technicalName;
+    private final Config.ConfigData configData;
 
-    private List<IdentityEntities.BooleanAttributeDefinition> booleanAttributes;
-    private List<IdentityEntities.DateAttributeDefinition> dateAttributes;
-    private List<IdentityEntities.DateTimeAttributeDefinition> datetimeAttributes;
-    private List<IdentityEntities.MultiChoiceAttributeDefinition> multichoiceAttributes;
-    private List<IdentityEntities.NumberAttributeDefinition> numberAttributes;
+    private final List<IdentityEntities.BooleanAttributeDefinition> booleanAttributes;
+    private final List<IdentityEntities.DateAttributeDefinition> dateAttributes;
+    private final List<IdentityEntities.DateTimeAttributeDefinition> datetimeAttributes;
+    private final List<IdentityEntities.MultiChoiceAttributeDefinition> multichoiceAttributes;
+    private final List<IdentityEntities.NumberAttributeDefinition> numberAttributes;
 
     public SchemaBuilder(String displayName, String technicalName, Config.ConfigData configData) {
         this.displayName = displayName;

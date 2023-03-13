@@ -68,12 +68,12 @@ class TestIdentity(unittest.TestCase):
 
         holder = identity_client.create_identity()
 
-        schema = identity_client.build_schema("Test Schema", "test_schema")\
-            .add_boolean_attribute("bool_attr", "bool_attr", "")\
+        schema = identity_client.build_schema("Test Schema", "test_schema") \
+            .add_boolean_attribute("bool_attr", "bool_attr", "") \
             .build()
 
-        receipt = identity_client.build_credential(schema.id, holder.key)\
-            .with_boolean_attribute("BoolAttr", True)\
+        receipt = identity_client.build_credential(schema.id, holder.key) \
+            .with_boolean_attribute("BoolAttr", True) \
             .build()
 
         integrity_client = IntegrityClient()

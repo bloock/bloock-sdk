@@ -5,7 +5,6 @@ from bloock._bridge.proto.config_pb2 import ConfigData
 from bloock._bridge.proto.identity_pb2 import CreateCredentialRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.entity.identity.boolean_attribute import BooleanAttribute
-from bloock.entity.identity.credential_offer import CredentialOffer
 from bloock.entity.identity.credential_receipt import CredentialReceipt
 from bloock.entity.identity.date_attribute import DateAttribute
 from bloock.entity.identity.datetime_attribute import DatetimeAttribute

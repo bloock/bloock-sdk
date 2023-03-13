@@ -5,15 +5,15 @@ import com.bloock.sdk.bridge.proto.IdentityEntities;
 import java.util.List;
 
 public class CredentialBody {
-    private List<String> context;
-    private String id;
-    private List<String> type;
-    private String issuanceDate;
-    private String credentialSubject;
-    private CredentialStatus credentialStatus;
-    private String issuer;
-    private CredentialSchema credentialSchema;
-    private CredentialProof proof;
+    private final List<String> context;
+    private final String id;
+    private final List<String> type;
+    private final String issuanceDate;
+    private final String credentialSubject;
+    private final CredentialStatus credentialStatus;
+    private final String issuer;
+    private final CredentialSchema credentialSchema;
+    private final CredentialProof proof;
 
     public CredentialBody(List<String> context, String id, List<String> type, String issuanceDate, String credentialSubject, CredentialStatus credentialStatus, String issuer, CredentialSchema credentialSchema, CredentialProof proof) {
         this.context = context;

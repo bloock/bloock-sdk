@@ -22,14 +22,6 @@ class CredentialReceipt
         return new CredentialReceipt($res->getId(), $res->getAnchorId());
     }
 
-    public function toProto(): \Bloock\CredentialReceipt
-    {
-        $p = new \Bloock\CredentialReceipt();
-        $p->setId($this->id);
-        $p->setAnchorId($this->anchorId);
-        return $p;
-    }
-
     /**
      * @return string
      */
@@ -44,5 +36,13 @@ class CredentialReceipt
     public function getAnchorId(): int
     {
         return $this->anchorId;
+    }
+
+    public function toProto(): \Bloock\CredentialReceipt
+    {
+        $p = new \Bloock\CredentialReceipt();
+        $p->setId($this->id);
+        $p->setAnchorId($this->anchorId);
+        return $p;
     }
 }

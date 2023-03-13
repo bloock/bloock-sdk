@@ -1,12 +1,10 @@
 package com.bloock.sdk.entity.identity;
 
 import com.bloock.sdk.bridge.proto.IdentityEntities;
-import com.bloock.sdk.entity.authenticity.Signature;
-import com.bloock.sdk.entity.integrity.Proof;
 
 public class CredentialOfferCredential {
-    private String id;
-    private String description;
+    private final String id;
+    private final String description;
 
     public CredentialOfferCredential(String id, String description) {
         this.id = id;

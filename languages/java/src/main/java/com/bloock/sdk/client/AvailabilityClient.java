@@ -13,8 +13,8 @@ import com.bloock.sdk.entity.availability.Publisher;
 import com.bloock.sdk.entity.record.Record;
 
 public class AvailabilityClient {
-    private Bridge bridge;
-    private ConfigData configData;
+    private final Bridge bridge;
+    private final ConfigData configData;
 
     public AvailabilityClient() {
         this.bridge = new Bridge();

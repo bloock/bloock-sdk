@@ -10,15 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CredentialBuilder {
-    private String schemaId;
-    private String holderKey;
-    private Config.ConfigData configData;
+    private final String schemaId;
+    private final String holderKey;
+    private final Config.ConfigData configData;
 
-    private List<IdentityEntities.BooleanAttribute> booleanAttributes;
-    private List<IdentityEntities.DateAttribute> dateAttributes;
-    private List<IdentityEntities.DateTimeAttribute> datetimeAttributes;
-    private List<IdentityEntities.MultiChoiceAttribute> multichoiceAttributes;
-    private List<IdentityEntities.NumberAttribute> numberAttributes;
+    private final List<IdentityEntities.BooleanAttribute> booleanAttributes;
+    private final List<IdentityEntities.DateAttribute> dateAttributes;
+    private final List<IdentityEntities.DateTimeAttribute> datetimeAttributes;
+    private final List<IdentityEntities.MultiChoiceAttribute> multichoiceAttributes;
+    private final List<IdentityEntities.NumberAttribute> numberAttributes;
 
     public CredentialBuilder(String schemaId, String holderKey, Config.ConfigData configData) {
         this.schemaId = schemaId;

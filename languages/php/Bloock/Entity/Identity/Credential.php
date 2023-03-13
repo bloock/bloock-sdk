@@ -23,19 +23,6 @@ class Credential
         $this->body = $body;
     }
 
-    public static function fromProto(\Bloock\Credential $res): Credential
-    {
-        return new Credential($res->getThreadId(), CredentialBody::fromProto($res->getBody()));
-    }
-
-    public function toProto(): \Bloock\Credential
-    {
-        $p = new \Bloock\Credential();
-        $p->setThreadId($this->threadId);
-        $p->setBody($this->body->toProto());
-        return $p;
-    }
-
     public static function fromJson(string $json): Credential
     {
         $bridge = new Bridge();
@@ -51,6 +38,27 @@ class Credential
         }
 
         return Credential::fromProto($res->getCredential());
+    }
+
+    public static function fromProto(\Bloock\Credential $res): Credential
+    {
+        return new Credential($res->getThreadId(), CredentialBody::fromProto($res->getBody()));
+    }
+
+    /**
+     * @return string
+     */
+    public function getThreadId(): string
+    {
+        return $this->threadId;
+    }
+
+    /**
+     * @return CredentialBody
+     */
+    public function getBody(): CredentialBody
+    {
+        return $this->body;
     }
 
     public function toJson(): string
@@ -70,19 +78,11 @@ class Credential
         return $res->getJson();
     }
 
-    /**
-     * @return string
-     */
-    public function getThreadId(): string
+    public function toProto(): \Bloock\Credential
     {
-        return $this->threadId;
-    }
-
-    /**
-     * @return CredentialBody
-     */
-    public function getBody(): CredentialBody
-    {
-        return $this->body;
+        $p = new \Bloock\Credential();
+        $p->setThreadId($this->threadId);
+        $p->setBody($this->body->toProto());
+        return $p;
     }
 }

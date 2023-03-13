@@ -5,8 +5,8 @@ import com.bloock.sdk.entity.authenticity.Signature;
 import com.bloock.sdk.entity.integrity.Proof;
 
 public class CredentialProof {
-    private Proof bloockProof;
-    private Signature signatureProof;
+    private final Proof bloockProof;
+    private final Signature signatureProof;
 
     public CredentialProof(Proof bloockProof, Signature signatureProof) {
         this.bloockProof = bloockProof;
