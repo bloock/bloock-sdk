@@ -22,6 +22,7 @@ use crate::items::VerifyRecordsResponse;
 use crate::items::VerifyResponse;
 use crate::items::VerifyWebhookSignatureResponse;
 use crate::items::WaitAnchorResponse;
+use crate::items::WaitOfferResponse;
 use crate::items::{
     BuildSchemaResponse, CreateCredentialResponse, CreateIdentityResponse,
     CredentialFromJsonResponse, CredentialOfferFromJsonResponse, CredentialOfferRedeemResponse,
@@ -64,6 +65,7 @@ pub enum ResponseType {
     LoadIdentityResponse(LoadIdentityResponse),
     BuildSchemaResponse(BuildSchemaResponse),
     GetSchemaResponse(GetSchemaResponse),
+    WaitOfferResponse(WaitOfferResponse),
     CreateCredentialResponse(CreateCredentialResponse),
     GetOfferResponse(GetOfferResponse),
     CredentialOfferToJsonResponse(CredentialOfferToJsonResponse),
@@ -110,6 +112,7 @@ impl ResponseType {
             ResponseType::GetSchemaResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateCredentialResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetOfferResponse(r) => r.encode(&mut result_vec),
+            ResponseType::WaitOfferResponse(r) => r.encode(&mut result_vec),
             ResponseType::CredentialOfferToJsonResponse(r) => r.encode(&mut result_vec),
             ResponseType::CredentialOfferFromJsonResponse(r) => r.encode(&mut result_vec),
             ResponseType::CredentialOfferRedeemResponse(r) => r.encode(&mut result_vec),
@@ -153,6 +156,7 @@ impl ResponseType {
             ResponseType::GetSchemaResponse(r) => r.encoded_len(),
             ResponseType::CreateCredentialResponse(r) => r.encoded_len(),
             ResponseType::GetOfferResponse(r) => r.encoded_len(),
+            ResponseType::WaitOfferResponse(r) => r.encoded_len(),
             ResponseType::CredentialOfferToJsonResponse(r) => r.encoded_len(),
             ResponseType::CredentialOfferFromJsonResponse(r) => r.encoded_len(),
             ResponseType::CredentialOfferRedeemResponse(r) => r.encoded_len(),

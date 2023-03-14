@@ -1,10 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import {
-  Credential,
-  CredentialOffer,
-  IdentityClient,
-  IntegrityClient
-} from "../dist";
+import { Credential, CredentialOffer, IdentityClient } from "../dist";
 import { initSdk } from "./util";
 
 describe("Identity Tests", () => {
@@ -63,8 +58,7 @@ describe("Identity Tests", () => {
       .withBoleanAttribute("BoolAttr", true)
       .build();
 
-    const integrityClient = new IntegrityClient();
-    await integrityClient.waitAnchor(receipt.anchorId);
+    await identityClient.waitOffer(receipt.id);
 
     const offer = await identityClient.getOffer(receipt.id);
     const offerJson = await offer.toJson();

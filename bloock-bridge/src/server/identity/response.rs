@@ -9,7 +9,7 @@ use crate::{
         CredentialToJsonRequest, CredentialToJsonResponse, Error, GetOfferRequest,
         GetOfferResponse, GetSchemaRequest, GetSchemaResponse, LoadIdentityRequest,
         LoadIdentityResponse, RevokeCredentialRequest, RevokeCredentialResponse,
-        VerifyCredentialRequest, VerifyCredentialResponse,
+        VerifyCredentialRequest, VerifyCredentialResponse, WaitOfferRequest, WaitOfferResponse,
     },
     server::response_types::ResponseTypeError,
 };
@@ -75,6 +75,18 @@ impl ResponseTypeError<CreateCredentialRequest> for CreateCredentialResponse {
 }
 
 impl ResponseTypeError<GetOfferRequest> for GetOfferResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            offer: None,
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<WaitOfferRequest> for WaitOfferResponse {
     fn build_error(err: String) -> Self {
         Self {
             offer: None,

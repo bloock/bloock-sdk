@@ -10,7 +10,7 @@ use crate::{
         CredentialVerification, GetOfferRequest, GetOfferResponse, GetSchemaRequest,
         GetSchemaResponse, Identity, IdentityServiceHandler, LoadIdentityRequest,
         LoadIdentityResponse, RevokeCredentialRequest, RevokeCredentialResponse, Schema,
-        VerifyCredentialRequest, VerifyCredentialResponse,
+        VerifyCredentialRequest, VerifyCredentialResponse, WaitOfferRequest, WaitOfferResponse,
     },
     server::response_types::RequestConfigData,
 };
@@ -210,6 +210,22 @@ impl IdentityServiceHandler for IdentityServer {
             .map_err(|e| e.to_string())?;
 
         Ok(GetOfferResponse {
+            offer: Some(offer.into()),
+            error: None,
+        })
+    }
+
+    async fn wait_offer(&self, req: &WaitOfferRequest) -> Result<WaitOfferResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity::configure(config_data.clone());
+
+        let offer = client
+            .wait_offer(req.offer_id.clone(), req.timeout)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(WaitOfferResponse {
             offer: Some(offer.into()),
             error: None,
         })

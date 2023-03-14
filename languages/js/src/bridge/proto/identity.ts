@@ -1,4 +1,5 @@
 /* eslint-disable */
+import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { ConfigData } from "./config";
 import {
@@ -90,6 +91,17 @@ export interface GetOfferRequest {
 
 export interface GetOfferResponse {
   offer?: CredentialOffer;
+  error?: Error | undefined;
+}
+
+export interface WaitOfferRequest {
+  configData?: ConfigData;
+  offerId: string;
+  timeout: number;
+}
+
+export interface WaitOfferResponse {
+  offer?: CredentialOffer | undefined;
   error?: Error | undefined;
 }
 
@@ -1079,6 +1091,136 @@ export const GetOfferResponse = {
   },
 };
 
+function createBaseWaitOfferRequest(): WaitOfferRequest {
+  return { configData: undefined, offerId: "", timeout: 0 };
+}
+
+export const WaitOfferRequest = {
+  encode(message: WaitOfferRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.offerId !== "") {
+      writer.uint32(18).string(message.offerId);
+    }
+    if (message.timeout !== 0) {
+      writer.uint32(24).int64(message.timeout);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): WaitOfferRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWaitOfferRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.offerId = reader.string();
+          break;
+        case 3:
+          message.timeout = longToNumber(reader.int64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): WaitOfferRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      offerId: isSet(object.offerId) ? String(object.offerId) : "",
+      timeout: isSet(object.timeout) ? Number(object.timeout) : 0,
+    };
+  },
+
+  toJSON(message: WaitOfferRequest): unknown {
+    const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.offerId !== undefined && (obj.offerId = message.offerId);
+    message.timeout !== undefined && (obj.timeout = Math.round(message.timeout));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<WaitOfferRequest>, I>>(object: I): WaitOfferRequest {
+    const message = createBaseWaitOfferRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.offerId = object.offerId ?? "";
+    message.timeout = object.timeout ?? 0;
+    return message;
+  },
+};
+
+function createBaseWaitOfferResponse(): WaitOfferResponse {
+  return { offer: undefined, error: undefined };
+}
+
+export const WaitOfferResponse = {
+  encode(message: WaitOfferResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.offer !== undefined) {
+      CredentialOffer.encode(message.offer, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): WaitOfferResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWaitOfferResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.offer = CredentialOffer.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): WaitOfferResponse {
+    return {
+      offer: isSet(object.offer) ? CredentialOffer.fromJSON(object.offer) : undefined,
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: WaitOfferResponse): unknown {
+    const obj: any = {};
+    message.offer !== undefined && (obj.offer = message.offer ? CredentialOffer.toJSON(message.offer) : undefined);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<WaitOfferResponse>, I>>(object: I): WaitOfferResponse {
+    const message = createBaseWaitOfferResponse();
+    message.offer = (object.offer !== undefined && object.offer !== null)
+      ? CredentialOffer.fromPartial(object.offer)
+      : undefined;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
 function createBaseCredentialOfferToJsonRequest(): CredentialOfferToJsonRequest {
   return { configData: undefined, credentialOffer: undefined };
 }
@@ -1966,6 +2108,7 @@ export interface IdentityService {
   GetSchema(request: GetSchemaRequest): Promise<GetSchemaResponse>;
   CreateCredential(request: CreateCredentialRequest): Promise<CreateCredentialResponse>;
   GetOffer(request: GetOfferRequest): Promise<GetOfferResponse>;
+  WaitOffer(request: WaitOfferRequest): Promise<WaitOfferResponse>;
   CredentialOfferToJson(request: CredentialOfferToJsonRequest): Promise<CredentialOfferToJsonResponse>;
   CredentialOfferFromJson(request: CredentialOfferFromJsonRequest): Promise<CredentialOfferFromJsonResponse>;
   CredentialOfferRedeem(request: CredentialOfferRedeemRequest): Promise<CredentialOfferRedeemResponse>;
@@ -1985,6 +2128,7 @@ export class IdentityServiceClientImpl implements IdentityService {
     this.GetSchema = this.GetSchema.bind(this);
     this.CreateCredential = this.CreateCredential.bind(this);
     this.GetOffer = this.GetOffer.bind(this);
+    this.WaitOffer = this.WaitOffer.bind(this);
     this.CredentialOfferToJson = this.CredentialOfferToJson.bind(this);
     this.CredentialOfferFromJson = this.CredentialOfferFromJson.bind(this);
     this.CredentialOfferRedeem = this.CredentialOfferRedeem.bind(this);
@@ -2027,6 +2171,12 @@ export class IdentityServiceClientImpl implements IdentityService {
     const data = GetOfferRequest.encode(request).finish();
     const promise = this.rpc.request("bloock.IdentityService", "GetOffer", data);
     return promise.then((data) => GetOfferResponse.decode(new _m0.Reader(data)));
+  }
+
+  WaitOffer(request: WaitOfferRequest): Promise<WaitOfferResponse> {
+    const data = WaitOfferRequest.encode(request).finish();
+    const promise = this.rpc.request("bloock.IdentityService", "WaitOffer", data);
+    return promise.then((data) => WaitOfferResponse.decode(new _m0.Reader(data)));
   }
 
   CredentialOfferToJson(request: CredentialOfferToJsonRequest): Promise<CredentialOfferToJsonResponse> {
@@ -2125,6 +2275,14 @@ export const IdentityServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    waitOffer: {
+      name: "WaitOffer",
+      requestType: WaitOfferRequest,
+      requestStream: false,
+      responseType: WaitOfferResponse,
+      responseStream: false,
+      options: {},
+    },
     credentialOfferToJson: {
       name: "CredentialOfferToJson",
       requestType: CredentialOfferToJsonRequest,
@@ -2188,6 +2346,25 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
+declare var self: any | undefined;
+declare var window: any | undefined;
+declare var global: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
+  throw "Unable to locate global object";
+})();
+
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
@@ -2198,6 +2375,18 @@ type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

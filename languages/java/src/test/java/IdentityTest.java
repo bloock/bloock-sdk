@@ -62,8 +62,7 @@ class IdentityTest {
                 .withBooleanAttribute("BoolAttr", true)
                 .build();
 
-        IntegrityClient integrityClient = new IntegrityClient();
-        integrityClient.waitAnchor(receipt.getAnchorId());
+        identityClient.waitOffer(receipt.getId());
 
         CredentialOffer offer = identityClient.getOffer(receipt.getId());
         String offerJson = offer.toJson();

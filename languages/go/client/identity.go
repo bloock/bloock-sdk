@@ -104,6 +104,23 @@ func (c *IdentityClient) GetOffer(id string) (identity.CredentialOffer, error) {
 	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
 }
 
+func (c *IdentityClient) WaitOffer(offerID string) (identity.CredentialOffer, error) {
+	res, err := c.bridgeClient.Identity().WaitOffer(context.Background(), &proto.WaitOfferRequest{
+		ConfigData: c.configData,
+		OfferId:    offerID,
+	})
+
+	if err != nil {
+		return identity.CredentialOffer{}, err
+	}
+
+	if res.Error != nil {
+		return identity.CredentialOffer{}, errors.New(res.Error.Message)
+	}
+
+	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
+}
+
 func (c *IdentityClient) RedeemOffer(credentialOffer identity.CredentialOffer, holderPrivateKey string) (identity.Credential, error) {
 	res, err := c.bridgeClient.Identity().CredentialOfferRedeem(context.Background(), &proto.CredentialOfferRedeemRequest{
 		ConfigData:         c.configData,

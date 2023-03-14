@@ -372,6 +372,15 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::IdentityServiceWaitOffer => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .identity
+                    .wait_offer(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::IdentityServiceCredentialOfferToJson => {
                 let req = self.serialize_request(payload)?;
                 Ok(self

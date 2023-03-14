@@ -19,6 +19,7 @@ use Bloock\GetSchemaRequest;
 use Bloock\LoadIdentityRequest;
 use Bloock\RevokeCredentialRequest;
 use Bloock\VerifyCredentialRequest;
+use Bloock\WaitOfferRequest;
 use Exception;
 
 class IdentityClient
@@ -94,6 +95,20 @@ class IdentityClient
         $req->setConfigData($this->config)->setId($id);
 
         $res = $this->bridge->identity->GetOffer($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return CredentialOffer::fromProto($res->getOffer());
+    }
+
+    public function waitOffer(string $offerId): CredentialOffer
+    {
+        $req = new WaitOfferRequest();
+        $req->setConfigData($this->config)->setOfferId($offerId);
+
+        $res = $this->bridge->identity->WaitOffer($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());

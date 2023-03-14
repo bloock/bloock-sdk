@@ -101,6 +101,20 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
+     * @param \Bloock\WaitOfferRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function WaitOffer(\Bloock\WaitOfferRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityService/WaitOffer',
+        $argument,
+        ['\Bloock\WaitOfferResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
      * @param \Bloock\CredentialOfferToJsonRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options

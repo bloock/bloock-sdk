@@ -88,6 +88,21 @@ public class IdentityClient {
         return CredentialOffer.fromProto(response.getOffer());
     }
 
+    public CredentialOffer waitOffer(String offerId) throws Exception {
+        Identity.WaitOfferRequest request = Identity.WaitOfferRequest.newBuilder()
+                .setConfigData(this.configData)
+                .setOfferId(offerId)
+                .build();
+
+        Identity.WaitOfferResponse response = bridge.getIdentity().waitOffer(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return CredentialOffer.fromProto(response.getOffer());
+    }
+
     public Credential redeemOffer(CredentialOffer credentialOffer, String holderPrivateKey) throws Exception {
         Identity.CredentialOfferRedeemRequest request = Identity.CredentialOfferRedeemRequest.newBuilder()
                 .setConfigData(this.configData)

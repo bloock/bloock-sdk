@@ -28,6 +28,7 @@ type IdentityServiceClient interface {
 	GetSchema(ctx context.Context, in *GetSchemaRequest, opts ...grpc.CallOption) (*GetSchemaResponse, error)
 	CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CreateCredentialResponse, error)
 	GetOffer(ctx context.Context, in *GetOfferRequest, opts ...grpc.CallOption) (*GetOfferResponse, error)
+	WaitOffer(ctx context.Context, in *WaitOfferRequest, opts ...grpc.CallOption) (*WaitOfferResponse, error)
 	CredentialOfferToJson(ctx context.Context, in *CredentialOfferToJsonRequest, opts ...grpc.CallOption) (*CredentialOfferToJsonResponse, error)
 	CredentialOfferFromJson(ctx context.Context, in *CredentialOfferFromJsonRequest, opts ...grpc.CallOption) (*CredentialOfferFromJsonResponse, error)
 	CredentialOfferRedeem(ctx context.Context, in *CredentialOfferRedeemRequest, opts ...grpc.CallOption) (*CredentialOfferRedeemResponse, error)
@@ -93,6 +94,15 @@ func (c *identityServiceClient) CreateCredential(ctx context.Context, in *Create
 func (c *identityServiceClient) GetOffer(ctx context.Context, in *GetOfferRequest, opts ...grpc.CallOption) (*GetOfferResponse, error) {
 	out := new(GetOfferResponse)
 	err := c.cc.Invoke(ctx, "/bloock.IdentityService/GetOffer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityServiceClient) WaitOffer(ctx context.Context, in *WaitOfferRequest, opts ...grpc.CallOption) (*WaitOfferResponse, error) {
+	out := new(WaitOfferResponse)
+	err := c.cc.Invoke(ctx, "/bloock.IdentityService/WaitOffer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -172,6 +182,7 @@ type IdentityServiceServer interface {
 	GetSchema(context.Context, *GetSchemaRequest) (*GetSchemaResponse, error)
 	CreateCredential(context.Context, *CreateCredentialRequest) (*CreateCredentialResponse, error)
 	GetOffer(context.Context, *GetOfferRequest) (*GetOfferResponse, error)
+	WaitOffer(context.Context, *WaitOfferRequest) (*WaitOfferResponse, error)
 	CredentialOfferToJson(context.Context, *CredentialOfferToJsonRequest) (*CredentialOfferToJsonResponse, error)
 	CredentialOfferFromJson(context.Context, *CredentialOfferFromJsonRequest) (*CredentialOfferFromJsonResponse, error)
 	CredentialOfferRedeem(context.Context, *CredentialOfferRedeemRequest) (*CredentialOfferRedeemResponse, error)
@@ -203,6 +214,9 @@ func (UnimplementedIdentityServiceServer) CreateCredential(context.Context, *Cre
 }
 func (UnimplementedIdentityServiceServer) GetOffer(context.Context, *GetOfferRequest) (*GetOfferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOffer not implemented")
+}
+func (UnimplementedIdentityServiceServer) WaitOffer(context.Context, *WaitOfferRequest) (*WaitOfferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WaitOffer not implemented")
 }
 func (UnimplementedIdentityServiceServer) CredentialOfferToJson(context.Context, *CredentialOfferToJsonRequest) (*CredentialOfferToJsonResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CredentialOfferToJson not implemented")
@@ -342,6 +356,24 @@ func _IdentityService_GetOffer_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentityServiceServer).GetOffer(ctx, req.(*GetOfferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityService_WaitOffer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WaitOfferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceServer).WaitOffer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.IdentityService/WaitOffer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceServer).WaitOffer(ctx, req.(*WaitOfferRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -502,6 +534,10 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOffer",
 			Handler:    _IdentityService_GetOffer_Handler,
+		},
+		{
+			MethodName: "WaitOffer",
+			Handler:    _IdentityService_WaitOffer_Handler,
 		},
 		{
 			MethodName: "CredentialOfferToJson",

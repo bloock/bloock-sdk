@@ -42,6 +42,8 @@ pub enum IdentityError {
     InvalidCredentialError(),
     #[error("Error while revoking credential: {0}")]
     RevokeCredentialError(String),
+    #[error("Wait offer timed out")]
+    OfferTimeoutError(),
 }
 
 impl From<IdentityError> for BloockError {

@@ -63,8 +63,7 @@ final class IdentityTest extends TestCase
             ->withBooleanAttribute("BoolAttr", true)
             ->build();
 
-        $integrityClient = new IntegrityClient();
-        $integrityClient->waitAnchor($receipt->getAnchorId());
+        $identityClient->waitOffer($receipt->getId());
 
         $offer = $identityClient->getOffer($receipt->getId());
         $offerJson = $offer->toJSON();

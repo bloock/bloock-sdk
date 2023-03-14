@@ -2,7 +2,9 @@ use crate::config::entity::network::Network;
 use crate::error::BloockResult;
 use crate::integrity::entity::proof::Proof;
 use crate::integrity::service::IntegrityService;
+use crate::shared::util;
 use crate::{availability::service::AvailabilityService, config::service::ConfigService};
+use async_std::task;
 use bloock_http::Client;
 use bloock_identity::did::Did;
 use bloock_keys::local::{LocalKey, LocalKeyParams};
@@ -10,6 +12,7 @@ use bloock_signer::create_verifier_from_signature;
 use bloock_signer::entity::signature::Signature;
 use serde_json::{Map, Number, Value};
 use std::sync::Arc;
+use std::time::Duration;
 
 use super::entity::credential::Credential;
 use super::entity::credential_offer::CredentialOffer;
@@ -176,6 +179,50 @@ impl<H: Client> IdentityService<H> {
 
         let offer = res.try_into()?;
         Ok(offer)
+    }
+
+    pub async fn wait_offer(
+        &self,
+        offer_id: String,
+        mut timeout: i64,
+    ) -> BloockResult<CredentialOffer> {
+        if timeout == 0 {
+            timeout = 120000;
+        }
+        let config = self.config_service.get_config();
+
+        let mut attempts = 0;
+        let start = util::get_current_timestamp();
+        let mut next_try = start + config.wait_message_interval_default;
+
+        let timeout_time = start + timeout as u128;
+
+        loop {
+            if let Ok(offer) = self.get_offer(offer_id.clone()).await {
+                return Ok(offer);
+            }
+
+            let mut current_time = util::get_current_timestamp();
+            if current_time > timeout_time {
+                return Err(IdentityError::OfferTimeoutError().into());
+            }
+
+            task::sleep(Duration::from_millis(1000)).await;
+
+            current_time = util::get_current_timestamp();
+            while current_time < next_try && current_time < timeout_time {
+                task::sleep(Duration::from_millis(200)).await;
+                current_time = util::get_current_timestamp();
+            }
+
+            if current_time >= timeout_time {
+                return Err(IdentityError::OfferTimeoutError().into());
+            }
+
+            next_try += attempts * config.wait_message_interval_factor
+                + config.wait_message_interval_default;
+            attempts += 1;
+        }
     }
 
     pub async fn redeem_credential(

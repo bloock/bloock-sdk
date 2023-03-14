@@ -7,7 +7,8 @@ import {
   GetSchemaRequest,
   LoadIdentityRequest,
   RevokeCredentialRequest,
-  VerifyCredentialRequest
+  VerifyCredentialRequest,
+  WaitOfferRequest
 } from "../bridge/proto/identity";
 import { NewConfigData } from "../config/config";
 import { Credential, CredentialBuilder } from "../entity/identity";
@@ -99,6 +100,23 @@ export class IdentityClient {
     return this.bridge
       .getIdentity()
       .GetOffer(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return CredentialOffer.fromProto(res.offer!);
+      });
+  }
+
+  public waitOffer(offerId: string): Promise<CredentialOffer> {
+    const request = WaitOfferRequest.fromPartial({
+      configData: this.configData,
+      offerId: offerId
+    });
+
+    return this.bridge
+      .getIdentity()
+      .WaitOffer(request)
       .then(res => {
         if (res.error) {
           throw res.error;

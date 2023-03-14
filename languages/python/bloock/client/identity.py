@@ -1,6 +1,6 @@
 from bloock._bridge import bridge
 from bloock._bridge.proto.identity_pb2 import CreateIdentityRequest, LoadIdentityRequest, GetSchemaRequest, \
-    CredentialOfferRedeemRequest, VerifyCredentialRequest, RevokeCredentialRequest, GetOfferRequest
+    CredentialOfferRedeemRequest, VerifyCredentialRequest, RevokeCredentialRequest, GetOfferRequest, WaitOfferRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.identity.credential import Credential
@@ -65,6 +65,18 @@ class IdentityClient:
             GetOfferRequest(
                 config_data=self.config_data,
                 id=id,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return CredentialOffer.from_proto(res.offer)
+
+    def wait_offer(self, offer_id: str) -> CredentialOffer:
+        res = self.bridge_client.identity().WaitOffer(
+            WaitOfferRequest(
+                config_data=self.config_data,
+                offer_id=offer_id,
             )
         )
 

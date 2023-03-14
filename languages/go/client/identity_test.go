@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/identity"
-	"github.com/bloock/bloock-sdk-go/v2/entity/integrity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -71,8 +70,7 @@ func TestIdentity(t *testing.T) {
 		receipt, err := identityClient.BuildCredential(schema.Id, holder.Key).WithBooleanAttribute("BoolAttr", true).Build()
 		assert.NoError(t, err)
 
-		integrityClient := NewIntegrityClient()
-		_, err = integrityClient.WaitAnchor(receipt.AnchorID, integrity.NewAnchorParams())
+		_, err = identityClient.WaitOffer(receipt.Id)
 		assert.NoError(t, err)
 
 		offer, err := identityClient.GetOffer(receipt.Id)

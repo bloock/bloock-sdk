@@ -76,8 +76,7 @@ class TestIdentity(unittest.TestCase):
             .with_boolean_attribute("BoolAttr", True) \
             .build()
 
-        integrity_client = IntegrityClient()
-        integrity_client.wait_anchor(receipt.anchor_id)
+        identity_client.wait_offer(receipt.id)
 
         offer = identity_client.get_offer(receipt.id)
         offer_json = offer.to_json()
