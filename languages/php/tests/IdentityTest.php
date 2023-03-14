@@ -56,11 +56,11 @@ final class IdentityTest extends TestCase
         $holder = $identityClient->createIdentity();
 
         $schema = $identityClient->buildSchema("Test Schema", "test_schema")
-            ->addBooleanAttribute("bool_attr", "bool_attr", "")
+            ->addBooleanAttribute("Boolean Attribute", "bool_attr", "")
             ->build();
 
         $receipt = $identityClient->buildCredential($schema->getId(), $holder->getKey())
-            ->withBooleanAttribute("BoolAttr", true)
+            ->withBooleanAttribute("bool_attr", true)
             ->build();
 
         $identityClient->waitOffer($receipt->getId());

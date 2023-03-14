@@ -64,10 +64,10 @@ func TestIdentity(t *testing.T) {
 		holder, err := identityClient.CreateIdentity()
 		assert.NoError(t, err)
 
-		schema, err := identityClient.BuildSchema("Test Schema", "test_schema").AddBooleanAttribute("bool_attr", "bool_attr", "").Build()
+		schema, err := identityClient.BuildSchema("Test Schema", "test_schema").AddBooleanAttribute("Boolean Attribute", "bool_attr", "").Build()
 		assert.NoError(t, err)
 
-		receipt, err := identityClient.BuildCredential(schema.Id, holder.Key).WithBooleanAttribute("BoolAttr", true).Build()
+		receipt, err := identityClient.BuildCredential(schema.Id, holder.Key).WithBooleanAttribute("bool_attr", true).Build()
 		assert.NoError(t, err)
 
 		_, err = identityClient.WaitOffer(receipt.Id)

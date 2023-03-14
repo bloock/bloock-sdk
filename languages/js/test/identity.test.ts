@@ -50,12 +50,12 @@ describe("Identity Tests", () => {
 
     const schema = await identityClient
       .buildSchema("Test Schema", "test_schema")
-      .addBooleanAttribute("bool_attr", "bool_attr", "")
+      .addBooleanAttribute("Boolean Attribute", "bool_attr", "")
       .build();
 
     const receipt = await identityClient
       .buildCredential(schema.id, holder.key)
-      .withBoleanAttribute("BoolAttr", true)
+      .withBoleanAttribute("bool_attr", true)
       .build();
 
     await identityClient.waitOffer(receipt.id);

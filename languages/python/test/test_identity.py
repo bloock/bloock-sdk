@@ -69,11 +69,11 @@ class TestIdentity(unittest.TestCase):
         holder = identity_client.create_identity()
 
         schema = identity_client.build_schema("Test Schema", "test_schema") \
-            .add_boolean_attribute("bool_attr", "bool_attr", "") \
+            .add_boolean_attribute("Boolean Attribute", "bool_attr", "") \
             .build()
 
         receipt = identity_client.build_credential(schema.id, holder.key) \
-            .with_boolean_attribute("BoolAttr", True) \
+            .with_boolean_attribute("bool_attr", True) \
             .build()
 
         identity_client.wait_offer(receipt.id)
