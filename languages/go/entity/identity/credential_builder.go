@@ -8,7 +8,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
-type CredentialOfferBuilder struct {
+type CredentialBuilder struct {
 	schemaId   string
 	holderKey  string
 	configData *proto.ConfigData
@@ -20,8 +20,8 @@ type CredentialOfferBuilder struct {
 	numberAttribute      []NumberAttribute
 }
 
-func NewCredentialOfferBuilder(schemaId string, holderKey string, configData *proto.ConfigData) CredentialOfferBuilder {
-	return CredentialOfferBuilder{
+func NewCredentialBuilder(schemaId string, holderKey string, configData *proto.ConfigData) CredentialBuilder {
+	return CredentialBuilder{
 		schemaId:             schemaId,
 		holderKey:            holderKey,
 		configData:           configData,
@@ -33,32 +33,32 @@ func NewCredentialOfferBuilder(schemaId string, holderKey string, configData *pr
 	}
 }
 
-func (c CredentialOfferBuilder) WithBooleanAttribute(key string, value bool) CredentialOfferBuilder {
+func (c CredentialBuilder) WithBooleanAttribute(key string, value bool) CredentialBuilder {
 	c.booleanAttribute = append(c.booleanAttribute, NewBooleanAttribute(key, value))
 	return c
 }
 
-func (c CredentialOfferBuilder) WithDateAttribute(key string, value int64) CredentialOfferBuilder {
+func (c CredentialBuilder) WithDateAttribute(key string, value int64) CredentialBuilder {
 	c.dateAttribute = append(c.dateAttribute, NewDateAttribute(key, value))
 	return c
 }
 
-func (c CredentialOfferBuilder) WithDatetimeAttribute(key string, value int64) CredentialOfferBuilder {
+func (c CredentialBuilder) WithDatetimeAttribute(key string, value int64) CredentialBuilder {
 	c.datetimeAttribute = append(c.datetimeAttribute, NewDatetimeAttribute(key, value))
 	return c
 }
 
-func (c CredentialOfferBuilder) WithMultichoiceAttribute(key string, value string) CredentialOfferBuilder {
+func (c CredentialBuilder) WithMultichoiceAttribute(key string, value string) CredentialBuilder {
 	c.multichoiceAttribute = append(c.multichoiceAttribute, NewMultichoiceAttribute(key, value))
 	return c
 }
 
-func (c CredentialOfferBuilder) WithNumberAttribute(key string, value int64) CredentialOfferBuilder {
+func (c CredentialBuilder) WithNumberAttribute(key string, value int64) CredentialBuilder {
 	c.numberAttribute = append(c.numberAttribute, NewNumberAttribute(key, value))
 	return c
 }
 
-func (c CredentialOfferBuilder) Build() (CredentialOffer, error) {
+func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 	bridge := bridge.NewBloockBridge()
 
 	booleanAttributes := make([]*proto.BooleanAttribute, len(c.booleanAttribute))
@@ -86,7 +86,7 @@ func (c CredentialOfferBuilder) Build() (CredentialOffer, error) {
 		numberAttributes[i] = b.ToProto()
 	}
 
-	req := proto.CreateCredentialOfferRequest{
+	req := proto.CreateCredentialRequest{
 		SchemaId:              c.schemaId,
 		HolderKey:             c.holderKey,
 		ConfigData:            c.configData,
@@ -97,14 +97,14 @@ func (c CredentialOfferBuilder) Build() (CredentialOffer, error) {
 		NumberAttributes:      numberAttributes,
 	}
 
-	res, err := bridge.Identity().CreateCredentialOffer(context.Background(), &req)
+	res, err := bridge.Identity().CreateCredential(context.Background(), &req)
 	if err != nil {
-		return CredentialOffer{}, err
+		return CredentialReceipt{}, err
 	}
 
 	if res.Error != nil {
-		return CredentialOffer{}, errors.New(res.Error.Message)
+		return CredentialReceipt{}, errors.New(res.Error.Message)
 	}
 
-	return NewCredentialOfferFromProto(res.GetCredentialOffer()), nil
+	return NewCredentialReceiptFromProto(res.GetCredentialReceipt()), nil
 }

@@ -3,8 +3,8 @@ package com.bloock.sdk.entity.identity;
 import com.bloock.sdk.bridge.proto.IdentityEntities;
 
 public class Schema {
-    private String id;
-    private String json;
+    private final String id;
+    private final String json;
 
     public Schema(String id, String json) {
         this.id = id;
@@ -20,5 +20,13 @@ public class Schema {
                 .setId(this.id)
                 .setJsonLd(this.json)
                 .build();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getJson() {
+        return json;
     }
 }

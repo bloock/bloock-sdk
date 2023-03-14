@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from bloock._bridge import BloockBridge
 from bloock._bridge.proto.config_pb2 import ConfigData
-from bloock._bridge.proto.identity_pb2 import CreateCredentialOfferRequest
+from bloock._bridge.proto.identity_pb2 import CreateCredentialRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.entity.identity.boolean_attribute import BooleanAttribute
-from bloock.entity.identity.credential_offer import CredentialOffer
+from bloock.entity.identity.credential_receipt import CredentialReceipt
 from bloock.entity.identity.date_attribute import DateAttribute
 from bloock.entity.identity.datetime_attribute import DatetimeAttribute
 from bloock.entity.identity.multichoice_attribute import MultichoiceAttribute
 from bloock.entity.identity.number_attribute import NumberAttribute
 
 
-class CredentialOfferBuilder:
+class CredentialBuilder:
     def __init__(self, schema_id: str, holder_key: str, config_data: ConfigData) -> None:
         self.schema_id = schema_id
         self.holder_key = holder_key
@@ -24,27 +24,27 @@ class CredentialOfferBuilder:
         self.multichoice_attributes = []
         self.number_attributes = []
 
-    def with_boolean_attribute(self, key: str, value: bool) -> CredentialOfferBuilder:
+    def with_boolean_attribute(self, key: str, value: bool) -> CredentialBuilder:
         self.boolean_attributes.append(BooleanAttribute(key, value))
         return self
 
-    def with_date_attribute(self, key: str, value: int) -> CredentialOfferBuilder:
+    def with_date_attribute(self, key: str, value: int) -> CredentialBuilder:
         self.date_attributes.append(DateAttribute(key, value))
         return self
 
-    def with_datetime_attribute(self, key: str, value: int) -> CredentialOfferBuilder:
+    def with_datetime_attribute(self, key: str, value: int) -> CredentialBuilder:
         self.datetime_attributes.append(DatetimeAttribute(key, value))
         return self
 
-    def with_multichoice_attribute(self, key: str, value: str) -> CredentialOfferBuilder:
+    def with_multichoice_attribute(self, key: str, value: str) -> CredentialBuilder:
         self.multichoice_attributes.append(MultichoiceAttribute(key, value))
         return self
 
-    def with_number_attribute(self, key: str, value: int) -> CredentialOfferBuilder:
+    def with_number_attribute(self, key: str, value: int) -> CredentialBuilder:
         self.number_attributes.append(NumberAttribute(key, value))
         return self
 
-    def build(self) -> CredentialOffer:
+    def build(self) -> CredentialReceipt:
         bridge = BloockBridge()
 
         boolean_attributes = []
@@ -67,7 +67,7 @@ class CredentialOfferBuilder:
         for a in self.number_attributes:
             number_attributes.append(a.to_proto())
 
-        req = CreateCredentialOfferRequest(
+        req = CreateCredentialRequest(
             config_data=self.config_data,
             schema_id=self.schema_id,
             holder_key=self.holder_key,
@@ -78,8 +78,8 @@ class CredentialOfferBuilder:
             number_attributes=number_attributes
         )
 
-        res = bridge.identity().CreateCredentialOffer(req)
+        res = bridge.identity().CreateCredential(req)
         if res.error != Error():
             raise Exception(res.error.message)
 
-        return CredentialOffer.from_proto(res.credential_offer)
+        return CredentialReceipt.from_proto(res.credential_receipt)

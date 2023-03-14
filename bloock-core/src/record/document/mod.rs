@@ -228,6 +228,7 @@ mod tests {
             private_key: Some(
                 "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c9457".to_string(),
             ),
+            mnemonic: None,
         };
         let signer = LocalEcdsaSigner::new(local_key, None);
 

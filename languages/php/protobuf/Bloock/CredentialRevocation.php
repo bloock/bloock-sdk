@@ -14,9 +14,9 @@ use Google\Protobuf\Internal\GPBUtil;
 class CredentialRevocation extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
+     * Generated from protobuf field <code>bool success = 1;</code>
      */
-    protected $timestamp = 0;
+    protected $success = false;
 
     /**
      * Constructor.
@@ -24,7 +24,7 @@ class CredentialRevocation extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type int|string $timestamp
+     *     @type bool $success
      * }
      */
     public function __construct($data = NULL) {
@@ -33,23 +33,23 @@ class CredentialRevocation extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
-     * @return int|string
+     * Generated from protobuf field <code>bool success = 1;</code>
+     * @return bool
      */
-    public function getTimestamp()
+    public function getSuccess()
     {
-        return $this->timestamp;
+        return $this->success;
     }
 
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
-     * @param int|string $var
+     * Generated from protobuf field <code>bool success = 1;</code>
+     * @param bool $var
      * @return $this
      */
-    public function setTimestamp($var)
+    public function setSuccess($var)
     {
-        GPBUtil::checkInt64($var);
-        $this->timestamp = $var;
+        GPBUtil::checkBool($var);
+        $this->success = $var;
 
         return $this;
     }

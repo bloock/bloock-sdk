@@ -6,7 +6,7 @@ import java.util.List;
 
 public class MultichoiceAttributeDescriptor extends AttributeDescriptor {
 
-    private List<String> allowedValues;
+    private final List<String> allowedValues;
 
     public MultichoiceAttributeDescriptor(String displayName, String technicalName, List<String> allowedValues, String description) {
         super(displayName, technicalName, description);

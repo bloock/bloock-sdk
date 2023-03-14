@@ -11,9 +11,11 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from . import authenticity_entities_pb2 as authenticity__entities__pb2
+from . import integrity_entities_pb2 as integrity__entities__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17identity_entities.proto\x12\x06\x62loock\">\n\x08Identity\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x0b\n\x03key\x18\x02 \x01(\t\x12\x13\n\x0bprivate_key\x18\x03 \x01(\t\"S\n\x1a\x42ooleanAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"P\n\x17\x44\x61teAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"T\n\x1b\x44\x61teTimeAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"o\n\x1eMultiChoiceAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x16\n\x0e\x61llowed_values\x18\x04 \x03(\t\"R\n\x19NumberAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"-\n\x10\x42ooleanAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08\"*\n\rDateAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03\".\n\x11\x44\x61teTimeAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03\"1\n\x14MultiChoiceAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\",\n\x0fNumberAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03\"%\n\x06Schema\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07json_ld\x18\x02 \x01(\t\"\x1f\n\x0f\x43redentialOffer\x12\x0c\n\x04json\x18\x01 \x01(\t\"\x1a\n\nCredential\x12\x0c\n\x04json\x18\x01 \x01(\t\"O\n\x16\x43redentialVerification\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x12\x0e\n\x06issuer\x18\x02 \x01(\t\x12\x12\n\nrevocation\x18\x03 \x01(\x03\")\n\x14\x43redentialRevocation\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17identity_entities.proto\x12\x06\x62loock\x1a\x1b\x61uthenticity_entities.proto\x1a\x18integrity_entities.proto\">\n\x08Identity\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x0b\n\x03key\x18\x02 \x01(\t\x12\x13\n\x0bprivate_key\x18\x03 \x01(\t\"S\n\x1a\x42ooleanAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"P\n\x17\x44\x61teAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"T\n\x1b\x44\x61teTimeAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"o\n\x1eMultiChoiceAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x16\n\x0e\x61llowed_values\x18\x04 \x03(\t\"R\n\x19NumberAttributeDefinition\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"-\n\x10\x42ooleanAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08\"*\n\rDateAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03\".\n\x11\x44\x61teTimeAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03\"1\n\x14MultiChoiceAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\",\n\x0fNumberAttribute\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03\"%\n\x06Schema\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07json_ld\x18\x02 \x01(\t\"f\n\x0f\x43redentialOffer\x12\x0c\n\x04thid\x18\x01 \x01(\t\x12)\n\x04\x62ody\x18\x02 \x01(\x0b\x32\x1b.bloock.CredentialOfferBody\x12\r\n\x05_from\x18\x03 \x01(\t\x12\x0b\n\x03_to\x18\x04 \x01(\t\"_\n\x13\x43redentialOfferBody\x12\x0b\n\x03url\x18\x01 \x01(\t\x12;\n\x0b\x63redentials\x18\x02 \x03(\x0b\x32&.bloock.CredentialOfferBodyCredentials\"A\n\x1e\x43redentialOfferBodyCredentials\x12\n\n\x02id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"2\n\x11\x43redentialReceipt\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\tanchor_id\x18\x02 \x01(\x03\"E\n\nCredential\x12\x11\n\tthread_id\x18\x01 \x01(\t\x12$\n\x04\x62ody\x18\x02 \x01(\x0b\x32\x16.bloock.CredentialBody\"\x90\x02\n\x0e\x43redentialBody\x12\x0f\n\x07\x63ontext\x18\x01 \x03(\t\x12\n\n\x02id\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x03(\t\x12\x15\n\rissuance_date\x18\x04 \x01(\t\x12\x1a\n\x12\x63redential_subject\x18\x05 \x01(\t\x12\x33\n\x11\x63redential_status\x18\x06 \x01(\x0b\x32\x18.bloock.CredentialStatus\x12\x0e\n\x06issuer\x18\x07 \x01(\t\x12\x33\n\x11\x63redential_schema\x18\x08 \x01(\x0b\x32\x18.bloock.CredentialSchema\x12&\n\x05proof\x18\t \x01(\x0b\x32\x17.bloock.CredentialProof\"F\n\x10\x43redentialStatus\x12\n\n\x02id\x18\x01 \x01(\t\x12\x18\n\x10revocation_nonce\x18\x02 \x01(\x03\x12\x0c\n\x04type\x18\x03 \x01(\t\",\n\x10\x43redentialSchema\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\"b\n\x0f\x43redentialProof\x12#\n\x0c\x62loock_proof\x18\x01 \x01(\x0b\x32\r.bloock.Proof\x12*\n\x0fsignature_proof\x18\x02 \x01(\x0b\x32\x11.bloock.Signature\"O\n\x16\x43redentialVerification\x12\x11\n\ttimestamp\x18\x01 \x01(\x04\x12\x0e\n\x06issuer\x18\x02 \x01(\t\x12\x12\n\nrevocation\x18\x03 \x01(\x04\"\'\n\x14\x43redentialRevocation\x12\x0f\n\x07success\x18\x01 \x01(\x08\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'identity_entities_pb2', globals())
@@ -21,36 +23,50 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
-  _IDENTITY._serialized_start=35
-  _IDENTITY._serialized_end=97
-  _BOOLEANATTRIBUTEDEFINITION._serialized_start=99
-  _BOOLEANATTRIBUTEDEFINITION._serialized_end=182
-  _DATEATTRIBUTEDEFINITION._serialized_start=184
-  _DATEATTRIBUTEDEFINITION._serialized_end=264
-  _DATETIMEATTRIBUTEDEFINITION._serialized_start=266
-  _DATETIMEATTRIBUTEDEFINITION._serialized_end=350
-  _MULTICHOICEATTRIBUTEDEFINITION._serialized_start=352
-  _MULTICHOICEATTRIBUTEDEFINITION._serialized_end=463
-  _NUMBERATTRIBUTEDEFINITION._serialized_start=465
-  _NUMBERATTRIBUTEDEFINITION._serialized_end=547
-  _BOOLEANATTRIBUTE._serialized_start=549
-  _BOOLEANATTRIBUTE._serialized_end=594
-  _DATEATTRIBUTE._serialized_start=596
-  _DATEATTRIBUTE._serialized_end=638
-  _DATETIMEATTRIBUTE._serialized_start=640
-  _DATETIMEATTRIBUTE._serialized_end=686
-  _MULTICHOICEATTRIBUTE._serialized_start=688
-  _MULTICHOICEATTRIBUTE._serialized_end=737
-  _NUMBERATTRIBUTE._serialized_start=739
-  _NUMBERATTRIBUTE._serialized_end=783
-  _SCHEMA._serialized_start=785
-  _SCHEMA._serialized_end=822
-  _CREDENTIALOFFER._serialized_start=824
-  _CREDENTIALOFFER._serialized_end=855
-  _CREDENTIAL._serialized_start=857
-  _CREDENTIAL._serialized_end=883
-  _CREDENTIALVERIFICATION._serialized_start=885
-  _CREDENTIALVERIFICATION._serialized_end=964
-  _CREDENTIALREVOCATION._serialized_start=966
-  _CREDENTIALREVOCATION._serialized_end=1007
+  _IDENTITY._serialized_start=90
+  _IDENTITY._serialized_end=152
+  _BOOLEANATTRIBUTEDEFINITION._serialized_start=154
+  _BOOLEANATTRIBUTEDEFINITION._serialized_end=237
+  _DATEATTRIBUTEDEFINITION._serialized_start=239
+  _DATEATTRIBUTEDEFINITION._serialized_end=319
+  _DATETIMEATTRIBUTEDEFINITION._serialized_start=321
+  _DATETIMEATTRIBUTEDEFINITION._serialized_end=405
+  _MULTICHOICEATTRIBUTEDEFINITION._serialized_start=407
+  _MULTICHOICEATTRIBUTEDEFINITION._serialized_end=518
+  _NUMBERATTRIBUTEDEFINITION._serialized_start=520
+  _NUMBERATTRIBUTEDEFINITION._serialized_end=602
+  _BOOLEANATTRIBUTE._serialized_start=604
+  _BOOLEANATTRIBUTE._serialized_end=649
+  _DATEATTRIBUTE._serialized_start=651
+  _DATEATTRIBUTE._serialized_end=693
+  _DATETIMEATTRIBUTE._serialized_start=695
+  _DATETIMEATTRIBUTE._serialized_end=741
+  _MULTICHOICEATTRIBUTE._serialized_start=743
+  _MULTICHOICEATTRIBUTE._serialized_end=792
+  _NUMBERATTRIBUTE._serialized_start=794
+  _NUMBERATTRIBUTE._serialized_end=838
+  _SCHEMA._serialized_start=840
+  _SCHEMA._serialized_end=877
+  _CREDENTIALOFFER._serialized_start=879
+  _CREDENTIALOFFER._serialized_end=981
+  _CREDENTIALOFFERBODY._serialized_start=983
+  _CREDENTIALOFFERBODY._serialized_end=1078
+  _CREDENTIALOFFERBODYCREDENTIALS._serialized_start=1080
+  _CREDENTIALOFFERBODYCREDENTIALS._serialized_end=1145
+  _CREDENTIALRECEIPT._serialized_start=1147
+  _CREDENTIALRECEIPT._serialized_end=1197
+  _CREDENTIAL._serialized_start=1199
+  _CREDENTIAL._serialized_end=1268
+  _CREDENTIALBODY._serialized_start=1271
+  _CREDENTIALBODY._serialized_end=1543
+  _CREDENTIALSTATUS._serialized_start=1545
+  _CREDENTIALSTATUS._serialized_end=1615
+  _CREDENTIALSCHEMA._serialized_start=1617
+  _CREDENTIALSCHEMA._serialized_end=1661
+  _CREDENTIALPROOF._serialized_start=1663
+  _CREDENTIALPROOF._serialized_end=1761
+  _CREDENTIALVERIFICATION._serialized_start=1763
+  _CREDENTIALVERIFICATION._serialized_end=1842
+  _CREDENTIALREVOCATION._serialized_start=1844
+  _CREDENTIALREVOCATION._serialized_end=1883
 # @@protoc_insertion_point(module_scope)

@@ -14,7 +14,7 @@ public class ConnectionRequest<ReqT, RespT> extends ClientCall<ReqT, RespT> {
     private static final Logger logger = Logger.getLogger(ConnectionRequest.class.getName());
     private final MethodDescriptor<ReqT, RespT> method;
     private ClientCall.Listener<RespT> listener;
-    private CallOptions callOptions;
+    private final CallOptions callOptions;
 
     ConnectionRequest(MethodDescriptor<ReqT, RespT> method, CallOptions callOptions) {
         this.method = method;

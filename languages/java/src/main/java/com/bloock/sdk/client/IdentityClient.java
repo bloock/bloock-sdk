@@ -8,8 +8,8 @@ import com.bloock.sdk.config.Config;
 import com.bloock.sdk.entity.identity.*;
 
 public class IdentityClient {
-    private Bridge bridge;
-    private ConfigData configData;
+    private final Bridge bridge;
+    private final ConfigData configData;
 
     public IdentityClient() {
         this.bridge = new Bridge();
@@ -69,8 +69,38 @@ public class IdentityClient {
         return Schema.fromProto(response.getSchema());
     }
 
-    public CredentialOfferBuilder buildOffer(String schemaId, String holderKey) throws Exception {
-        return new CredentialOfferBuilder(schemaId, holderKey, this.configData);
+    public CredentialBuilder buildCredential(String schemaId, String holderKey) throws Exception {
+        return new CredentialBuilder(schemaId, holderKey, this.configData);
+    }
+
+    public CredentialOffer getOffer(String id) throws Exception {
+        Identity.GetOfferRequest request = Identity.GetOfferRequest.newBuilder()
+                .setConfigData(this.configData)
+                .setId(id)
+                .build();
+
+        Identity.GetOfferResponse response = bridge.getIdentity().getOffer(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return CredentialOffer.fromProto(response.getOffer());
+    }
+
+    public CredentialOffer waitOffer(String offerId) throws Exception {
+        Identity.WaitOfferRequest request = Identity.WaitOfferRequest.newBuilder()
+                .setConfigData(this.configData)
+                .setOfferId(offerId)
+                .build();
+
+        Identity.WaitOfferResponse response = bridge.getIdentity().waitOffer(request);
+
+        if (response.getError() != Error.getDefaultInstance()) {
+            throw new Exception(response.getError().getMessage());
+        }
+
+        return CredentialOffer.fromProto(response.getOffer());
     }
 
     public Credential redeemOffer(CredentialOffer credentialOffer, String holderPrivateKey) throws Exception {
@@ -104,7 +134,7 @@ public class IdentityClient {
         return CredentialVerification.fromProto(response.getResult());
     }
 
-    public long revokeCredential(Credential credential) throws Exception {
+    public boolean revokeCredential(Credential credential) throws Exception {
         Identity.RevokeCredentialRequest request = Identity.RevokeCredentialRequest.newBuilder()
                 .setConfigData(this.configData)
                 .setCredential(credential.toProto())
@@ -116,7 +146,7 @@ public class IdentityClient {
             throw new Exception(response.getError().getMessage());
         }
 
-        return response.getResult().getTimestamp();
+        return response.getResult().getSuccess();
     }
 
 }

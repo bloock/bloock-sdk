@@ -14,10 +14,12 @@ class IdentityEntities
         if (static::$is_initialized == true) {
           return;
         }
+        \GPBMetadata\AuthenticityEntities::initOnce();
+        \GPBMetadata\IntegrityEntities::initOnce();
         $pool->internalAddGeneratedFile(
             '
-–
-identity_entities.protobloock">
+ü
+identity_entities.protobloockintegrity_entities.proto">
 Identity
 mnemonic (	
 key (	
@@ -71,19 +73,57 @@ class IdentityEntities
 Schema
 
 id (	
-json_ld (	"
+json_ld (	"f
 CredentialOffer
-json (	"
+thid (	)
+body (2.bloock.CredentialOfferBody
+_from (	
+_to (	"_
+CredentialOfferBody
+url (	;
+credentials (2&.bloock.CredentialOfferBodyCredentials"A
+CredentialOfferBodyCredentials
 
-Credential
-json (	"O
+id (	
+description (	"2
+CredentialReceipt
+
+id (	
+	anchor_id ("E
+
+Credential
+	thread_id (	$
+body (2.bloock.CredentialBody"ê
+CredentialBody
+context (	
+
+id (	
+type (	
+issuance_date (	
+credential_subject (	3
+credential_status (2.bloock.CredentialStatus
+issuer (	3
+credential_schema (2.bloock.CredentialSchema&
+proof	 (2.bloock.CredentialProof"F
+CredentialStatus
+
+id (	
+revocation_nonce (
+type (	",
+CredentialSchema
+
+id (	
+type (	"b
+CredentialProof#
+bloock_proof (2.bloock.Proof*
+signature_proof (2.bloock.Signature"O
 CredentialVerification
-	timestamp (
+	timestamp (
 issuer (	
 
-revocation (")
-CredentialRevocation
-	timestamp (BW
+revocation ("\'
+CredentialRevocation
+success (BW
 com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protobproto3'
         , true);
 

@@ -92,6 +92,7 @@ impl From<LocalKey> for CoreLocalKey<String> {
             key_type: key.key_type().into(),
             key: key.key,
             private_key: key.private_key,
+            mnemonic: None,
         }
     }
 }

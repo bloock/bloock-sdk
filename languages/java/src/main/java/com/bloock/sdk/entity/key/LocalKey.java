@@ -19,7 +19,7 @@ public class LocalKey {
     }
 
     public KeysEntities.LocalKey toProto() {
-        KeysEntities.LocalKey.Builder builder =  KeysEntities.LocalKey.newBuilder();
+        KeysEntities.LocalKey.Builder builder = KeysEntities.LocalKey.newBuilder();
 
         if (this.key != null) builder.setKey(this.key);
         if (this.privateKey != null) builder.setPrivateKey(this.privateKey);

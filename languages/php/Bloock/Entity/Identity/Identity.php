@@ -25,6 +25,30 @@ class Identity
         return new Identity($res->getMnemonic(), $res->getKey(), $res->getPrivateKey());
     }
 
+    /**
+     * @return string
+     */
+    public function getMnemonic(): string
+    {
+        return $this->mnemonic;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrivateKey(): string
+    {
+        return $this->privateKey;
+    }
+
     public function toProto(): \Bloock\Identity
     {
         $p = new \Bloock\Identity();

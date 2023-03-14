@@ -1,0 +1,10 @@
+pub mod create_credential_request;
+pub mod create_credential_response;
+pub mod create_schema_request;
+pub mod create_schema_response;
+pub mod get_credential_revocation_response;
+pub mod get_offer_response;
+pub mod redeem_credential_request;
+pub mod redeem_credential_response;
+pub mod revoke_credential_request;
+pub mod revoke_credential_response;

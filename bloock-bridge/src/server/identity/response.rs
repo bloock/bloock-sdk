@@ -1,14 +1,15 @@
 use crate::{
     error::BridgeError,
     items::{
-        BuildSchemaRequest, BuildSchemaResponse, CreateCredentialOfferRequest,
-        CreateCredentialOfferResponse, CreateIdentityRequest, CreateIdentityResponse,
-        CredentialFromJsonRequest, CredentialFromJsonResponse, CredentialOfferFromJsonRequest,
+        BuildSchemaRequest, BuildSchemaResponse, CreateCredentialRequest, CreateCredentialResponse,
+        CreateIdentityRequest, CreateIdentityResponse, CredentialFromJsonRequest,
+        CredentialFromJsonResponse, CredentialOfferFromJsonRequest,
         CredentialOfferFromJsonResponse, CredentialOfferRedeemRequest,
         CredentialOfferRedeemResponse, CredentialOfferToJsonRequest, CredentialOfferToJsonResponse,
-        CredentialToJsonRequest, CredentialToJsonResponse, Error, GetSchemaRequest,
-        GetSchemaResponse, LoadIdentityRequest, LoadIdentityResponse, RevokeCredentialRequest,
-        RevokeCredentialResponse, VerifyCredentialRequest, VerifyCredentialResponse,
+        CredentialToJsonRequest, CredentialToJsonResponse, Error, GetOfferRequest,
+        GetOfferResponse, GetSchemaRequest, GetSchemaResponse, LoadIdentityRequest,
+        LoadIdentityResponse, RevokeCredentialRequest, RevokeCredentialResponse,
+        VerifyCredentialRequest, VerifyCredentialResponse, WaitOfferRequest, WaitOfferResponse,
     },
     server::response_types::ResponseTypeError,
 };
@@ -61,10 +62,34 @@ impl ResponseTypeError<GetSchemaRequest> for GetSchemaResponse {
     }
 }
 
-impl ResponseTypeError<CreateCredentialOfferRequest> for CreateCredentialOfferResponse {
+impl ResponseTypeError<CreateCredentialRequest> for CreateCredentialResponse {
     fn build_error(err: String) -> Self {
         Self {
-            credential_offer: None,
+            credential_receipt: None,
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<GetOfferRequest> for GetOfferResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            offer: None,
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<WaitOfferRequest> for WaitOfferResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            offer: None,
             error: Some(Error {
                 kind: BridgeError::KeysError.to_string(),
                 message: err,

@@ -22,11 +22,27 @@ class Schema
         return new Schema($res->getId(), $res->getJsonLd());
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
     public function toProto(): \Bloock\Schema
     {
         $p = new \Bloock\Schema();
         $p->setId($this->id);
         $p->setJsonLd($this->json);
         return $p;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJson(): string
+    {
+        return $this->json;
     }
 }

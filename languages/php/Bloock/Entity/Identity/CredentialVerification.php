@@ -25,6 +25,30 @@ class CredentialVerification
         return new CredentialVerification($res->getTimestamp(), $res->getIssuer(), $res->getRevocation());
     }
 
+    /**
+     * @return int
+     */
+    public function getTimestamp(): int
+    {
+        return $this->timestamp;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIssuer(): string
+    {
+        return $this->issuer;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRevocation(): int
+    {
+        return $this->revocation;
+    }
+
     public function toProto(): \Bloock\CredentialVerification
     {
         $p = new \Bloock\CredentialVerification();

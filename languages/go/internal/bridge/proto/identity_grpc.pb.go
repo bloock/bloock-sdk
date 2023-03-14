@@ -26,7 +26,9 @@ type IdentityServiceClient interface {
 	LoadIdentity(ctx context.Context, in *LoadIdentityRequest, opts ...grpc.CallOption) (*LoadIdentityResponse, error)
 	BuildSchema(ctx context.Context, in *BuildSchemaRequest, opts ...grpc.CallOption) (*BuildSchemaResponse, error)
 	GetSchema(ctx context.Context, in *GetSchemaRequest, opts ...grpc.CallOption) (*GetSchemaResponse, error)
-	CreateCredentialOffer(ctx context.Context, in *CreateCredentialOfferRequest, opts ...grpc.CallOption) (*CreateCredentialOfferResponse, error)
+	CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CreateCredentialResponse, error)
+	GetOffer(ctx context.Context, in *GetOfferRequest, opts ...grpc.CallOption) (*GetOfferResponse, error)
+	WaitOffer(ctx context.Context, in *WaitOfferRequest, opts ...grpc.CallOption) (*WaitOfferResponse, error)
 	CredentialOfferToJson(ctx context.Context, in *CredentialOfferToJsonRequest, opts ...grpc.CallOption) (*CredentialOfferToJsonResponse, error)
 	CredentialOfferFromJson(ctx context.Context, in *CredentialOfferFromJsonRequest, opts ...grpc.CallOption) (*CredentialOfferFromJsonResponse, error)
 	CredentialOfferRedeem(ctx context.Context, in *CredentialOfferRedeemRequest, opts ...grpc.CallOption) (*CredentialOfferRedeemResponse, error)
@@ -80,9 +82,27 @@ func (c *identityServiceClient) GetSchema(ctx context.Context, in *GetSchemaRequ
 	return out, nil
 }
 
-func (c *identityServiceClient) CreateCredentialOffer(ctx context.Context, in *CreateCredentialOfferRequest, opts ...grpc.CallOption) (*CreateCredentialOfferResponse, error) {
-	out := new(CreateCredentialOfferResponse)
-	err := c.cc.Invoke(ctx, "/bloock.IdentityService/CreateCredentialOffer", in, out, opts...)
+func (c *identityServiceClient) CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CreateCredentialResponse, error) {
+	out := new(CreateCredentialResponse)
+	err := c.cc.Invoke(ctx, "/bloock.IdentityService/CreateCredential", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityServiceClient) GetOffer(ctx context.Context, in *GetOfferRequest, opts ...grpc.CallOption) (*GetOfferResponse, error) {
+	out := new(GetOfferResponse)
+	err := c.cc.Invoke(ctx, "/bloock.IdentityService/GetOffer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityServiceClient) WaitOffer(ctx context.Context, in *WaitOfferRequest, opts ...grpc.CallOption) (*WaitOfferResponse, error) {
+	out := new(WaitOfferResponse)
+	err := c.cc.Invoke(ctx, "/bloock.IdentityService/WaitOffer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +180,9 @@ type IdentityServiceServer interface {
 	LoadIdentity(context.Context, *LoadIdentityRequest) (*LoadIdentityResponse, error)
 	BuildSchema(context.Context, *BuildSchemaRequest) (*BuildSchemaResponse, error)
 	GetSchema(context.Context, *GetSchemaRequest) (*GetSchemaResponse, error)
-	CreateCredentialOffer(context.Context, *CreateCredentialOfferRequest) (*CreateCredentialOfferResponse, error)
+	CreateCredential(context.Context, *CreateCredentialRequest) (*CreateCredentialResponse, error)
+	GetOffer(context.Context, *GetOfferRequest) (*GetOfferResponse, error)
+	WaitOffer(context.Context, *WaitOfferRequest) (*WaitOfferResponse, error)
 	CredentialOfferToJson(context.Context, *CredentialOfferToJsonRequest) (*CredentialOfferToJsonResponse, error)
 	CredentialOfferFromJson(context.Context, *CredentialOfferFromJsonRequest) (*CredentialOfferFromJsonResponse, error)
 	CredentialOfferRedeem(context.Context, *CredentialOfferRedeemRequest) (*CredentialOfferRedeemResponse, error)
@@ -187,8 +209,14 @@ func (UnimplementedIdentityServiceServer) BuildSchema(context.Context, *BuildSch
 func (UnimplementedIdentityServiceServer) GetSchema(context.Context, *GetSchemaRequest) (*GetSchemaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSchema not implemented")
 }
-func (UnimplementedIdentityServiceServer) CreateCredentialOffer(context.Context, *CreateCredentialOfferRequest) (*CreateCredentialOfferResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateCredentialOffer not implemented")
+func (UnimplementedIdentityServiceServer) CreateCredential(context.Context, *CreateCredentialRequest) (*CreateCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCredential not implemented")
+}
+func (UnimplementedIdentityServiceServer) GetOffer(context.Context, *GetOfferRequest) (*GetOfferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOffer not implemented")
+}
+func (UnimplementedIdentityServiceServer) WaitOffer(context.Context, *WaitOfferRequest) (*WaitOfferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WaitOffer not implemented")
 }
 func (UnimplementedIdentityServiceServer) CredentialOfferToJson(context.Context, *CredentialOfferToJsonRequest) (*CredentialOfferToJsonResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CredentialOfferToJson not implemented")
@@ -296,20 +324,56 @@ func _IdentityService_GetSchema_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityService_CreateCredentialOffer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateCredentialOfferRequest)
+func _IdentityService_CreateCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCredentialRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityServiceServer).CreateCredentialOffer(ctx, in)
+		return srv.(IdentityServiceServer).CreateCredential(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bloock.IdentityService/CreateCredentialOffer",
+		FullMethod: "/bloock.IdentityService/CreateCredential",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceServer).CreateCredentialOffer(ctx, req.(*CreateCredentialOfferRequest))
+		return srv.(IdentityServiceServer).CreateCredential(ctx, req.(*CreateCredentialRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityService_GetOffer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOfferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceServer).GetOffer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.IdentityService/GetOffer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceServer).GetOffer(ctx, req.(*GetOfferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityService_WaitOffer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WaitOfferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceServer).WaitOffer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.IdentityService/WaitOffer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceServer).WaitOffer(ctx, req.(*WaitOfferRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -464,8 +528,16 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IdentityService_GetSchema_Handler,
 		},
 		{
-			MethodName: "CreateCredentialOffer",
-			Handler:    _IdentityService_CreateCredentialOffer_Handler,
+			MethodName: "CreateCredential",
+			Handler:    _IdentityService_CreateCredential_Handler,
+		},
+		{
+			MethodName: "GetOffer",
+			Handler:    _IdentityService_GetOffer_Handler,
+		},
+		{
+			MethodName: "WaitOffer",
+			Handler:    _IdentityService_WaitOffer_Handler,
 		},
 		{
 			MethodName: "CredentialOfferToJson",

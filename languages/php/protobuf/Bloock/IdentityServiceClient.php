@@ -73,16 +73,44 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\CreateCredentialOfferRequest $argument input argument
+     * @param \Bloock\CreateCredentialRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
      * @return mixed
      */
-    public function CreateCredentialOffer(\Bloock\CreateCredentialOfferRequest $argument,
+    public function CreateCredential(\Bloock\CreateCredentialRequest $argument,
       $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/CreateCredentialOffer',
+        return $this->_simpleRequest('/bloock.IdentityService/CreateCredential',
         $argument,
-        ['\Bloock\CreateCredentialOfferResponse', 'decode'],
+        ['\Bloock\CreateCredentialResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\GetOfferRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GetOffer(\Bloock\GetOfferRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityService/GetOffer',
+        $argument,
+        ['\Bloock\GetOfferResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\WaitOfferRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function WaitOffer(\Bloock\WaitOfferRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityService/WaitOffer',
+        $argument,
+        ['\Bloock\WaitOfferResponse', 'decode'],
         $metadata, $options);
     }
 

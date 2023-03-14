@@ -1,9 +1,19 @@
 package identity
 
-import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+import (
+	"context"
+	"errors"
+
+	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
+	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/v2/internal/config"
+)
 
 type CredentialOffer struct {
-	json string
+	Thid string
+	Body CredentialOfferBody
+	From string
+	To   string
 }
 
 func NewCredentialOfferFromProto(s *proto.CredentialOffer) CredentialOffer {
@@ -11,22 +21,54 @@ func NewCredentialOfferFromProto(s *proto.CredentialOffer) CredentialOffer {
 		return CredentialOffer{}
 	}
 	return CredentialOffer{
-		json: s.Json,
+		Thid: s.Thid,
+		Body: NewCredentialOfferBodyFromProto(s.Body),
+		From: s.XFrom,
+		To:   s.XTo,
 	}
 }
 
 func (c CredentialOffer) ToProto() *proto.CredentialOffer {
 	return &proto.CredentialOffer{
-		Json: c.json,
+		Thid:  c.Thid,
+		Body:  c.Body.ToProto(),
+		XFrom: c.From,
+		XTo:   c.To,
 	}
 }
 
-func NewCredentialOfferFromJson(json string) CredentialOffer {
-	return CredentialOffer{
-		json: json,
+func NewCredentialOfferFromJson(json string) (CredentialOffer, error) {
+	bridge := bridge.NewBloockBridge()
+	res, err := bridge.Identity().CredentialOfferFromJson(context.Background(), &proto.CredentialOfferFromJsonRequest{
+		ConfigData: config.NewConfigDataDefault(),
+		Json:       json,
+	})
+
+	if err != nil {
+		return CredentialOffer{}, err
 	}
+
+	if res.Error != nil {
+		return CredentialOffer{}, errors.New(res.Error.Message)
+	}
+
+	return NewCredentialOfferFromProto(res.GetCredentialOffer()), nil
 }
 
-func (c CredentialOffer) ToJson() string {
-	return c.json
+func (c CredentialOffer) ToJson() (string, error) {
+	bridge := bridge.NewBloockBridge()
+	res, err := bridge.Identity().CredentialOfferToJson(context.Background(), &proto.CredentialOfferToJsonRequest{
+		ConfigData:      config.NewConfigDataDefault(),
+		CredentialOffer: c.ToProto(),
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if res.Error != nil {
+		return "", errors.New(res.Error.Message)
+	}
+
+	return res.GetJson(), nil
 }

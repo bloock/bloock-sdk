@@ -27,7 +27,7 @@ dev: copy_lib proto
 	go run cmd/main.go
 
 test: copy_lib proto
-	go test -v ./... -count=1
+	go test -v ./...
 
 fmt:
 	go fmt ./...

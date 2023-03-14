@@ -16,8 +16,8 @@ import com.bloock.sdk.entity.key.RsaKeyPair;
 import com.bloock.sdk.entity.record.Record;
 
 public class EncryptionClient {
-    private Bridge bridge;
-    private ConfigData configData;
+    private final Bridge bridge;
+    private final ConfigData configData;
 
     public EncryptionClient() {
         this.bridge = new Bridge();

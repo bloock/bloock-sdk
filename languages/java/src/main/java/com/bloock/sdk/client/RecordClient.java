@@ -7,7 +7,7 @@ import com.bloock.sdk.entity.availability.Loader;
 import com.bloock.sdk.entity.record.Record;
 
 public class RecordClient {
-    private ConfigData configData;
+    private final ConfigData configData;
 
     public RecordClient() {
         this.configData = Config.newConfigDataDefault();

@@ -3,9 +3,9 @@ package com.bloock.sdk.entity.identity;
 import com.bloock.sdk.bridge.proto.IdentityEntities;
 
 public class Identity {
-    private String mnemonic;
-    private String key;
-    private String privateKey;
+    private final String mnemonic;
+    private final String key;
+    private final String privateKey;
 
     public Identity(String mnemonic, String key, String privateKey) {
         this.mnemonic = mnemonic;
@@ -23,5 +23,17 @@ public class Identity {
                 .setKey(this.key)
                 .setPrivateKey(this.privateKey)
                 .build();
+    }
+
+    public String getMnemonic() {
+        return mnemonic;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
     }
 }

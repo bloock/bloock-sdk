@@ -1,9 +1,17 @@
 package identity
 
-import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+import (
+	"context"
+	"errors"
+
+	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
+	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+	"github.com/bloock/bloock-sdk-go/v2/internal/config"
+)
 
 type Credential struct {
-	json string
+	ThreadID string
+	Body     CredentialBody
 }
 
 func NewCredentialFromProto(s *proto.Credential) Credential {
@@ -11,22 +19,50 @@ func NewCredentialFromProto(s *proto.Credential) Credential {
 		return Credential{}
 	}
 	return Credential{
-		json: s.Json,
+		ThreadID: s.ThreadId,
+		Body:     NewCredentialBodyFromProto(s.Body),
 	}
 }
 
 func (c Credential) ToProto() *proto.Credential {
 	return &proto.Credential{
-		Json: c.json,
+		ThreadId: c.ThreadID,
+		Body:     c.Body.ToProto(),
 	}
 }
 
-func NewCredentialFromJson(json string) Credential {
-	return Credential{
-		json: json,
+func NewCredentialFromJson(json string) (Credential, error) {
+	bridge := bridge.NewBloockBridge()
+	res, err := bridge.Identity().CredentialFromJson(context.Background(), &proto.CredentialFromJsonRequest{
+		ConfigData: config.NewConfigDataDefault(),
+		Json:       json,
+	})
+
+	if err != nil {
+		return Credential{}, err
 	}
+
+	if res.Error != nil {
+		return Credential{}, errors.New(res.Error.Message)
+	}
+
+	return NewCredentialFromProto(res.GetCredential()), nil
 }
 
-func (c Credential) ToJson() string {
-	return c.json
+func (c Credential) ToJson() (string, error) {
+	bridge := bridge.NewBloockBridge()
+	res, err := bridge.Identity().CredentialToJson(context.Background(), &proto.CredentialToJsonRequest{
+		ConfigData: config.NewConfigDataDefault(),
+		Credential: c.ToProto(),
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if res.Error != nil {
+		return "", errors.New(res.Error.Message)
+	}
+
+	return res.GetJson(), nil
 }

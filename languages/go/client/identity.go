@@ -83,8 +83,42 @@ func (c *IdentityClient) GetSchema(id string) (identity.Schema, error) {
 	return identity.NewSchemaFromProto(res.GetSchema()), nil
 }
 
-func (c *IdentityClient) BuildOffer(schemaId string, holderKey string) identity.CredentialOfferBuilder {
-	return identity.NewCredentialOfferBuilder(schemaId, holderKey, c.configData)
+func (c *IdentityClient) BuildCredential(schemaId string, holderKey string) identity.CredentialBuilder {
+	return identity.NewCredentialBuilder(schemaId, holderKey, c.configData)
+}
+
+func (c *IdentityClient) GetOffer(id string) (identity.CredentialOffer, error) {
+	res, err := c.bridgeClient.Identity().GetOffer(context.Background(), &proto.GetOfferRequest{
+		ConfigData: c.configData,
+		Id:         id,
+	})
+
+	if err != nil {
+		return identity.CredentialOffer{}, err
+	}
+
+	if res.Error != nil {
+		return identity.CredentialOffer{}, errors.New(res.Error.Message)
+	}
+
+	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
+}
+
+func (c *IdentityClient) WaitOffer(offerID string) (identity.CredentialOffer, error) {
+	res, err := c.bridgeClient.Identity().WaitOffer(context.Background(), &proto.WaitOfferRequest{
+		ConfigData: c.configData,
+		OfferId:    offerID,
+	})
+
+	if err != nil {
+		return identity.CredentialOffer{}, err
+	}
+
+	if res.Error != nil {
+		return identity.CredentialOffer{}, errors.New(res.Error.Message)
+	}
+
+	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
 }
 
 func (c *IdentityClient) RedeemOffer(credentialOffer identity.CredentialOffer, holderPrivateKey string) (identity.Credential, error) {
@@ -122,19 +156,19 @@ func (c *IdentityClient) VerifyCredential(credential identity.Credential) (ident
 	return identity.NewCredentialVerificationFromProto(res.GetResult()), nil
 }
 
-func (c *IdentityClient) RevokeCredential(credential identity.Credential) (int64, error) {
+func (c *IdentityClient) RevokeCredential(credential identity.Credential) (bool, error) {
 	res, err := c.bridgeClient.Identity().RevokeCredential(context.Background(), &proto.RevokeCredentialRequest{
 		ConfigData: c.configData,
 		Credential: credential.ToProto(),
 	})
 
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
 	if res.Error != nil {
-		return 0, errors.New(res.Error.Message)
+		return false, errors.New(res.Error.Message)
 	}
 
-	return res.Result.GetTimestamp(), nil
+	return res.Result.GetSuccess(), nil
 }

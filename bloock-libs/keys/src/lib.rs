@@ -70,6 +70,8 @@ impl KeyType {
 
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
 pub enum KeysError {
+    #[error("Failed to generate EC key: {0}")]
+    GenerateECKeyError(String),
     #[error("Failed to generate rsa key: {0}")]
     GenerateRsaKeyError(String),
     #[error("Invalid key type provided")]

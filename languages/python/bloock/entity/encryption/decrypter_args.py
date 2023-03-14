@@ -1,4 +1,3 @@
-import bloock._bridge.proto.encryption_entities_pb2 as proto
 from bloock.entity.key.local_key import LocalKey
 from bloock.entity.key.managed_key import ManagedKey
 
@@ -14,4 +13,3 @@ class DecrypterArgs:
             self.managed_key = key
         else:
             raise Exception("Invalid key provided. Must be of type LocalKey or ManagedKey")
-

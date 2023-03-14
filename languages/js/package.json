@@ -1,6 +1,6 @@
 {
   "name": "@bloock/sdk",
-  "version": "2.4.1-beta.4",
+  "version": "2.4.1-beta.5",
   "description": "",
   "keywords": [],
   "author": "Bloock",
@@ -19,7 +19,7 @@
     "fs": false
   },
   "scripts": {
-    "start": "tsdx watch",
+    "start": "node dist/index.cjs.development.js",
     "build": "tsdx build --format cjs,esm --name index",
     "test": "jest ./test --testTimeout=60000",
     "lint": "tsdx lint src test",

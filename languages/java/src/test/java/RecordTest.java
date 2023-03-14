@@ -11,7 +11,6 @@ import com.bloock.sdk.entity.integrity.ProofAnchor;
 import com.bloock.sdk.entity.key.EcdsaKeyPair;
 import com.bloock.sdk.entity.key.KeyType;
 import com.bloock.sdk.entity.key.LocalKey;
-import com.bloock.sdk.entity.key.RsaKeyPair;
 import com.bloock.sdk.entity.record.Record;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

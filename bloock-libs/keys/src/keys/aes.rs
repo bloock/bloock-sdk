@@ -18,6 +18,7 @@ impl From<AesKey> for LocalKey<String> {
             key_type,
             key: value.key,
             private_key: None,
+            mnemonic: None,
         }
     }
 }

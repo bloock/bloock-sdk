@@ -8,16 +8,18 @@ use Bloock\ConfigData;
 use Bloock\CreateIdentityRequest;
 use Bloock\CredentialOfferRedeemRequest;
 use Bloock\Entity\Identity\Credential;
+use Bloock\Entity\Identity\CredentialBuilder;
 use Bloock\Entity\Identity\CredentialOffer;
-use Bloock\Entity\Identity\CredentialOfferBuilder;
 use Bloock\Entity\Identity\CredentialVerification;
 use Bloock\Entity\Identity\Identity;
 use Bloock\Entity\Identity\Schema;
 use Bloock\Entity\Identity\SchemaBuilder;
+use Bloock\GetOfferRequest;
 use Bloock\GetSchemaRequest;
 use Bloock\LoadIdentityRequest;
 use Bloock\RevokeCredentialRequest;
 use Bloock\VerifyCredentialRequest;
+use Bloock\WaitOfferRequest;
 use Exception;
 
 class IdentityClient
@@ -82,9 +84,37 @@ class IdentityClient
         return Schema::fromProto($res->getSchema());
     }
 
-    public function buildOffer(string $schemaId, string $holderKey): CredentialOfferBuilder
+    public function buildCredential(string $schemaId, string $holderKey): CredentialBuilder
     {
-        return new CredentialOfferBuilder($schemaId, $holderKey, $this->config);
+        return new CredentialBuilder($schemaId, $holderKey, $this->config);
+    }
+
+    public function getOffer(string $id): CredentialOffer
+    {
+        $req = new GetOfferRequest();
+        $req->setConfigData($this->config)->setId($id);
+
+        $res = $this->bridge->identity->GetOffer($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return CredentialOffer::fromProto($res->getOffer());
+    }
+
+    public function waitOffer(string $offerId): CredentialOffer
+    {
+        $req = new WaitOfferRequest();
+        $req->setConfigData($this->config)->setOfferId($offerId);
+
+        $res = $this->bridge->identity->WaitOffer($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return CredentialOffer::fromProto($res->getOffer());
     }
 
     public function redeemOffer(CredentialOffer $offer, string $holderPrivateKey): Credential
@@ -115,7 +145,7 @@ class IdentityClient
         return CredentialVerification::fromProto($res->getResult());
     }
 
-    public function revokeCredential(Credential $credential): int
+    public function revokeCredential(Credential $credential): bool
     {
         $req = new RevokeCredentialRequest();
         $req->setConfigData($this->config)->setCredential($credential->toProto());
@@ -126,6 +156,6 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return $res->getResult()->getTimestamp();
+        return $res->getResult()->getSuccess();
     }
 }

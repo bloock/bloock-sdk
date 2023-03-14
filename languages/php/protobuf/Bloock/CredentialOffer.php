@@ -14,9 +14,21 @@ use Google\Protobuf\Internal\GPBUtil;
 class CredentialOffer extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>string json = 1;</code>
+     * Generated from protobuf field <code>string thid = 1;</code>
      */
-    protected $json = '';
+    protected $thid = '';
+    /**
+     * Generated from protobuf field <code>.bloock.CredentialOfferBody body = 2;</code>
+     */
+    protected $body = null;
+    /**
+     * Generated from protobuf field <code>string _from = 3;</code>
+     */
+    protected $_from = '';
+    /**
+     * Generated from protobuf field <code>string _to = 4;</code>
+     */
+    protected $_to = '';
 
     /**
      * Constructor.
@@ -24,7 +36,10 @@ class CredentialOffer extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type string $json
+     *     @type string $thid
+     *     @type \Bloock\CredentialOfferBody $body
+     *     @type string $_from
+     *     @type string $_to
      * }
      */
     public function __construct($data = NULL) {
@@ -33,23 +48,99 @@ class CredentialOffer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string json = 1;</code>
+     * Generated from protobuf field <code>string thid = 1;</code>
      * @return string
      */
-    public function getJson()
+    public function getThid()
     {
-        return $this->json;
+        return $this->thid;
     }
 
     /**
-     * Generated from protobuf field <code>string json = 1;</code>
+     * Generated from protobuf field <code>string thid = 1;</code>
      * @param string $var
      * @return $this
      */
-    public function setJson($var)
+    public function setThid($var)
     {
         GPBUtil::checkString($var, True);
-        $this->json = $var;
+        $this->thid = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.CredentialOfferBody body = 2;</code>
+     * @return \Bloock\CredentialOfferBody|null
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    public function hasBody()
+    {
+        return isset($this->body);
+    }
+
+    public function clearBody()
+    {
+        unset($this->body);
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.CredentialOfferBody body = 2;</code>
+     * @param \Bloock\CredentialOfferBody $var
+     * @return $this
+     */
+    public function setBody($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\CredentialOfferBody::class);
+        $this->body = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string _from = 3;</code>
+     * @return string
+     */
+    public function getFrom()
+    {
+        return $this->_from;
+    }
+
+    /**
+     * Generated from protobuf field <code>string _from = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setFrom($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->_from = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string _to = 4;</code>
+     * @return string
+     */
+    public function getTo()
+    {
+        return $this->_to;
+    }
+
+    /**
+     * Generated from protobuf field <code>string _to = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setTo($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->_to = $var;
 
         return $this;
     }

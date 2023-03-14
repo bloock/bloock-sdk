@@ -11,6 +11,7 @@ import google.protobuf.message
 import identity_entities_pb2
 import shared_pb2
 import sys
+import typing
 
 if sys.version_info >= (3, 8):
     import typing as typing_extensions
@@ -199,7 +200,7 @@ class GetSchemaResponse(google.protobuf.message.Message):
 
 global___GetSchemaResponse = GetSchemaResponse
 
-class CreateCredentialOfferRequest(google.protobuf.message.Message):
+class CreateCredentialRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
@@ -239,28 +240,114 @@ class CreateCredentialOfferRequest(google.protobuf.message.Message):
     def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "holder_key", b"holder_key", "multichoice_attributes", b"multichoice_attributes", "number_attributes", b"number_attributes", "schema_id", b"schema_id"]) -> None: ...
 
-global___CreateCredentialOfferRequest = CreateCredentialOfferRequest
+global___CreateCredentialRequest = CreateCredentialRequest
 
-class CreateCredentialOfferResponse(google.protobuf.message.Message):
+class CreateCredentialResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    CREDENTIAL_OFFER_FIELD_NUMBER: builtins.int
+    CREDENTIAL_RECEIPT_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     @property
-    def credential_offer(self) -> identity_entities_pb2.CredentialOffer: ...
+    def credential_receipt(self) -> identity_entities_pb2.CredentialReceipt: ...
     @property
     def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
-        credential_offer: identity_entities_pb2.CredentialOffer | None = ...,
+        credential_receipt: identity_entities_pb2.CredentialReceipt | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_offer", b"credential_offer", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_offer", b"credential_offer", "error", b"error"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_receipt", b"credential_receipt", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_receipt", b"credential_receipt", "error", b"error"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
-global___CreateCredentialOfferResponse = CreateCredentialOfferResponse
+global___CreateCredentialResponse = CreateCredentialResponse
+
+class GetOfferRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    id: builtins.str
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        id: builtins.str = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "id", b"id"]) -> None: ...
+
+global___GetOfferRequest = GetOfferRequest
+
+class GetOfferResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    OFFER_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def offer(self) -> identity_entities_pb2.CredentialOffer: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        offer: identity_entities_pb2.CredentialOffer | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "offer", b"offer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "offer", b"offer"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___GetOfferResponse = GetOfferResponse
+
+class WaitOfferRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    OFFER_ID_FIELD_NUMBER: builtins.int
+    TIMEOUT_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    offer_id: builtins.str
+    timeout: builtins.int
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        offer_id: builtins.str = ...,
+        timeout: builtins.int = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "offer_id", b"offer_id", "timeout", b"timeout"]) -> None: ...
+
+global___WaitOfferRequest = WaitOfferRequest
+
+class WaitOfferResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    OFFER_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def offer(self) -> identity_entities_pb2.CredentialOffer: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        offer: identity_entities_pb2.CredentialOffer | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "_offer", b"_offer", "error", b"error", "offer", b"offer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "_offer", b"_offer", "error", b"error", "offer", b"offer"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_offer", b"_offer"]) -> typing_extensions.Literal["offer"] | None: ...
+
+global___WaitOfferResponse = WaitOfferResponse
 
 class CredentialOfferToJsonRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor

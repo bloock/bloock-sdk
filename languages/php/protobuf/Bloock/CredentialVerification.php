@@ -14,7 +14,7 @@ use Google\Protobuf\Internal\GPBUtil;
 class CredentialVerification extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
+     * Generated from protobuf field <code>uint64 timestamp = 1;</code>
      */
     protected $timestamp = 0;
     /**
@@ -22,7 +22,7 @@ class CredentialVerification extends \Google\Protobuf\Internal\Message
      */
     protected $issuer = '';
     /**
-     * Generated from protobuf field <code>int64 revocation = 3;</code>
+     * Generated from protobuf field <code>uint64 revocation = 3;</code>
      */
     protected $revocation = 0;
 
@@ -43,7 +43,7 @@ class CredentialVerification extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
+     * Generated from protobuf field <code>uint64 timestamp = 1;</code>
      * @return int|string
      */
     public function getTimestamp()
@@ -52,13 +52,13 @@ class CredentialVerification extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 timestamp = 1;</code>
+     * Generated from protobuf field <code>uint64 timestamp = 1;</code>
      * @param int|string $var
      * @return $this
      */
     public function setTimestamp($var)
     {
-        GPBUtil::checkInt64($var);
+        GPBUtil::checkUint64($var);
         $this->timestamp = $var;
 
         return $this;
@@ -87,7 +87,7 @@ class CredentialVerification extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 revocation = 3;</code>
+     * Generated from protobuf field <code>uint64 revocation = 3;</code>
      * @return int|string
      */
     public function getRevocation()
@@ -96,13 +96,13 @@ class CredentialVerification extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 revocation = 3;</code>
+     * Generated from protobuf field <code>uint64 revocation = 3;</code>
      * @param int|string $var
      * @return $this
      */
     public function setRevocation($var)
     {
-        GPBUtil::checkInt64($var);
+        GPBUtil::checkUint64($var);
         $this->revocation = $var;
 
         return $this;

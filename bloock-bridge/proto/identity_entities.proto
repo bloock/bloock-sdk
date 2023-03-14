@@ -5,6 +5,9 @@ package bloock;
 option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "com.bloock.sdk.bridge.proto";
 
+import "authenticity_entities.proto";
+import "integrity_entities.proto";
+
 message Identity {
     string mnemonic = 1;
     string key = 2;
@@ -73,19 +76,66 @@ message Schema {
 }
 
 message CredentialOffer {
-    string json = 1;
+    string thid = 1;
+    CredentialOfferBody body = 2;
+    string _from = 3;
+    string _to = 4;
+}
+
+message CredentialOfferBody {
+    string url = 1;
+    repeated CredentialOfferBodyCredentials credentials = 2;
+}
+
+message CredentialOfferBodyCredentials {
+    string id = 1;
+    string description = 2;
+}
+
+message CredentialReceipt {
+    string id = 1;
+    int64 anchor_id = 2;
 }
 
 message Credential {
-    string json = 1;
+    string thread_id = 1;
+    CredentialBody body = 2;
+}
+
+message CredentialBody {
+    repeated string context = 1;
+    string id = 2;
+    repeated string type = 3;
+    string issuance_date = 4;
+    string credential_subject = 5;
+    CredentialStatus credential_status = 6;
+    string issuer = 7;
+    CredentialSchema credential_schema = 8;
+    CredentialProof proof = 9;
+}
+
+message CredentialStatus {
+    string id = 1;
+    int64 revocation_nonce = 2;
+    string type = 3;
+}
+
+message CredentialSchema {
+    string id = 1;
+    string type = 2;
+}
+
+message CredentialProof {
+    Proof bloock_proof = 1;
+    Signature signature_proof = 2;
 }
 
 message CredentialVerification {
-    int64 timestamp = 1;
+    uint64 timestamp = 1;
     string issuer = 2;
-    int64 revocation = 3;
+    uint64 revocation = 3;
 }
 
 message CredentialRevocation {
-    int64 timestamp = 1;
+    bool success = 1;
 }
