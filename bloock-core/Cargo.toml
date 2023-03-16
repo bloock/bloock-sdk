@@ -1,6 +1,6 @@
 [package]
 name = "bloock-core"
-version = "2.4.1-beta.5"
+version = "2.4.1-beta.6"
 edition = "2021"
 
 [lib]
