@@ -16,7 +16,7 @@ from . import shared_pb2 as shared__pb2
 from . import config_pb2 as config__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nkeys.proto\x12\x06\x62loock\x1a\x13keys_entities.proto\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\"e\n\x17GenerateLocalKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12!\n\x08key_type\x18\x02 \x01(\x0e\x32\x0f.bloock.KeyType\"l\n\x18GenerateLocalKeyResponse\x12#\n\tlocal_key\x18\x01 \x01(\x0b\x32\x10.bloock.LocalKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"n\n\x19GenerateManagedKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12(\n\x06params\x18\x02 \x01(\x0b\x32\x18.bloock.ManagedKeyParams\"r\n\x1aGenerateManagedKeyResponse\x12\'\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xc0\x01\n\nKeyService\x12U\n\x10GenerateLocalKey\x12\x1f.bloock.GenerateLocalKeyRequest\x1a .bloock.GenerateLocalKeyResponse\x12[\n\x12GenerateManagedKey\x12!.bloock.GenerateManagedKeyRequest\x1a\".bloock.GenerateManagedKeyResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nkeys.proto\x12\x06\x62loock\x1a\x13keys_entities.proto\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\"e\n\x17GenerateLocalKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12!\n\x08key_type\x18\x02 \x01(\x0e\x32\x0f.bloock.KeyType\"l\n\x18GenerateLocalKeyResponse\x12#\n\tlocal_key\x18\x01 \x01(\x0b\x32\x10.bloock.LocalKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"n\n\x19GenerateManagedKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12(\n\x06params\x18\x02 \x01(\x0b\x32\x18.bloock.ManagedKeyParams\"r\n\x1aGenerateManagedKeyResponse\x12\'\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x98\x01\n\x13LoadLocalKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12!\n\x08key_type\x18\x02 \x01(\x0e\x32\x0f.bloock.KeyType\x12\x0b\n\x03key\x18\x03 \x01(\t\x12\x18\n\x0bprivate_key\x18\x04 \x01(\tH\x00\x88\x01\x01\x42\x0e\n\x0c_private_key\"h\n\x14LoadLocalKeyResponse\x12#\n\tlocal_key\x18\x01 \x01(\x0b\x32\x10.bloock.LocalKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"L\n\x15LoadManagedKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\n\n\x02id\x18\x02 \x01(\t\"n\n\x16LoadManagedKeyResponse\x12\'\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xdc\x02\n\nKeyService\x12U\n\x10GenerateLocalKey\x12\x1f.bloock.GenerateLocalKeyRequest\x1a .bloock.GenerateLocalKeyResponse\x12[\n\x12GenerateManagedKey\x12!.bloock.GenerateManagedKeyRequest\x1a\".bloock.GenerateManagedKeyResponse\x12I\n\x0cLoadLocalKey\x12\x1b.bloock.LoadLocalKeyRequest\x1a\x1c.bloock.LoadLocalKeyResponse\x12O\n\x0eLoadManagedKey\x12\x1d.bloock.LoadManagedKeyRequest\x1a\x1e.bloock.LoadManagedKeyResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'keys_pb2', globals())
@@ -32,6 +32,14 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _GENERATEMANAGEDKEYREQUEST._serialized_end=394
   _GENERATEMANAGEDKEYRESPONSE._serialized_start=396
   _GENERATEMANAGEDKEYRESPONSE._serialized_end=510
-  _KEYSERVICE._serialized_start=513
-  _KEYSERVICE._serialized_end=705
+  _LOADLOCALKEYREQUEST._serialized_start=513
+  _LOADLOCALKEYREQUEST._serialized_end=665
+  _LOADLOCALKEYRESPONSE._serialized_start=667
+  _LOADLOCALKEYRESPONSE._serialized_end=771
+  _LOADMANAGEDKEYREQUEST._serialized_start=773
+  _LOADMANAGEDKEYREQUEST._serialized_end=849
+  _LOADMANAGEDKEYRESPONSE._serialized_start=851
+  _LOADMANAGEDKEYRESPONSE._serialized_end=961
+  _KEYSERVICE._serialized_start=964
+  _KEYSERVICE._serialized_end=1312
 # @@protoc_insertion_point(module_scope)

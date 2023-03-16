@@ -16,6 +16,15 @@ describe("Key Tests", () => {
 
     expect(key.key).toBeDefined();
     expect(key.privateKey).toBeDefined();
+
+    let loadedKey = await keyClient.loadLocalKey(
+      KeyType.EcP256k,
+      key.key,
+      key.privateKey
+    );
+
+    expect(key.key).toEqual(loadedKey.key);
+    expect(key.privateKey).toEqual(loadedKey.privateKey);
   });
 
   test("generate local rsa", async () => {
@@ -26,6 +35,15 @@ describe("Key Tests", () => {
 
     expect(key.key).toBeDefined();
     expect(key.privateKey).toBeDefined();
+
+    let loadedKey = await keyClient.loadLocalKey(
+      KeyType.Rsa2048,
+      key.key,
+      key.privateKey
+    );
+
+    expect(key.key).toEqual(loadedKey.key);
+    expect(key.privateKey).toEqual(loadedKey.privateKey);
   });
 
   test("generate local aes", async () => {
@@ -36,6 +54,15 @@ describe("Key Tests", () => {
 
     expect(key.key).toBeDefined();
     expect(key.privateKey).toBeUndefined();
+
+    let loadedKey = await keyClient.loadLocalKey(
+      KeyType.Aes128,
+      key.key,
+      key.privateKey
+    );
+
+    expect(key.key).toEqual(loadedKey.key);
+    expect(key.privateKey).toEqual(loadedKey.privateKey);
   });
 
   test("generate managed ecdsa", async () => {
@@ -53,6 +80,14 @@ describe("Key Tests", () => {
     expect(key.key).toBeDefined();
     expect(key.keyType).toBe(keyType);
     expect(key.protection).toBe(keyProtection);
+
+    let loadedKey = await keyClient.loadManagedKey(key.id);
+
+    expect(key.id).toEqual(loadedKey.id);
+    expect(key.name).toEqual(loadedKey.name);
+    expect(key.key).toEqual(loadedKey.key);
+    expect(key.keyType).toEqual(loadedKey.keyType);
+    expect(key.protection).toEqual(loadedKey.protection);
   });
 
   test("generate managed rsa", async () => {
@@ -70,6 +105,14 @@ describe("Key Tests", () => {
     expect(key.key).toBeDefined();
     expect(key.keyType).toBe(keyType);
     expect(key.protection).toBe(keyProtection);
+
+    let loadedKey = await keyClient.loadManagedKey(key.id);
+
+    expect(key.id).toEqual(loadedKey.id);
+    expect(key.name).toEqual(loadedKey.name);
+    expect(key.key).toEqual(loadedKey.key);
+    expect(key.keyType).toEqual(loadedKey.keyType);
+    expect(key.protection).toEqual(loadedKey.protection);
   });
 
   test("generate managed without name", async () => {
@@ -86,5 +129,13 @@ describe("Key Tests", () => {
     expect(key.key).toBeDefined();
     expect(key.keyType).toBe(keyType);
     expect(key.protection).toBe(keyProtection);
+
+    let loadedKey = await keyClient.loadManagedKey(key.id);
+
+    expect(key.id).toEqual(loadedKey.id);
+    expect(key.name).toEqual(loadedKey.name);
+    expect(key.key).toEqual(loadedKey.key);
+    expect(key.keyType).toEqual(loadedKey.keyType);
+    expect(key.protection).toEqual(loadedKey.protection);
   });
 });

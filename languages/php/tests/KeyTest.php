@@ -22,6 +22,11 @@ final class KeyTest extends TestCase
 
         $this->assertNotNull($key->key);
         $this->assertNotNull($key->privateKey);
+
+        $loadedKey = $keyClient->loadLocalKey(KeyType::EcP256k, $key->key, $key->privateKey);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->privateKey, $loadedKey->privateKey);
+
     }
 
     public function testGenerateLocalRsa()
@@ -31,6 +36,10 @@ final class KeyTest extends TestCase
 
         $this->assertNotNull($key->key);
         $this->assertNotNull($key->privateKey);
+
+        $loadedKey = $keyClient->loadLocalKey(KeyType::Rsa2048, $key->key, $key->privateKey);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }
 
     public function testGenerateLocalAes()
@@ -40,6 +49,10 @@ final class KeyTest extends TestCase
 
         $this->assertNotNull($key->key);
         $this->assertEquals($key->privateKey, "");
+
+        $loadedKey = $keyClient->loadLocalKey(KeyType::Aes256, $key->key, $key->privateKey);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }
 
     public function testGenerateManagedEcdsa()
@@ -57,6 +70,13 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->key);
         $this->assertEquals($key->keyType, $keyType);
         $this->assertEquals($key->protection, $keyProtection);
+
+        $loadedKey = $keyClient->loadManagedKey($key->id);
+        $this->assertEquals($key->id, $loadedKey->id);
+        $this->assertEquals($key->name, $loadedKey->name);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->keyType, $loadedKey->keyType);
+        $this->assertEquals($key->protection, $loadedKey->protection);
     }
 
     public function testGenerateManagedRsa()
@@ -74,6 +94,13 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->key);
         $this->assertEquals($key->keyType, $keyType);
         $this->assertEquals($key->protection, $keyProtection);
+
+        $loadedKey = $keyClient->loadManagedKey($key->id);
+        $this->assertEquals($key->id, $loadedKey->id);
+        $this->assertEquals($key->name, $loadedKey->name);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->keyType, $loadedKey->keyType);
+        $this->assertEquals($key->protection, $loadedKey->protection);
     }
 
     public function testGenerateManagedWithoutName()
@@ -90,5 +117,12 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->key);
         $this->assertEquals($key->keyType, $keyType);
         $this->assertEquals($key->protection, $keyProtection);
+
+        $loadedKey = $keyClient->loadManagedKey($key->id);
+        $this->assertEquals($key->id, $loadedKey->id);
+        $this->assertEquals($key->name, $loadedKey->name);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->keyType, $loadedKey->keyType);
+        $this->assertEquals($key->protection, $loadedKey->protection);
     }
 }

@@ -9,6 +9,8 @@ use crate::items::GetHashResponse;
 use crate::items::GetOfferResponse;
 use crate::items::GetProofResponse;
 use crate::items::GetSignaturesResponse;
+use crate::items::LoadLocalKeyResponse;
+use crate::items::LoadManagedKeyResponse;
 use crate::items::PublishResponse;
 use crate::items::RecordBuilderResponse;
 use crate::items::RetrieveResponse;
@@ -61,6 +63,8 @@ pub enum ResponseType {
     RetrieveResponse(RetrieveResponse),
     GenerateLocalKeyResponse(GenerateLocalKeyResponse),
     GenerateManagedKeyResponse(GenerateManagedKeyResponse),
+    LoadLocalKeyResponse(LoadLocalKeyResponse),
+    LoadManagedKeyResponse(LoadManagedKeyResponse),
     CreateIdentityResponse(CreateIdentityResponse),
     LoadIdentityResponse(LoadIdentityResponse),
     BuildSchemaResponse(BuildSchemaResponse),
@@ -105,6 +109,8 @@ impl ResponseType {
             ResponseType::RetrieveResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateLocalKeyResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateManagedKeyResponse(r) => r.encode(&mut result_vec),
+            ResponseType::LoadLocalKeyResponse(r) => r.encode(&mut result_vec),
+            ResponseType::LoadManagedKeyResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateIdentityResponse(r) => r.encode(&mut result_vec),
             ResponseType::LoadIdentityResponse(r) => r.encode(&mut result_vec),
@@ -149,6 +155,8 @@ impl ResponseType {
             ResponseType::RetrieveResponse(r) => r.encoded_len(),
             ResponseType::GenerateLocalKeyResponse(r) => r.encoded_len(),
             ResponseType::GenerateManagedKeyResponse(r) => r.encoded_len(),
+            ResponseType::LoadLocalKeyResponse(r) => r.encoded_len(),
+            ResponseType::LoadManagedKeyResponse(r) => r.encoded_len(),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encoded_len(),
             ResponseType::CreateIdentityResponse(r) => r.encoded_len(),
             ResponseType::LoadIdentityResponse(r) => r.encoded_len(),
