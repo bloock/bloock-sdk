@@ -41,4 +41,23 @@ impl<H: Client> KeyService<H> {
         .await
         .map_err(|e| KeyError::GenerateManagedKeyError(e.to_string()).into())
     }
+
+    pub fn load_local_key(
+        &self,
+        key_type: KeyType,
+        key: String,
+        private_key: Option<String>,
+    ) -> BloockResult<LocalKey<String>> {
+        Ok(LocalKey::load(key_type, key, private_key))
+    }
+
+    pub async fn load_managed_key(&self, id: String) -> BloockResult<ManagedKey> {
+        ManagedKey::load(
+            id,
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+        )
+        .await
+        .map_err(|e| KeyError::LoadManagedKeyError(e.to_string()).into())
+    }
 }

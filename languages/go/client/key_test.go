@@ -17,6 +17,12 @@ func TestKey(t *testing.T) {
 
 		assert.NotEmpty(t, localKey.Key)
 		assert.NotEmpty(t, localKey.PrivateKey)
+
+		loadedKey, err := keyClient.LoadLocalKey(key.EcP256k, localKey.Key, &localKey.PrivateKey)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedKey.Key, localKey.Key)
+		assert.Equal(t, loadedKey.PrivateKey, localKey.PrivateKey)
 	})
 
 	t.Run("generate local rsa", func(t *testing.T) {
@@ -26,6 +32,12 @@ func TestKey(t *testing.T) {
 
 		assert.NotEmpty(t, localKey.Key)
 		assert.NotEmpty(t, localKey.PrivateKey)
+
+		loadedKey, err := keyClient.LoadLocalKey(key.Rsa2048, localKey.Key, &localKey.PrivateKey)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedKey.Key, localKey.Key)
+		assert.Equal(t, loadedKey.PrivateKey, localKey.PrivateKey)
 	})
 
 	t.Run("generate local aes", func(t *testing.T) {
@@ -35,6 +47,12 @@ func TestKey(t *testing.T) {
 
 		assert.NotEmpty(t, localKey.Key)
 		assert.Empty(t, localKey.PrivateKey)
+
+		loadedKey, err := keyClient.LoadLocalKey(key.Aes128, localKey.Key, &localKey.PrivateKey)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedKey.Key, localKey.Key)
+		assert.Equal(t, loadedKey.PrivateKey, localKey.PrivateKey)
 	})
 
 	t.Run("generate managed ecdsa", func(t *testing.T) {
@@ -55,6 +73,15 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, managedKey.Key)
 		assert.Equal(t, protection, managedKey.Protection)
 		assert.Equal(t, keyType, managedKey.KeyType)
+
+		loadedKey, err := keyClient.LoadManagedKey(managedKey.ID)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedKey.ID, managedKey.ID)
+		assert.Equal(t, loadedKey.Name, managedKey.Name)
+		assert.Equal(t, loadedKey.Key, managedKey.Key)
+		assert.Equal(t, loadedKey.Protection, managedKey.Protection)
+		assert.Equal(t, loadedKey.KeyType, managedKey.KeyType)
 	})
 
 	t.Run("generate managed rsa", func(t *testing.T) {
@@ -75,6 +102,15 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, managedKey.Key)
 		assert.Equal(t, protection, managedKey.Protection)
 		assert.Equal(t, keyType, managedKey.KeyType)
+
+		loadedKey, err := keyClient.LoadManagedKey(managedKey.ID)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedKey.ID, managedKey.ID)
+		assert.Equal(t, loadedKey.Name, managedKey.Name)
+		assert.Equal(t, loadedKey.Key, managedKey.Key)
+		assert.Equal(t, loadedKey.Protection, managedKey.Protection)
+		assert.Equal(t, loadedKey.KeyType, managedKey.KeyType)
 	})
 
 	t.Run("generate managed without name", func(t *testing.T) {
@@ -93,5 +129,14 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, managedKey.Key)
 		assert.Equal(t, protection, managedKey.Protection)
 		assert.Equal(t, keyType, managedKey.KeyType)
+
+		loadedKey, err := keyClient.LoadManagedKey(managedKey.ID)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedKey.ID, managedKey.ID)
+		assert.Equal(t, loadedKey.Name, managedKey.Name)
+		assert.Equal(t, loadedKey.Key, managedKey.Key)
+		assert.Equal(t, loadedKey.Protection, managedKey.Protection)
+		assert.Equal(t, loadedKey.KeyType, managedKey.KeyType)
 	})
 }

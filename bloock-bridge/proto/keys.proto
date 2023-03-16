@@ -13,6 +13,8 @@ import "config.proto";
 service KeyService {
     rpc GenerateLocalKey(GenerateLocalKeyRequest) returns (GenerateLocalKeyResponse);
     rpc GenerateManagedKey(GenerateManagedKeyRequest) returns (GenerateManagedKeyResponse);
+    rpc LoadLocalKey(LoadLocalKeyRequest) returns (LoadLocalKeyResponse);
+    rpc LoadManagedKey(LoadManagedKeyRequest) returns (LoadManagedKeyResponse);
 }
 
 message GenerateLocalKeyRequest {
@@ -31,6 +33,28 @@ message GenerateManagedKeyRequest {
 }
 
 message GenerateManagedKeyResponse {
+    ManagedKey managed_key = 1;
+    optional Error error = 2;
+}
+
+message LoadLocalKeyRequest {
+    ConfigData config_data = 1;
+    KeyType key_type = 2;
+    string key = 3;
+    optional string private_key = 4;
+}
+
+message LoadLocalKeyResponse {
+    LocalKey local_key = 1;
+    optional Error error = 2;
+}
+
+message LoadManagedKeyRequest {
+    ConfigData config_data = 1;
+    string id = 2;
+}
+
+message LoadManagedKeyResponse {
     ManagedKey managed_key = 1;
     optional Error error = 2;
 }

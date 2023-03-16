@@ -24,6 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type KeyServiceClient interface {
 	GenerateLocalKey(ctx context.Context, in *GenerateLocalKeyRequest, opts ...grpc.CallOption) (*GenerateLocalKeyResponse, error)
 	GenerateManagedKey(ctx context.Context, in *GenerateManagedKeyRequest, opts ...grpc.CallOption) (*GenerateManagedKeyResponse, error)
+	LoadLocalKey(ctx context.Context, in *LoadLocalKeyRequest, opts ...grpc.CallOption) (*LoadLocalKeyResponse, error)
+	LoadManagedKey(ctx context.Context, in *LoadManagedKeyRequest, opts ...grpc.CallOption) (*LoadManagedKeyResponse, error)
 }
 
 type keyServiceClient struct {
@@ -52,12 +54,32 @@ func (c *keyServiceClient) GenerateManagedKey(ctx context.Context, in *GenerateM
 	return out, nil
 }
 
+func (c *keyServiceClient) LoadLocalKey(ctx context.Context, in *LoadLocalKeyRequest, opts ...grpc.CallOption) (*LoadLocalKeyResponse, error) {
+	out := new(LoadLocalKeyResponse)
+	err := c.cc.Invoke(ctx, "/bloock.KeyService/LoadLocalKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keyServiceClient) LoadManagedKey(ctx context.Context, in *LoadManagedKeyRequest, opts ...grpc.CallOption) (*LoadManagedKeyResponse, error) {
+	out := new(LoadManagedKeyResponse)
+	err := c.cc.Invoke(ctx, "/bloock.KeyService/LoadManagedKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KeyServiceServer is the server API for KeyService service.
 // All implementations must embed UnimplementedKeyServiceServer
 // for forward compatibility
 type KeyServiceServer interface {
 	GenerateLocalKey(context.Context, *GenerateLocalKeyRequest) (*GenerateLocalKeyResponse, error)
 	GenerateManagedKey(context.Context, *GenerateManagedKeyRequest) (*GenerateManagedKeyResponse, error)
+	LoadLocalKey(context.Context, *LoadLocalKeyRequest) (*LoadLocalKeyResponse, error)
+	LoadManagedKey(context.Context, *LoadManagedKeyRequest) (*LoadManagedKeyResponse, error)
 	mustEmbedUnimplementedKeyServiceServer()
 }
 
@@ -70,6 +92,12 @@ func (UnimplementedKeyServiceServer) GenerateLocalKey(context.Context, *Generate
 }
 func (UnimplementedKeyServiceServer) GenerateManagedKey(context.Context, *GenerateManagedKeyRequest) (*GenerateManagedKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateManagedKey not implemented")
+}
+func (UnimplementedKeyServiceServer) LoadLocalKey(context.Context, *LoadLocalKeyRequest) (*LoadLocalKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadLocalKey not implemented")
+}
+func (UnimplementedKeyServiceServer) LoadManagedKey(context.Context, *LoadManagedKeyRequest) (*LoadManagedKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadManagedKey not implemented")
 }
 func (UnimplementedKeyServiceServer) mustEmbedUnimplementedKeyServiceServer() {}
 
@@ -120,6 +148,42 @@ func _KeyService_GenerateManagedKey_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KeyService_LoadLocalKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadLocalKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).LoadLocalKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.KeyService/LoadLocalKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).LoadLocalKey(ctx, req.(*LoadLocalKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KeyService_LoadManagedKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadManagedKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).LoadManagedKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.KeyService/LoadManagedKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).LoadManagedKey(ctx, req.(*LoadManagedKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // KeyService_ServiceDesc is the grpc.ServiceDesc for KeyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +198,14 @@ var KeyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateManagedKey",
 			Handler:    _KeyService_GenerateManagedKey_Handler,
+		},
+		{
+			MethodName: "LoadLocalKey",
+			Handler:    _KeyService_LoadLocalKey_Handler,
+		},
+		{
+			MethodName: "LoadManagedKey",
+			Handler:    _KeyService_LoadManagedKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

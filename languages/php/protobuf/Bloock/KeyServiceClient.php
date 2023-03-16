@@ -44,4 +44,32 @@ class KeyServiceClient extends \Bloock\Bridge\Connection {
         $metadata, $options);
     }
 
+    /**
+     * @param \Bloock\LoadLocalKeyRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function LoadLocalKey(\Bloock\LoadLocalKeyRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.KeyService/LoadLocalKey',
+        $argument,
+        ['\Bloock\LoadLocalKeyResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\LoadManagedKeyRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function LoadManagedKey(\Bloock\LoadManagedKeyRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.KeyService/LoadManagedKey',
+        $argument,
+        ['\Bloock\LoadManagedKeyResponse', 'decode'],
+        $metadata, $options);
+    }
+
 }

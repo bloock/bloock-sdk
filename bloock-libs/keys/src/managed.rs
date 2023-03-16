@@ -44,7 +44,7 @@ pub struct ManagedKey {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
-pub struct ManagedKeyRequest {
+pub struct CreateManagedKeyRequest {
     pub name: Option<String>,
     pub key_type: String,
     pub key_curve: Option<String>,
@@ -73,7 +73,7 @@ impl ManagedKey {
     ) -> Result<ManagedKey> {
         let client = bloock_http::BloockHttpClient::new(api_key);
 
-        let req = ManagedKeyRequest {
+        let req = CreateManagedKeyRequest {
             name: params.name.clone(),
             key_type: params.key_type.get_key_type(),
             key_curve: params.key_type.get_key_curve(),
@@ -83,6 +83,24 @@ impl ManagedKey {
         };
         let res: ManagedKeyResponse = client
             .post_json(format!("{}/keys/v1/keys", api_host), req, None)
+            .await
+            .map_err(|e| KeysError::ManagedKeyRequestError(e.to_string()))?;
+
+        Ok(ManagedKey {
+            id: res.key_id,
+            name: Some(res.name),
+            key_type: KeyType::new(&res.key_type, Some(&res.key_curve), Some(res.key_size))?,
+            public_key: res.pub_key,
+            protection: res.key_protection.into(),
+            expiration: Some(res.expiration),
+        })
+    }
+
+    pub async fn load(id: String, api_host: String, api_key: String) -> Result<ManagedKey> {
+        let client = bloock_http::BloockHttpClient::new(api_key);
+
+        let res: ManagedKeyResponse = client
+            .get_json(format!("{}/keys/v1/keys/{}", api_host, id), None)
             .await
             .map_err(|e| KeysError::ManagedKeyRequestError(e.to_string()))?;
 

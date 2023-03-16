@@ -17,6 +17,10 @@ pub enum KeyError {
     GenerateLocalKeyError(String),
     #[error("Error generating managed key: {0}")]
     GenerateManagedKeyError(String),
+    #[error("Error loading local key: {0}")]
+    LoadLocalKeyError(String),
+    #[error("Error loading managed key: {0}")]
+    LoadManagedKeyError(String),
 }
 
 impl From<KeyError> for BloockError {

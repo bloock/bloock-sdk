@@ -318,6 +318,24 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::KeyServiceLoadLocalKey => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .load_local_key(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceLoadManagedKey => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .load_managed_key(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::IdentityServiceCreateIdentity => {
                 let req = self.serialize_request(payload)?;
                 Ok(self

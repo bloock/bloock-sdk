@@ -20,6 +20,10 @@ class KeyTest {
 
         assertNotNull(localKey.getKey());
         assertNotNull(localKey.getPrivateKey());
+
+        LocalKey loadedKey = keyClient.loadLocalKey(KeyType.EcP256k, localKey.getKey(), localKey.getPrivateKey());
+        assertEquals(localKey.getKey(), loadedKey.getKey());
+        assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
     }
 
     @Test
@@ -29,6 +33,10 @@ class KeyTest {
 
         assertNotNull(localKey.getKey());
         assertNotNull(localKey.getPrivateKey());
+
+        LocalKey loadedKey = keyClient.loadLocalKey(KeyType.Rsa2048, localKey.getKey(), localKey.getPrivateKey());
+        assertEquals(localKey.getKey(), loadedKey.getKey());
+        assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
     }
 
     @Test
@@ -38,6 +46,10 @@ class KeyTest {
 
         assertNotNull(localKey.getKey());
         assertEquals(localKey.getPrivateKey(), "");
+
+        LocalKey loadedKey = keyClient.loadLocalKey(KeyType.Aes256, localKey.getKey(), localKey.getPrivateKey());
+        assertEquals(localKey.getKey(), loadedKey.getKey());
+        assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
     }
 
     @Test
@@ -54,6 +66,13 @@ class KeyTest {
         assertNotNull(managedKey.getKey());
         assertEquals(managedKey.getKeyType(), keyType);
         assertEquals(managedKey.getProtection(), keyProtectionLevel);
+
+        ManagedKey loadedKey = keyClient.loadManagedKey(managedKey.getId());
+        assertEquals(managedKey.getId(), loadedKey.getId());
+        assertEquals(managedKey.getName(), loadedKey.getName());
+        assertEquals(managedKey.getKey(), loadedKey.getKey());
+        assertEquals(managedKey.getKeyType(), loadedKey.getKeyType());
+        assertEquals(managedKey.getProtection(), loadedKey.getProtection());
     }
 
     @Test
@@ -70,6 +89,13 @@ class KeyTest {
         assertNotNull(managedKey.getKey());
         assertEquals(managedKey.getKeyType(), keyType);
         assertEquals(managedKey.getProtection(), keyProtectionLevel);
+
+        ManagedKey loadedKey = keyClient.loadManagedKey(managedKey.getId());
+        assertEquals(managedKey.getId(), loadedKey.getId());
+        assertEquals(managedKey.getName(), loadedKey.getName());
+        assertEquals(managedKey.getKey(), loadedKey.getKey());
+        assertEquals(managedKey.getKeyType(), loadedKey.getKeyType());
+        assertEquals(managedKey.getProtection(), loadedKey.getProtection());
     }
 
     @Test
@@ -85,6 +111,13 @@ class KeyTest {
         assertNotNull(managedKey.getKey());
         assertEquals(managedKey.getKeyType(), keyType);
         assertEquals(managedKey.getProtection(), keyProtectionLevel);
+
+        ManagedKey loadedKey = keyClient.loadManagedKey(managedKey.getId());
+        assertEquals(managedKey.getId(), loadedKey.getId());
+        assertEquals(managedKey.getName(), loadedKey.getName());
+        assertEquals(managedKey.getKey(), loadedKey.getKey());
+        assertEquals(managedKey.getKeyType(), loadedKey.getKeyType());
+        assertEquals(managedKey.getProtection(), loadedKey.getProtection());
     }
 
 }
