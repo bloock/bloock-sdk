@@ -11,20 +11,20 @@ var DisableAnalytics bool = false
 var NetworkConfig map[int32]*proto.NetworkConfig = make(map[int32]*proto.NetworkConfig)
 
 func SetProvider(network integrity.Network, provider string) {
-	if val, ok := NetworkConfig[int32(network)]; ok {
-		val.HttpProvider = provider
+	if _, ok := NetworkConfig[int32(network)]; ok {
+		NetworkConfig[int32(network.Number())].HttpProvider = provider
 	} else {
-		NetworkConfig[int32(network)] = &proto.NetworkConfig{
+		NetworkConfig[int32(network.Number())] = &proto.NetworkConfig{
 			HttpProvider: provider,
 		}
 	}
 }
 
 func SetContractAddess(network integrity.Network, contractAddess string) {
-	if val, ok := NetworkConfig[int32(network)]; ok {
-		val.ContractAddress = contractAddess
+	if _, ok := NetworkConfig[int32(network)]; ok {
+		NetworkConfig[int32(network.Number())].ContractAddress = contractAddess
 	} else {
-		NetworkConfig[int32(network)] = &proto.NetworkConfig{
+		NetworkConfig[int32(network.Number())] = &proto.NetworkConfig{
 			ContractAddress: contractAddess,
 		}
 	}
