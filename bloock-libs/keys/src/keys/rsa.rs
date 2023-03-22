@@ -19,7 +19,7 @@ impl From<RsaKey> for LocalKey<String> {
             _ => KeyType::Rsa2048,
         };
         Self {
-            key_type: key_type,
+            key_type,
             key: value.public_key,
             private_key: Some(value.private_key),
             mnemonic: None,

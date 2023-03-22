@@ -1,30 +1,73 @@
 import { BloockBridge } from "../../bridge/bridge";
 import {
-  CredentialFromJsonRequest,
-  CredentialToJsonRequest
+  CredentialToJsonRequest,
+  CredentialFromJsonRequest
 } from "../../bridge/proto/identity";
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
 import { NewConfigData } from "../../config/config";
-import { CredentialBody } from "./credential_body";
+import { CredentialProof } from "./credential_proof";
+import { CredentialSchema } from "./credential_schema";
+import { CredentialStatus } from "./credential_status";
 
 export class Credential {
-  threadId: string;
-  body: CredentialBody;
+  context: string[];
+  id: string;
+  type: string[];
+  issuanceDate: string;
+  credentialSubject: any;
+  credentialStatus: CredentialStatus;
+  issuer: string;
+  credentialSchema: CredentialSchema;
+  proof: CredentialProof;
 
-  constructor(threadId: string, body: CredentialBody) {
-    this.threadId = threadId;
-    this.body = body;
+  constructor(
+    context: string[],
+    id: string,
+    type: string[],
+    issuanceDate: string,
+    credentialSubject: any,
+    credentialStatus: CredentialStatus,
+    issuer: string,
+    credentialSchema: CredentialSchema,
+    proof: CredentialProof
+  ) {
+    this.context = context;
+    this.id = id;
+    this.type = type;
+    this.issuanceDate = issuanceDate;
+    this.credentialStatus = credentialStatus;
+    this.credentialSubject = credentialSubject;
+    this.issuer = issuer;
+    this.credentialSchema = credentialSchema;
+    this.proof = proof;
   }
 
   public toProto(): identityEntitiesProto.Credential {
     return identityEntitiesProto.Credential.fromPartial({
-      threadId: this.threadId,
-      body: this.body.toProto()
+      context: this.context,
+      id: this.id,
+      type: this.type,
+      issuanceDate: this.issuanceDate,
+      credentialStatus: this.credentialStatus.toProto(),
+      credentialSubject: this.credentialSubject,
+      issuer: this.issuer,
+      credentialSchema: this.credentialSchema.toProto(),
+      proof: this.proof.toProto()
     });
   }
 
   static fromProto(r: identityEntitiesProto.Credential): Credential {
-    return new Credential(r.threadId, CredentialBody.fromProto(r.body!));
+    return new Credential(
+      r.context,
+      r.id,
+      r.type,
+      r.issuanceDate,
+      r.credentialSubject,
+      CredentialStatus.fromProto(r.credentialStatus!),
+      r.issuer,
+      CredentialSchema.fromProto(r.credentialSchema!),
+      CredentialProof.fromProto(r.proof!)
+    );
   }
 
   public toJson(): Promise<string> {

@@ -7,9 +7,9 @@ pub enum ProtectionLevel {
     SOFTWARE,
     HSM,
 }
-impl Into<u8> for ProtectionLevel {
-    fn into(self) -> u8 {
-        match self {
+impl From<ProtectionLevel> for u8 {
+    fn from(val: ProtectionLevel) -> Self {
+        match val {
             ProtectionLevel::SOFTWARE => 1,
             ProtectionLevel::HSM => 2,
         }
@@ -130,7 +130,7 @@ mod tests {
         let params = ManagedKeyParams {
             name: Some(name.clone()),
             key_type: key_type.clone(),
-            protection: protection,
+            protection,
             expiration: None,
         };
         let key = ManagedKey::new(
@@ -156,7 +156,7 @@ mod tests {
         let params = ManagedKeyParams {
             name: Some(name.clone()),
             key_type: key_type.clone(),
-            protection: protection,
+            protection,
             expiration: None,
         };
         let key = ManagedKey::new(

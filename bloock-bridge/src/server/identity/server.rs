@@ -15,9 +15,9 @@ use crate::{
     server::response_types::RequestConfigData,
 };
 use async_trait::async_trait;
-use bloock_core::identity;
 use bloock_core::identity::entity::credential::Credential as CoreCredential;
 use bloock_core::identity::entity::credential_offer::CredentialOffer as CoreCredentialOffer;
+use bloock_core::identity::{self, entity::schema::Attribute};
 
 pub struct IdentityServer {}
 
@@ -67,37 +67,37 @@ impl IdentityServiceHandler for IdentityServer {
 
         let client = identity::configure(config_data.clone());
 
-        let boolean_attr = req
-            .boolean_attributes
-            .iter()
-            .map(|a| a.id.clone())
-            .collect::<Vec<String>>();
+        let boolean_attr = req.boolean_attributes.iter().map(|a| Attribute {
+            name: a.id.clone(),
+            r#type: "integer".to_string(),
+            values: None,
+        });
 
-        let date_attr = req
-            .date_attributes
-            .iter()
-            .map(|a| a.id.clone())
-            .collect::<Vec<String>>();
+        let date_attr = req.date_attributes.iter().map(|a| Attribute {
+            name: a.id.clone(),
+            r#type: "integer".to_string(),
+            values: None,
+        });
 
-        let datetime_attr = req
-            .datetime_attributes
-            .iter()
-            .map(|a| a.id.clone())
-            .collect::<Vec<String>>();
+        let datetime_attr = req.datetime_attributes.iter().map(|a| Attribute {
+            name: a.id.clone(),
+            r#type: "integer".to_string(),
+            values: None,
+        });
 
-        let multichoice_attr = req
-            .multichoice_attributes
-            .iter()
-            .map(|a| a.id.clone())
-            .collect::<Vec<String>>();
+        let multichoice_attr = req.multichoice_attributes.iter().map(|a| Attribute {
+            name: a.id.clone(),
+            r#type: "multichoice".to_string(),
+            values: Some(a.allowed_values.clone()),
+        });
 
-        let number_attr = req
-            .number_attributes
-            .iter()
-            .map(|a| a.id.clone())
-            .collect::<Vec<String>>();
+        let number_attr = req.number_attributes.iter().map(|a| Attribute {
+            name: a.id.clone(),
+            r#type: "integer".to_string(),
+            values: None,
+        });
 
-        let attributes: Vec<String> = boolean_attr
+        let attributes: Vec<Attribute> = boolean_attr
             .into_iter()
             .chain(date_attr.into_iter())
             .chain(datetime_attr.into_iter())
@@ -150,32 +150,21 @@ impl IdentityServiceHandler for IdentityServer {
         let boolean_attr = req
             .boolean_attributes
             .iter()
-            .map(|a| (a.id.clone(), a.value as i64))
-            .collect::<Vec<(String, i64)>>();
+            .map(|a| (a.id.clone(), a.value as i64));
 
-        let date_attr = req
-            .date_attributes
-            .iter()
-            .map(|a| (a.id.clone(), a.value))
-            .collect::<Vec<(String, i64)>>();
+        let date_attr = req.date_attributes.iter().map(|a| (a.id.clone(), a.value));
 
         let datetime_attr = req
             .datetime_attributes
             .iter()
-            .map(|a| (a.id.clone(), a.value))
-            .collect::<Vec<(String, i64)>>();
+            .map(|a| (a.id.clone(), a.value));
 
-        let multichoice_attr = req
-            .multichoice_attributes
-            .iter()
-            .map(|a| (a.id.clone(), 0))
-            .collect::<Vec<(String, i64)>>();
+        let multichoice_attr = req.multichoice_attributes.iter().map(|a| (a.id.clone(), 0));
 
         let number_attr = req
             .number_attributes
             .iter()
-            .map(|a| (a.id.clone(), a.value))
-            .collect::<Vec<(String, i64)>>();
+            .map(|a| (a.id.clone(), a.value));
 
         let attributes: Vec<(String, i64)> = boolean_attr
             .into_iter()
@@ -251,7 +240,7 @@ impl IdentityServiceHandler for IdentityServer {
         req: &CredentialOfferFromJsonRequest,
     ) -> Result<CredentialOfferFromJsonResponse, String> {
         let offer: CoreCredentialOffer = serde_json::from_str(&req.json)
-            .map_err(|e| format!("couldn't deserialize credential offer: {}", e.to_string()))?;
+            .map_err(|e| format!("couldn't deserialize credential offer: {}", e))?;
 
         Ok(CredentialOfferFromJsonResponse {
             credential_offer: Some(offer.into()),
@@ -311,7 +300,7 @@ impl IdentityServiceHandler for IdentityServer {
         req: &CredentialFromJsonRequest,
     ) -> Result<CredentialFromJsonResponse, String> {
         let credential: CoreCredential = serde_json::from_str(&req.json)
-            .map_err(|e| format!("couldn't deserialize credential: {}", e.to_string()))?;
+            .map_err(|e| format!("couldn't deserialize credential: {}", e))?;
 
         Ok(CredentialFromJsonResponse {
             credential: Some(credential.into()),

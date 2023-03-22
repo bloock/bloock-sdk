@@ -8,9 +8,10 @@ use async_std::task;
 use bloock_http::Client;
 use bloock_identity::did::Did;
 use bloock_keys::local::{LocalKey, LocalKeyParams};
-use bloock_signer::create_verifier_from_signature;
 use bloock_signer::entity::signature::Signature;
-use serde_json::{Map, Number, Value};
+use bloock_signer::local::ecdsa::LocalEcdsaSigner;
+use bloock_signer::{create_verifier_from_signature, Signer};
+use serde_json::{json, Map, Number, Value};
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -26,6 +27,7 @@ use super::entity::dto::redeem_credential_response::RedeemCredentialResponse;
 use super::entity::dto::revoke_credential_request::RevokeCredentialRequest;
 use super::entity::dto::revoke_credential_response::RevokeCredentialResponse;
 use super::entity::revocation_result::RevocationResult;
+use super::entity::schema::Attribute;
 use super::{
     entity::{
         dto::{
@@ -80,10 +82,18 @@ impl<H: Client> IdentityService<H> {
         &self,
         display_name: String,
         technical_name: String,
-        attributes: Vec<String>,
+        attributes: Vec<Attribute>,
     ) -> BloockResult<Schema> {
+        let mut attr = Map::new();
+        for a in attributes {
+            let r#type = a.r#type;
+            let values = a.values;
+            attr.insert(a.name, json!({ "type": r#type, "values": values }));
+        }
+
         let req = CreateSchemaRequest {
-            attributes,
+            attributes: serde_json::to_value(attr)
+                .map_err(|e| IdentityError::CreateSchemaError(e.to_string()))?,
             schema_name: display_name,
             schema_type: technical_name,
         };
@@ -229,11 +239,22 @@ impl<H: Client> IdentityService<H> {
         &self,
         id: String,
         thread_id: String,
-        _holder_private_key: String,
+        holder_private_key: String,
     ) -> BloockResult<Credential> {
+        let key = LocalKey::load(
+            bloock_keys::KeyType::EcP256k,
+            "".to_string(),
+            Some(holder_private_key),
+        );
+        let signer = LocalEcdsaSigner::new(key, None);
+        let signature = signer
+            .sign(id.as_bytes())
+            .await
+            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
+
         let req = RedeemCredentialRequest {
             thread_id,
-            signature: "signature".to_string(),
+            signature: signature.signature,
         };
 
         let res: RedeemCredentialResponse = self
@@ -275,16 +296,31 @@ impl<H: Client> IdentityService<H> {
         &self,
         credential: Credential,
     ) -> BloockResult<CredentialVerification> {
-        let timestamp = self
-            .verify_credential_integrity(credential.body.proof.1.clone())
-            .await?;
+        let mut credential_payload = credential.clone();
+        credential_payload.proof = None;
+
+        let bloock_proof = credential
+            .proof
+            .clone()
+            .ok_or(IdentityError::InvalidProofError())?
+            .1;
+        let timestamp = self.verify_credential_integrity(bloock_proof).await?;
+
+        let signature_proof = credential
+            .proof
+            .clone()
+            .ok_or(IdentityError::InvalidSignatureError())?
+            .0;
+        let payload_value = serde_json::to_value(&credential_payload).unwrap();
+        let payload = serde_json::to_vec(&payload_value).unwrap();
 
         let signature_valid = self
-            .verify_credential_signature(credential.body.proof.0.clone())
+            .verify_credential_signature(&payload, signature_proof)
             .await?;
-        // if !signature_valid {
-        //     return Err(IdentityError::InvalidSignatureError().into());
-        // }
+
+        if !signature_valid {
+            return Err(IdentityError::InvalidSignatureError().into());
+        }
 
         let revocation = self
             .get_credential_revocation_status(credential.clone())
@@ -292,7 +328,7 @@ impl<H: Client> IdentityService<H> {
 
         Ok(CredentialVerification {
             timestamp,
-            issuer: credential.body.issuer,
+            issuer: credential.issuer,
             revocation,
         })
     }
@@ -312,7 +348,11 @@ impl<H: Client> IdentityService<H> {
         Ok(timestamp)
     }
 
-    pub async fn verify_credential_signature(&self, signature: Signature) -> BloockResult<bool> {
+    pub async fn verify_credential_signature(
+        &self,
+        payload: &[u8],
+        signature: Signature,
+    ) -> BloockResult<bool> {
         let verifier = create_verifier_from_signature(
             &signature,
             self.config_service.get_api_base_url(),
@@ -321,7 +361,7 @@ impl<H: Client> IdentityService<H> {
         .map_err(|_| IdentityError::InvalidSignatureError())?;
 
         let valid = verifier
-            .verify(&[], signature)
+            .verify(payload, signature)
             .await
             .map_err(|_| IdentityError::InvalidSignatureError())?;
 
@@ -334,7 +374,7 @@ impl<H: Client> IdentityService<H> {
     ) -> BloockResult<u128> {
         let res: GetCredentialRevocationResponse = self
             .http
-            .get_json(credential.body.credential_status.id, None)
+            .get_json(credential.credential_status.id, None)
             .await
             .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
 
@@ -353,8 +393,8 @@ impl<H: Client> IdentityService<H> {
                 format!(
                     "{}/identity/v1/{}/claims/revoke/{}",
                     self.config_service.get_api_base_url(),
-                    credential.body.issuer,
-                    credential.body.credential_status.revocation_nonce
+                    credential.issuer,
+                    credential.credential_status.revocation_nonce
                 ),
                 req,
                 None,
@@ -372,6 +412,8 @@ impl<H: Client> IdentityService<H> {
 mod tests {
     use bloock_http::MockClient;
     use std::sync::Arc;
+
+    use crate::{config::config_data::ConfigData, identity::entity::credential::Credential};
 
     #[tokio::test]
     async fn test_create_identity() {
@@ -403,5 +445,27 @@ mod tests {
             "74b4c109fd4043c4e10e6aca50a1e91146407ccc4dff7c99419e16bf3ab89934".to_string()
         );
         assert_eq!(identity.mnemonic, mnemonic);
+    }
+
+    #[tokio::test]
+    async fn test_verify_credential() {
+        let credential_json = "{\"id\":\"https://api.bloock.com/identity/v1/claims/0f08f63c-0e31-4bb6-8fc3-28893bdeb7aa\",\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/iden3credential-v2.json-ld\"],\"type\":[\"VerifiableCredential\",\"TestSchema\"],\"issuanceDate\":\"2023-03-22T12:32:33.239583166Z\",\"credentialSubject\":{\"BoolAttr\":0,\"id\":\"did:polygonid:polygon:mumbai:2qHCSnJzmiB9mP5L86h51d6i3FhEgcYg9AmUcUg8jg\",\"type\":\"TestSchema\"},\"credentialStatus\":{\"id\":\"https://api.bloock.com/identity/v1/did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ/claims/revocation/status/1500049182\",\"revocationNonce\":1500049182,\"type\":\"BloockRevocationProof\"},\"issuer\":\"did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ\",\"credentialSchema\":{\"id\":\"https://api.bloock.com/hosting/v1/ipfs/Qmcj962wRkypdbAopKLvcedSkBf33ctJaGJ8PkXiUTMm79\",\"type\":\"JsonSchemaValidator2018\"},\"proof\":[{\"header\":{\"alg\":\"ES256K_M\",\"kid\":\"230303a5-8aef-4e92-bc7c-e06f5c488784\"},\"message_hash\":\"7de2019ac52a160191f748bed783b3582d66cb025b963330c63397aa17503d97\",\"protected\":\"e30\",\"signature\":\"ISAqQwDBMaSSkmAYbifS-uC0UzfAtnA7fzz51G4KQov6JJZwMHOKKZoRblOzvcF2D_W_Bf8ukCZJOBXBMc0_5g==\",\"type\":\"BloockSignatureProof\"},{\"anchor\":{\"anchor_id\":296849,\"networks\":[{\"name\":\"bloock_chain\",\"state\":\"Confirmed\",\"tx_hash\":\"0x5ce3e8e3b4b8735f295dbd8a2e6d98077474177c6f0578f1096dabc60617d6bb\"}],\"root\":\"aa39de63e0fc71aaaa9253086116b24b8a964cd9ba2ab58e33ef2554c0c095c2\",\"status\":\"Success\"},\"bitmap\":\"ffefc0\",\"depth\":\"000100020004000600080009000b000c000d000e001100110010000f000a000700050003\",\"leaves\":[\"b8654cc90adb6ad348287a4017e335c2785be2ef93f16f940b86605fc36d5c97\"],\"nodes\":[\"f566fe90b22641e6c4c89b5a39ea3bd4400303bf7ffa12016325b81cc0984825\",\"408f4da6b4e5b09c26a58f066beb6d81588bc3afddc4b39288e6e80cfe58b45a\",\"79be2e105bfe45b3b91f6749fd66dd920a25dfb0c089a27b98705a012c08e6e6\",\"e270112ede50dfca26404a9a7812df5a777322dedb7421c80abb3061c60a1b35\",\"22eba74324f088f18425cc9e93c2b3a21bced8d5a6cfade4b874abba361ff920\",\"b72dfb3f491e53c4816e83fd607fdaf7c79f64fe563d3f55b16af8241fbe22a6\",\"1688d687f3507abcbf9ebfd286bc2eba0e69f6af585cf2461650d74713c0d670\",\"efc548462843bbb9ddef0965a0c646eeb71c78fd662babb2635722d02a97985b\",\"287a57e146ff9d469ae5b39f11343b3c9e55fdbdc7f4edd9f4ca8fba4bd268c7\",\"94644790f7cd155d3b58c60c3f021f30666e5cfeb683ab12d27fec78aa418397\",\"515ecaf2713b13b8ba615674b4a94694d30d33ce133addd8331af5e56032f4bd\",\"717127712b837d4747d78db3dc55c1e9ded34ff6c124db409c11a72f6c1b2d7d\",\"f6b8d2fdb44c2b0a0e12b5ec232a4097c3bc45db51d89af26e0432b84fe07aca\",\"a00deee4b96eacdd9ff30e4691d805221deb8284e6856c856611766cfa54721f\",\"7b1c1939a58bd75e0dda34d3de7fcaa2143f0b65ffc27645c6a513b819e70601\",\"fc749d3a915ce5429560c8bc4f73d47bcc9cadec8ef3e9779c0462447ae50475\",\"296a21e0117f26be026eb608be5b54f1e305ac241b248ef4e045ec9467f47047\"],\"type\":\"BloockIntegrityProof\"}]}";
+
+        let config = ConfigData::new(
+            option_env!("API_KEY").unwrap().to_string(),
+            "Javascript".to_string(),
+            true,
+        );
+        let service = crate::identity::configure(config);
+
+        let credential: Credential = serde_json::from_str(credential_json).unwrap();
+        let valid = service.verify_credential(credential).await.unwrap();
+
+        assert!(valid.timestamp > 0);
+        assert!(valid.revocation == 0);
+        assert_eq!(
+            valid.issuer,
+            "did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ".to_string()
+        );
     }
 }

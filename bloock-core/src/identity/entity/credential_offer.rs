@@ -58,11 +58,11 @@ mod tests {
     async fn test_serialization() {
         let json = "{\"thid\":\"aff91293-faec-4ffb-b0a0-c9be5e17fcaf\",\"body\":{\"url\":\"https//api.bloock.com/identity/v1/claims/792f62fb-7b26-4dd6-a440-f0e6f4ad402a/redeem\",\"credentials\":[{\"id\":\"792f62fb-7b26-4dd6-a440-f0e6f4ad402a\",\"description\":\"TestSchema\"}]},\"from\":\"did:iden3:eth:main:zxHh4f4NFe6a6D1NhUNEUrMw1nb36YNMHgiboNNz7\",\"to\":\"did:iden3:eth:main:zxJDvyiWDaLXiFEUBCKbPBQBxznbb2LgqwG9vXTp2\"}";
 
-        let value: Value = serde_json::from_str(&json).unwrap();
+        let value: Value = serde_json::from_str(json).unwrap();
 
         let offer: CredentialOffer = serde_json::from_value(value.clone()).unwrap();
 
-        let offer_json = serde_json::to_value(&offer).unwrap();
+        let offer_json = serde_json::to_value(offer).unwrap();
 
         assert_eq!(offer_json, value);
     }

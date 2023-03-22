@@ -10,8 +10,15 @@ import (
 )
 
 type Credential struct {
-	ThreadID string
-	Body     CredentialBody
+	Context           []string
+	Id                string
+	Type              []string
+	IssuanceDate      string
+	CredentialSubject interface{}
+	CredentialStatus  CredentialStatus
+	Issuer            string
+	CredentialSchema  CredentialSchema
+	Proof             CredentialProof
 }
 
 func NewCredentialFromProto(s *proto.Credential) Credential {
@@ -19,15 +26,29 @@ func NewCredentialFromProto(s *proto.Credential) Credential {
 		return Credential{}
 	}
 	return Credential{
-		ThreadID: s.ThreadId,
-		Body:     NewCredentialBodyFromProto(s.Body),
+		Context:           s.Context,
+		Id:                s.Id,
+		Type:              s.Type,
+		IssuanceDate:      s.IssuanceDate,
+		CredentialSubject: s.CredentialSubject,
+		CredentialStatus:  NewCredentialStatusFromProto(s.CredentialStatus),
+		Issuer:            s.Issuer,
+		CredentialSchema:  NewCredentialSchemaFromProto(s.CredentialSchema),
+		Proof:             NewCredentialProofFromProto(s.Proof),
 	}
 }
 
 func (c Credential) ToProto() *proto.Credential {
 	return &proto.Credential{
-		ThreadId: c.ThreadID,
-		Body:     c.Body.ToProto(),
+		Context:           c.Context,
+		Id:                c.Id,
+		Type:              c.Type,
+		IssuanceDate:      c.IssuanceDate,
+		CredentialSubject: c.CredentialSubject.(string),
+		CredentialStatus:  c.CredentialStatus.ToProto(),
+		Issuer:            c.Issuer,
+		CredentialSchema:  c.CredentialSchema.ToProto(),
+		Proof:             c.Proof.ToProto(),
 	}
 }
 
