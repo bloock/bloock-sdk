@@ -56,13 +56,11 @@ impl<S: ToString> LocalEcdsaSigner<S> {
 #[async_trait(?Send)]
 impl<S: ToString + AsRef<[u8]> + Clone> Signer for LocalEcdsaSigner<S> {
     async fn sign(&self, payload: &[u8]) -> crate::Result<Signature> {
-        let private_key =
-            self.local_key
-                .private_key
-                .clone()
-                .ok_or(SignerError::InvalidSecretKey(
-                    "no private key found".to_string(),
-                ))?;
+        let private_key = self
+            .local_key
+            .private_key
+            .clone()
+            .ok_or_else(|| SignerError::InvalidSecretKey("no private key found".to_string()))?;
         let secret_key_hex =
             hex::decode(private_key).map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let secret_key = SecretKey::parse_slice(&secret_key_hex)

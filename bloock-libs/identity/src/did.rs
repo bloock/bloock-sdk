@@ -53,8 +53,8 @@ impl Did {
         to_checksum.extend(genesis);
 
         let mut s: u16 = 0;
-        for i in 0..to_checksum.len() {
-            s = s + to_checksum[i] as u16;
+        for c in &to_checksum {
+            s += *c as u16;
         }
         s.to_le_bytes()
     }

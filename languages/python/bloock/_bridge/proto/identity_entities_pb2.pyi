@@ -324,25 +324,6 @@ global___CredentialReceipt = CredentialReceipt
 class Credential(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    THREAD_ID_FIELD_NUMBER: builtins.int
-    BODY_FIELD_NUMBER: builtins.int
-    thread_id: builtins.str
-    @property
-    def body(self) -> global___CredentialBody: ...
-    def __init__(
-        self,
-        *,
-        thread_id: builtins.str = ...,
-        body: global___CredentialBody | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["body", b"body"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["body", b"body", "thread_id", b"thread_id"]) -> None: ...
-
-global___Credential = Credential
-
-class CredentialBody(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
     CONTEXT_FIELD_NUMBER: builtins.int
     ID_FIELD_NUMBER: builtins.int
     TYPE_FIELD_NUMBER: builtins.int
@@ -382,7 +363,7 @@ class CredentialBody(google.protobuf.message.Message):
     def HasField(self, field_name: typing_extensions.Literal["credential_schema", b"credential_schema", "credential_status", b"credential_status", "proof", b"proof"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["context", b"context", "credential_schema", b"credential_schema", "credential_status", b"credential_status", "credential_subject", b"credential_subject", "id", b"id", "issuance_date", b"issuance_date", "issuer", b"issuer", "proof", b"proof", "type", b"type"]) -> None: ...
 
-global___CredentialBody = CredentialBody
+global___Credential = Credential
 
 class CredentialStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor

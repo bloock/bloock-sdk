@@ -98,11 +98,6 @@ message CredentialReceipt {
 }
 
 message Credential {
-    string thread_id = 1;
-    CredentialBody body = 2;
-}
-
-message CredentialBody {
     repeated string context = 1;
     string id = 2;
     repeated string type = 3;

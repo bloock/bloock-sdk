@@ -8,9 +8,10 @@ use async_std::task;
 use bloock_http::Client;
 use bloock_identity::did::Did;
 use bloock_keys::local::{LocalKey, LocalKeyParams};
-use bloock_signer::create_verifier_from_signature;
 use bloock_signer::entity::signature::Signature;
-use serde_json::{Map, Number, Value};
+use bloock_signer::local::ecdsa::LocalEcdsaSigner;
+use bloock_signer::{create_verifier_from_signature, Signer};
+use serde_json::{json, Map, Number, Value};
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -26,6 +27,7 @@ use super::entity::dto::redeem_credential_response::RedeemCredentialResponse;
 use super::entity::dto::revoke_credential_request::RevokeCredentialRequest;
 use super::entity::dto::revoke_credential_response::RevokeCredentialResponse;
 use super::entity::revocation_result::RevocationResult;
+use super::entity::schema::Attribute;
 use super::{
     entity::{
         dto::{
@@ -80,10 +82,18 @@ impl<H: Client> IdentityService<H> {
         &self,
         display_name: String,
         technical_name: String,
-        attributes: Vec<String>,
+        attributes: Vec<Attribute>,
     ) -> BloockResult<Schema> {
+        let mut attr = Map::new();
+        for a in attributes {
+            let r#type = a.r#type;
+            let values = a.values;
+            attr.insert(a.name, json!({ "type": r#type, "values": values }));
+        }
+
         let req = CreateSchemaRequest {
-            attributes,
+            attributes: serde_json::to_value(attr)
+                .map_err(|e| IdentityError::CreateSchemaError(e.to_string()))?,
             schema_name: display_name,
             schema_type: technical_name,
         };
@@ -229,11 +239,22 @@ impl<H: Client> IdentityService<H> {
         &self,
         id: String,
         thread_id: String,
-        _holder_private_key: String,
+        holder_private_key: String,
     ) -> BloockResult<Credential> {
+        let key = LocalKey::load(
+            bloock_keys::KeyType::EcP256k,
+            "".to_string(),
+            Some(holder_private_key),
+        );
+        let signer = LocalEcdsaSigner::new(key, None);
+        let signature = signer
+            .sign(id.as_bytes())
+            .await
+            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
+
         let req = RedeemCredentialRequest {
             thread_id,
-            signature: "signature".to_string(),
+            signature: signature.signature,
         };
 
         let res: RedeemCredentialResponse = self
@@ -275,16 +296,31 @@ impl<H: Client> IdentityService<H> {
         &self,
         credential: Credential,
     ) -> BloockResult<CredentialVerification> {
-        let timestamp = self
-            .verify_credential_integrity(credential.body.proof.1.clone())
-            .await?;
+        let mut credential_payload = credential.clone();
+        credential_payload.proof = None;
+
+        let bloock_proof = credential
+            .proof
+            .clone()
+            .ok_or(IdentityError::InvalidProofError())?
+            .1;
+        let timestamp = self.verify_credential_integrity(bloock_proof).await?;
+
+        let signature_proof = credential
+            .proof
+            .clone()
+            .ok_or(IdentityError::InvalidSignatureError())?
+            .0;
+        let payload_value = serde_json::to_value(&credential_payload).unwrap();
+        let payload = serde_json::to_vec(&payload_value).unwrap();
 
         let signature_valid = self
-            .verify_credential_signature(credential.body.proof.0.clone())
+            .verify_credential_signature(&payload, signature_proof)
             .await?;
-        // if !signature_valid {
-        //     return Err(IdentityError::InvalidSignatureError().into());
-        // }
+
+        if !signature_valid {
+            return Err(IdentityError::InvalidSignatureError().into());
+        }
 
         let revocation = self
             .get_credential_revocation_status(credential.clone())
@@ -292,7 +328,7 @@ impl<H: Client> IdentityService<H> {
 
         Ok(CredentialVerification {
             timestamp,
-            issuer: credential.body.issuer,
+            issuer: credential.issuer,
             revocation,
         })
     }
@@ -312,7 +348,11 @@ impl<H: Client> IdentityService<H> {
         Ok(timestamp)
     }
 
-    pub async fn verify_credential_signature(&self, signature: Signature) -> BloockResult<bool> {
+    pub async fn verify_credential_signature(
+        &self,
+        payload: &[u8],
+        signature: Signature,
+    ) -> BloockResult<bool> {
         let verifier = create_verifier_from_signature(
             &signature,
             self.config_service.get_api_base_url(),
@@ -321,7 +361,7 @@ impl<H: Client> IdentityService<H> {
         .map_err(|_| IdentityError::InvalidSignatureError())?;
 
         let valid = verifier
-            .verify(&[], signature)
+            .verify(payload, signature)
             .await
             .map_err(|_| IdentityError::InvalidSignatureError())?;
 
@@ -334,7 +374,7 @@ impl<H: Client> IdentityService<H> {
     ) -> BloockResult<u128> {
         let res: GetCredentialRevocationResponse = self
             .http
-            .get_json(credential.body.credential_status.id, None)
+            .get_json(credential.credential_status.id, None)
             .await
             .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
 
@@ -353,8 +393,8 @@ impl<H: Client> IdentityService<H> {
                 format!(
                     "{}/identity/v1/{}/claims/revoke/{}",
                     self.config_service.get_api_base_url(),
-                    credential.body.issuer,
-                    credential.body.credential_status.revocation_nonce
+                    credential.issuer,
+                    credential.credential_status.revocation_nonce
                 ),
                 req,
                 None,
@@ -372,6 +412,8 @@ impl<H: Client> IdentityService<H> {
 mod tests {
     use bloock_http::MockClient;
     use std::sync::Arc;
+
+    use crate::{config::config_data::ConfigData, identity::entity::credential::Credential};
 
     #[tokio::test]
     async fn test_create_identity() {

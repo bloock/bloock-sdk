@@ -39,7 +39,7 @@ impl LocalKey<String> {
     pub fn load_mnemonic(key_type: KeyType, mnemonic: String) -> Result<LocalKey<String>> {
         match key_type {
             KeyType::EcP256k => Ok(EcKey::load_ec_p256_from_mnemonic(mnemonic)?.into()),
-            _ => return Err(KeysError::InvalidKeyTypeError()),
+            _ => Err(KeysError::InvalidKeyTypeError()),
         }
     }
 }

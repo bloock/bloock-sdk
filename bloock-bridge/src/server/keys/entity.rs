@@ -56,8 +56,8 @@ impl From<ManagedKey> for CoreManagedKey {
         Self {
             id: key.id,
             public_key: key.key,
-            protection: key_protection.into(),
-            key_type: key_type.into(),
+            protection: key_protection,
+            key_type,
             name: match key.name.as_str() {
                 "" => None,
                 _ => Some(key.name),
@@ -80,7 +80,7 @@ impl From<CoreManagedKey> for ManagedKey {
             key: key.public_key,
             protection: key_protection.into(),
             key_type: key_type.into(),
-            name: key.name.unwrap_or("".to_string()),
+            name: key.name.unwrap_or_default(),
             expiration: key.expiration.unwrap_or(0),
         }
     }

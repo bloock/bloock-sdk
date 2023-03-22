@@ -22,7 +22,7 @@ impl<H: Client> AuthenticityService<H> {
             .ok_or(AuthenticityError::PayloadNotFoundError())?;
 
         let signature = signer
-            .sign(&payload)
+            .sign(payload)
             .await
             .map_err(InfrastructureError::SignerError)?;
 

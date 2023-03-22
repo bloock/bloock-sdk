@@ -19,7 +19,7 @@ impl KeyServiceHandler for KeyServer {
     ) -> Result<GenerateLocalKeyResponse, String> {
         let config_data = req.get_config_data()?;
 
-        let client = key::configure(config_data.clone());
+        let client = key::configure(config_data);
         let key = client
             .generate_local_key(req.key_type().into())
             .map_err(|e| e.to_string())?;
@@ -64,7 +64,7 @@ impl KeyServiceHandler for KeyServer {
     ) -> Result<LoadLocalKeyResponse, String> {
         let config_data = req.get_config_data()?;
 
-        let client = key::configure(config_data.clone());
+        let client = key::configure(config_data);
         let key = client
             .load_local_key(
                 req.key_type().into(),

@@ -18,7 +18,7 @@ class IdentityEntities
         \GPBMetadata\IntegrityEntities::initOnce();
         $pool->internalAddGeneratedFile(
             '
-ü
+‘
 identity_entities.protobloockintegrity_entities.proto">
 Identity
 mnemonic (	
@@ -89,12 +89,9 @@ class IdentityEntities
 CredentialReceipt
 
 id (	
-	anchor_id ("E
+	anchor_id ("å
 
-Credential
-	thread_id (	$
-body (2.bloock.CredentialBody"ê
-CredentialBody
+Credential
 context (	
 
 id (	

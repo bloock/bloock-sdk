@@ -53,9 +53,7 @@ impl<S: ToString + Clone> Decrypter for LocalRsaDecrypter<S> {
             .local_key
             .private_key
             .clone()
-            .ok_or(EncrypterError::InvalidKey(
-                "No private key provided".to_string(),
-            ))?;
+            .ok_or_else(|| EncrypterError::InvalidKey("No private key provided".to_string()))?;
         let private_key = RsaPrivateKey::from_pkcs8_pem(&secret_key.to_string())
             .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
         let padding = PaddingScheme::new_oaep::<sha2::Sha256>();

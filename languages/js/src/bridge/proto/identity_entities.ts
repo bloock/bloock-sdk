@@ -94,11 +94,6 @@ export interface CredentialReceipt {
 }
 
 export interface Credential {
-  threadId: string;
-  body?: CredentialBody;
-}
-
-export interface CredentialBody {
   context: string[];
   id: string;
   type: string[];
@@ -1147,66 +1142,6 @@ export const CredentialReceipt = {
 };
 
 function createBaseCredential(): Credential {
-  return { threadId: "", body: undefined };
-}
-
-export const Credential = {
-  encode(message: Credential, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.threadId !== "") {
-      writer.uint32(10).string(message.threadId);
-    }
-    if (message.body !== undefined) {
-      CredentialBody.encode(message.body, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Credential {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCredential();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.threadId = reader.string();
-          break;
-        case 2:
-          message.body = CredentialBody.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Credential {
-    return {
-      threadId: isSet(object.threadId) ? String(object.threadId) : "",
-      body: isSet(object.body) ? CredentialBody.fromJSON(object.body) : undefined,
-    };
-  },
-
-  toJSON(message: Credential): unknown {
-    const obj: any = {};
-    message.threadId !== undefined && (obj.threadId = message.threadId);
-    message.body !== undefined && (obj.body = message.body ? CredentialBody.toJSON(message.body) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<Credential>, I>>(object: I): Credential {
-    const message = createBaseCredential();
-    message.threadId = object.threadId ?? "";
-    message.body = (object.body !== undefined && object.body !== null)
-      ? CredentialBody.fromPartial(object.body)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseCredentialBody(): CredentialBody {
   return {
     context: [],
     id: "",
@@ -1220,8 +1155,8 @@ function createBaseCredentialBody(): CredentialBody {
   };
 }
 
-export const CredentialBody = {
-  encode(message: CredentialBody, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const Credential = {
+  encode(message: Credential, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.context) {
       writer.uint32(10).string(v!);
     }
@@ -1252,10 +1187,10 @@ export const CredentialBody = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialBody {
+  decode(input: _m0.Reader | Uint8Array, length?: number): Credential {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCredentialBody();
+    const message = createBaseCredential();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1294,7 +1229,7 @@ export const CredentialBody = {
     return message;
   },
 
-  fromJSON(object: any): CredentialBody {
+  fromJSON(object: any): Credential {
     return {
       context: Array.isArray(object?.context) ? object.context.map((e: any) => String(e)) : [],
       id: isSet(object.id) ? String(object.id) : "",
@@ -1308,7 +1243,7 @@ export const CredentialBody = {
     };
   },
 
-  toJSON(message: CredentialBody): unknown {
+  toJSON(message: Credential): unknown {
     const obj: any = {};
     if (message.context) {
       obj.context = message.context.map((e) => e);
@@ -1332,8 +1267,8 @@ export const CredentialBody = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<CredentialBody>, I>>(object: I): CredentialBody {
-    const message = createBaseCredentialBody();
+  fromPartial<I extends Exact<DeepPartial<Credential>, I>>(object: I): Credential {
+    const message = createBaseCredential();
     message.context = object.context?.map((e) => e) || [];
     message.id = object.id ?? "";
     message.type = object.type?.map((e) => e) || [];
