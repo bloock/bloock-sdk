@@ -3,6 +3,8 @@ import com.bloock.sdk.entity.identity.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Arrays;
 import java.util.List;
 
 class IdentityTest {
@@ -56,7 +58,7 @@ class IdentityTest {
         Schema schema = identityClient.buildSchema("Test Schema", "test_schema")
                 .addBooleanAttribute("Boolean Attribute", "bool_attr", "")
                 .addMultichoiceAttribute("Multichoice Attribute", "multichoice_attr",
-                        List.of("option_a", "option_b", "option_c"), "")
+                        Arrays.asList("option_a", "option_b", "option_c"), "")
                 .build();
 
         CredentialReceipt receipt = identityClient.buildCredential(schema.getId(), holder.getKey())

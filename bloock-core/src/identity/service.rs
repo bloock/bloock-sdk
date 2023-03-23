@@ -413,8 +413,6 @@ mod tests {
     use bloock_http::MockClient;
     use std::sync::Arc;
 
-    use crate::{config::config_data::ConfigData, identity::entity::credential::Credential};
-
     #[tokio::test]
     async fn test_create_identity() {
         let http = MockClient::default();
