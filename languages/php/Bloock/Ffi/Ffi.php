@@ -34,7 +34,12 @@ final class Ffi
                 $libDirs = $libDirs . '/native/x86_64_apple_darwin/libbloock_bridge.dylib';
             }
         } else if (PHP_OS_FAMILY == 'Linux') {
-            $libDirs = $libDirs . '/native/x86_64_unknown_linux_musl/libbloock_bridge.so';
+            exec('getconf GNU_LIBC_VERSION', $output, $retVar);
+            if ($retVar === 0) {
+                $libDirs = $libDirs . '/native/x86_64_unknown_linux_gnu/libbloock_bridge.so';
+            } else {
+                $libDirs = $libDirs . '/native/x86_64_unknown_linux_musl/libbloock_bridge.so';            
+            }
         } else if (PHP_OS_FAMILY == 'Windows') {
             $libDirs = $libDirs . '/native/x86_64_pc_windows_gnu/libbloock_bridge.dll';
         } else {
