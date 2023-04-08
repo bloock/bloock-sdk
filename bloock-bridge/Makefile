@@ -27,9 +27,9 @@ build-all: build-linux build-windows build-darwin build-wasm
 build-linux: aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu x86_64-unknown-linux-musl
 
 $(eval $(call BUILD_RECIPE_ZIG,aarch64-unknown-linux-gnu,2.23))
-$(eval $(call BUILD_RECIPE_ZIG,aarch64-unknown-linux-musl,2.23, RUSTFLAGS="-C target-feature=-crt-static"))
+$(eval $(call BUILD_RECIPE,aarch64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static"))
 $(eval $(call BUILD_RECIPE_ZIG,x86_64-unknown-linux-gnu,2.23))
-$(eval $(call BUILD_RECIPE_ZIG,x86_64-unknown-linux-musl,2.23, RUSTFLAGS="-C target-feature=-crt-static"))
+$(eval $(call BUILD_RECIPE,x86_64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static"))
 
 # Windows
 
