@@ -31,6 +31,9 @@ jobs:
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup zigbuild
+        run: |
+          pip install cargo-zigbuild
       - name: Install musl tools
         if: ${{ inputs.target }} == 'x86_64-unknown-linux-musl'
         run: |
