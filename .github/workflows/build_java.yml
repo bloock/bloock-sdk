@@ -23,7 +23,7 @@ jobs:
       - name: Copy libraries into resources.
         run: |
           mkdir -p languages/java/src/main/resources/linux
-          [[ -e bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-musl.so languages/java/src/main/resources/linux/libbloock_bridge.so
+          [[ -e bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-gnu.so ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge_x86_64-unknown-linux-gnu.so languages/java/src/main/resources/linux/libbloock_bridge.so
           mkdir -p languages/java/src/main/resources/macos
           [[ -e bloock_core_lib_dynamic/libbloock_bridge-fat.dylib ]] && cp -r bloock_core_lib_dynamic/libbloock_bridge-fat.dylib languages/java/src/main/resources/macos/libbloock_bridge.dylib
           mkdir -p languages/java/src/main/resources/win
