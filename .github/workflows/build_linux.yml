@@ -35,7 +35,7 @@ jobs:
         run: |
           pip install cargo-zigbuild
       - name: Install musl tools
-        if: ${{ inputs.target }} == 'x86_64-unknown-linux-musl'
+        if: contains(${{ inputs.target }}, 'musl')
         run: |
           sudo apt-get install musl-tools
       - name: Build release libraries
