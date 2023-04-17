@@ -31,16 +31,13 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v3
-      - name: Install toolchain if not cross-compiling
-        uses: actions-rs/toolchain@v1
+      - uses: actions/cache@v3
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          target: ${{ inputs.target }}
-      - name: Install musl-tools on Linux
-        run: sudo apt-get update --yes && sudo apt-get install --yes musl-tools
-        if: contains(inputs.os, 'ubuntu') && !inputs.cross
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-build-${{ hashFiles('**/Cargo.lock') }}
       - uses: taiki-e/install-action@cross
       - name: Build binary (*nix)
         shell: bash
