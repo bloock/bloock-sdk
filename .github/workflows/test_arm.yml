@@ -37,14 +37,14 @@ jobs:
             target: aarch64-pc-windows-msvc
             bin: ubi.exe
             name: ubi-Windows-aarch64.zip
-            cargo_command: cross
+            cargo_command: cargo
 
           - os_name: macOS-x86_64
             os: macOS-latest
             target: x86_64-apple-darwin
             bin: ubi
             name: ubi-Darwin-x86_64.tar.gz
-            cargo_command: cross
+            cargo_command: cargo
     with:
       os_name: ${{ matrix.platform.os_name }}
       os: ${{ matrix.platform.os }}
