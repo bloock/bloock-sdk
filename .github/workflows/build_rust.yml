@@ -43,8 +43,8 @@ jobs:
           target: ${{ inputs.target }}
       - uses: arduino/setup-protoc@v1
         with:
-          version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ !(inputs.cross) }}
       - name: Build binary
         uses: actions-rs/cargo@v1
         with:
