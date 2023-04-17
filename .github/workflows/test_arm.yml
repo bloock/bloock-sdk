@@ -43,5 +43,4 @@ jobs:
       target: ${{ matrix.platform.target }}
       bin: ${{ matrix.platform.bin }}
       name: ${{ matrix.platform.name }}
-      cross: ${{ matrix.platform.cross }}
       cargo_command: ${{ matrix.platform.cargo_command }}
