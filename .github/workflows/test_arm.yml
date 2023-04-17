@@ -32,7 +32,7 @@ jobs:
             bin: ubi.exe
             name: ubi-Windows-aarch64.zip
             cross: false
-            cargo_command: cargo
+            cargo_command: cross
 
           - os_name: macOS-x86_64
             os: macOS-latest
@@ -40,7 +40,7 @@ jobs:
             bin: ubi
             name: ubi-Darwin-x86_64.tar.gz
             cross: false
-            cargo_command: cargo
+            cargo_command: cross
     with:
       os_name: ${{ matrix.platform.os_name }}
       os: ${{ matrix.platform.os }}
