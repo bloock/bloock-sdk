@@ -45,9 +45,9 @@ jobs:
           toolchain: stable
           override: true
           target: ${{ inputs.target }}
-        if: ${{ !(inputs.cross) }}
+        if: contains(inputs.cargo_command, 'cargo')
       - uses: taiki-e/install-action@cross
-        if: ${{ inputs.cross }}
+        if: contains(inputs.cargo_command, 'cross')
       - name: Build binary (*nix)
         shell: bash
         run: |

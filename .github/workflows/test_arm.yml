@@ -15,7 +15,6 @@ jobs:
             target: x86_64-unknown-freebsd
             bin: ubi
             name: ubi-FreeBSD-x86_64.tar.gz
-            cross: true
             cargo_command: cross
 
           - os_name: Linux-x86_64
@@ -23,7 +22,6 @@ jobs:
             target: x86_64-unknown-linux-musl
             bin: ubi
             name: ubi-Linux-x86_64-musl.tar.gz
-            cross: false
             cargo_command: cargo
 
           - os_name: Windows-aarch64
@@ -31,7 +29,6 @@ jobs:
             target: aarch64-pc-windows-msvc
             bin: ubi.exe
             name: ubi-Windows-aarch64.zip
-            cross: false
             cargo_command: cross
 
           - os_name: macOS-x86_64
@@ -39,7 +36,6 @@ jobs:
             target: x86_64-apple-darwin
             bin: ubi
             name: ubi-Darwin-x86_64.tar.gz
-            cross: false
             cargo_command: cross
     with:
       os_name: ${{ matrix.platform.os_name }}
