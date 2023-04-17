@@ -51,6 +51,7 @@ jobs:
               sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET: /usr/local/bin
       - name: Install cross if cross-compiling (*nix)
         id: cross-nix
         shell: bash
