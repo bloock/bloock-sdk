@@ -64,12 +64,11 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - uses: ./.github/actions/install_cross
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install rustup target
-        run: rustup target add x86_64-pc-windows-gnu
       - name: Build release MinGW library
         run: make -C bloock-bridge x86_64-pc-windows-gnu
       - name: Copy files

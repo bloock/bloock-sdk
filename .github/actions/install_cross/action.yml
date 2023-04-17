@@ -1,0 +1,14 @@
+name: "Install Cross"
+description: "Install Cross"
+runs:
+  using: "composite"
+  steps:
+    - name: Download cross
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh release download --repo cross-rs/cross --pattern 'cross-x86_64-unknown-linux-gnu\.tar\.gz'
+    - name: Install cross
+      shell: bash
+      run: mv ./cross /usr/bin/cross
+    
