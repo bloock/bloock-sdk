@@ -16,7 +16,7 @@ jobs:
             bin: ubi
             name: ubi-FreeBSD-x86_64.tar.gz
             cross: true
-            cargo_command: ./cross
+            cargo_command: cross
 
           - os_name: Linux-x86_64
             os: ubuntu-20.04
