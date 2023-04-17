@@ -42,8 +42,7 @@ jobs:
         run: sudo apt-get update --yes && sudo apt-get install --yes musl-tools
         if: contains(inputs.os, 'ubuntu') && !inputs.cross
       - name: Install cross if cross-compiling
-        id: cross-windows
-        shell: powershell
+        shell: bash
         run: |
           cargo install cross
         if: inputs.cross
