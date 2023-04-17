@@ -38,7 +38,16 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-rust-build-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install toolchain if not cross-compiling
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: ${{ inputs.target }}
+        if: ${{ !(inputs.cross) }}
       - uses: taiki-e/install-action@cross
+        if: ${{ inputs.cross }}
       - name: Build binary (*nix)
         shell: bash
         run: |
