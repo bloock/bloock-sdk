@@ -6,7 +6,6 @@ on:
 
 jobs:
   test_build:
-    needs: [version]
     uses: ./.github/workflows/build_rust.yml
     strategy:
       matrix:
@@ -50,11 +49,3 @@ jobs:
       name: ${{ matrix.platform.name }}
       cross: ${{ matrix.platform.cross }}
       cargo_command: ${{ matrix.platform.cargo_command }}
-
-  build_darwin:
-    needs: [version]
-    uses: ./.github/workflows/build_darwin.yml
-
-  build_windows:
-    needs: [version]
-    uses: ./.github/workflows/build_windows.yml
