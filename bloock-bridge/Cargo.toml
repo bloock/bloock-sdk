@@ -38,6 +38,3 @@ tokio = { version = "1.19.2", features = ["rt", "macros"] }
 
 [target.'cfg(target_arch = "wasm32")'.dev-dependencies]
 wasm-bindgen-test = "0.3.32"
-
-[target.'cfg(all())']
-pre-build = ["apt-get update && apt-get install --assume-yes --no-install-recommends protobuf-compiler"]
