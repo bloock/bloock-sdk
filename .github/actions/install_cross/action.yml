@@ -10,5 +10,7 @@ runs:
       run: gh release download --repo cross-rs/cross --pattern 'cross-x86_64-unknown-linux-gnu\.tar\.gz'
     - name: Install cross
       shell: bash
-      run: mv ./cross /usr/bin/cross
+      run: |
+        tar -xzvf cross-x86_64-unknown-linux-gnu.tar.gz
+        mv ./cross /usr/bin/cross
     
