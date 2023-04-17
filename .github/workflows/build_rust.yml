@@ -62,7 +62,7 @@ jobs:
           else
             tar czvf ../../../${{ inputs.name }} ${{ inputs.bin }}
           fi
-          cd -          
+          cd -
       - name: Publish release artifacts
         uses: actions/upload-artifact@v3
         with:
