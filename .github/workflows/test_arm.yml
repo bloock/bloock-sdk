@@ -1,0 +1,60 @@
+name: Test Workflow
+on:
+  push:
+    branches:
+      - feature/EIT-3075
+
+jobs:
+  test_build:
+    needs: [version]
+    uses: ./.github/workflows/build_rust.yml
+    strategy:
+      matrix:
+        platform:
+          - os_name: FreeBSD-x86_64
+            os: ubuntu-20.04
+            target: x86_64-unknown-freebsd
+            bin: ubi
+            name: ubi-FreeBSD-x86_64.tar.gz
+            cross: true
+            cargo_command: ./cross
+
+          - os_name: Linux-x86_64
+            os: ubuntu-20.04
+            target: x86_64-unknown-linux-musl
+            bin: ubi
+            name: ubi-Linux-x86_64-musl.tar.gz
+            cross: false
+            cargo_command: cargo
+
+          - os_name: Windows-aarch64
+            os: windows-latest
+            target: aarch64-pc-windows-msvc
+            bin: ubi.exe
+            name: ubi-Windows-aarch64.zip
+            cross: false
+            cargo_command: cargo
+
+          - os_name: macOS-x86_64
+            os: macOS-latest
+            target: x86_64-apple-darwin
+            bin: ubi
+            name: ubi-Darwin-x86_64.tar.gz
+            cross: false
+            cargo_command: cargo
+    with:
+      os_name: ${{ matrix.platform.os_name }}
+      os: ${{ matrix.platform.os }}
+      target: ${{ matrix.platform.target }}
+      bin: ${{ matrix.platform.bin }}
+      name: ${{ matrix.platform.name }}
+      cross: ${{ matrix.platform.cross }}
+      cargo_command: ${{ matrix.platform.cargo_command }}
+
+  build_darwin:
+    needs: [version]
+    uses: ./.github/workflows/build_darwin.yml
+
+  build_windows:
+    needs: [version]
+    uses: ./.github/workflows/build_windows.yml

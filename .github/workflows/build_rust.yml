@@ -1,0 +1,106 @@
+name: Build Linux
+
+on:
+  workflow_call:
+    inputs:
+      os_name:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+      target:
+        required: true
+        type: string
+      bin:
+        required: true
+        type: string
+      name:
+        required: true
+        type: string
+      cross:
+        required: true
+        type: boolean
+      cargo_command:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build for ${{ inputs.target }}
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install toolchain if not cross-compiling
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: ${{ inputs.target }}
+        if: ${{ !inputs.cross }}
+      - name: Install musl-tools on Linux
+        run: sudo apt-get update --yes && sudo apt-get install --yes musl-tools
+        if: contains(inputs.os, 'ubuntu') && !inputs.cross
+      - name: Install UBI
+        shell: bash
+        run: |
+          curl --silent --location \
+              https://raw.githubusercontent.com/houseabsolute/ubi/master/bootstrap/bootstrap-ubi.sh |
+              sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install cross if cross-compiling (*nix)
+        id: cross-nix
+        shell: bash
+        run: |
+          ubi --project cross-rs/cross --matching musl --in .          
+        if: inputs.cross && !contains(inputs.os, 'windows')
+      - name: Install cross if cross-compiling (Windows)
+        id: cross-windows
+        shell: powershell
+        run: |
+          ubi --project cross-rs/cross --in .          
+        if: inputs.cross && contains(inputs.os, 'windows')
+      - name: Build binary (*nix)
+        shell: bash
+        run: |
+          ${{ inputs.cargo_command }} build --locked --release --target ${{ inputs.target }}
+        if: ${{ !contains(inputs.os, 'windows') }}
+      - name: Build binary (Windows)
+        # We have to use the platform's native shell. If we use bash on
+        # Windows then OpenSSL complains that the Perl it finds doesn't use
+        # the platform's native paths and refuses to build.
+        shell: powershell
+        run: |
+          & ${{ inputs.cargo_command }} build --locked --release --target ${{ inputs.target }}
+        if: contains(inputs.os, 'windows')
+      - name: Strip binary
+        shell: bash
+        run: |
+          strip target/${{ inputs.target }}/release/${{ inputs.bin }}
+        # strip doesn't work with cross-arch binaries on Linux or Windows.
+        if: ${{ !(inputs.cross || inputs.target == 'aarch64-pc-windows-msvc') }}
+      - name: Package as archive
+        shell: bash
+        run: |
+          cd target/${{ inputs.target }}/release
+          if [[ "${{ inputs.os }}" == "windows-latest" ]]; then
+            7z a ../../../${{ inputs.name }} ${{ inputs.bin }}
+          else
+            tar czvf ../../../${{ inputs.name }} ${{ inputs.bin }}
+          fi
+          cd -          
+      - name: Publish release artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ubi-${{ inputs.os_name }}
+          path: "ubi*"
+        if: github.ref == 'refs/tags/test-release'
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: "ubi*"
+          body_path: Changes.md
+        if: startsWith( github.ref, 'refs/tags/v' )
