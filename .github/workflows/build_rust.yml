@@ -38,32 +38,15 @@ jobs:
           toolchain: stable
           override: true
           target: ${{ inputs.target }}
-        if: ${{ !inputs.cross }}
       - name: Install musl-tools on Linux
         run: sudo apt-get update --yes && sudo apt-get install --yes musl-tools
         if: contains(inputs.os, 'ubuntu') && !inputs.cross
-      - name: Install UBI
-        shell: bash
-        run: |
-          mkdir $HOME/bin
-          curl --silent --location \
-              https://raw.githubusercontent.com/houseabsolute/ubi/master/bootstrap/bootstrap-ubi.sh |
-              sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TARGET: /usr/local/bin
-      - name: Install cross if cross-compiling (*nix)
-        id: cross-nix
-        shell: bash
-        run: |
-          ubi --project cross-rs/cross --matching musl --in .          
-        if: inputs.cross && !contains(inputs.os, 'windows')
-      - name: Install cross if cross-compiling (Windows)
+      - name: Install cross if cross-compiling
         id: cross-windows
         shell: powershell
         run: |
-          ubi --project cross-rs/cross --in .          
-        if: inputs.cross && contains(inputs.os, 'windows')
+          cargo install cross
+        if: inputs.cross
       - name: Build binary (*nix)
         shell: bash
         run: |
