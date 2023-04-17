@@ -38,26 +38,15 @@ jobs:
       - name: Install toolchain if not cross-compiling
         uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: stable
           override: true
           target: ${{ inputs.target }}
-        if: contains(inputs.cargo_command, 'cargo')
-      - uses: taiki-e/install-action@cross
-        if: contains(inputs.cargo_command, 'cross')
-      - name: Build binary (*nix)
-        shell: bash
-        run: |
-          ${{ inputs.cargo_command }} build --locked --release --target ${{ inputs.target }}
-        if: ${{ !contains(inputs.os, 'windows') }}
-      - name: Build binary (Windows)
-        # We have to use the platform's native shell. If we use bash on
-        # Windows then OpenSSL complains that the Perl it finds doesn't use
-        # the platform's native paths and refuses to build.
-        shell: powershell
-        run: |
-          & ${{ inputs.cargo_command }} build --locked --release --target ${{ inputs.target }}
-        if: contains(inputs.os, 'windows')
+      - name: Build binary
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ contains(inputs.cargo_command, 'cross') }}
+          command: build
+          args: --locked --release --target ${{ inputs.target }}
       - name: Strip binary
         shell: bash
         run: |
