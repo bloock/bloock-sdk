@@ -52,18 +52,18 @@ jobs:
           cp bloock-bridge/build/native/bloock_bridge.h binaries/dynamic
       - name: Copy binaries (Linux)
         run: |
-          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/libbloock_bridge.so binaries/dynamic/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.so binaries/dynamic/${{ inputs.target }} | true
         if: contains(inputs.target, 'linux')
       - name: Copy binaries (Windows)
         run: |
-          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/bloock_bridge.dll binaries/dynamic/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/bloock_bridge.dll binaries/dynamic/${{ inputs.target }} | true
         if: contains(inputs.target, 'windows')
       - name: Copy binaries (Darwin)
         run: |
-          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/libbloock_bridge.dylib binaries/dynamic/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.dylib binaries/dynamic/${{ inputs.target }} | true
         if: contains(inputs.target, 'darwin')
       - name: Publish dynamic artifacts
         uses: actions/upload-artifact@v3
