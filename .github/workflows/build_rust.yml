@@ -52,7 +52,7 @@ jobs:
           command: build
           args: --locked --release --target ${{ inputs.target }}
       - run: |
-          mkdir -p ./dist
+          mkdir -p dist/${{ inputs.target }}
           cp target/${{ inputs.target }}/release/lib* dist/${{ inputs.target }}
           cp target/${{ inputs.target }}/release/bloock* dist/${{ inputs.target }}
       - name: Publish artifacts
