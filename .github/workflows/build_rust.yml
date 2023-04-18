@@ -61,9 +61,10 @@ jobs:
             tar czvf ../../../${{ inputs.name }} ${{ inputs.bin }}
           fi
           cd -
-      - uses: actions/upload-artifact@v2
+      - name: Publish release artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: bloock_core_lib_static
+          name: bloock-${{ inputs.os_name }}
           if-no-files-found: error
-          path: |
-            bloock_core_lib_static/libbloock_bridge-fat.a
+          path: "bloock*"
+          
