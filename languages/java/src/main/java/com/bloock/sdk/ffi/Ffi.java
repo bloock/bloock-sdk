@@ -23,15 +23,15 @@ public class Ffi {
         String suffix = null;
 
         if (platform.contains("win")) {
-            path = "win/bloock_bridge.dll";
+            path = "x86_64-pc-windows-gnu/bloock_bridge.dll";
             prefix = "bloock_bridge";
             suffix = ".dll";
         } else if (platform.contains("mac")) {
-            path = "macos/libbloock_bridge.dylib";
+            path = "aarch64-apple-darwin/libbloock_bridge.dylib";
             prefix = "libbloock_bridge";
             suffix = ".dylib";
         } else {
-            path = "linux/libbloock_bridge.so";
+            path = "x86_64-unknown-linux-gnu/libbloock_bridge.so";
             prefix = "libbloock_bridge";
             suffix = ".so";
         }
