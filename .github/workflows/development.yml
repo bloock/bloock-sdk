@@ -22,7 +22,7 @@ jobs:
     uses: ./.github/workflows/build_linux.yml
     strategy:
       matrix:
-        target: [x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl]
+        target: [x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl, aarch64-unknown-linux-gnu]
     with:
       target: ${{ matrix.target }}
 
