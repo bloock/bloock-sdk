@@ -16,7 +16,7 @@ jobs:
             target: x86_64-unknown-linux-gnu
             bin: libbloock_bridge.so
             name: bloock-Linux-x86_64-gnu.tar.gz
-            cargo_command: cargo
+            cargo_command: cross
           
           - os_name: Linux-x86_64-musl
             os: ubuntu-latest
