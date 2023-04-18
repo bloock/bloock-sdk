@@ -19,11 +19,11 @@ jobs:
       - name: Download binaries
         uses: actions/download-artifact@v1
         with:
-          name: bloock_core_lib
+          name: bloock_core_lib_dynamic
       - name: Copy binaries.
         run: |
           mkdir -p languages/java/src/main/resources
-          cp -r bloock_core_lib/* languages/java/src/main/resources/
+          cp -r bloock_core_lib_dynamic/* languages/java/src/main/resources/
       - name: Cleanup
         run: |
           rm languages/java/Makefile

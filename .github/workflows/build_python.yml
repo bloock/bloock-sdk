@@ -16,11 +16,11 @@ jobs:
       - name: Download binaries
         uses: actions/download-artifact@v1
         with:
-          name: bloock_core_lib
+          name: bloock_core_lib_static
       - name: Copy binaries.
         run: |
           mkdir -p languages/python/bloock/native
-          cp -r bloock_core_lib/* languages/python/bloock/native/
+          cp -r bloock_core_lib_static/* languages/python/bloock/native/
       - name: Cleanup
         run: |
           rm languages/python/Makefile
