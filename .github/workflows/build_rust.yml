@@ -51,20 +51,15 @@ jobs:
           use-cross: ${{ contains(inputs.cargo_command, 'cross') }}
           command: build
           args: --locked --release --target ${{ inputs.target }}
-      - name: Package as archive
-        shell: bash
-        run: |
-          cd target/${{ inputs.target }}/release
-          if [[ "${{ inputs.os }}" == "windows-latest" ]]; then
-            7z a ../../../${{ inputs.name }} ${{ inputs.bin }}
-          else
-            tar czvf ../../../${{ inputs.name }} ${{ inputs.bin }}
-          fi
-          cd -
-      - name: Publish release artifacts
+      - run: |
+          mkdir -p ./dist
+          cp target/${{ inputs.target }}/release/lib* dist/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/bloock* dist/${{ inputs.target }}
+      - name: Publish artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: bloock-${{ inputs.os_name }}
+          name: bloock_core_lib
           if-no-files-found: error
-          path: "bloock*"
-          
+          path: |
+            bloock-bridge/build/native/bloock_bridge.h
+            "dist/*"
