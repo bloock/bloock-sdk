@@ -43,26 +43,24 @@ jobs:
           args: --locked --release --target ${{ inputs.target }}
       - name: Copy headers
         run: |
-          mkdir -p binaries/dynamic
-          mkdir -p binaries/static
-          cp bloock-bridge/build/native/bloock_bridge.h binaries/dynamic
+          mkdir -p binaries/static/${{ inputs.target }}
+          mkdir -p binaries/dynamic/${{ inputs.target }}
           cp bloock-bridge/build/native/bloock_bridge.h binaries/static
+          cp bloock-bridge/build/native/bloock_bridge.h binaries/dynamic
       - name: Copy binaries (Linux)
         run: |
-          mkdir -p bloock-bridge/build/native/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
-          cp target/${{ inputs.target }}/release/libbloock_bridge.so binaries/dynamic/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/libbloock_bridge.so binaries/dynamic/${{ inputs.target }}
         if: contains(inputs.target, 'linux')
       - name: Copy binaries (Windows)
         run: |
-          mkdir -p bloock-bridge/build/native/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/bloock_bridge.dll binaries/dynamic/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/bloock_bridge.dll binaries/dynamic/${{ inputs.target }}
         if: contains(inputs.target, 'windows')
       - name: Copy binaries (Darwin)
         run: |
-          mkdir -p bloock-bridge/build/native/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
-          cp target/${{ inputs.target }}/release/libbloock_bridge.dylib binaries/dynamic/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/libbloock_bridge.dylib binaries/dynamic/${{ inputs.target }}
         if: contains(inputs.target, 'darwin')
       - name: Publish dynamic artifacts
         uses: actions/upload-artifact@v3
