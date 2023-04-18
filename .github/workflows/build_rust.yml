@@ -41,27 +41,40 @@ jobs:
           use-cross: ${{ contains(inputs.cargo_command, 'cross') }}
           command: build
           args: --locked --release --target ${{ inputs.target }}
+      - name: Copy headers
+        run: |
+          mkdir -p binaries/dynamic
+          mkdir -p binaries/static
+          cp bloock-bridge/build/native/bloock_bridge.h binaries/dynamic
+          cp bloock-bridge/build/native/bloock_bridge.h binaries/static
       - name: Copy binaries (Linux)
         run: |
           mkdir -p bloock-bridge/build/native/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/libbloock_bridge.a bloock-bridge/build/native/${{ inputs.target }} | true
-          cp target/${{ inputs.target }}/release/libbloock_bridge.so bloock-bridge/build/native/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.so binaries/dynamic/${{ inputs.target }} | true
         if: contains(inputs.target, 'linux')
       - name: Copy binaries (Windows)
         run: |
           mkdir -p bloock-bridge/build/native/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/bloock_bridge.dll bloock-bridge/build/native/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/bloock_bridge.dll binaries/dynamic/${{ inputs.target }} | true
         if: contains(inputs.target, 'windows')
       - name: Copy binaries (Darwin)
         run: |
           mkdir -p bloock-bridge/build/native/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/libbloock_bridge.a bloock-bridge/build/native/${{ inputs.target }} | true
-          cp target/${{ inputs.target }}/release/libbloock_bridge.dylib bloock-bridge/build/native/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.dylib binaries/dynamic/${{ inputs.target }} | true
         if: contains(inputs.target, 'darwin')
-      - name: Publish artifacts
+      - name: Publish dynamic artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: bloock_core_lib
+          name: bloock_core_lib_dynamic
           if-no-files-found: error
           path: |
-            bloock-bridge/build/native/*
+            binaries/dynamic/*
+      - name: Publish static artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: bloock_core_lib_static
+          if-no-files-found: error
+          path: |
+            binaries/static/*
