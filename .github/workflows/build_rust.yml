@@ -45,6 +45,7 @@ jobs:
         run: |
           ls target
           ls target/${{ inputs.target }}
+          ls target/${{ inputs.target }}/release
           mkdir -p binaries/static/${{ inputs.target }}
           mkdir -p binaries/dynamic/${{ inputs.target }}
           cp bloock-bridge/build/native/bloock_bridge.h binaries/static
