@@ -29,19 +29,28 @@ final class Ffi
         $arch = php_uname("m");
         if (PHP_OS_FAMILY == 'Darwin') {
             if ($arch == 'arm64') {
-                $libDirs = $libDirs . '/native/aarch64_apple_darwin/libbloock_bridge.dylib';
+                $libDirs = $libDirs . '/native/aarch64-apple-darwin/libbloock_bridge.dylib';
             } else {
-                $libDirs = $libDirs . '/native/x86_64_apple_darwin/libbloock_bridge.dylib';
+                $libDirs = $libDirs . '/native/x86_64-apple-darwin/libbloock_bridge.dylib';
             }
         } else if (PHP_OS_FAMILY == 'Linux') {
-            exec('getconf GNU_LIBC_VERSION', $output, $retVar);
-            if ($retVar === 0) {
-                $libDirs = $libDirs . '/native/x86_64_unknown_linux_gnu/libbloock_bridge.so';
+            if ($arch == 'arm64') {
+                exec('getconf GNU_LIBC_VERSION', $output, $retVar);
+                if ($retVar === 0) {
+                    $libDirs = $libDirs . '/native/aarch64-unknown-linux-gnu/libbloock_bridge.so';
+                } else {
+                    $libDirs = $libDirs . '/native/aarch64-unknown-linux-musl/libbloock_bridge.so';            
+                }
             } else {
-                $libDirs = $libDirs . '/native/x86_64_unknown_linux_musl/libbloock_bridge.so';            
+                exec('getconf GNU_LIBC_VERSION', $output, $retVar);
+                if ($retVar === 0) {
+                    $libDirs = $libDirs . '/native/x86_64-unknown-linux-gnu/libbloock_bridge.so';
+                } else {
+                    $libDirs = $libDirs . '/native/x86_64-unknown-linux-musl/libbloock_bridge.so';            
+                }
             }
         } else if (PHP_OS_FAMILY == 'Windows') {
-            $libDirs = $libDirs . '/native/x86_64_pc_windows_gnu/libbloock_bridge.dll';
+            $libDirs = $libDirs . '/native/x86_64-pc-windows-gnu/libbloock_bridge.dll';
         } else {
             throw new Exception("Not supported platform or OS");
         }

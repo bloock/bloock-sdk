@@ -12,8 +12,10 @@ env = os.environ.get("BLOOCK_ENV", "DEVELOPMENT")
 if env == "CI":
     lib_dirs = "bloock/_ffi/native"
 else:
-    if sys.platform.startswith("linux"):
+    if platform.machine() == "x86_64" and sys.platform.startswith("linux"):
         lib_dirs = "bloock/_ffi/native/x86_64-unknown-linux-musl"
+    elif sys.platform.startswith("linux"):
+        lib_dirs = "bloock/_ffi/native/aarch64-unknown-linux-musl"
     elif sys.platform.startswith("win"):
         lib_dirs = "bloock/_ffi/native/x86_64-pc-windows-gnu"
     elif platform.machine() == "x86_64" and sys.platform.startswith("darwin"):

@@ -27,13 +27,25 @@ public class Ffi {
             prefix = "bloock_bridge";
             suffix = ".dll";
         } else if (platform.contains("mac")) {
-            path = "aarch64-apple-darwin/libbloock_bridge.dylib";
-            prefix = "libbloock_bridge";
-            suffix = ".dylib";
+            if (arch.contains("arm")) {
+                path = "aarch64-apple-darwin/libbloock_bridge.dylib";
+                prefix = "libbloock_bridge";
+                suffix = ".dylib";
+            } else {
+                path = "x86_64-apple-darwin/libbloock_bridge.dylib";
+                prefix = "libbloock_bridge";
+                suffix = ".dylib";
+            }
         } else {
-            path = "x86_64-unknown-linux-gnu/libbloock_bridge.so";
-            prefix = "libbloock_bridge";
-            suffix = ".so";
+            if (arch.contains("arm")) {
+                path = "aarch64-unknown-linux-gnu/libbloock_bridge.so";
+                prefix = "libbloock_bridge";
+                suffix = ".so";
+            } else {
+                path = "x86_64-unknown-linux-gnu/libbloock_bridge.so";
+                prefix = "libbloock_bridge";
+                suffix = ".so";
+            }
         }
 
         try {
