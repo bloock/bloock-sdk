@@ -49,8 +49,6 @@ jobs:
       os_name: ${{ matrix.platform.os_name }}
       os: ${{ matrix.platform.os }}
       target: ${{ matrix.platform.target }}
-      bin: ${{ matrix.platform.bin }}
-      name: ${{ matrix.platform.name }}
       cargo_command: ${{ matrix.platform.cargo_command }}
   build_wasm:
     uses: ./.github/workflows/build_wasm.yml

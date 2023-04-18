@@ -12,12 +12,6 @@ on:
       target:
         required: true
         type: string
-      bin:
-        required: true
-        type: string
-      name:
-        required: true
-        type: string
       cargo_command:
         required: true
         type: string
@@ -54,7 +48,6 @@ jobs:
         run: |
           mkdir -p bloock-bridge/build/native/${{ inputs.target }}
           cp target/${{ inputs.target }}/release/bloock_bridge.dll bloock-bridge/build/native/${{ inputs.target }} | true
-          cp target/${{ inputs.target }}/release/libbloock_bridge.lib bloock-bridge/build/native/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/libbloock_bridge.a bloock-bridge/build/native/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/libbloock_bridge.so bloock-bridge/build/native/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/libbloock_bridge.dylib bloock-bridge/build/native/${{ inputs.target }} | true
