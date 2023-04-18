@@ -50,7 +50,6 @@ jobs:
       - name: Copy binaries (Windows)
         run: |
           mkdir -p bloock-bridge/build/native/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/bloock_bridge.a bloock-bridge/build/native/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/bloock_bridge.dll bloock-bridge/build/native/${{ inputs.target }} | true
         if: contains(inputs.target, 'windows')
       - name: Copy binaries (Darwin)
