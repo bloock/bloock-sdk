@@ -53,8 +53,8 @@ jobs:
           args: --locked --release --target ${{ inputs.target }}
       - run: |
           mkdir -p dist/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/lib* dist/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/bloock* dist/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/lib* dist/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/bloock* dist/${{ inputs.target }} | true
       - name: Publish artifacts
         uses: actions/upload-artifact@v3
         with:
