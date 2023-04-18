@@ -3,9 +3,6 @@ name: Build Linux
 on:
   workflow_call:
     inputs:
-      os_name:
-        required: true
-        type: string
       os:
         required: true
         type: string
@@ -44,13 +41,24 @@ jobs:
           use-cross: ${{ contains(inputs.cargo_command, 'cross') }}
           command: build
           args: --locked --release --target ${{ inputs.target }}
-      - name: Copy binaries
+      - name: Copy binaries (Linux)
         run: |
           mkdir -p bloock-bridge/build/native/${{ inputs.target }}
-          cp target/${{ inputs.target }}/release/bloock_bridge.dll bloock-bridge/build/native/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/libbloock_bridge.a bloock-bridge/build/native/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/libbloock_bridge.so bloock-bridge/build/native/${{ inputs.target }} | true
+        if: contains(inputs.target, 'linux')
+      - name: Copy binaries (Windows)
+        run: |
+          mkdir -p bloock-bridge/build/native/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/bloock_bridge.a bloock-bridge/build/native/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/bloock_bridge.dll bloock-bridge/build/native/${{ inputs.target }} | true
+        if: contains(inputs.target, 'windows')
+      - name: Copy binaries (Darwin)
+        run: |
+          mkdir -p bloock-bridge/build/native/${{ inputs.target }}
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a bloock-bridge/build/native/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/libbloock_bridge.dylib bloock-bridge/build/native/${{ inputs.target }} | true
+        if: contains(inputs.target, 'darwin')
       - name: Publish artifacts
         uses: actions/upload-artifact@v3
         with:

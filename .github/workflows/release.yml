@@ -21,33 +21,55 @@ jobs:
           github_ref: ${{ github.ref }}
         run: grep "${github_ref/refs\/tags\/v/}" VERSION
 
+  build_binaries:
+    needs: [version]
+    uses: ./.github/workflows/build_rust.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            cargo_command: cross
+          
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            cargo_command: cross
+
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            cargo_command: cross
+
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            cargo_command: cross
+
+          - os: windows-latest
+            target: x86_64-pc-windows-gnu
+            cargo_command: cargo
+
+          - os: macOS-latest
+            target: x86_64-apple-darwin
+            cargo_command: cargo
+
+          - os: macOS-latest
+            target: aarch64-apple-darwin
+            cargo_command: cargo
+    with:
+      os: ${{ matrix.platform.os }}
+      target: ${{ matrix.platform.target }}
+      cargo_command: ${{ matrix.platform.cargo_command }}
+
   build_wasm:
     needs: [version]
     uses: ./.github/workflows/build_wasm.yml
 
-  build_linux:
-    needs: [version]
-    uses: ./.github/workflows/build_linux.yml
-    strategy:
-      matrix:
-        target: [x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl, aarch64-unknown-linux-gnu, aarch64-unknown-linux-musl]
-    with:
-      target: ${{ matrix.target }}
-
-  build_darwin:
-    needs: [version]
-    uses: ./.github/workflows/build_darwin.yml
-
-  build_windows:
-    needs: [version]
-    uses: ./.github/workflows/build_windows.yml
-
   build_go:
-    needs: [build_linux, build_darwin, build_windows]
+    needs: [build_binaries]
     uses: ./.github/workflows/build_go.yml
 
   build_python:
-    needs: [build_linux, build_darwin, build_windows]
+    needs: [build_binaries]
     uses: ./.github/workflows/build_python.yml
     strategy:
       matrix:
@@ -56,11 +78,11 @@ jobs:
       os: ${{ matrix.os }}
 
   build_java:
-    needs: [build_linux, build_darwin, build_windows]
+    needs: [build_binaries]
     uses: ./.github/workflows/build_java.yml
 
   build_php:
-    needs: [build_linux, build_darwin, build_windows]
+    needs: [build_binaries]
     uses: ./.github/workflows/build_php.yml
 
   build_js:
@@ -68,7 +90,7 @@ jobs:
     uses: ./.github/workflows/build_js.yml
 
   test_rust:
-    needs: [build_linux, build_darwin, build_windows, build_wasm]
+    needs: [build_binaries, build_wasm]
     uses: ./.github/workflows/test_rust.yml
     strategy:
       fail-fast: false
