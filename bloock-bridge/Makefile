@@ -12,9 +12,9 @@ $(1):
 	cp ../target/$$@/release/libbloock_bridge* build/native/$$@/
 endef
 
-define BUILD_RECIPE_ZIG
+define BUILD_CROSS_RECIPE
 $(1):
-	$(3) cargo zigbuild --release --target $$@.$(2)
+	$(2) cross build --release --target $$@ --verbose
 	rm -rfv build/native/$$@/*
 	mkdir -p build/native/$$@
 	cp ../target/$$@/release/libbloock_bridge* build/native/$$@/
@@ -26,9 +26,9 @@ build-all: build-linux build-windows build-darwin build-wasm
 
 build-linux: aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu x86_64-unknown-linux-musl
 
-$(eval $(call BUILD_RECIPE_ZIG,aarch64-unknown-linux-gnu,2.23))
+$(eval $(call BUILD_CROSS_RECIPE,aarch64-unknown-linux-gnu))
 $(eval $(call BUILD_RECIPE,aarch64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static"))
-$(eval $(call BUILD_RECIPE_ZIG,x86_64-unknown-linux-gnu,2.23))
+$(eval $(call BUILD_CROSS_RECIPE,x86_64-unknown-linux-gnu))
 $(eval $(call BUILD_RECIPE,x86_64-unknown-linux-musl, RUSTFLAGS="-C target-feature=-crt-static"))
 
 # Windows
