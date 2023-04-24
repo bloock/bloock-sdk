@@ -27,7 +27,7 @@ public class Ffi {
             prefix = "bloock_bridge";
             suffix = ".dll";
         } else if (platform.contains("mac")) {
-            if (arch.contains("arm")) {
+            if (arch.contains("aarch64")) {
                 path = "aarch64-apple-darwin/libbloock_bridge.dylib";
                 prefix = "libbloock_bridge";
                 suffix = ".dylib";
