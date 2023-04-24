@@ -29,7 +29,7 @@ libs: List[str] = []
 if sys.platform.startswith("win"):
     libs.extend(
         (
-            f"{lib_dirs}/libbloock_bridge.lib",
+            f"{lib_dirs}/bloock_bridge.lib",
             "Ws2_32.lib",
             "advapi32.lib",
             "userenv.lib",
