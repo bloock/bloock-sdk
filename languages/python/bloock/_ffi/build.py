@@ -17,7 +17,7 @@ else:
     elif sys.platform.startswith("linux"):
         lib_dirs = "bloock/_ffi/native/aarch64-unknown-linux-musl"
     elif sys.platform.startswith("win"):
-        lib_dirs = "bloock/_ffi/native/x86_64-pc-windows-gnu"
+        lib_dirs = "bloock/_ffi/native/x86_64-pc-windows-msvc"
     elif platform.machine() == "x86_64" and sys.platform.startswith("darwin"):
         lib_dirs = "bloock/_ffi/native/x86_64-apple-darwin"
     else:
