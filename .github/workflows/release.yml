@@ -48,6 +48,10 @@ jobs:
             target: x86_64-pc-windows-gnu
             cargo_command: cargo
 
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            cargo_command: cargo
+
           - os: macOS-latest
             target: x86_64-apple-darwin
             cargo_command: cargo
