@@ -52,11 +52,16 @@ jobs:
           cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/libbloock_bridge.so binaries/dynamic/${{ inputs.target }} | true
         if: contains(inputs.target, 'linux')
-      - name: Copy binaries (Windows)
+      - name: Copy binaries (Windows GNU)
         run: |
-          cp target/${{ inputs.target }}/release/bloock_bridge.lib binaries/static/${{ inputs.target }} | true
           cp target/${{ inputs.target }}/release/bloock_bridge.dll binaries/dynamic/${{ inputs.target }} | true
-        if: contains(inputs.target, 'windows')
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+        if: contains(inputs.target, 'x86_64-pc-windows-gnu')
+      - name: Copy binaries (Windows MSVC)
+        run: |
+          cp target/${{ inputs.target }}/release/bloock_bridge.dll binaries/dynamic/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/bloock_bridge.lib binaries/static/${{ inputs.target }} | true
+        if: contains(inputs.target, 'x86_64-pc-windows-msvc')
       - name: Copy binaries (Darwin)
         run: |
           cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
