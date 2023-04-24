@@ -5,16 +5,16 @@ copy_lib:
 	rm -rfv Bloock/Ffi/native/*
 	cp ../../bloock-bridge/build/native/bloock_bridge.h Bloock/Ffi/native/
 ifeq ($(UNAME_S),Linux)
-	mkdir -p Bloock/Ffi/native/x86_64_unknown_linux_musl
-	cp ../../bloock-bridge/build/native/x86_64-unknown-linux-musl/* Bloock/Ffi/native/x86_64_unknown_linux_musl
+	mkdir -p Bloock/Ffi/native/x86_64-unknown-linux-musl
+	cp ../../bloock-bridge/build/native/x86_64-unknown-linux-musl/* Bloock/Ffi/native/x86_64-unknown-linux-musl
 endif
 ifeq ($(UNAME_S),Darwin)
 ifeq ($(UNAME_M),x86_64)
-	mkdir -p Bloock/Ffi/native/x86_64_apple_darwin
-	cp ../../bloock-bridge/build/native/x86_64-apple-darwin/* Bloock/Ffi/native/x86_64_apple_darwin
+	mkdir -p Bloock/Ffi/native/x86_64-apple-darwin
+	cp ../../bloock-bridge/build/native/x86_64-apple-darwin/* Bloock/Ffi/native/x86_64-apple-darwin
 else
-	mkdir -p Bloock/Ffi/native/aarch64_apple_darwin
-	cp ../../bloock-bridge/build/native/aarch64-apple-darwin/* Bloock/Ffi/native/aarch64_apple_darwin
+	mkdir -p Bloock/Ffi/native/aarch64-apple-darwin
+	cp ../../bloock-bridge/build/native/aarch64-apple-darwin/* Bloock/Ffi/native/aarch64-apple-darwin
 endif
 endif
 

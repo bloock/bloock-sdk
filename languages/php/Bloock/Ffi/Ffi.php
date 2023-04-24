@@ -50,7 +50,7 @@ final class Ffi
                 }
             }
         } else if (PHP_OS_FAMILY == 'Windows') {
-            $libDirs = $libDirs . '/native/x86_64-pc-windows-gnu/libbloock_bridge.dll';
+            $libDirs = $libDirs . '/native/x86_64-pc-windows-gnu/bloock_bridge.dll';
         } else {
             throw new Exception("Not supported platform or OS");
         }
