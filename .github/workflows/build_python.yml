@@ -19,8 +19,8 @@ jobs:
           name: bloock_core_lib_static
       - name: Copy binaries.
         run: |
-          mkdir -p languages/python/bloock/native
-          cp -r bloock_core_lib_static/* languages/python/bloock/native/
+          mkdir -p languages/python/bloock/_ffi/native
+          cp -r bloock_core_lib_static/* languages/python/bloock/_ffi/native/
       - name: Cleanup
         run: |
           rm languages/python/Makefile
