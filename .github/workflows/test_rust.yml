@@ -24,7 +24,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-rust-build-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ inputs.os }}-rust-build-${{ hashFiles('**/Cargo.lock') }}
       - name: Install Rust stable toolchain
         uses: actions-rs/toolchain@v1
         with:

@@ -4,14 +4,8 @@ UNAME_M := $(shell uname -m)
 copy_lib:
 	rm -rfv src/main/resources/*
 
-ifeq ($(UNAME_S),Linux)
-	mkdir -p src/main/resources/linux
-	cp ../../bloock-bridge/build/native/x86_64-unknown-linux-musl/* src/main/resources/linux/
-endif
-ifeq ($(UNAME_S),Darwin)
-	mkdir -p src/main/resources/macos
-	cp ../../bloock-bridge/build/native/aarch64-apple-darwin/* src/main/resources/macos/
-endif
+	mkdir -p src/main/resources
+	cp -r ../../bloock-bridge/build/native/* src/main/resources/
 
 dev: copy_lib
 	./gradlew run

@@ -1,0 +1,81 @@
+name: Build Linux
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      target:
+        required: true
+        type: string
+      cargo_command:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build for ${{ inputs.target }}
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: ${{ inputs.target }}-rust-build-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install toolchain if not cross-compiling
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          target: ${{ inputs.target }}
+      - uses: arduino/setup-protoc@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ !inputs.cross }}
+      - name: Build binary
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ contains(inputs.cargo_command, 'cross') }}
+          command: build
+          args: --locked --release --target ${{ inputs.target }}
+      - name: Copy headers
+        run: |
+          ls target
+          ls target/${{ inputs.target }}
+          ls target/${{ inputs.target }}/release
+          mkdir -p binaries/static/${{ inputs.target }}
+          mkdir -p binaries/dynamic/${{ inputs.target }}
+          cp bloock-bridge/build/native/bloock_bridge.h binaries/static
+          cp bloock-bridge/build/native/bloock_bridge.h binaries/dynamic
+      - name: Copy binaries (Linux)
+        run: |
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.so binaries/dynamic/${{ inputs.target }} | true
+        if: contains(inputs.target, 'linux')
+      - name: Copy binaries (Windows)
+        run: |
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/bloock_bridge.dll binaries/dynamic/${{ inputs.target }} | true
+        if: contains(inputs.target, 'windows')
+      - name: Copy binaries (Darwin)
+        run: |
+          cp target/${{ inputs.target }}/release/libbloock_bridge.a binaries/static/${{ inputs.target }} | true
+          cp target/${{ inputs.target }}/release/libbloock_bridge.dylib binaries/dynamic/${{ inputs.target }} | true
+        if: contains(inputs.target, 'darwin')
+      - name: Publish dynamic artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: bloock_core_lib_dynamic
+          if-no-files-found: error
+          path: |
+            binaries/dynamic/*
+      - name: Publish static artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: bloock_core_lib_static
+          if-no-files-found: error
+          path: |
+            binaries/static/*

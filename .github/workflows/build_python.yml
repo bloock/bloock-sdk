@@ -13,34 +13,23 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v3
-      - name: Download static libs
+      - name: Download binaries
         uses: actions/download-artifact@v1
         with:
           name: bloock_core_lib_static
-      - name: Copy library headers.
+      - name: Copy binaries.
         run: |
-          mkdir -p languages/python/bloock/native
-          cp -r bloock_core_lib_static/bloock_bridge.h languages/python/bloock/_ffi/native/bloock_bridge.h
-      - name: Copy static library.
-        if: runner.os == 'Linux'
+          mkdir -p languages/python/bloock/_ffi/native
+          cp -r bloock_core_lib_static/* languages/python/bloock/_ffi/native/
+      - name: Cleanup
         run: |
-          cp -r bloock_core_lib_static/libbloock_bridge_x86_64-unknown-linux-musl.a languages/python/bloock/_ffi/native/libbloock_bridge.a
-      - name: Copy static library.
-        if: runner.os == 'macOS'
-        run: |
-          cp -r bloock_core_lib_static/libbloock_bridge-fat.a languages/python/bloock/_ffi/native/libbloock_bridge.a
-      - name: Copy static library.
-        if: runner.os == 'Windows'
-        run: |
-          cp -r bloock_core_lib_static/bloock_bridge_windows.lib languages/python/bloock/_ffi/native/libbloock_bridge.lib
-      - name: Copy in readme
-        run: |
-          cp README.md languages/python/bloock/README.md
+          rm languages/python/Makefile
+          cp LICENSE languages/python/LICENSE
+          cp README.md languages/python/README.md
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.2
         env:
           CIBW_BUILD: "*64"
-          CIBW_ENVIRONMENT: BLOOCK_ENV=CI
           CIBW_ARCHS: "${{ inputs.os == 'macos-latest' && 'x86_64 arm64 universal2' || 'auto' }}"
         with:
           package-dir: languages/python
