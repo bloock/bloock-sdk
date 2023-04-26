@@ -37,7 +37,7 @@ public class Ffi {
                 suffix = ".dylib";
             }
         } else {
-            if (arch.contains("arm")) {
+            if (arch.contains("aarch64")) {
                 path = "aarch64-unknown-linux-gnu/libbloock_bridge.so";
                 prefix = "libbloock_bridge";
                 suffix = ".so";
@@ -52,10 +52,12 @@ public class Ffi {
             InputStream input = getClass().getClassLoader().getResourceAsStream(path);
             File file = File.createTempFile(prefix, suffix);
             OutputStream out = Files.newOutputStream(file.toPath());
-            int read;
-            byte[] bytes = new byte[1024];
-            while ((read = input.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
+            if (input != null) {
+                int read;
+                byte[] bytes = new byte[1024];
+                while ((read = input.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+                }
             }
             out.close();
             file.deleteOnExit();
