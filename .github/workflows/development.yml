@@ -112,4 +112,5 @@ jobs:
     with:
       artifact: bloock_lib_php
     secrets:
+      api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}

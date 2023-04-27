@@ -22,8 +22,6 @@ jobs:
           [[ -e bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a languages/go/internal/ffi/native/x86_64_pc_windows_gnu/libbloock_bridge_windows.a
           [[ -e bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a languages/go/internal/ffi/native/x86_64_apple_darwin/libbloock_bridge.a
           [[ -e bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a languages/go/internal/ffi/native/aarch64_apple_darwin/libbloock_bridge.a
-
-          cp -r bloock_core_lib_static/* languages/go/internal/ffi/native/
       - name: Cleanup
         run: |
           rm languages/go/Makefile
