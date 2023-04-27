@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 jobs:
-  build_wheel:
+  build_php:
     name: Build PHP
     runs-on: ubuntu-latest
     steps:
@@ -15,44 +15,43 @@ jobs:
           name: bloock_core_lib_dynamic
       - name: Copy binaries.
         run: |
-          ls languages/php/Bloock/Ffi/native
-    
           mkdir -p languages/php/Bloock/Ffi/native
+          ls languages/php/Bloock/Ffi/native
           [[ -e bloock_core_lib_dynamic/bloock_bridge.h ]] && cp bloock_core_lib_dynamic/bloock_bridge.h languages/php/Bloock/Ffi/native/bloock_bridge.h
 
           echo ---
+          mkdir -p languages/php/Bloock/Ffi/native/x86_64-unknown-linux-gnu
           ls languages/php/Bloock/Ffi/native
           ls languages/php/Bloock/Ffi/native/x86_64-unknown-linux-gnu
 
-          mkdir -p languages/php/Bloock/Ffi/native/x86_64-unknown-linux-gnu
           [[ -e bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.a languages/php/Bloock/Ffi/native/x86_64-unknown-linux-gnu/libbloock_bridge.a
           
           echo ---
+          mkdir -p languages/php/Bloock/Ffi/native/aarch64-unknown-linux-gnu
           ls languages/php/Bloock/Ffi/native
           ls languages/php/Bloock/Ffi/native/aarch64-unknown-linux-gnu
 
-          mkdir -p languages/php/Bloock/Ffi/native/aarch64-unknown-linux-gnu
           [[ -e bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.a languages/php/Bloock/Ffi/native/aarch64-unknown-linux-gnu/libbloock_bridge.a
           
           echo ---
+          mkdir -p languages/php/Bloock/Ffi/native/x86_64-pc-windows-gnu
           ls languages/php/Bloock/Ffi/native
           ls languages/php/Bloock/Ffi/native/x86_64-pc-windows-gnu
 
-          mkdir -p languages/php/Bloock/Ffi/native/x86_64-pc-windows-gnu
           [[ -e bloock_core_lib_dynamic/x86_64-pc-windows-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/x86_64-pc-windows-gnu/libbloock_bridge.a languages/php/Bloock/Ffi/native/x86_64-pc-windows-gnu/libbloock_bridge_windows.a
           
           echo ---
+          mkdir -p languages/php/Bloock/Ffi/native/x86_64-apple-darwin
           ls languages/php/Bloock/Ffi/native
           ls languages/php/Bloock/Ffi/native/x86_64-apple-darwin
 
-          mkdir -p languages/php/Bloock/Ffi/native/x86_64-apple-darwin
           [[ -e bloock_core_lib_dynamic/x86_64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/x86_64-apple-darwin/libbloock_bridge.a languages/php/Bloock/Ffi/native/x86_64-apple-darwin/libbloock_bridge.a
           
           echo ---
+          mkdir -p languages/php/Bloock/Ffi/native/aarch64-apple-darwin
           ls languages/php/Bloock/Ffi/native
           ls languages/php/Bloock/Ffi/native/aarch64-apple-darwin
           
-          mkdir -p languages/php/Bloock/Ffi/native/aarch64-apple-darwin
           [[ -e bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.a languages/php/Bloock/Ffi/native/aarch64-apple-darwin/libbloock_bridge.a
 
       - name: Cleanup
