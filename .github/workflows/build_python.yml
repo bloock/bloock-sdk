@@ -20,22 +20,22 @@ jobs:
       - name: Copy binaries.
         run: |
           mkdir -p languages/python/bloock/_ffi/native
-          [[ -e bloock_core_lib_static/bloock_bridge.h ]] && cp bloock_core_lib_static/bloock_bridge.h languages/python/bloock/_ffi/native/bloock_bridge.h
+          cp bloock_core_lib_static/bloock_bridge.h languages/python/bloock/_ffi/native/bloock_bridge.h || true
           
           mkdir -p languages/python/bloock/_ffi/native/x86_64-unknown-linux-musl
-          [[ -e bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-unknown-linux-musl/libbloock_bridge.a
+          cp bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-unknown-linux-musl/libbloock_bridge.a || true
           
           mkdir -p languages/python/bloock/_ffi/native/aarch64-unknown-linux-musl
-          [[ -e bloock_core_lib_static/aarch64-unknown-linux-musl/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-unknown-linux-musl/libbloock_bridge.a languages/python/bloock/_ffi/native/aarch64-unknown-linux-musl/libbloock_bridge.a
+          cp bloock_core_lib_static/aarch64-unknown-linux-musl/libbloock_bridge.a languages/python/bloock/_ffi/native/aarch64-unknown-linux-musl/libbloock_bridge.a || true
           
           mkdir -p languages/python/bloock/_ffi/native/x86_64-pc-windows-gnu
-          [[ -e bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-pc-windows-gnu/libbloock_bridge_windows.a
+          cp bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-pc-windows-gnu/libbloock_bridge_windows.a || true
           
           mkdir -p languages/python/bloock/_ffi/native/x86_64-apple-darwin
-          [[ -e bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-apple-darwin/libbloock_bridge.a
+          cp bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-apple-darwin/libbloock_bridge.a || true
           
           mkdir -p languages/python/bloock/_ffi/native/aarch64-apple-darwin
-          [[ -e bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a languages/python/bloock/_ffi/native/aarch64-apple-darwin/libbloock_bridge.a
+          cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a languages/python/bloock/_ffi/native/aarch64-apple-darwin/libbloock_bridge.a || true
 
       - name: Cleanup
         run: |
