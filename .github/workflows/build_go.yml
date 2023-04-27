@@ -24,7 +24,6 @@ jobs:
           [[ -e bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a languages/go/internal/ffi/native/aarch64_apple_darwin/libbloock_bridge.a
       - name: Cleanup
         run: |
-          rm languages/go/Makefile
           cp LICENSE languages/go/LICENSE
           cp README.md languages/go/README.md
       - uses: actions/upload-artifact@v2

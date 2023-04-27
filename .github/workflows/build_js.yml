@@ -28,11 +28,11 @@ jobs:
         working-directory: languages/js
         run: |
           yarn build
+      - name: Cleanup
+        run: |
           rm -rf node_modules
-          rm Makefile
-      - name: Copy master README into project directory
-        working-directory: languages/js
-        run: cp ../../README.md .
+          cp LICENSE languages/js/LICENSE
+          cp README.md languages/js/README.md
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_lib_js
