@@ -24,13 +24,29 @@ jobs:
         run: |
           mkdir -p languages/java/src/main/resources
           [[ -e bloock_core_lib_dynamic/bloock_bridge.h ]] && cp bloock_core_lib_dynamic/bloock_bridge.h languages/java/src/main/resources/bloock_bridge.h
+          
+          mkdir -p languages/java/src/main/resources/x86_64-unknown-linux-gnu
           [[ -e bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.a languages/java/src/main/resources/x86_64-unknown-linux-gnu/libbloock_bridge.a
+          
+          mkdir -p languages/java/src/main/resources/aarch64-unknown-linux-gnu
           [[ -e bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.a languages/java/src/main/resources/aarch64-unknown-linux-gnu/libbloock_bridge.a
+          
+          mkdir -p languages/java/src/main/resources/x86_64-pc-windows-gnu
           [[ -e bloock_core_lib_dynamic/x86_64-pc-windows-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/x86_64-pc-windows-gnu/libbloock_bridge.a languages/java/src/main/resources/x86_64-pc-windows-gnu/libbloock_bridge_windows.a
+          
+          mkdir -p languages/java/src/main/resources/x86_64-apple-darwin
           [[ -e bloock_core_lib_dynamic/x86_64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/x86_64-apple-darwin/libbloock_bridge.a languages/java/src/main/resources/x86_64-apple-darwin/libbloock_bridge.a
+          
+          mkdir -p languages/java/src/main/resources/aarch64-apple-darwin
           [[ -e bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.a languages/java/src/main/resources/aarch64-apple-darwin/libbloock_bridge.a
+          
+          mkdir -p languages/java/src/main/resources/armv7-linux-androideabi
           [[ -e bloock_core_lib_dynamic/armv7-linux-androideabi/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/armv7-linux-androideabi/libbloock_bridge.a languages/java/src/main/resources/armv7-linux-androideabi/libbloock_bridge.a
+          
+          mkdir -p languages/java/src/main/resources/aarch64-linux-android
           [[ -e bloock_core_lib_dynamic/aarch64-linux-android/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/aarch64-linux-android/libbloock_bridge.a languages/java/src/main/resources/aarch64-linux-android/libbloock_bridge.a
+          
+          mkdir -p languages/java/src/main/resources/i686-linux-android
           [[ -e bloock_core_lib_dynamic/i686-linux-android/libbloock_bridge.a ]] && cp bloock_core_lib_dynamic/i686-linux-android/libbloock_bridge.a languages/java/src/main/resources/i686-linux-android/libbloock_bridge.a
 
       - name: Cleanup
