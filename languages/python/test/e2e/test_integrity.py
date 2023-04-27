@@ -3,7 +3,7 @@ import unittest
 from bloock import Network
 from bloock.client.integrity import IntegrityClient
 from bloock.client.record import RecordClient
-from test.util import init_sdk
+from test.e2e.util import init_sdk
 
 
 class TestIntegrity(unittest.TestCase):

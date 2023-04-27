@@ -37,4 +37,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: bloock_lib_java
-          path: languages/java/build/libs/*
+          path: languages/java

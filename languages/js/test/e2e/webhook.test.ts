@@ -1,4 +1,4 @@
-import { WebhookClient } from "../dist";
+import { WebhookClient } from "../../dist";
 import { initSdk } from "./util";
 import { describe, test, expect } from "@jest/globals";
 

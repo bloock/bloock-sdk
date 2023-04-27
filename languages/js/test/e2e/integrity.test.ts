@@ -1,4 +1,9 @@
-import { Record, Network, RecordClient, IntegrityClient } from "../dist/index";
+import {
+  Record,
+  Network,
+  RecordClient,
+  IntegrityClient
+} from "../../dist/index";
 import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
 

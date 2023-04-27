@@ -1,0 +1,50 @@
+name: Test Compat
+
+on:
+  workflow_call:
+    inputs:
+      lang:
+        required: true
+        type: string
+      lang-version:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+      artifact:
+        required: true
+        type: string
+
+jobs:
+  test:
+    name: Test ${{ inputs.lang }}
+    runs-on: ${{ inputs.os }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: ${{ inputs.artifact }}
+      - uses: ./.github/actions/setup_go
+        with:
+          version: ${{ inputs.lang-version }}
+        if: ${{ inputs.lang == "go" }}
+      - uses: ./.github/actions/setup_java
+        with:
+          version: ${{ inputs.lang-version }}
+        if: ${{ inputs.lang == "java" }}
+      - uses: ./.github/actions/setup_js
+        with:
+          version: ${{ inputs.lang-version }}
+        if: ${{ inputs.lang == "js" }}
+      - uses: ./.github/actions/setup_php
+        with:
+          version: ${{ inputs.lang-version }}
+        if: ${{ inputs.lang == "php" }}
+      - uses: ./.github/actions/setup_python
+        with:
+          version: ${{ inputs.lang-version }}
+        if: ${{ inputs.lang == "python" }}
+      - name: Test
+        run: make test-compat
+        working-directory: ${{ inputs.artifact }}

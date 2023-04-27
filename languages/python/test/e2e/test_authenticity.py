@@ -7,7 +7,7 @@ from bloock.entity.authenticity.ecdsa_signer import EcdsaSigner
 from bloock.entity.authenticity.ens_signer import EnsSigner
 from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.key.key_type import KeyType
-from test.util import init_sdk
+from test.e2e.util import init_sdk
 
 
 class TestAuthenticity(unittest.TestCase):

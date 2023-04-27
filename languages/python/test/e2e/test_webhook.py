@@ -1,7 +1,7 @@
 import unittest
 
 from bloock.client.webhook import WebhookClient
-from test.util import init_sdk
+from test.e2e.util import init_sdk
 
 
 class TestWebhook(unittest.TestCase):

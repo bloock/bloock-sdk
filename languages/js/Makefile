@@ -17,6 +17,9 @@ dev: build
 test: build
 	yarn run test
 
+test-compat: build
+	yarn run compat
+
 fmt:
 	yarn run fix
 

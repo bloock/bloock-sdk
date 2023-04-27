@@ -7,7 +7,7 @@ import {
   IpfsLoader,
   IpfsPublisher,
   RecordClient
-} from "../dist";
+} from "../../dist";
 
 describe("Availability Tests", () => {
   test("publish hosted", async () => {

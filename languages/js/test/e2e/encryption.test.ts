@@ -12,7 +12,7 @@ import {
   RecordClient,
   RsaDecrypter,
   RsaEncrypter
-} from "../dist";
+} from "../../dist";
 
 describe("Encryptions Tests", () => {
   test("encrypt local aes", async () => {

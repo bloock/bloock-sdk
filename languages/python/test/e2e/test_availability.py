@@ -6,7 +6,7 @@ from bloock.entity.availability.hosted_loader import HostedLoader
 from bloock.entity.availability.hosted_publisher import HostedPublisher
 from bloock.entity.availability.ipfs_loader import IpfsLoader
 from bloock.entity.availability.ipfs_publisher import IpfsPublisher
-from test.util import init_sdk
+from test.e2e.util import init_sdk
 
 
 class TestAvailability(unittest.TestCase):

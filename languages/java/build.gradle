@@ -49,7 +49,7 @@ protobuf {
     }
 }
 
-test {
+tasks.withType(Test) {
     useJUnitPlatform()
 }
 
@@ -63,7 +63,28 @@ sourceSets {
             srcDirs 'build/generated/source/proto/main/java'
         }
     }
+
+    compat {
+        java {
+            srcDirs "$projectDir/src/compat/java"
+        }
+
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
 }
+
+configurations {
+    compatImplementation.extendsFrom testImplementation
+    compatRuntime.extendsFrom testRuntime
+}
+
+task compatTest(type: Test) {
+    testClassesDirs = sourceSets.compat.output.classesDirs
+    classpath = sourceSets.compat.runtimeClasspath
+    outputs.upToDateWhen { false }
+}
+check.dependsOn compatTest
 
 tasks.withType(Jar).all {
     duplicatesStrategy 'exclude'

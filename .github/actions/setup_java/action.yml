@@ -1,0 +1,12 @@
+name: "Setup Java"
+description: "Setup Java"
+inputs:
+  version:
+    required: true
+    description: Java version
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-java@v1
+      with:
+        java-version: ${{ inputs.version }}

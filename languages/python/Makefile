@@ -17,8 +17,11 @@ build: copy_lib proto
 dev: copy_lib proto build
 	python3 main.py
 
-test: build
-	python3 -m unittest
+test: copy_lib proto
+	python3 -m unittest discover -s test/e2e
+
+test-compat: copy_lib proto
+	python3 -m unittest discover -s test/compat
 
 fmt:
 	black .

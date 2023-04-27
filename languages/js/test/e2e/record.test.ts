@@ -19,7 +19,7 @@ import {
   RsaEncrypter,
   SignatureAlg,
   AvailabilityClient
-} from "../dist/index";
+} from "../../dist/index";
 import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
 

@@ -1,4 +1,4 @@
-import { Bloock } from "../dist/index";
+import { Bloock } from "../../dist/index";
 
 export function initSdk() {
   const apiKey = process.env["API_KEY"] || "";

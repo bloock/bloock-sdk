@@ -4,7 +4,7 @@ from bloock.client.key import KeyClient
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed_key_params import ManagedKeyParams
-from test.util import init_sdk
+from test.e2e.util import init_sdk
 
 
 class TestKey(unittest.TestCase):

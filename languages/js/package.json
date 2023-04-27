@@ -21,7 +21,8 @@
   "scripts": {
     "start": "node dist/index.cjs.development.js",
     "build": "tsdx build --format cjs,esm --name index",
-    "test": "jest ./test --testTimeout=60000",
+    "test": "jest ./test/e2e --testTimeout=60000",
+    "compat": "jest ./test/compat --testTimeout=60000",
     "lint": "tsdx lint src test",
     "fix": "tsdx lint --fix",
     "size": "npm run build && size-limit"

@@ -22,29 +22,42 @@ public class Ffi {
         String prefix = null;
         String suffix = null;
 
-        if (platform.contains("win")) {
-            path = "x86_64-pc-windows-gnu/bloock_bridge.dll";
-            prefix = "bloock_bridge";
-            suffix = ".dll";
-        } else if (platform.contains("mac")) {
-            if (arch.contains("aarch64")) {
-                path = "aarch64-apple-darwin/libbloock_bridge.dylib";
+        String android = System.getProperty("java.vendor");
+        if (android != null && android.toLowerCase().contains("android")) {
+            if (arch.contains("armv7")) {
+                path = "armv7-linux-androideabi/libbloock_bridge.android";
                 prefix = "libbloock_bridge";
-                suffix = ".dylib";
+                suffix = ".android";
             } else {
-                path = "x86_64-apple-darwin/libbloock_bridge.dylib";
+                path = "aarch64-linux-android/libbloock_bridge.android";
                 prefix = "libbloock_bridge";
-                suffix = ".dylib";
+                suffix = ".android";
             }
         } else {
-            if (arch.contains("aarch64")) {
-                path = "aarch64-unknown-linux-gnu/libbloock_bridge.so";
-                prefix = "libbloock_bridge";
-                suffix = ".so";
+            if (platform.contains("win")) {
+                path = "x86_64-pc-windows-gnu/bloock_bridge.dll";
+                prefix = "bloock_bridge";
+                suffix = ".dll";
+            } else if (platform.contains("mac")) {
+                if (arch.contains("aarch64")) {
+                    path = "aarch64-apple-darwin/libbloock_bridge.dylib";
+                    prefix = "libbloock_bridge";
+                    suffix = ".dylib";
+                } else {
+                    path = "x86_64-apple-darwin/libbloock_bridge.dylib";
+                    prefix = "libbloock_bridge";
+                    suffix = ".dylib";
+                }
             } else {
-                path = "x86_64-unknown-linux-gnu/libbloock_bridge.so";
-                prefix = "libbloock_bridge";
-                suffix = ".so";
+                if (arch.contains("aarch64")) {
+                    path = "aarch64-unknown-linux-gnu/libbloock_bridge.so";
+                    prefix = "libbloock_bridge";
+                    suffix = ".so";
+                } else {
+                    path = "x86_64-unknown-linux-gnu/libbloock_bridge.so";
+                    prefix = "libbloock_bridge";
+                    suffix = ".so";
+                }
             }
         }
 

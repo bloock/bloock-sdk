@@ -5,7 +5,7 @@ import {
   KeyProtectionLevel,
   KeyType,
   ManagedKeyParams
-} from "../dist";
+} from "../../dist";
 
 describe("Key Tests", () => {
   test("generate local ecdsa", async () => {

@@ -54,10 +54,9 @@ jobs:
 
   test_js:
     needs: [build_js]
-    uses: ./.github/workflows/test_js.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      node-version: 16
+      artifact: bloock_lib_js
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
@@ -68,10 +67,9 @@ jobs:
 
   test_go:
     needs: [build_go]
-    uses: ./.github/workflows/test_go.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      go-version: "1.18"
+      artifact: bloock_lib_go
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
@@ -84,10 +82,9 @@ jobs:
 
   test_python:
     needs: [build_python]
-    uses: ./.github/workflows/test_python.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      python-version: "3.7"
+      artifact: bloock_lib_python
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
@@ -98,10 +95,9 @@ jobs:
 
   test_java:
     needs: [build_java]
-    uses: ./.github/workflows/test_java.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      java-version: "10"
+      artifact: bloock_lib_java
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
@@ -112,9 +108,8 @@ jobs:
 
   test_php:
     needs: [build_php]
-    uses: ./.github/workflows/test_php.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      php-version: "8.1"
+      artifact: bloock_lib_php
     secrets:
       api_key: ${{ secrets.API_KEY }}

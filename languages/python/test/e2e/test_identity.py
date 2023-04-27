@@ -4,7 +4,7 @@ from bloock.client.identity import IdentityClient
 from bloock.client.integrity import IntegrityClient
 from bloock.entity.identity.credential import Credential
 from bloock.entity.identity.credential_offer import CredentialOffer
-from test.util import init_sdk
+from test.e2e.util import init_sdk
 
 
 class TestIdentity(unittest.TestCase):

@@ -11,7 +11,7 @@ from bloock.entity.encryption.encryption_alg import EncryptionAlg
 from bloock.entity.encryption.rsa_decrypter import RsaDecrypter
 from bloock.entity.encryption.rsa_encrypter import RsaEncrypter
 from bloock.entity.key.key_type import KeyType
-from test.util import init_sdk
+from test.e2e.util import init_sdk
 
 
 class TestEncryption(unittest.TestCase):

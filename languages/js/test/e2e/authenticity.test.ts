@@ -9,7 +9,7 @@ import {
   KeyType,
   ManagedKeyParams,
   RecordClient
-} from "../dist";
+} from "../../dist";
 
 describe("Authenticity Tests", () => {
   test("generate ecdsa keys", async () => {

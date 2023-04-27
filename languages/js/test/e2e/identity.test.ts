@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { Credential, CredentialOffer, IdentityClient } from "../dist";
+import { Credential, CredentialOffer, IdentityClient } from "../../dist";
 import { initSdk } from "./util";
 
 describe("Identity Tests", () => {

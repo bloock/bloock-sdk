@@ -24,7 +24,7 @@ from bloock.entity.encryption.rsa_encrypter import RsaEncrypter
 from bloock.entity.integrity.anchor import AnchorNetwork
 from bloock.entity.integrity.proof import Proof, ProofAnchor
 from bloock.entity.key.key_type import KeyType
-from test.util import init_sdk
+from test.e2e.util import init_sdk
 
 
 class TestRecord(unittest.TestCase):

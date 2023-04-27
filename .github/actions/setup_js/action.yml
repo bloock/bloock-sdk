@@ -1,0 +1,16 @@
+name: "Setup JS"
+description: "Setup JS"
+inputs:
+  version:
+    required: true
+    description: Node version
+runs:
+  using: "composite"
+  steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ inputs.version }}
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --frozen-lockfile

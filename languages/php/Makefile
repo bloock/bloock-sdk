@@ -30,7 +30,10 @@ proto:
 	sed -i 's/\\Grpc\\UnaryCall/mixed/' protobuf/Bloock/*.php
 
 test: proto copy_lib
-	php ./vendor/bin/phpunit --configuration ./phpunit.xml
+	php ./vendor/bin/phpunit --configuration ./phpunit.xml --testsuite e2e_tests
+
+test-compat: proto copy_lib
+	php ./vendor/bin/phpunit --configuration ./phpunit.xml --testsuite compat_tests
 
 fmt:
 
