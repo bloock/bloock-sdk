@@ -29,10 +29,10 @@ proto:
 	sed -i 's/\\Grpc\\BaseStub/\\Bloock\\Bridge\\Connection/' protobuf/Bloock/*.php
 	sed -i 's/\\Grpc\\UnaryCall/mixed/' protobuf/Bloock/*.php
 
-test: proto
+test:
 	php ./vendor/bin/phpunit --configuration ./phpunit.xml --testsuite e2e_tests
 
-test-compat: proto
+test-compat:
 	php ./vendor/bin/phpunit --configuration ./phpunit.xml --testsuite compat_tests
 
 fmt:

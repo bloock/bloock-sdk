@@ -26,10 +26,10 @@ proto:
 dev: copy_lib proto
 	go run cmd/main.go
 
-test: proto
+test:
 	go test -tags=e2e -v ./...
 
-test-compat: proto
+test-compat:
 	go test -tags=compat -v ./...
 
 fmt:

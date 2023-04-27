@@ -17,10 +17,10 @@ build: copy_lib proto
 dev: copy_lib proto build
 	python3 main.py
 
-test: proto
+test:
 	python3 -m unittest discover -s test/e2e
 
-test-compat: proto
+test-compat:
 	python3 -m unittest discover -s test/compat
 
 fmt:

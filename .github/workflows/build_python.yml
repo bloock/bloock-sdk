@@ -50,5 +50,9 @@ jobs:
           package-dir: languages/python
       - uses: actions/upload-artifact@v2
         with:
-          name: bloock_lib_python
+          name: bloock_lib_python_wheels
           path: ./wheelhouse/*.whl
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bloock_lib_python
+          path: languages/python
