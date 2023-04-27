@@ -30,7 +30,7 @@ jobs:
           yarn build
       - name: Cleanup
         run: |
-          rm -rf node_modules
+          rm -rf languages/js/node_modules
           cp LICENSE languages/js/LICENSE
           cp README.md languages/js/README.md
       - uses: actions/upload-artifact@v2

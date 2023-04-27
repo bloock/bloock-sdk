@@ -23,19 +23,19 @@ jobs:
           [[ -e bloock_core_lib_static/bloock_bridge.h ]] && cp bloock_core_lib_static/bloock_bridge.h languages/python/bloock/_ffi/native/bloock_bridge.h
           
           mkdir -p languages/python/bloock/_ffi/native/x86_64-unknown-linux-musl
-          [[ -e bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64_unknown_linux_musl/libbloock_bridge.a
+          [[ -e bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-unknown-linux-musl/libbloock_bridge.a
           
-          mkdir -p languages/python/bloock/_ffi/native/aarch64-unknown-linux-gnu
-          [[ -e bloock_core_lib_static/aarch64-unknown-linux-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-unknown-linux-gnu/libbloock_bridge.a languages/python/bloock/_ffi/native/aarch64_unknown_linux_musl/libbloock_bridge.a
+          mkdir -p languages/python/bloock/_ffi/native/aarch64-unknown-linux-musl
+          [[ -e bloock_core_lib_static/aarch64-unknown-linux-musl/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-unknown-linux-musl/libbloock_bridge.a languages/python/bloock/_ffi/native/aarch64-unknown-linux-musl/libbloock_bridge.a
           
           mkdir -p languages/python/bloock/_ffi/native/x86_64-pc-windows-gnu
-          [[ -e bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64_pc_windows_gnu/libbloock_bridge_windows.a
+          [[ -e bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-pc-windows-gnu/libbloock_bridge_windows.a
           
           mkdir -p languages/python/bloock/_ffi/native/x86_64-apple-darwin
-          [[ -e bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64_apple_darwin/libbloock_bridge.a
+          [[ -e bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a languages/python/bloock/_ffi/native/x86_64-apple-darwin/libbloock_bridge.a
           
           mkdir -p languages/python/bloock/_ffi/native/aarch64-apple-darwin
-          [[ -e bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a languages/python/bloock/_ffi/native/aarch64_apple_darwin/libbloock_bridge.a
+          [[ -e bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ]] && cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a languages/python/bloock/_ffi/native/aarch64-apple-darwin/libbloock_bridge.a
 
       - name: Cleanup
         run: |
