@@ -13,10 +13,10 @@ dev: copy_lib
 build: copy_lib
 	./gradlew build -x test
 
-test: copy_lib
+test:
 	./gradlew test
 
-test-compat: copy_lib
+test-compat:
 	./gradlew compatTest
 
 fmt.jar:
