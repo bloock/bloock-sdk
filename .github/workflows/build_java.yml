@@ -16,6 +16,7 @@ jobs:
       - uses: ./.github/actions/setup_java
         with:
           version: 10
+          working-directory: languages/java
       - name: Download binaries
         uses: actions/download-artifact@v1
         with:
