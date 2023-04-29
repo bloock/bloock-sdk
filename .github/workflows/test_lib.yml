@@ -24,6 +24,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Set version env
+        id: version
+        shell: bash
+        run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
       - name: Download artifact
         uses: actions/download-artifact@v1
         with:
@@ -52,6 +56,7 @@ jobs:
         with:
           version: ${{ inputs.lang-version }}
           working-directory: ${{ inputs.artifact }}
+          wheel-version: ${{ steps.version.outputs.bloock_version }}
         if: ${{ inputs.lang == 'python' }}
       - name: Test
         run: make test
