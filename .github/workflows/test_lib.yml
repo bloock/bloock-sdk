@@ -23,6 +23,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/setup_go
         with:
           version: ${{ inputs.lang-version }}
