@@ -1,3 +1,5 @@
+.PHONY: test
+
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 

@@ -1,4 +1,4 @@
-.PHONY: install proto dev test fmt lint clean
+.PHONY: test
 
 copy-lib:
 	rm -rfv src/ffi/native/*

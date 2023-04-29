@@ -1,3 +1,5 @@
+.PHONY: test
+
 copy_lib:
 	rm -rfv ./bloock/_ffi/native/*
 	cp -r ../../bloock-bridge/build/native/* ./bloock/_ffi/native/
