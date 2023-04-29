@@ -19,10 +19,10 @@ jobs:
           cp bloock_core_lib_dynamic/bloock_bridge.h languages/php/Bloock/Ffi/native/bloock_bridge.h || true
 
           mkdir -p languages/php/Bloock/Ffi/native/x86_64-unknown-linux-gnu
-          cp bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.a languages/php/Bloock/Ffi/native/x86_64-unknown-linux-gnu/libbloock_bridge.a || true
+          cp bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.so languages/php/Bloock/Ffi/native/x86_64-unknown-linux-gnu/libbloock_bridge.so || true
           
           mkdir -p languages/php/Bloock/Ffi/native/aarch64-unknown-linux-gnu
-          cp bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.a languages/php/Bloock/Ffi/native/aarch64-unknown-linux-gnu/libbloock_bridge.a || true
+          cp bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.so languages/php/Bloock/Ffi/native/aarch64-unknown-linux-gnu/libbloock_bridge.so || true
           
           mkdir -p languages/php/Bloock/Ffi/native/x86_64-pc-windows-gnu
           cp bloock_core_lib_dynamic/x86_64-pc-windows-gnu/libbloock_bridge.a languages/php/Bloock/Ffi/native/x86_64-pc-windows-gnu/libbloock_bridge_windows.a || true

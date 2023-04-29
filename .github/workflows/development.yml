@@ -89,7 +89,7 @@ jobs:
     uses: ./.github/workflows/test_lib.yml
     with:
       lang: python
-      lang-version: 3.10
+      lang-version: "3.10"
       artifact: bloock_lib_python
     secrets:
       api_host: ${{ secrets.API_HOST }}
