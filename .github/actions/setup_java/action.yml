@@ -13,3 +13,7 @@ runs:
     - uses: actions/setup-java@v1
       with:
         java-version: ${{ inputs.version }}
+    - name: Make gradlew executable
+      shell: bash
+      run: chmod +x ./gradlew
+      working-directory: ${{ inputs.working-directory }}
