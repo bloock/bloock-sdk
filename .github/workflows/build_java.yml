@@ -13,9 +13,9 @@ jobs:
         id: version
         shell: bash
         run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
-      - uses: actions/setup-java@v1
+      - uses: ./.github/actions/setup_java
         with:
-          java-version: "10"
+          version: 10
       - name: Download binaries
         uses: actions/download-artifact@v1
         with:
@@ -56,7 +56,7 @@ jobs:
           cp README.md languages/java/README.md
       - name: Build
         run: |
-          ./gradlew build -x test
+          ./gradlew jar
           ./gradlew shadowJar
         working-directory: languages/java
       - uses: actions/upload-artifact@v2

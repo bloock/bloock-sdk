@@ -9,10 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js 16
-        uses: actions/setup-node@v1
+      - uses: ./.github/actions/setup_js
         with:
-          node-version: "16"
+          version: 16
       - name: Download WASM libs
         uses: actions/download-artifact@v1
         with:
@@ -21,9 +20,6 @@ jobs:
         run: |
           mkdir -p languages/js/src/ffi/native
           cp bloock_core_lib_wasm/* languages/js/src/ffi/native
-      - name: Install dependencies
-        working-directory: languages/js
-        run: yarn install --frozen-lockfile
       - name: Build
         working-directory: languages/js
         run: |
