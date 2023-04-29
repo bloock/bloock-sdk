@@ -12,6 +12,7 @@ jobs:
       - uses: ./.github/actions/setup_js
         with:
           version: 16
+          working-directory: languages/js
       - name: Download WASM libs
         uses: actions/download-artifact@v1
         with:

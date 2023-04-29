@@ -4,6 +4,9 @@ inputs:
   version:
     required: true
     description: Node version
+  working-directory:
+    required: true
+    description: Working directory
 runs:
   using: "composite"
   steps:
@@ -14,3 +17,4 @@ runs:
     - name: Install dependencies
       shell: bash
       run: yarn install --frozen-lockfile
+      working-directory: ${{ inputs.working-directory }}

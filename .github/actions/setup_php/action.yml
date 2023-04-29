@@ -4,6 +4,9 @@ inputs:
   version:
     required: true
     description: PHP version
+  working-directory:
+    required: true
+    description: Working directory
 runs:
   using: "composite"
   steps:
@@ -15,3 +18,5 @@ runs:
         extensions: ffi
     - name: Install composer dependencies
       uses: ramsey/composer-install@v2
+      with:
+        working-directory: ${{ inputs.working-directory }}

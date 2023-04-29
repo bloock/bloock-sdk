@@ -4,6 +4,9 @@ inputs:
   version:
     required: true
     description: Python version
+  working-directory:
+    required: true
+    description: Working directory
 runs:
   using: "composite"
   steps:
