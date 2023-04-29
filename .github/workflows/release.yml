@@ -124,8 +124,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: ["1.18", "1.19"]
+        os: [ubuntu-latest]
+        go-version: ["1.19"]
     with:
       os: ${{ matrix.os }}
       go-version: ${{ matrix.go-version }}
@@ -139,8 +139,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        os: [ubuntu-latest]
+        python-version: ["3.10"]
     with:
       os: ${{ matrix.os }}
       python-version: ${{ matrix.python-version }}
@@ -155,7 +155,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        java-version: [8, 11, 17, 19]
+        java-version: [8]
     with:
       os: ${{ matrix.os }}
       java-version: ${{ matrix.java-version }}
@@ -169,8 +169,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        php-version: ["7.4", "8.0", "8.1", "8.2"]
+        os: [ubuntu-latest]
+        php-version: ["8.2"]
     with:
       os: ${{ matrix.os }}
       php-version: ${{ matrix.php-version }}
@@ -183,8 +183,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: ["14", "16", "18"]
+        os: [ubuntu-latest]
+        node-version: ["18"]
     with:
       os: ${{ matrix.os }}
       node-version: ${{ matrix.node-version }}

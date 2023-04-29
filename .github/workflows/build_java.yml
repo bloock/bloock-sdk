@@ -23,6 +23,7 @@ jobs:
       - name: Copy binaries.
         run: |
           mkdir -p languages/java/src/main/resources
+
           cp bloock_core_lib_dynamic/bloock_bridge.h languages/java/src/main/resources/bloock_bridge.h || true
           
           mkdir -p languages/java/src/main/resources/x86_64-unknown-linux-gnu
@@ -41,13 +42,13 @@ jobs:
           cp bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.a languages/java/src/main/resources/aarch64-apple-darwin/libbloock_bridge.a || true
           
           mkdir -p languages/java/src/main/resources/armv7-linux-androideabi
-          cp bloock_core_lib_dynamic/armv7-linux-androideabi/libbloock_bridge.a languages/java/src/main/resources/armv7-linux-androideabi/libbloock_bridge.a || true
+          cp bloock_core_lib_dynamic/armv7-linux-androideabi/libbloock_bridge.a languages/java/src/main/resources/armv7-linux-androideabi/libbloock_bridge.android || true
           
           mkdir -p languages/java/src/main/resources/aarch64-linux-android
-          cp bloock_core_lib_dynamic/aarch64-linux-android/libbloock_bridge.a languages/java/src/main/resources/aarch64-linux-android/libbloock_bridge.a || true
+          cp bloock_core_lib_dynamic/aarch64-linux-android/libbloock_bridge.a languages/java/src/main/resources/aarch64-linux-android/libbloock_bridge.android || true
           
           mkdir -p languages/java/src/main/resources/i686-linux-android
-          cp bloock_core_lib_dynamic/i686-linux-android/libbloock_bridge.a languages/java/src/main/resources/i686-linux-android/libbloock_bridge.a || true
+          cp bloock_core_lib_dynamic/i686-linux-android/libbloock_bridge.a languages/java/src/main/resources/i686-linux-android/libbloock_bridge.android || true
 
       - name: Cleanup
         run: |

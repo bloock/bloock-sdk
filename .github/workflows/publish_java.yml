@@ -31,6 +31,10 @@ jobs:
         run: |
           mkdir -p languages/java/src/main/resources
           cp -r bloock_core_lib_dynamic-${{ github.event.inputs.version }}/bloock_core_lib_dynamic/* languages/java/src/main/resources/
+          
+          mv languages/java/src/main/resources/armv7-linux-androideabi/libbloock_bridge.so languages/java/src/main/resources/armv7-linux-androideabi/libbloock_bridge.android || true
+          mv languages/java/src/main/resources/aarch64-linux-android/libbloock_bridge.so languages/java/src/main/resources/aarch64-linux-android/libbloock_bridge.android || true
+          mv languages/java/src/main/resources/i686-linux-android/libbloock_bridge.so languages/java/src/main/resources/i686-linux-android/libbloock_bridge.android || true
       - name: Cleanup
         run: |
           rm languages/java/Makefile
