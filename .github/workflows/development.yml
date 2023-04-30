@@ -50,7 +50,11 @@ jobs:
 
   build_js:
     needs: [build_wasm]
-    uses: ./.github/workflows/build_js.yml
+    uses: ./.github/workflows/build_lib.yml
+    with:
+      os: ubuntu-latest
+      lang: js
+      lang-version: 18
 
   test_js:
     needs: [build_js]
@@ -65,7 +69,11 @@ jobs:
 
   build_go:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_go.yml
+    uses: ./.github/workflows/build_lib.yml
+    with:
+      os: ubuntu-latest
+      lang: go
+      lang-version: 1.19
 
   test_go:
     needs: [build_go]
@@ -80,9 +88,11 @@ jobs:
 
   build_python:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_python.yml
+    uses: ./.github/workflows/build_lib.yml
     with:
       os: ubuntu-latest
+      lang: python
+      lang-version: "3.10"
 
   test_python:
     needs: [build_python]
@@ -97,8 +107,11 @@ jobs:
 
   build_java:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_java.yml
-
+    uses: ./.github/workflows/build_lib.yml
+    with:
+      os: ubuntu-latest
+      lang: java
+      lang-version: 8
   test_java:
     needs: [build_java]
     uses: ./.github/workflows/test_lib.yml
@@ -112,7 +125,11 @@ jobs:
 
   build_php:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_php.yml
+    uses: ./.github/workflows/build_lib.yml
+    with:
+      os: ubuntu-latest
+      lang: php
+      lang-version: 8.2
 
   test_php:
     needs: [build_php]

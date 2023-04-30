@@ -17,6 +17,31 @@ runs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ inputs.version }}
+    - name: Download binaries
+      uses: actions/download-artifact@v1
+      with:
+        name: bloock_core_lib_static
+    - name: Copy binaries.
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.working-directory }}/bloock/_ffi/native
+        cp bloock_core_lib_static/bloock_bridge.h ${{ inputs.working-directory }}/bloock/_ffi/native/bloock_bridge.h || true
+        
+        mkdir -p ${{ inputs.working-directory }}/bloock/_ffi/native/x86_64-unknown-linux-musl
+        cp bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a ${{ inputs.working-directory }}/bloock/_ffi/native/x86_64-unknown-linux-musl/libbloock_bridge.a || true
+        
+        mkdir -p ${{ inputs.working-directory }}/bloock/_ffi/native/aarch64-unknown-linux-musl
+        cp bloock_core_lib_static/aarch64-unknown-linux-musl/libbloock_bridge.a ${{ inputs.working-directory }}/bloock/_ffi/native/aarch64-unknown-linux-musl/libbloock_bridge.a || true
+        
+        mkdir -p ${{ inputs.working-directory }}/bloock/_ffi/native/x86_64-pc-windows-gnu
+        cp bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a ${{ inputs.working-directory }}/bloock/_ffi/native/x86_64-pc-windows-gnu/libbloock_bridge_windows.a || true
+        
+        mkdir -p ${{ inputs.working-directory }}/bloock/_ffi/native/x86_64-apple-darwin
+        cp bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a ${{ inputs.working-directory }}/bloock/_ffi/native/x86_64-apple-darwin/libbloock_bridge.a || true
+        
+        mkdir -p ${{ inputs.working-directory }}/bloock/_ffi/native/aarch64-apple-darwin
+        cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ${{ inputs.working-directory }}/bloock/_ffi/native/aarch64-apple-darwin/libbloock_bridge.a || true
+
     - name: Download python wheels from package run
       uses: actions/download-artifact@v3
       with:

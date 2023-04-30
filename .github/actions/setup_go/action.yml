@@ -14,3 +14,16 @@ runs:
       uses: actions/setup-go@v3
       with:
         go-version: ${{ inputs.version }}
+    - name: Download binaries
+      uses: actions/download-artifact@v1
+      with:
+        name: bloock_core_lib_static
+    - name: Copy binaries.
+      shell: bash
+      run: |
+        cp bloock_core_lib_static/bloock_bridge.h ${{ inputs.working-directory }}/internal/ffi/native/bloock_bridge.h || true
+        cp bloock_core_lib_static/x86_64-unknown-linux-musl/libbloock_bridge.a ${{ inputs.working-directory }}/internal/ffi/native/x86_64_unknown_linux_musl/libbloock_bridge.a || true
+        cp bloock_core_lib_static/aarch64-unknown-linux-musl/libbloock_bridge.a ${{ inputs.working-directory }}/internal/ffi/native/aarch64_unknown_linux_musl/libbloock_bridge.a || true
+        cp bloock_core_lib_static/x86_64-pc-windows-gnu/libbloock_bridge.a ${{ inputs.working-directory }}/internal/ffi/native/x86_64_pc_windows_gnu/libbloock_bridge_windows.a || true
+        cp bloock_core_lib_static/x86_64-apple-darwin/libbloock_bridge.a ${{ inputs.working-directory }}/internal/ffi/native/x86_64_apple_darwin/libbloock_bridge.a || true
+        cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ${{ inputs.working-directory }}/internal/ffi/native/aarch64_apple_darwin/libbloock_bridge.a || true
