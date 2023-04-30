@@ -63,4 +63,4 @@ jobs:
         env:
           API_HOST: ${{ secrets.api_host }}
           API_KEY: ${{ secrets.api_key }}
-        working-directory: ${{ inputs.artifact }}
+        working-directory: languages/${{ inputs.lang }}
