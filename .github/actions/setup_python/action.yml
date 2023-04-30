@@ -53,6 +53,6 @@ runs:
       run: |
         pip install bloock==${{ inputs.wheel-version }} -f ~/bloock_lib_python/wheelhouse --no-deps --no-index
         pip install bloock==${{ inputs.wheel-version }} -f ~/bloock_lib_python/wheelhouse
-      working-directory: ~/bloock_lib_python
+      working-directory: ${{ inputs.working-directory }}
       if: ${{ inputs.wheel-version }}
  

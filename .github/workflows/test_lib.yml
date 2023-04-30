@@ -35,7 +35,7 @@ jobs:
       - uses: ./.github/actions/setup_go
         with:
           version: ${{ inputs.lang-version }}
-          working-directory: ${{ inputs.artifact }}
+          working-directory: languages/go
         if: ${{ inputs.lang == 'go' }}
       - uses: ./.github/actions/setup_java
         with:
@@ -45,17 +45,17 @@ jobs:
       - uses: ./.github/actions/setup_js
         with:
           version: ${{ inputs.lang-version }}
-          working-directory: ${{ inputs.artifact }}
+          working-directory: languages/js
         if: ${{ inputs.lang == 'js' }}
       - uses: ./.github/actions/setup_php
         with:
           version: ${{ inputs.lang-version }}
-          working-directory: ${{ inputs.artifact }}
+          working-directory: languages/php
         if: ${{ inputs.lang == 'php' }}
       - uses: ./.github/actions/setup_python
         with:
           version: ${{ inputs.lang-version }}
-          working-directory: ${{ inputs.artifact }}
+          working-directory: languages/python
           wheel-version: ${{ steps.version.outputs.bloock_version }}
         if: ${{ inputs.lang == 'python' }}
       - name: Test

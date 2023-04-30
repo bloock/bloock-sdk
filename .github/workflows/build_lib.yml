@@ -52,7 +52,7 @@ jobs:
       - name: Cleanup
         shell: bash
         run: |
-          rm -rf node_modules
+          rm -rf languages/${{ inputs.lang }}/node_modules
           cp LICENSE languages/${{ inputs.lang }}/LICENSE
           cp README.md languages/${{ inputs.lang }}/README.md
       - uses: actions/upload-artifact@v2
