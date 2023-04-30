@@ -31,6 +31,9 @@ proto:
 	sed -i 's/\\Grpc\\BaseStub/\\Bloock\\Bridge\\Connection/' protobuf/Bloock/*.php
 	sed -i 's/\\Grpc\\UnaryCall/mixed/' protobuf/Bloock/*.php
 
+build:
+	echo "Building"
+	
 test:
 	php ./vendor/bin/phpunit --configuration ./phpunit.xml --testsuite e2e_tests
 

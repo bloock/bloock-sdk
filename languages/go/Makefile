@@ -25,6 +25,9 @@ proto:
 	--go-grpc_opt=paths=source_relative \
 	../../bloock-bridge/proto/*.proto
 
+build:
+	echo "Building"
+
 dev: copy_lib proto
 	go run cmd/main.go
 

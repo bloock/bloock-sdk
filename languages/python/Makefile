@@ -8,7 +8,7 @@ proto:
 	python3 -m grpc_tools.protoc -I../../bloock-bridge/proto --python_out=./bloock/_bridge/proto --mypy_out=./bloock/_bridge/proto --grpc_python_out=./bloock/_bridge/proto ../../bloock-bridge/proto/*.proto
 	sed -i 's/^\(import.*_pb2\)/from . \1/' bloock/_bridge/proto/*.py
 
-build: copy_lib proto
+build:
 	pip3 install cibuildwheel==2.12.3
 	python3 -m cibuildwheel --output-dir wheelhouse
 

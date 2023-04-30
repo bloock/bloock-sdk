@@ -12,8 +12,9 @@ copy_lib:
 dev: copy_lib
 	./gradlew run
 
-build: copy_lib
-	./gradlew build -x test
+build:
+	./gradlew jar
+	./gradlew shadowJar
 
 test:
 	./gradlew test
