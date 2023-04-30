@@ -1,0 +1,60 @@
+name: Test Lib
+
+on:
+  workflow_call:
+    inputs:
+      lang:
+        required: true
+        type: string
+      lang-version:
+        required: true
+        type: string
+    secrets:
+      api_host:
+        required: true
+      api_key:
+        required: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set version env
+        id: version
+        shell: bash
+        run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
+      - uses: ./.github/actions/setup_go
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/go
+        if: ${{ inputs.lang == 'go' }}
+      - uses: ./.github/actions/setup_java
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/java
+        if: ${{ inputs.lang == 'java' }}
+      - uses: ./.github/actions/setup_js
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/js
+        if: ${{ inputs.lang == 'js' }}
+      - uses: ./.github/actions/setup_php
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/php
+        if: ${{ inputs.lang == 'php' }}
+      - uses: ./.github/actions/setup_python
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/python
+          wheel-version: ${{ steps.version.outputs.bloock_version }}
+        if: ${{ inputs.lang == 'python' }}
+      - name: Test
+        shell: bash
+        run: make test
+        env:
+          API_HOST: ${{ secrets.api_host }}
+          API_KEY: ${{ secrets.api_key }}
+        working-directory: languages/${{ inputs.lang }}

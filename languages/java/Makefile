@@ -1,3 +1,5 @@
+.PHONY: test
+
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 
@@ -10,11 +12,15 @@ copy_lib:
 dev: copy_lib
 	./gradlew run
 
-build: copy_lib
-	./gradlew build -x test
+build:
+	./gradlew jar
+	./gradlew shadowJar
 
-test: copy_lib
+test:
 	./gradlew test
+
+test-compat:
+	./gradlew compatTest
 
 fmt.jar:
 	$(eval URL := $(shell curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/google/google-java-format/releases/latest | jq '.assets[] | select(.name | test("all-deps.jar")) | .browser_download_url'))

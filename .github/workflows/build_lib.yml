@@ -1,0 +1,63 @@
+name: Build Lib
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      lang:
+        required: true
+        type: string
+      lang-version:
+        required: true
+        type: string
+jobs:
+  build_lib:
+    name: Build ${{ inputs.lang }}.
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup_go
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/go
+        if: ${{ inputs.lang == 'go' }}
+      - uses: ./.github/actions/setup_java
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/java
+        if: ${{ inputs.lang == 'java' }}
+      - uses: ./.github/actions/setup_js
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/js
+        if: ${{ inputs.lang == 'js' }}
+      - uses: ./.github/actions/setup_php
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/php
+        if: ${{ inputs.lang == 'php' }}
+      - uses: ./.github/actions/setup_python
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/python
+        if: ${{ inputs.lang == 'python' }}
+      - name: Build
+        run: make build
+        env:
+          CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-* pp38-* pp39-*"
+          CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux*"
+          CIBW_ARCHS_MACOS: x86_64 universal2
+          CIBW_ARCHS_LINUX: auto aarch64
+        working-directory: languages/${{ inputs.lang }}
+      - name: Cleanup
+        shell: bash
+        run: |
+          rm -rf languages/${{ inputs.lang }}/node_modules
+          cp LICENSE languages/${{ inputs.lang }}/LICENSE
+          cp README.md languages/${{ inputs.lang }}/README.md
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bloock_lib_${{ inputs.lang }}
+          path: languages/${{ inputs.lang }}

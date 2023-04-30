@@ -1,0 +1,47 @@
+name: "Setup PHP"
+description: "Setup PHP"
+inputs:
+  version:
+    required: true
+    description: PHP version
+  working-directory:
+    required: true
+    description: Working directory
+runs:
+  using: "composite"
+  steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.version }}
+        coverage: none
+        extensions: ffi
+    - name: Install composer dependencies
+      uses: ramsey/composer-install@v2
+      with:
+        working-directory: ${{ inputs.working-directory }}
+    - name: Download binaries
+      uses: actions/download-artifact@v1
+      with:
+        name: bloock_core_lib_dynamic
+    - name: Copy binaries.
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.working-directory }}/Bloock/Ffi/native
+        cp bloock_core_lib_dynamic/bloock_bridge.h ${{ inputs.working-directory }}/Bloock/Ffi/native/bloock_bridge.h || true
+
+        mkdir -p ${{ inputs.working-directory }}/Bloock/Ffi/native/x86_64-unknown-linux-gnu
+        cp bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.so ${{ inputs.working-directory }}/Bloock/Ffi/native/x86_64-unknown-linux-gnu/libbloock_bridge.so || true
+        
+        mkdir -p ${{ inputs.working-directory }}/Bloock/Ffi/native/aarch64-unknown-linux-gnu
+        cp bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.so ${{ inputs.working-directory }}/Bloock/Ffi/native/aarch64-unknown-linux-gnu/libbloock_bridge.so || true
+        
+        mkdir -p ${{ inputs.working-directory }}/Bloock/Ffi/native/x86_64-pc-windows-gnu
+        cp bloock_core_lib_dynamic/x86_64-pc-windows-gnu/bloock_bridge.dll ${{ inputs.working-directory }}/Bloock/Ffi/native/x86_64-pc-windows-gnu/bloock_bridge.dll || true
+        
+        mkdir -p ${{ inputs.working-directory }}/Bloock/Ffi/native/x86_64-apple-darwin
+        cp bloock_core_lib_dynamic/x86_64-apple-darwin/libbloock_bridge.dylib ${{ inputs.working-directory }}/Bloock/Ffi/native/x86_64-apple-darwin/libbloock_bridge.dylib || true
+        
+        mkdir -p ${{ inputs.working-directory }}/Bloock/Ffi/native/aarch64-apple-darwin
+        cp bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.dylib ${{ inputs.working-directory }}/Bloock/Ffi/native/aarch64-apple-darwin/libbloock_bridge.dylib || true
+

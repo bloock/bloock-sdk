@@ -1,4 +1,4 @@
-.PHONY: install proto dev test fmt lint clean
+.PHONY: test
 
 copy-lib:
 	rm -rfv src/ffi/native/*
@@ -8,7 +8,7 @@ copy-lib:
 proto:
 	node scripts/proto.js
 
-build: copy-lib
+build:
 	yarn build
 
 dev: build
@@ -16,6 +16,9 @@ dev: build
 
 test: build
 	yarn run test
+
+test-compat: build
+	yarn run compat
 
 fmt:
 	yarn run fix

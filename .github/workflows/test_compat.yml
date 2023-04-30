@@ -1,0 +1,61 @@
+name: Test Compat
+
+on:
+  workflow_call:
+    inputs:
+      lang:
+        required: true
+        type: string
+      lang-version:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+
+jobs:
+  test:
+    name: Test ${{ inputs.lang }}
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set version env
+        id: version
+        shell: bash
+        run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_OUTPUT
+      - uses: ./.github/actions/setup_go
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/go
+        if: ${{ inputs.lang == 'go' }}
+      - uses: ./.github/actions/setup_java
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/java
+        if: ${{ inputs.lang == 'java' }}
+      - uses: ./.github/actions/setup_js
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/js
+        if: ${{ inputs.lang == 'js' }}
+      - uses: ./.github/actions/setup_php
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/php
+        if: ${{ inputs.lang == 'php' }}
+      - uses: ./.github/actions/setup_python
+        with:
+          version: ${{ inputs.lang-version }}
+          working-directory: languages/python
+          wheel-version: ${{ steps.version.outputs.bloock_version }}
+        if: ${{ inputs.lang == 'python' }}
+      - name: Test
+        shell: bash
+        run: make test-compat
+        working-directory: languages/${{ inputs.lang }}
+        if: ${{ inputs.lang != 'java' || inputs.os != 'windows-latest' }}
+      - name: Test (Win)
+        shell: powershell
+        run: .\gradlew compatTest
+        working-directory: languages/${{ inputs.lang }}
+        if: ${{ inputs.lang == 'java' && inputs.os == 'windows-latest' }}

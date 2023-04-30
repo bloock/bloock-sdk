@@ -17,7 +17,6 @@ jobs:
     needs: [version]
     uses: ./.github/workflows/build_rust.yml
     strategy:
-      fail-fast: false
       matrix:
         platform:
           - os: ubuntu-latest
@@ -39,82 +38,97 @@ jobs:
   test_rust:
     needs: [build_binaries, build_wasm]
     uses: ./.github/workflows/test_rust.yml
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
     with:
-      os: ${{ matrix.os }}
+      os: ubuntu-latest
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
 
   build_js:
     needs: [build_wasm]
-    uses: ./.github/workflows/build_js.yml
+    uses: ./.github/workflows/build_lib.yml
+    with:
+      os: ubuntu-latest
+      lang: js
+      lang-version: 18
 
   test_js:
     needs: [build_js]
-    uses: ./.github/workflows/test_js.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      node-version: 16
+      lang: js
+      lang-version: 18
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
 
   build_go:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_go.yml
+    uses: ./.github/workflows/build_lib.yml
+    with:
+      os: ubuntu-latest
+      lang: go
+      lang-version: 1.19
 
   test_go:
     needs: [build_go]
-    uses: ./.github/workflows/test_go.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      go-version: "1.18"
+      lang: go
+      lang-version: 1.19
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
 
   build_python:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_python.yml
+    uses: ./.github/workflows/build_lib.yml
     with:
       os: ubuntu-latest
+      lang: python
+      lang-version: "3.10"
 
   test_python:
     needs: [build_python]
-    uses: ./.github/workflows/test_python.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      python-version: "3.7"
+      lang: python
+      lang-version: "3.10"
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
 
   build_java:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_java.yml
-
-  test_java:
-    needs: [build_java]
-    uses: ./.github/workflows/test_java.yml
+    uses: ./.github/workflows/build_lib.yml
     with:
       os: ubuntu-latest
-      java-version: "10"
+      lang: java
+      lang-version: 8
+  test_java:
+    needs: [build_java]
+    uses: ./.github/workflows/test_lib.yml
+    with:
+      lang: java
+      lang-version: 8
     secrets:
       api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}
 
   build_php:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_php.yml
+    uses: ./.github/workflows/build_lib.yml
+    with:
+      os: ubuntu-latest
+      lang: php
+      lang-version: 8.2
 
   test_php:
     needs: [build_php]
-    uses: ./.github/workflows/test_php.yml
+    uses: ./.github/workflows/test_lib.yml
     with:
-      os: ubuntu-latest
-      php-version: "8.1"
+      lang: php
+      lang-version: 8.2
     secrets:
+      api_host: ${{ secrets.API_HOST }}
       api_key: ${{ secrets.API_KEY }}

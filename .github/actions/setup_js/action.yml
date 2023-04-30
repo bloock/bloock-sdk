@@ -1,0 +1,29 @@
+name: "Setup JS"
+description: "Setup JS"
+inputs:
+  version:
+    required: true
+    description: Node version
+  working-directory:
+    required: true
+    description: Working directory
+runs:
+  using: "composite"
+  steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ inputs.version }}
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --frozen-lockfile
+      working-directory: ${{ inputs.working-directory }}
+    - name: Download WASM libs
+      uses: actions/download-artifact@v1
+      with:
+        name: bloock_core_lib_wasm
+    - name: Copy libraries.
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.working-directory }}/src/ffi/native
+        cp bloock_core_lib_wasm/* ${{ inputs.working-directory }}/src/ffi/native

@@ -1,0 +1,53 @@
+name: "Setup Java"
+description: "Setup Java"
+inputs:
+  version:
+    required: true
+    description: Java version
+  working-directory:
+    required: true
+    description: Working directory
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-java@v1
+      with:
+        java-version: ${{ inputs.version }}
+    - name: Make gradlew executable
+      shell: bash
+      run: chmod +x ./gradlew
+      working-directory: ${{ inputs.working-directory }}
+    - name: Download binaries
+      uses: actions/download-artifact@v1
+      with:
+        name: bloock_core_lib_dynamic
+    - name: Copy binaries.
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources
+
+        cp bloock_core_lib_dynamic/bloock_bridge.h ${{ inputs.working-directory }}/src/main/resources/bloock_bridge.h || true
+        
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/x86_64-unknown-linux-gnu
+        cp bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.so ${{ inputs.working-directory }}/src/main/resources/x86_64-unknown-linux-gnu/libbloock_bridge.so || true
+        
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/aarch64-unknown-linux-gnu
+        cp bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.so ${{ inputs.working-directory }}/src/main/resources/aarch64-unknown-linux-gnu/libbloock_bridge.so || true
+        
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/x86_64-pc-windows-gnu
+        cp bloock_core_lib_dynamic/x86_64-pc-windows-gnu/bloock_bridge.dll ${{ inputs.working-directory }}/src/main/resources/x86_64-pc-windows-gnu/bloock_bridge.dll || true
+        
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/x86_64-apple-darwin
+        cp bloock_core_lib_dynamic/x86_64-apple-darwin/libbloock_bridge.dylib ${{ inputs.working-directory }}/src/main/resources/x86_64-apple-darwin/libbloock_bridge.dylib || true
+        
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/aarch64-apple-darwin
+        cp bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.dylib ${{ inputs.working-directory }}/src/main/resources/aarch64-apple-darwin/libbloock_bridge.dylib || true
+        
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/armv7-linux-androideabi
+        cp bloock_core_lib_dynamic/armv7-linux-androideabi/libbloock_bridge.so ${{ inputs.working-directory }}/src/main/resources/armv7-linux-androideabi/libbloock_bridge.android || true
+        
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/aarch64-linux-android
+        cp bloock_core_lib_dynamic/aarch64-linux-android/libbloock_bridge.so ${{ inputs.working-directory }}/src/main/resources/aarch64-linux-android/libbloock_bridge.android || true
+        
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/i686-linux-android
+        cp bloock_core_lib_dynamic/i686-linux-android/libbloock_bridge.so ${{ inputs.working-directory }}/src/main/resources/i686-linux-android/libbloock_bridge.android || true

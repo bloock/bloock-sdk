@@ -1,3 +1,5 @@
+.PHONY: test
+
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 
@@ -23,11 +25,17 @@ proto:
 	--go-grpc_opt=paths=source_relative \
 	../../bloock-bridge/proto/*.proto
 
+build:
+	echo "Building"
+
 dev: copy_lib proto
 	go run cmd/main.go
 
-test: copy_lib proto
-	go test -v ./...
+test:
+	go test -tags=e2e -v ./...
+
+test-compat:
+	go test -tags=compat -v ./...
 
 fmt:
 	go fmt ./...

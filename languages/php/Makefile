@@ -1,3 +1,5 @@
+.PHONY: test
+
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 
@@ -29,8 +31,14 @@ proto:
 	sed -i 's/\\Grpc\\BaseStub/\\Bloock\\Bridge\\Connection/' protobuf/Bloock/*.php
 	sed -i 's/\\Grpc\\UnaryCall/mixed/' protobuf/Bloock/*.php
 
-test: proto copy_lib
-	php ./vendor/bin/phpunit --configuration ./phpunit.xml
+build:
+	echo "Building"
+	
+test:
+	php ./vendor/bin/phpunit --configuration ./phpunit.xml --testsuite e2e_tests
+
+test-compat:
+	php ./vendor/bin/phpunit --configuration ./phpunit.xml --testsuite compat_tests
 
 fmt:
 
