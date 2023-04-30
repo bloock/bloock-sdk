@@ -17,3 +17,37 @@ runs:
       shell: bash
       run: chmod +x ./gradlew
       working-directory: ${{ inputs.working-directory }}
+    - name: Download binaries
+      uses: actions/download-artifact@v1
+      with:
+        name: bloock_core_lib_dynamic
+    - name: Copy binaries.
+      shell: bash
+      run: |
+        mkdir -p languages/java/src/main/resources
+
+        cp bloock_core_lib_dynamic/bloock_bridge.h languages/java/src/main/resources/bloock_bridge.h || true
+        
+        mkdir -p languages/java/src/main/resources/x86_64-unknown-linux-gnu
+        cp bloock_core_lib_dynamic/x86_64-unknown-linux-gnu/libbloock_bridge.so languages/java/src/main/resources/x86_64-unknown-linux-gnu/libbloock_bridge.so || true
+        
+        mkdir -p languages/java/src/main/resources/aarch64-unknown-linux-gnu
+        cp bloock_core_lib_dynamic/aarch64-unknown-linux-gnu/libbloock_bridge.so languages/java/src/main/resources/aarch64-unknown-linux-gnu/libbloock_bridge.so || true
+        
+        mkdir -p languages/java/src/main/resources/x86_64-pc-windows-gnu
+        cp bloock_core_lib_dynamic/x86_64-pc-windows-gnu/libbloock_bridge.a languages/java/src/main/resources/x86_64-pc-windows-gnu/libbloock_bridge_windows.a || true
+        
+        mkdir -p languages/java/src/main/resources/x86_64-apple-darwin
+        cp bloock_core_lib_dynamic/x86_64-apple-darwin/libbloock_bridge.a languages/java/src/main/resources/x86_64-apple-darwin/libbloock_bridge.a || true
+        
+        mkdir -p languages/java/src/main/resources/aarch64-apple-darwin
+        cp bloock_core_lib_dynamic/aarch64-apple-darwin/libbloock_bridge.a languages/java/src/main/resources/aarch64-apple-darwin/libbloock_bridge.a || true
+        
+        mkdir -p languages/java/src/main/resources/armv7-linux-androideabi
+        cp bloock_core_lib_dynamic/armv7-linux-androideabi/libbloock_bridge.a languages/java/src/main/resources/armv7-linux-androideabi/libbloock_bridge.android || true
+        
+        mkdir -p languages/java/src/main/resources/aarch64-linux-android
+        cp bloock_core_lib_dynamic/aarch64-linux-android/libbloock_bridge.a languages/java/src/main/resources/aarch64-linux-android/libbloock_bridge.android || true
+        
+        mkdir -p languages/java/src/main/resources/i686-linux-android
+        cp bloock_core_lib_dynamic/i686-linux-android/libbloock_bridge.a languages/java/src/main/resources/i686-linux-android/libbloock_bridge.android || true

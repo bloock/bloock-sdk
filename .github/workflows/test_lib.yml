@@ -40,7 +40,7 @@ jobs:
       - uses: ./.github/actions/setup_java
         with:
           version: ${{ inputs.lang-version }}
-          working-directory: ${{ inputs.artifact }}
+          working-directory: languages/java
         if: ${{ inputs.lang == 'java' }}
       - uses: ./.github/actions/setup_js
         with:
