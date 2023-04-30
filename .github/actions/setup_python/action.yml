@@ -45,14 +45,14 @@ runs:
     - name: Download python wheels from package run
       uses: actions/download-artifact@v3
       with:
-        name: bloock_lib_python_wheels
-        path: ~/bloock_lib_python_wheels
+        name: bloock_lib_python
+        path: ~/bloock_lib_python
       if: ${{ inputs.wheel-version }}
     - name: Install wheel
       shell: bash
       run: |
-        pip install bloock==${{ inputs.wheel-version }} -f ~/bloock_lib_python_wheels --no-deps --no-index
-        pip install bloock==${{ inputs.wheel-version }} -f ~/bloock_lib_python_wheels
-      working-directory: ${{ inputs.working-directory }}
+        pip install bloock==${{ inputs.wheel-version }} -f ~/bloock_lib_python/wheelhouse --no-deps --no-index
+        pip install bloock==${{ inputs.wheel-version }} -f ~/bloock_lib_python/wheelhouse
+      working-directory: ~/bloock_lib_python
       if: ${{ inputs.wheel-version }}
  
