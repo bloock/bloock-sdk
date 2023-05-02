@@ -22,25 +22,24 @@ public class Ffi {
         String prefix = null;
         String suffix = null;
 
+        String[] compatibleBinaries = new String[] {};
+
         String android = System.getProperty("java.vendor");
         if (android != null && android.toLowerCase().contains("android")) {
-            String androidCpu = System.getProperty("ro.product.cpu.abilist").toLowerCase();
-            if (androidCpu.contains("arm64-v8a")) {
-                path = "aarch64-linux-android/libbloock_bridge.android";
-                prefix = "libbloock_bridge";
-                suffix = ".android";
-            } else if (androidCpu.contains("armeabi-v7a")) {
-                path = "armv7-linux-androideabi/libbloock_bridge.android";
-                prefix = "libbloock_bridge";
-                suffix = ".android";
-            } else if (androidCpu.contains("x86")) {
-                path = "i686-linux-android/libbloock_bridge.android";
-                prefix = "libbloock_bridge";
-                suffix = ".android";
-            } else {
-                path = "x86_64-linux-android/libbloock_bridge.android";
-                prefix = "libbloock_bridge";
-                suffix = ".android";
+            compatibleBinaries = new String[] {
+                    "aarch64-linux-android/libbloock_bridge.android",
+                    "armv7-linux-androideabi/libbloock_bridge.android",
+                    "i686-linux-android/libbloock_bridge.android",
+                    "x86_64-linux-android/libbloock_bridge.android"
+            };
+            prefix = "libbloock_bridge";
+            suffix = ".android";
+
+            for (String binary: compatibleBinaries) {
+                try {
+                    loadBinary(binary, prefix, suffix);
+                    return;
+                } catch (UnsatisfiedLinkError | IOException ignored) {}
             }
         } else {
             if (platform.contains("win")) {
@@ -68,26 +67,12 @@ public class Ffi {
                     suffix = ".so";
                 }
             }
+
+            try {
+                loadBinary(path, prefix, suffix);
+            } catch (UnsatisfiedLinkError | IOException ignored) {}
         }
 
-        try {
-            InputStream input = getClass().getClassLoader().getResourceAsStream(path);
-            File file = File.createTempFile(prefix, suffix);
-            OutputStream out = Files.newOutputStream(file.toPath());
-            if (input != null) {
-                int read;
-                byte[] bytes = new byte[1024];
-                while ((read = input.read(bytes)) != -1) {
-                    out.write(bytes, 0, read);
-                }
-            }
-            out.close();
-            file.deleteOnExit();
-
-            bloockLib = Native.load(file.getAbsolutePath(), BloockLib.class);
-        } catch (IOException ignored) {
-
-        }
     }
 
     public static Ffi get() {
@@ -105,5 +90,23 @@ public class Ffi {
 
     public interface BloockLib extends Library {
         String request(String requestType, String payload);
+    }
+
+    private void loadBinary(String path, String prefix, String suffix) throws UnsatisfiedLinkError, IOException {
+        System.out.println(path);
+        InputStream input = getClass().getClassLoader().getResourceAsStream(path);
+        File file = File.createTempFile(prefix, suffix);
+        OutputStream out = Files.newOutputStream(file.toPath());
+        if (input != null) {
+            int read;
+            byte[] bytes = new byte[1024];
+            while ((read = input.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+        }
+        out.close();
+        file.deleteOnExit();
+
+        bloockLib = Native.load(file.getAbsolutePath(), BloockLib.class);
     }
 }
