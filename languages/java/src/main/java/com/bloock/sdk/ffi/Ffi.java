@@ -24,12 +24,21 @@ public class Ffi {
 
         String android = System.getProperty("java.vendor");
         if (android != null && android.toLowerCase().contains("android")) {
-            if (arch.contains("armv7")) {
+            String androidCpu = System.getProperty("ro.product.cpu.abilist").toLowerCase();
+            if (androidCpu.contains("arm64-v8a")) {
+                path = "aarch64-linux-android/libbloock_bridge.android";
+                prefix = "libbloock_bridge";
+                suffix = ".android";
+            } else if (androidCpu.contains("armeabi-v7a")) {
                 path = "armv7-linux-androideabi/libbloock_bridge.android";
                 prefix = "libbloock_bridge";
                 suffix = ".android";
+            } else if (androidCpu.contains("x86")) {
+                path = "i686-linux-android/libbloock_bridge.android";
+                prefix = "libbloock_bridge";
+                suffix = ".android";
             } else {
-                path = "aarch64-linux-android/libbloock_bridge.android";
+                path = "x86_64-linux-android/libbloock_bridge.android";
                 prefix = "libbloock_bridge";
                 suffix = ".android";
             }

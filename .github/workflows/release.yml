@@ -54,6 +54,10 @@ jobs:
           - os: ubuntu-latest
             target: i686-linux-android
             cargo_command: cross
+          
+          - os: ubuntu-latest
+            target: x86_64-linux-android
+            cargo_command: cross
 
           - os: windows-latest
             target: x86_64-pc-windows-gnu
