@@ -10,146 +10,145 @@ import com.bloock.sdk.entity.integrity.Network;
 import com.bloock.sdk.entity.integrity.Proof;
 import com.bloock.sdk.entity.integrity.RecordReceipt;
 import com.bloock.sdk.entity.record.Record;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class IntegrityClient {
-    private final Bridge bridge;
-    private final ConfigData configData;
+  private final Bridge bridge;
+  private final ConfigData configData;
 
-    public IntegrityClient() {
-        this.bridge = new Bridge();
-        this.configData = Config.newConfigDataDefault();
+  public IntegrityClient() {
+    this.bridge = new Bridge();
+    this.configData = Config.newConfigDataDefault();
+  }
+
+  public IntegrityClient(ConfigData configData) {
+    this.bridge = new Bridge();
+    this.configData = Config.newConfigData(configData);
+  }
+
+  public List<RecordReceipt> sendRecords(List<Record> records) throws Exception {
+    SendRecordsRequest request =
+        SendRecordsRequest.newBuilder()
+            .setConfigData(this.configData)
+            .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()))
+            .build();
+
+    SendRecordsResponse response = bridge.getIntegrity().sendRecords(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public IntegrityClient(ConfigData configData) {
-        this.bridge = new Bridge();
-        this.configData = Config.newConfigData(configData);
+    return response.getRecordsList().stream()
+        .map(x -> RecordReceipt.fromProto(x))
+        .collect(Collectors.toList());
+  }
+
+  public Anchor getAnchor(long id) throws Exception {
+    GetAnchorRequest request =
+        GetAnchorRequest.newBuilder().setConfigData(this.configData).setAnchorId(id).build();
+
+    GetAnchorResponse response = bridge.getIntegrity().getAnchor(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public List<RecordReceipt> sendRecords(List<Record> records) throws Exception {
-        SendRecordsRequest request =
-                SendRecordsRequest.newBuilder()
-                        .setConfigData(this.configData)
-                        .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()))
-                        .build();
+    return Anchor.fromProto(response.getAnchor());
+  }
 
-        SendRecordsResponse response = bridge.getIntegrity().sendRecords(request);
+  public Anchor waitAnchor(long id) throws Exception {
+    return waitAnchor(id, 120000);
+  }
 
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
+  public Anchor waitAnchor(long id, long timeout) throws Exception {
+    WaitAnchorRequest request =
+        WaitAnchorRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setAnchorId(id)
+            .setTimeout(timeout)
+            .build();
 
-        return response.getRecordsList().stream()
-                .map(x -> RecordReceipt.fromProto(x))
-                .collect(Collectors.toList());
+    WaitAnchorResponse response = bridge.getIntegrity().waitAnchor(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public Anchor getAnchor(long id) throws Exception {
-        GetAnchorRequest request =
-                GetAnchorRequest.newBuilder().setConfigData(this.configData).setAnchorId(id).build();
+    return Anchor.fromProto(response.getAnchor());
+  }
 
-        GetAnchorResponse response = bridge.getIntegrity().getAnchor(request);
+  public Proof getProof(List<Record> records) throws Exception {
+    GetProofRequest request =
+        GetProofRequest.newBuilder()
+            .setConfigData(this.configData)
+            .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()))
+            .build();
 
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
+    GetProofResponse response = bridge.getIntegrity().getProof(request);
 
-        return Anchor.fromProto(response.getAnchor());
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public Anchor waitAnchor(long id) throws Exception {
-        return waitAnchor(id, 120000);
+    return Proof.fromProto(response.getProof());
+  }
+
+  public String verifyProof(Proof proof) throws Exception {
+    VerifyProofRequest request =
+        VerifyProofRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setProof(proof.toProto())
+            .build();
+
+    VerifyProofResponse response = bridge.getIntegrity().verifyProof(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public Anchor waitAnchor(long id, long timeout) throws Exception {
-        WaitAnchorRequest request =
-                WaitAnchorRequest.newBuilder()
-                        .setConfigData(this.configData)
-                        .setAnchorId(id)
-                        .setTimeout(timeout)
-                        .build();
+    return response.getRecord();
+  }
 
-        WaitAnchorResponse response = bridge.getIntegrity().waitAnchor(request);
+  public long verifyRecords(List<Record> records) throws Exception {
+    return verifyRecords(records, null);
+  }
 
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
+  public long verifyRecords(List<Record> records, Network network) throws Exception {
+    VerifyRecordsRequest.Builder builder =
+        VerifyRecordsRequest.newBuilder()
+            .setConfigData(this.configData)
+            .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()));
 
-        return Anchor.fromProto(response.getAnchor());
+    if (network != null) {
+      builder.setNetwork(network.toProto());
     }
 
-    public Proof getProof(List<Record> records) throws Exception {
-        GetProofRequest request =
-                GetProofRequest.newBuilder()
-                        .setConfigData(this.configData)
-                        .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()))
-                        .build();
+    VerifyRecordsRequest request = builder.build();
+    VerifyRecordsResponse response = bridge.getIntegrity().verifyRecords(request);
 
-        GetProofResponse response = bridge.getIntegrity().getProof(request);
-
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
-
-        return Proof.fromProto(response.getProof());
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public String verifyProof(Proof proof) throws Exception {
-        VerifyProofRequest request =
-                VerifyProofRequest.newBuilder()
-                        .setConfigData(this.configData)
-                        .setProof(proof.toProto())
-                        .build();
+    return response.getTimestamp();
+  }
 
-        VerifyProofResponse response = bridge.getIntegrity().verifyProof(request);
+  public long validateRoot(String root, Network network) throws Exception {
+    ValidateRootRequest request =
+        ValidateRootRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setRoot(root)
+            .setNetwork(network.toProto())
+            .build();
 
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
+    ValidateRootResponse response = bridge.getIntegrity().validateRoot(request);
 
-        return response.getRecord();
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public long verifyRecords(List<Record> records) throws Exception {
-        return verifyRecords(records, null);
-    }
-
-    public long verifyRecords(List<Record> records, Network network) throws Exception {
-        VerifyRecordsRequest.Builder builder =
-                VerifyRecordsRequest.newBuilder()
-                        .setConfigData(this.configData)
-                        .addAllRecords(records.stream().map(x -> x.toProto()).collect(Collectors.toList()));
-
-        if (network != null) {
-            builder.setNetwork(network.toProto());
-        }
-
-        VerifyRecordsRequest request = builder.build();
-        VerifyRecordsResponse response = bridge.getIntegrity().verifyRecords(request);
-
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
-
-        return response.getTimestamp();
-    }
-
-    public long validateRoot(String root, Network network) throws Exception {
-        ValidateRootRequest request =
-                ValidateRootRequest.newBuilder()
-                        .setConfigData(this.configData)
-                        .setRoot(root)
-                        .setNetwork(network.toProto())
-                        .build();
-
-        ValidateRootResponse response = bridge.getIntegrity().validateRoot(request);
-
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
-
-        return response.getTimestamp();
-    }
+    return response.getTimestamp();
+  }
 }
