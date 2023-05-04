@@ -51,3 +51,6 @@ runs:
         
         mkdir -p ${{ inputs.working-directory }}/src/main/resources/i686-linux-android
         cp bloock_core_lib_dynamic/i686-linux-android/libbloock_bridge.so ${{ inputs.working-directory }}/src/main/resources/i686-linux-android/libbloock_bridge.android || true
+
+        mkdir -p ${{ inputs.working-directory }}/src/main/resources/x86_64-linux-android
+        cp bloock_core_lib_dynamic/x86_64-linux-android/libbloock_bridge.so ${{ inputs.working-directory }}/src/main/resources/x86_64-linux-android/libbloock_bridge.android || true

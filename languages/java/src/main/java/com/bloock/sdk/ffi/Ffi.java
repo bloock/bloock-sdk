@@ -21,6 +21,51 @@ public class Ffi {
     String prefix = null;
     String suffix = null;
 
+        String[] compatibleBinaries = new String[] {};
+
+        String android = System.getProperty("java.vendor");
+        if (android != null && android.toLowerCase().contains("android")) {
+            compatibleBinaries = new String[] {
+                    "aarch64-linux-android/libbloock_bridge.android",
+                    "armv7-linux-androideabi/libbloock_bridge.android",
+                    "i686-linux-android/libbloock_bridge.android",
+                    "x86_64-linux-android/libbloock_bridge.android"
+            };
+            prefix = "libbloock_bridge";
+            suffix = ".android";
+
+            for (String binary: compatibleBinaries) {
+                try {
+                    loadBinary(binary, prefix, suffix);
+                    return;
+                } catch (UnsatisfiedLinkError | IOException ignored) {}
+            }
+        } else {
+            if (platform.contains("win")) {
+                path = "x86_64-pc-windows-gnu/bloock_bridge.dll";
+                prefix = "bloock_bridge";
+                suffix = ".dll";
+            } else if (platform.contains("mac")) {
+                if (arch.contains("aarch64")) {
+                    path = "aarch64-apple-darwin/libbloock_bridge.dylib";
+                    prefix = "libbloock_bridge";
+                    suffix = ".dylib";
+                } else {
+                    path = "x86_64-apple-darwin/libbloock_bridge.dylib";
+                    prefix = "libbloock_bridge";
+                    suffix = ".dylib";
+                }
+            } else {
+                if (arch.contains("aarch64")) {
+                    path = "aarch64-unknown-linux-gnu/libbloock_bridge.so";
+                    prefix = "libbloock_bridge";
+                    suffix = ".so";
+                } else {
+                    path = "x86_64-unknown-linux-gnu/libbloock_bridge.so";
+                    prefix = "libbloock_bridge";
+                    suffix = ".so";
+                }
+            }
     String android = System.getProperty("java.vendor");
     if (android != null && android.toLowerCase().contains("android")) {
       if (arch.contains("armv7")) {
@@ -60,6 +105,12 @@ public class Ffi {
       }
     }
 
+            try {
+                loadBinary(path, prefix, suffix);
+            } catch (UnsatisfiedLinkError | IOException ignored) {}
+        }
+
+    }
     try {
       InputStream input = getClass().getClassLoader().getResourceAsStream(path);
       File file = File.createTempFile(prefix, suffix);
@@ -93,7 +144,25 @@ public class Ffi {
     return Base64.getDecoder().decode(encodedResponse.getBytes());
   }
 
-  public interface BloockLib extends Library {
-    String request(String requestType, String payload);
-  }
+    public interface BloockLib extends Library {
+        String request(String requestType, String payload);
+    }
+
+    private void loadBinary(String path, String prefix, String suffix) throws UnsatisfiedLinkError, IOException {
+        System.out.println(path);
+        InputStream input = getClass().getClassLoader().getResourceAsStream(path);
+        File file = File.createTempFile(prefix, suffix);
+        OutputStream out = Files.newOutputStream(file.toPath());
+        if (input != null) {
+            int read;
+            byte[] bytes = new byte[1024];
+            while ((read = input.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+        }
+        out.close();
+        file.deleteOnExit();
+
+        bloockLib = Native.load(file.getAbsolutePath(), BloockLib.class);
+    }
 }
