@@ -225,7 +225,7 @@ mod tests {
         assert_eq!("e30", result_protected);
         assert_eq!(ECDSA_ALG, result_algorithm);
         assert_eq!(
-            "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8",
+            "04d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff888ceff77fc0d48a6f1bcaab3a0833b880ffda5981c35ce09f1c8f60b8528bb22",
             result_public_key
         );
         assert_ne!(content, result_payload);
@@ -264,7 +264,7 @@ mod tests {
         assert_eq!("e30", result_protected);
         assert_eq!(ENS_ALG, result_algorithm);
         assert_eq!(
-            "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8",
+            "04d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff888ceff77fc0d48a6f1bcaab3a0833b880ffda5981c35ce09f1c8f60b8528bb22",
             result_public_key
         );
         assert_ne!(content, result_payload);
@@ -363,7 +363,7 @@ mod tests {
             Signature {
                 header: SignatureHeader {
                     alg: ECDSA_ALG.to_string(),
-                    kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
+                    kid: "04d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff888ceff77fc0d48a6f1bcaab3a0833b880ffda5981c35ce09f1c8f60b8528bb22".to_string(),
                 },
                 protected: "e30".to_string(),
                 signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e61141600".to_string(),
@@ -596,9 +596,9 @@ mod hash_tests {
     const PAYLOAD: &str = "hello world";
     const HASH_PAYLOAD: &str = "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad";
     const HASH_SIGNED_PAYLOAD: &str =
-        "35af08da6fbcd93a3ec5a85d44333de4b062c2ba88d9077fff174b7793abaa63";
+        "1e431b7adc30af3a3e4e2d36e2139d2ffd84628978c80dcd2b194b07a78b3186";
     const HASH_DOUBLY_SIGNED_PAYLOAD: &str =
-        "5f9064051ec1994a53119ccbeb6ad1a2c04754a8a9faf8b0d951b931376b9332";
+        "c328cd3838bb340aee7701c65c506497a503a047c6be3e3d2c151db4735558d6";
 
     const LOCAL_KEY: LocalKey<&str> = LocalKey {
         key_type: bloock_keys::KeyType::EcP256k,

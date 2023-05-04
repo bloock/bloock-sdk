@@ -31,7 +31,7 @@ pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<V
 
     Ok(libsecp256k1::recover(&message, &parsed_sig, &recovery_id)
         .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
-        .serialize_compressed()
+        .serialize()
         .to_vec())
 }
 

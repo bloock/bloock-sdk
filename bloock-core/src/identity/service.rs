@@ -432,7 +432,7 @@ mod tests {
 
         assert_eq!(
             identity.key,
-            "03e073e1608b3fabfe96d3bdafc80cb13acfbedcc34bf98f9a25c3ef5e5cb6c3d4".to_string()
+            "04e073e1608b3fabfe96d3bdafc80cb13acfbedcc34bf98f9a25c3ef5e5cb6c3d47f2fa6824c7c2b43b401d8a6b1b4be01e195a676cfa284a8002e7e213154a327".to_string()
         );
         assert_eq!(
             identity.private_key,
