@@ -13,23 +13,23 @@ type SchemaBuilder struct {
 	technicalName string
 	configData    *proto.ConfigData
 
-	booleanAttributeDescriptor     []BooleanAttributeDescriptor
-	dateAttributeDescriptor        []DateAttributeDescriptor
-	datetimeAttributeDescriptor    []DatetimeAttributeDescriptor
-	multichoiceAttributeDescriptor []MultichoiceAttributeDescriptor
-	numberAttributeDescriptor      []NumberAttributeDescriptor
+	booleanAttributeDescriptor  []BooleanAttributeDescriptor
+	dateAttributeDescriptor     []DateAttributeDescriptor
+	datetimeAttributeDescriptor []DatetimeAttributeDescriptor
+	stringAttributeDescriptor   []StringAttributeDescriptor
+	numberAttributeDescriptor   []NumberAttributeDescriptor
 }
 
 func NewSchemaBuilder(displayName string, technicalName string, configData *proto.ConfigData) SchemaBuilder {
 	return SchemaBuilder{
-		displayName:                    displayName,
-		technicalName:                  technicalName,
-		configData:                     configData,
-		booleanAttributeDescriptor:     []BooleanAttributeDescriptor{},
-		dateAttributeDescriptor:        []DateAttributeDescriptor{},
-		datetimeAttributeDescriptor:    []DatetimeAttributeDescriptor{},
-		multichoiceAttributeDescriptor: []MultichoiceAttributeDescriptor{},
-		numberAttributeDescriptor:      []NumberAttributeDescriptor{},
+		displayName:                 displayName,
+		technicalName:               technicalName,
+		configData:                  configData,
+		booleanAttributeDescriptor:  []BooleanAttributeDescriptor{},
+		dateAttributeDescriptor:     []DateAttributeDescriptor{},
+		datetimeAttributeDescriptor: []DatetimeAttributeDescriptor{},
+		stringAttributeDescriptor:   []StringAttributeDescriptor{},
+		numberAttributeDescriptor:   []NumberAttributeDescriptor{},
 	}
 }
 
@@ -48,8 +48,8 @@ func (c SchemaBuilder) AddDatetimeAttribute(name string, technicalName string, d
 	return c
 }
 
-func (c SchemaBuilder) AddMultichoiceAttribute(name string, technicalName string, allowedValues []string, description string) SchemaBuilder {
-	c.multichoiceAttributeDescriptor = append(c.multichoiceAttributeDescriptor, NewMultichoiceAttributeDescriptor(name, technicalName, allowedValues, description))
+func (c SchemaBuilder) AddStringAttribute(name string, technicalName string, description string) SchemaBuilder {
+	c.stringAttributeDescriptor = append(c.stringAttributeDescriptor, NewStringAttributeDescriptor(name, technicalName, description))
 	return c
 }
 
@@ -76,9 +76,9 @@ func (c SchemaBuilder) Build() (Schema, error) {
 		datetimeAttributesDescriptor[i] = b.ToProto()
 	}
 
-	multichoiceAttributesDescriptor := make([]*proto.MultiChoiceAttributeDefinition, len(c.multichoiceAttributeDescriptor))
-	for i, b := range c.multichoiceAttributeDescriptor {
-		multichoiceAttributesDescriptor[i] = b.ToProto()
+	stringAttributesDescriptor := make([]*proto.StringAttributeDefinition, len(c.stringAttributeDescriptor))
+	for i, b := range c.stringAttributeDescriptor {
+		stringAttributesDescriptor[i] = b.ToProto()
 	}
 
 	numberAttributesDescriptor := make([]*proto.NumberAttributeDefinition, len(c.numberAttributeDescriptor))
@@ -87,14 +87,14 @@ func (c SchemaBuilder) Build() (Schema, error) {
 	}
 
 	req := proto.BuildSchemaRequest{
-		DisplayName:           c.displayName,
-		TechnicalName:         c.technicalName,
-		ConfigData:            c.configData,
-		BooleanAttributes:     booleanAttributesDescriptor,
-		DateAttributes:        dateAttributesDescriptor,
-		DatetimeAttributes:    datetimeAttributesDescriptor,
-		MultichoiceAttributes: multichoiceAttributesDescriptor,
-		NumberAttributes:      numberAttributesDescriptor,
+		DisplayName:        c.displayName,
+		TechnicalName:      c.technicalName,
+		ConfigData:         c.configData,
+		BooleanAttributes:  booleanAttributesDescriptor,
+		DateAttributes:     dateAttributesDescriptor,
+		DatetimeAttributes: datetimeAttributesDescriptor,
+		StringAttributes:   stringAttributesDescriptor,
+		NumberAttributes:   numberAttributesDescriptor,
 	}
 
 	res, err := bridge.Identity().BuildSchema(context.Background(), &req)

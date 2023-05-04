@@ -9,7 +9,7 @@ from bloock._bridge.proto.shared_pb2 import Error
 from bloock.entity.identity.boolean_attribute_descriptor import BooleanAttributeDescriptor
 from bloock.entity.identity.date_attribute_descriptor import DateAttributeDescriptor
 from bloock.entity.identity.datetime_attribute_descriptor import DatetimeAttributeDescriptor
-from bloock.entity.identity.multichoice_attribute_descriptor import MultichoiceAttributeDescriptor
+from bloock.entity.identity.string_attribute_descriptor import StringAttributeDescriptor
 from bloock.entity.identity.number_attribute_descriptor import NumberAttributeDescriptor
 from bloock.entity.identity.schema import Schema
 
@@ -23,7 +23,7 @@ class SchemaBuilder:
         self.boolean_attributes = []
         self.date_attributes = []
         self.datetime_attributes = []
-        self.multichoice_attributes = []
+        self.string_attributes = []
         self.number_attributes = []
 
     def add_boolean_attribute(self, name: str, technical_name: str, description: str) -> SchemaBuilder:
@@ -38,10 +38,9 @@ class SchemaBuilder:
         self.datetime_attributes.append(DatetimeAttributeDescriptor(name, technical_name, description))
         return self
 
-    def add_multichoice_attribute(self, name: str, technical_name: str, allowed_values: List[str],
-                                  description: str) -> SchemaBuilder:
-        self.multichoice_attributes.append(
-            MultichoiceAttributeDescriptor(name, technical_name, allowed_values, description))
+    def add_string_attribute(self, name: str, technical_name: str, description: str) -> SchemaBuilder:
+        self.string_attributes.append(
+            StringAttributeDescriptor(name, technical_name, description))
         return self
 
     def add_number_attribute(self, name: str, technical_name: str, description: str) -> SchemaBuilder:
@@ -63,9 +62,9 @@ class SchemaBuilder:
         for a in self.datetime_attributes:
             datetime_attributes.append(a.to_proto())
 
-        multichoice_attributes = []
-        for a in self.multichoice_attributes:
-            multichoice_attributes.append(a.to_proto())
+        string_attributes = []
+        for a in self.string_attributes:
+            string_attributes.append(a.to_proto())
 
         number_attributes = []
         for a in self.number_attributes:
@@ -78,7 +77,7 @@ class SchemaBuilder:
             boolean_attributes=boolean_attributes,
             date_attributes=date_attributes,
             datetime_attributes=datetime_attributes,
-            multichoice_attributes=multichoice_attributes,
+            string_attributes=string_attributes,
             number_attributes=number_attributes
         )
 

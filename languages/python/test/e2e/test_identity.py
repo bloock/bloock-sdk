@@ -53,12 +53,12 @@ class TestIdentity(unittest.TestCase):
 
         schema = identity_client.build_schema("Test Schema", "test_schema") \
             .add_boolean_attribute("Boolean Attribute", "bool_attr", "") \
-            .add_multichoice_attribute("Multichoice Attribute", "multichoice_attr", ["option_a", "option_b", "option_c"], "") \
+            .add_string_attribute("String Attribute", "string_attr", "") \
             .build()
 
         receipt = identity_client.build_credential(schema.id, holder.key) \
             .with_boolean_attribute("bool_attr", True) \
-            .with_multichoice_attribute("multichoice_attr", "option_b") \
+            .with_string_attribute("string_attr", "string test") \
             .build()
 
         identity_client.wait_offer(receipt.id)

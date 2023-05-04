@@ -5,7 +5,7 @@ import { Schema } from "./schema";
 import { BooleanAttributeDescriptor } from "./boolean_attribute_descriptor";
 import { DateAttributeDescriptor } from "./date_attribute_descriptor";
 import { DateTimeAttributeDescriptor } from "./datetime_attribute_descriptor";
-import { MultichoiceAttributeDescriptor } from "./multichoice_attribute_descriptor";
+import { StringAttributeDescriptor } from "./string_attribute_descriptor";
 import { NumberAttributeDescriptor } from "./number_attribute_descriptor";
 
 export class SchemaBuilder {
@@ -16,7 +16,7 @@ export class SchemaBuilder {
   booleanAttributes: BooleanAttributeDescriptor[];
   dateAttributes: DateAttributeDescriptor[];
   dateTimeAttributes: DateTimeAttributeDescriptor[];
-  multichoiceAttributes: MultichoiceAttributeDescriptor[];
+  stringAttributes: StringAttributeDescriptor[];
   numberAttributes: NumberAttributeDescriptor[];
 
   constructor(
@@ -30,7 +30,7 @@ export class SchemaBuilder {
     this.booleanAttributes = [];
     this.dateAttributes = [];
     this.dateTimeAttributes = [];
-    this.multichoiceAttributes = [];
+    this.stringAttributes = [];
     this.numberAttributes = [];
   }
 
@@ -67,17 +67,15 @@ export class SchemaBuilder {
     return this;
   }
 
-  public addMultichoiceAttribute(
+  public addStringAttribute(
     name: string,
     technicalName: string,
-    values: string[],
     description?: string
   ): SchemaBuilder {
-    this.multichoiceAttributes.push(
-      new MultichoiceAttributeDescriptor(
+    this.stringAttributes.push(
+      new StringAttributeDescriptor(
         name,
         technicalName,
-        values,
         description
       )
     );
@@ -105,7 +103,7 @@ export class SchemaBuilder {
       booleanAttributes: this.booleanAttributes.map(a => a.toProto()),
       dateAttributes: this.dateAttributes.map(a => a.toProto()),
       datetimeAttributes: this.dateTimeAttributes.map(a => a.toProto()),
-      multichoiceAttributes: this.multichoiceAttributes.map(a => a.toProto()),
+      stringAttributes: this.stringAttributes.map(a => a.toProto()),
       numberAttributes: this.numberAttributes.map(a => a.toProto())
     });
 

@@ -18,7 +18,7 @@ class IdentityEntities
         \GPBMetadata\IntegrityEntities::initOnce();
         $pool->internalAddGeneratedFile(
             '
-Ô
+²
 identity_entities.protobloockintegrity_entities.proto">
 Identity
 mnemonic (	
@@ -38,13 +38,12 @@ class IdentityEntities
 display_name (	
 
 id (	
-description (	"o
-MultiChoiceAttributeDefinition
+description (	"R
+StringAttributeDefinition
 display_name (	
 
 id (	
-description (	
-allowed_values (	"R
+description (	"R
 NumberAttributeDefinition
 display_name (	
 
@@ -61,8 +60,8 @@ class IdentityEntities
 DateTimeAttribute
 
 id (	
-value ("1
-MultiChoiceAttribute
+value (",
+StringAttribute
 
 id (	
 value (	",

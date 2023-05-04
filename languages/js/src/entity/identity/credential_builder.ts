@@ -5,7 +5,7 @@ import { BooleanAttribute } from "./boolean_attribute";
 import { CredentialReceipt } from "./credential_receipt";
 import { DateAttribute } from "./date_attribute";
 import { DateTimeAttribute } from "./datetime_attribute";
-import { MultichoiceAttribute } from "./multichoice_attribute";
+import { StringAttribute } from "./string_attribute";
 import { NumberAttribute } from "./number_attribute";
 
 export class CredentialBuilder {
@@ -16,7 +16,7 @@ export class CredentialBuilder {
   booleanAttributes: BooleanAttribute[];
   dateAttributes: DateAttribute[];
   dateTimeAttributes: DateTimeAttribute[];
-  multichoiceAttributes: MultichoiceAttribute[];
+  stringAttributes: StringAttribute[];
   numberAttributes: NumberAttribute[];
 
   constructor(schemaId: string, holderKey: string, configData: ConfigData) {
@@ -27,7 +27,7 @@ export class CredentialBuilder {
     this.booleanAttributes = [];
     this.dateAttributes = [];
     this.dateTimeAttributes = [];
-    this.multichoiceAttributes = [];
+    this.stringAttributes = [];
     this.numberAttributes = [];
   }
 
@@ -46,11 +46,11 @@ export class CredentialBuilder {
     return this;
   }
 
-  public withMultichoiceAttribute(
+  public withStringAttribute(
     key: string,
     value: string
   ): CredentialBuilder {
-    this.multichoiceAttributes.push(new MultichoiceAttribute(key, value));
+    this.stringAttributes.push(new StringAttribute(key, value));
     return this;
   }
 
@@ -69,7 +69,7 @@ export class CredentialBuilder {
       booleanAttributes: this.booleanAttributes.map(a => a.toProto()),
       dateAttributes: this.dateAttributes.map(a => a.toProto()),
       datetimeAttributes: this.dateTimeAttributes.map(a => a.toProto()),
-      multichoiceAttributes: this.multichoiceAttributes.map(a => a.toProto()),
+      stringAttributes: this.stringAttributes.map(a => a.toProto()),
       numberAttributes: this.numberAttributes.map(a => a.toProto())
     });
 

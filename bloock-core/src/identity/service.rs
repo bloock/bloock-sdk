@@ -11,7 +11,7 @@ use bloock_keys::local::{LocalKey, LocalKeyParams};
 use bloock_signer::entity::signature::Signature;
 use bloock_signer::local::ecdsa::LocalEcdsaSigner;
 use bloock_signer::{create_verifier_from_signature, Signer};
-use serde_json::{json, Map, Number, Value};
+use serde_json::{json, Map, Value};
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -87,8 +87,7 @@ impl<H: Client> IdentityService<H> {
         let mut attr = Map::new();
         for a in attributes {
             let r#type = a.r#type;
-            let values = a.values;
-            attr.insert(a.name, json!({ "type": r#type, "values": values }));
+            attr.insert(a.name, json!({ "type": r#type }));
         }
 
         let req = CreateSchemaRequest {
@@ -134,15 +133,12 @@ impl<H: Client> IdentityService<H> {
         &self,
         schema_id: String,
         holder_key: String,
-        attributes: Vec<(String, i64)>,
+        attributes: Vec<(String, Value)>,
     ) -> BloockResult<CreateCredentialResponse> {
         let mut map = Map::new();
 
         for attribute in attributes.iter() {
-            map.insert(
-                attribute.0.clone(),
-                Value::Number(Number::from(attribute.1)),
-            );
+            map.insert(attribute.0.clone(), attribute.1.clone());
         }
 
         let credential_subject = Value::Object(map);
@@ -254,7 +250,7 @@ impl<H: Client> IdentityService<H> {
 
         let req = RedeemCredentialRequest {
             thread_id,
-            signature: signature.signature,
+            signature,
         };
 
         let res: RedeemCredentialResponse = self

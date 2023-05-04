@@ -57,12 +57,12 @@ final class IdentityTest extends TestCase
 
         $schema = $identityClient->buildSchema("Test Schema", "test_schema")
             ->addBooleanAttribute("Boolean Attribute", "bool_attr", "")
-            ->addMultichoiceAttribute("Multichoice Attribute", "multichoice_attr", ["option_a", "option_b", "option_c"], "")
+            ->addStringAttribute("String Attribute", "string_attr", "")
             ->build();
 
         $receipt = $identityClient->buildCredential($schema->getId(), $holder->getKey())
             ->withBooleanAttribute("bool_attr", true)
-            ->withMultichoiceAttribute("multichoice_attr", "option_b")
+            ->withStringAttribute("string_attr", "string test")
             ->build();
 
         $identityClient->waitOffer($receipt->getId());

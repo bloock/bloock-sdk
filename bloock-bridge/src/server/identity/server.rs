@@ -18,6 +18,7 @@ use async_trait::async_trait;
 use bloock_core::identity::entity::credential::Credential as CoreCredential;
 use bloock_core::identity::entity::credential_offer::CredentialOffer as CoreCredentialOffer;
 use bloock_core::identity::{self, entity::schema::Attribute};
+use serde_json::{Number, Value};
 
 pub struct IdentityServer {}
 
@@ -69,39 +70,34 @@ impl IdentityServiceHandler for IdentityServer {
 
         let boolean_attr = req.boolean_attributes.iter().map(|a| Attribute {
             name: a.id.clone(),
-            r#type: "integer".to_string(),
-            values: None,
+            r#type: "boolean".to_string(),
         });
 
         let date_attr = req.date_attributes.iter().map(|a| Attribute {
             name: a.id.clone(),
-            r#type: "integer".to_string(),
-            values: None,
+            r#type: "date".to_string(),
         });
 
         let datetime_attr = req.datetime_attributes.iter().map(|a| Attribute {
             name: a.id.clone(),
-            r#type: "integer".to_string(),
-            values: None,
+            r#type: "datetime".to_string(),
         });
 
-        let multichoice_attr = req.multichoice_attributes.iter().map(|a| Attribute {
+        let string_attr = req.string_attributes.iter().map(|a| Attribute {
             name: a.id.clone(),
-            r#type: "multichoice".to_string(),
-            values: Some(a.allowed_values.clone()),
+            r#type: "string".to_string(),
         });
 
         let number_attr = req.number_attributes.iter().map(|a| Attribute {
             name: a.id.clone(),
             r#type: "integer".to_string(),
-            values: None,
         });
 
         let attributes: Vec<Attribute> = boolean_attr
             .into_iter()
             .chain(date_attr.into_iter())
             .chain(datetime_attr.into_iter())
-            .chain(multichoice_attr.into_iter())
+            .chain(string_attr.into_iter())
             .chain(number_attr.into_iter())
             .collect();
 
@@ -150,27 +146,33 @@ impl IdentityServiceHandler for IdentityServer {
         let boolean_attr = req
             .boolean_attributes
             .iter()
-            .map(|a| (a.id.clone(), a.value as i64));
+            .map(|a| (a.id.clone(), Value::Number(Number::from(a.value as i64))));
 
-        let date_attr = req.date_attributes.iter().map(|a| (a.id.clone(), a.value));
+        let date_attr = req
+            .date_attributes
+            .iter()
+            .map(|a| (a.id.clone(), Value::Number(Number::from(a.value))));
 
         let datetime_attr = req
             .datetime_attributes
             .iter()
-            .map(|a| (a.id.clone(), a.value));
+            .map(|a| (a.id.clone(), Value::Number(Number::from(a.value as i64))));
 
-        let multichoice_attr = req.multichoice_attributes.iter().map(|a| (a.id.clone(), 0));
+        let string_attr = req
+            .string_attributes
+            .iter()
+            .map(|a| (a.id.clone(), Value::String(String::from(a.value.clone()))));
 
         let number_attr = req
             .number_attributes
             .iter()
-            .map(|a| (a.id.clone(), a.value));
+            .map(|a| (a.id.clone(), Value::Number(Number::from(a.value))));
 
-        let attributes: Vec<(String, i64)> = boolean_attr
+        let attributes: Vec<(String, Value)> = boolean_attr
             .into_iter()
             .chain(date_attr.into_iter())
             .chain(datetime_attr.into_iter())
-            .chain(multichoice_attr.into_iter())
+            .chain(string_attr.into_iter())
             .chain(number_attr.into_iter())
             .collect();
 

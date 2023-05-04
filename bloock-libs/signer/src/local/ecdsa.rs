@@ -101,7 +101,7 @@ impl<S: ToString + AsRef<[u8]> + Clone> Signer for LocalEcdsaSigner<S> {
             signature: hex::encode(buffer),
             header: SignatureHeader {
                 alg: Algorithms::Es256k.to_string(),
-                kid: hex::encode(public_key.serialize_compressed()),
+                kid: hex::encode(public_key.serialize()),
             },
             message_hash: hex::encode(Keccak256::generate_hash(payload)),
         };

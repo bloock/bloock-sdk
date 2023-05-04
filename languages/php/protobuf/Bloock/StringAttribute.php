@@ -9,9 +9,9 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Generated from protobuf message <code>bloock.MultiChoiceAttribute</code>
+ * Generated from protobuf message <code>bloock.StringAttribute</code>
  */
-class MultiChoiceAttribute extends \Google\Protobuf\Internal\Message
+class StringAttribute extends \Google\Protobuf\Internal\Message
 {
     /**
      * Generated from protobuf field <code>string id = 1;</code>

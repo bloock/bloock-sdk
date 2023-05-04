@@ -20,6 +20,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class CreateIdentityRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -36,6 +37,7 @@ class CreateIdentityRequest(google.protobuf.message.Message):
 
 global___CreateIdentityRequest = CreateIdentityRequest
 
+@typing_extensions.final
 class CreateIdentityResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -57,6 +59,7 @@ class CreateIdentityResponse(google.protobuf.message.Message):
 
 global___CreateIdentityResponse = CreateIdentityResponse
 
+@typing_extensions.final
 class LoadIdentityRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -76,6 +79,7 @@ class LoadIdentityRequest(google.protobuf.message.Message):
 
 global___LoadIdentityRequest = LoadIdentityRequest
 
+@typing_extensions.final
 class LoadIdentityResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -97,6 +101,7 @@ class LoadIdentityResponse(google.protobuf.message.Message):
 
 global___LoadIdentityResponse = LoadIdentityResponse
 
+@typing_extensions.final
 class BuildSchemaRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -106,7 +111,7 @@ class BuildSchemaRequest(google.protobuf.message.Message):
     BOOLEAN_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DATE_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DATETIME_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    MULTICHOICE_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    STRING_ATTRIBUTES_FIELD_NUMBER: builtins.int
     NUMBER_ATTRIBUTES_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
@@ -119,7 +124,7 @@ class BuildSchemaRequest(google.protobuf.message.Message):
     @property
     def datetime_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateTimeAttributeDefinition]: ...
     @property
-    def multichoice_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.MultiChoiceAttributeDefinition]: ...
+    def string_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.StringAttributeDefinition]: ...
     @property
     def number_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.NumberAttributeDefinition]: ...
     def __init__(
@@ -131,14 +136,15 @@ class BuildSchemaRequest(google.protobuf.message.Message):
         boolean_attributes: collections.abc.Iterable[identity_entities_pb2.BooleanAttributeDefinition] | None = ...,
         date_attributes: collections.abc.Iterable[identity_entities_pb2.DateAttributeDefinition] | None = ...,
         datetime_attributes: collections.abc.Iterable[identity_entities_pb2.DateTimeAttributeDefinition] | None = ...,
-        multichoice_attributes: collections.abc.Iterable[identity_entities_pb2.MultiChoiceAttributeDefinition] | None = ...,
+        string_attributes: collections.abc.Iterable[identity_entities_pb2.StringAttributeDefinition] | None = ...,
         number_attributes: collections.abc.Iterable[identity_entities_pb2.NumberAttributeDefinition] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "display_name", b"display_name", "multichoice_attributes", b"multichoice_attributes", "number_attributes", b"number_attributes", "technical_name", b"technical_name"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "display_name", b"display_name", "number_attributes", b"number_attributes", "string_attributes", b"string_attributes", "technical_name", b"technical_name"]) -> None: ...
 
 global___BuildSchemaRequest = BuildSchemaRequest
 
+@typing_extensions.final
 class BuildSchemaResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -160,6 +166,7 @@ class BuildSchemaResponse(google.protobuf.message.Message):
 
 global___BuildSchemaResponse = BuildSchemaResponse
 
+@typing_extensions.final
 class GetSchemaRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -179,6 +186,7 @@ class GetSchemaRequest(google.protobuf.message.Message):
 
 global___GetSchemaRequest = GetSchemaRequest
 
+@typing_extensions.final
 class GetSchemaResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -200,6 +208,7 @@ class GetSchemaResponse(google.protobuf.message.Message):
 
 global___GetSchemaResponse = GetSchemaResponse
 
+@typing_extensions.final
 class CreateCredentialRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -209,7 +218,7 @@ class CreateCredentialRequest(google.protobuf.message.Message):
     BOOLEAN_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DATE_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DATETIME_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    MULTICHOICE_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    STRING_ATTRIBUTES_FIELD_NUMBER: builtins.int
     NUMBER_ATTRIBUTES_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
@@ -222,7 +231,7 @@ class CreateCredentialRequest(google.protobuf.message.Message):
     @property
     def datetime_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateTimeAttribute]: ...
     @property
-    def multichoice_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.MultiChoiceAttribute]: ...
+    def string_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.StringAttribute]: ...
     @property
     def number_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.NumberAttribute]: ...
     def __init__(
@@ -234,14 +243,15 @@ class CreateCredentialRequest(google.protobuf.message.Message):
         boolean_attributes: collections.abc.Iterable[identity_entities_pb2.BooleanAttribute] | None = ...,
         date_attributes: collections.abc.Iterable[identity_entities_pb2.DateAttribute] | None = ...,
         datetime_attributes: collections.abc.Iterable[identity_entities_pb2.DateTimeAttribute] | None = ...,
-        multichoice_attributes: collections.abc.Iterable[identity_entities_pb2.MultiChoiceAttribute] | None = ...,
+        string_attributes: collections.abc.Iterable[identity_entities_pb2.StringAttribute] | None = ...,
         number_attributes: collections.abc.Iterable[identity_entities_pb2.NumberAttribute] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "holder_key", b"holder_key", "multichoice_attributes", b"multichoice_attributes", "number_attributes", b"number_attributes", "schema_id", b"schema_id"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "holder_key", b"holder_key", "number_attributes", b"number_attributes", "schema_id", b"schema_id", "string_attributes", b"string_attributes"]) -> None: ...
 
 global___CreateCredentialRequest = CreateCredentialRequest
 
+@typing_extensions.final
 class CreateCredentialResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -263,6 +273,7 @@ class CreateCredentialResponse(google.protobuf.message.Message):
 
 global___CreateCredentialResponse = CreateCredentialResponse
 
+@typing_extensions.final
 class GetOfferRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -282,6 +293,7 @@ class GetOfferRequest(google.protobuf.message.Message):
 
 global___GetOfferRequest = GetOfferRequest
 
+@typing_extensions.final
 class GetOfferResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -303,6 +315,7 @@ class GetOfferResponse(google.protobuf.message.Message):
 
 global___GetOfferResponse = GetOfferResponse
 
+@typing_extensions.final
 class WaitOfferRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -325,6 +338,7 @@ class WaitOfferRequest(google.protobuf.message.Message):
 
 global___WaitOfferRequest = WaitOfferRequest
 
+@typing_extensions.final
 class WaitOfferResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -349,6 +363,7 @@ class WaitOfferResponse(google.protobuf.message.Message):
 
 global___WaitOfferResponse = WaitOfferResponse
 
+@typing_extensions.final
 class CredentialOfferToJsonRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -369,6 +384,7 @@ class CredentialOfferToJsonRequest(google.protobuf.message.Message):
 
 global___CredentialOfferToJsonRequest = CredentialOfferToJsonRequest
 
+@typing_extensions.final
 class CredentialOfferToJsonResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -389,6 +405,7 @@ class CredentialOfferToJsonResponse(google.protobuf.message.Message):
 
 global___CredentialOfferToJsonResponse = CredentialOfferToJsonResponse
 
+@typing_extensions.final
 class CredentialOfferFromJsonRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -408,6 +425,7 @@ class CredentialOfferFromJsonRequest(google.protobuf.message.Message):
 
 global___CredentialOfferFromJsonRequest = CredentialOfferFromJsonRequest
 
+@typing_extensions.final
 class CredentialOfferFromJsonResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -429,6 +447,7 @@ class CredentialOfferFromJsonResponse(google.protobuf.message.Message):
 
 global___CredentialOfferFromJsonResponse = CredentialOfferFromJsonResponse
 
+@typing_extensions.final
 class CredentialOfferRedeemRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -452,6 +471,7 @@ class CredentialOfferRedeemRequest(google.protobuf.message.Message):
 
 global___CredentialOfferRedeemRequest = CredentialOfferRedeemRequest
 
+@typing_extensions.final
 class CredentialOfferRedeemResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -473,6 +493,7 @@ class CredentialOfferRedeemResponse(google.protobuf.message.Message):
 
 global___CredentialOfferRedeemResponse = CredentialOfferRedeemResponse
 
+@typing_extensions.final
 class CredentialToJsonRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -493,6 +514,7 @@ class CredentialToJsonRequest(google.protobuf.message.Message):
 
 global___CredentialToJsonRequest = CredentialToJsonRequest
 
+@typing_extensions.final
 class CredentialToJsonResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -513,6 +535,7 @@ class CredentialToJsonResponse(google.protobuf.message.Message):
 
 global___CredentialToJsonResponse = CredentialToJsonResponse
 
+@typing_extensions.final
 class CredentialFromJsonRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -532,6 +555,7 @@ class CredentialFromJsonRequest(google.protobuf.message.Message):
 
 global___CredentialFromJsonRequest = CredentialFromJsonRequest
 
+@typing_extensions.final
 class CredentialFromJsonResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -553,6 +577,7 @@ class CredentialFromJsonResponse(google.protobuf.message.Message):
 
 global___CredentialFromJsonResponse = CredentialFromJsonResponse
 
+@typing_extensions.final
 class VerifyCredentialRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -573,6 +598,7 @@ class VerifyCredentialRequest(google.protobuf.message.Message):
 
 global___VerifyCredentialRequest = VerifyCredentialRequest
 
+@typing_extensions.final
 class VerifyCredentialResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -594,6 +620,7 @@ class VerifyCredentialResponse(google.protobuf.message.Message):
 
 global___VerifyCredentialResponse = VerifyCredentialResponse
 
+@typing_extensions.final
 class RevokeCredentialRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -614,6 +641,7 @@ class RevokeCredentialRequest(google.protobuf.message.Message):
 
 global___RevokeCredentialRequest = RevokeCredentialRequest
 
+@typing_extensions.final
 class RevokeCredentialResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

@@ -8,7 +8,7 @@ from bloock.entity.identity.boolean_attribute import BooleanAttribute
 from bloock.entity.identity.credential_receipt import CredentialReceipt
 from bloock.entity.identity.date_attribute import DateAttribute
 from bloock.entity.identity.datetime_attribute import DatetimeAttribute
-from bloock.entity.identity.multichoice_attribute import MultichoiceAttribute
+from bloock.entity.identity.string_attribute import StringAttribute
 from bloock.entity.identity.number_attribute import NumberAttribute
 
 
@@ -21,7 +21,7 @@ class CredentialBuilder:
         self.boolean_attributes = []
         self.date_attributes = []
         self.datetime_attributes = []
-        self.multichoice_attributes = []
+        self.string_attributes = []
         self.number_attributes = []
 
     def with_boolean_attribute(self, key: str, value: bool) -> CredentialBuilder:
@@ -36,8 +36,8 @@ class CredentialBuilder:
         self.datetime_attributes.append(DatetimeAttribute(key, value))
         return self
 
-    def with_multichoice_attribute(self, key: str, value: str) -> CredentialBuilder:
-        self.multichoice_attributes.append(MultichoiceAttribute(key, value))
+    def with_string_attribute(self, key: str, value: str) -> CredentialBuilder:
+        self.string_attributes.append(StringAttribute(key, value))
         return self
 
     def with_number_attribute(self, key: str, value: int) -> CredentialBuilder:
@@ -59,9 +59,9 @@ class CredentialBuilder:
         for a in self.datetime_attributes:
             datetime_attributes.append(a.to_proto())
 
-        multichoice_attributes = []
-        for a in self.multichoice_attributes:
-            multichoice_attributes.append(a.to_proto())
+        string_attributes = []
+        for a in self.string_attributes:
+            string_attributes.append(a.to_proto())
 
         number_attributes = []
         for a in self.number_attributes:
@@ -74,7 +74,7 @@ class CredentialBuilder:
             boolean_attributes=boolean_attributes,
             date_attributes=date_attributes,
             datetime_attributes=datetime_attributes,
-            multichoice_attributes=multichoice_attributes,
+            string_attributes=string_attributes,
             number_attributes=number_attributes
         )
 

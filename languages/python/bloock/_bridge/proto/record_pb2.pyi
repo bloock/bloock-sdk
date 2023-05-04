@@ -22,6 +22,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class RecordBuilderFromStringRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -59,6 +60,7 @@ class RecordBuilderFromStringRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromStringRequest = RecordBuilderFromStringRequest
 
+@typing_extensions.final
 class RecordBuilderFromHexRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -96,6 +98,7 @@ class RecordBuilderFromHexRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromHexRequest = RecordBuilderFromHexRequest
 
+@typing_extensions.final
 class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -133,6 +136,7 @@ class RecordBuilderFromJSONRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromJSONRequest = RecordBuilderFromJSONRequest
 
+@typing_extensions.final
 class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -170,6 +174,7 @@ class RecordBuilderFromBytesRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromBytesRequest = RecordBuilderFromBytesRequest
 
+@typing_extensions.final
 class RecordBuilderFromFileRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -207,6 +212,7 @@ class RecordBuilderFromFileRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromFileRequest = RecordBuilderFromFileRequest
 
+@typing_extensions.final
 class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -245,6 +251,7 @@ class RecordBuilderFromRecordRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromRecordRequest = RecordBuilderFromRecordRequest
 
+@typing_extensions.final
 class RecordBuilderResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -266,6 +273,7 @@ class RecordBuilderResponse(google.protobuf.message.Message):
 
 global___RecordBuilderResponse = RecordBuilderResponse
 
+@typing_extensions.final
 class RecordBuilderFromLoaderRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -304,6 +312,7 @@ class RecordBuilderFromLoaderRequest(google.protobuf.message.Message):
 
 global___RecordBuilderFromLoaderRequest = RecordBuilderFromLoaderRequest
 
+@typing_extensions.final
 class GetHashRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -324,6 +333,7 @@ class GetHashRequest(google.protobuf.message.Message):
 
 global___GetHashRequest = GetHashRequest
 
+@typing_extensions.final
 class GetHashResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -344,6 +354,7 @@ class GetHashResponse(google.protobuf.message.Message):
 
 global___GetHashResponse = GetHashResponse
 
+@typing_extensions.final
 class SetProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -368,6 +379,7 @@ class SetProofRequest(google.protobuf.message.Message):
 
 global___SetProofRequest = SetProofRequest
 
+@typing_extensions.final
 class SetProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

@@ -16,7 +16,7 @@ class CredentialBuilder
     private array $booleanAttributes;
     private array $dateAttributes;
     private array $datetimeAttributes;
-    private array $multichoiceAttributes;
+    private array $stringAttributes;
     private array $numberAttributes;
 
     public function __construct(string $schemaId, string $holderKey, ConfigData $configData)
@@ -28,7 +28,7 @@ class CredentialBuilder
         $this->booleanAttributes = [];
         $this->dateAttributes = [];
         $this->datetimeAttributes = [];
-        $this->multichoiceAttributes = [];
+        $this->stringAttributes = [];
         $this->numberAttributes = [];
     }
 
@@ -53,10 +53,10 @@ class CredentialBuilder
         return $this;
     }
 
-    public function withMultichoiceAttribute(string $key, string $value): CredentialBuilder
+    public function withStringAttribute(string $key, string $value): CredentialBuilder
     {
-        $attribute = new MultichoiceAttribute($key, $value);
-        $this->multichoiceAttributes[] = $attribute->toProto();
+        $attribute = new StringAttribute($key, $value);
+        $this->stringAttributes[] = $attribute->toProto();
         return $this;
     }
 
@@ -78,7 +78,7 @@ class CredentialBuilder
         $req->setBooleanAttributes($this->booleanAttributes);
         $req->setDateAttributes($this->dateAttributes);
         $req->setDatetimeAttributes($this->datetimeAttributes);
-        $req->setMultichoiceAttributes($this->multichoiceAttributes);
+        $req->setstringAttributes($this->stringAttributes);
         $req->setNumberAttributes($this->numberAttributes);
 
         $res = $bridge->identity->CreateCredential($req);

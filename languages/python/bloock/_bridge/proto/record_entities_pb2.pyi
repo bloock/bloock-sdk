@@ -21,7 +21,7 @@ class _RecordTypes:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _RecordTypesEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RecordTypes.ValueType], builtins.type):  # noqa: F821
+class _RecordTypesEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RecordTypes.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     STRING: _RecordTypes.ValueType  # 0
     HEX: _RecordTypes.ValueType  # 1
@@ -42,6 +42,7 @@ RECORD: RecordTypes.ValueType  # 5
 LOADER: RecordTypes.ValueType  # 6
 global___RecordTypes = RecordTypes
 
+@typing_extensions.final
 class RecordHeader(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -56,6 +57,7 @@ class RecordHeader(google.protobuf.message.Message):
 
 global___RecordHeader = RecordHeader
 
+@typing_extensions.final
 class Record(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
