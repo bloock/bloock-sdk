@@ -13,7 +13,8 @@
     "php": ">=7.4",
     "ext-ffi": "*",
     "grpc/grpc": "^1.38",
-    "google/protobuf": "^3.17"
+    "google/protobuf": "^3.17",
+    "doctrine/instantiator": "1.5.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9"
