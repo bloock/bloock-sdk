@@ -28,11 +28,10 @@ export interface DateTimeAttributeDefinition {
   description: string;
 }
 
-export interface MultiChoiceAttributeDefinition {
+export interface StringAttributeDefinition {
   displayName: string;
   id: string;
   description: string;
-  allowedValues: string[];
 }
 
 export interface NumberAttributeDefinition {
@@ -56,7 +55,7 @@ export interface DateTimeAttribute {
   value: number;
 }
 
-export interface MultiChoiceAttribute {
+export interface StringAttribute {
   id: string;
   value: string;
 }
@@ -399,12 +398,12 @@ export const DateTimeAttributeDefinition = {
   },
 };
 
-function createBaseMultiChoiceAttributeDefinition(): MultiChoiceAttributeDefinition {
-  return { displayName: "", id: "", description: "", allowedValues: [] };
+function createBaseStringAttributeDefinition(): StringAttributeDefinition {
+  return { displayName: "", id: "", description: "" };
 }
 
-export const MultiChoiceAttributeDefinition = {
-  encode(message: MultiChoiceAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const StringAttributeDefinition = {
+  encode(message: StringAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.displayName !== "") {
       writer.uint32(10).string(message.displayName);
     }
@@ -414,16 +413,13 @@ export const MultiChoiceAttributeDefinition = {
     if (message.description !== "") {
       writer.uint32(26).string(message.description);
     }
-    for (const v of message.allowedValues) {
-      writer.uint32(34).string(v!);
-    }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): MultiChoiceAttributeDefinition {
+  decode(input: _m0.Reader | Uint8Array, length?: number): StringAttributeDefinition {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMultiChoiceAttributeDefinition();
+    const message = createBaseStringAttributeDefinition();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -436,9 +432,6 @@ export const MultiChoiceAttributeDefinition = {
         case 3:
           message.description = reader.string();
           break;
-        case 4:
-          message.allowedValues.push(reader.string());
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -447,36 +440,27 @@ export const MultiChoiceAttributeDefinition = {
     return message;
   },
 
-  fromJSON(object: any): MultiChoiceAttributeDefinition {
+  fromJSON(object: any): StringAttributeDefinition {
     return {
       displayName: isSet(object.displayName) ? String(object.displayName) : "",
       id: isSet(object.id) ? String(object.id) : "",
       description: isSet(object.description) ? String(object.description) : "",
-      allowedValues: Array.isArray(object?.allowedValues) ? object.allowedValues.map((e: any) => String(e)) : [],
     };
   },
 
-  toJSON(message: MultiChoiceAttributeDefinition): unknown {
+  toJSON(message: StringAttributeDefinition): unknown {
     const obj: any = {};
     message.displayName !== undefined && (obj.displayName = message.displayName);
     message.id !== undefined && (obj.id = message.id);
     message.description !== undefined && (obj.description = message.description);
-    if (message.allowedValues) {
-      obj.allowedValues = message.allowedValues.map((e) => e);
-    } else {
-      obj.allowedValues = [];
-    }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MultiChoiceAttributeDefinition>, I>>(
-    object: I,
-  ): MultiChoiceAttributeDefinition {
-    const message = createBaseMultiChoiceAttributeDefinition();
+  fromPartial<I extends Exact<DeepPartial<StringAttributeDefinition>, I>>(object: I): StringAttributeDefinition {
+    const message = createBaseStringAttributeDefinition();
     message.displayName = object.displayName ?? "";
     message.id = object.id ?? "";
     message.description = object.description ?? "";
-    message.allowedValues = object.allowedValues?.map((e) => e) || [];
     return message;
   },
 };
@@ -716,12 +700,12 @@ export const DateTimeAttribute = {
   },
 };
 
-function createBaseMultiChoiceAttribute(): MultiChoiceAttribute {
+function createBaseStringAttribute(): StringAttribute {
   return { id: "", value: "" };
 }
 
-export const MultiChoiceAttribute = {
-  encode(message: MultiChoiceAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const StringAttribute = {
+  encode(message: StringAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
@@ -731,10 +715,10 @@ export const MultiChoiceAttribute = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): MultiChoiceAttribute {
+  decode(input: _m0.Reader | Uint8Array, length?: number): StringAttribute {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMultiChoiceAttribute();
+    const message = createBaseStringAttribute();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -752,19 +736,19 @@ export const MultiChoiceAttribute = {
     return message;
   },
 
-  fromJSON(object: any): MultiChoiceAttribute {
+  fromJSON(object: any): StringAttribute {
     return { id: isSet(object.id) ? String(object.id) : "", value: isSet(object.value) ? String(object.value) : "" };
   },
 
-  toJSON(message: MultiChoiceAttribute): unknown {
+  toJSON(message: StringAttribute): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
     message.value !== undefined && (obj.value = message.value);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MultiChoiceAttribute>, I>>(object: I): MultiChoiceAttribute {
-    const message = createBaseMultiChoiceAttribute();
+  fromPartial<I extends Exact<DeepPartial<StringAttribute>, I>>(object: I): StringAttribute {
+    const message = createBaseStringAttribute();
     message.id = object.id ?? "";
     message.value = object.value ?? "";
     return message;

@@ -9,9 +9,9 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Generated from protobuf message <code>bloock.MultiChoiceAttributeDefinition</code>
+ * Generated from protobuf message <code>bloock.StringAttributeDefinition</code>
  */
-class MultiChoiceAttributeDefinition extends \Google\Protobuf\Internal\Message
+class StringAttributeDefinition extends \Google\Protobuf\Internal\Message
 {
     /**
      * Generated from protobuf field <code>string display_name = 1;</code>
@@ -25,10 +25,6 @@ class MultiChoiceAttributeDefinition extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string description = 3;</code>
      */
     protected $description = '';
-    /**
-     * Generated from protobuf field <code>repeated string allowed_values = 4;</code>
-     */
-    private $allowed_values;
 
     /**
      * Constructor.
@@ -39,7 +35,6 @@ class MultiChoiceAttributeDefinition extends \Google\Protobuf\Internal\Message
      *     @type string $display_name
      *     @type string $id
      *     @type string $description
-     *     @type array<string>|\Google\Protobuf\Internal\RepeatedField $allowed_values
      * }
      */
     public function __construct($data = NULL) {
@@ -109,28 +104,6 @@ class MultiChoiceAttributeDefinition extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->description = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>repeated string allowed_values = 4;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
-     */
-    public function getAllowedValues()
-    {
-        return $this->allowed_values;
-    }
-
-    /**
-     * Generated from protobuf field <code>repeated string allowed_values = 4;</code>
-     * @param array<string>|\Google\Protobuf\Internal\RepeatedField $var
-     * @return $this
-     */
-    public function setAllowedValues($var)
-    {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
-        $this->allowed_values = $arr;
 
         return $this;
     }

@@ -11,78 +11,79 @@ import com.bloock.sdk.entity.key.ManagedKey;
 import com.bloock.sdk.entity.key.ManagedKeyParams;
 
 public class KeyClient {
-    private final Bridge bridge;
-    private final ConfigData configData;
+  private final Bridge bridge;
+  private final ConfigData configData;
 
-    public KeyClient() {
-        this.bridge = new Bridge();
-        this.configData = Config.newConfigDataDefault();
+  public KeyClient() {
+    this.bridge = new Bridge();
+    this.configData = Config.newConfigDataDefault();
+  }
+
+  public KeyClient(ConfigData configData) {
+    this.bridge = new Bridge();
+    this.configData = Config.newConfigData(configData);
+  }
+
+  public LocalKey newLocalKey(KeyType keyType) throws Exception {
+    Keys.GenerateLocalKeyRequest request =
+        Keys.GenerateLocalKeyRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setKeyType(keyType.toProto())
+            .build();
+
+    Keys.GenerateLocalKeyResponse response = bridge.getKey().generateLocalKey(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public KeyClient(ConfigData configData) {
-        this.bridge = new Bridge();
-        this.configData = Config.newConfigData(configData);
+    return LocalKey.fromProto(response.getLocalKey());
+  }
+
+  public LocalKey loadLocalKey(KeyType keyType, String key, String privateKey) throws Exception {
+    Keys.LoadLocalKeyRequest request =
+        Keys.LoadLocalKeyRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setKeyType(keyType.toProto())
+            .setKey(key)
+            .setPrivateKey(privateKey)
+            .build();
+
+    Keys.LoadLocalKeyResponse response = bridge.getKey().loadLocalKey(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public LocalKey newLocalKey(KeyType keyType) throws Exception {
-        Keys.GenerateLocalKeyRequest request = Keys.GenerateLocalKeyRequest.newBuilder()
-                .setConfigData(this.configData)
-                .setKeyType(keyType.toProto())
-                .build();
+    return LocalKey.fromProto(response.getLocalKey());
+  }
 
-        Keys.GenerateLocalKeyResponse response = bridge.getKey().generateLocalKey(request);
+  public ManagedKey newManagedKey(ManagedKeyParams params) throws Exception {
+    Keys.GenerateManagedKeyRequest request =
+        Keys.GenerateManagedKeyRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setParams(params.toProto())
+            .build();
 
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
+    Keys.GenerateManagedKeyResponse response = bridge.getKey().generateManagedKey(request);
 
-        return LocalKey.fromProto(response.getLocalKey());
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public LocalKey loadLocalKey(KeyType keyType, String key, String privateKey) throws Exception {
-        Keys.LoadLocalKeyRequest request = Keys.LoadLocalKeyRequest.newBuilder()
-                .setConfigData(this.configData)
-                .setKeyType(keyType.toProto())
-                .setKey(key)
-                .setPrivateKey(privateKey)
-                .build();
+    return ManagedKey.fromProto(response.getManagedKey());
+  }
 
-        Keys.LoadLocalKeyResponse response = bridge.getKey().loadLocalKey(request);
+  public ManagedKey loadManagedKey(String id) throws Exception {
+    Keys.LoadManagedKeyRequest request =
+        Keys.LoadManagedKeyRequest.newBuilder().setConfigData(this.configData).setId(id).build();
 
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
+    Keys.LoadManagedKeyResponse response = bridge.getKey().loadManagedKey(request);
 
-        return LocalKey.fromProto(response.getLocalKey());
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
     }
 
-    public ManagedKey newManagedKey(ManagedKeyParams params) throws Exception {
-        Keys.GenerateManagedKeyRequest request = Keys.GenerateManagedKeyRequest.newBuilder()
-                .setConfigData(this.configData)
-                .setParams(params.toProto())
-                .build();
-
-        Keys.GenerateManagedKeyResponse response = bridge.getKey().generateManagedKey(request);
-
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
-
-        return ManagedKey.fromProto(response.getManagedKey());
-    }
-
-    public ManagedKey loadManagedKey(String id) throws Exception {
-        Keys.LoadManagedKeyRequest request = Keys.LoadManagedKeyRequest.newBuilder()
-                .setConfigData(this.configData)
-                .setId(id)
-                .build();
-
-        Keys.LoadManagedKeyResponse response = bridge.getKey().loadManagedKey(request);
-
-        if (response.getError() != Error.getDefaultInstance()) {
-            throw new Exception(response.getError().getMessage());
-        }
-
-        return ManagedKey.fromProto(response.getManagedKey());
-    }
+    return ManagedKey.fromProto(response.getManagedKey());
+  }
 }

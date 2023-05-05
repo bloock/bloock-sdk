@@ -68,13 +68,17 @@ func TestIdentity(t *testing.T) {
 
 		schema, err := identityClient.BuildSchema("Test Schema", "test_schema").
 			AddBooleanAttribute("Boolean Attribute", "bool_attr", "").
-			AddMultichoiceAttribute("Multichoice Attribute", "multichoice_attr", []string{"option_a", "option_b", "option_c"}, "").
+			AddStringAttribute("String Attribute", "string_attr", "").
+			AddDateAttribute("Date Attribute", "date_attr", "").
+			AddDatetimeAttribute("Datetime Attribute", "datetime_attr", "").
 			Build()
 		assert.NoError(t, err)
 
 		receipt, err := identityClient.BuildCredential(schema.Id, holder.Key).
 			WithBooleanAttribute("bool_attr", true).
-			WithMultichoiceAttribute("multichoice_attr", "option_b").
+			WithStringAttribute("string_attr", "string test").
+			WithDateAttribute("date_attr", 1683209430).
+			WithDatetimeAttribute("datetime_attr", 1683209430).
 			Build()
 		assert.NoError(t, err)
 

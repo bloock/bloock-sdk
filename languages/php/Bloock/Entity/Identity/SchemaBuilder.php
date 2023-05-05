@@ -16,7 +16,7 @@ class SchemaBuilder
     private array $booleanAttributes;
     private array $dateAttributes;
     private array $datetimeAttributes;
-    private array $multichoiceAttributes;
+    private array $stringAttributes;
     private array $numberAttributes;
 
     public function __construct(string $displayName, string $technicalName, ConfigData $configData)
@@ -28,7 +28,7 @@ class SchemaBuilder
         $this->booleanAttributes = [];
         $this->dateAttributes = [];
         $this->datetimeAttributes = [];
-        $this->multichoiceAttributes = [];
+        $this->stringAttributes = [];
         $this->numberAttributes = [];
     }
 
@@ -53,10 +53,10 @@ class SchemaBuilder
         return $this;
     }
 
-    public function addMultichoiceAttribute(string $name, string $technicalName, array $allowedValues, ?string $description): SchemaBuilder
+    public function addStringAttribute(string $name, string $technicalName, ?string $description): SchemaBuilder
     {
-        $attribute = new MultichoiceAttributeDescriptor($name, $technicalName, $allowedValues, $description);
-        $this->multichoiceAttributes[] = $attribute->toProto();
+        $attribute = new StringAttributeDescriptor($name, $technicalName, $description);
+        $this->stringAttributes[] = $attribute->toProto();
         return $this;
     }
 
@@ -78,7 +78,7 @@ class SchemaBuilder
         $req->setBooleanAttributes($this->booleanAttributes);
         $req->setDateAttributes($this->dateAttributes);
         $req->setDatetimeAttributes($this->datetimeAttributes);
-        $req->setMultichoiceAttributes($this->multichoiceAttributes);
+        $req->setStringAttributes($this->stringAttributes);
         $req->setNumberAttributes($this->numberAttributes);
 
         $res = $bridge->identity->BuildSchema($req);

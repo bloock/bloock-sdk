@@ -4,16 +4,16 @@ import bloock._bridge.proto.identity_entities_pb2 as proto
 from bloock.entity.identity.attribute import Attribute
 
 
-class MultichoiceAttribute(Attribute):
+class StringAttribute(Attribute):
     @staticmethod
-    def from_proto(a: proto.MultiChoiceAttribute) -> MultichoiceAttribute:
-        return MultichoiceAttribute(
+    def from_proto(a: proto.StringAttribute) -> StringAttribute:
+        return StringAttribute(
             id=a.id,
             value=a.value,
         )
 
-    def to_proto(self) -> proto.MultiChoiceAttribute:
-        return proto.MultiChoiceAttribute(
+    def to_proto(self) -> proto.StringAttribute:
+        return proto.StringAttribute(
             id=self.id,
             value=self.value,
         )

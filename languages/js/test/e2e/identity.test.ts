@@ -51,10 +51,9 @@ describe("Identity Tests", () => {
     const schema = await identityClient
       .buildSchema("Test Schema", "test_schema")
       .addBooleanAttribute("Boolean Attribute", "bool_attr", "")
-      .addMultichoiceAttribute(
-        "Multichoice Attribute",
-        "multichoice_attr",
-        ["option_a", "option_b", "option_c"],
+      .addStringAttribute(
+        "String Attribute",
+        "string_attr",
         ""
       )
       .build();
@@ -62,7 +61,7 @@ describe("Identity Tests", () => {
     const receipt = await identityClient
       .buildCredential(schema.id, holder.key)
       .withBoleanAttribute("bool_attr", true)
-      .withMultichoiceAttribute("multichoice_attr", "option_b")
+      .withStringAttribute("string_attr", "string test")
       .build();
 
     await identityClient.waitOffer(receipt.id);

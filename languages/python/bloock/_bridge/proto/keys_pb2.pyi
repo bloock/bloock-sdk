@@ -17,6 +17,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class GenerateLocalKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -36,6 +37,7 @@ class GenerateLocalKeyRequest(google.protobuf.message.Message):
 
 global___GenerateLocalKeyRequest = GenerateLocalKeyRequest
 
+@typing_extensions.final
 class GenerateLocalKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -57,6 +59,7 @@ class GenerateLocalKeyResponse(google.protobuf.message.Message):
 
 global___GenerateLocalKeyResponse = GenerateLocalKeyResponse
 
+@typing_extensions.final
 class GenerateManagedKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -77,6 +80,7 @@ class GenerateManagedKeyRequest(google.protobuf.message.Message):
 
 global___GenerateManagedKeyRequest = GenerateManagedKeyRequest
 
+@typing_extensions.final
 class GenerateManagedKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -98,6 +102,7 @@ class GenerateManagedKeyResponse(google.protobuf.message.Message):
 
 global___GenerateManagedKeyResponse = GenerateManagedKeyResponse
 
+@typing_extensions.final
 class LoadLocalKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -124,6 +129,7 @@ class LoadLocalKeyRequest(google.protobuf.message.Message):
 
 global___LoadLocalKeyRequest = LoadLocalKeyRequest
 
+@typing_extensions.final
 class LoadLocalKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -145,6 +151,7 @@ class LoadLocalKeyResponse(google.protobuf.message.Message):
 
 global___LoadLocalKeyResponse = LoadLocalKeyResponse
 
+@typing_extensions.final
 class LoadManagedKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -164,6 +171,7 @@ class LoadManagedKeyRequest(google.protobuf.message.Message):
 
 global___LoadManagedKeyRequest = LoadManagedKeyRequest
 
+@typing_extensions.final
 class LoadManagedKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

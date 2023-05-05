@@ -72,12 +72,12 @@ mod tests {
 
     #[test]
     fn test_create_did() {
-        let public_key =
-            "020703f82185e6be40f7086ac676b1114647d63d6ea906ec8cad3c427a1aac5c2a".to_string();
+        let public_key: String =
+            "04fb371ca5da323bb0f6ef76ba79228c3edcd1b889776ec7b6eac83b34a3e4f3bc114c2ab21bbb1b398d33270e5fae0be9fbd6828666fd50b7d1d7caca009449dd".to_string();
         let did = Did::from_public_key(public_key).unwrap();
         assert_eq!(
             did.to_string(),
-            "did:iden3:eth:main:213TATBRDPjfy747UnLYPXNTdQs3Nm9er5pDDzi1mW".to_string()
+            "did:iden3:eth:main:214Bi4mfapmsjdadb4SZ56mTqhESSgLbUqQY1rDLmz".to_string()
         );
     }
 }

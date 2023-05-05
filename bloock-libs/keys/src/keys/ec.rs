@@ -51,7 +51,7 @@ impl EcKey {
 
         Ok(EcKey {
             private_key: hex::encode(secret_key.serialize()),
-            public_key: hex::encode(public_key.serialize_compressed()),
+            public_key: hex::encode(public_key.serialize()),
             mnemonic: mnemonic.into_phrase(),
         })
     }

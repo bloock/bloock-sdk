@@ -6,5 +6,4 @@ pub struct Schema {
 pub struct Attribute {
     pub name: String,
     pub r#type: String,
-    pub values: Option<Vec<String>>,
 }

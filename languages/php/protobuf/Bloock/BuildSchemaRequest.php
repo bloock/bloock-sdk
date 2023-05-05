@@ -38,9 +38,9 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
      */
     private $datetime_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.MultiChoiceAttributeDefinition multichoice_attributes = 7;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 7;</code>
      */
-    private $multichoice_attributes;
+    private $string_attributes;
     /**
      * Generated from protobuf field <code>repeated .bloock.NumberAttributeDefinition number_attributes = 8;</code>
      */
@@ -55,11 +55,11 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
      *     @type \Bloock\ConfigData $config_data
      *     @type string $display_name
      *     @type string $technical_name
-     *     @type array<\Bloock\BooleanAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $boolean_attributes
-     *     @type array<\Bloock\DateAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $date_attributes
-     *     @type array<\Bloock\DateTimeAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $datetime_attributes
-     *     @type array<\Bloock\MultiChoiceAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $multichoice_attributes
-     *     @type array<\Bloock\NumberAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $number_attributes
+     *     @type \Bloock\BooleanAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $boolean_attributes
+     *     @type \Bloock\DateAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $date_attributes
+     *     @type \Bloock\DateTimeAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $datetime_attributes
+     *     @type \Bloock\StringAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $string_attributes
+     *     @type \Bloock\NumberAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $number_attributes
      * }
      */
     public function __construct($data = NULL) {
@@ -154,7 +154,7 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinition boolean_attributes = 4;</code>
-     * @param array<\Bloock\BooleanAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \Bloock\BooleanAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setBooleanAttributes($var)
@@ -176,7 +176,7 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinition date_attributes = 5;</code>
-     * @param array<\Bloock\DateAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \Bloock\DateAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setDateAttributes($var)
@@ -198,7 +198,7 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinition datetime_attributes = 6;</code>
-     * @param array<\Bloock\DateTimeAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \Bloock\DateTimeAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setDatetimeAttributes($var)
@@ -210,23 +210,23 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.MultiChoiceAttributeDefinition multichoice_attributes = 7;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 7;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
-    public function getMultichoiceAttributes()
+    public function getStringAttributes()
     {
-        return $this->multichoice_attributes;
+        return $this->string_attributes;
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.MultiChoiceAttributeDefinition multichoice_attributes = 7;</code>
-     * @param array<\Bloock\MultiChoiceAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $var
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 7;</code>
+     * @param \Bloock\StringAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
-    public function setMultichoiceAttributes($var)
+    public function setStringAttributes($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\MultiChoiceAttributeDefinition::class);
-        $this->multichoice_attributes = $arr;
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\StringAttributeDefinition::class);
+        $this->string_attributes = $arr;
 
         return $this;
     }
@@ -242,7 +242,7 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.NumberAttributeDefinition number_attributes = 8;</code>
-     * @param array<\Bloock\NumberAttributeDefinition>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \Bloock\NumberAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setNumberAttributes($var)

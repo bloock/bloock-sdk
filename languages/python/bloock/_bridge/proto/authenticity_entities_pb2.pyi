@@ -21,7 +21,7 @@ class _SignerAlg:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _SignerAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_SignerAlg.ValueType], builtins.type):  # noqa: F821
+class _SignerAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_SignerAlg.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ES256K: _SignerAlg.ValueType  # 0
     ENS: _SignerAlg.ValueType  # 1
@@ -32,6 +32,7 @@ ES256K: SignerAlg.ValueType  # 0
 ENS: SignerAlg.ValueType  # 1
 global___SignerAlg = SignerAlg
 
+@typing_extensions.final
 class Signer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -64,6 +65,7 @@ class Signer(google.protobuf.message.Message):
 
 global___Signer = Signer
 
+@typing_extensions.final
 class Signature(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -89,6 +91,7 @@ class Signature(google.protobuf.message.Message):
 
 global___Signature = Signature
 
+@typing_extensions.final
 class SignatureHeader(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

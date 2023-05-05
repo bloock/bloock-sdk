@@ -37,7 +37,7 @@ class ProofAnchor extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type int|string $anchor_id
-     *     @type array<\Bloock\AnchorNetwork>|\Google\Protobuf\Internal\RepeatedField $networks
+     *     @type \Bloock\AnchorNetwork[]|\Google\Protobuf\Internal\RepeatedField $networks
      *     @type string $root
      *     @type string $status
      * }
@@ -80,7 +80,7 @@ class ProofAnchor extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.AnchorNetwork networks = 2;</code>
-     * @param array<\Bloock\AnchorNetwork>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \Bloock\AnchorNetwork[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setNetworks($var)

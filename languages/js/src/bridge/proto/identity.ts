@@ -15,11 +15,11 @@ import {
   DateTimeAttribute,
   DateTimeAttributeDefinition,
   Identity,
-  MultiChoiceAttribute,
-  MultiChoiceAttributeDefinition,
   NumberAttribute,
   NumberAttributeDefinition,
   Schema,
+  StringAttribute,
+  StringAttributeDefinition,
 } from "./identity_entities";
 import { Error } from "./shared";
 
@@ -49,7 +49,7 @@ export interface BuildSchemaRequest {
   booleanAttributes: BooleanAttributeDefinition[];
   dateAttributes: DateAttributeDefinition[];
   datetimeAttributes: DateTimeAttributeDefinition[];
-  multichoiceAttributes: MultiChoiceAttributeDefinition[];
+  stringAttributes: StringAttributeDefinition[];
   numberAttributes: NumberAttributeDefinition[];
 }
 
@@ -75,7 +75,7 @@ export interface CreateCredentialRequest {
   booleanAttributes: BooleanAttribute[];
   dateAttributes: DateAttribute[];
   datetimeAttributes: DateTimeAttribute[];
-  multichoiceAttributes: MultiChoiceAttribute[];
+  stringAttributes: StringAttribute[];
   numberAttributes: NumberAttribute[];
 }
 
@@ -415,7 +415,7 @@ function createBaseBuildSchemaRequest(): BuildSchemaRequest {
     booleanAttributes: [],
     dateAttributes: [],
     datetimeAttributes: [],
-    multichoiceAttributes: [],
+    stringAttributes: [],
     numberAttributes: [],
   };
 }
@@ -440,8 +440,8 @@ export const BuildSchemaRequest = {
     for (const v of message.datetimeAttributes) {
       DateTimeAttributeDefinition.encode(v!, writer.uint32(50).fork()).ldelim();
     }
-    for (const v of message.multichoiceAttributes) {
-      MultiChoiceAttributeDefinition.encode(v!, writer.uint32(58).fork()).ldelim();
+    for (const v of message.stringAttributes) {
+      StringAttributeDefinition.encode(v!, writer.uint32(58).fork()).ldelim();
     }
     for (const v of message.numberAttributes) {
       NumberAttributeDefinition.encode(v!, writer.uint32(66).fork()).ldelim();
@@ -475,7 +475,7 @@ export const BuildSchemaRequest = {
           message.datetimeAttributes.push(DateTimeAttributeDefinition.decode(reader, reader.uint32()));
           break;
         case 7:
-          message.multichoiceAttributes.push(MultiChoiceAttributeDefinition.decode(reader, reader.uint32()));
+          message.stringAttributes.push(StringAttributeDefinition.decode(reader, reader.uint32()));
           break;
         case 8:
           message.numberAttributes.push(NumberAttributeDefinition.decode(reader, reader.uint32()));
@@ -502,8 +502,8 @@ export const BuildSchemaRequest = {
       datetimeAttributes: Array.isArray(object?.datetimeAttributes)
         ? object.datetimeAttributes.map((e: any) => DateTimeAttributeDefinition.fromJSON(e))
         : [],
-      multichoiceAttributes: Array.isArray(object?.multichoiceAttributes)
-        ? object.multichoiceAttributes.map((e: any) => MultiChoiceAttributeDefinition.fromJSON(e))
+      stringAttributes: Array.isArray(object?.stringAttributes)
+        ? object.stringAttributes.map((e: any) => StringAttributeDefinition.fromJSON(e))
         : [],
       numberAttributes: Array.isArray(object?.numberAttributes)
         ? object.numberAttributes.map((e: any) => NumberAttributeDefinition.fromJSON(e))
@@ -536,12 +536,10 @@ export const BuildSchemaRequest = {
     } else {
       obj.datetimeAttributes = [];
     }
-    if (message.multichoiceAttributes) {
-      obj.multichoiceAttributes = message.multichoiceAttributes.map((e) =>
-        e ? MultiChoiceAttributeDefinition.toJSON(e) : undefined
-      );
+    if (message.stringAttributes) {
+      obj.stringAttributes = message.stringAttributes.map((e) => e ? StringAttributeDefinition.toJSON(e) : undefined);
     } else {
-      obj.multichoiceAttributes = [];
+      obj.stringAttributes = [];
     }
     if (message.numberAttributes) {
       obj.numberAttributes = message.numberAttributes.map((e) => e ? NumberAttributeDefinition.toJSON(e) : undefined);
@@ -562,8 +560,7 @@ export const BuildSchemaRequest = {
     message.dateAttributes = object.dateAttributes?.map((e) => DateAttributeDefinition.fromPartial(e)) || [];
     message.datetimeAttributes = object.datetimeAttributes?.map((e) => DateTimeAttributeDefinition.fromPartial(e)) ||
       [];
-    message.multichoiceAttributes =
-      object.multichoiceAttributes?.map((e) => MultiChoiceAttributeDefinition.fromPartial(e)) || [];
+    message.stringAttributes = object.stringAttributes?.map((e) => StringAttributeDefinition.fromPartial(e)) || [];
     message.numberAttributes = object.numberAttributes?.map((e) => NumberAttributeDefinition.fromPartial(e)) || [];
     return message;
   },
@@ -758,7 +755,7 @@ function createBaseCreateCredentialRequest(): CreateCredentialRequest {
     booleanAttributes: [],
     dateAttributes: [],
     datetimeAttributes: [],
-    multichoiceAttributes: [],
+    stringAttributes: [],
     numberAttributes: [],
   };
 }
@@ -783,8 +780,8 @@ export const CreateCredentialRequest = {
     for (const v of message.datetimeAttributes) {
       DateTimeAttribute.encode(v!, writer.uint32(50).fork()).ldelim();
     }
-    for (const v of message.multichoiceAttributes) {
-      MultiChoiceAttribute.encode(v!, writer.uint32(58).fork()).ldelim();
+    for (const v of message.stringAttributes) {
+      StringAttribute.encode(v!, writer.uint32(58).fork()).ldelim();
     }
     for (const v of message.numberAttributes) {
       NumberAttribute.encode(v!, writer.uint32(66).fork()).ldelim();
@@ -818,7 +815,7 @@ export const CreateCredentialRequest = {
           message.datetimeAttributes.push(DateTimeAttribute.decode(reader, reader.uint32()));
           break;
         case 7:
-          message.multichoiceAttributes.push(MultiChoiceAttribute.decode(reader, reader.uint32()));
+          message.stringAttributes.push(StringAttribute.decode(reader, reader.uint32()));
           break;
         case 8:
           message.numberAttributes.push(NumberAttribute.decode(reader, reader.uint32()));
@@ -845,8 +842,8 @@ export const CreateCredentialRequest = {
       datetimeAttributes: Array.isArray(object?.datetimeAttributes)
         ? object.datetimeAttributes.map((e: any) => DateTimeAttribute.fromJSON(e))
         : [],
-      multichoiceAttributes: Array.isArray(object?.multichoiceAttributes)
-        ? object.multichoiceAttributes.map((e: any) => MultiChoiceAttribute.fromJSON(e))
+      stringAttributes: Array.isArray(object?.stringAttributes)
+        ? object.stringAttributes.map((e: any) => StringAttribute.fromJSON(e))
         : [],
       numberAttributes: Array.isArray(object?.numberAttributes)
         ? object.numberAttributes.map((e: any) => NumberAttribute.fromJSON(e))
@@ -875,12 +872,10 @@ export const CreateCredentialRequest = {
     } else {
       obj.datetimeAttributes = [];
     }
-    if (message.multichoiceAttributes) {
-      obj.multichoiceAttributes = message.multichoiceAttributes.map((e) =>
-        e ? MultiChoiceAttribute.toJSON(e) : undefined
-      );
+    if (message.stringAttributes) {
+      obj.stringAttributes = message.stringAttributes.map((e) => e ? StringAttribute.toJSON(e) : undefined);
     } else {
-      obj.multichoiceAttributes = [];
+      obj.stringAttributes = [];
     }
     if (message.numberAttributes) {
       obj.numberAttributes = message.numberAttributes.map((e) => e ? NumberAttribute.toJSON(e) : undefined);
@@ -900,7 +895,7 @@ export const CreateCredentialRequest = {
     message.booleanAttributes = object.booleanAttributes?.map((e) => BooleanAttribute.fromPartial(e)) || [];
     message.dateAttributes = object.dateAttributes?.map((e) => DateAttribute.fromPartial(e)) || [];
     message.datetimeAttributes = object.datetimeAttributes?.map((e) => DateTimeAttribute.fromPartial(e)) || [];
-    message.multichoiceAttributes = object.multichoiceAttributes?.map((e) => MultiChoiceAttribute.fromPartial(e)) || [];
+    message.stringAttributes = object.stringAttributes?.map((e) => StringAttribute.fromPartial(e)) || [];
     message.numberAttributes = object.numberAttributes?.map((e) => NumberAttribute.fromPartial(e)) || [];
     return message;
   },

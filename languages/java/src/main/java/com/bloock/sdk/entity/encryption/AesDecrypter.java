@@ -6,37 +6,37 @@ import com.bloock.sdk.entity.key.LocalKey;
 import com.bloock.sdk.entity.key.ManagedKey;
 
 public class AesDecrypter implements Decrypter {
-    EncryptionAlg alg;
-    DecrypterArgs args;
+  EncryptionAlg alg;
+  DecrypterArgs args;
 
-    public AesDecrypter(String password) {
-        this.alg = EncryptionAlg.A256GCM;
-        this.args = new DecrypterArgs(new LocalKey(password, null));
+  public AesDecrypter(String password) {
+    this.alg = EncryptionAlg.A256GCM;
+    this.args = new DecrypterArgs(new LocalKey(password, null));
+  }
+
+  public AesDecrypter(LocalKey localKey) {
+    this.alg = EncryptionAlg.A256GCM;
+    this.args = new DecrypterArgs(localKey);
+  }
+
+  public AesDecrypter(ManagedKey managedKey) {
+    this.alg = EncryptionAlg.A256GCM;
+    this.args = new DecrypterArgs(managedKey);
+  }
+
+  @Override
+  public EncryptionEntities.Decrypter toProto() {
+    EncryptionEntities.Decrypter.Builder builder =
+        EncryptionEntities.Decrypter.newBuilder().setAlg(this.alg);
+
+    if (this.args.localKey != null) {
+      builder.setLocalKey(this.args.localKey.toProto());
     }
 
-    public AesDecrypter(LocalKey localKey) {
-        this.alg = EncryptionAlg.A256GCM;
-        this.args = new DecrypterArgs(localKey);
+    if (this.args.managedKey != null) {
+      builder.setManagedKey(this.args.managedKey.toProto());
     }
 
-    public AesDecrypter(ManagedKey managedKey) {
-        this.alg = EncryptionAlg.A256GCM;
-        this.args = new DecrypterArgs(managedKey);
-    }
-
-    @Override
-    public EncryptionEntities.Decrypter toProto() {
-        EncryptionEntities.Decrypter.Builder builder = EncryptionEntities.Decrypter.newBuilder()
-                .setAlg(this.alg);
-
-        if (this.args.localKey != null) {
-            builder.setLocalKey(this.args.localKey.toProto());
-        }
-
-        if (this.args.managedKey != null) {
-            builder.setManagedKey(this.args.managedKey.toProto());
-        }
-
-        return builder.build();
-    }
+    return builder.build();
+  }
 }

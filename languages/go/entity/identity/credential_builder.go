@@ -13,23 +13,23 @@ type CredentialBuilder struct {
 	holderKey  string
 	configData *proto.ConfigData
 
-	booleanAttribute     []BooleanAttribute
-	dateAttribute        []DateAttribute
-	datetimeAttribute    []DatetimeAttribute
-	multichoiceAttribute []MultichoiceAttribute
-	numberAttribute      []NumberAttribute
+	booleanAttribute  []BooleanAttribute
+	dateAttribute     []DateAttribute
+	datetimeAttribute []DatetimeAttribute
+	stringAttribute   []StringAttribute
+	numberAttribute   []NumberAttribute
 }
 
 func NewCredentialBuilder(schemaId string, holderKey string, configData *proto.ConfigData) CredentialBuilder {
 	return CredentialBuilder{
-		schemaId:             schemaId,
-		holderKey:            holderKey,
-		configData:           configData,
-		booleanAttribute:     []BooleanAttribute{},
-		dateAttribute:        []DateAttribute{},
-		datetimeAttribute:    []DatetimeAttribute{},
-		multichoiceAttribute: []MultichoiceAttribute{},
-		numberAttribute:      []NumberAttribute{},
+		schemaId:          schemaId,
+		holderKey:         holderKey,
+		configData:        configData,
+		booleanAttribute:  []BooleanAttribute{},
+		dateAttribute:     []DateAttribute{},
+		datetimeAttribute: []DatetimeAttribute{},
+		stringAttribute:   []StringAttribute{},
+		numberAttribute:   []NumberAttribute{},
 	}
 }
 
@@ -48,8 +48,8 @@ func (c CredentialBuilder) WithDatetimeAttribute(key string, value int64) Creden
 	return c
 }
 
-func (c CredentialBuilder) WithMultichoiceAttribute(key string, value string) CredentialBuilder {
-	c.multichoiceAttribute = append(c.multichoiceAttribute, NewMultichoiceAttribute(key, value))
+func (c CredentialBuilder) WithStringAttribute(key string, value string) CredentialBuilder {
+	c.stringAttribute = append(c.stringAttribute, NewStringAttribute(key, value))
 	return c
 }
 
@@ -76,9 +76,9 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 		datetimeAttributes[i] = b.ToProto()
 	}
 
-	multichoiceAttributes := make([]*proto.MultiChoiceAttribute, len(c.multichoiceAttribute))
-	for i, b := range c.multichoiceAttribute {
-		multichoiceAttributes[i] = b.ToProto()
+	stringAttributes := make([]*proto.StringAttribute, len(c.stringAttribute))
+	for i, b := range c.stringAttribute {
+		stringAttributes[i] = b.ToProto()
 	}
 
 	numberAttributes := make([]*proto.NumberAttribute, len(c.numberAttribute))
@@ -87,14 +87,14 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 	}
 
 	req := proto.CreateCredentialRequest{
-		SchemaId:              c.schemaId,
-		HolderKey:             c.holderKey,
-		ConfigData:            c.configData,
-		BooleanAttributes:     booleanAttributes,
-		DateAttributes:        dateAttributes,
-		DatetimeAttributes:    datetimeAttributes,
-		MultichoiceAttributes: multichoiceAttributes,
-		NumberAttributes:      numberAttributes,
+		SchemaId:           c.schemaId,
+		HolderKey:          c.holderKey,
+		ConfigData:         c.configData,
+		BooleanAttributes:  booleanAttributes,
+		DateAttributes:     dateAttributes,
+		DatetimeAttributes: datetimeAttributes,
+		StringAttributes:   stringAttributes,
+		NumberAttributes:   numberAttributes,
 	}
 
 	res, err := bridge.Identity().CreateCredential(context.Background(), &req)

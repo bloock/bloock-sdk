@@ -20,7 +20,7 @@ class _KeyType:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _KeyTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_KeyType.ValueType], builtins.type):  # noqa: F821
+class _KeyTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_KeyType.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     EcP256k: _KeyType.ValueType  # 0
     Rsa2048: _KeyType.ValueType  # 1
@@ -43,7 +43,7 @@ class _KeyProtectionLevel:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _KeyProtectionLevelEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_KeyProtectionLevel.ValueType], builtins.type):  # noqa: F821
+class _KeyProtectionLevelEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_KeyProtectionLevel.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     SOFTWARE: _KeyProtectionLevel.ValueType  # 0
     HSM: _KeyProtectionLevel.ValueType  # 1
@@ -54,6 +54,7 @@ SOFTWARE: KeyProtectionLevel.ValueType  # 0
 HSM: KeyProtectionLevel.ValueType  # 1
 global___KeyProtectionLevel = KeyProtectionLevel
 
+@typing_extensions.final
 class LocalKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -76,6 +77,7 @@ class LocalKey(google.protobuf.message.Message):
 
 global___LocalKey = LocalKey
 
+@typing_extensions.final
 class ManagedKeyParams(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -104,6 +106,7 @@ class ManagedKeyParams(google.protobuf.message.Message):
 
 global___ManagedKeyParams = ManagedKeyParams
 
+@typing_extensions.final
 class ManagedKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
