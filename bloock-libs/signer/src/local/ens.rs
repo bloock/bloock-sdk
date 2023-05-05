@@ -7,7 +7,7 @@ use crate::{
 use async_trait::async_trait;
 use bloock_hasher::{keccak::Keccak256, Hasher, H256};
 use bloock_keys::local::LocalKey;
-use libsecp256k1::{PublicKey, PublicKeyFormat};
+use libsecp256k1::PublicKey;
 
 pub async fn get_common_name(
     signature: &Signature,
@@ -33,7 +33,7 @@ pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<V
 fn derive_eth_address(mut public_key: Vec<u8>) -> Result<String> {
     if public_key.len() != 64 {
         // the key is probably compressed, so we try to decompress it
-        public_key = PublicKey::parse_slice(&public_key, Some(PublicKeyFormat::Compressed))
+        public_key = PublicKey::parse_slice(&public_key, None)
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
             .serialize()[1..]
             .to_vec();
