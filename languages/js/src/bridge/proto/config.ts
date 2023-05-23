@@ -6,6 +6,7 @@ export enum Network {
   ETHEREUM_GOERLI = 1,
   GNOSIS_CHAIN = 2,
   BLOOCK_CHAIN = 3,
+  POLYGON_CHAIN = 4,
   UNRECOGNIZED = -1,
 }
 
@@ -23,6 +24,9 @@ export function networkFromJSON(object: any): Network {
     case 3:
     case "BLOOCK_CHAIN":
       return Network.BLOOCK_CHAIN;
+    case 4:
+    case "POLYGON_CHAIN":
+      return Network.POLYGON_CHAIN;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -40,6 +44,8 @@ export function networkToJSON(object: Network): string {
       return "GNOSIS_CHAIN";
     case Network.BLOOCK_CHAIN:
       return "BLOOCK_CHAIN";
+    case Network.POLYGON_CHAIN:
+      return "POLYGON_CHAIN";
     case Network.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

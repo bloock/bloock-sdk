@@ -10,6 +10,7 @@ class Network(Enum):
     ETHEREUM_GOERLI = 1
     GNOSIS_CHAIN = 2
     BLOOCK_CHAIN = 3
+    POLYGON_CHAIN = 4
 
     def __int__(self):
         return self.value
@@ -24,3 +25,5 @@ class Network(Enum):
             return NetworkProto.GNOSIS_CHAIN
         elif network == Network.BLOOCK_CHAIN:
             return NetworkProto.BLOOCK_CHAIN
+        elif network == Network.POLYGON_CHAIN:
+            return NetworkProto.POLYGON_CHAIN

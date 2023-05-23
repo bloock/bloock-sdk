@@ -6,6 +6,7 @@ pub enum Network {
     EthereumGoerli,
     BloockChain,
     GnosisChain,
+    PolygonChain,
 }
 
 impl From<String> for Network {
@@ -15,6 +16,7 @@ impl From<String> for Network {
             "gnosis_chain" => Network::GnosisChain,
             "ethereum_goerli" => Network::EthereumGoerli,
             "ethereum_mainnet" => Network::EthereumMainnet,
+            "polygon_chain" => Network::PolygonChain,
             _ => Network::EthereumMainnet,
         }
     }
@@ -27,6 +29,7 @@ impl From<Network> for String {
             Network::EthereumGoerli => "ethereum_goerli".to_string(),
             Network::EthereumMainnet => "ethereum_mainnet".to_string(),
             Network::GnosisChain => "gnosis_chain".to_string(),
+            Network::PolygonChain => "polygon_chain".to_string(),
         }
     }
 }

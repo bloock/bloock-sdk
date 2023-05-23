@@ -27,6 +27,7 @@ enum Network {
     ETHEREUM_GOERLI = 1;
     GNOSIS_CHAIN = 2;
     BLOOCK_CHAIN = 3;
+    POLYGON_CHAIN = 4;
 }
 
 message NetworkConfig {

@@ -8,6 +8,7 @@ class Network
     const ETHEREUM_GOERLI = "ETHEREUM_GOERLI";
     const GNOSIS_CHAIN = "GNOSIS_CHAIN";
     const BLOOCK_CHAIN = "BLOOCK_CHAIN";
+    const POLYGON_CHAIN = "POLYGON_CHAIN";
 
     public static function fromProto(\Bloock\Network $network): string
     {
@@ -18,6 +19,8 @@ class Network
                 return Network::GNOSIS_CHAIN;
             case \Bloock\Network::BLOOCK_CHAIN:
                 return Network::BLOOCK_CHAIN;
+            case \Bloock\Network::POLYGON_CHAIN:
+                return Network::POLYGON_CHAIN;
             default:
                 return Network::ETHEREUM_MAINNET;
         }
@@ -32,9 +35,10 @@ class Network
                 return \Bloock\Network::GNOSIS_CHAIN;
             case Network::BLOOCK_CHAIN:
                 return \Bloock\Network::BLOOCK_CHAIN;
+            case Network::POLYGON_CHAIN:
+                return \Bloock\Network::POLYGON_CHAIN;
             default:
                 return \Bloock\Network::ETHEREUM_MAINNET;
         }
     }
-
 }

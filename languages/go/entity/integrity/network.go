@@ -16,6 +16,7 @@ type networks struct {
 	EthereumGnosis  Network
 	EthereumMainnet Network
 	EthereumGoerli  Network
+	EthereumPolygon Network
 }
 
 func ListOfNetworks() networks {
@@ -24,6 +25,7 @@ func ListOfNetworks() networks {
 		EthereumGnosis:  proto.Network_GNOSIS_CHAIN,
 		EthereumMainnet: proto.Network_ETHEREUM_MAINNET,
 		EthereumGoerli:  proto.Network_ETHEREUM_GOERLI,
+		EthereumPolygon: proto.Network_POLYGON_CHAIN,
 	}
 }
 

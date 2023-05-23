@@ -27,12 +27,17 @@ class Network
      * Generated from protobuf enum <code>BLOOCK_CHAIN = 3;</code>
      */
     const BLOOCK_CHAIN = 3;
+    /**
+     * Generated from protobuf enum <code>POLYGON_CHAIN = 4;</code>
+     */
+    const POLYGON_CHAIN = 4;
 
     private static $valueToName = [
         self::ETHEREUM_MAINNET => 'ETHEREUM_MAINNET',
         self::ETHEREUM_GOERLI => 'ETHEREUM_GOERLI',
         self::GNOSIS_CHAIN => 'GNOSIS_CHAIN',
         self::BLOOCK_CHAIN => 'BLOOCK_CHAIN',
+        self::POLYGON_CHAIN => 'POLYGON_CHAIN',
     ];
 
     public static function name($value)

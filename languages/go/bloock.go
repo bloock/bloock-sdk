@@ -20,12 +20,12 @@ func SetProvider(network integrity.Network, provider string) {
 	}
 }
 
-func SetContractAddess(network integrity.Network, contractAddess string) {
+func SetContractAddess(network integrity.Network, contractAddress string) {
 	if _, ok := NetworkConfig[int32(network)]; ok {
-		NetworkConfig[int32(network.Number())].ContractAddress = contractAddess
+		NetworkConfig[int32(network.Number())].ContractAddress = contractAddress
 	} else {
 		NetworkConfig[int32(network.Number())] = &proto.NetworkConfig{
-			ContractAddress: contractAddess,
+			ContractAddress: contractAddress,
 		}
 	}
 }
