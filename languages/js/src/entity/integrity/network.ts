@@ -5,7 +5,8 @@ export enum Network {
   ETHEREUM_MAINNET = 0,
   ETHEREUM_GOERLI = 1,
   GNOSIS_CHAIN = 2,
-  BLOOCK_CHAIN = 3
+  BLOOCK_CHAIN = 3,
+  POLYGON_CHAIN = 4
 }
 
 export namespace Network {
@@ -19,6 +20,8 @@ export namespace Network {
         return proto.Network.GNOSIS_CHAIN;
       case Network.BLOOCK_CHAIN:
         return proto.Network.BLOOCK_CHAIN;
+      case Network.POLYGON_CHAIN:
+        return proto.Network.POLYGON_CHAIN;
       default:
         return proto.Network.UNRECOGNIZED;
     }
@@ -34,6 +37,8 @@ export namespace Network {
         return Network.GNOSIS_CHAIN;
       case proto.Network.BLOOCK_CHAIN:
         return Network.BLOOCK_CHAIN;
+      case proto.Network.POLYGON_CHAIN:
+        return Network.POLYGON_CHAIN;
       default:
         return Network.UNRECOGNIZED;
     }

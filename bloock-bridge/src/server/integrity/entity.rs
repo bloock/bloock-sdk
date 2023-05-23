@@ -60,6 +60,7 @@ impl From<Network> for CoreNetwork {
             Network::EthereumMainnet => CoreNetwork::EthereumMainnet,
             Network::EthereumGoerli => CoreNetwork::EthereumGoerli,
             Network::GnosisChain => CoreNetwork::GnosisChain,
+            Network::PolygonChain => CoreNetwork::PolygonChain,
         }
     }
 }

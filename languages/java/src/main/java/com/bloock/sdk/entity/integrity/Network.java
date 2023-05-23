@@ -6,7 +6,8 @@ public enum Network {
   ETHEREUM_MAINNET,
   ETHEREUM_GOERLI,
   GNOSIS_CHAIN,
-  BLOOCK_CHAIN;
+  BLOOCK_CHAIN,
+  POLYGON_CHAIN;
 
   public Config.Network toProto() {
     switch (this) {
@@ -18,6 +19,8 @@ public enum Network {
         return Config.Network.ETHEREUM_MAINNET;
       case GNOSIS_CHAIN:
         return Config.Network.GNOSIS_CHAIN;
+      case POLYGON_CHAIN:
+        return Config.Network.POLYGON_CHAIN;
       default:
         return Config.Network.ETHEREUM_MAINNET;
     }
