@@ -27,7 +27,7 @@
 
 If you need help, you can join our Discord server where our engineering team will be happy to help you:
 
-[![Join Discord](https://dcbadge.vercel.app/api/server/4SrHRtJZep?compact=true)](https://discord.gg/4SrHRtJZep)
+[![Join Discord](https://dcbadge.vercel.app/api/server/XwK3NSHp?compact=true)](https://discord.gg/XwK3NSHp)
 
 ## Language support
 
