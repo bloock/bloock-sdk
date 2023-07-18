@@ -5,6 +5,7 @@ import { LocalKey, ManagedKey } from "./keys_entities";
 export enum SignerAlg {
   ES256K = 0,
   ENS = 1,
+  BJJ = 2,
   UNRECOGNIZED = -1,
 }
 
@@ -16,6 +17,9 @@ export function signerAlgFromJSON(object: any): SignerAlg {
     case 1:
     case "ENS":
       return SignerAlg.ENS;
+    case 2:
+    case "BJJ":
+      return SignerAlg.BJJ;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -29,6 +33,8 @@ export function signerAlgToJSON(object: SignerAlg): string {
       return "ES256K";
     case SignerAlg.ENS:
       return "ENS";
+    case SignerAlg.BJJ:
+      return "BJJ";
     case SignerAlg.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

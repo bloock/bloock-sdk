@@ -6,7 +6,7 @@ use crate::{
 use async_trait::async_trait;
 use bloock_hasher::{keccak::Keccak256, Hasher, H256};
 use bloock_keys::managed::ManagedKey;
-use libsecp256k1::{PublicKey};
+use libsecp256k1::PublicKey;
 
 use super::ecdsa::{ManagedEcdsaSigner, ManagedEcdsaVerifier};
 
@@ -40,7 +40,10 @@ fn derive_eth_address(mut public_key: Vec<u8>) -> Result<String> {
             .to_vec();
     }
 
-    Ok(hex::encode(&Keccak256::generate_hash(&public_key)[12..]))
+    let public_key_slice = &public_key;
+    Ok(hex::encode(
+        &Keccak256::generate_hash(&[public_key_slice])[12..],
+    ))
 }
 
 pub struct ManagedEnsSigner {

@@ -12,6 +12,8 @@ cfg_wasm! {
     use crate::wasm_http::SimpleHttpClient;
 }
 
+const API_VERSION: &str = "2023-07-13";
+
 pub struct BloockHttpClient {
     api_key: String,
 }
@@ -26,9 +28,13 @@ impl Client for BloockHttpClient {
         let headers = match headers {
             Some(mut h) => {
                 h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h.push(("api_version".to_string(), API_VERSION.to_string()));
                 h
             }
-            None => vec![("X-Api-Key".to_string(), self.get_api_key())],
+            None => vec![
+                ("X-Api-Key".to_string(), self.get_api_key()),
+                ("api_version".to_string(), API_VERSION.to_string()),
+            ],
         };
 
         let client = SimpleHttpClient {};
@@ -43,9 +49,13 @@ impl Client for BloockHttpClient {
         let headers = match headers {
             Some(mut h) => {
                 h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h.push(("api_version".to_string(), API_VERSION.to_string()));
                 h
             }
-            None => vec![("X-Api-Key".to_string(), self.get_api_key())],
+            None => vec![
+                ("X-Api-Key".to_string(), self.get_api_key()),
+                ("api_version".to_string(), API_VERSION.to_string()),
+            ],
         };
 
         let client = SimpleHttpClient {};
@@ -61,9 +71,13 @@ impl Client for BloockHttpClient {
         let headers = match headers {
             Some(mut h) => {
                 h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h.push(("api_version".to_string(), API_VERSION.to_string()));
                 h
             }
-            None => vec![("X-Api-Key".to_string(), self.get_api_key())],
+            None => vec![
+                ("X-Api-Key".to_string(), self.get_api_key()),
+                ("api_version".to_string(), API_VERSION.to_string()),
+            ],
         };
 
         let client = SimpleHttpClient {};
@@ -83,9 +97,13 @@ impl Client for BloockHttpClient {
         let headers = match headers {
             Some(mut h) => {
                 h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h.push(("api_version".to_string(), API_VERSION.to_string()));
                 h
             }
-            None => vec![("X-Api-Key".to_string(), self.get_api_key())],
+            None => vec![
+                ("X-Api-Key".to_string(), self.get_api_key()),
+                ("api_version".to_string(), API_VERSION.to_string()),
+            ],
         };
 
         let client = SimpleHttpClient {};
@@ -101,9 +119,13 @@ impl Client for BloockHttpClient {
         let headers = match headers {
             Some(mut h) => {
                 h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h.push(("api_version".to_string(), API_VERSION.to_string()));
                 h
             }
-            None => vec![("X-Api-Key".to_string(), self.get_api_key())],
+            None => vec![
+                ("X-Api-Key".to_string(), self.get_api_key()),
+                ("api_version".to_string(), API_VERSION.to_string()),
+            ],
         };
 
         let client = SimpleHttpClient {};

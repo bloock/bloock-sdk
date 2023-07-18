@@ -47,8 +47,6 @@ pub struct ManagedKey {
 pub struct CreateManagedKeyRequest {
     pub name: Option<String>,
     pub key_type: String,
-    pub key_curve: Option<String>,
-    pub key_size: Option<u32>,
     pub protection_level: u8,
     pub expiration: Option<i64>,
 }
@@ -58,8 +56,6 @@ pub struct ManagedKeyResponse {
     pub key_id: String,
     pub name: String,
     pub key_type: String,
-    pub key_curve: String,
-    pub key_size: u32,
     pub key_protection: u8,
     pub pub_key: String,
     pub expiration: i64,
@@ -76,8 +72,6 @@ impl ManagedKey {
         let req = CreateManagedKeyRequest {
             name: params.name.clone(),
             key_type: params.key_type.get_key_type(),
-            key_curve: params.key_type.get_key_curve(),
-            key_size: params.key_type.get_key_size(),
             protection_level: params.protection.into(),
             expiration: params.expiration,
         };
@@ -89,7 +83,7 @@ impl ManagedKey {
         Ok(ManagedKey {
             id: res.key_id,
             name: Some(res.name),
-            key_type: KeyType::new(&res.key_type, Some(&res.key_curve), Some(res.key_size))?,
+            key_type: KeyType::new(&res.key_type)?,
             public_key: res.pub_key,
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),
@@ -107,7 +101,7 @@ impl ManagedKey {
         Ok(ManagedKey {
             id: res.key_id,
             name: Some(res.name),
-            key_type: KeyType::new(&res.key_type, Some(&res.key_curve), Some(res.key_size))?,
+            key_type: KeyType::new(&res.key_type)?,
             public_key: res.pub_key,
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),
@@ -135,7 +129,7 @@ mod tests {
         };
         let key = ManagedKey::new(
             &params,
-            "https://api.bloock.com".to_string(),
+            "https://api.bloock.dev".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
         )
         .await
@@ -161,7 +155,7 @@ mod tests {
         };
         let key = ManagedKey::new(
             &params,
-            "https://api.bloock.com".to_string(),
+            "https://api.bloock.dev".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
         )
         .await

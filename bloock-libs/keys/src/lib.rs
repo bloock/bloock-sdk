@@ -10,6 +10,7 @@ pub type Result<T> = std::result::Result<T, KeysError>;
 #[derive(Clone, Debug, PartialEq)]
 pub enum KeyType {
     EcP256k,
+    BJJ,
     Rsa2048,
     Rsa3072,
     Rsa4096,
@@ -18,52 +19,28 @@ pub enum KeyType {
 }
 
 impl KeyType {
-    pub fn new(key_type: &str, key_curve: Option<&str>, key_size: Option<u32>) -> Result<KeyType> {
+    pub fn new(key_type: &str) -> Result<KeyType> {
         match key_type {
-            "EC" => match key_curve {
-                Some("P-256K") => Ok(KeyType::EcP256k),
-                _ => Err(KeysError::InvalidKeyTypeError()),
-            },
-            "RSA" => match key_size {
-                Some(2048) => Ok(KeyType::Rsa2048),
-                Some(3072) => Ok(KeyType::Rsa3072),
-                Some(4096) => Ok(KeyType::Rsa4096),
-                _ => Err(KeysError::InvalidKeyTypeError()),
-            },
+            "EcP256k" => Ok(KeyType::EcP256k),
+            "BJJ" => Ok(KeyType::BJJ),
+            "Rsa2048" => Ok(KeyType::Rsa2048),
+            "Rsa3072" => Ok(KeyType::Rsa3072),
+            "Rsa4096" => Ok(KeyType::Rsa4096),
+            "Aes128" => Ok(KeyType::Aes128),
+            "Aes256" => Ok(KeyType::Aes256),
             _ => Err(KeysError::InvalidKeyTypeError()),
         }
     }
 
     pub fn get_key_type(&self) -> String {
         match self {
-            KeyType::EcP256k => "EC".to_string(),
-            KeyType::Rsa2048 => "RSA".to_string(),
-            KeyType::Rsa3072 => "RSA".to_string(),
-            KeyType::Rsa4096 => "RSA".to_string(),
-            KeyType::Aes128 => "AES".to_string(),
-            KeyType::Aes256 => "AES".to_string(),
-        }
-    }
-
-    pub fn get_key_curve(&self) -> Option<String> {
-        match self {
-            KeyType::EcP256k => Some("P-256K".to_string()),
-            KeyType::Rsa2048 => None,
-            KeyType::Rsa3072 => None,
-            KeyType::Rsa4096 => None,
-            KeyType::Aes128 => None,
-            KeyType::Aes256 => None,
-        }
-    }
-
-    pub fn get_key_size(&self) -> Option<u32> {
-        match self {
-            KeyType::EcP256k => None,
-            KeyType::Rsa2048 => Some(2048),
-            KeyType::Rsa3072 => Some(3072),
-            KeyType::Rsa4096 => Some(4096),
-            KeyType::Aes128 => Some(128),
-            KeyType::Aes256 => Some(256),
+            KeyType::EcP256k => "EcP256k".to_string(),
+            KeyType::BJJ => "BJJ".to_string(),
+            KeyType::Rsa2048 => "Rsa2048".to_string(),
+            KeyType::Rsa3072 => "Rsa3072".to_string(),
+            KeyType::Rsa4096 => "Rsa4096".to_string(),
+            KeyType::Aes128 => "Aes128".to_string(),
+            KeyType::Aes256 => "Aes256".to_string(),
         }
     }
 }

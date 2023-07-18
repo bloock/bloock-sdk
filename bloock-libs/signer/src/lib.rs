@@ -3,6 +3,7 @@ use async_trait::async_trait;
 use entity::alg::Algorithms;
 use local::ecdsa::LocalEcdsaVerifier;
 use local::ens::LocalEnsVerifier;
+use managed::bjj::ManagedBJJVerifier;
 use managed::ecdsa::ManagedEcdsaVerifier;
 use managed::ens::ManagedEnsVerifier;
 use serde::Serialize;
@@ -34,6 +35,7 @@ pub fn create_verifier_from_signature(
         Algorithms::Ens => Ok(Box::<LocalEnsVerifier>::default()),
         Algorithms::Es256kM => Ok(ManagedEcdsaVerifier::new_boxed(api_host, api_key)),
         Algorithms::EnsM => Ok(ManagedEnsVerifier::new_boxed(api_host, api_key)),
+        Algorithms::BjjM => Ok(ManagedBJJVerifier::new_boxed(api_host, api_key)),
     }
 }
 

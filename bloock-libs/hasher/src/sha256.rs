@@ -6,9 +6,9 @@ use sha2::Digest;
 pub struct Sha256 {}
 
 impl Hasher for Sha256 {
-    fn generate_hash(data: &[u8]) -> H256 {
+    fn generate_hash(data: &[&[u8]]) -> H256 {
         let mut hasher = sha2::Sha256::new();
-        hasher.update(data);
+        hasher.update(&data.concat());
         let result = hasher.finalize();
         result.into()
     }
@@ -21,7 +21,7 @@ mod tests {
 
     #[test]
     fn test_sha256_1() {
-        let data = "hello world".as_bytes();
+        let data: &[&[u8]] = &["hello world".as_bytes()];
 
         assert_eq!(
             Sha256::generate_hash(data),

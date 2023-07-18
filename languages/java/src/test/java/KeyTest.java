@@ -80,6 +80,30 @@ class KeyTest {
   }
 
   @Test
+  void generateManagedBjj() throws Exception {
+    KeyClient keyClient = new KeyClient();
+
+    String name = "key_name";
+    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+    KeyType keyType = KeyType.Bjj;
+
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType, name));
+
+    assertEquals(managedKey.getName(), name);
+    assertNotNull(managedKey.getKey());
+    assertEquals(managedKey.getKeyType(), keyType);
+    assertEquals(managedKey.getProtection(), keyProtectionLevel);
+
+    ManagedKey loadedKey = keyClient.loadManagedKey(managedKey.getId());
+    assertEquals(managedKey.getId(), loadedKey.getId());
+    assertEquals(managedKey.getName(), loadedKey.getName());
+    assertEquals(managedKey.getKey(), loadedKey.getKey());
+    assertEquals(managedKey.getKeyType(), loadedKey.getKeyType());
+    assertEquals(managedKey.getProtection(), loadedKey.getProtection());
+  }
+
+  @Test
   void generateManagedRsa() throws Exception {
     KeyClient keyClient = new KeyClient();
 

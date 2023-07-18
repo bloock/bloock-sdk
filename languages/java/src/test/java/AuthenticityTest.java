@@ -59,6 +59,22 @@ class AuthenticityTest {
   }
 
   @Test
+  void signManagedBjj() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    Record record = recordClient.fromString("Hello world").build();
+
+    KeyClient keyClient = new KeyClient();
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj));
+
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+    Signature signature =
+        authenticityClient.sign(record, new BjjSigner(new SignerArgs(managedKey)));
+
+    assertNotNull(signature);
+  }
+
+  @Test
   void verifyLocalEcdsa() throws Exception {
     RecordClient recordClient = new RecordClient();
     AuthenticityClient authenticityClient = new AuthenticityClient();
@@ -89,6 +105,25 @@ class AuthenticityTest {
         recordClient
             .fromString("Hello world")
             .withSigner(new EcdsaSigner(new SignerArgs(managedKey)))
+            .build();
+
+    boolean valid = authenticityClient.verify(record);
+    assertTrue(valid);
+  }
+
+  @Test
+  void verifyManagedBjj() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+
+    KeyClient keyClient = new KeyClient();
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj));
+
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new BjjSigner(new SignerArgs(managedKey)))
             .build();
 
     boolean valid = authenticityClient.verify(record);

@@ -3,12 +3,13 @@ use std::convert::TryInto;
 use thiserror::Error as ThisError;
 
 pub mod keccak;
+pub mod poseidon;
 pub mod sha256;
 
 pub type Result<T> = std::result::Result<T, HasherError>;
 
 pub trait Hasher {
-    fn generate_hash(data: &[u8]) -> H256;
+    fn generate_hash(data: &[&[u8]]) -> H256;
 }
 
 pub type H256 = [u8; 32];

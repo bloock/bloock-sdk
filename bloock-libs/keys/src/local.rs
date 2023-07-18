@@ -19,6 +19,7 @@ impl LocalKey<String> {
     pub fn new(params: &LocalKeyParams) -> Result<LocalKey<String>> {
         match params.key_type {
             KeyType::EcP256k => Ok(EcKey::new_ec_p256k()?.into()),
+            KeyType::BJJ => todo!(),
             KeyType::Rsa2048 => Ok(RsaKey::new_rsa_2048()?.into()),
             KeyType::Rsa3072 => Ok(RsaKey::new_rsa_3072()?.into()),
             KeyType::Rsa4096 => Ok(RsaKey::new_rsa_4096()?.into()),

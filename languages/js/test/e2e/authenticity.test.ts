@@ -55,6 +55,23 @@ describe("Authenticity Tests", () => {
     expect(signature.signature).toBeTruthy();
   });
 
+  test("sign managed bjj", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.BJJ)
+    );
+
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new EcdsaSigner(key));
+
+    expect(signature.signature).toBeTruthy();
+  });
+
   test("verify local ecdsa", async () => {
     initSdk();
 

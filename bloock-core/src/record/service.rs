@@ -367,7 +367,7 @@ mod tests {
                 },
                 protected: "e30".to_string(),
                 signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e61141600".to_string(),
-                message_hash: hex::encode(Keccak256::generate_hash(unencrypted_record.get_payload().unwrap())),
+                message_hash: hex::encode(Keccak256::generate_hash(&[unencrypted_record.get_payload().unwrap().as_slice()])),
             }
         ];
 
@@ -678,9 +678,11 @@ mod hash_tests {
             .await
             .unwrap();
 
-        let expected_hash = hex::encode(Keccak256::generate_hash(
-            &record.clone().serialize().unwrap(),
-        ));
+        let expected_hash = hex::encode(Keccak256::generate_hash(&[record
+            .clone()
+            .serialize()
+            .unwrap()
+            .as_slice()]));
 
         assert_eq!(expected_hash, HASH_SIGNED_PAYLOAD);
 

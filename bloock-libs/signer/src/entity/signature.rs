@@ -29,7 +29,8 @@ impl Signature {
             Algorithms::Es256kM => crate::local::ecdsa::get_common_name(self),
             Algorithms::EnsM => {
                 crate::local::ens::get_common_name(self, ens_provider, api_key).await
-            }
+            },
+            Algorithms::BjjM => crate::local::ecdsa::get_common_name(self)
         }
     }
 
@@ -40,6 +41,7 @@ impl Signature {
             Algorithms::Ens => crate::local::ens::recover_public_key(self, message_hash),
             Algorithms::Es256kM => crate::local::ecdsa::recover_public_key(self, message_hash),
             Algorithms::EnsM => crate::local::ens::recover_public_key(self, message_hash),
+            Algorithms::BjjM => crate::local::ecdsa::recover_public_key(self, message_hash),
         }
     }
 }

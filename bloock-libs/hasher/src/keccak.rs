@@ -7,9 +7,9 @@ use tiny_keccak::Keccak;
 pub struct Keccak256 {}
 
 impl Hasher for Keccak256 {
-    fn generate_hash(data: &[u8]) -> H256 {
+    fn generate_hash(data: &[&[u8]]) -> H256 {
         let mut hasher = Keccak::v256();
-        hasher.update(data);
+        hasher.update(&data.concat());
         let mut output = [0u8; 32];
         hasher.finalize(&mut output);
         output
@@ -23,7 +23,7 @@ mod tests {
 
     #[test]
     fn test_keccak_1() {
-        let data = "Test Data".as_bytes();
+        let data: &[&[u8]] = &["Test Data".as_bytes()];
 
         assert_eq!(
             Keccak256::generate_hash(data),
@@ -36,7 +36,7 @@ mod tests {
 
     #[test]
     fn test_keccak_2() {
-        let data = "Bloock".as_bytes();
+        let data: &[&[u8]] = &["Bloock".as_bytes()];
 
         assert_eq!(
             Keccak256::generate_hash(data),
@@ -49,7 +49,7 @@ mod tests {
 
     #[test]
     fn test_keccak_3() {
-        let data = "testing keccak".as_bytes();
+        let data: &[&[u8]] = &["testing keccak".as_bytes()];
 
         assert_eq!(
             Keccak256::generate_hash(data),
@@ -69,7 +69,7 @@ mod tests {
         ];
 
         assert_eq!(
-            Keccak256::generate_hash(&data),
+            Keccak256::generate_hash(&[&data]),
             hex::decode("d5f4f7e1d989848480236fb0a5f808d5877abf778364ae50845234dd6c1e80fc")
                 .unwrap()
                 .as_slice(),

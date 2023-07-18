@@ -22,7 +22,7 @@ impl Record {
 
         let hash = match document.get_proof() {
             Some(proof) => proof.get_hash()?,
-            None => Keccak256::generate_hash(&document.build()?),
+            None => Keccak256::generate_hash(&[document.build()?.as_slice()]),
         };
 
         Ok(Self {
@@ -294,7 +294,7 @@ mod tests {
                 kid: "12c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
             },
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
-            message_hash: hex::encode(Keccak256::generate_hash(&document.get_payload())),
+            message_hash: hex::encode(Keccak256::generate_hash(&[document.get_payload().as_slice()])),
         }]);
 
         let record_with_signature = Record::new(document).unwrap();
