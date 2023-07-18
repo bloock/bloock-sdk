@@ -6,6 +6,7 @@ from enum import Enum
 class SignatureAlg(Enum):
     ECDSA = 0
     ENS = 1
+    BJJ = 2
     UNRECOGNIZED = -1
 
     def __int__(self):
@@ -17,5 +18,7 @@ class SignatureAlg(Enum):
             return SignatureAlg.ECDSA
         elif alg == "ENS":
             return SignatureAlg.ENS
+        elif alg == "BJJ":
+            return SignatureAlg.BJJ
         else:
             return SignatureAlg.UNRECOGNIZED

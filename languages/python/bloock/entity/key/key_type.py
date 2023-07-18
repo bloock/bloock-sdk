@@ -12,6 +12,7 @@ class KeyType(Enum):
     Rsa4096 = 3
     Aes128 = 4
     Aes256 = 5
+    Bjj = 6
     UNRECOGNIZED = -1
 
     def __int__(self):
@@ -31,6 +32,8 @@ class KeyType(Enum):
             return KeyType.Aes128
         elif alg == proto.KeyType.Aes256:
             return KeyType.Aes256
+        elif alg == proto.KeyType.Bjj:
+            return KeyType.Bjj
         else:
             return KeyType.UNRECOGNIZED
 
@@ -47,5 +50,7 @@ class KeyType(Enum):
             return proto.KeyType.Aes128
         elif self == KeyType.Aes256:
             return proto.KeyType.Aes256
+        elif self == KeyType.Bjj:
+            return proto.KeyType.Bjj
         else:
             return proto.KeyType.EcP256k

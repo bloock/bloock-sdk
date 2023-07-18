@@ -25,11 +25,13 @@ class _SignerAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._Enum
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ES256K: _SignerAlg.ValueType  # 0
     ENS: _SignerAlg.ValueType  # 1
+    BJJ: _SignerAlg.ValueType  # 2
 
 class SignerAlg(_SignerAlg, metaclass=_SignerAlgEnumTypeWrapper): ...
 
 ES256K: SignerAlg.ValueType  # 0
 ENS: SignerAlg.ValueType  # 1
+BJJ: SignerAlg.ValueType  # 2
 global___SignerAlg = SignerAlg
 
 @typing_extensions.final

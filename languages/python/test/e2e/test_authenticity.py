@@ -4,9 +4,12 @@ from bloock.client.authenticity import AuthenticityClient
 from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
 from bloock.entity.authenticity.ecdsa_signer import EcdsaSigner
+from bloock.entity.authenticity.bjj_signer import BjjSigner
 from bloock.entity.authenticity.ens_signer import EnsSigner
 from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.key.key_type import KeyType
+from bloock.entity.key.managed_key_params import ManagedKeyParams
+from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from test.e2e.util import init_sdk
 
 
@@ -35,6 +38,18 @@ class TestAuthenticity(unittest.TestCase):
         signature = authenticity_client.sign(record, EcdsaSigner(SignerArgs(key)))
         self.assertNotEqual(signature, "")
 
+    def test_sign_managed_bjj(self):
+        record_client = RecordClient()
+
+        record = record_client.from_string("Hello world").build()
+
+        key_client = KeyClient()
+        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
+
+        authenticity_client = AuthenticityClient()
+        signature = authenticity_client.sign(record, BjjSigner(SignerArgs(key)))
+        self.assertNotEqual(signature, "")
+
     def test_verify_local_ecdsa(self):
         authenticity_client = AuthenticityClient()
 
@@ -45,6 +60,23 @@ class TestAuthenticity(unittest.TestCase):
         record = (
             record_client.from_string("Hello world")
             .with_signer(EcdsaSigner(SignerArgs(key)))
+            .build()
+        )
+
+        valid = authenticity_client.verify(record)
+        self.assertTrue(valid)
+
+    def test_verify_managed_bjj(self):
+        record_client = RecordClient()
+        authenticity_client = AuthenticityClient()
+
+        key_client = KeyClient()
+        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
+
+        record_client = RecordClient()
+        record = (
+            record_client.from_string("Hello world")
+            .with_signer(BjjSigner(SignerArgs(key)))
             .build()
         )
 
