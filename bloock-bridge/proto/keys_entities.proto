@@ -12,6 +12,7 @@ enum KeyType {
     Rsa4096 = 3;
     Aes128 = 4;
     Aes256 = 5;
+    Bjj = 6;
 }
 
 enum KeyProtectionLevel {

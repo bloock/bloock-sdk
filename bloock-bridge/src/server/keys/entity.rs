@@ -13,6 +13,7 @@ impl From<KeyType> for CoreKeyType {
             KeyType::Rsa4096 => CoreKeyType::Rsa4096,
             KeyType::Aes128 => CoreKeyType::Aes128,
             KeyType::Aes256 => CoreKeyType::Aes256,
+            KeyType::Bjj => CoreKeyType::BJJ,
         }
     }
 }
@@ -26,6 +27,7 @@ impl From<CoreKeyType> for KeyType {
             CoreKeyType::Rsa4096 => KeyType::Rsa4096,
             CoreKeyType::Aes128 => KeyType::Aes128,
             CoreKeyType::Aes256 => KeyType::Aes256,
+            CoreKeyType::BJJ => KeyType::Bjj,
         }
     }
 }
