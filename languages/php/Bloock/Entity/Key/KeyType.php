@@ -10,6 +10,7 @@ class KeyType
     const Rsa4096 = "Rsa4096";
     const Aes128 = "Aes128";
     const Aes256 = "Aes256";
+    const Bjj = "Bjj";
     const UNRECOGNIZED = "UNRECOGNIZED";
 
     public static function toProto(string $type): int
@@ -27,6 +28,8 @@ class KeyType
                 return \Bloock\KeyType::Aes128;
             case KeyType::Aes256:
                 return \Bloock\KeyType::Aes256;
+            case KeyType::Bjj:
+                return \Bloock\KeyType::Bjj;
             default:
                 return \Bloock\KeyType::EcP256k;
         }
@@ -47,6 +50,8 @@ class KeyType
                 return KeyType::Aes128;
             case \Bloock\KeyType::Aes256:
                 return KeyType::Aes256;
+            case \Bloock\KeyType::Bjj:
+                return KeyType::Bjj;
             default:
                 return KeyType::UNRECOGNIZED;
         }

@@ -4,6 +4,7 @@ use Bloock\Bloock;
 use Bloock\Client\AuthenticityClient;
 use Bloock\Client\KeyClient;
 use Bloock\Client\RecordClient;
+use Bloock\Entity\Authenticity\BjjSigner;
 use Bloock\Entity\Authenticity\EcdsaSigner;
 use Bloock\Entity\Authenticity\EnsSigner;
 use Bloock\Entity\Authenticity\SignatureAlg;
@@ -70,6 +71,24 @@ final class AuthenticityTest extends TestCase
     /**
      * @throws Exception
      */
+    public function testSignManagedBjj()
+    {
+        $recordClient = new RecordClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Bjj));
+        $signature = $authenticityClient->sign($record, new BjjSigner(new SignerArgs($key)));
+
+        $this->assertNotNull($signature);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testVerifyLocalEcdsa()
     {
         $recordClient = new RecordClient();
@@ -96,6 +115,23 @@ final class AuthenticityTest extends TestCase
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
 
         $record = $recordClient->fromString("Hello world")->withSigner(new EcdsaSigner(new SignerArgs($key)))->build();
+
+        $valid = $authenticityClient->verify($record);
+        $this->assertTrue($valid);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testVerifyManagedBjj()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Bjj));
+
+        $record = $recordClient->fromString("Hello world")->withSigner(new BjjSigner(new SignerArgs($key)))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
