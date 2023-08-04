@@ -736,6 +736,7 @@ name = "bloock-identity-rs"
 version = "0.1.0"
 dependencies = [
  "base58",
+ "bloock-http",
  "bloock-merkletree-rs",
  "bloock-poseidon-rs",
  "chrono",

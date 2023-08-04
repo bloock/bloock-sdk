@@ -1,11 +1,11 @@
+use bloock_http::Client;
+use bloock_http::SimpleHttpClient;
 use futures::{future::BoxFuture, FutureExt};
 use iref::IriBuf;
 use json_ld::{syntax::ErrorCode, Loader, RemoteDocument};
 use json_syntax::Parse;
 use locspan::Span;
 use rdf_types::IriVocabularyMut;
-use std::io::BufReader;
-use std::io::Read;
 
 pub struct BloockLoader {}
 
@@ -21,18 +21,19 @@ impl Loader<IriBuf, Span> for BloockLoader {
     where
         IriBuf: 'a,
     {
-        let url: IriBuf = url.into();
-
-        let mut req = ureq::get(&url.as_str());
-        req = req.set("Content-Type", "application/ld+json");
-
         async move {
-            let res = req.call().unwrap();
+            let url: IriBuf = url.into();
+            let client = SimpleHttpClient {};
+            let req = client.get(
+                url.as_str().to_string(),
+                Some(vec![(
+                    "Content-Type".to_string(),
+                    "application/ld+json".to_string(),
+                )]),
+            );
+            let res = futures::executor::block_on(req).unwrap();
 
-            let mut reader = BufReader::new(res.into_reader());
-            let mut res_buffer = Vec::new();
-            reader.read_to_end(&mut res_buffer).unwrap();
-            let text = std::str::from_utf8(&res_buffer).unwrap();
+            let text = std::str::from_utf8(&res).unwrap();
 
             if let Ok(doc) = json_syntax::Value::parse_str(text, |span| span) {
                 let remote_doc = RemoteDocument::new(
