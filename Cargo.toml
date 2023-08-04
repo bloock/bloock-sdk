@@ -11,7 +11,8 @@ members = [
     "bloock-libs/encrypter",
     "bloock-libs/hasher",
     "bloock-libs/keys",
-    "bloock-libs/signer"
+    "bloock-libs/signer",
+    "bloock-libs/identity-v2"
 ]
 
 exclude = []
