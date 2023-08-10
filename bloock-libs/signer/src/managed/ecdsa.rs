@@ -184,7 +184,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_and_verify_ok() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {
             name: None,
@@ -218,7 +218,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_and_verify_ok_set_common_name() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {
             name: None,
@@ -258,7 +258,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_and_verify_ok_get_common_name_without_set() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {
             name: None,
@@ -282,7 +282,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_invalid_signature() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {
             name: None,
@@ -320,7 +320,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_invalid_public_key() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "hello world";
@@ -347,7 +347,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_invalid_payload() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {

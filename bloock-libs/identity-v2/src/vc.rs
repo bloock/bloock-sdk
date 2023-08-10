@@ -28,9 +28,10 @@ pub const DEFAULT_EXPIRATION_DATE_FORMAT: &str = "%Y-%m-%dT%H:%M:%SZ";
 
 pub struct VC {
     credential: Credential,
+    credential_id: String,
     credential_type: String,
     nonce: u64,
-    version: u32,
+    version: i32,
 }
 
 impl VC {
@@ -43,7 +44,7 @@ impl VC {
         expiration: i64,
         attributes: Vec<(String, Value)>,
         credential_type: String,
-        version: u32,
+        version: i32,
         api_host: String,
     ) -> Result<Self, IdentityError> {
         let issuance_date = Local::now().naive_local();
@@ -77,7 +78,7 @@ impl VC {
         expiration: i64,
         attributes: Vec<(String, Value)>,
         credential_type: String,
-        version: u32,
+        version: i32,
         issuance: NaiveDateTime,
         nonce: u64,
         uuid: String,
@@ -156,6 +157,7 @@ impl VC {
                 property_set: None,
                 proof: None,
             },
+            credential_id: uuid,
             credential_type,
             nonce,
             version,
@@ -187,7 +189,9 @@ impl VC {
     }
 
     pub async fn get_core_claim(&self) -> Result<Claim, IdentityError> {
-        let root_merkle = self.merklize_credential().await?;
+        let hash = Hasher {};
+
+        let root_merkle = self.merklize_credential(hash.clone()).await?;
         let schema_hash = create_schema_hash(self.credential_type.as_bytes());
         let subject_id_uri: ssi::vc::URI = match self.credential.credential_subject.clone() {
             OneOrMany::One(credential_subject) => match credential_subject.id {
@@ -212,8 +216,7 @@ impl VC {
             NaiveDateTime::parse_from_str(&expiration_date_string, DEFAULT_EXPIRATION_DATE_FORMAT)
                 .map_err(|e| IdentityError::ErrorParseType(e.to_string()))?;
 
-        let mut claim_core = Claim::default(schema_hash);
-        claim_core.set_schema_hash(schema_hash);
+        let mut claim_core = Claim::default(schema_hash, hash);
         claim_core.set_revocation_nonce(self.nonce);
         claim_core.set_version(self.version);
         claim_core.set_expiration_date(expiration_date);
@@ -223,7 +226,7 @@ impl VC {
         Ok(claim_core)
     }
 
-    async fn merklize_credential(&self) -> Result<BigInt, IdentityError> {
+    async fn merklize_credential(&self, hash: Hasher) -> Result<BigInt, IdentityError> {
         let mut loader = BloockLoader {};
         let dataset = to_dataset_for_signing(&self.credential, None, &mut loader)
             .await
@@ -233,7 +236,6 @@ impl VC {
         let rdf_entries = entries_from_rdf(dataset_normalized)
             .map_err(|e| IdentityError::ErrorRdfEntry(e.to_string()))?;
 
-        let hash = Hasher {};
         let merkle = Merkle::default()
             .await
             .map_err(|e| IdentityError::ErrorMerkleTree(e.to_string()))?;
@@ -252,12 +254,21 @@ impl VC {
 
         Ok(res)
     }
+
+    pub fn get_credential(&self) -> Credential {
+        self.credential.clone()
+    }
+
+    pub fn get_credentia_id(&self) -> Result<String, IdentityError> {
+        Ok(self.credential_id.clone())
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use chrono::NaiveDateTime;
     use serde_json::{json, Number, Value};
+    use ssi::vc::Credential;
 
     use crate::vc::VC;
 
@@ -481,49 +492,16 @@ mod tests {
 
         vc.validate_schema(schema).unwrap();
 
-        let vc_string: String = vc.to_json().unwrap();
-
-        let expected_credential = r#"{
-            "@context": [
-              "https://www.w3.org/2018/credentials/v1",
-              "https://schema.iden3.io/core/jsonld/iden3proofs.jsonld",
-              "https://api.bloock.dev/hosting/v1/ipfs/QmZ9BzmMGzLv4y9P6djYUm8sgQt47ZjECGAM8nToFW2qvt"
-            ],
-            "credentialSchema": {
-                "id": "https://api.bloock.dev/hosting/v1/ipfs/QmTvHzXiegijCdhGC4kgjps8hSi3FP1K17ezrYPgdMU6Ek",
-                "type": "JsonSchema2023"
-            },
-            "credentialStatus": {
-                "id": "https://api.bloock.dev/identity/v1/did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U/claims/revocation/status/3825417065",
-                "revocationNonce": 3825417065 as i64,
-                "type": "SparseMerkleTreeProof"
-            },
-            "credentialSubject": {
-                "birth_date": 921950325,
-                "country": "Spain",
-                "name": "Eduard",
-                "type": "DrivingLicense",
-                "first_surname": "Tomas",
-                "id": "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr",
-                "license_type": 1,
-                "nif": "54688188M",
-                "second_surname": "Escoruela"
-            },
-            "expirationDate": "2028-06-15T07:07:39Z",
-            "id": "https://api.bloock.dev/identity/v1/did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U/claims/5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c",
-            "issuer": "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U",
-            "issuanceDate": "2023-07-24T10:29:25.18351605Z",
-            "type": [
-              "VerifiableCredential",
-              "DrivingLicense"
-            ]
-          }"#;
-
         let expected_claim_core_hex = "b9064d46baefd34de66fd370f0f3f0f92a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b00f79f40114c92814ee55fac46cdebf21d77ce80a5c9f439cd85a18461a888aa170000000000000000000000000000000000000000000000000000000000000000693b03e4000000003b5df36d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
+        let expected_hash_index_value =
+            "27c13d7cc2f2f738943ce0d1bf364ac656616ab241189974a33a564dca4d0f05".to_string();
 
         let core_claim = vc.get_core_claim().await.unwrap();
         let core_claim_hex = core_claim.hex().unwrap();
 
+        let hash_index_value = core_claim.hi_hv_hash();
+
+        assert_eq!(expected_hash_index_value, hash_index_value);
         assert_eq!(expected_claim_core_hex, core_claim_hex);
     }
 }

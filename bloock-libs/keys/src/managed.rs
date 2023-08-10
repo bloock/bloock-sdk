@@ -129,7 +129,7 @@ mod tests {
         };
         let key = ManagedKey::new(
             &params,
-            "https://api.bloock.dev".to_string(),
+            "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
         )
         .await
@@ -155,7 +155,7 @@ mod tests {
         };
         let key = ManagedKey::new(
             &params,
-            "https://api.bloock.dev".to_string(),
+            "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
         )
         .await

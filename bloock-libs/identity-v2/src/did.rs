@@ -2,13 +2,14 @@ use std::{collections::HashMap, sync::Mutex};
 
 use base58::FromBase58;
 use lazy_static::lazy_static;
+use serde::{Deserialize, Serialize};
 
 pub const DID_ID_LEN: usize = 31;
 pub const EMPTY_ID: [u8; 31] = [0u8; 31];
 
 pub type Id = [u8; DID_ID_LEN];
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DIDMethod {
     Iden3,
     PolygonID,
@@ -42,7 +43,7 @@ lazy_static! {
     };
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Blockchain {
     Ethereum,
     Polygon,
@@ -65,35 +66,35 @@ impl Blockchain {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum NetworkID {
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum Network {
     Main,
     Mumbai,
     Goerli,
 }
 
-impl NetworkID {
-    pub fn new(method: &str) -> Result<NetworkID, String> {
+impl Network {
+    pub fn new(method: &str) -> Result<Network, String> {
         match method {
-            "main" => Ok(NetworkID::Main),
-            "mumbai" => Ok(NetworkID::Mumbai),
-            "goerli" => Ok(NetworkID::Goerli),
+            "main" => Ok(Network::Main),
+            "mumbai" => Ok(Network::Mumbai),
+            "goerli" => Ok(Network::Goerli),
             _ => Err("Invalid network type provided".to_string()),
         }
     }
 
     pub fn get_network_id_type(&self) -> String {
         match self {
-            NetworkID::Main => "main".to_string(),
-            NetworkID::Mumbai => "mumbai".to_string(),
-            NetworkID::Goerli => "goerli".to_string(),
+            Network::Main => "main".to_string(),
+            Network::Mumbai => "mumbai".to_string(),
+            Network::Goerli => "goerli".to_string(),
         }
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct DIDNetworkFlag {
     blockchain: Blockchain,
-    network_id: NetworkID,
+    network_id: Network,
 }
 
 type DIDNetworkMap = HashMap<DIDNetworkFlag, u8>;
@@ -107,28 +108,28 @@ lazy_static! {
         iden3_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Polygon,
-                network_id: NetworkID::Main,
+                network_id: Network::Main,
             },
             0b00010000 | 0b00000001,
         );
         iden3_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Polygon,
-                network_id: NetworkID::Mumbai,
+                network_id: Network::Mumbai,
             },
             0b00010000 | 0b00000010,
         );
         iden3_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Ethereum,
-                network_id: NetworkID::Main,
+                network_id: Network::Main,
             },
             0b00100000 | 0b00000001,
         );
         iden3_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Ethereum,
-                network_id: NetworkID::Goerli,
+                network_id: Network::Goerli,
             },
             0b00100000 | 0b00000010,
         );
@@ -138,14 +139,14 @@ lazy_static! {
         polygon_id_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Polygon,
-                network_id: NetworkID::Main,
+                network_id: Network::Main,
             },
             0b00010000 | 0b00000001,
         );
         polygon_id_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Polygon,
-                network_id: NetworkID::Mumbai,
+                network_id: Network::Mumbai,
             },
             0b00010000 | 0b00000010,
         );
@@ -158,7 +159,7 @@ lazy_static! {
 pub struct Did {
     pub method: DIDMethod,
     pub blockchain: Blockchain,
-    pub network_id: NetworkID,
+    pub network_id: Network,
     pub id: Id,
 }
 
@@ -167,7 +168,7 @@ impl Did {
         Self {
             method: DIDMethod::Iden3,
             blockchain: Blockchain::Ethereum,
-            network_id: NetworkID::Main,
+            network_id: Network::Main,
             id: [0u8; DID_ID_LEN],
         }
     }
@@ -215,7 +216,7 @@ pub fn parse_did(did_str: String) -> Result<Did, String> {
     match args.len() {
         5 => {
             did.blockchain = Blockchain::new(args[2])?;
-            did.network_id = NetworkID::new(args[3])?;
+            did.network_id = Network::new(args[3])?;
 
             did.id = id_from_string(args[4].to_owned())?;
         }
@@ -283,7 +284,7 @@ fn find_blockchain_for_did_method_by_value(
 fn find_network_id_for_did_method_by_value(
     method: DIDMethod,
     value: u8,
-) -> Result<NetworkID, String> {
+) -> Result<Network, String> {
     let did_method_network = DID_METHOD_NETWORK.lock().unwrap();
     match did_method_network.get(&method) {
         Some(network_map) => {

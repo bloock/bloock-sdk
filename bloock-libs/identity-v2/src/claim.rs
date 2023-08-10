@@ -5,9 +5,9 @@ use std::io::{Cursor, Write};
 
 use crate::{
     did::Id,
+    hash::Hasher,
     schema::{SchemaHash, SCHEMA_HASH_LEN},
 };
-
 const Q_STRING: &str =
     "21888242871839275222246405745257275088548364400416034343698204186575808495617";
 
@@ -48,13 +48,15 @@ type ElemBytes = [u8; 32];
 pub struct Claim {
     index: [ElemBytes; 4],
     value: [ElemBytes; 4],
+    hash: Hasher,
 }
 
 impl Claim {
-    pub fn default(sh: SchemaHash) -> Self {
+    pub fn default(sh: SchemaHash, hash: Hasher) -> Self {
         let mut c = Claim {
             index: Default::default(),
             value: Default::default(),
+            hash,
         };
         c.set_schema_hash(sh);
         c
@@ -64,6 +66,23 @@ impl Claim {
         let res = self.marshal_binary()?;
 
         Ok(hex::encode(res))
+    }
+
+    pub fn hi_hv_hash(&self) -> String {
+        let mut common_hash: Vec<BigInt> = vec![];
+
+        let index = elem_bytes_to_ints(self.index.to_vec());
+        let h_index = self.hash.generate_hash_bigints(&index);
+
+        let value = elem_bytes_to_ints(self.value.to_vec());
+        let h_value = self.hash.generate_hash_bigints(&value);
+
+        common_hash.push(h_index.into());
+        common_hash.push(h_value.into());
+
+        let result = self.hash.generate_hash_bigints(&common_hash);
+
+        hex::encode(result.to_bytes_be())
     }
 
     fn marshal_binary(&self) -> Result<Vec<u8>, String> {
@@ -90,7 +109,7 @@ impl Claim {
         self.value[0][..8].copy_from_slice(&bytes);
     }
 
-    pub fn set_version(&mut self, ver: u32) {
+    pub fn set_version(&mut self, ver: i32) {
         let bytes = ver.to_le_bytes();
         self.index[0][20..24].copy_from_slice(&bytes);
     }
@@ -188,6 +207,13 @@ fn int_to_bytes(in_val: &BigInt) -> Vec<u8> {
     swap_endianness(&in_val.to_signed_bytes_be())
 }
 
+fn bytes_to_int(input: &[u8]) -> BigInt {
+    let mut bytes = input.to_owned();
+    bytes.reverse();
+
+    BigInt::from_signed_bytes_be(&bytes)
+}
+
 fn check_big_int_in_field(a: &BigInt, q: &BigInt) -> bool {
     a < q
 }
@@ -199,4 +225,15 @@ fn swap_endianness(b: &[u8]) -> Vec<u8> {
         o[b.len() - 1 - i] = *byte;
     }
     o
+}
+
+fn elem_bytes_to_ints(elements: Vec<ElemBytes>) -> Vec<BigInt> {
+    let mut result: Vec<BigInt> = vec![];
+
+    for element in elements.iter() {
+        let new_element = bytes_to_int(&element[..]);
+        result.push(new_element)
+    }
+
+    result
 }

@@ -2,7 +2,7 @@ use crate::entity::alg::Algorithms;
 use crate::entity::signature::{ProtectedHeader, Signature, SignatureHeader};
 use crate::{Signer, SignerError, Verifier};
 use async_trait::async_trait;
-use bloock_hasher::poseidon::Poseidon;
+use bloock_hasher::poseidon::{check_poseidon_hash, Poseidon};
 use bloock_hasher::{keccak::Keccak256, Hasher};
 use bloock_http::{BloockHttpClient, Client};
 use bloock_keys::managed::ManagedKey;
@@ -81,20 +81,29 @@ impl Signer for ManagedBJJSigner {
             .as_bytes()
             .to_owned();
 
-        let hash: [u8; 32];
+        let final_payload;
         if protected == base64_url::encode("{}") {
             // To keep backwards compatibility if the protected header is empty, we just verify the payload
-            hash = Poseidon::generate_hash(&[payload]);
+            final_payload = payload;
         } else {
-            hash = Poseidon::generate_hash(&[payload_with_protected.as_slice()]);
+            final_payload = payload_with_protected.as_slice();
         }
+
+        let hash: Vec<u8>;
+        let is_poseidon_hash = check_poseidon_hash(payload);
+        if is_poseidon_hash {
+            hash = final_payload.to_vec();
+        } else {
+            hash = Poseidon::generate_hash(&[final_payload])[..].to_vec();
+        }
+        let encoded_hash = hex::encode(hash);
 
         let http = BloockHttpClient::new(self.api_key.clone());
 
         let req = SignRequest {
             key_id: self.managed_key.id.clone(),
             algorithm: "BJJ".to_string(),
-            payload: hex::encode(hash),
+            payload: encoded_hash,
         };
         let res: SignResponse = http
             .post_json(format!("{}/keys/v1/sign", self.api_host), req, None)
@@ -185,7 +194,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_and_verify_ok() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {
             name: None,
@@ -216,7 +225,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_and_verify_ok_set_common_name() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {
             name: None,
@@ -253,7 +262,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_and_verify_ok_get_common_name_without_set() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {
             name: None,
@@ -277,7 +286,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_invalid_signature() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {
             name: None,
@@ -342,7 +351,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_invalid_payload() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let managed_key_params = bloock_keys::managed::ManagedKeyParams {

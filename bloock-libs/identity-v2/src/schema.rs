@@ -47,3 +47,34 @@ pub fn get_type_id_from_context(schema: String, _type: String) -> Result<String,
     }
     Err("@id not found for the given schema and type".to_string())
 }
+
+pub fn get_json_ld_context_from_json(schema: String) -> Result<String, String> {
+    let value: Value = serde_json::from_str(&schema).map_err(|e| e.to_string())?;
+
+    if let Some(metadata) = value["$metadata"].as_object() {
+        if let Some(uris) = metadata.get("uris") {
+            if let Some(id) = uris["jsonLdContext"].as_str() {
+                return Ok(id.to_string());
+            }
+        }
+    }
+    Err("@id not found for the given schema and type".to_string())
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_create_schema_hash() {
+        let data: &[u8] = "urn:uuid:23f799df-3186-4370-b6e2-0a077bae590f".as_bytes();
+
+        assert_eq!(
+            create_schema_hash(data),
+            hex::decode("763e6d7daae422aaccea5c833a6dd0a0".as_bytes())
+                .unwrap()
+                .as_slice()
+        );
+    }
+}

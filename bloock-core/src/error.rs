@@ -4,6 +4,7 @@ use crate::config::ConfigError;
 use crate::encryption::EncryptionError;
 use crate::event::EventError;
 use crate::identity::IdentityError;
+use crate::identity_v2::IdentityErrorV2;
 use crate::integrity::IntegrityError;
 use crate::key::KeyError;
 use crate::record::RecordError;
@@ -42,6 +43,8 @@ pub enum ErrorKind {
     Event(#[from] EventError),
     #[error("Identity error: {0}")]
     Identity(#[from] IdentityError),
+    #[error("Identity error: {0}")]
+    IdentityV2(#[from] IdentityErrorV2),
     #[error("Infrastructure error: {0}")]
     Infrastructure(#[from] InfrastructureError),
     #[error("Operational error: {0}")]

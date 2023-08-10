@@ -5,6 +5,7 @@ use num_bigint::{BigInt, BigUint};
 use tiny_keccak::Hasher as KeccakHasher;
 use tiny_keccak::Keccak;
 
+#[derive(Debug, Clone)]
 pub struct Hasher {}
 
 impl Hasher {
