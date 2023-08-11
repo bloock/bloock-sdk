@@ -90,6 +90,31 @@ describe("Key Tests", () => {
     expect(key.protection).toEqual(loadedKey.protection);
   });
 
+  test("generate managed bjj", async () => {
+    initSdk();
+
+    let keyName = "key_name";
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.Bjj;
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType, keyName)
+    );
+
+    expect(key.name).toBe(keyName);
+    expect(key.key).toBeDefined();
+    expect(key.keyType).toBe(keyType);
+    expect(key.protection).toBe(keyProtection);
+
+    let loadedKey = await keyClient.loadManagedKey(key.id);
+
+    expect(key.id).toEqual(loadedKey.id);
+    expect(key.name).toEqual(loadedKey.name);
+    expect(key.key).toEqual(loadedKey.key);
+    expect(key.keyType).toEqual(loadedKey.keyType);
+    expect(key.protection).toEqual(loadedKey.protection);
+  });
+
   test("generate managed rsa", async () => {
     initSdk();
 

@@ -86,6 +86,35 @@ func TestKey(t *testing.T) {
 		assert.Equal(t, loadedKey.KeyType, managedKey.KeyType)
 	})
 
+	t.Run("generate managed bjj", func(t *testing.T) {
+		keyClient := NewKeyClient()
+
+		name := "key-name"
+		protection := key.KEY_PROTECTION_SOFTWARE
+		keyType := key.Bjj
+		params := key.ManagedKeyParams{
+			Name:       name,
+			Protection: protection,
+			KeyType:    keyType,
+		}
+		managedKey, err := keyClient.NewManagedKey(params)
+		assert.NoError(t, err)
+
+		assert.Equal(t, name, managedKey.Name)
+		assert.NotEmpty(t, managedKey.Key)
+		assert.Equal(t, protection, managedKey.Protection)
+		assert.Equal(t, keyType, managedKey.KeyType)
+
+		loadedKey, err := keyClient.LoadManagedKey(managedKey.ID)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedKey.ID, managedKey.ID)
+		assert.Equal(t, loadedKey.Name, managedKey.Name)
+		assert.Equal(t, loadedKey.Key, managedKey.Key)
+		assert.Equal(t, loadedKey.Protection, managedKey.Protection)
+		assert.Equal(t, loadedKey.KeyType, managedKey.KeyType)
+	})
+
 	t.Run("generate managed rsa", func(t *testing.T) {
 		keyClient := NewKeyClient()
 

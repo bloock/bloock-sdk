@@ -64,6 +64,26 @@ class TestKey(unittest.TestCase):
         self.assertEqual(managed_key.key, loaded_key.key)
         self.assertEqual(managed_key.key_type, loaded_key.key_type)
         self.assertEqual(managed_key.protection, loaded_key.protection)
+    
+    def test_generate_managed_bjj(self):
+        key_client = KeyClient()
+        protection = KeyProtectionLevel.SOFTWARE
+        key_type = KeyType.Bjj
+        key_name = "key_name"
+        params = ManagedKeyParams(protection, key_type, key_name)
+        managed_key = key_client.new_managed_key(params)
+
+        self.assertEqual(managed_key.name, key_name)
+        self.assertNotEqual(managed_key.key, "")
+        self.assertEqual(managed_key.protection, protection)
+        self.assertEqual(managed_key.key_type, key_type)
+
+        loaded_key = key_client.load_managed_key(managed_key.id)
+        self.assertEqual(managed_key.id, loaded_key.id)
+        self.assertEqual(managed_key.name, loaded_key.name)
+        self.assertEqual(managed_key.key, loaded_key.key)
+        self.assertEqual(managed_key.key_type, loaded_key.key_type)
+        self.assertEqual(managed_key.protection, loaded_key.protection)
 
     def test_generate_managed_rsa(self):
         key_client = KeyClient()

@@ -14,8 +14,9 @@ use bloock_core::{
     record::entity::record::Record as RecordCore,
     record::{builder::Builder, service::RecordService},
     Decrypter as DecrypterCore, Encrypter as EncrypterCore, LocalAesDecrypter, LocalAesEncrypter,
-    LocalEcdsaSigner, LocalEnsSigner, LocalRsaDecrypter, LocalRsaEncrypter, ManagedEcdsaSigner,
-    ManagedEnsSigner, ManagedRsaDecrypter, ManagedRsaEncrypter, Signer as SignerCore,
+    LocalEcdsaSigner, LocalEnsSigner, LocalRsaDecrypter, LocalRsaEncrypter, ManagedBJJSigner,
+    ManagedEcdsaSigner, ManagedEnsSigner, ManagedRsaDecrypter, ManagedRsaEncrypter,
+    Signer as SignerCore,
 };
 use std::convert::TryInto;
 
@@ -277,6 +278,12 @@ async fn build_record(
                     config_data.config.host.clone(),
                     config_data.config.api_key.clone(),
                 ),
+                Some(SignerAlg::Bjj) => ManagedBJJSigner::new_boxed(
+                    key.into(),
+                    signer.common_name,
+                    config_data.config.host.clone(),
+                    config_data.config.api_key.clone(),
+                ),
                 Some(SignerAlg::Ens) => ManagedEnsSigner::new_boxed(
                     key.into(),
                     config_data.config.host.clone(),
@@ -290,6 +297,7 @@ async fn build_record(
                     LocalEcdsaSigner::new_boxed(key.into(), signer.common_name)
                 }
                 Some(SignerAlg::Ens) => LocalEnsSigner::new_boxed(key.into()),
+                Some(SignerAlg::Bjj) => todo!(),
                 None => return Err("invalid signer provided".to_string()),
             }
         } else {

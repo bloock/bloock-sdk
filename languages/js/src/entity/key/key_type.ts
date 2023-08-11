@@ -6,7 +6,8 @@ export enum KeyType {
   Rsa3072,
   Rsa4096,
   Aes128,
-  Aes256
+  Aes256,
+  Bjj,
 }
 
 export namespace KeyType {
@@ -24,6 +25,8 @@ export namespace KeyType {
         return keysEntitiesProto.KeyType.Aes128;
       case KeyType.Aes256:
         return keysEntitiesProto.KeyType.Aes256;
+      case KeyType.Bjj:
+        return keysEntitiesProto.KeyType.Bjj;
     }
   }
 
@@ -41,6 +44,8 @@ export namespace KeyType {
         return KeyType.Aes128;
       case keysEntitiesProto.KeyType.Aes256:
         return KeyType.Aes256;
+      case keysEntitiesProto.KeyType.Bjj:
+        return KeyType.Bjj;
       default:
         return KeyType.EcP256k;
     }

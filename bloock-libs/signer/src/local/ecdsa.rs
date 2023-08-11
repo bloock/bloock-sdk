@@ -80,12 +80,12 @@ impl<S: ToString + AsRef<[u8]> + Clone> Signer for LocalEcdsaSigner<S> {
             .as_bytes()
             .to_owned();
 
-        let hash = Sha256::generate_hash(if protected == base64_url::encode("{}") {
+        let hash = Sha256::generate_hash(&[if protected == base64_url::encode("{}") {
             // to keep backwards compatibility if the protected header is empty we just sign the payload
             payload
         } else {
             payload_with_protected
-        });
+        }]);
 
         let message = Message::parse(&hash);
 
@@ -103,7 +103,7 @@ impl<S: ToString + AsRef<[u8]> + Clone> Signer for LocalEcdsaSigner<S> {
                 alg: Algorithms::Es256k.to_string(),
                 kid: hex::encode(public_key.serialize()),
             },
-            message_hash: hex::encode(Keccak256::generate_hash(payload)),
+            message_hash: hex::encode(Keccak256::generate_hash(&[payload])),
         };
 
         Ok(signature)
@@ -127,12 +127,13 @@ impl Verifier for LocalEcdsaVerifier {
             .as_bytes()
             .to_owned();
 
-        let hash = Sha256::generate_hash(if signature.protected == base64_url::encode("{}") {
-            // to keep backwards compatibility if the protected header is empty we just verify the payload
-            payload
+        let hash: [u8; 32];
+        if signature.protected == base64_url::encode("{}") {
+            // To keep backwards compatibility if the protected header is empty, we just verify the payload
+            hash = Sha256::generate_hash(&[payload]);
         } else {
-            payload_with_protected
-        });
+            hash = Sha256::generate_hash(&[payload_with_protected.as_slice()]);
+        }
 
         let message = Message::parse(&hash);
 
@@ -177,7 +178,7 @@ mod tests {
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
 
-        let result = create_verifier_from_signature(&signature, api_host, api_key)
+        let result = create_verifier_from_signature(&signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), signature)
             .await
@@ -205,7 +206,7 @@ mod tests {
         assert_eq!(signature.header.alg.as_str(), "ES256K");
         assert_eq!(get_common_name(&signature).unwrap().as_str(), "a name");
 
-        let result = create_verifier_from_signature(&signature, api_host, api_key)
+        let result = create_verifier_from_signature(&signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), signature)
             .await
@@ -267,7 +268,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
             .await
@@ -295,7 +296,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
             .await;
@@ -322,7 +323,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
             .await
@@ -344,9 +345,11 @@ mod tests {
 
         let signature = c.sign(string_payload.as_bytes()).await.unwrap();
 
-        let result_key =
-            recover_public_key(&signature, Sha256::generate_hash(string_payload.as_bytes()))
-                .unwrap();
+        let result_key = recover_public_key(
+            &signature,
+            Sha256::generate_hash(&[string_payload.as_bytes()]),
+        )
+        .unwrap();
 
         assert_eq!(hex::encode(result_key), local_key.key);
     }

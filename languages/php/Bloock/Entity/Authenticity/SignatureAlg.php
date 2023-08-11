@@ -8,6 +8,7 @@ class SignatureAlg
 {
     const ECDSA = "ECDSA";
     const ENS = "ENS";
+    const BJJ = "BJJ";
     const UNRECOGNIZED = "UNRECOGNIZED";
 
     public static function fromString(string $alg): string
@@ -17,6 +18,8 @@ class SignatureAlg
                 return SignatureAlg::ECDSA;
             case "ENS":
                 return SignatureAlg::ENS;
+            case "BJJ":
+                return SignatureAlg::BJJ;
             default:
                 return SignatureAlg::UNRECOGNIZED;
         }
@@ -29,6 +32,8 @@ class SignatureAlg
                 return SignatureAlg::ECDSA;
             case SignerAlg::ENS:
                 return SignatureAlg::ENS;
+            case SignerAlg::BJJ:
+                return SignatureAlg::BJJ;
             default:
                 return SignatureAlg::UNRECOGNIZED;
         }

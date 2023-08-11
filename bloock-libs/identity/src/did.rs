@@ -42,7 +42,7 @@ impl Did {
         payload.extend(x);
         payload.extend(y);
 
-        let hash = Keccak256::generate_hash(&payload);
+        let hash = Keccak256::generate_hash(&[&payload.as_slice()]);
         let genesis = hash[hash.len() - 27..].try_into().unwrap();
         Ok(genesis)
     }

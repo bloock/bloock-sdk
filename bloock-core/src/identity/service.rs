@@ -353,6 +353,7 @@ impl<H: Client> IdentityService<H> {
             &signature,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            Some("2023-01-01".to_string()),
         )
         .map_err(|_| IdentityError::InvalidSignatureError())?;
 

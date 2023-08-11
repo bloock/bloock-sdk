@@ -28,6 +28,7 @@ class _KeyTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTy
     Rsa4096: _KeyType.ValueType  # 3
     Aes128: _KeyType.ValueType  # 4
     Aes256: _KeyType.ValueType  # 5
+    Bjj: _KeyType.ValueType  # 6
 
 class KeyType(_KeyType, metaclass=_KeyTypeEnumTypeWrapper): ...
 
@@ -37,6 +38,7 @@ Rsa3072: KeyType.ValueType  # 2
 Rsa4096: KeyType.ValueType  # 3
 Aes128: KeyType.ValueType  # 4
 Aes256: KeyType.ValueType  # 5
+Bjj: KeyType.ValueType  # 6
 global___KeyType = KeyType
 
 class _KeyProtectionLevel:

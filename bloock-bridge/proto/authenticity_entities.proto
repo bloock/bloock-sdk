@@ -10,6 +10,7 @@ import "keys_entities.proto";
 enum SignerAlg {
     ES256K = 0;
     ENS = 1;
+    BJJ = 2;
 }
 
 message Signer {

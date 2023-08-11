@@ -6,7 +6,7 @@ use crate::{
 use async_trait::async_trait;
 use bloock_hasher::{keccak::Keccak256, Hasher, H256};
 use bloock_keys::managed::ManagedKey;
-use libsecp256k1::{PublicKey};
+use libsecp256k1::PublicKey;
 
 use super::ecdsa::{ManagedEcdsaSigner, ManagedEcdsaVerifier};
 
@@ -40,7 +40,10 @@ fn derive_eth_address(mut public_key: Vec<u8>) -> Result<String> {
             .to_vec();
     }
 
-    Ok(hex::encode(&Keccak256::generate_hash(&public_key)[12..]))
+    let public_key_slice = &public_key;
+    Ok(hex::encode(
+        &Keccak256::generate_hash(&[public_key_slice])[12..],
+    ))
 }
 
 pub struct ManagedEnsSigner {
@@ -81,22 +84,23 @@ impl Signer for ManagedEnsSigner {
 pub struct ManagedEnsVerifier {
     api_host: String,
     api_key: String,
+    api_version: Option<String>,
 }
 
 impl ManagedEnsVerifier {
-    pub fn new(api_host: String, api_key: String) -> Self {
-        Self { api_host, api_key }
+    pub fn new(api_host: String, api_key: String, api_version: Option<String>) -> Self {
+        Self { api_host, api_key, api_version }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key))
+    pub fn new_boxed(api_host: String, api_key: String, api_version: Option<String>) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key, api_version))
     }
 }
 
 #[async_trait(?Send)]
 impl Verifier for ManagedEnsVerifier {
     async fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool> {
-        ManagedEcdsaVerifier::new(self.api_host.clone(), self.api_key.clone())
+        ManagedEcdsaVerifier::new(self.api_host.clone(), self.api_key.clone(), self.api_version.clone())
             .verify(payload, signature)
             .await
     }

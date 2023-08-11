@@ -7,6 +7,7 @@ mod availability;
 pub mod config;
 mod encryption;
 mod identity;
+mod identity_v2;
 mod integrity;
 mod keys;
 
@@ -14,6 +15,7 @@ use self::authenticity::server::AuthenticityServer;
 use self::availability::server::AvailabilityServer;
 use self::encryption::server::EncryptionServer;
 use self::identity::server::IdentityServer;
+use self::identity_v2::server::IdentityServerV2;
 use self::integrity::server::IntegrityServer;
 use self::keys::server::KeyServer;
 use self::record::server::RecordServer;
@@ -25,6 +27,7 @@ use crate::items::AvailabilityServiceHandler;
 use crate::items::BloockServer;
 use crate::items::EncryptionServiceHandler;
 use crate::items::IdentityServiceHandler;
+use crate::items::IdentityServiceV2Handler;
 use crate::items::IntegrityServiceHandler;
 use crate::items::KeyServiceHandler;
 use crate::items::RecordServiceHandler;
@@ -39,6 +42,7 @@ pub struct Server {
     record: RecordServer,
     key: KeyServer,
     identity: IdentityServer,
+    identity_v2: IdentityServerV2,
     webhook: WebhookServer,
 }
 
@@ -52,6 +56,7 @@ impl Server {
             record: RecordServer {},
             key: KeyServer {},
             identity: IdentityServer {},
+            identity_v2: IdentityServerV2 {},
             webhook: WebhookServer {},
         }
     }
@@ -467,6 +472,83 @@ impl Server {
                 Ok(self
                     .webhook
                     .verify_webhook_signature(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2CreateCredential => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .create_credential(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2CreateIssuer => {
+                let req: crate::items::CreateIssuerRequest = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .create_issuer(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2BuildSchema => {
+                let req: crate::items::BuildSchemaRequestV2 = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .build_schema(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2PublishIssuerState => {
+                let req: crate::items::PublishIssuerStateRequest =
+                    self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .publish_issuer_state(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2RevokeCredential => {
+                let req: crate::items::RevokeCredentialRequestV2 =
+                    self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .revoke_credential(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2CredentialToJson => {
+                let req: crate::items::CredentialToJsonRequestV2 =
+                    self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .credential_to_json(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2CredentialFromJson => {
+                let req: crate::items::CredentialFromJsonRequestV2 =
+                    self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .credential_from_json(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2GetCredentialProof => {
+                let req: crate::items::GetCredentialProofRequest =
+                    self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .get_credential_proof(&req)
                     .await
                     .to_response_type(&req)
                     .await)

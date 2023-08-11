@@ -11,6 +11,7 @@ const (
 	Rsa4096 KeyType = iota
 	Aes128  KeyType = iota
 	Aes256  KeyType = iota
+	Bjj     KeyType = iota
 )
 
 var (
@@ -21,6 +22,7 @@ var (
 		proto.KeyType_Rsa4096: Rsa4096,
 		proto.KeyType_Aes128:  Aes128,
 		proto.KeyType_Aes256:  Aes256,
+		proto.KeyType_Bjj: Bjj,
 	}
 
 	KeyTypeToProto = map[KeyType]proto.KeyType{
@@ -30,5 +32,6 @@ var (
 		Rsa4096: proto.KeyType_Rsa4096,
 		Aes128:  proto.KeyType_Aes128,
 		Aes256:  proto.KeyType_Aes256,
+		Bjj: proto.KeyType_Bjj,
 	}
 )

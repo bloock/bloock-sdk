@@ -3,6 +3,7 @@ import { initSdk } from "./util";
 import {
   AuthenticityClient,
   EcdsaSigner,
+  BjjSigner,
   EnsSigner,
   KeyClient,
   KeyProtectionLevel,
@@ -55,6 +56,23 @@ describe("Authenticity Tests", () => {
     expect(signature.signature).toBeTruthy();
   });
 
+  test("sign managed bjj", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj)
+    );
+
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new BjjSigner(key));
+
+    expect(signature.signature).toBeTruthy();
+  });
+
   test("verify local ecdsa", async () => {
     initSdk();
 
@@ -84,6 +102,25 @@ describe("Authenticity Tests", () => {
     let record = await recordClient
       .fromString("Hello world")
       .withSigner(new EcdsaSigner(key))
+      .build();
+
+    let authenticityClient = new AuthenticityClient();
+    let valid = await authenticityClient.verify(record);
+    expect(valid).toBeTruthy();
+  });
+
+  test("verify managed bjj", async () => {
+    initSdk();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj)
+    );
+
+    let recordClient = new RecordClient();
+    let record = await recordClient
+      .fromString("Hello world")
+      .withSigner(new BjjSigner(key))
       .build();
 
     let authenticityClient = new AuthenticityClient();

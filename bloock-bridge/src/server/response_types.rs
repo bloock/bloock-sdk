@@ -1,19 +1,27 @@
 use crate::items::BloockServer;
+use crate::items::BuildSchemaResponseV2;
+use crate::items::CreateCredentialResponseV2;
+use crate::items::CreateIssuerResponse;
+use crate::items::CredentialFromJsonResponseV2;
+use crate::items::CredentialToJsonResponseV2;
 use crate::items::DecryptResponse;
 use crate::items::EncryptResponse;
 use crate::items::EncryptionAlgResponse;
 use crate::items::GenerateLocalKeyResponse;
 use crate::items::GenerateManagedKeyResponse;
 use crate::items::GetAnchorResponse;
+use crate::items::GetCredentialProofResponse;
 use crate::items::GetHashResponse;
 use crate::items::GetOfferResponse;
 use crate::items::GetProofResponse;
 use crate::items::GetSignaturesResponse;
 use crate::items::LoadLocalKeyResponse;
 use crate::items::LoadManagedKeyResponse;
+use crate::items::PublishIssuerStateResponse;
 use crate::items::PublishResponse;
 use crate::items::RecordBuilderResponse;
 use crate::items::RetrieveResponse;
+use crate::items::RevokeCredentialResponseV2;
 use crate::items::SendRecordsResponse;
 use crate::items::SetProofResponse;
 use crate::items::SignResponse;
@@ -80,6 +88,14 @@ pub enum ResponseType {
     VerifyCredentialResponse(VerifyCredentialResponse),
     RevokeCredentialResponse(RevokeCredentialResponse),
     VerifyWebhookSignatureResponse(VerifyWebhookSignatureResponse),
+    CreateCredentialResponseV2(CreateCredentialResponseV2),
+    CreateIssuerResponse(CreateIssuerResponse),
+    BuildSchemaResponseV2(BuildSchemaResponseV2),
+    PublishIssuerStateResponse(PublishIssuerStateResponse),
+    RevokeCredentialResponseV2(RevokeCredentialResponseV2),
+    CredentialToJsonResponseV2(CredentialToJsonResponseV2),
+    CredentialFromJsonResponseV2(CredentialFromJsonResponseV2),
+    GetCredentialProofResponse(GetCredentialProofResponse),
 }
 
 impl ResponseType {
@@ -126,6 +142,14 @@ impl ResponseType {
             ResponseType::CredentialFromJsonResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyCredentialResponse(r) => r.encode(&mut result_vec),
             ResponseType::RevokeCredentialResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateCredentialResponseV2(r) => r.encode(&mut result_vec),
+            ResponseType::CreateIssuerResponse(r) => r.encode(&mut result_vec),
+            ResponseType::BuildSchemaResponseV2(r) => r.encode(&mut result_vec),
+            ResponseType::PublishIssuerStateResponse(r) => r.encode(&mut result_vec),
+            ResponseType::RevokeCredentialResponseV2(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialToJsonResponseV2(r) => r.encode(&mut result_vec),
+            ResponseType::CredentialFromJsonResponseV2(r) => r.encode(&mut result_vec),
+            ResponseType::GetCredentialProofResponse(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -172,6 +196,14 @@ impl ResponseType {
             ResponseType::CredentialFromJsonResponse(r) => r.encoded_len(),
             ResponseType::VerifyCredentialResponse(r) => r.encoded_len(),
             ResponseType::RevokeCredentialResponse(r) => r.encoded_len(),
+            ResponseType::CreateCredentialResponseV2(r) => r.encoded_len(),
+            ResponseType::CreateIssuerResponse(r) => r.encoded_len(),
+            ResponseType::BuildSchemaResponseV2(r) => r.encoded_len(),
+            ResponseType::PublishIssuerStateResponse(r) => r.encoded_len(),
+            ResponseType::RevokeCredentialResponseV2(r) => r.encoded_len(),
+            ResponseType::CredentialToJsonResponseV2(r) => r.encoded_len(),
+            ResponseType::CredentialFromJsonResponseV2(r) => r.encoded_len(),
+            ResponseType::GetCredentialProofResponse(r) => r.encoded_len(),
         }
     }
 }

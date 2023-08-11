@@ -23,6 +23,18 @@ func TestAuthenticity(t *testing.T) {
 		assert.NotEmpty(t, keys.PublicKey)
 	})
 
+	t.Run("generate bjj keys", func(t *testing.T) {
+		keyClient := NewKeyClient()
+		keys, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			KeyType: key.Bjj,
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+		})
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, keys.Key)
+		assert.NotEmpty(t, keys.ID)
+	})
+
 	t.Run("sign local ecdsa", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
@@ -66,6 +78,29 @@ func TestAuthenticity(t *testing.T) {
 		assert.NotEmpty(t, signature.Signature)
 	})
 
+	t.Run("sign managed bjj", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.Bjj,
+		})
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &key}))
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, signature.Signature)
+	})
+
 	t.Run("verify local ecdsa", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
@@ -101,6 +136,30 @@ func TestAuthenticity(t *testing.T) {
 		record, err := recordClient.
 			FromString("Hello world").
 			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{ManagedKey: &key})).
+			Build()
+		assert.NoError(t, err)
+
+		valid, err := authenticityClient.Verify(record)
+		assert.NoError(t, err)
+
+		assert.True(t, valid)
+	})
+
+	t.Run("verify managed bjj", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.Bjj,
+		})
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &key})).
 			Build()
 		assert.NoError(t, err)
 
@@ -263,7 +322,6 @@ func TestAuthenticity(t *testing.T) {
 		name, err := authenticityClient.GetSignatureCommonName(signatures[0])
 		assert.NoError(t, err)
 		assert.Equal(t, commonName, name)
-
 	})
 
 	t.Run("get ens signature common name", func(t *testing.T) {

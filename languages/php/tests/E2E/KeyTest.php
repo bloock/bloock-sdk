@@ -26,7 +26,6 @@ final class KeyTest extends TestCase
         $loadedKey = $keyClient->loadLocalKey(KeyType::EcP256k, $key->key, $key->privateKey);
         $this->assertEquals($key->key, $loadedKey->key);
         $this->assertEquals($key->privateKey, $loadedKey->privateKey);
-
     }
 
     public function testGenerateLocalRsa()
@@ -62,6 +61,30 @@ final class KeyTest extends TestCase
         $keyName = "key_name";
         $keyProtection = KeyProtectionLevel::SOFTWARE;
         $keyType = KeyType::EcP256k;
+
+        $params = new ManagedKeyParams($keyProtection, $keyType, $keyName);
+        $key = $keyClient->newManagedKey($params);
+
+        $this->assertEquals($key->name, $keyName);
+        $this->assertNotNull($key->key);
+        $this->assertEquals($key->keyType, $keyType);
+        $this->assertEquals($key->protection, $keyProtection);
+
+        $loadedKey = $keyClient->loadManagedKey($key->id);
+        $this->assertEquals($key->id, $loadedKey->id);
+        $this->assertEquals($key->name, $loadedKey->name);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->keyType, $loadedKey->keyType);
+        $this->assertEquals($key->protection, $loadedKey->protection);
+    }
+
+    public function testGenerateManagedBjj()
+    {
+        $keyClient = new KeyClient();
+
+        $keyName = "key_name";
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::Bjj;
 
         $params = new ManagedKeyParams($keyProtection, $keyType, $keyName);
         $key = $keyClient->newManagedKey($params);

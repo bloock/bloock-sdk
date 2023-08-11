@@ -5,6 +5,7 @@ pub mod encryption;
 pub mod error;
 pub mod event;
 pub mod identity;
+pub mod identity_v2;
 pub mod integrity;
 pub mod key;
 pub mod record;
@@ -22,5 +23,6 @@ pub use bloock_http::{BloockHttpClient, SimpleHttpClient};
 pub use bloock_signer::{
     create_verifier_from_signature, entity::signature::Signature,
     entity::signature::SignatureHeader, local::ecdsa::LocalEcdsaSigner, local::ens::LocalEnsSigner,
-    managed::ecdsa::ManagedEcdsaSigner, managed::ens::ManagedEnsSigner, Signer, SignerError,
+    managed::bjj::ManagedBJJSigner, managed::ecdsa::ManagedEcdsaSigner,
+    managed::ens::ManagedEnsSigner, Signer, SignerError,
 };

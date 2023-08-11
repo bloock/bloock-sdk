@@ -9,6 +9,7 @@ export enum KeyType {
   Rsa4096 = 3,
   Aes128 = 4,
   Aes256 = 5,
+  Bjj = 6,
   UNRECOGNIZED = -1,
 }
 
@@ -32,6 +33,9 @@ export function keyTypeFromJSON(object: any): KeyType {
     case 5:
     case "Aes256":
       return KeyType.Aes256;
+    case 6:
+    case "Bjj":
+      return KeyType.Bjj;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -53,6 +57,8 @@ export function keyTypeToJSON(object: KeyType): string {
       return "Aes128";
     case KeyType.Aes256:
       return "Aes256";
+    case KeyType.Bjj:
+      return "Bjj";
     case KeyType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

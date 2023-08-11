@@ -19,10 +19,15 @@ class SignerAlg
      * Generated from protobuf enum <code>ENS = 1;</code>
      */
     const ENS = 1;
+    /**
+     * Generated from protobuf enum <code>BJJ = 2;</code>
+     */
+    const BJJ = 2;
 
     private static $valueToName = [
         self::ES256K => 'ES256K',
         self::ENS => 'ENS',
+        self::BJJ => 'BJJ',
     ];
 
     public static function name($value)

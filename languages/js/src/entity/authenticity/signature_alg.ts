@@ -1,7 +1,8 @@
 export enum SignatureAlg {
   UNRECOGNIZED = -1,
   ECDSA = 0,
-  ENS = 1
+  ENS = 1,
+  BJJ = 2
 }
 
 export namespace SignatureAlg {
@@ -11,6 +12,8 @@ export namespace SignatureAlg {
         return SignatureAlg.ECDSA;
       case "ENS":
         return SignatureAlg.ENS;
+      case "BJJ":
+        return SignatureAlg.BJJ;
       default:
         return SignatureAlg.UNRECOGNIZED;
     }

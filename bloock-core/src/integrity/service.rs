@@ -174,6 +174,7 @@ impl<H: Client> IntegrityService<H> {
                     signature,
                     self.config_service.get_api_base_url(),
                     self.config_service.get_api_key(),
+                    None,
                 )
                 .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
                 let verification_response = verifier
@@ -296,7 +297,7 @@ impl<H: Client> IntegrityService<H> {
 fn merge(left: &H256, right: &H256) -> H256 {
     let mut vec = left.to_vec();
     vec.extend_from_slice(right);
-    Keccak256::generate_hash(&vec)
+    Keccak256::generate_hash(&[vec.as_slice()])
 }
 
 #[cfg(test)]

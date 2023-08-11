@@ -21,7 +21,10 @@ keys-build:
 identity-build:
 	cd identity && cargo build --release
 
-test: hasher-test signer-test encrypter-test executor-test http-test web3-test keys-test identity-test
+identityV2-build:
+	cd identity-v2 && cargo build --release
+
+test: hasher-test signer-test encrypter-test executor-test http-test web3-test keys-test identity-test identityV2-test
 
 hasher-test:
 	cd hasher && cargo test --release
@@ -49,6 +52,9 @@ keys-test:
 
 identity-test:
 	cd identity && cargo test --release
+
+identityV2-test:
+	cd identity-v2 && cargo test --release
 
 wasm-test: http-wasm-test
 

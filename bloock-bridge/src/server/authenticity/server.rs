@@ -10,7 +10,7 @@ use crate::{
 use async_trait::async_trait;
 use bloock_core::{
     authenticity, config::entity::network::Network, record::entity::record::Record as RecordCore,
-    LocalEcdsaSigner, LocalEnsSigner, ManagedEcdsaSigner, ManagedEnsSigner,
+    LocalEcdsaSigner, LocalEnsSigner, ManagedBJJSigner, ManagedEcdsaSigner, ManagedEnsSigner,
     Signature as SignatureCore, Signer,
 };
 
@@ -49,6 +49,12 @@ impl AuthenticityServiceHandler for AuthenticityServer {
                     config_data.config.host,
                     config_data.config.api_key,
                 ),
+                Some(SignerAlg::Bjj) => ManagedBJJSigner::new_boxed(
+                    key.into(),
+                    signer.common_name,
+                    config_data.config.host,
+                    config_data.config.api_key,
+                ),
                 Some(SignerAlg::Ens) => ManagedEnsSigner::new_boxed(
                     key.into(),
                     config_data.config.host,
@@ -62,6 +68,7 @@ impl AuthenticityServiceHandler for AuthenticityServer {
                     LocalEcdsaSigner::new_boxed(key.into(), signer.common_name)
                 }
                 Some(SignerAlg::Ens) => LocalEnsSigner::new_boxed(key.into()),
+                Some(SignerAlg::Bjj) => todo!(),
                 None => return Err("invalid signer provided".to_string()),
             }
         } else {

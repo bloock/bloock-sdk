@@ -39,7 +39,9 @@ fn derive_eth_address(mut public_key: Vec<u8>) -> Result<String> {
             .to_vec();
     }
 
-    Ok(hex::encode(&Keccak256::generate_hash(&public_key)[12..]))
+    Ok(hex::encode(
+        &Keccak256::generate_hash(&[public_key.as_slice()])[12..],
+    ))
 }
 
 pub struct LocalEnsSigner {

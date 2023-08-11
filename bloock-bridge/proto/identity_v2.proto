@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "config.proto";
+import "authenticity_entities.proto";
+import "shared.proto";
+import "identity_entities_v2.proto";
+
+service IdentityServiceV2 {
+    rpc CreateIssuer(CreateIssuerRequest) returns (CreateIssuerResponse);
+
+    rpc BuildSchema(BuildSchemaRequestV2) returns (BuildSchemaResponseV2);
+
+    rpc CreateCredential(CreateCredentialRequestV2) returns (CreateCredentialResponseV2);
+    rpc GetCredentialProof(GetCredentialProofRequest) returns (GetCredentialProofResponse);
+    rpc RevokeCredential(RevokeCredentialRequestV2) returns (RevokeCredentialResponseV2);
+
+    rpc CredentialToJson(CredentialToJsonRequestV2) returns (CredentialToJsonResponseV2);
+    rpc CredentialFromJson(CredentialFromJsonRequestV2) returns (CredentialFromJsonResponseV2);
+
+    rpc PublishIssuerState(PublishIssuerStateRequest) returns (PublishIssuerStateResponse);
+}
+
+message GetCredentialProofRequest {
+    ConfigData config_data = 1;
+    string issuer_did = 2;
+    string credential_id = 3;
+}
+
+message GetCredentialProofResponse {
+    string proof = 1;
+    optional Error error = 2;
+}
+
+message CredentialToJsonRequestV2 {
+    ConfigData config_data = 1;
+    CredentialV2 credential = 2;
+}
+
+message CredentialToJsonResponseV2 {
+    string json = 1;
+    optional Error error = 2;
+}
+
+message CredentialFromJsonRequestV2 {
+    ConfigData config_data = 1;
+    string json = 2;
+}
+
+message CredentialFromJsonResponseV2 {
+    CredentialV2 credential = 1;
+    optional Error error = 2;
+}
+
+message CreateCredentialRequestV2 {
+    ConfigData config_data = 1;
+    string schema_id = 2;
+    string schema_type = 3;
+    string issuer_did = 4;
+    string holder_did = 5;
+    int64 expiration = 6;
+    optional int32 version = 7;
+    Signer signer = 8;
+    repeated BooleanAttributeV2 boolean_attributes = 9;
+    repeated DateAttributeV2 date_attributes = 10;
+    repeated DateTimeAttributeV2 datetime_attributes = 11;
+    repeated StringAttributeV2 string_attributes = 12;
+    repeated NumberAttributeV2 number_attributes = 13;
+    repeated ProofType proof_type = 14;
+}
+
+message BuildSchemaRequestV2 {
+    ConfigData config_data = 1;
+    string display_name = 2;
+    string schema_type = 3;
+    string version = 4;
+    string description = 5;
+    string issuer_did = 6;
+    repeated BooleanAttributeDefinitionV2 boolean_attributes = 7;
+    repeated DateAttributeDefinitionV2 date_attributes = 8;
+    repeated DateTimeAttributeDefinitionV2 datetime_attributes = 9;
+    repeated StringAttributeDefinitionV2 string_attributes = 10;
+    repeated NumberAttributeDefinitionV2 number_attributes = 11;
+}
+
+message CreateIssuerRequest {
+    IssuerKey issuer_key = 1;
+    ConfigData config_data = 2;
+}
+
+message PublishIssuerStateRequest {
+    ConfigData config_data = 1;
+    string issuer_did = 2;
+    Signer signer = 3;
+}
+
+message CreateCredentialResponseV2 {
+    CredentialReceiptV2 credential_receipt = 1;
+    optional Error error = 2;
+}
+
+message CreateIssuerResponse {
+    string did = 1;
+    optional Error error = 2;
+}
+
+message BuildSchemaResponseV2 {
+    SchemaV2 schema = 1;
+    optional Error error = 2;
+}
+
+message PublishIssuerStateResponse {
+    IssuerStateReceipt state_receipt = 1;
+    optional Error error = 2;
+}
+
+message RevokeCredentialRequestV2 {
+    ConfigData config_data = 1;
+    CredentialV2 credential = 2;
+}
+
+message RevokeCredentialResponseV2 {
+    CredentialRevocationV2 result = 1;
+    optional Error error = 2;
+}
+
