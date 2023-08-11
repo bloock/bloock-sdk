@@ -178,7 +178,7 @@ mod tests {
 
         assert_eq!(signature.header.alg.as_str(), "ES256K");
 
-        let result = create_verifier_from_signature(&signature, api_host, api_key)
+        let result = create_verifier_from_signature(&signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), signature)
             .await
@@ -206,7 +206,7 @@ mod tests {
         assert_eq!(signature.header.alg.as_str(), "ES256K");
         assert_eq!(get_common_name(&signature).unwrap().as_str(), "a name");
 
-        let result = create_verifier_from_signature(&signature, api_host, api_key)
+        let result = create_verifier_from_signature(&signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), signature)
             .await
@@ -268,7 +268,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
             .await
@@ -296,7 +296,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
             .await;
@@ -323,7 +323,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
             .await

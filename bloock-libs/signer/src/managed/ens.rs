@@ -84,22 +84,23 @@ impl Signer for ManagedEnsSigner {
 pub struct ManagedEnsVerifier {
     api_host: String,
     api_key: String,
+    api_version: Option<String>,
 }
 
 impl ManagedEnsVerifier {
-    pub fn new(api_host: String, api_key: String) -> Self {
-        Self { api_host, api_key }
+    pub fn new(api_host: String, api_key: String, api_version: Option<String>) -> Self {
+        Self { api_host, api_key, api_version }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key))
+    pub fn new_boxed(api_host: String, api_key: String, api_version: Option<String>) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key, api_version))
     }
 }
 
 #[async_trait(?Send)]
 impl Verifier for ManagedEnsVerifier {
     async fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool> {
-        ManagedEcdsaVerifier::new(self.api_host.clone(), self.api_key.clone())
+        ManagedEcdsaVerifier::new(self.api_host.clone(), self.api_key.clone(), self.api_version.clone())
             .verify(payload, signature)
             .await
     }

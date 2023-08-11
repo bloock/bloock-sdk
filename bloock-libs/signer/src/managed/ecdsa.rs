@@ -88,7 +88,7 @@ impl Signer for ManagedEcdsaSigner {
             hash = Sha256::generate_hash(&[payload_with_protected.as_slice()]);
         }
 
-        let http = BloockHttpClient::new(self.api_key.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), None);
 
         let req = SignRequest {
             key_id: self.managed_key.id.clone(),
@@ -117,15 +117,20 @@ impl Signer for ManagedEcdsaSigner {
 pub struct ManagedEcdsaVerifier {
     api_host: String,
     api_key: String,
+    api_version: Option<String>,
 }
 
 impl ManagedEcdsaVerifier {
-    pub fn new(api_host: String, api_key: String) -> Self {
-        Self { api_host, api_key }
+    pub fn new(api_host: String, api_key: String, api_version: Option<String>) -> Self {
+        Self {
+            api_host,
+            api_key,
+            api_version,
+        }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key))
+    pub fn new_boxed(api_host: String, api_key: String, api_version: Option<String>) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key, api_version))
     }
 }
 
@@ -145,7 +150,7 @@ impl Verifier for ManagedEcdsaVerifier {
             hash = Sha256::generate_hash(&[payload_with_protected.as_slice()]);
         }
 
-        let http = BloockHttpClient::new(self.api_key.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.api_version.clone());
 
         let req = VerifyRequest {
             key_id: signature.header.kid.clone(),
@@ -192,9 +197,10 @@ mod tests {
             protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let string_payload = "hello world";
 
@@ -207,11 +213,12 @@ mod tests {
             Algorithms::Es256kM.to_string()
         );
 
-        let result = create_verifier_from_signature(&signature, api_host.clone(), api_key.clone())
-            .unwrap()
-            .verify(string_payload.as_bytes(), signature)
-            .await
-            .unwrap();
+        let result =
+            create_verifier_from_signature(&signature, api_host.clone(), api_key.clone(), None)
+                .unwrap()
+                .verify(string_payload.as_bytes(), signature)
+                .await
+                .unwrap();
 
         assert!(result);
     }
@@ -226,9 +233,10 @@ mod tests {
             protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let string_payload = "hello world";
 
@@ -247,11 +255,12 @@ mod tests {
         );
         assert_eq!(get_common_name(&signature).unwrap().as_str(), "a name");
 
-        let result = create_verifier_from_signature(&signature, api_host.clone(), api_key.clone())
-            .unwrap()
-            .verify(string_payload.as_bytes(), signature)
-            .await
-            .unwrap();
+        let result =
+            create_verifier_from_signature(&signature, api_host.clone(), api_key.clone(), None)
+                .unwrap()
+                .verify(string_payload.as_bytes(), signature)
+                .await
+                .unwrap();
 
         assert!(result);
     }
@@ -266,9 +275,10 @@ mod tests {
             protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let string_payload = "hello world";
 
@@ -290,9 +300,10 @@ mod tests {
             protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let string_payload = "hello world";
 
@@ -308,12 +319,16 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result =
-            create_verifier_from_signature(&json_signature, api_host.clone(), api_key.clone())
-                .unwrap()
-                .verify(string_payload.as_bytes(), json_signature)
-                .await
-                .unwrap();
+        let result = create_verifier_from_signature(
+            &json_signature,
+            api_host.clone(),
+            api_key.clone(),
+            None,
+        )
+        .unwrap()
+        .verify(string_payload.as_bytes(), json_signature)
+        .await
+        .unwrap();
 
         assert!(!result);
     }
@@ -337,7 +352,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key)
+        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
             .unwrap()
             .verify(string_payload.as_bytes(), json_signature)
             .await;
@@ -356,9 +371,10 @@ mod tests {
             protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let string_payload = "end world";
 
@@ -374,12 +390,16 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result =
-            create_verifier_from_signature(&json_signature, api_host.clone(), api_key.clone())
-                .unwrap()
-                .verify(string_payload.as_bytes(), json_signature)
-                .await
-                .unwrap();
+        let result = create_verifier_from_signature(
+            &json_signature,
+            api_host.clone(),
+            api_key.clone(),
+            None,
+        )
+        .unwrap()
+        .verify(string_payload.as_bytes(), json_signature)
+        .await
+        .unwrap();
 
         assert!(!result);
     }

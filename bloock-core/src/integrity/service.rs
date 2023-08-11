@@ -174,6 +174,7 @@ impl<H: Client> IntegrityService<H> {
                     signature,
                     self.config_service.get_api_base_url(),
                     self.config_service.get_api_key(),
+                    None,
                 )
                 .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
                 let verification_response = verifier

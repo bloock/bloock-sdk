@@ -66,8 +66,9 @@ impl ManagedKey {
         params: &ManagedKeyParams,
         api_host: String,
         api_key: String,
+        api_version: Option<String>,
     ) -> Result<ManagedKey> {
-        let client = bloock_http::BloockHttpClient::new(api_key);
+        let client = bloock_http::BloockHttpClient::new(api_key, api_version);
 
         let req = CreateManagedKeyRequest {
             name: params.name.clone(),
@@ -91,7 +92,7 @@ impl ManagedKey {
     }
 
     pub async fn load(id: String, api_host: String, api_key: String) -> Result<ManagedKey> {
-        let client = bloock_http::BloockHttpClient::new(api_key);
+        let client = bloock_http::BloockHttpClient::new(api_key, None);
 
         let res: ManagedKeyResponse = client
             .get_json(format!("{}/keys/v1/keys/{}", api_host, id), None)
@@ -131,6 +132,7 @@ mod tests {
             &params,
             "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
+            None,
         )
         .await
         .unwrap();
@@ -157,6 +159,7 @@ mod tests {
             &params,
             "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
+            None,
         )
         .await
         .unwrap();
