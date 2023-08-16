@@ -12,13 +12,14 @@ type BloockClient struct {
 	AvailabilityClient AvailabilityClient
 	EncryptionClient   EncryptionClient
 	IdentityClient     IdentityClient
+	IdentityV2Client   IdentityV2Client
 	IntegrityClient    IntegrityClient
 	KeyClient          KeyClient
 	RecordClient       RecordClient
 	WebhookClient      WebhookClient
 }
 
-func NewBloockClient(apiKey string) BloockClient {
+func NewBloockClient(apiKey string, apiManagedHost string) BloockClient {
 	configData := config.NewConfigDataDefault()
 	configData.Config.ApiKey = apiKey
 	return BloockClient{
@@ -28,6 +29,7 @@ func NewBloockClient(apiKey string) BloockClient {
 		AvailabilityClient: NewAvailabilityClientWithConfig(configData),
 		EncryptionClient:   NewEncryptionClientWithConfig(configData),
 		IdentityClient:     NewIdentityClientWithConfig(configData),
+		IdentityV2Client:   NewIdentityV2ClientWithConfig(configData, apiManagedHost),
 		IntegrityClient:    NewIntegrityClientWithConfig(configData),
 		KeyClient:          NewKeyClientWithConfig(configData),
 		RecordClient:       NewRecordClientWithConfig(configData),

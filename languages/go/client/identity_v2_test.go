@@ -25,8 +25,9 @@ func TestIdentityV2(t *testing.T) {
 		schemaType := "DrivingLicense"
 		holderDid := "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr"
 		expiration := int64(4089852142)
+		apiManagedHost := "https://clientHost.com"
 
-		identityClient := NewIdentityV2Client()
+		identityClient := NewIdentityV2Client(apiManagedHost)
 		keyClient := NewKeyClient()
 
 		keys, err := keyClient.NewManagedKey(key.ManagedKeyParams{
@@ -41,10 +42,19 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 
 		issuerKey := identityV2.NewBjjIssuerKey(identityV2.IssuerKeyArgs{ManagedKey: &key})
-		did, err := identityClient.CreateIssuer(issuerKey)
+		issuerParams := identityV2.NewIssuerParams()
+		issuerParams.Method = identityV2.ListOfMethods().PolygonId
+		issuerParams.Blockchain = identityV2.ListOfBlockchains().Polygon
+		issuerParams.NetworkId = identityV2.ListOfNetworkIds().Mumbai
+		did, err := identityClient.CreateIssuer(issuerKey, issuerParams)
 		assert.NoError(t, err)
 		// did:polygonid:polygon:mumbai:2qH7BSPLEVZU6qNCAuCMdmw3yWvQiximqKw68PBAAp
 		issuerDid := did
+
+		dids, err := identityClient.GetIssuerList()
+		assert.NoError(t, err)
+		assert.GreaterOrEqual(t, len(dids), 1)
+		assert.Equal(t, issuerDid, dids[0])
 
 		proofType := []identityV2.ProofType{identityV2.BloockProof, identityV2.PolygonMtp}
 

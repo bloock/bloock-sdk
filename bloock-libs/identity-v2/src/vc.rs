@@ -46,6 +46,7 @@ impl VC {
         credential_type: String,
         version: i32,
         api_host: String,
+        api_managed_host: String,
     ) -> Result<Self, IdentityError> {
         let issuance_date = Local::now().naive_local();
         let nonce =
@@ -66,6 +67,7 @@ impl VC {
             nonce,
             uuid,
             api_host,
+            api_managed_host,
         )
     }
 
@@ -83,6 +85,7 @@ impl VC {
         nonce: u64,
         uuid: String,
         api_host: String,
+        api_managed_host: String,
     ) -> Result<Self, IdentityError> {
         parse_did(issuer.clone()).map_err(|e| IdentityError::InvalidDid(e.to_string()))?;
         parse_did(holder.clone()).map_err(|e| IdentityError::InvalidDid(e.to_string()))?;
@@ -121,12 +124,7 @@ impl VC {
         };
 
         let expiration_date = NaiveDateTime::from_timestamp_opt(expiration, 0).unwrap();
-        let credential_id = format!(
-            "{}/identity/v1/{}/claims/{}",
-            api_host,
-            issuer.clone(),
-            uuid
-        );
+        let credential_id = format!("{}/v1/{}/claims/{}", api_managed_host, issuer.clone(), uuid);
 
         let credential_subject_map: Map<String, Value> = attributes.into_iter().collect();
 

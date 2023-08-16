@@ -3,12 +3,17 @@ use bloock_core::identity_v2::entity::{
         Credential as CoreCredential, CredentialSchema as CoreCredentialSchema,
         CredentialStatus as CoreCredentialStatus,
     },
+    did_metadata::DidMetadata,
     proof_type::ProofType as CoreProofType,
 };
+use bloock_identity_rs::did::{Blockchain as CoreBlockchain, DIDMethod, Network as CoreNetworkId};
 
 use crate::{
     error::BridgeError,
-    items::{CredentialSchemaV2, CredentialStatusV2, CredentialV2, ProofType},
+    items::{
+        Blockchain, CredentialSchemaV2, CredentialStatusV2, CredentialV2, IssuerParams, Method,
+        NetworkId, ProofType,
+    },
 };
 
 impl From<ProofType> for CoreProofType {
@@ -16,6 +21,55 @@ impl From<ProofType> for CoreProofType {
         match a {
             ProofType::BloockProof => CoreProofType::BloockProof,
             ProofType::PolygonMtp => CoreProofType::PolygonMtp,
+        }
+    }
+}
+
+impl From<IssuerParams> for DidMetadata {
+    fn from(n: IssuerParams) -> Self {
+        let method = match n.method() {
+            Method::Iden3 => DIDMethod::Iden3,
+            Method::PolygonId => DIDMethod::PolygonID,
+        };
+
+        let blockchain = match n.blockchain() {
+            Blockchain::Ethereum => CoreBlockchain::Ethereum,
+            Blockchain::Polygon => CoreBlockchain::Polygon,
+            Blockchain::UnknownChain => CoreBlockchain::Polygon,
+            Blockchain::NoChain => CoreBlockchain::Polygon,
+        };
+
+        let network_id = match n.network_id() {
+            NetworkId::Main => CoreNetworkId::Main,
+            NetworkId::Mumbai => CoreNetworkId::Mumbai,
+            NetworkId::Goerli => CoreNetworkId::Goerli,
+            NetworkId::UnknownNetwork => CoreNetworkId::Mumbai,
+            NetworkId::NoNetwork => CoreNetworkId::Mumbai,
+        };
+        
+        Self { method, blockchain, network: network_id }
+    }
+}
+
+impl From<Blockchain> for CoreBlockchain {
+    fn from(n: Blockchain) -> Self {
+        match n {
+            Blockchain::Ethereum => CoreBlockchain::Ethereum,
+            Blockchain::Polygon => CoreBlockchain::Polygon,
+            Blockchain::UnknownChain => CoreBlockchain::Polygon,
+            Blockchain::NoChain => CoreBlockchain::Polygon,
+        }
+    }
+}
+
+impl From<NetworkId> for CoreNetworkId {
+    fn from(n: NetworkId) -> Self {
+        match n {
+            NetworkId::Main => CoreNetworkId::Main,
+            NetworkId::Mumbai => CoreNetworkId::Mumbai,
+            NetworkId::Goerli => CoreNetworkId::Goerli,
+            NetworkId::UnknownNetwork => CoreNetworkId::Mumbai,
+            NetworkId::NoNetwork => CoreNetworkId::Mumbai,
         }
     }
 }

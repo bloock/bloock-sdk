@@ -16,6 +16,7 @@ base64 = "0.13.0"
 async-std = "1.12.0"
 hmac = "0.12.1"
 sha2 = "0.10.6"
+url = "2.3.1"
 bloock-hasher = { path = "../bloock-libs/hasher" }
 bloock-keys = { path = "../bloock-libs/keys" }
 bloock-signer = { path = "../bloock-libs/signer" }

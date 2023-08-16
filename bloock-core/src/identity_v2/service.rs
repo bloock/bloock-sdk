@@ -14,6 +14,7 @@ use crate::{
     availability::service::AvailabilityService, config::service::ConfigService,
     error::BloockResult, integrity::service::IntegrityService,
 };
+use url::Url;
 
 use super::{
     entity::{
@@ -23,11 +24,12 @@ use super::{
         dto::{
             create_credential_request::CreateCredentialRequest,
             create_credential_response::CreateCredentialResponse,
-            create_issuer_request::CreateIssuerRequest,
+            create_issuer_request::{CreateIssuerRequest, DidMetadata as DidMetadataRequest},
             create_issuer_response::CreateIssuerResponse,
             create_schema_request::CreateSchemaRequest,
             create_schema_response::CreateSchemaResponse,
             get_credential_proof_response::GetCredentialProofResponse,
+            get_issuer_list_response::GetIssuerListResponse,
             get_issuer_new_state_response::GetIssuerNewStateResponse,
             publish_issuer_state_request::PublishIssuerStateRequest,
             publish_issuer_state_response::PublishIssuerStateResponse,
@@ -49,16 +51,17 @@ pub struct IdentityServiceV2<H: Client> {
 }
 
 impl<H: Client> IdentityServiceV2<H> {
-    pub async fn create_issuer(&self, public_key: String) -> BloockResult<CreateIssuerResponse> {
-        let meatadata = DidMetadata {
-            method: bloock_identity_rs::did::DIDMethod::PolygonID.get_method_type(),
-            blockchain: bloock_identity_rs::did::Blockchain::Polygon.get_bloockchain_type(),
-            network: bloock_identity_rs::did::Network::Mumbai.get_network_id_type(),
-        };
-
+    pub async fn create_issuer(
+        &self,
+        public_key: String,
+        did_metadata: DidMetadata,
+    ) -> BloockResult<CreateIssuerResponse> {
         let req = CreateIssuerRequest {
-            did_metadata: serde_json::to_value(meatadata)
-                .map_err(|_e| IdentityErrorV2::InvalidDidMetadataProvided())?,
+            did_metadata: DidMetadataRequest {
+                method: did_metadata.method.get_method_type(),
+                blockchain: did_metadata.blockchain.get_bloockchain_type(),
+                network: did_metadata.network.get_network_id_type(),
+            },
             bn_128_public_key: public_key,
         };
 
@@ -74,6 +77,22 @@ impl<H: Client> IdentityServiceV2<H> {
             )
             .await
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
+
+        Ok(res)
+    }
+
+    pub async fn get_issuer_list(&self) -> BloockResult<Vec<GetIssuerListResponse>> {
+        let res: Vec<GetIssuerListResponse> = self
+            .http
+            .get_json(
+                format!(
+                    "{}/identity/v1/issuers",
+                    self.config_service.get_api_base_url(),
+                ),
+                None,
+            )
+            .await
+            .map_err(|e| IdentityErrorV2::IssuerListError(e.to_string()))?;
 
         Ok(res)
     }
@@ -133,9 +152,13 @@ impl<H: Client> IdentityServiceV2<H> {
         mut attributes: Vec<(String, Value)>,
         signer: Box<dyn Signer>,
         proof_types: Vec<ProofType>,
+        api_managed_host: String,
     ) -> BloockResult<CreateCredentialReceipt> {
         attributes.push(("id".to_string(), Value::String(holder_did.clone())));
         attributes.push(("type".to_string(), Value::String(schema_type.clone())));
+
+        _ = Url::parse(&api_managed_host.clone())
+            .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()));
 
         let schema_json = self.get_schema(schema_id.clone()).await?;
         let context_json_ld = get_json_ld_context_from_json(schema_json.json)
@@ -161,6 +184,7 @@ impl<H: Client> IdentityServiceV2<H> {
             credential_type,
             version,
             self.config_service.get_api_base_url(),
+            api_managed_host,
         )
         .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
 

@@ -553,6 +553,15 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::IdentityServiceV2GetIssuerList => {
+                let req: crate::items::GetIssuerListRequest = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .get_issuer_list(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::Unknown => Err(BridgeError::ServiceNotFound),
         }
     }

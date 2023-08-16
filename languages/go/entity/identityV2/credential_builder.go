@@ -10,15 +10,16 @@ import (
 )
 
 type CredentialBuilder struct {
-	schemaId   string
-	schemaType string
-	issuerDid  string
-	holderDid  string
-	expiration int64
-	version    int32
-	signer     *proto.Signer
-	proof      []proto.ProofType
-	configData *proto.ConfigData
+	schemaId       string
+	schemaType     string
+	issuerDid      string
+	holderDid      string
+	expiration     int64
+	version        int32
+	signer         *proto.Signer
+	apiManagedHost string
+	proof          []proto.ProofType
+	configData     *proto.ConfigData
 
 	booleanAttribute  []BooleanAttribute
 	dateAttribute     []DateAttribute
@@ -27,7 +28,7 @@ type CredentialBuilder struct {
 	numberAttribute   []NumberAttribute
 }
 
-func NewCredentialBuilder(schemaId, schemaType, issuerDid, holderDid string, expiration int64, version int32, configData *proto.ConfigData) CredentialBuilder {
+func NewCredentialBuilder(schemaId, schemaType, issuerDid, holderDid string, expiration int64, version int32, apiManagedHost string, configData *proto.ConfigData) CredentialBuilder {
 	return CredentialBuilder{
 		schemaId:          schemaId,
 		schemaType:        schemaType,
@@ -35,6 +36,7 @@ func NewCredentialBuilder(schemaId, schemaType, issuerDid, holderDid string, exp
 		holderDid:         holderDid,
 		expiration:        expiration,
 		version:           version,
+		apiManagedHost:    apiManagedHost,
 		configData:        configData,
 		booleanAttribute:  []BooleanAttribute{},
 		dateAttribute:     []DateAttribute{},
@@ -119,6 +121,7 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 		Expiration:         c.expiration,
 		Version:            &c.version,
 		Signer:             c.signer,
+		ApiManagedHost:     c.apiManagedHost,
 		ConfigData:         c.configData,
 		BooleanAttributes:  booleanAttributes,
 		DateAttributes:     dateAttributes,

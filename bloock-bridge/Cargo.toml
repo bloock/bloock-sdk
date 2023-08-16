@@ -19,6 +19,7 @@ base64 = "0.13.0"
 serde_json = "1.0.82"
 bloock-encrypter = { path = "../bloock-libs/encrypter" }
 bloock-keys = { path = "../bloock-libs/keys" }
+bloock-identity-rs = { path = "../bloock-libs/identity-v2" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "0.2.84"

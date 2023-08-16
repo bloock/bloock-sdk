@@ -28,6 +28,8 @@ pub enum IdentityErrorV2 {
     InvalidAttributeError(),
     #[error("Error while creating credential: {0}")]
     CreateCredentialError(String),
+    #[error("Error while getting issuer list: {0}")]
+    IssuerListError(String),
     #[error("Error while getting offer: {0}")]
     GetOfferError(String),
     #[error("Error while redeeming credential: {0}")]
