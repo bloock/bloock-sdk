@@ -266,7 +266,6 @@ impl VC {
 mod tests {
     use chrono::NaiveDateTime;
     use serde_json::{json, Number, Value};
-    use ssi::vc::Credential;
 
     use crate::vc::VC;
 
@@ -314,6 +313,7 @@ mod tests {
             ),
         ];
         let api_host = "https://api.bloock.dev".to_string();
+        let api_managed_host = "https://api.bloock.dev/identity".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
         let nonce: u64 = 3825417065;
@@ -333,6 +333,7 @@ mod tests {
             nonce,
             uuid,
             api_host,
+            api_managed_host,
         )
         .unwrap();
 
