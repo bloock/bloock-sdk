@@ -12,6 +12,7 @@ import "identity_entities_v2.proto";
 
 service IdentityServiceV2 {
     rpc CreateIssuer(CreateIssuerRequest) returns (CreateIssuerResponse);
+    rpc GetIssuerList(GetIssuerListRequest) returns (GetIssuerListResponse);
 
     rpc BuildSchema(BuildSchemaRequestV2) returns (BuildSchemaResponseV2);
 
@@ -23,6 +24,15 @@ service IdentityServiceV2 {
     rpc CredentialFromJson(CredentialFromJsonRequestV2) returns (CredentialFromJsonResponseV2);
 
     rpc PublishIssuerState(PublishIssuerStateRequest) returns (PublishIssuerStateResponse);
+}
+
+message GetIssuerListRequest {
+    ConfigData config_data = 1;
+}
+
+message GetIssuerListResponse {
+    repeated string did = 1;
+    optional Error error = 2;
 }
 
 message GetCredentialProofRequest {
@@ -65,12 +75,13 @@ message CreateCredentialRequestV2 {
     int64 expiration = 6;
     optional int32 version = 7;
     Signer signer = 8;
-    repeated BooleanAttributeV2 boolean_attributes = 9;
-    repeated DateAttributeV2 date_attributes = 10;
-    repeated DateTimeAttributeV2 datetime_attributes = 11;
-    repeated StringAttributeV2 string_attributes = 12;
-    repeated NumberAttributeV2 number_attributes = 13;
-    repeated ProofType proof_type = 14;
+    string api_managed_host = 9;
+    repeated BooleanAttributeV2 boolean_attributes = 10;
+    repeated DateAttributeV2 date_attributes = 11;
+    repeated DateTimeAttributeV2 datetime_attributes = 12;
+    repeated StringAttributeV2 string_attributes = 13;
+    repeated NumberAttributeV2 number_attributes = 14;
+    repeated ProofType proof_type = 15;
 }
 
 message BuildSchemaRequestV2 {
@@ -90,6 +101,7 @@ message BuildSchemaRequestV2 {
 message CreateIssuerRequest {
     IssuerKey issuer_key = 1;
     ConfigData config_data = 2;
+    optional IssuerParams issuer_params = 3;
 }
 
 message PublishIssuerStateRequest {

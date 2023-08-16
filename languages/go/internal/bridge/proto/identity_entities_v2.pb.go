@@ -66,6 +66,159 @@ func (ProofType) EnumDescriptor() ([]byte, []int) {
 	return file_identity_entities_v2_proto_rawDescGZIP(), []int{0}
 }
 
+type Method int32
+
+const (
+	Method_IDEN3      Method = 0
+	Method_POLYGON_ID Method = 1
+)
+
+// Enum value maps for Method.
+var (
+	Method_name = map[int32]string{
+		0: "IDEN3",
+		1: "POLYGON_ID",
+	}
+	Method_value = map[string]int32{
+		"IDEN3":      0,
+		"POLYGON_ID": 1,
+	}
+)
+
+func (x Method) Enum() *Method {
+	p := new(Method)
+	*p = x
+	return p
+}
+
+func (x Method) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Method) Descriptor() protoreflect.EnumDescriptor {
+	return file_identity_entities_v2_proto_enumTypes[1].Descriptor()
+}
+
+func (Method) Type() protoreflect.EnumType {
+	return &file_identity_entities_v2_proto_enumTypes[1]
+}
+
+func (x Method) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Method.Descriptor instead.
+func (Method) EnumDescriptor() ([]byte, []int) {
+	return file_identity_entities_v2_proto_rawDescGZIP(), []int{1}
+}
+
+type Blockchain int32
+
+const (
+	Blockchain_ETHEREUM      Blockchain = 0
+	Blockchain_POLYGON       Blockchain = 1
+	Blockchain_UNKNOWN_CHAIN Blockchain = 2
+	Blockchain_NO_CHAIN      Blockchain = 3
+)
+
+// Enum value maps for Blockchain.
+var (
+	Blockchain_name = map[int32]string{
+		0: "ETHEREUM",
+		1: "POLYGON",
+		2: "UNKNOWN_CHAIN",
+		3: "NO_CHAIN",
+	}
+	Blockchain_value = map[string]int32{
+		"ETHEREUM":      0,
+		"POLYGON":       1,
+		"UNKNOWN_CHAIN": 2,
+		"NO_CHAIN":      3,
+	}
+)
+
+func (x Blockchain) Enum() *Blockchain {
+	p := new(Blockchain)
+	*p = x
+	return p
+}
+
+func (x Blockchain) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Blockchain) Descriptor() protoreflect.EnumDescriptor {
+	return file_identity_entities_v2_proto_enumTypes[2].Descriptor()
+}
+
+func (Blockchain) Type() protoreflect.EnumType {
+	return &file_identity_entities_v2_proto_enumTypes[2]
+}
+
+func (x Blockchain) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Blockchain.Descriptor instead.
+func (Blockchain) EnumDescriptor() ([]byte, []int) {
+	return file_identity_entities_v2_proto_rawDescGZIP(), []int{2}
+}
+
+type NetworkId int32
+
+const (
+	NetworkId_MAIN            NetworkId = 0
+	NetworkId_MUMBAI          NetworkId = 1
+	NetworkId_GOERLI          NetworkId = 2
+	NetworkId_UNKNOWN_NETWORK NetworkId = 3
+	NetworkId_NO_NETWORK      NetworkId = 4
+)
+
+// Enum value maps for NetworkId.
+var (
+	NetworkId_name = map[int32]string{
+		0: "MAIN",
+		1: "MUMBAI",
+		2: "GOERLI",
+		3: "UNKNOWN_NETWORK",
+		4: "NO_NETWORK",
+	}
+	NetworkId_value = map[string]int32{
+		"MAIN":            0,
+		"MUMBAI":          1,
+		"GOERLI":          2,
+		"UNKNOWN_NETWORK": 3,
+		"NO_NETWORK":      4,
+	}
+)
+
+func (x NetworkId) Enum() *NetworkId {
+	p := new(NetworkId)
+	*p = x
+	return p
+}
+
+func (x NetworkId) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (NetworkId) Descriptor() protoreflect.EnumDescriptor {
+	return file_identity_entities_v2_proto_enumTypes[3].Descriptor()
+}
+
+func (NetworkId) Type() protoreflect.EnumType {
+	return &file_identity_entities_v2_proto_enumTypes[3]
+}
+
+func (x NetworkId) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use NetworkId.Descriptor instead.
+func (NetworkId) EnumDescriptor() ([]byte, []int) {
+	return file_identity_entities_v2_proto_rawDescGZIP(), []int{3}
+}
+
 type IssuerKey struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1200,6 +1353,69 @@ func (x *CredentialRevocationV2) GetSuccess() bool {
 	return false
 }
 
+type IssuerParams struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Method     Method     `protobuf:"varint,1,opt,name=method,proto3,enum=bloock.Method" json:"method,omitempty"`
+	Blockchain Blockchain `protobuf:"varint,2,opt,name=blockchain,proto3,enum=bloock.Blockchain" json:"blockchain,omitempty"`
+	NetworkId  NetworkId  `protobuf:"varint,3,opt,name=network_id,json=networkId,proto3,enum=bloock.NetworkId" json:"network_id,omitempty"`
+}
+
+func (x *IssuerParams) Reset() {
+	*x = IssuerParams{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_v2_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IssuerParams) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IssuerParams) ProtoMessage() {}
+
+func (x *IssuerParams) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_v2_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IssuerParams.ProtoReflect.Descriptor instead.
+func (*IssuerParams) Descriptor() ([]byte, []int) {
+	return file_identity_entities_v2_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *IssuerParams) GetMethod() Method {
+	if x != nil {
+		return x.Method
+	}
+	return Method_IDEN3
+}
+
+func (x *IssuerParams) GetBlockchain() Blockchain {
+	if x != nil {
+		return x.Blockchain
+	}
+	return Blockchain_ETHEREUM
+}
+
+func (x *IssuerParams) GetNetworkId() NetworkId {
+	if x != nil {
+		return x.NetworkId
+	}
+	return NetworkId_MAIN
+}
+
 var File_identity_entities_v2_proto protoreflect.FileDescriptor
 
 var file_identity_entities_v2_proto_rawDesc = []byte{
@@ -1333,16 +1549,38 @@ var file_identity_entities_v2_proto_rawDesc = []byte{
 	0x28, 0x09, 0x52, 0x06, 0x6a, 0x73, 0x6f, 0x6e, 0x4c, 0x64, 0x22, 0x32, 0x0a, 0x16, 0x43, 0x72,
 	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x76, 0x6f, 0x63, 0x61, 0x74, 0x69,
 	0x6f, 0x6e, 0x56, 0x32, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x2a, 0x2c,
-	0x0a, 0x09, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0f, 0x0a, 0x0b, 0x42,
-	0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a,
-	0x50, 0x6f, 0x6c, 0x79, 0x67, 0x6f, 0x6e, 0x4d, 0x74, 0x70, 0x10, 0x01, 0x42, 0x57, 0x0a, 0x1b,
-	0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x62,
-	0x72, 0x69, 0x64, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x5a, 0x38, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2f, 0x62,
-	0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2d, 0x73, 0x64, 0x6b, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f,
-	0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x9c,
+	0x01, 0x0a, 0x0c, 0x49, 0x73, 0x73, 0x75, 0x65, 0x72, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12,
+	0x26, 0x0a, 0x06, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32,
+	0x0e, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x52,
+	0x06, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x12, 0x32, 0x0a, 0x0a, 0x62, 0x6c, 0x6f, 0x63, 0x6b,
+	0x63, 0x68, 0x61, 0x69, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x12, 0x2e, 0x62, 0x6c,
+	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x52,
+	0x0a, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x12, 0x30, 0x0a, 0x0a, 0x6e,
+	0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32,
+	0x11, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b,
+	0x49, 0x64, 0x52, 0x09, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x49, 0x64, 0x2a, 0x2c, 0x0a,
+	0x09, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0f, 0x0a, 0x0b, 0x42, 0x6c,
+	0x6f, 0x6f, 0x63, 0x6b, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x50,
+	0x6f, 0x6c, 0x79, 0x67, 0x6f, 0x6e, 0x4d, 0x74, 0x70, 0x10, 0x01, 0x2a, 0x23, 0x0a, 0x06, 0x4d,
+	0x65, 0x74, 0x68, 0x6f, 0x64, 0x12, 0x09, 0x0a, 0x05, 0x49, 0x44, 0x45, 0x4e, 0x33, 0x10, 0x00,
+	0x12, 0x0e, 0x0a, 0x0a, 0x50, 0x4f, 0x4c, 0x59, 0x47, 0x4f, 0x4e, 0x5f, 0x49, 0x44, 0x10, 0x01,
+	0x2a, 0x48, 0x0a, 0x0a, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x12, 0x0c,
+	0x0a, 0x08, 0x45, 0x54, 0x48, 0x45, 0x52, 0x45, 0x55, 0x4d, 0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07,
+	0x50, 0x4f, 0x4c, 0x59, 0x47, 0x4f, 0x4e, 0x10, 0x01, 0x12, 0x11, 0x0a, 0x0d, 0x55, 0x4e, 0x4b,
+	0x4e, 0x4f, 0x57, 0x4e, 0x5f, 0x43, 0x48, 0x41, 0x49, 0x4e, 0x10, 0x02, 0x12, 0x0c, 0x0a, 0x08,
+	0x4e, 0x4f, 0x5f, 0x43, 0x48, 0x41, 0x49, 0x4e, 0x10, 0x03, 0x2a, 0x52, 0x0a, 0x09, 0x4e, 0x65,
+	0x74, 0x77, 0x6f, 0x72, 0x6b, 0x49, 0x64, 0x12, 0x08, 0x0a, 0x04, 0x4d, 0x41, 0x49, 0x4e, 0x10,
+	0x00, 0x12, 0x0a, 0x0a, 0x06, 0x4d, 0x55, 0x4d, 0x42, 0x41, 0x49, 0x10, 0x01, 0x12, 0x0a, 0x0a,
+	0x06, 0x47, 0x4f, 0x45, 0x52, 0x4c, 0x49, 0x10, 0x02, 0x12, 0x13, 0x0a, 0x0f, 0x55, 0x4e, 0x4b,
+	0x4e, 0x4f, 0x57, 0x4e, 0x5f, 0x4e, 0x45, 0x54, 0x57, 0x4f, 0x52, 0x4b, 0x10, 0x03, 0x12, 0x0e,
+	0x0a, 0x0a, 0x4e, 0x4f, 0x5f, 0x4e, 0x45, 0x54, 0x57, 0x4f, 0x52, 0x4b, 0x10, 0x04, 0x42, 0x57,
+	0x0a, 0x1b, 0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x73, 0x64, 0x6b,
+	0x2e, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x5a, 0x38, 0x67,
+	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b,
+	0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2d, 0x73, 0x64, 0x6b, 0x2d, 0x67, 0x6f, 0x2f, 0x76,
+	0x32, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67,
+	0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1357,42 +1595,49 @@ func file_identity_entities_v2_proto_rawDescGZIP() []byte {
 	return file_identity_entities_v2_proto_rawDescData
 }
 
-var file_identity_entities_v2_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_identity_entities_v2_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_identity_entities_v2_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_identity_entities_v2_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_identity_entities_v2_proto_goTypes = []interface{}{
 	(ProofType)(0),                        // 0: bloock.ProofType
-	(*IssuerKey)(nil),                     // 1: bloock.IssuerKey
-	(*CredentialV2)(nil),                  // 2: bloock.CredentialV2
-	(*CredentialStatusV2)(nil),            // 3: bloock.CredentialStatusV2
-	(*CredentialSchemaV2)(nil),            // 4: bloock.CredentialSchemaV2
-	(*BooleanAttributeV2)(nil),            // 5: bloock.BooleanAttributeV2
-	(*DateAttributeV2)(nil),               // 6: bloock.DateAttributeV2
-	(*DateTimeAttributeV2)(nil),           // 7: bloock.DateTimeAttributeV2
-	(*StringAttributeV2)(nil),             // 8: bloock.StringAttributeV2
-	(*NumberAttributeV2)(nil),             // 9: bloock.NumberAttributeV2
-	(*BooleanAttributeDefinitionV2)(nil),  // 10: bloock.BooleanAttributeDefinitionV2
-	(*DateAttributeDefinitionV2)(nil),     // 11: bloock.DateAttributeDefinitionV2
-	(*DateTimeAttributeDefinitionV2)(nil), // 12: bloock.DateTimeAttributeDefinitionV2
-	(*StringAttributeDefinitionV2)(nil),   // 13: bloock.StringAttributeDefinitionV2
-	(*NumberAttributeDefinitionV2)(nil),   // 14: bloock.NumberAttributeDefinitionV2
-	(*CredentialReceiptV2)(nil),           // 15: bloock.CredentialReceiptV2
-	(*IssuerStateReceipt)(nil),            // 16: bloock.IssuerStateReceipt
-	(*SchemaV2)(nil),                      // 17: bloock.SchemaV2
-	(*CredentialRevocationV2)(nil),        // 18: bloock.CredentialRevocationV2
-	(*LocalKey)(nil),                      // 19: bloock.LocalKey
-	(*ManagedKey)(nil),                    // 20: bloock.ManagedKey
+	(Method)(0),                           // 1: bloock.Method
+	(Blockchain)(0),                       // 2: bloock.Blockchain
+	(NetworkId)(0),                        // 3: bloock.NetworkId
+	(*IssuerKey)(nil),                     // 4: bloock.IssuerKey
+	(*CredentialV2)(nil),                  // 5: bloock.CredentialV2
+	(*CredentialStatusV2)(nil),            // 6: bloock.CredentialStatusV2
+	(*CredentialSchemaV2)(nil),            // 7: bloock.CredentialSchemaV2
+	(*BooleanAttributeV2)(nil),            // 8: bloock.BooleanAttributeV2
+	(*DateAttributeV2)(nil),               // 9: bloock.DateAttributeV2
+	(*DateTimeAttributeV2)(nil),           // 10: bloock.DateTimeAttributeV2
+	(*StringAttributeV2)(nil),             // 11: bloock.StringAttributeV2
+	(*NumberAttributeV2)(nil),             // 12: bloock.NumberAttributeV2
+	(*BooleanAttributeDefinitionV2)(nil),  // 13: bloock.BooleanAttributeDefinitionV2
+	(*DateAttributeDefinitionV2)(nil),     // 14: bloock.DateAttributeDefinitionV2
+	(*DateTimeAttributeDefinitionV2)(nil), // 15: bloock.DateTimeAttributeDefinitionV2
+	(*StringAttributeDefinitionV2)(nil),   // 16: bloock.StringAttributeDefinitionV2
+	(*NumberAttributeDefinitionV2)(nil),   // 17: bloock.NumberAttributeDefinitionV2
+	(*CredentialReceiptV2)(nil),           // 18: bloock.CredentialReceiptV2
+	(*IssuerStateReceipt)(nil),            // 19: bloock.IssuerStateReceipt
+	(*SchemaV2)(nil),                      // 20: bloock.SchemaV2
+	(*CredentialRevocationV2)(nil),        // 21: bloock.CredentialRevocationV2
+	(*IssuerParams)(nil),                  // 22: bloock.IssuerParams
+	(*LocalKey)(nil),                      // 23: bloock.LocalKey
+	(*ManagedKey)(nil),                    // 24: bloock.ManagedKey
 }
 var file_identity_entities_v2_proto_depIdxs = []int32{
-	19, // 0: bloock.IssuerKey.local_key:type_name -> bloock.LocalKey
-	20, // 1: bloock.IssuerKey.managed_key:type_name -> bloock.ManagedKey
-	3,  // 2: bloock.CredentialV2.credential_status:type_name -> bloock.CredentialStatusV2
-	4,  // 3: bloock.CredentialV2.credential_schema:type_name -> bloock.CredentialSchemaV2
-	2,  // 4: bloock.CredentialReceiptV2.credential:type_name -> bloock.CredentialV2
-	5,  // [5:5] is the sub-list for method output_type
-	5,  // [5:5] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	23, // 0: bloock.IssuerKey.local_key:type_name -> bloock.LocalKey
+	24, // 1: bloock.IssuerKey.managed_key:type_name -> bloock.ManagedKey
+	6,  // 2: bloock.CredentialV2.credential_status:type_name -> bloock.CredentialStatusV2
+	7,  // 3: bloock.CredentialV2.credential_schema:type_name -> bloock.CredentialSchemaV2
+	5,  // 4: bloock.CredentialReceiptV2.credential:type_name -> bloock.CredentialV2
+	1,  // 5: bloock.IssuerParams.method:type_name -> bloock.Method
+	2,  // 6: bloock.IssuerParams.blockchain:type_name -> bloock.Blockchain
+	3,  // 7: bloock.IssuerParams.network_id:type_name -> bloock.NetworkId
+	8,  // [8:8] is the sub-list for method output_type
+	8,  // [8:8] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_identity_entities_v2_proto_init() }
@@ -1618,6 +1863,18 @@ func file_identity_entities_v2_proto_init() {
 				return nil
 			}
 		}
+		file_identity_entities_v2_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IssuerParams); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_identity_entities_v2_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	file_identity_entities_v2_proto_msgTypes[14].OneofWrappers = []interface{}{}
@@ -1626,8 +1883,8 @@ func file_identity_entities_v2_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_identity_entities_v2_proto_rawDesc,
-			NumEnums:      1,
-			NumMessages:   18,
+			NumEnums:      4,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

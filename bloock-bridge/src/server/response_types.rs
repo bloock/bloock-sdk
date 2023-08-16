@@ -12,6 +12,7 @@ use crate::items::GenerateManagedKeyResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetCredentialProofResponse;
 use crate::items::GetHashResponse;
+use crate::items::GetIssuerListResponse;
 use crate::items::GetOfferResponse;
 use crate::items::GetProofResponse;
 use crate::items::GetSignaturesResponse;
@@ -96,6 +97,7 @@ pub enum ResponseType {
     CredentialToJsonResponseV2(CredentialToJsonResponseV2),
     CredentialFromJsonResponseV2(CredentialFromJsonResponseV2),
     GetCredentialProofResponse(GetCredentialProofResponse),
+    GetIssuerListResponse(GetIssuerListResponse),
 }
 
 impl ResponseType {
@@ -150,6 +152,7 @@ impl ResponseType {
             ResponseType::CredentialToJsonResponseV2(r) => r.encode(&mut result_vec),
             ResponseType::CredentialFromJsonResponseV2(r) => r.encode(&mut result_vec),
             ResponseType::GetCredentialProofResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetIssuerListResponse(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -204,6 +207,7 @@ impl ResponseType {
             ResponseType::CredentialToJsonResponseV2(r) => r.encoded_len(),
             ResponseType::CredentialFromJsonResponseV2(r) => r.encoded_len(),
             ResponseType::GetCredentialProofResponse(r) => r.encoded_len(),
+            ResponseType::GetIssuerListResponse(r) => r.encoded_len(),
         }
     }
 }

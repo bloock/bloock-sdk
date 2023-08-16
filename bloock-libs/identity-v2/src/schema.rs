@@ -40,7 +40,9 @@ pub fn get_type_id_from_context(schema: String, _type: String) -> Result<String,
         for context_obj in context_array {
             if let Some(type_value) = context_obj[_type.clone()].as_object() {
                 if let Some(id) = type_value.get("@id") {
-                    return Ok(id.to_string());
+                    if let Some(res) = id.as_str() {
+                        return Ok(res.to_string());
+                    }
                 }
             }
         }

@@ -2,7 +2,10 @@ use async_trait::async_trait;
 use bloock_core::{
     identity_v2::{
         self,
-        entity::{credential::Credential, proof_type::ProofType, schema::Attribute},
+        entity::{
+            credential::Credential, did_metadata::DidMetadata, proof_type::ProofType,
+            schema::Attribute,
+        },
     },
     ManagedBJJSigner, Signer,
 };
@@ -16,10 +19,10 @@ use crate::{
         CreateCredentialResponseV2, CreateIssuerRequest, CreateIssuerResponse,
         CredentialFromJsonRequestV2, CredentialFromJsonResponseV2, CredentialReceiptV2,
         CredentialRevocationV2, CredentialToJsonRequestV2, CredentialToJsonResponseV2,
-        CredentialV2, GetCredentialProofRequest, GetCredentialProofResponse,
-        IdentityServiceV2Handler, IssuerStateReceipt, PublishIssuerStateRequest,
-        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
-        SchemaV2, SignerAlg,
+        CredentialV2, GetCredentialProofRequest, GetCredentialProofResponse, GetIssuerListRequest,
+        GetIssuerListResponse, IdentityServiceV2Handler, IssuerStateReceipt,
+        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
+        RevokeCredentialResponseV2, SchemaV2, SignerAlg,
     },
     server::response_types::RequestConfigData,
 };
@@ -60,14 +63,36 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             return Err("invalid key provided".to_string());
         };
 
+        let params: DidMetadata = match req.issuer_params.clone() {
+            Some(i) => i.into(),
+            None => DidMetadata::default(),
+        };
+
         let client = identity_v2::configure(config_data.clone());
         let receipt = client
-            .create_issuer(public_key)
+            .create_issuer(public_key, params)
             .await
             .map_err(|e| e.to_string())?;
 
         Ok(CreateIssuerResponse {
             did: receipt.did,
+            error: None,
+        })
+    }
+
+    async fn get_issuer_list(
+        &self,
+        req: &GetIssuerListRequest,
+    ) -> Result<GetIssuerListResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity_v2::configure(config_data.clone());
+        let receipt = client.get_issuer_list().await.map_err(|e| e.to_string())?;
+
+        let res: Vec<String> = receipt.iter().map(|r| r.did.clone()).collect();
+
+        Ok(GetIssuerListResponse {
+            did: res,
             error: None,
         })
     }
@@ -238,6 +263,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 attributes,
                 signer,
                 core_proof_types,
+                req.api_managed_host.clone(),
             )
             .await
             .map_err(|e| e.to_string())?;

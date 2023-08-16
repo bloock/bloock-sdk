@@ -46,6 +46,7 @@ impl VC {
         credential_type: String,
         version: i32,
         api_host: String,
+        api_managed_host: String,
     ) -> Result<Self, IdentityError> {
         let issuance_date = Local::now().naive_local();
         let nonce =
@@ -66,6 +67,7 @@ impl VC {
             nonce,
             uuid,
             api_host,
+            api_managed_host,
         )
     }
 
@@ -83,6 +85,7 @@ impl VC {
         nonce: u64,
         uuid: String,
         api_host: String,
+        api_managed_host: String,
     ) -> Result<Self, IdentityError> {
         parse_did(issuer.clone()).map_err(|e| IdentityError::InvalidDid(e.to_string()))?;
         parse_did(holder.clone()).map_err(|e| IdentityError::InvalidDid(e.to_string()))?;
@@ -121,12 +124,7 @@ impl VC {
         };
 
         let expiration_date = NaiveDateTime::from_timestamp_opt(expiration, 0).unwrap();
-        let credential_id = format!(
-            "{}/identity/v1/{}/claims/{}",
-            api_host,
-            issuer.clone(),
-            uuid
-        );
+        let credential_id = format!("{}/v1/{}/claims/{}", api_managed_host, issuer.clone(), uuid);
 
         let credential_subject_map: Map<String, Value> = attributes.into_iter().collect();
 
@@ -268,7 +266,6 @@ impl VC {
 mod tests {
     use chrono::NaiveDateTime;
     use serde_json::{json, Number, Value};
-    use ssi::vc::Credential;
 
     use crate::vc::VC;
 
@@ -316,6 +313,7 @@ mod tests {
             ),
         ];
         let api_host = "https://api.bloock.dev".to_string();
+        let api_managed_host = "https://api.bloock.dev/identity".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
         let nonce: u64 = 3825417065;
@@ -335,6 +333,7 @@ mod tests {
             nonce,
             uuid,
             api_host,
+            api_managed_host,
         )
         .unwrap();
 

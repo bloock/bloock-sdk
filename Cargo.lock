@@ -532,6 +532,7 @@ dependencies = [
  "sha2 0.10.7",
  "thiserror",
  "tokio",
+ "url",
  "wasm-bindgen-futures",
 ]
 
@@ -753,6 +754,7 @@ dependencies = [
  "bloock-core",
  "bloock-encrypter",
  "bloock-executor",
+ "bloock-identity-rs",
  "bloock-keys",
  "cbindgen",
  "convert_case",
