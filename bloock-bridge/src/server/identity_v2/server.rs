@@ -17,12 +17,13 @@ use crate::{
     items::{
         BuildSchemaRequestV2, BuildSchemaResponseV2, CreateCredentialRequestV2,
         CreateCredentialResponseV2, CreateIssuerRequest, CreateIssuerResponse,
-        CredentialFromJsonRequestV2, CredentialFromJsonResponseV2, CredentialReceiptV2,
-        CredentialRevocationV2, CredentialToJsonRequestV2, CredentialToJsonResponseV2,
-        CredentialV2, GetCredentialProofRequest, GetCredentialProofResponse, GetIssuerListRequest,
-        GetIssuerListResponse, IdentityServiceV2Handler, IssuerStateReceipt,
-        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
-        RevokeCredentialResponseV2, SchemaV2, SignerAlg,
+        CredentialFromJsonRequestV2, CredentialFromJsonResponseV2, CredentialProofV2,
+        CredentialReceiptV2, CredentialRevocationV2, CredentialToJsonRequestV2,
+        CredentialToJsonResponseV2, CredentialV2, GetCredentialProofRequest,
+        GetCredentialProofResponse, GetIssuerListRequest, GetIssuerListResponse,
+        IdentityServiceV2Handler, IssuerStateReceipt, PublishIssuerStateRequest,
+        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
+        SchemaV2, SignerAlg,
     },
     server::response_types::RequestConfigData,
 };
@@ -348,7 +349,14 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             .await
             .map_err(|e| e.to_string())?;
 
-        Ok(GetCredentialProofResponse { proof, error: None })
+        Ok(GetCredentialProofResponse {
+            proof: Some(CredentialProofV2 {
+                signature_proof: proof.signature_proof,
+                bloock_proof: proof.bloock_proof,
+                sparse_mt_proof: proof.sparse_mt_proof,
+            }),
+            error: None,
+        })
     }
 
     async fn credential_to_json(
@@ -362,7 +370,8 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             .try_into()
             .map_err(|e: BridgeError| e.to_string())?;
 
-        let json = serde_json::to_string(&offer).map_err(|_| "couldn't serialize credential")?;
+        let json = serde_json::to_string(&offer)
+            .map_err(|e| format!("couldn't serialize credential: {}", e.to_string()))?;
 
         Ok(CredentialToJsonResponseV2 { json, error: None })
     }
@@ -372,7 +381,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
         req: &CredentialFromJsonRequestV2,
     ) -> Result<CredentialFromJsonResponseV2, String> {
         let credential: Credential = serde_json::from_str(&req.json)
-            .map_err(|e| format!("couldn't deserialize credential: {}", e))?;
+            .map_err(|e| format!("couldn't deserialize credential: {}", e.to_string()))?;
 
         let deserialized_credential: Option<CredentialV2> = Some(
             credential

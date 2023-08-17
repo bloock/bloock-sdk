@@ -98,7 +98,7 @@ impl ResponseTypeError<CredentialFromJsonRequestV2> for CredentialFromJsonRespon
 impl ResponseTypeError<GetCredentialProofRequest> for GetCredentialProofResponse {
     fn build_error(err: String) -> Self {
         Self {
-            proof: "".to_string(),
+            proof: None,
             error: Some(Error {
                 kind: BridgeError::KeysError.to_string(),
                 message: err,

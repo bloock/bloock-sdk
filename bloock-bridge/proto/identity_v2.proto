@@ -42,7 +42,7 @@ message GetCredentialProofRequest {
 }
 
 message GetCredentialProofResponse {
-    string proof = 1;
+    CredentialProofV2 proof = 1;
     optional Error error = 2;
 }
 
