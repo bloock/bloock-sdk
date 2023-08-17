@@ -36,6 +36,7 @@ use super::{
             revoke_credential_request::RevokeCredentialRequest,
             revoke_credential_response::RevokeCredentialResponse,
         },
+        proof::CredentialProof,
         proof_type::ProofType,
         revocation_result::RevocationResult,
         schema::{Attribute, Schema},
@@ -256,8 +257,10 @@ impl<H: Client> IdentityServiceV2<H> {
             )
             .await
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
-        let credential_proof = serde_json::to_value(&proof.proof)
+
+        let credential_proof: CredentialProof = serde_json::from_value(proof.proof)
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
+
         credential.proof = Some(credential_proof);
 
         Ok(CreateCredentialReceipt {
@@ -343,7 +346,7 @@ impl<H: Client> IdentityServiceV2<H> {
         &self,
         issuer_did: String,
         credential_id: String,
-    ) -> BloockResult<String> {
+    ) -> BloockResult<CredentialProof> {
         parse_did(issuer_did.clone())
             .map_err(|e| IdentityErrorV2::GetCredentialProofError(e.to_string()))?;
 
@@ -361,8 +364,8 @@ impl<H: Client> IdentityServiceV2<H> {
             .await
             .map_err(|e| IdentityErrorV2::GetCredentialProofError(e.to_string()))?;
 
-        let credential_proof = serde_json::to_string(&proof.proof)
-            .map_err(|e| IdentityErrorV2::GetCredentialProofError(e.to_string()))?;
+        let credential_proof: CredentialProof = serde_json::from_value(proof.proof)
+            .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
 
         Ok(credential_proof)
     }

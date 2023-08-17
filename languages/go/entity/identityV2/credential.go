@@ -36,7 +36,7 @@ func NewCredentialFromProto(s *proto.CredentialV2) Credential {
 		CredentialStatus:  NewCredentialStatusFromProto(s.CredentialStatus),
 		Issuer:            s.Issuer,
 		CredentialSchema:  NewCredentialSchemaFromProto(s.CredentialSchema),
-		Proof:             CredentialProof(s.GetProof()),
+		Proof:             NewCredentialProofFromProto(s.GetProof()),
 	}
 }
 
@@ -51,7 +51,7 @@ func (c Credential) ToProto() *proto.CredentialV2 {
 		CredentialStatus:  c.CredentialStatus.ToProto(),
 		Issuer:            c.Issuer,
 		CredentialSchema:  c.CredentialSchema.ToProto(),
-		Proof:             string(c.Proof),
+		Proof:             c.Proof.ToProto(),
 	}
 }
 

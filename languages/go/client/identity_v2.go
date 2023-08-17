@@ -11,23 +11,23 @@ import (
 )
 
 type IdentityV2Client struct {
-	bridgeClient bridge.BloockBridge
-	configData   *proto.ConfigData
+	bridgeClient   bridge.BloockBridge
+	configData     *proto.ConfigData
 	apiManagedHost string
 }
 
 func NewIdentityV2Client(apiManagedHost string) IdentityV2Client {
 	return IdentityV2Client{
-		bridgeClient: bridge.NewBloockBridge(),
-		configData:   config.NewConfigDataDefault(),
+		bridgeClient:   bridge.NewBloockBridge(),
+		configData:     config.NewConfigDataDefault(),
 		apiManagedHost: apiManagedHost,
 	}
 }
 
 func NewIdentityV2ClientWithConfig(configData *proto.ConfigData, apiManagedHost string) IdentityV2Client {
 	return IdentityV2Client{
-		bridgeClient: bridge.NewBloockBridge(),
-		configData:   configData,
+		bridgeClient:   bridge.NewBloockBridge(),
+		configData:     configData,
 		apiManagedHost: apiManagedHost,
 	}
 }
@@ -86,14 +86,14 @@ func (c *IdentityV2Client) GetCredentialProof(issuerDid string, credentialId str
 	})
 
 	if err != nil {
-		return identityV2.CredentialProof(""), err
+		return identityV2.CredentialProof{}, err
 	}
 
 	if res.Error != nil {
-		return identityV2.CredentialProof(""), errors.New(res.Error.Message)
+		return identityV2.CredentialProof{}, errors.New(res.Error.Message)
 	}
 
-	return identityV2.CredentialProof(res.GetProof()), nil
+	return identityV2.NewCredentialProofFromProto(res.GetProof()), nil
 }
 
 func (c *IdentityV2Client) RevokeCredential(credential identityV2.Credential) (bool, error) {
