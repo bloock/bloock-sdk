@@ -2,7 +2,7 @@
 
 package client
 
-/*import (
+import (
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2"
@@ -56,7 +56,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.GreaterOrEqual(t, len(dids), 1)
 		assert.Equal(t, issuerDid, dids[0])
 
-		proofType := []identityV2.ProofType{identityV2.BloockProof, identityV2.PolygonMtp}
+		proofType := []identityV2.ProofType{identityV2.IntegrityProofType, identityV2.SparseMtProofType}
 
 		schema, err := identityClient.BuildSchema("Driving License", schemaType, "1.0", "driving license schema", issuerDid).
 			AddNumberAttribute("License Type", "license_type", "license type", false).
@@ -118,4 +118,4 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "", proof)
 	})
-}*/
+}

@@ -352,7 +352,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
         Ok(GetCredentialProofResponse {
             proof: Some(CredentialProofV2 {
                 signature_proof: proof.signature_proof,
-                bloock_proof: proof.bloock_proof,
+                integrity_proof: proof.integrity_proof,
                 sparse_mt_proof: proof.sparse_mt_proof,
             }),
             error: None,

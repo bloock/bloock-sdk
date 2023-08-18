@@ -4,7 +4,7 @@ import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 type CredentialProof struct {
 	SignatureProof string
-	BloockProof    string
+	IntegrityProof string
 	SparseMtProof  string
 }
 
@@ -14,17 +14,17 @@ func NewCredentialProofFromProto(s *proto.CredentialProofV2) CredentialProof {
 	}
 	return CredentialProof{
 		SignatureProof: s.GetSignatureProof(),
-		BloockProof:    s.GetBloockProof(),
+		IntegrityProof: s.GetIntegrityProof(),
 		SparseMtProof:  s.GetSparseMtProof(),
 	}
 }
 
 func (c CredentialProof) ToProto() *proto.CredentialProofV2 {
-	var bloockProof, sparseMtProof *string
-	if c.BloockProof == "" {
-		bloockProof = nil
+	var integrityProof, sparseMtProof *string
+	if c.IntegrityProof == "" {
+		integrityProof = nil
 	} else {
-		bloockProof = &c.BloockProof
+		integrityProof = &c.IntegrityProof
 	}
 	if c.SparseMtProof == "" {
 		sparseMtProof = nil
@@ -33,7 +33,7 @@ func (c CredentialProof) ToProto() *proto.CredentialProofV2 {
 	}
 	return &proto.CredentialProofV2{
 		SignatureProof: c.SignatureProof,
-		BloockProof:    bloockProof,
+		IntegrityProof:    integrityProof,
 		SparseMtProof:  sparseMtProof,
 	}
 }

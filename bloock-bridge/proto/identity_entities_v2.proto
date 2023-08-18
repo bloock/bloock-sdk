@@ -8,8 +8,8 @@ option java_package = "com.bloock.sdk.bridge.proto";
 import "keys_entities.proto";
 
 enum ProofType {
-    BloockProof = 0;
-    PolygonMtp = 1;
+    IntegrityProofType = 0;
+    SparseMtProofType = 1;
 }
 
 message IssuerKey {
@@ -32,7 +32,7 @@ message CredentialV2 {
 
 message CredentialProofV2 {
     string signature_proof = 1;
-    optional string bloock_proof = 2;
+    optional string integrity_proof = 2;
     optional string sparse_mt_proof = 3;
 }
 

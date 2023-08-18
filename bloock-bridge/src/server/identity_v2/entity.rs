@@ -20,8 +20,8 @@ use crate::{
 impl From<ProofType> for CoreProofType {
     fn from(a: ProofType) -> Self {
         match a {
-            ProofType::BloockProof => CoreProofType::BloockProof,
-            ProofType::PolygonMtp => CoreProofType::PolygonMtp,
+            ProofType::IntegrityProofType => CoreProofType::IntegrityProofType,
+            ProofType::SparseMtProofType => CoreProofType::SparseMtProofType,
         }
     }
 }
@@ -106,7 +106,7 @@ impl TryFrom<CoreCredential> for CredentialV2 {
             }),
             proof: Some(CredentialProofV2 {
                 signature_proof: credential_proof.signature_proof,
-                bloock_proof: credential_proof.bloock_proof,
+                integrity_proof: credential_proof.integrity_proof,
                 sparse_mt_proof: credential_proof.sparse_mt_proof,
             }),
         })
@@ -157,7 +157,7 @@ impl TryFrom<CredentialV2> for CoreCredential {
 
             proof: Some(CoreCredentialProof {
                 signature_proof: credential_proof.signature_proof,
-                bloock_proof: credential_proof.bloock_proof,
+                integrity_proof: credential_proof.integrity_proof,
                 sparse_mt_proof: credential_proof.sparse_mt_proof,
             }),
         })
