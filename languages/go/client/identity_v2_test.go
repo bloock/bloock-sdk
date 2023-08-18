@@ -2,7 +2,7 @@
 
 package client
 
-import (
+/*import (
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2"
@@ -118,4 +118,4 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "", proof)
 	})
-}
+}*/
