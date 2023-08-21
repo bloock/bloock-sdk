@@ -281,7 +281,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             credential_receipt: Some(CredentialReceiptV2 {
                 credential: deserialized_credential,
                 credential_id: receipt.credential_id,
-                anchor_id: Some(receipt.anchor_id),
+                anchor_id: receipt.anchor_id,
             }),
             error: None,
         })
