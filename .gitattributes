@@ -1,1 +1,0 @@
-/languages/go/internal/ffi/native/**/*.a filter=lfs diff=lfs merge=lfs -text
