@@ -34,6 +34,7 @@ if sys.platform.startswith("win"):
             "advapi32.lib",
             "userenv.lib",
             "bcrypt.lib",
+            "ntdll.lib",
         )
     )
 elif sys.platform.startswith("darwin"):
