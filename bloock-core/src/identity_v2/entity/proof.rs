@@ -1,77 +1,93 @@
-use serde::Deserialize;
-use serde::Serialize;
+use std::str::FromStr;
 
-#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
-pub struct BjjSignature {
-    #[serde(rename = "coreClaim")]
-    pub core_claim: String,
-    pub signature: String,
-    #[serde(rename = "issuerData")]
-    pub issuer_data: BjjIssuerData,
+use serde::{
+    ser::{Error, SerializeSeq},
+    Deserialize, Serialize,
+};
+use serde_json::Value;
+
+pub const SIGNATURE_PROOF_TYPE: &str = "BJJSignature2021";
+pub const INTEGRITY_PROOF_TYPE: &str = "BloockIntegrityProof";
+pub const SPARSE_MT_PROOF_TYPE: &str = "Iden3SparseMerkleTreeProof";
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CredentialProof {
+    pub signature_proof: String,
+    pub integrity_proof: Option<String>,
+    pub sparse_mt_proof: Option<String>,
 }
 
-#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
-pub struct BjjIssuerData {
-    pub id: String,
-    pub mtp: Mtp,
-    pub state: BjjState,
-    #[serde(rename = "authCoreClaim")]
-    pub auth_core_claim: String,
-    #[serde(rename = "credentialStatus")]
-    pub credential_status: CredentialStatus,
+impl Serialize for CredentialProof {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut state = serializer.serialize_seq(None)?;
+
+        let mut bjj_signature = Value::from_str(&self.signature_proof.clone())
+            .map_err(|_| Error::custom("error serializing zkp signature proof"))?;
+        let bjj_signature_map = bjj_signature
+            .as_object_mut()
+            .ok_or_else(|| Error::custom("error serializing zkp signature proof"))?;
+        state.serialize_element(&bjj_signature_map)?;
+
+        if let Some(integrity_proof) = self.integrity_proof.clone() {
+            let mut proof = Value::from_str(&integrity_proof.clone())
+                .map_err(|_| Error::custom("error serializing integrity proof"))?;
+            let proof_map = proof
+                .as_object_mut()
+                .ok_or_else(|| Error::custom("error serializing integrity proof"))?;
+            state.serialize_element(&proof_map)?;
+        }
+        if let Some(sparse_mt_proof) = self.sparse_mt_proof.clone() {
+            let mut sparse_mtp = Value::from_str(&sparse_mt_proof.clone())
+                .map_err(|_| Error::custom("error serializing sparse mtp proof"))?;
+            let sparse_mtp_map = sparse_mtp
+                .as_object_mut()
+                .ok_or_else(|| Error::custom("error serializing sparse mtp proof"))?;
+            state.serialize_element(&sparse_mtp_map)?;
+        }
+
+        state.end()
+    }
 }
 
-#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
-pub struct Mtp {
-    pub siblings: Vec<String>,
-    pub existence: bool,
-}
+impl<'de> Deserialize<'de> for CredentialProof {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value: Value = Value::deserialize(deserializer)?;
 
-#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
-pub struct BjjState {
-    pub value: String,
-    #[serde(rename = "claimsTreeRoot")]
-    pub claims_tree_root: String,
-}
+        let mut signature_proof = String::new();
+        let mut sparse_mt_proof: Option<String> = None;
+        let mut integrity_proof = None;
 
-#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
-pub struct CredentialStatus {
-    pub id: String,
-    pub r#type: String,
-    #[serde(rename = "revocationNonce")]
-    pub revocation_none: i64,
-}
+        if let Some(proof_array) = value.as_array() {
+            for proof in proof_array.iter() {
+                if let Some(proof_type) = proof["type"].as_str() {
+                    match proof_type {
+                        SIGNATURE_PROOF_TYPE => {
+                            signature_proof = proof.to_string();
+                        }
+                        INTEGRITY_PROOF_TYPE => {
+                            integrity_proof = Some(proof.to_string());
+                        }
+                        SPARSE_MT_PROOF_TYPE => {
+                            sparse_mt_proof = Some(proof.to_string());
+                        }
+                        _ => return Err(serde::de::Error::missing_field(SIGNATURE_PROOF_TYPE)),
+                    }
+                } else {
+                    return Err(serde::de::Error::missing_field("type"));
+                }
+            }
+        }
 
-#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
-pub struct SparseMtp {
-    pub mtp: Mtp,
-    #[serde(rename = "coreClaim")]
-    pub core_claim: String,
-    #[serde(rename = "issuerData")]
-    pub issuer_data: SparseIssuerData,
-}
-
-#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
-pub struct SparseIssuerData {
-    pub id: String,
-    pub state: SparseState,
-    #[serde(rename = "authCoreClaim")]
-    pub auth_core_claim: String
-}
-
-#[derive(Deserialize, Serialize, Clone, Debug, Eq, PartialEq)]
-pub struct SparseState {
-    #[serde(rename = "txId")]
-    pub tx_id: String,
-    pub value: String,
-    #[serde(rename = "blockNumber")]
-    pub block_number: i64,
-    #[serde(rename = "rootOfRoots")]
-    pub root_of_roots: String,
-    #[serde(rename = "blockTimestamp")]
-    pub block_timestamp: i64,
-    #[serde(rename = "claimsTreeRoot")]
-    pub claims_tree_root: String,
-    #[serde(rename = "revocationTreeRoot")]
-    pub revocation_tree_root: String,
+        Ok(CredentialProof {
+            signature_proof,
+            integrity_proof,
+            sparse_mt_proof,
+        })
+    }
 }

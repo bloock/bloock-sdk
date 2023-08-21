@@ -4,6 +4,7 @@ use bloock_core::identity_v2::entity::{
         CredentialStatus as CoreCredentialStatus,
     },
     did_metadata::DidMetadata,
+    proof::CredentialProof as CoreCredentialProof,
     proof_type::ProofType as CoreProofType,
 };
 use bloock_identity_rs::did::{Blockchain as CoreBlockchain, DIDMethod, Network as CoreNetworkId};
@@ -11,16 +12,16 @@ use bloock_identity_rs::did::{Blockchain as CoreBlockchain, DIDMethod, Network a
 use crate::{
     error::BridgeError,
     items::{
-        Blockchain, CredentialSchemaV2, CredentialStatusV2, CredentialV2, IssuerParams, Method,
-        NetworkId, ProofType,
+        Blockchain, CredentialProofV2, CredentialSchemaV2, CredentialStatusV2, CredentialV2,
+        IssuerParams, Method, NetworkId, ProofType,
     },
 };
 
 impl From<ProofType> for CoreProofType {
     fn from(a: ProofType) -> Self {
         match a {
-            ProofType::BloockProof => CoreProofType::BloockProof,
-            ProofType::PolygonMtp => CoreProofType::PolygonMtp,
+            ProofType::IntegrityProofType => CoreProofType::IntegrityProofType,
+            ProofType::SparseMtProofType => CoreProofType::SparseMtProofType,
         }
     }
 }
@@ -46,8 +47,12 @@ impl From<IssuerParams> for DidMetadata {
             NetworkId::UnknownNetwork => CoreNetworkId::Mumbai,
             NetworkId::NoNetwork => CoreNetworkId::Mumbai,
         };
-        
-        Self { method, blockchain, network: network_id }
+
+        Self {
+            method,
+            blockchain,
+            network: network_id,
+        }
     }
 }
 
@@ -79,7 +84,7 @@ impl TryFrom<CoreCredential> for CredentialV2 {
 
     fn try_from(value: CoreCredential) -> Result<Self, Self::Error> {
         let credential_proof = value.proof.ok_or_else(|| {
-            BridgeError::RequestDeserialization("couldn't deserialize proof".to_string())
+            BridgeError::RequestDeserialization("couldn't deserialize credential proof".to_string())
         })?;
 
         Ok(CredentialV2 {
@@ -99,7 +104,11 @@ impl TryFrom<CoreCredential> for CredentialV2 {
                 id: value.credential_schema.id,
                 r#type: value.credential_schema.r#type,
             }),
-            proof: credential_proof.to_string(),
+            proof: Some(CredentialProofV2 {
+                signature_proof: credential_proof.signature_proof,
+                integrity_proof: credential_proof.integrity_proof,
+                sparse_mt_proof: credential_proof.sparse_mt_proof,
+            }),
         })
     }
 }
@@ -118,6 +127,10 @@ impl TryFrom<CredentialV2> for CoreCredential {
             BridgeError::RequestDeserialization(
                 "couldn't deserialize credential schema".to_string(),
             )
+        })?;
+
+        let credential_proof = value.proof.ok_or_else(|| {
+            BridgeError::RequestDeserialization("couldn't deserialize credential proof".to_string())
         })?;
 
         Ok(CoreCredential {
@@ -141,11 +154,12 @@ impl TryFrom<CredentialV2> for CoreCredential {
                 id: credential_schema.id,
                 r#type: credential_schema.r#type,
             },
-            proof: serde_json::from_str(&value.proof).map_err(|_| {
-                BridgeError::RequestDeserialization(
-                    "couldn't deserialize credential proof".to_string(),
-                )
-            })?,
+
+            proof: Some(CoreCredentialProof {
+                signature_proof: credential_proof.signature_proof,
+                integrity_proof: credential_proof.integrity_proof,
+                sparse_mt_proof: credential_proof.sparse_mt_proof,
+            }),
         })
     }
 }

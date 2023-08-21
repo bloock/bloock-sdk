@@ -40,6 +40,8 @@ pub enum IdentityErrorV2 {
     InvalidKeyProvided(),
     #[error("Invalid proof provided")]
     InvalidProofError(),
+    #[error("Empty proof field response")]
+    EmptyProofFieldError(),
     #[error("Invalid signature provided")]
     InvalidSignatureError(),
     #[error("Invalid credential provided")]

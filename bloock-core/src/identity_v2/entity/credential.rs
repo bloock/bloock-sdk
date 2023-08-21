@@ -1,12 +1,7 @@
-use serde::{
-    ser::{Error, SerializeTuple},
-    Deserialize, Serialize,
-};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::integrity::entity::proof::Proof;
-
-use super::proof::{BjjSignature, SparseMtp};
+use super::proof::CredentialProof;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Credential {
@@ -25,8 +20,7 @@ pub struct Credential {
     pub issuer: String,
     #[serde(rename = "credentialSchema")]
     pub credential_schema: CredentialSchema,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub proof: Option<Value>,
+    pub proof: Option<CredentialProof>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
@@ -41,53 +35,6 @@ pub struct CredentialStatus {
 pub struct CredentialSchema {
     pub id: String,
     pub r#type: String,
-}
-
-#[derive(Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct CredentialProof(pub BjjSignature, pub Option<Proof>, pub Option<SparseMtp>);
-
-impl Serialize for CredentialProof {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut bjj_signature = serde_json::to_value(self.0.clone())
-            .map_err(|_| Error::custom("error serializing zkp signature proof"))?;
-        let bjj_signature_map = bjj_signature
-            .as_object_mut()
-            .ok_or_else(|| Error::custom("error serializing zkp signature proof"))?;
-        bjj_signature_map.insert(
-            "type".to_string(),
-            Value::String("BJJSignature2021".to_string()),
-        );
-
-        let mut proof = serde_json::to_value(self.1.clone())
-            .map_err(|_| Error::custom("error serializing bloock proof"))?;
-        let proof_map = proof
-            .as_object_mut()
-            .ok_or_else(|| Error::custom("error serializing bloock proof"))?;
-        proof_map.insert(
-            "type".to_string(),
-            Value::String("BloockIntegrityProof".to_string()),
-        );
-
-        let mut sparse_mtp = serde_json::to_value(self.2.clone())
-            .map_err(|_| Error::custom("error serializing sparse mtp proof"))?;
-        let sparse_mtp_map = sparse_mtp
-            .as_object_mut()
-            .ok_or_else(|| Error::custom("error serializing sparse mtp proof"))?;
-        sparse_mtp_map.insert(
-            "type".to_string(),
-            Value::String("Iden3SparseMerkleTreeProof".to_string()),
-        );
-
-        let mut state = serializer.serialize_tuple(3)?;
-        state.serialize_element(&bjj_signature_map)?;
-        state.serialize_element(&proof_map)?;
-        state.serialize_element(&sparse_mtp_map)?;
-
-        state.end()
-    }
 }
 
 #[cfg(test)]
