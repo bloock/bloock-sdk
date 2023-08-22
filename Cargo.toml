@@ -12,13 +12,16 @@ members = [
     "bloock-libs/hasher",
     "bloock-libs/keys",
     "bloock-libs/signer",
-    "bloock-libs/identity-v2"
+    "bloock-libs/identity-v2",
 ]
 
 exclude = []
 
 [profile.release]
 debug = false
+lto = true
+opt-level = "z"
+codegen-units = 1
 
 [profile.bench]
 debug = true

@@ -1,6 +1,6 @@
 [package]
 name = "bloock-core"
-version = "2.6.0-beta.3"
+version = "2.6.0-beta.4"
 edition = "2021"
 
 [lib]
@@ -29,7 +29,7 @@ bloock-identity-rs = { path = "../bloock-libs/identity-v2" }
 
 [dev-dependencies]
 mockall = "0.11.2"
-tokio = { version = "1.20.1", features = ["rt", "macros"]}
+tokio = { version = "1.20.1", features = ["rt", "macros"] }
 
 [dev-dependencies.bloock-http]
 path = "../bloock-libs/http"
