@@ -13,6 +13,7 @@ import "identity_entities_v2.proto";
 service IdentityServiceV2 {
     rpc CreateIssuer(CreateIssuerRequest) returns (CreateIssuerResponse);
     rpc GetIssuerList(GetIssuerListRequest) returns (GetIssuerListResponse);
+    rpc GetIssuerByKey(GetIssuerByKeyRequest) returns (GetIssuerByKeyResponse);
 
     rpc BuildSchema(BuildSchemaRequestV2) returns (BuildSchemaResponseV2);
 
@@ -32,6 +33,11 @@ message GetIssuerListRequest {
 
 message GetIssuerListResponse {
     repeated string did = 1;
+    optional Error error = 2;
+}
+
+message GetIssuerByKeyResponse {
+    string did = 1;
     optional Error error = 2;
 }
 
@@ -99,6 +105,12 @@ message BuildSchemaRequestV2 {
 }
 
 message CreateIssuerRequest {
+    IssuerKey issuer_key = 1;
+    ConfigData config_data = 2;
+    optional IssuerParams issuer_params = 3;
+}
+
+message GetIssuerByKeyRequest {
     IssuerKey issuer_key = 1;
     ConfigData config_data = 2;
     optional IssuerParams issuer_params = 3;

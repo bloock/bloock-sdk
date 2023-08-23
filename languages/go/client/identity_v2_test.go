@@ -55,16 +55,31 @@ func TestIdentityV2(t *testing.T) {
 		})
 		assert.NoError(t, err)
 
+		notFoundKey, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			KeyType:    key.Bjj,
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+		})
+		assert.NoError(t, err)
+
 		keyBjj, err := keyClient.LoadManagedKey(keys.ID)
 		assert.NoError(t, err)
 
 		issuerKey := identityV2.NewBjjIssuerKey(identityV2.IssuerKeyArgs{ManagedKey: &keyBjj})
+		notFoundIssuerKey := identityV2.NewBjjIssuerKey(identityV2.IssuerKeyArgs{ManagedKey: &notFoundKey})
 		issuer, err := identityClient.CreateIssuer(issuerKey, identityV2.NewIssuerParams())
 		assert.NoError(t, err)
 		assert.True(t, strings.Contains(issuer, "polygonid"))
 
 		_, err = identityClient.CreateIssuer(issuerKey, identityV2.NewIssuerParams())
 		assert.Error(t, err)
+
+		getIssuerDid, err := identityClient.GetIssuerByKey(issuerKey, identityV2.NewIssuerParams())
+		assert.NoError(t, err)
+		assert.Equal(t, issuer, getIssuerDid)
+
+		getIssuerDid, err = identityClient.GetIssuerByKey(notFoundIssuerKey, identityV2.NewIssuerParams())
+		assert.NoError(t, err)
+		assert.Equal(t, "", getIssuerDid)
 
 		issuers, err := identityClient.GetIssuerList()
 		assert.NoError(t, err)
@@ -210,6 +225,6 @@ func TestIdentityV2(t *testing.T) {
 		proof, err := identityClient.GetCredentialProof(issuer, res.CredentialId)
 		assert.NoError(t, err)
 		assert.NotNil(t, proof.SignatureProof)
-		assert.Nil(t, proof.IntegrityProof)
+		assert.Equal(t, "", proof.IntegrityProof)
 	})
 }*/
