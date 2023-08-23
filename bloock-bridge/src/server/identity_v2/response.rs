@@ -1,3 +1,5 @@
+use std::vec;
+
 use crate::{
     error::BridgeError,
     items::{
@@ -5,8 +7,9 @@ use crate::{
         CreateCredentialResponseV2, CreateIssuerRequest, CreateIssuerResponse,
         CredentialFromJsonRequestV2, CredentialFromJsonResponseV2, CredentialToJsonRequestV2,
         CredentialToJsonResponseV2, Error, GetCredentialProofRequest, GetCredentialProofResponse,
-        GetIssuerListRequest, GetIssuerListResponse, PublishIssuerStateRequest,
-        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
+        GetIssuerByKeyRequest, GetIssuerByKeyResponse, GetIssuerListRequest, GetIssuerListResponse,
+        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
+        RevokeCredentialResponseV2,
     },
     server::response_types::ResponseTypeError,
 };
@@ -111,6 +114,18 @@ impl ResponseTypeError<GetIssuerListRequest> for GetIssuerListResponse {
     fn build_error(err: String) -> Self {
         Self {
             did: vec![],
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<GetIssuerByKeyRequest> for GetIssuerByKeyResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            did: "".to_string(),
             error: Some(Error {
                 kind: BridgeError::KeysError.to_string(),
                 message: err,

@@ -29,6 +29,7 @@ use super::{
             create_schema_request::CreateSchemaRequest,
             create_schema_response::CreateSchemaResponse,
             get_credential_proof_response::GetCredentialProofResponse,
+            get_issuer_by_key_response::GetIssuerByKeyResponse,
             get_issuer_list_response::GetIssuerListResponse,
             get_issuer_new_state_response::GetIssuerNewStateResponse,
             publish_issuer_state_request::PublishIssuerStateRequest,
@@ -80,6 +81,30 @@ impl<H: Client> IdentityServiceV2<H> {
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
 
         Ok(res)
+    }
+
+    pub async fn get_issuer_by_key(
+        &self,
+        public_key: String,
+        did_metadata: DidMetadata,
+    ) -> BloockResult<String> {
+        let res: GetIssuerByKeyResponse = self
+            .http
+            .get_json(
+                format!(
+                    "{}/identity/v1/issuers/key/{}?method={}&blockchain={}&network={}",
+                    self.config_service.get_api_base_url(),
+                    public_key,
+                    did_metadata.method.get_method_type(),
+                    did_metadata.blockchain.get_bloockchain_type(),
+                    did_metadata.network.get_network_id_type()
+                ),
+                None,
+            )
+            .await
+            .map_err(|e| IdentityErrorV2::GetIssuerByKeyError(e.to_string()))?;
+
+        Ok(res.did)
     }
 
     pub async fn get_issuer_list(&self) -> BloockResult<Vec<GetIssuerListResponse>> {

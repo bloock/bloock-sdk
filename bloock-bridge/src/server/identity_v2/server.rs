@@ -20,10 +20,10 @@ use crate::{
         CredentialFromJsonRequestV2, CredentialFromJsonResponseV2, CredentialProofV2,
         CredentialReceiptV2, CredentialRevocationV2, CredentialToJsonRequestV2,
         CredentialToJsonResponseV2, CredentialV2, GetCredentialProofRequest,
-        GetCredentialProofResponse, GetIssuerListRequest, GetIssuerListResponse,
-        IdentityServiceV2Handler, IssuerStateReceipt, PublishIssuerStateRequest,
-        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
-        SchemaV2, SignerAlg,
+        GetCredentialProofResponse, GetIssuerByKeyRequest, GetIssuerByKeyResponse,
+        GetIssuerListRequest, GetIssuerListResponse, IdentityServiceV2Handler, IssuerStateReceipt,
+        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
+        RevokeCredentialResponseV2, SchemaV2, SignerAlg,
     },
     server::response_types::RequestConfigData,
 };
@@ -77,6 +77,55 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
 
         Ok(CreateIssuerResponse {
             did: receipt.did,
+            error: None,
+        })
+    }
+
+    async fn get_issuer_by_key(
+        &self,
+        req: &GetIssuerByKeyRequest,
+    ) -> Result<GetIssuerByKeyResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let issuer_key = req
+            .clone()
+            .issuer_key
+            .ok_or_else(|| "no key provided".to_string())?;
+
+        let local_key = issuer_key.local_key;
+        let managed_key = issuer_key.managed_key;
+
+        let public_key = if let Some(key) = managed_key {
+            let key_type: KeyType = key.key_type().into();
+            if key_type == KeyType::BJJ {
+                key.key
+            } else {
+                return Err("invalid key type provided".to_string());
+            }
+        } else if let Some(key) = local_key {
+            let key_type: KeyType = key.key_type().into();
+            if key_type == KeyType::BJJ {
+                key.key
+            } else {
+                return Err("invalid key type provided".to_string());
+            }
+        } else {
+            return Err("invalid key provided".to_string());
+        };
+
+        let params: DidMetadata = match req.issuer_params.clone() {
+            Some(i) => i.into(),
+            None => DidMetadata::default(),
+        };
+
+        let client = identity_v2::configure(config_data.clone());
+        let issuer = client
+            .get_issuer_by_key(public_key, params)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(GetIssuerByKeyResponse {
+            did: issuer,
             error: None,
         })
     }
