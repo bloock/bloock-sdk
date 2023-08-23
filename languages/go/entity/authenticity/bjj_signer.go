@@ -10,8 +10,8 @@ type BjjSigner struct {
 	Args SignerArgs
 }
 
-func NewBjjSigner(args SignerArgs) EcdsaSigner {
-	return EcdsaSigner{
+func NewBjjSigner(args SignerArgs) BjjSigner {
+	return BjjSigner{
 		Alg:  proto.SignerAlg_BJJ,
 		Args: args,
 	}
