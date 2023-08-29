@@ -207,8 +207,8 @@ impl<H: Client> IdentityServiceV2<H> {
 
         let vc = VC::new(
             context_json_ld,
-            schema_json.cid,
-            schema_type,
+            schema_json.cid.clone(),
+            schema_type.clone(),
             issuer_did.clone(),
             holder_did,
             expiration,
@@ -219,6 +219,9 @@ impl<H: Client> IdentityServiceV2<H> {
             api_managed_host,
         )
         .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
+
+        vc.validate_schema(schema_json.json.clone())
+            .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
 
         let credential_id = vc
             .get_credentia_id()
@@ -297,6 +300,7 @@ impl<H: Client> IdentityServiceV2<H> {
         Ok(CreateCredentialReceipt {
             credential,
             credential_id: res.id,
+            schema_type,
             anchor_id: res.anchor_id,
         })
     }
