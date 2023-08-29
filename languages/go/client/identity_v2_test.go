@@ -102,7 +102,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, schema.Id)
 
-		res, err := identityClient.BuildCredential(schema.Id, DrivingLicenseSchemaType, issuer, holderDid, expiration, 0).
+		res, err := identityClient.BuildCredential(schema.Id, issuer, holderDid, expiration, 0).
 			WithIntegerAttribute("license_type", 1).
 			WithDecimalAttribute("quantity_oil", 2.25555).
 			WithStringAttribute("nif", "54688188M").
@@ -121,7 +121,6 @@ func TestIdentityV2(t *testing.T) {
 		assert.NotNil(t, res.Credential)
 
 		credential := res.Credential
-
 		assert.Equal(t, issuer, credential.Issuer)
 		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
@@ -131,16 +130,6 @@ func TestIdentityV2(t *testing.T) {
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
-
-		// for {
-		// 	proof, err := identityClient.GetCredentialProof(issuer, res.CredentialId)
-		// 	assert.NoError(t, err)
-		// 	assert.NotNil(t, proof.SignatureProof)
-
-		// 	if proof.SparseMtProof != "" && proof.IntegrityProof != "" {
-		// 		break
-		// 	}
-		// }
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
 			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
@@ -185,7 +174,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, schema2.Id)
 
-		res, err := identityClient.BuildCredential(schema2.Id, KYCAgeSchemaType, issuer, holderDid, expiration, 0).
+		res, err := identityClient.BuildCredential(schema2.Id, issuer, holderDid, expiration, 0).
 			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
 			WithIntegerAttribute("document_type", 1).
@@ -210,17 +199,6 @@ func TestIdentityV2(t *testing.T) {
 
 		_, err = identityClient.BuildIssuerSatePublisher(issuer).Build()
 		assert.Error(t, err)
-
-		// for {
-		// 	proof, err := identityClient.GetCredentialProof(issuer, res.CredentialId)
-		// 	assert.NoError(t, err)
-		// 	assert.NotNil(t, proof.SignatureProof)
-		// 	assert.Nil(t, proof.IntegrityProof)
-
-		// 	if proof.SparseMtProof != "" {
-		// 		break
-		// 	}
-		// }
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
 			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).

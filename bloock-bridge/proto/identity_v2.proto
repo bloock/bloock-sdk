@@ -75,20 +75,19 @@ message CredentialFromJsonResponseV2 {
 message CreateCredentialRequestV2 {
     ConfigData config_data = 1;
     string schema_id = 2;
-    string schema_type = 3;
-    string issuer_did = 4;
-    string holder_did = 5;
-    int64 expiration = 6;
-    optional int32 version = 7;
-    Signer signer = 8;
-    string api_managed_host = 9;
-    repeated StringAttributeV2 string_attributes = 10;
-    repeated IntegerAttributeV2 integer_attributes = 11;
-    repeated DecimalAttributeV2 decimal_attributes = 12;
-    repeated BooleanAttributeV2 boolean_attributes = 13;
-    repeated DateAttributeV2 date_attributes = 14;
-    repeated DateTimeAttributeV2 datetime_attributes = 15;
-    repeated ProofType proof_type = 16;
+    string issuer_did = 3;
+    string holder_did = 4;
+    int64 expiration = 5;
+    optional int32 version = 6;
+    Signer signer = 7;
+    string api_managed_host = 8;
+    repeated StringAttributeV2 string_attributes = 9;
+    repeated IntegerAttributeV2 integer_attributes = 10;
+    repeated DecimalAttributeV2 decimal_attributes = 11;
+    repeated BooleanAttributeV2 boolean_attributes = 12;
+    repeated DateAttributeV2 date_attributes = 13;
+    repeated DateTimeAttributeV2 datetime_attributes = 14;
+    repeated ProofType proof_type = 15;
 }
 
 message BuildSchemaRequestV2 {

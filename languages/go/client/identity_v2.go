@@ -87,8 +87,8 @@ func (c *IdentityV2Client) BuildSchema(displayName string, schemaType, version, 
 	return identityV2.NewSchemaBuilder(displayName, schemaType, version, description, issuerDid, c.configData)
 }
 
-func (c *IdentityV2Client) BuildCredential(schemaId, schemaType, issuerDid, holderDid string, expiration int64, version int32) identityV2.CredentialBuilder {
-	return identityV2.NewCredentialBuilder(schemaId, schemaType, issuerDid, holderDid, expiration, version, c.apiManagedHost, c.configData)
+func (c *IdentityV2Client) BuildCredential(schemaId, issuerDid, holderDid string, expiration int64, version int32) identityV2.CredentialBuilder {
+	return identityV2.NewCredentialBuilder(schemaId, issuerDid, holderDid, expiration, version, c.apiManagedHost, c.configData)
 }
 
 func (c *IdentityV2Client) BuildIssuerSatePublisher(issuerDid string) identityV2.IssuerStatePublisher {

@@ -12,7 +12,6 @@ import (
 
 type CredentialBuilder struct {
 	schemaId       string
-	schemaType     string
 	issuerDid      string
 	holderDid      string
 	expiration     int64
@@ -30,10 +29,9 @@ type CredentialBuilder struct {
 	datetimeAttribute []DatetimeAttribute
 }
 
-func NewCredentialBuilder(schemaId, schemaType, issuerDid, holderDid string, expiration int64, version int32, apiManagedHost string, configData *proto.ConfigData) CredentialBuilder {
+func NewCredentialBuilder(schemaId, issuerDid, holderDid string, expiration int64, version int32, apiManagedHost string, configData *proto.ConfigData) CredentialBuilder {
 	return CredentialBuilder{
 		schemaId:          schemaId,
-		schemaType:        schemaType,
 		issuerDid:         issuerDid,
 		holderDid:         holderDid,
 		expiration:        expiration,
@@ -128,7 +126,6 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 
 	req := proto.CreateCredentialRequestV2{
 		SchemaId:           c.schemaId,
-		SchemaType:         c.schemaType,
 		IssuerDid:          c.issuerDid,
 		HolderDid:          c.holderDid,
 		Expiration:         c.expiration,

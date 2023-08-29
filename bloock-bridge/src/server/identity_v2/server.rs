@@ -364,7 +364,6 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
         let receipt = client
             .create_credential(
                 req.schema_id.clone(),
-                req.schema_type.clone(),
                 req.issuer_did.clone(),
                 req.holder_did.clone(),
                 req.expiration.clone(),
