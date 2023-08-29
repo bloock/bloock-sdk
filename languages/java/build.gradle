@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'com.bloock.sdk'
-version = '2.6.0-beta.6'
+version = '2.6.0-beta.7'
 
 repositories {
     maven { url "https://maven-central.storage-download.googleapis.com/maven2/" }
