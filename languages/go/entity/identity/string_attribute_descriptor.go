@@ -33,8 +33,8 @@ func NewStringAttributeDescriptorFromProto(s *proto.StringAttributeDefinition) S
 
 func (s StringAttributeDescriptor) ToProto() *proto.StringAttributeDefinition {
 	return &proto.StringAttributeDefinition{
-		DisplayName:   s.DisplayName,
-		Id:            s.TechnicalName,
-		Description:   s.Description,
+		DisplayName: s.DisplayName,
+		Id:          s.TechnicalName,
+		Description: s.Description,
 	}
 }

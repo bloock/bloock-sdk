@@ -68,8 +68,8 @@ func (c *IdentityV2Client) GetIssuerList() ([]string, error) {
 
 func (c *IdentityV2Client) GetIssuerByKey(issuerKey identityV2.IssuerKey, params identityV2.IssuerParams) (string, error) {
 	res, err := c.bridgeClient.IdentityV2().GetIssuerByKey(context.Background(), &proto.GetIssuerByKeyRequest{
-		ConfigData: c.configData,
-		IssuerKey:  issuerKey.ToProto(),
+		ConfigData:   c.configData,
+		IssuerKey:    issuerKey.ToProto(),
 		IssuerParams: identityV2.IssuerParamsToProto(params),
 	})
 	if err != nil {

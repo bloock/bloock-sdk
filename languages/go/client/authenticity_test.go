@@ -26,7 +26,7 @@ func TestAuthenticity(t *testing.T) {
 	t.Run("generate bjj keys", func(t *testing.T) {
 		keyClient := NewKeyClient()
 		keys, err := keyClient.NewManagedKey(key.ManagedKeyParams{
-			KeyType: key.Bjj,
+			KeyType:    key.Bjj,
 			Protection: key.KEY_PROTECTION_SOFTWARE,
 		})
 		assert.NoError(t, err)
