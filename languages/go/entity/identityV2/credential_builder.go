@@ -3,6 +3,7 @@ package identityV2
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
@@ -11,7 +12,6 @@ import (
 
 type CredentialBuilder struct {
 	schemaId       string
-	schemaType     string
 	issuerDid      string
 	holderDid      string
 	expiration     int64
@@ -21,44 +21,30 @@ type CredentialBuilder struct {
 	proof          []proto.ProofType
 	configData     *proto.ConfigData
 
+	stringAttribute   []StringAttribute
+	integerAttribute  []IntegerAttribute
+	decimalAttribute  []DecimalAttribute
 	booleanAttribute  []BooleanAttribute
 	dateAttribute     []DateAttribute
 	datetimeAttribute []DatetimeAttribute
-	stringAttribute   []StringAttribute
-	numberAttribute   []NumberAttribute
 }
 
-func NewCredentialBuilder(schemaId, schemaType, issuerDid, holderDid string, expiration int64, version int32, apiManagedHost string, configData *proto.ConfigData) CredentialBuilder {
+func NewCredentialBuilder(schemaId, issuerDid, holderDid string, expiration int64, version int32, apiManagedHost string, configData *proto.ConfigData) CredentialBuilder {
 	return CredentialBuilder{
 		schemaId:          schemaId,
-		schemaType:        schemaType,
 		issuerDid:         issuerDid,
 		holderDid:         holderDid,
 		expiration:        expiration,
 		version:           version,
 		apiManagedHost:    apiManagedHost,
 		configData:        configData,
+		stringAttribute:   []StringAttribute{},
+		integerAttribute:  []IntegerAttribute{},
+		decimalAttribute:  []DecimalAttribute{},
 		booleanAttribute:  []BooleanAttribute{},
 		dateAttribute:     []DateAttribute{},
 		datetimeAttribute: []DatetimeAttribute{},
-		stringAttribute:   []StringAttribute{},
-		numberAttribute:   []NumberAttribute{},
 	}
-}
-
-func (c CredentialBuilder) WithBooleanAttribute(key string, value bool) CredentialBuilder {
-	c.booleanAttribute = append(c.booleanAttribute, NewBooleanAttribute(key, value))
-	return c
-}
-
-func (c CredentialBuilder) WithDateAttribute(key string, value int64) CredentialBuilder {
-	c.dateAttribute = append(c.dateAttribute, NewDateAttribute(key, value))
-	return c
-}
-
-func (c CredentialBuilder) WithDatetimeAttribute(key string, value int64) CredentialBuilder {
-	c.datetimeAttribute = append(c.datetimeAttribute, NewDatetimeAttribute(key, value))
-	return c
 }
 
 func (c CredentialBuilder) WithStringAttribute(key string, value string) CredentialBuilder {
@@ -66,8 +52,28 @@ func (c CredentialBuilder) WithStringAttribute(key string, value string) Credent
 	return c
 }
 
-func (c CredentialBuilder) WithNumberAttribute(key string, value int64) CredentialBuilder {
-	c.numberAttribute = append(c.numberAttribute, NewNumberAttribute(key, value))
+func (c CredentialBuilder) WithIntegerAttribute(key string, value int64) CredentialBuilder {
+	c.integerAttribute = append(c.integerAttribute, NewIntegerAttribute(key, value))
+	return c
+}
+
+func (c CredentialBuilder) WithDecimalAttribute(key string, value float64) CredentialBuilder {
+	c.decimalAttribute = append(c.decimalAttribute, NewDecimalAttribute(key, value))
+	return c
+}
+
+func (c CredentialBuilder) WithBooleanAttribute(key string, value bool) CredentialBuilder {
+	c.booleanAttribute = append(c.booleanAttribute, NewBooleanAttribute(key, value))
+	return c
+}
+
+func (c CredentialBuilder) WithDateAttribute(key string, value time.Time) CredentialBuilder {
+	c.dateAttribute = append(c.dateAttribute, NewDateAttribute(key, value))
+	return c
+}
+
+func (c CredentialBuilder) WithDatetimeAttribute(key string, value time.Time) CredentialBuilder {
+	c.datetimeAttribute = append(c.datetimeAttribute, NewDatetimeAttribute(key, value))
 	return c
 }
 
@@ -88,6 +94,21 @@ func (c CredentialBuilder) WithProofType(proofs []ProofType) CredentialBuilder {
 func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 	bridge := bridge.NewBloockBridge()
 
+	stringAttributes := make([]*proto.StringAttributeV2, len(c.stringAttribute))
+	for i, b := range c.stringAttribute {
+		stringAttributes[i] = b.ToProto()
+	}
+
+	integerAttributes := make([]*proto.IntegerAttributeV2, len(c.integerAttribute))
+	for i, b := range c.integerAttribute {
+		integerAttributes[i] = b.ToProto()
+	}
+
+	decimalAttributes := make([]*proto.DecimalAttributeV2, len(c.decimalAttribute))
+	for i, b := range c.decimalAttribute {
+		decimalAttributes[i] = b.ToProto()
+	}
+
 	booleanAttributes := make([]*proto.BooleanAttributeV2, len(c.booleanAttribute))
 	for i, b := range c.booleanAttribute {
 		booleanAttributes[i] = b.ToProto()
@@ -103,19 +124,8 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 		datetimeAttributes[i] = b.ToProto()
 	}
 
-	stringAttributes := make([]*proto.StringAttributeV2, len(c.stringAttribute))
-	for i, b := range c.stringAttribute {
-		stringAttributes[i] = b.ToProto()
-	}
-
-	numberAttributes := make([]*proto.NumberAttributeV2, len(c.numberAttribute))
-	for i, b := range c.numberAttribute {
-		numberAttributes[i] = b.ToProto()
-	}
-
 	req := proto.CreateCredentialRequestV2{
 		SchemaId:           c.schemaId,
-		SchemaType:         c.schemaType,
 		IssuerDid:          c.issuerDid,
 		HolderDid:          c.holderDid,
 		Expiration:         c.expiration,
@@ -123,11 +133,12 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 		Signer:             c.signer,
 		ApiManagedHost:     c.apiManagedHost,
 		ConfigData:         c.configData,
+		StringAttributes:   stringAttributes,
+		IntegerAttributes:  integerAttributes,
+		DecimalAttributes:  decimalAttributes,
 		BooleanAttributes:  booleanAttributes,
 		DateAttributes:     dateAttributes,
 		DatetimeAttributes: datetimeAttributes,
-		StringAttributes:   stringAttributes,
-		NumberAttributes:   numberAttributes,
 		ProofType:          c.proof,
 	}
 

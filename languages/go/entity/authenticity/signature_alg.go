@@ -13,6 +13,6 @@ var (
 	SignatureAlgFromProto = map[string]SignatureAlg{
 		"ES256K": ECDSA,
 		"ENS":    ENS,
-		"BJJ": BJJ,
+		"BJJ":    BJJ,
 	}
 )

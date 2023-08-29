@@ -33,7 +33,7 @@ func (c CredentialProof) ToProto() *proto.CredentialProofV2 {
 	}
 	return &proto.CredentialProofV2{
 		SignatureProof: c.SignatureProof,
-		IntegrityProof:    integrityProof,
+		IntegrityProof: integrityProof,
 		SparseMtProof:  sparseMtProof,
 	}
 }

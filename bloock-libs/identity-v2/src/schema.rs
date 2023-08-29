@@ -60,7 +60,18 @@ pub fn get_json_ld_context_from_json(schema: String) -> Result<String, String> {
             }
         }
     }
-    Err("@id not found for the given schema and type".to_string())
+    Err("@id not found for the given schema".to_string())
+}
+
+pub fn get_schema_type_from_json(schema: String) -> Result<String, String> {
+    let value: Value = serde_json::from_str(&schema).map_err(|e| e.to_string())?;
+
+    if let Some(metadata) = value["$metadata"].as_object() {
+        if let Some(schema_type) = metadata["type"].as_str() {
+                return Ok(schema_type.to_string());
+        }
+    }
+    Err("schema type not found for the given schema".to_string())
 }
 
 #[cfg(test)]

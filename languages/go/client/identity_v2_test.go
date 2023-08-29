@@ -5,6 +5,7 @@ package client
 /*import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/bloock/bloock-sdk-go/v2"
 	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
@@ -88,25 +89,29 @@ func TestIdentityV2(t *testing.T) {
 		proofType := []identityV2.ProofType{identityV2.IntegrityProofType, identityV2.SparseMtProofType}
 
 		schema, err := identityClient.BuildSchema("Driving License", DrivingLicenseSchemaType, "1.0", "driving license schema", issuer).
-			AddNumberAttribute("License Type", "license_type", "license type", false).
+			AddIntegerAttribute("License Type", "license_type", "license type", false).
+			AddDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true).
 			AddStringAttribute("Nif", "nif", "nif", true).
-			AddStringAttribute("Country", "country", "country", true).
-			AddNumberAttribute("Birth Date", "birth_date", "birth date", true).
-			AddStringAttribute("Name", "name", "name", true).
-			AddStringAttribute("Second Surname", "second_surname", "second surname", true).
-			AddStringAttribute("First Surname", "first_surname", "first surname", true).
+			AddBooleanAttribute("Is Spanish", "is_spanish", "is spanish", true).
+			AddDateAttribute("Birth Date", "birth_date", "birth date", true).
+			AddDatetimeAttribute("Local Hour", "local_hour", "local hour", true).
+			AddStringEnumAttribute("Car Type", "car_type", "car type", true, []string{"big", "medium", "small"}).
+			AddIntegerEnumAttribute("Car Points", "car_points", "car points", true, []int64{1, 5, 10}).
+			AddDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, []float64{1.10, 1.20, 1.30}).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, schema.Id)
 
-		res, err := identityClient.BuildCredential(schema.Id, DrivingLicenseSchemaType, issuer, holderDid, expiration, 0).
-			WithNumberAttribute("birth_date", 921950325).
-			WithStringAttribute("country", "Spain").
-			WithStringAttribute("first_surname", "Tomas").
-			WithNumberAttribute("license_type", 1).
-			WithStringAttribute("name", "Eduard").
+		res, err := identityClient.BuildCredential(schema.Id, issuer, holderDid, expiration, 0).
+			WithIntegerAttribute("license_type", 1).
+			WithDecimalAttribute("quantity_oil", 2.25555).
 			WithStringAttribute("nif", "54688188M").
-			WithStringAttribute("second_surname", "Escoruela").
+			WithBooleanAttribute("is_spanish", true).
+			WithDateAttribute("birth_date", time.Date(1999, time.March, 20, 0, 0, 0, 0, time.UTC)).
+			WithDatetimeAttribute("local_hour", time.Now()).
+			WithStringAttribute("car_type", "big").
+			WithIntegerAttribute("car_points", 5).
+			WithDecimalAttribute("precision_wheels", 1.10).
 			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
 			WithProofType(proofType).
 			Build()
@@ -116,7 +121,6 @@ func TestIdentityV2(t *testing.T) {
 		assert.NotNil(t, res.Credential)
 
 		credential := res.Credential
-
 		assert.Equal(t, issuer, credential.Issuer)
 		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
@@ -126,16 +130,6 @@ func TestIdentityV2(t *testing.T) {
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
-
-		// for {
-		// 	proof, err := identityClient.GetCredentialProof(issuer, res.CredentialId)
-		// 	assert.NoError(t, err)
-		// 	assert.NotNil(t, proof.SignatureProof)
-
-		// 	if proof.SparseMtProof != "" && proof.IntegrityProof != "" {
-		// 		break
-		// 	}
-		// }
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
 			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
@@ -173,17 +167,17 @@ func TestIdentityV2(t *testing.T) {
 		assert.True(t, strings.Contains(issuer, "iden3"))
 
 		schema2, err := identityClient.BuildSchema("KYC Age Credential", KYCAgeSchemaType, "1.0", "kyc age schema", issuer).
-			AddDateAttribute("Birth Date", "birth_date", "your bityh date", true).
+			AddIntegerAttribute("Birth Date", "birth_date", "your bityh date", true).
 			AddStringAttribute("Name", "name", "your name", true).
-			AddNumberAttribute("Document Type", "document_type", "your document type", false).
+			AddIntegerAttribute("Document Type", "document_type", "your document type", false).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, schema2.Id)
 
-		res, err := identityClient.BuildCredential(schema2.Id, KYCAgeSchemaType, issuer, holderDid, expiration, 0).
-			WithDateAttribute("birth_date", 921950325).
+		res, err := identityClient.BuildCredential(schema2.Id, issuer, holderDid, expiration, 0).
+			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
-			WithNumberAttribute("document_type", 1).
+			WithIntegerAttribute("document_type", 1).
 			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
 			Build()
 		assert.NoError(t, err)
@@ -205,17 +199,6 @@ func TestIdentityV2(t *testing.T) {
 
 		_, err = identityClient.BuildIssuerSatePublisher(issuer).Build()
 		assert.Error(t, err)
-
-		// for {
-		// 	proof, err := identityClient.GetCredentialProof(issuer, res.CredentialId)
-		// 	assert.NoError(t, err)
-		// 	assert.NotNil(t, proof.SignatureProof)
-		// 	assert.Nil(t, proof.IntegrityProof)
-
-		// 	if proof.SparseMtProof != "" {
-		// 		break
-		// 	}
-		// }
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
 			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).

@@ -2,25 +2,25 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
-type NumberAttributeDescriptor struct {
+type DecimalAttributeDescriptor struct {
 	AttributeDescriptor
 }
 
-func NewNumberAttributeDescriptor(name string, id string, description string, required bool) NumberAttributeDescriptor {
+func NewDecimalAttributeDescriptor(name string, id string, description string, required bool) DecimalAttributeDescriptor {
 	a := AttributeDescriptor{
 		DisplayName: name,
 		Id:          id,
 		Description: description,
 		Required:    required,
 	}
-	return NumberAttributeDescriptor{
+	return DecimalAttributeDescriptor{
 		AttributeDescriptor: a,
 	}
 }
 
-func NewNumberAttributeDescriptorFromProto(s *proto.NumberAttributeDefinitionV2) NumberAttributeDescriptor {
+func NewDecimalAttributeDescriptorFromProto(s *proto.DecimalAttributeDefinitionV2) DecimalAttributeDescriptor {
 	if s == nil {
-		return NumberAttributeDescriptor{}
+		return DecimalAttributeDescriptor{}
 	}
 	a := AttributeDescriptor{
 		DisplayName: s.GetId(),
@@ -28,13 +28,13 @@ func NewNumberAttributeDescriptorFromProto(s *proto.NumberAttributeDefinitionV2)
 		Description: s.Description,
 		Required:    s.Required,
 	}
-	return NumberAttributeDescriptor{
+	return DecimalAttributeDescriptor{
 		AttributeDescriptor: a,
 	}
 }
 
-func (s NumberAttributeDescriptor) ToProto() *proto.NumberAttributeDefinitionV2 {
-	return &proto.NumberAttributeDefinitionV2{
+func (s DecimalAttributeDescriptor) ToProto() *proto.DecimalAttributeDefinitionV2 {
+	return &proto.DecimalAttributeDefinitionV2{
 		DisplayName: s.DisplayName,
 		Id:          s.Id,
 		Description: s.Description,

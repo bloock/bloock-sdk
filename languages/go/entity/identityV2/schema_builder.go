@@ -16,27 +16,50 @@ type SchemaBuilder struct {
 	issuerDid   string
 	configData  *proto.ConfigData
 
-	booleanAttributeDescriptor  []BooleanAttributeDescriptor
-	dateAttributeDescriptor     []DateAttributeDescriptor
-	datetimeAttributeDescriptor []DatetimeAttributeDescriptor
-	stringAttributeDescriptor   []StringAttributeDescriptor
-	numberAttributeDescriptor   []NumberAttributeDescriptor
+	stringAttributeDescriptor      []StringAttributeDescriptor
+	integerAttributeDescriptor     []IntegerAttributeDescriptor
+	decimalAttributeDescriptor     []DecimalAttributeDescriptor
+	booleanAttributeDescriptor     []BooleanAttributeDescriptor
+	dateAttributeDescriptor        []DateAttributeDescriptor
+	datetimeAttributeDescriptor    []DatetimeAttributeDescriptor
+	stringEnumAttributeDescriptor  []StringEnumAttributeDescriptor
+	integerEnumAttributeDescriptor []IntegerEnumAttributeDescriptor
+	decimalEnumAttributeDescriptor []DecimalEnumAttributeDescriptor
 }
 
 func NewSchemaBuilder(displayName string, schemaType, version, description, issuerDid string, configData *proto.ConfigData) SchemaBuilder {
 	return SchemaBuilder{
-		displayName:                 displayName,
-		schemaType:                  schemaType,
-		version:                     version,
-		description:                 description,
-		issuerDid:                   issuerDid,
-		configData:                  configData,
-		booleanAttributeDescriptor:  []BooleanAttributeDescriptor{},
-		dateAttributeDescriptor:     []DateAttributeDescriptor{},
-		datetimeAttributeDescriptor: []DatetimeAttributeDescriptor{},
-		stringAttributeDescriptor:   []StringAttributeDescriptor{},
-		numberAttributeDescriptor:   []NumberAttributeDescriptor{},
+		displayName:                    displayName,
+		schemaType:                     schemaType,
+		version:                        version,
+		description:                    description,
+		issuerDid:                      issuerDid,
+		configData:                     configData,
+		stringAttributeDescriptor:      []StringAttributeDescriptor{},
+		integerAttributeDescriptor:     []IntegerAttributeDescriptor{},
+		decimalAttributeDescriptor:     []DecimalAttributeDescriptor{},
+		booleanAttributeDescriptor:     []BooleanAttributeDescriptor{},
+		dateAttributeDescriptor:        []DateAttributeDescriptor{},
+		datetimeAttributeDescriptor:    []DatetimeAttributeDescriptor{},
+		stringEnumAttributeDescriptor:  []StringEnumAttributeDescriptor{},
+		integerEnumAttributeDescriptor: []IntegerEnumAttributeDescriptor{},
+		decimalEnumAttributeDescriptor: []DecimalEnumAttributeDescriptor{},
 	}
+}
+
+func (c SchemaBuilder) AddStringAttribute(name string, id string, description string, required bool) SchemaBuilder {
+	c.stringAttributeDescriptor = append(c.stringAttributeDescriptor, NewStringAttributeDescriptor(name, id, description, required))
+	return c
+}
+
+func (c SchemaBuilder) AddIntegerAttribute(name string, id string, description string, required bool) SchemaBuilder {
+	c.integerAttributeDescriptor = append(c.integerAttributeDescriptor, NewIntegerAttributeDescriptor(name, id, description, required))
+	return c
+}
+
+func (c SchemaBuilder) AddDecimalAttribute(name string, id string, description string, required bool) SchemaBuilder {
+	c.decimalAttributeDescriptor = append(c.decimalAttributeDescriptor, NewDecimalAttributeDescriptor(name, id, description, required))
+	return c
 }
 
 func (c SchemaBuilder) AddBooleanAttribute(name string, id string, description string, required bool) SchemaBuilder {
@@ -54,18 +77,38 @@ func (c SchemaBuilder) AddDatetimeAttribute(name string, id string, description 
 	return c
 }
 
-func (c SchemaBuilder) AddStringAttribute(name string, id string, description string, required bool) SchemaBuilder {
-	c.stringAttributeDescriptor = append(c.stringAttributeDescriptor, NewStringAttributeDescriptor(name, id, description, required))
+func (c SchemaBuilder) AddStringEnumAttribute(name string, id string, description string, required bool, enum []string) SchemaBuilder {
+	c.stringEnumAttributeDescriptor = append(c.stringEnumAttributeDescriptor, NewStringEnumAttributeDescriptor(name, id, description, required, enum))
 	return c
 }
 
-func (c SchemaBuilder) AddNumberAttribute(name string, id string, description string, required bool) SchemaBuilder {
-	c.numberAttributeDescriptor = append(c.numberAttributeDescriptor, NewNumberAttributeDescriptor(name, id, description, required))
+func (c SchemaBuilder) AddIntegerEnumAttribute(name string, id string, description string, required bool, enum []int64) SchemaBuilder {
+	c.integerEnumAttributeDescriptor = append(c.integerEnumAttributeDescriptor, NewIntegerEnumAttributeDescriptor(name, id, description, required, enum))
+	return c
+}
+
+func (c SchemaBuilder) AddDecimalEnumAttribute(name string, id string, description string, required bool, enum []float64) SchemaBuilder {
+	c.decimalEnumAttributeDescriptor = append(c.decimalEnumAttributeDescriptor, NewDecimalEnumAttributeDescriptor(name, id, description, required, enum))
 	return c
 }
 
 func (c SchemaBuilder) Build() (Schema, error) {
 	bridge := bridge.NewBloockBridge()
+
+	stringAttributesDescriptor := make([]*proto.StringAttributeDefinitionV2, len(c.stringAttributeDescriptor))
+	for i, b := range c.stringAttributeDescriptor {
+		stringAttributesDescriptor[i] = b.ToProto()
+	}
+
+	integerAttributesDescriptor := make([]*proto.IntegerAttributeDefinitionV2, len(c.integerAttributeDescriptor))
+	for i, b := range c.integerAttributeDescriptor {
+		integerAttributesDescriptor[i] = b.ToProto()
+	}
+
+	decimalAttributesDescriptor := make([]*proto.DecimalAttributeDefinitionV2, len(c.decimalAttributeDescriptor))
+	for i, b := range c.decimalAttributeDescriptor {
+		decimalAttributesDescriptor[i] = b.ToProto()
+	}
 
 	booleanAttributesDescriptor := make([]*proto.BooleanAttributeDefinitionV2, len(c.booleanAttributeDescriptor))
 	for i, b := range c.booleanAttributeDescriptor {
@@ -82,28 +125,37 @@ func (c SchemaBuilder) Build() (Schema, error) {
 		datetimeAttributesDescriptor[i] = b.ToProto()
 	}
 
-	stringAttributesDescriptor := make([]*proto.StringAttributeDefinitionV2, len(c.stringAttributeDescriptor))
-	for i, b := range c.stringAttributeDescriptor {
-		stringAttributesDescriptor[i] = b.ToProto()
+	stringEnumAttributesDescriptor := make([]*proto.StringEnumAttributeDefinitionV2, len(c.stringEnumAttributeDescriptor))
+	for i, b := range c.stringEnumAttributeDescriptor {
+		stringEnumAttributesDescriptor[i] = b.ToProto()
 	}
 
-	numberAttributesDescriptor := make([]*proto.NumberAttributeDefinitionV2, len(c.numberAttributeDescriptor))
-	for i, b := range c.numberAttributeDescriptor {
-		numberAttributesDescriptor[i] = b.ToProto()
+	integerEnumAttributesDescriptor := make([]*proto.IntegerEnumAttributeDefinitionV2, len(c.integerEnumAttributeDescriptor))
+	for i, b := range c.integerEnumAttributeDescriptor {
+		integerEnumAttributesDescriptor[i] = b.ToProto()
+	}
+
+	decimalEnumAttributesDescriptor := make([]*proto.DecimalEnumAttributeDefinitionV2, len(c.decimalEnumAttributeDescriptor))
+	for i, b := range c.decimalEnumAttributeDescriptor {
+		decimalEnumAttributesDescriptor[i] = b.ToProto()
 	}
 
 	req := proto.BuildSchemaRequestV2{
-		DisplayName:        c.displayName,
-		SchemaType:         c.schemaType,
-		Version:            c.version,
-		Description:        c.description,
-		IssuerDid:          c.issuerDid,
-		ConfigData:         c.configData,
-		BooleanAttributes:  booleanAttributesDescriptor,
-		DateAttributes:     dateAttributesDescriptor,
-		DatetimeAttributes: datetimeAttributesDescriptor,
-		StringAttributes:   stringAttributesDescriptor,
-		NumberAttributes:   numberAttributesDescriptor,
+		DisplayName:           c.displayName,
+		SchemaType:            c.schemaType,
+		Version:               c.version,
+		Description:           c.description,
+		IssuerDid:             c.issuerDid,
+		ConfigData:            c.configData,
+		StringAttributes:      stringAttributesDescriptor,
+		IntegerAttributes:     integerAttributesDescriptor,
+		DecimalAttributes:     decimalAttributesDescriptor,
+		BooleanAttributes:     booleanAttributesDescriptor,
+		DateAttributes:        dateAttributesDescriptor,
+		DatetimeAttributes:    datetimeAttributesDescriptor,
+		StringEnumAttributes:  stringEnumAttributesDescriptor,
+		IntegerEnumAttributes: integerEnumAttributesDescriptor,
+		DecimalEnumAttributes: decimalEnumAttributesDescriptor,
 	}
 
 	res, err := bridge.IdentityV2().BuildSchema(context.Background(), &req)

@@ -4,7 +4,10 @@ use bloock_hasher::{keccak::Keccak256, Hasher};
 use bloock_http::Client;
 use bloock_identity_rs::{
     did::parse_did,
-    schema::{get_json_ld_context_from_json, get_type_id_from_context, parse_to_schema_cid},
+    schema::{
+        get_json_ld_context_from_json, get_schema_type_from_json, get_type_id_from_context,
+        parse_to_schema_cid,
+    },
     vc::VC,
 };
 use bloock_signer::Signer;
@@ -138,7 +141,8 @@ impl<H: Client> IdentityServiceV2<H> {
         let mut attr = Map::new();
         for a in attributes {
             let r#type = a.r#type;
-            attr.insert(a.name, json!({ "data_type": r#type, "title": a.title, "description": a.description, "required": a.required }));
+            let r#enum = a.r#enum.unwrap_or(vec![]);
+            attr.insert(a.name, json!({ "data_type": r#type, "title": a.title, "description": a.description, "required": a.required, "enum": r#enum }));
         }
 
         let req = CreateSchemaRequest {
@@ -170,7 +174,6 @@ impl<H: Client> IdentityServiceV2<H> {
     pub async fn create_credential(
         &self,
         schema_id: String,
-        schema_type: String,
         issuer_did: String,
         holder_did: String,
         expiration: i64,
@@ -180,14 +183,14 @@ impl<H: Client> IdentityServiceV2<H> {
         proof_types: Vec<ProofType>,
         api_managed_host: String,
     ) -> BloockResult<CreateCredentialReceipt> {
-        attributes.push(("id".to_string(), Value::String(holder_did.clone())));
-        attributes.push(("type".to_string(), Value::String(schema_type.clone())));
-
         _ = Url::parse(&api_managed_host.clone())
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()));
 
         let schema_json = self.get_schema(schema_id.clone()).await?;
-        let context_json_ld = get_json_ld_context_from_json(schema_json.json)
+        let context_json_ld = get_json_ld_context_from_json(schema_json.json.clone())
+            .map_err(|e| IdentityErrorV2::SchemaParseError(e.to_string()))?;
+
+        let schema_type = get_schema_type_from_json(schema_json.json.clone())
             .map_err(|e| IdentityErrorV2::SchemaParseError(e.to_string()))?;
 
         let schema_json_ld = self.get_schema(context_json_ld.clone()).await?;
@@ -198,6 +201,9 @@ impl<H: Client> IdentityServiceV2<H> {
             Some(v) => v,
             None => 0,
         };
+
+        attributes.push(("id".to_string(), Value::String(holder_did.clone())));
+        attributes.push(("type".to_string(), Value::String(schema_type.clone())));
 
         let vc = VC::new(
             context_json_ld,
