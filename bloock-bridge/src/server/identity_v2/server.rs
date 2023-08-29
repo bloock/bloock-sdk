@@ -155,12 +155,40 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
 
         let client = identity_v2::configure(config_data.clone());
 
+        let string_attr = req.string_attributes.iter().map(|a| Attribute {
+            title: a.display_name.clone(),
+            name: a.id.clone(),
+            r#type: "string".to_string(),
+            description: a.description.clone(),
+            required: a.required.clone(),
+            r#enum: None,
+        });
+
+        let integer_attr = req.integer_attributes.iter().map(|a| Attribute {
+            title: a.display_name.clone(),
+            name: a.id.clone(),
+            r#type: "integer".to_string(),
+            description: a.description.clone(),
+            required: a.required.clone(),
+            r#enum: None,
+        });
+
+        let decimal_attr = req.decimal_attributes.iter().map(|a| Attribute {
+            title: a.display_name.clone(),
+            name: a.id.clone(),
+            r#type: "decimal".to_string(),
+            description: a.description.clone(),
+            required: a.required.clone(),
+            r#enum: None,
+        });
+
         let boolean_attr = req.boolean_attributes.iter().map(|a| Attribute {
             title: a.display_name.clone(),
             name: a.id.clone(),
             r#type: "boolean".to_string(),
             description: a.description.clone(),
             required: a.required.clone(),
+            r#enum: None,
         });
 
         let date_attr = req.date_attributes.iter().map(|a| Attribute {
@@ -169,6 +197,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             r#type: "date".to_string(),
             description: a.description.clone(),
             required: a.required.clone(),
+            r#enum: None,
         });
 
         let datetime_attr = req.datetime_attributes.iter().map(|a| Attribute {
@@ -177,30 +206,52 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             r#type: "datetime".to_string(),
             description: a.description.clone(),
             required: a.required.clone(),
+            r#enum: None,
         });
 
-        let string_attr = req.string_attributes.iter().map(|a| Attribute {
+        let string_enum_attr = req.string_enum_attributes.iter().map(|a| Attribute {
             title: a.display_name.clone(),
             name: a.id.clone(),
-            r#type: "string".to_string(),
+            r#type: "string_enum".to_string(),
             description: a.description.clone(),
             required: a.required.clone(),
+            r#enum: Some(a.r#enum.clone()),
         });
 
-        let number_attr = req.number_attributes.iter().map(|a| Attribute {
-            title: a.display_name.clone(),
-            name: a.id.clone(),
-            r#type: "integer".to_string(),
-            description: a.description.clone(),
-            required: a.required.clone(),
+        let integer_enum_attr = req.integer_enum_attributes.iter().map(|a| {
+            let ints: Vec<String> = a.r#enum.iter().map(|&a| a.to_string()).collect();
+            Attribute {
+                title: a.display_name.clone(),
+                name: a.id.clone(),
+                r#type: "integer_enum".to_string(),
+                description: a.description.clone(),
+                required: a.required.clone(),
+                r#enum: Some(ints),
+            }
+        });
+
+        let decimal_enum_attr = req.decimal_enum_attributes.iter().map(|a| {
+            let floats: Vec<String> = a.r#enum.iter().map(|&a| a.to_string()).collect();
+            Attribute {
+                title: a.display_name.clone(),
+                name: a.id.clone(),
+                r#type: "decimal_enum".to_string(),
+                description: a.description.clone(),
+                required: a.required.clone(),
+                r#enum: Some(floats),
+            }
         });
 
         let attributes: Vec<Attribute> = boolean_attr
             .into_iter()
+            .chain(string_attr.into_iter())
+            .chain(integer_attr.into_iter())
+            .chain(decimal_attr.into_iter())
             .chain(date_attr.into_iter())
             .chain(datetime_attr.into_iter())
-            .chain(string_attr.into_iter())
-            .chain(number_attr.into_iter())
+            .chain(string_enum_attr.into_iter())
+            .chain(integer_enum_attr.into_iter())
+            .chain(decimal_enum_attr.into_iter())
             .collect();
 
         let schema = client
@@ -261,6 +312,23 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             return Err("invalid key provided".to_string());
         };
 
+        let string_attr = req
+            .string_attributes
+            .iter()
+            .map(|a| (a.id.clone(), Value::String(String::from(a.value.clone()))));
+
+        let integer_attr = req
+            .integer_attributes
+            .iter()
+            .map(|a| (a.id.clone(), Value::Number(Number::from(a.value))));
+
+        let decimal_attr = req.decimal_attributes.iter().map(|a| {
+            (
+                a.id.clone(),
+                Value::Number(Number::from_f64(a.value).unwrap()),
+            )
+        });
+
         let boolean_attr = req
             .boolean_attributes
             .iter()
@@ -269,29 +337,20 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
         let date_attr = req
             .date_attributes
             .iter()
-            .map(|a| (a.id.clone(), Value::Number(Number::from(a.value))));
+            .map(|a| (a.id.clone(), Value::String(String::from(a.value.clone()))));
 
         let datetime_attr = req
             .datetime_attributes
             .iter()
-            .map(|a| (a.id.clone(), Value::Number(Number::from(a.value as i64))));
-
-        let string_attr = req
-            .string_attributes
-            .iter()
             .map(|a| (a.id.clone(), Value::String(String::from(a.value.clone()))));
-
-        let number_attr = req
-            .number_attributes
-            .iter()
-            .map(|a| (a.id.clone(), Value::Number(Number::from(a.value))));
 
         let attributes: Vec<(String, Value)> = boolean_attr
             .into_iter()
+            .chain(string_attr.into_iter())
+            .chain(integer_attr.into_iter())
+            .chain(decimal_attr.into_iter())
             .chain(date_attr.into_iter())
             .chain(datetime_attr.into_iter())
-            .chain(string_attr.into_iter())
-            .chain(number_attr.into_iter())
             .collect();
 
         let core_proof_types: Vec<ProofType> = req

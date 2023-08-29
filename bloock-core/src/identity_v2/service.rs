@@ -138,7 +138,8 @@ impl<H: Client> IdentityServiceV2<H> {
         let mut attr = Map::new();
         for a in attributes {
             let r#type = a.r#type;
-            attr.insert(a.name, json!({ "data_type": r#type, "title": a.title, "description": a.description, "required": a.required }));
+            let r#enum = a.r#enum.unwrap_or(vec![]);
+            attr.insert(a.name, json!({ "data_type": r#type, "title": a.title, "description": a.description, "required": a.required, "enum": r#enum }));
         }
 
         let req = CreateSchemaRequest {

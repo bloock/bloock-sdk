@@ -1,6 +1,6 @@
 use std::{collections::HashMap, ops::Rem};
 
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, NaiveTime};
 use num_bigint::{BigInt, BigUint};
 use num_traits::{FromPrimitive, Num};
 use rdf_types::{Object, Quad, Subject};
@@ -504,27 +504,27 @@ fn convert_string_to_xsd_value(
         | LDDataType::XSDNSPositiveInteger => {
             let r: u64 = value
                 .parse()
-                .map_err(|_e| MerklizeError::ErrorParsingNumber(value.to_string()))?;
+                .map_err(|_e| MerklizeError::ErrorParsingInteger(value.to_string()))?;
             result_value = RdfEntryValue::IntValue(r);
         }
         LDDataType::XSDNSDateTime => {
             let date_re = regex::Regex::new(r"^\d{4}-\d{2}-\d{2}$").unwrap();
             if date_re.is_match(value) {
-                result_value = RdfEntryValue::DateTime(
-                    chrono::DateTime::parse_from_str(value, "%Y-%m-%d")
-                        .unwrap()
-                        .naive_utc(),
-                );
+                let parsed_date = chrono::NaiveDate::parse_from_str(value, "%Y-%m-%d")
+                    .map_err(|e| MerklizeError::ErrorParsingDate(e.to_string()))?;
+                result_value = RdfEntryValue::DateTime(NaiveDateTime::new(parsed_date, NaiveTime::default()));
             } else {
                 result_value = RdfEntryValue::DateTime(
                     chrono::DateTime::parse_from_rfc3339(value)
-                        .unwrap()
+                        .map_err(|e| MerklizeError::ErrorParsingDateTime(e.to_string()))?
                         .naive_utc(),
                 );
             }
         }
         LDDataType::XSDDouble => {
-            let f = value.parse::<f64>().unwrap();
+            let f = value
+                .parse::<f64>()
+                .map_err(|e| MerklizeError::ErrorParsingDouble(e.to_string()))?;
             result_value = RdfEntryValue::StringValue(get_canonical_double(f));
         }
         LDDataType::Other => {

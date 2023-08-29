@@ -8,5 +8,6 @@ pub struct Attribute {
     pub name: String,
     pub r#type: String,
     pub description: String,
-    pub required: bool
+    pub required: bool,
+    pub r#enum: Option<Vec<String>>
 }

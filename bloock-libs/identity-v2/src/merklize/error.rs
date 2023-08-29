@@ -26,6 +26,12 @@ pub enum MerklizeError {
     ErrorPath(String),
     #[error("Unexpected type path")]
     InvalidPathType(),
-    #[error("Error parsing number: {0}")]
-    ErrorParsingNumber(String),
+    #[error("Error parsing integer: {0}")]
+    ErrorParsingInteger(String),
+    #[error("Error parsing double: {0}")]
+    ErrorParsingDouble(String),
+    #[error("Error parsing date: {0}")]
+    ErrorParsingDate(String),
+    #[error("Error parsing date-time: {0}")]
+    ErrorParsingDateTime(String),
 }

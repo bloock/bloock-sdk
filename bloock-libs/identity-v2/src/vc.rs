@@ -340,156 +340,12 @@ mod tests {
         vc
     }
 
-    fn create_schema() -> String {
-        let schema = json!({
-            "$metadata": {
-                "type": "DrivingLicense",
-                "uris": {
-                    "jsonLdContext": "https://api.bloock.dev/hosting/v1/ipfs/QmZ9BzmMGzLv4y9P6djYUm8sgQt47ZjECGAM8nToFW2qvt"
-                },
-                "version": "1.0"
-            },
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "description": "driving license schema",
-            "title": "Driving License",
-            "properties": {
-                "@context": {
-                    "type": [
-                        "string",
-                        "array",
-                        "object"
-                    ]
-                },
-                "expirationDate": {
-                    "format": "date-time",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "issuanceDate": {
-                    "format": "date-time",
-                    "type": "string"
-                },
-                "issuer": {
-                    "type": [
-                        "string",
-                        "object"
-                    ],
-                    "format": "uri",
-                    "properties": {
-                        "id": {
-                            "format": "uri",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "id"
-                    ]
-                },
-                "type": {
-                    "type": [
-                        "string",
-                        "array"
-                    ],
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "credentialSubject": {
-                    "description": "Stores the data of the credential",
-                    "title": "Credential subject",
-                    "properties": {
-                        "license_type": {
-                            "description": "license_type",
-                            "title": "License Type",
-                            "type": "integer"
-                        },
-                        "nif": {
-                            "description": "nif",
-                            "title": "NIF",
-                            "type": "string"
-                        },
-                        "country": {
-                            "description": "country",
-                            "title": "Country",
-                            "type": "string"
-                        },
-                        "birth_date": {
-                            "description": "birth_date",
-                            "title": "Birth Date",
-                            "type": "integer"
-                        },
-                        "name": {
-                            "description": "name",
-                            "title": "Name",
-                            "type": "string"
-                        },
-                        "second_surname": {
-                            "description": "second_surname",
-                            "title": "Second Surname",
-                            "type": "string"
-                        },
-                        "first_surname": {
-                            "description": "first_surname",
-                            "title": "First Surname",
-                            "type": "string"
-                        },
-                        "id": {
-                            "description": "Stores the DID of the subject that owns the credential",
-                            "title": "Credential subject ID",
-                            "format": "uri",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "nif",
-                        "country",
-                        "birth_date",
-                        "name",
-                        "second_surname",
-                        "first_surname"
-                    ],
-                    "type": "object"
-                },
-                "credentialSchema": {
-                    "properties": {
-                        "id": {
-                            "format": "uri",
-                            "type": "string"
-                        },
-                        "type": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "id",
-                        "type"
-                    ],
-                    "type": "object"
-                }
-            },
-            "required": [
-                "@context",
-                "id",
-                "issuanceDate",
-                "issuer",
-                "type",
-                "credentialSubject",
-                "credentialSchema"
-            ],
-            "type": "object"
-        });
-
-        schema.to_string()
-    }
-
     #[tokio::test]
     async fn test_e2e() {
         let vc = create_credential();
-        let schema = create_schema();
+        let schema = json!({"$metadata":{"type":"DrivingLicense","uris":{"jsonLdContext":"https://api.bloock.dev/hosting/v1/ipfs/QmZ9BzmMGzLv4y9P6djYUm8sgQt47ZjECGAM8nToFW2qvt"},"version":"1.0"},"$schema":"https://json-schema.org/draft/2020-12/schema","description":"driving license schema","title":"Driving License","properties":{"@context":{"type":["string","array","object"]},"expirationDate":{"format":"date-time","type":"string"},"id":{"type":"string"},"issuanceDate":{"format":"date-time","type":"string"},"issuer":{"type":["string","object"],"format":"uri","properties":{"id":{"format":"uri","type":"string"}},"required":["id"]},"type":{"type":["string","array"],"items":{"type":"string"}},"credentialSubject":{"description":"Stores the data of the credential","title":"Credential subject","properties":{"license_type":{"description":"license_type","title":"License Type","type":"integer"},"nif":{"description":"nif","title":"NIF","type":"string"},"country":{"description":"country","title":"Country","type":"string"},"birth_date":{"description":"birth_date","title":"Birth Date","type":"integer"},"name":{"description":"name","title":"Name","type":"string"},"second_surname":{"description":"second_surname","title":"Second Surname","type":"string"},"first_surname":{"description":"first_surname","title":"First Surname","type":"string"},"id":{"description":"Stores the DID of the subject that owns the credential","title":"Credential subject ID","format":"uri","type":"string"}},"required":["nif","country","birth_date","name","second_surname","first_surname"],"type":"object"},"credentialSchema":{"properties":{"id":{"format":"uri","type":"string"},"type":{"type":"string"}},"required":["id","type"],"type":"object"}},"required":["@context","id","issuanceDate","issuer","type","credentialSubject","credentialSchema"],"type":"object"});
 
-        vc.validate_schema(schema).unwrap();
+        vc.validate_schema(schema.to_string()).unwrap();
 
         let expected_claim_core_hex = "b9064d46baefd34de66fd370f0f3f0f92a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b00f79f40114c92814ee55fac46cdebf21d77ce80a5c9f439cd85a18461a888aa170000000000000000000000000000000000000000000000000000000000000000693b03e4000000003b5df36d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
         let expected_hash_index_value =
@@ -502,5 +358,513 @@ mod tests {
 
         assert_eq!(expected_hash_index_value, hash_index_value);
         assert_eq!(expected_claim_core_hex, core_claim_hex);
+    }
+
+    #[tokio::test]
+    async fn test_credential_type_enums() {
+        let schema = json!({"$metadata":{"uris":{"jsonLdContext":"https://api.bloock.dev/hosting/v1/ipfs/Qmbg1sZyaDstzEm6r5zLqbMNjhtmUFF7FwkZtVjeyge58z"},"version":"1.0","type":"TestCredentialEnums"},"$schema":"https://json-schema.org/draft/2020-12/schema","description":"test credential enums","title":"Test Credential Enums","properties":{"credentialSubject":{"description":"Stores the data of the credential","title":"Credential subject","properties":{"enum_number_example":{"description":"enum number example","enum":[10,20,30],"title":"Enum Number Example","type":"number"},"enum_integer_example":{"description":"enum integer example","enum":[10,20,30],"title":"Enum integer example","type":"integer"},"enum_string_example":{"description":"enum string example","enum":["hello","bye"],"title":"Enum String Example","type":"string"},"id":{"description":"Stores the DID of the subject that owns the credential","title":"Credential subject ID","format":"uri","type":"string"}},"required":["enum_number_example","enum_integer_example","enum_string_example"],"type":"object"},"@context":{"type":["string","array","object"]},"expirationDate":{"format":"date-time","type":"string"},"id":{"type":"string"},"issuanceDate":{"format":"date-time","type":"string"},"issuer":{"type":["string","object"],"format":"uri","properties":{"id":{"format":"uri","type":"string"}},"required":["id"]},"type":{"type":["string","array"],"items":{"type":"string"}},"credentialSchema":{"properties":{"id":{"format":"uri","type":"string"},"type":{"type":"string"}},"required":["id","type"],"type":"object"}},"required":["credentialSubject","@context","id","issuanceDate","issuer","type","credentialSchema"],"type":"object"});
+        let context_json_ld =
+            "https://api.bloock.dev/hosting/v1/ipfs/Qmbg1sZyaDstzEm6r5zLqbMNjhtmUFF7FwkZtVjeyge58z"
+                .to_string();
+        let schema_cid = "Qmd2tQAyGvTKM2wW9u8TJnCJFqNMGJ3cgyr4G3nooLbk8Z".to_string();
+        let schema_type = "TestCredentialEnums".to_string();
+        let issuer =
+            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+        let holder =
+            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+        let expiration_date =
+            NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
+                .unwrap();
+        let expiration = expiration_date.timestamp();
+        let issuance = NaiveDateTime::parse_from_str(
+            "2023-07-24T10:29:25.18351605Z",
+            "%Y-%m-%dT%H:%M:%S%.9fZ",
+        )
+        .unwrap();
+        let invalid_string_enum_attributes: Vec<(String, Value)> = vec![
+            (
+                "enum_number_example".to_string(),
+                Value::Number(Number::from(10)),
+            ),
+            (
+                "enum_integer_example".to_string(),
+                Value::Number(Number::from(20)),
+            ),
+            (
+                "enum_string_example".to_string(),
+                Value::String("invalid enum".to_string()),
+            ),
+        ];
+        let api_host = "https://api.bloock.dev".to_string();
+        let api_managed_host = "https://api.bloock.dev/identity".to_string();
+        let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
+        let version = 0;
+        let nonce: u64 = 3825417065;
+        let uuid = "5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string();
+
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            invalid_string_enum_attributes.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_err());
+        assert!(vc.get_core_claim().await.is_ok());
+
+        let invalid_integer_enum_attributes: Vec<(String, Value)> = vec![
+            (
+                "enum_number_example".to_string(),
+                Value::Number(Number::from(10)),
+            ),
+            (
+                "enum_integer_example".to_string(),
+                Value::Number(Number::from(0)),
+            ),
+            (
+                "enum_string_example".to_string(),
+                Value::String("hello".to_string()),
+            ),
+        ];
+
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            invalid_integer_enum_attributes.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_err());
+        assert!(vc.get_core_claim().await.is_ok());
+
+        let invalid_number_enum_attributes: Vec<(String, Value)> = vec![
+            (
+                "enum_number_example".to_string(),
+                Value::Number(Number::from(0)),
+            ),
+            (
+                "enum_integer_example".to_string(),
+                Value::Number(Number::from(20)),
+            ),
+            (
+                "enum_string_example".to_string(),
+                Value::String("hello".to_string()),
+            ),
+        ];
+
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            invalid_number_enum_attributes.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_err());
+        assert!(vc.get_core_claim().await.is_ok());
+
+        let valid_enum_attributes: Vec<(String, Value)> = vec![
+            (
+                "enum_number_example".to_string(),
+                Value::Number(Number::from(10)),
+            ),
+            (
+                "enum_integer_example".to_string(),
+                Value::Number(Number::from(20)),
+            ),
+            (
+                "enum_string_example".to_string(),
+                Value::String("bye".to_string()),
+            ),
+        ];
+
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            valid_enum_attributes.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_ok());
+        assert!(vc.get_core_claim().await.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_credential_type_string() {
+        let schema = json!({"$metadata":{"uris":{"jsonLdContext":"https://api.bloock.dev/hosting/v1/ipfs/QmZSfDnsovDpCbT6a6n3V5dXxJRcZXwSbyXS8hKJGEnVEU"},"version":"1.0","type":"TestStringTypes"},"$schema":"https://json-schema.org/draft/2020-12/schema","description":"test string types","title":"Test String Types","properties":{"credentialSubject":{"description":"Stores the data of the credential","title":"Credential subject","properties":{"string_uuid_example":{"description":"string uuid example","title":"String UUID Example","format":"uuid","type":"string"},"string_datetime_example":{"description":"string example datetime","title":"String Datetime Example","format":"date-time","type":"string"},"string_date_example":{"description":"string date example","title":"String Date Example","format":"date","type":"string"},"id":{"description":"Stores the DID of the subject that owns the credential","title":"Credential subject ID","format":"uri","type":"string"}},"required":["string_uuid_example","string_datetime_example","string_date_example"],"type":"object"},"@context":{"type":["string","array","object"]},"expirationDate":{"format":"date-time","type":"string"},"id":{"type":"string"},"issuanceDate":{"format":"date-time","type":"string"},"issuer":{"type":["string","object"],"format":"uri","properties":{"id":{"format":"uri","type":"string"}},"required":["id"]},"type":{"type":["string","array"],"items":{"type":"string"}},"credentialSchema":{"properties":{"id":{"format":"uri","type":"string"},"type":{"type":"string"}},"required":["id","type"],"type":"object"}},"required":["credentialSubject","@context","id","issuanceDate","issuer","type","credentialSchema"],"type":"object"});
+        let context_json_ld =
+            "https://api.bloock.dev/hosting/v1/ipfs/QmZSfDnsovDpCbT6a6n3V5dXxJRcZXwSbyXS8hKJGEnVEU"
+                .to_string();
+        let schema_cid = "QmY3Qn8k3NMoVFrVk76kLVoFUErCE8bZwj41jk8KaoYaDN".to_string();
+        let schema_type = "TestStringTypes".to_string();
+        let issuer =
+            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+        let holder =
+            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+        let expiration_date =
+            NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
+                .unwrap();
+        let expiration = expiration_date.timestamp();
+        let issuance = NaiveDateTime::parse_from_str(
+            "2023-07-24T10:29:25.18351605Z",
+            "%Y-%m-%dT%H:%M:%S%.9fZ",
+        )
+        .unwrap();
+        let invalid_string_datetime: Vec<(String, Value)> = vec![
+            (
+                "string_datetime_example".to_string(),
+                Value::String("2028-06-15".to_string()),
+            ),
+            (
+                "string_date_example".to_string(),
+                Value::String("2028-06-15".to_string()),
+            ),
+            (
+                "string_uuid_example".to_string(),
+                Value::String("5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string()),
+            ),
+        ];
+        let api_host = "https://api.bloock.dev".to_string();
+        let api_managed_host = "https://api.bloock.dev/identity".to_string();
+        let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
+        let version = 0;
+        let nonce: u64 = 3825417065;
+        let uuid = "5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string();
+
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            invalid_string_datetime.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_err());
+        assert!(vc.get_core_claim().await.is_ok());
+
+        let invalid_string_date: Vec<(String, Value)> = vec![
+            (
+                "string_datetime_example".to_string(),
+                Value::String("2023-07-24T10:29:25.18351605Z".to_string()),
+            ),
+            (
+                "string_date_example".to_string(),
+                Value::String("2023-07-24T10:29:25.18351605Z".to_string()),
+            ),
+            (
+                "string_uuid_example".to_string(),
+                Value::String("5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string()),
+            ),
+        ];
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            invalid_string_date.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_err());
+        assert!(vc.get_core_claim().await.is_ok());
+
+        let invalid_string_date_format: Vec<(String, Value)> = vec![
+            (
+                "string_datetime_example".to_string(),
+                Value::String("2023-07-24T10:29:25.18351605Z".to_string()),
+            ),
+            (
+                "string_date_example".to_string(),
+                Value::String("2023/08/01".to_string()),
+            ),
+            (
+                "string_uuid_example".to_string(),
+                Value::String("5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string()),
+            ),
+        ];
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            invalid_string_date_format.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.get_core_claim().await.is_err());
+
+        let valid_string_types: Vec<(String, Value)> = vec![
+            (
+                "string_datetime_example".to_string(),
+                Value::String("2023-07-24T10:29:25.18351605Z".to_string()),
+            ),
+            (
+                "string_date_example".to_string(),
+                Value::String("2028-06-15".to_string()),
+            ),
+            (
+                "string_uuid_example".to_string(),
+                Value::String("5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string()),
+            ),
+        ];
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            valid_string_types.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_ok());
+        assert!(vc.get_core_claim().await.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_credential_type_integer() {
+        let schema = json!({"$metadata":{"uris":{"jsonLdContext":"https://api.bloock.dev/hosting/v1/ipfs/QmNyUfBcJ23xSGVp3hbZu9s3nSeywD9KACxB3zoKisX8wc"},"version":"1.0","type":"TestIntegerTypes"},"$schema":"https://json-schema.org/draft/2020-12/schema","description":"test integer types","title":"Test Integer Types","properties":{"credentialSubject":{"description":"Stores the data of the credential","title":"Credential subject","properties":{"number_example":{"description":"number example","title":"Number Example","type":"number"},"integer_example":{"description":"integer example","title":"Integer Example","type":"integer"},"id":{"description":"Stores the DID of the subject that owns the credential","title":"Credential subject ID","format":"uri","type":"string"}},"required":["number_example","integer_example"],"type":"object"},"@context":{"type":["string","array","object"]},"expirationDate":{"format":"date-time","type":"string"},"id":{"type":"string"},"issuanceDate":{"format":"date-time","type":"string"},"issuer":{"type":["string","object"],"format":"uri","properties":{"id":{"format":"uri","type":"string"}},"required":["id"]},"type":{"type":["string","array"],"items":{"type":"string"}},"credentialSchema":{"properties":{"id":{"format":"uri","type":"string"},"type":{"type":"string"}},"required":["id","type"],"type":"object"}},"required":["credentialSubject","@context","id","issuanceDate","issuer","type","credentialSchema"],"type":"object"});
+        let context_json_ld =
+            "https://api.bloock.dev/hosting/v1/ipfs/QmNyUfBcJ23xSGVp3hbZu9s3nSeywD9KACxB3zoKisX8wc"
+                .to_string();
+        let schema_cid = "QmSt7zgfpaGppzdn852DzE1FdeYCzD1Ybu8ghjj8aD5aLv".to_string();
+        let schema_type = "TestIntegerTypes".to_string();
+        let issuer =
+            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+        let holder =
+            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+        let expiration_date =
+            NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
+                .unwrap();
+        let expiration = expiration_date.timestamp();
+        let issuance = NaiveDateTime::parse_from_str(
+            "2023-07-24T10:29:25.18351605Z",
+            "%Y-%m-%dT%H:%M:%S%.9fZ",
+        )
+        .unwrap();
+        let invalid_integer_decimal: Vec<(String, Value)> = vec![
+            (
+                "number_example".to_string(),
+                Value::Number(Number::from_f64(1.15).unwrap()),
+            ),
+            (
+                "integer_example".to_string(),
+                Value::Number(Number::from_f64(1.15).unwrap()),
+            ),
+        ];
+        let api_host = "https://api.bloock.dev".to_string();
+        let api_managed_host = "https://api.bloock.dev/identity".to_string();
+        let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
+        let version = 0;
+        let nonce: u64 = 3825417065;
+        let uuid = "5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string();
+
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            invalid_integer_decimal.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_err());
+        assert!(vc.get_core_claim().await.is_err());
+
+        let valid_integers: Vec<(String, Value)> = vec![
+            (
+                "number_example".to_string(),
+                Value::Number(Number::from(-15)),
+            ),
+            (
+                "integer_example".to_string(),
+                Value::Number(Number::from(15)),
+            ),
+        ];
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            valid_integers.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_ok());
+        assert!(vc.get_core_claim().await.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_credential_type_boolean() {
+        let schema = json!({"$metadata":{"uris":{"jsonLdContext":"https://api.bloock.dev/hosting/v1/ipfs/QmTtDtykMBAftUCsqivTJS3rqzvHKCjWfTQa1j5oJvYP7K"},"version":"1.0","type":"TestBooleanTypes"},"$schema":"https://json-schema.org/draft/2020-12/schema","description":"test boolean types","title":"Test Boolean Types","properties":{"credentialSubject":{"description":"Stores the data of the credential","title":"Credential subject","properties":{"boolean_example":{"description":"boolean example","title":"Boolean Example","type":"boolean"},"id":{"description":"Stores the DID of the subject that owns the credential","title":"Credential subject ID","format":"uri","type":"string"}},"required":["boolean_example"],"type":"object"},"@context":{"type":["string","array","object"]},"expirationDate":{"format":"date-time","type":"string"},"id":{"type":"string"},"issuanceDate":{"format":"date-time","type":"string"},"issuer":{"type":["string","object"],"format":"uri","properties":{"id":{"format":"uri","type":"string"}},"required":["id"]},"type":{"type":["string","array"],"items":{"type":"string"}},"credentialSchema":{"properties":{"id":{"format":"uri","type":"string"},"type":{"type":"string"}},"required":["id","type"],"type":"object"}},"required":["credentialSubject","@context","id","issuanceDate","issuer","type","credentialSchema"],"type":"object"});
+        let context_json_ld =
+            "https://api.bloock.dev/hosting/v1/ipfs/QmTtDtykMBAftUCsqivTJS3rqzvHKCjWfTQa1j5oJvYP7K"
+                .to_string();
+        let schema_cid = "QmYxWprBhUga6NnzzryaPNAtMWi9L9nLhwbkYQi5uqRnuW".to_string();
+        let schema_type = "TestBooleanTypes".to_string();
+        let issuer =
+            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+        let holder =
+            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+        let expiration_date =
+            NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
+                .unwrap();
+        let expiration = expiration_date.timestamp();
+        let issuance = NaiveDateTime::parse_from_str(
+            "2023-07-24T10:29:25.18351605Z",
+            "%Y-%m-%dT%H:%M:%S%.9fZ",
+        )
+        .unwrap();
+        let valid_boolean: Vec<(String, Value)> =
+            vec![("boolean_example".to_string(), Value::Bool(true))];
+        let api_host = "https://api.bloock.dev".to_string();
+        let api_managed_host = "https://api.bloock.dev/identity".to_string();
+        let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
+        let version = 0;
+        let nonce: u64 = 3825417065;
+        let uuid = "5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string();
+
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            valid_boolean.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_ok());
+        assert!(vc.get_core_claim().await.is_ok());
+
+        let invalid_boolean: Vec<(String, Value)> = vec![(
+            "boolean_example".to_string(),
+            Value::Number(Number::from(0)),
+        )];
+        let vc = VC::new_internal(
+            context_json_ld.clone(),
+            schema_cid.clone(),
+            schema_type.clone(),
+            issuer.clone(),
+            holder.clone(),
+            expiration,
+            invalid_boolean.clone(),
+            credential_type.clone(),
+            version,
+            issuance,
+            nonce,
+            uuid.clone(),
+            api_host.clone(),
+            api_managed_host.clone(),
+        )
+        .unwrap();
+
+        assert!(vc.validate_schema(schema.to_string()).is_err());
+        assert!(vc.get_core_claim().await.is_ok());
     }
 }

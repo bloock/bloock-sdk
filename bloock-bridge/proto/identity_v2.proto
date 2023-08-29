@@ -82,12 +82,13 @@ message CreateCredentialRequestV2 {
     optional int32 version = 7;
     Signer signer = 8;
     string api_managed_host = 9;
-    repeated BooleanAttributeV2 boolean_attributes = 10;
-    repeated DateAttributeV2 date_attributes = 11;
-    repeated DateTimeAttributeV2 datetime_attributes = 12;
-    repeated StringAttributeV2 string_attributes = 13;
-    repeated NumberAttributeV2 number_attributes = 14;
-    repeated ProofType proof_type = 15;
+    repeated StringAttributeV2 string_attributes = 10;
+    repeated IntegerAttributeV2 integer_attributes = 11;
+    repeated DecimalAttributeV2 decimal_attributes = 12;
+    repeated BooleanAttributeV2 boolean_attributes = 13;
+    repeated DateAttributeV2 date_attributes = 14;
+    repeated DateTimeAttributeV2 datetime_attributes = 15;
+    repeated ProofType proof_type = 16;
 }
 
 message BuildSchemaRequestV2 {
@@ -97,11 +98,15 @@ message BuildSchemaRequestV2 {
     string version = 4;
     string description = 5;
     string issuer_did = 6;
-    repeated BooleanAttributeDefinitionV2 boolean_attributes = 7;
-    repeated DateAttributeDefinitionV2 date_attributes = 8;
-    repeated DateTimeAttributeDefinitionV2 datetime_attributes = 9;
-    repeated StringAttributeDefinitionV2 string_attributes = 10;
-    repeated NumberAttributeDefinitionV2 number_attributes = 11;
+    repeated StringAttributeDefinitionV2 string_attributes = 7;
+    repeated IntegerAttributeDefinitionV2 integer_attributes = 8;
+    repeated DecimalAttributeDefinitionV2 decimal_attributes = 9;
+    repeated BooleanAttributeDefinitionV2 boolean_attributes = 10;
+    repeated DateAttributeDefinitionV2 date_attributes = 11;
+    repeated DateTimeAttributeDefinitionV2 datetime_attributes = 12;
+    repeated StringEnumAttributeDefinitionV2 string_enum_attributes = 13;
+    repeated IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 14;
+    repeated DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 15;
 }
 
 message CreateIssuerRequest {
