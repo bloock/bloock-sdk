@@ -2,7 +2,7 @@
 
 package client
 
-/*import (
+import (
 	"strings"
 	"testing"
 	"time"
@@ -211,4 +211,4 @@ func TestIdentityV2(t *testing.T) {
 		assert.NotNil(t, proof.SignatureProof)
 		assert.Equal(t, "", proof.IntegrityProof)
 	})
-}*/
+}
