@@ -15,15 +15,19 @@ export class DateAttribute extends Attribute<Date> {
 }
 
 function formatDateToString(date: Date): string {
-  const formatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
   const parts = formatter.formatToParts(date);
   const dateString = `${parts[0].value}-${parts[2].value}-${parts[4].value}`;
 
-  return dateString
+  return dateString;
 }
 
 function parseDateString(dateString: string): Date | null {
-  const dateParts = dateString.split('-');
+  const dateParts = dateString.split("-");
 
   if (dateParts.length !== 3) {
     return null;

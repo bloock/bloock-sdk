@@ -7,7 +7,12 @@ export class CredentialReceipt {
   credentialType: string;
   anchorId: number;
 
-  constructor(credential: Credential, credentialId: string, credentialType: string, anchorId: number) {
+  constructor(
+    credential: Credential,
+    credentialId: string,
+    credentialType: string,
+    anchorId: number
+  ) {
     this.credential = credential;
     this.credentialId = credentialId;
     this.credentialType = credentialType;
@@ -26,6 +31,11 @@ export class CredentialReceipt {
   static fromProto(
     r: identityEntitiesProto.CredentialReceiptV2
   ): CredentialReceipt {
-    return new CredentialReceipt(Credential.fromProto(r.credential!), r.credentialId, r.credentialType, r.anchorId!);
+    return new CredentialReceipt(
+      Credential.fromProto(r.credential!),
+      r.credentialId,
+      r.credentialType,
+      r.anchorId!
+    );
   }
 }

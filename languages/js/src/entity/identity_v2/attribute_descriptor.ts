@@ -8,7 +8,7 @@ export class AttributeDescriptor {
     displayName: string,
     technicalName: string,
     description: string,
-    required: boolean,
+    required: boolean
   ) {
     this.displayName = displayName;
     this.technicalName = technicalName;

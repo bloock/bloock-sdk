@@ -5,7 +5,11 @@ export class CredentialProof {
   integrityProof?: string;
   sparseMtProof?: string;
 
-  constructor(signatureProof: string, integrityProof?: string, sparseMtProof?: string) {
+  constructor(
+    signatureProof: string,
+    integrityProof?: string,
+    sparseMtProof?: string
+  ) {
     this.signatureProof = signatureProof;
     this.integrityProof = integrityProof;
     this.sparseMtProof = sparseMtProof;
@@ -19,9 +23,13 @@ export class CredentialProof {
     });
   }
 
-  static fromProto(r: identityEntitiesProto.CredentialProofV2): CredentialProof {
+  static fromProto(
+    r: identityEntitiesProto.CredentialProofV2
+  ): CredentialProof {
     return new CredentialProof(
-      r.signatureProof, r.integrityProof, r.sparseMtProof
+      r.signatureProof,
+      r.integrityProof,
+      r.sparseMtProof
     );
   }
 }

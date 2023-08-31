@@ -14,6 +14,11 @@ export class DateAttributeDescriptor extends AttributeDescriptor {
   static fromProto(
     r: identityEntitiesProto.DateAttributeDefinitionV2
   ): DateAttributeDescriptor {
-    return new DateAttributeDescriptor(r.displayName, r.id, r.description, r.required);
+    return new DateAttributeDescriptor(
+      r.displayName,
+      r.id,
+      r.description,
+      r.required
+    );
   }
 }

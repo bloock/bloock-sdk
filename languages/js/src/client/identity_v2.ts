@@ -1,11 +1,11 @@
 import { BloockBridge } from "../bridge/bridge";
 import { ConfigData } from "../bridge/proto/config";
 import {
-    CreateIssuerRequest,
-    GetIssuerListRequest,
-    GetIssuerByKeyRequest,
-    GetCredentialProofRequest,
-    RevokeCredentialRequestV2,
+  CreateIssuerRequest,
+  GetIssuerListRequest,
+  GetIssuerByKeyRequest,
+  GetCredentialProofRequest,
+  RevokeCredentialRequestV2
 } from "../bridge/proto/identity_v2";
 import { NewConfigData } from "../config/config";
 import { Credential } from "../entity/identity_v2/credential";
@@ -17,126 +17,148 @@ import { IssuerStatePublisher } from "../entity/identity_v2/issuer_state_publish
 import { SchemaBuilder } from "../entity/identity_v2/schema_builder";
 
 export class IdentityV2Client {
-    private bridge: BloockBridge;
-    private configData: ConfigData;
-    private apiManagedHost: string;
+  private bridge: BloockBridge;
+  private configData: ConfigData;
+  private apiManagedHost: string;
 
-    constructor(apiManagedHost: string, configData?: ConfigData) {
-        this.bridge = new BloockBridge();
-        this.configData = NewConfigData(configData);
-        this.apiManagedHost = apiManagedHost;
-    }
+  constructor(apiManagedHost: string, configData?: ConfigData) {
+    this.bridge = new BloockBridge();
+    this.configData = NewConfigData(configData);
+    this.apiManagedHost = apiManagedHost;
+  }
 
-    public createIssuer(issuerKey: IssuerKey, issuerParams?: IssuerParams): Promise<string> {
-        const request = CreateIssuerRequest.fromPartial({
-            issuerKey: issuerKey.toProto(),
-            issuerParams: issuerParams?.toProto(),
-            configData: this.configData
-        });
+  public createIssuer(
+    issuerKey: IssuerKey,
+    issuerParams?: IssuerParams
+  ): Promise<string> {
+    const request = CreateIssuerRequest.fromPartial({
+      issuerKey: issuerKey.toProto(),
+      issuerParams: issuerParams?.toProto(),
+      configData: this.configData
+    });
 
-        return this.bridge
-            .getIdentityV2()
-            .CreateIssuer(request)
-            .then(res => {
-                if (res.error) {
-                    throw res.error;
-                }
-                return res.did;
-            });
-    }
+    return this.bridge
+      .getIdentityV2()
+      .CreateIssuer(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.did;
+      });
+  }
 
-    public getIssuerList(): Promise<string[]> {
-        const request = GetIssuerListRequest.fromPartial({
-            configData: this.configData
-        });
+  public getIssuerList(): Promise<string[]> {
+    const request = GetIssuerListRequest.fromPartial({
+      configData: this.configData
+    });
 
-        return this.bridge
-            .getIdentityV2()
-            .GetIssuerList(request)
-            .then(res => {
-                if (res.error) {
-                    throw res.error;
-                }
-                return res.did;
-            });
-    }
+    return this.bridge
+      .getIdentityV2()
+      .GetIssuerList(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.did;
+      });
+  }
 
-    public getIssuerByKey(issuerKey: IssuerKey, issuerParams?: IssuerParams): Promise<string> {
-        const request = GetIssuerByKeyRequest.fromPartial({
-            issuerKey: issuerKey.toProto(),
-            issuerParams: issuerParams?.toProto(),
-            configData: this.configData
-        });
+  public getIssuerByKey(
+    issuerKey: IssuerKey,
+    issuerParams?: IssuerParams
+  ): Promise<string> {
+    const request = GetIssuerByKeyRequest.fromPartial({
+      issuerKey: issuerKey.toProto(),
+      issuerParams: issuerParams?.toProto(),
+      configData: this.configData
+    });
 
-        return this.bridge
-            .getIdentityV2()
-            .GetIssuerByKey(request)
-            .then(res => {
-                if (res.error) {
-                    throw res.error;
-                }
-                return res.did;
-            });
-    }
+    return this.bridge
+      .getIdentityV2()
+      .GetIssuerByKey(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.did;
+      });
+  }
 
-    public buildSchema(
-        displayName: string,
-        schemaType: string,
-        version: string,
-        description: string,
-        issuerDid: string
-    ): SchemaBuilder {
-        return new SchemaBuilder(displayName, schemaType, version, description, issuerDid, this.configData);
-    }
+  public buildSchema(
+    displayName: string,
+    schemaType: string,
+    version: string,
+    description: string,
+    issuerDid: string
+  ): SchemaBuilder {
+    return new SchemaBuilder(
+      displayName,
+      schemaType,
+      version,
+      description,
+      issuerDid,
+      this.configData
+    );
+  }
 
-    public buildCredential(
-        schemaId: string,
-        issuerDid: string,
-        holderDid: string,
-        expiration: number,
-        version: number,
-    ): CredentialBuilder {
-        return new CredentialBuilder(schemaId, issuerDid, holderDid, expiration, version, this.apiManagedHost, this.configData);
-    }
+  public buildCredential(
+    schemaId: string,
+    issuerDid: string,
+    holderDid: string,
+    expiration: number,
+    version: number
+  ): CredentialBuilder {
+    return new CredentialBuilder(
+      schemaId,
+      issuerDid,
+      holderDid,
+      expiration,
+      version,
+      this.apiManagedHost,
+      this.configData
+    );
+  }
 
-    public buildIssuerStatePublisher(
-        issuerDid: string,
-    ): IssuerStatePublisher {
-        return new IssuerStatePublisher(issuerDid, this.configData);
-    }
+  public buildIssuerStatePublisher(issuerDid: string): IssuerStatePublisher {
+    return new IssuerStatePublisher(issuerDid, this.configData);
+  }
 
-    public getCredentialProof(issuerDid: string, credentialId: string): Promise<CredentialProof> {
-        const request = GetCredentialProofRequest.fromPartial({
-            issuerDid: issuerDid,
-            credentialId: credentialId,
-            configData: this.configData
-        });
+  public getCredentialProof(
+    issuerDid: string,
+    credentialId: string
+  ): Promise<CredentialProof> {
+    const request = GetCredentialProofRequest.fromPartial({
+      issuerDid: issuerDid,
+      credentialId: credentialId,
+      configData: this.configData
+    });
 
-        return this.bridge
-            .getIdentityV2()
-            .GetCredentialProof(request)
-            .then(res => {
-                if (res.error) {
-                    throw res.error;
-                }
-                return CredentialProof.fromProto(res.proof!);
-            });
-    }
+    return this.bridge
+      .getIdentityV2()
+      .GetCredentialProof(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return CredentialProof.fromProto(res.proof!);
+      });
+  }
 
-    public revokeCredential(credential: Credential): Promise<boolean> {
-        const request = RevokeCredentialRequestV2.fromPartial({
-            configData: this.configData,
-            credential: credential.toProto()
-        });
+  public revokeCredential(credential: Credential): Promise<boolean> {
+    const request = RevokeCredentialRequestV2.fromPartial({
+      configData: this.configData,
+      credential: credential.toProto()
+    });
 
-        return this.bridge
-            .getIdentityV2()
-            .RevokeCredential(request)
-            .then(res => {
-                if (res.error) {
-                    throw res.error;
-                }
-                return res.result!.success!;
-            });
-    }
+    return this.bridge
+      .getIdentityV2()
+      .RevokeCredential(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.result!.success!;
+      });
+  }
 }

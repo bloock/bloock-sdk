@@ -46,10 +46,7 @@ export class CredentialBuilder {
     return this;
   }
 
-  public withStringAttribute(
-    key: string,
-    value: string
-  ): CredentialBuilder {
+  public withStringAttribute(key: string, value: string): CredentialBuilder {
     this.stringAttributes.push(new StringAttribute(key, value));
     return this;
   }

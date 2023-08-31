@@ -6,8 +6,8 @@ export enum ProofType {
 }
 
 export namespace ProofType {
-  export function toProto(this: ProofType): ProofTypeProto {
-    switch (this) {
+  export function toProto(proofType: ProofType): ProofTypeProto {
+    switch (proofType) {
       case ProofType.INTEGRITY_PROOF_TYPE:
         return ProofTypeProto.IntegrityProofType;
       case ProofType.SPARSE_MT_PROOF_TYPE:

@@ -5,13 +5,21 @@ import { BooleanAttribute } from "./boolean_attribute";
 import { CredentialReceipt } from "./credential_receipt";
 import { DateAttribute } from "./date_attribute";
 import { DateTimeAttribute } from "./datetime_attribute";
-import { BooleanAttributeV2, DateAttributeV2, DateTimeAttributeV2, DecimalAttributeV2, IntegerAttributeV2, ProofType as ProofTypeProto, StringAttributeV2 } from "../../bridge/proto/identity_entities_v2";
+import {
+  BooleanAttributeV2,
+  DateAttributeV2,
+  DateTimeAttributeV2,
+  DecimalAttributeV2,
+  IntegerAttributeV2,
+  ProofType as ProofTypeProto,
+  StringAttributeV2
+} from "../../bridge/proto/identity_entities_v2";
 import { Signer as SignerProto } from "../../bridge/proto/authenticity_entities";
 import { Signer } from "../authenticity/signer";
 import { DecimalAttribute } from "./decimal_attribute";
 import { IntegerAttribute } from "./integer_attribute";
 import { StringAttribute } from "./string_attribute";
-import { ProofType, ProofTypeMethods } from "./proof_type";
+import { ProofType } from "./proof_type";
 
 export class CredentialBuilder {
   schemaId: string;
@@ -31,14 +39,22 @@ export class CredentialBuilder {
   dateAttributes: DateAttributeV2[];
   dateTimeAttributes: DateTimeAttributeV2[];
 
-  constructor(schemaId: string, issuerDid: string, holderDid: string, expiration: number, version: number, apiManagedHost: string, configData: ConfigData) {
+  constructor(
+    schemaId: string,
+    issuerDid: string,
+    holderDid: string,
+    expiration: number,
+    version: number,
+    apiManagedHost: string,
+    configData: ConfigData
+  ) {
     this.schemaId = schemaId;
     this.issuerDid = issuerDid;
     this.holderDid = holderDid;
     this.expiration = expiration;
     this.version = version;
     this.configData = configData;
-    this.apiManagedHost = apiManagedHost
+    this.apiManagedHost = apiManagedHost;
 
     this.proof = [];
     this.signer = undefined;
@@ -50,10 +66,7 @@ export class CredentialBuilder {
     this.dateTimeAttributes = [];
   }
 
-  public withStringAttribute(
-    key: string,
-    value: string
-  ): CredentialBuilder {
+  public withStringAttribute(key: string, value: string): CredentialBuilder {
     this.stringAttributes.push(new StringAttribute(key, value));
     return this;
   }
@@ -89,9 +102,9 @@ export class CredentialBuilder {
   }
 
   public withProofType(proofs: ProofType[]): CredentialBuilder {
-    proofs.forEach((proof) => {
-      this.proof.push(ProofType.toProto(proof))
-    })
+    proofs.forEach(proof => {
+      this.proof.push(ProofType.toProto(proof));
+    });
     return this;
   }
 
@@ -113,7 +126,7 @@ export class CredentialBuilder {
       decimalAttributes: this.decimalAttributes,
       booleanAttributes: this.booleanAttributes,
       dateAttributes: this.dateAttributes,
-      datetimeAttributes: this.dateTimeAttributes,
+      datetimeAttributes: this.dateTimeAttributes
     });
 
     return bridge

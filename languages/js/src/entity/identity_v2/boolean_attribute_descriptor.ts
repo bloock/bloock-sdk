@@ -14,6 +14,11 @@ export class BooleanAttributeDescriptor extends AttributeDescriptor {
   static fromProto(
     r: identityEntitiesProto.BooleanAttributeDefinitionV2
   ): BooleanAttributeDescriptor {
-    return new BooleanAttributeDescriptor(r.displayName, r.id, r.description, r.required);
+    return new BooleanAttributeDescriptor(
+      r.displayName,
+      r.id,
+      r.description,
+      r.required
+    );
   }
 }

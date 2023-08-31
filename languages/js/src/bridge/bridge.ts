@@ -12,7 +12,10 @@ import {
   EncryptionServiceClientImpl
 } from "./proto/encryption";
 import { IdentityService, IdentityServiceClientImpl } from "./proto/identity";
-import { IdentityServiceV2, IdentityServiceV2ClientImpl } from "./proto/identity_v2";
+import {
+  IdentityServiceV2,
+  IdentityServiceV2ClientImpl
+} from "./proto/identity_v2";
 import {
   IntegrityService,
   IntegrityServiceClientImpl

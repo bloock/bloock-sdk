@@ -62,12 +62,7 @@ export class SchemaBuilder {
     required: boolean
   ): SchemaBuilder {
     this.stringAttributes.push(
-      new StringAttributeDescriptor(
-        name,
-        technicalName,
-        description,
-        required
-      )
+      new StringAttributeDescriptor(name, technicalName, description, required)
     );
     return this;
   }
@@ -76,7 +71,7 @@ export class SchemaBuilder {
     name: string,
     technicalName: string,
     description: string,
-    required: boolean,
+    required: boolean
   ): SchemaBuilder {
     this.integerAttributes.push(
       new IntegerAttributeDescriptor(name, technicalName, description, required)
@@ -88,7 +83,7 @@ export class SchemaBuilder {
     name: string,
     technicalName: string,
     description: string,
-    required: boolean,
+    required: boolean
   ): SchemaBuilder {
     this.decimalAttributes.push(
       new IntegerAttributeDescriptor(name, technicalName, description, required)
@@ -127,7 +122,12 @@ export class SchemaBuilder {
     required: boolean
   ): SchemaBuilder {
     this.dateTimeAttributes.push(
-      new DateTimeAttributeDescriptor(name, technicalName, description, required)
+      new DateTimeAttributeDescriptor(
+        name,
+        technicalName,
+        description,
+        required
+      )
     );
     return this;
   }
@@ -140,7 +140,13 @@ export class SchemaBuilder {
     enumeration: string[]
   ): SchemaBuilder {
     this.stringEnumAttributes.push(
-      new StringEnumAttributeDescriptor(name, technicalName, description, required, enumeration)
+      new StringEnumAttributeDescriptor(
+        name,
+        technicalName,
+        description,
+        required,
+        enumeration
+      )
     );
     return this;
   }
@@ -153,7 +159,13 @@ export class SchemaBuilder {
     enumeration: number[]
   ): SchemaBuilder {
     this.integerEnumAttributes.push(
-      new IntegerEnumAttributeDescriptor(name, technicalName, description, required, enumeration)
+      new IntegerEnumAttributeDescriptor(
+        name,
+        technicalName,
+        description,
+        required,
+        enumeration
+      )
     );
     return this;
   }
@@ -166,7 +178,13 @@ export class SchemaBuilder {
     enumeration: number[]
   ): SchemaBuilder {
     this.decimalEnumAttributes.push(
-      new DecimalEnumAttributeDescriptor(name, technicalName, description, required, enumeration)
+      new DecimalEnumAttributeDescriptor(
+        name,
+        technicalName,
+        description,
+        required,
+        enumeration
+      )
     );
     return this;
   }
@@ -189,7 +207,7 @@ export class SchemaBuilder {
       datetimeAttributes: this.dateTimeAttributes.map(a => a.toProto()),
       stringEnumAttributes: this.stringEnumAttributes.map(a => a.toProto()),
       integerEnumAttributes: this.integerEnumAttributes.map(a => a.toProto()),
-      decimalEnumAttributes: this.decimalEnumAttributes.map(a => a.toProto()),
+      decimalEnumAttributes: this.decimalEnumAttributes.map(a => a.toProto())
     });
 
     return bridge
