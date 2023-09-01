@@ -1,13 +1,16 @@
 package com.bloock.sdk.entity.identity_v2;
 
-import java.util.List;
-
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
+import java.util.List;
 
 public class IntegerEnumAttributeDescriptor extends AttributeDescriptor {
   private List<Long> enumeration;
 
-  public IntegerEnumAttributeDescriptor(String displayName, String technicalName, String description, Boolean required,
+  public IntegerEnumAttributeDescriptor(
+      String displayName,
+      String technicalName,
+      String description,
+      Boolean required,
       List<Long> enumeration) {
     super(displayName, technicalName, description, required);
     this.enumeration = enumeration;
@@ -15,8 +18,12 @@ public class IntegerEnumAttributeDescriptor extends AttributeDescriptor {
 
   public static IntegerEnumAttributeDescriptor fromProto(
       IdentityEntitiesV2.IntegerEnumAttributeDefinitionV2 res) {
-    return new IntegerEnumAttributeDescriptor(res.getDisplayName(), res.getId(), res.getDescription(),
-        res.getRequired(), res.getEnumList());
+    return new IntegerEnumAttributeDescriptor(
+        res.getDisplayName(),
+        res.getId(),
+        res.getDescription(),
+        res.getRequired(),
+        res.getEnumList());
   }
 
   public IdentityEntitiesV2.IntegerEnumAttributeDefinitionV2 toProto() {

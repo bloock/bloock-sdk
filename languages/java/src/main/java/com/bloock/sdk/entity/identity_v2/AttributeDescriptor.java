@@ -6,7 +6,8 @@ public class AttributeDescriptor {
   String description;
   Boolean required;
 
-  public AttributeDescriptor(String displayName, String technicalName, String description, Boolean required) {
+  public AttributeDescriptor(
+      String displayName, String technicalName, String description, Boolean required) {
     this.displayName = displayName;
     this.technicalName = technicalName;
     this.description = description;

@@ -1,9 +1,7 @@
 package com.bloock.sdk.entity.identity_v2;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
+import java.time.LocalDate;
 
 public class DateAttribute extends Attribute<LocalDate> {
   public DateAttribute(String id, LocalDate value) {
@@ -11,16 +9,17 @@ public class DateAttribute extends Attribute<LocalDate> {
   }
 
   public static DateAttribute fromProto(IdentityEntitiesV2.DateAttributeV2 res) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    LocalDate parsedDate = LocalDate.parse(res.getValue(), formatter);
+    LocalDate parsedDate = LocalDate.parse(res.getValue());
 
     return new DateAttribute(res.getId(), parsedDate);
   }
 
   public IdentityEntitiesV2.DateAttributeV2 toProto() {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    String formattedDate = this.value.format(formatter);
+    String formattedDate = this.value.toString();
 
-    return IdentityEntitiesV2.DateAttributeV2.newBuilder().setId(this.id).setValue(formattedDate).build();
+    return IdentityEntitiesV2.DateAttributeV2.newBuilder()
+        .setId(this.id)
+        .setValue(formattedDate)
+        .build();
   }
 }

@@ -19,11 +19,21 @@ public class CredentialProof {
   }
 
   public IdentityEntitiesV2.CredentialProofV2 toProto() {
-    return IdentityEntitiesV2.CredentialProofV2.newBuilder()
-        .setSignatureProof(this.singatureProof)
-        .setIntegrityProof(this.integrityProof)
-        .setSparseMtProof(this.sparseMtProof)
-        .build();
+    IdentityEntitiesV2.CredentialProofV2.Builder builder =
+        IdentityEntitiesV2.CredentialProofV2.newBuilder();
+    if (!this.singatureProof.isEmpty()) {
+      builder.setSignatureProof(this.singatureProof);
+    }
+
+    if (!this.integrityProof.isEmpty()) {
+      builder.setIntegrityProof(this.integrityProof);
+    }
+
+    if (!this.sparseMtProof.isEmpty()) {
+      builder.setSparseMtProof(this.sparseMtProof);
+    }
+
+    return builder.build();
   }
 
   public String getSignatureProof() {

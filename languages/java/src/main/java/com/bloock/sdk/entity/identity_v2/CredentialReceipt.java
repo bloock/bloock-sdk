@@ -8,7 +8,8 @@ public class CredentialReceipt {
   private final String credentialType;
   private final long anchorId;
 
-  public CredentialReceipt(Credential credential, String credentialId, String credentialType, long anchorId) {
+  public CredentialReceipt(
+      Credential credential, String credentialId, String credentialType, long anchorId) {
     this.credential = credential;
     this.credentialId = credentialId;
     this.credentialType = credentialType;
@@ -16,7 +17,9 @@ public class CredentialReceipt {
   }
 
   public static CredentialReceipt fromProto(IdentityEntitiesV2.CredentialReceiptV2 res) {
-    return new CredentialReceipt(Credential.fromProto(res.getCredential()), res.getCredentialId(),
+    return new CredentialReceipt(
+        Credential.fromProto(res.getCredential()),
+        res.getCredentialId(),
         res.getCredentialType(),
         res.getAnchorId());
   }

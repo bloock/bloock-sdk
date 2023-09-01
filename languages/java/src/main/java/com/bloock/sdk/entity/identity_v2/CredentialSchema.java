@@ -16,7 +16,10 @@ public class CredentialSchema {
   }
 
   public IdentityEntitiesV2.CredentialSchemaV2 toProto() {
-    return IdentityEntitiesV2.CredentialSchemaV2.newBuilder().setId(this.id).setType(this.type).build();
+    return IdentityEntitiesV2.CredentialSchemaV2.newBuilder()
+        .setId(this.id)
+        .setType(this.type)
+        .build();
   }
 
   public String getCredentialType() {

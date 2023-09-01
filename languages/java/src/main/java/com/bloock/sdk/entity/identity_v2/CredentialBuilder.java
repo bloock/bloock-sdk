@@ -1,16 +1,15 @@
 package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.Config;
-import com.bloock.sdk.bridge.proto.IdentityV2;
-import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
-import com.bloock.sdk.bridge.proto.Shared;
 import com.bloock.sdk.bridge.proto.AuthenticityEntities.Signer;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.bloock.sdk.bridge.proto.Config;
+import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
+import com.bloock.sdk.bridge.proto.IdentityV2;
+import com.bloock.sdk.bridge.proto.Shared;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CredentialBuilder {
   private final String schemaId;
@@ -19,7 +18,7 @@ public class CredentialBuilder {
   private final Long expiration;
   private final int version;
   private final String apiManagedHost;
-  private final ArrayList<IdentityEntitiesV2.ProofType> proofTypes;
+  private final ArrayList<com.bloock.sdk.bridge.proto.IdentityEntitiesV2.ProofType> proofTypes;
   private Signer signer;
   private final Config.ConfigData configData;
 
@@ -30,8 +29,14 @@ public class CredentialBuilder {
   private final List<IdentityEntitiesV2.IntegerAttributeV2> integerAttributes;
   private final List<IdentityEntitiesV2.DecimalAttributeV2> decimalAttributes;
 
-  public CredentialBuilder(String schemaId, String issuerDid, String holderKey, Long expiration, int version,
-      String apiManagedHost, Config.ConfigData configData) {
+  public CredentialBuilder(
+      String schemaId,
+      String issuerDid,
+      String holderKey,
+      Long expiration,
+      int version,
+      String apiManagedHost,
+      Config.ConfigData configData) {
     this.schemaId = schemaId;
     this.issuerDid = issuerDid;
     this.holderKey = holderKey;
@@ -95,23 +100,24 @@ public class CredentialBuilder {
   public CredentialReceipt build() throws Exception {
     Bridge bridge = new Bridge();
 
-    IdentityV2.CreateCredentialRequestV2 req = IdentityV2.CreateCredentialRequestV2.newBuilder()
-        .setConfigData(this.configData)
-        .setSchemaId(this.schemaId)
-        .setIssuerDid(this.issuerDid)
-        .setHolderDid(this.holderKey)
-        .setExpiration(this.expiration)
-        .setVersion(this.version)
-        .setApiManagedHost(this.apiManagedHost)
-        .setSigner(this.signer)
-        .addProofType(this.proofTypes)
-        .addAllStringAttributes(this.stringAttributes)
-        .addAllIntegerAttributes(this.integerAttributes)
-        .addAllDecimalAttributes(this.decimalAttributes)
-        .addAllBooleanAttributes(this.booleanAttributes)
-        .addAllDateAttributes(this.dateAttributes)
-        .addAllDatetimeAttributes(this.datetimeAttributes)
-        .build();
+    IdentityV2.CreateCredentialRequestV2 req =
+        IdentityV2.CreateCredentialRequestV2.newBuilder()
+            .setConfigData(this.configData)
+            .setSchemaId(this.schemaId)
+            .setIssuerDid(this.issuerDid)
+            .setHolderDid(this.holderKey)
+            .setExpiration(this.expiration)
+            .setVersion(this.version)
+            .setApiManagedHost(this.apiManagedHost)
+            .setSigner(this.signer)
+            .addAllProofType(this.proofTypes)
+            .addAllStringAttributes(this.stringAttributes)
+            .addAllIntegerAttributes(this.integerAttributes)
+            .addAllDecimalAttributes(this.decimalAttributes)
+            .addAllBooleanAttributes(this.booleanAttributes)
+            .addAllDateAttributes(this.dateAttributes)
+            .addAllDatetimeAttributes(this.datetimeAttributes)
+            .build();
 
     IdentityV2.CreateCredentialResponseV2 response = bridge.getIdentityV2().createCredential(req);
 

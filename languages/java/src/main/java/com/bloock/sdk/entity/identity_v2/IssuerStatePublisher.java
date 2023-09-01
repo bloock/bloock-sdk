@@ -25,11 +25,12 @@ public class IssuerStatePublisher {
   public IssuerStateReceipt build() throws Exception {
     Bridge bridge = new Bridge();
 
-    IdentityV2.PublishIssuerStateRequest req = IdentityV2.PublishIssuerStateRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setIssuerDid(this.issuerDid)
-        .setSigner(this.signer)
-        .build();
+    IdentityV2.PublishIssuerStateRequest req =
+        IdentityV2.PublishIssuerStateRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setIssuerDid(this.issuerDid)
+            .setSigner(this.signer)
+            .build();
 
     IdentityV2.PublishIssuerStateResponse response = bridge.getIdentityV2().publishIssuerState(req);
 

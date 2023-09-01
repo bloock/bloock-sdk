@@ -2,10 +2,9 @@ package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.Config;
-import com.bloock.sdk.bridge.proto.IdentityV2;
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
+import com.bloock.sdk.bridge.proto.IdentityV2;
 import com.bloock.sdk.bridge.proto.Shared;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +26,14 @@ public class SchemaBuilder {
   private final List<IdentityEntitiesV2.IntegerEnumAttributeDefinitionV2> integerEnumAttributes;
   private final List<IdentityEntitiesV2.DecimalEnumAttributeDefinitionV2> decimalEnumAttributes;
 
-  public SchemaBuilder(String displayName, String schemaType, String version, String description, String issuerDid, Config.ConfigData configData) {
-    this.displayName = displayName; 
+  public SchemaBuilder(
+      String displayName,
+      String schemaType,
+      String version,
+      String description,
+      String issuerDid,
+      Config.ConfigData configData) {
+    this.displayName = displayName;
     this.schemaType = schemaType;
     this.version = version;
     this.description = description;
@@ -46,57 +51,81 @@ public class SchemaBuilder {
     this.decimalEnumAttributes = new ArrayList<>();
   }
 
-  public SchemaBuilder addStringAttribute(String name, String technicalName, String description, Boolean required) {
+  public SchemaBuilder addStringAttribute(
+      String name, String technicalName, String description, Boolean required) {
     this.stringAttributes.add(
         new StringAttributeDescriptor(name, technicalName, description, required).toProto());
     return this;
   }
 
-  public SchemaBuilder addIntegerAttribute(String name, String technicalName, String description, Boolean required) {
+  public SchemaBuilder addIntegerAttribute(
+      String name, String technicalName, String description, Boolean required) {
     this.integerAttributes.add(
         new IntegerAttributeDescriptor(name, technicalName, description, required).toProto());
     return this;
   }
 
-  public SchemaBuilder addDecimalAttribute(String name, String technicalName, String description, Boolean required) {
+  public SchemaBuilder addDecimalAttribute(
+      String name, String technicalName, String description, Boolean required) {
     this.decimalAttributes.add(
         new DecimalAttributeDescriptor(name, technicalName, description, required).toProto());
     return this;
   }
 
-  public SchemaBuilder addBooleanAttribute(String name, String technicalName, String description, Boolean required) {
+  public SchemaBuilder addBooleanAttribute(
+      String name, String technicalName, String description, Boolean required) {
     this.booleanAttributes.add(
         new BooleanAttributeDescriptor(name, technicalName, description, required).toProto());
     return this;
   }
 
-  public SchemaBuilder addDateAttribute(String name, String technicalName, String description, Boolean required) {
+  public SchemaBuilder addDateAttribute(
+      String name, String technicalName, String description, Boolean required) {
     this.dateAttributes.add(
         new DateAttributeDescriptor(name, technicalName, description, required).toProto());
     return this;
   }
 
-  public SchemaBuilder addDatetimeAttribute(String name, String technicalName, String description, Boolean required) {
+  public SchemaBuilder addDatetimeAttribute(
+      String name, String technicalName, String description, Boolean required) {
     this.datetimeAttributes.add(
         new DatetimeAttributeDescriptor(name, technicalName, description, required).toProto());
     return this;
   }
 
-  public SchemaBuilder addStringEnumAttribute(String name, String technicalName, String description, Boolean required, List<String> enumeration) {
+  public SchemaBuilder addStringEnumAttribute(
+      String name,
+      String technicalName,
+      String description,
+      Boolean required,
+      List<String> enumeration) {
     this.stringEnumAttributes.add(
-        new StringEnumAttributeDescriptor(name, technicalName, description, required, enumeration).toProto());
+        new StringEnumAttributeDescriptor(name, technicalName, description, required, enumeration)
+            .toProto());
     return this;
   }
 
-  public SchemaBuilder addIntegerEnumAttribute(String name, String technicalName, String description, Boolean required, List<Long> enumeration) {
+  public SchemaBuilder addIntegerEnumAttribute(
+      String name,
+      String technicalName,
+      String description,
+      Boolean required,
+      List<Long> enumeration) {
     this.integerEnumAttributes.add(
-        new IntegerEnumAttributeDescriptor(name, technicalName, description, required, enumeration).toProto());
+        new IntegerEnumAttributeDescriptor(name, technicalName, description, required, enumeration)
+            .toProto());
     return this;
   }
 
-  public SchemaBuilder addDecimalEnumAttribute(String name, String technicalName, String description, Boolean required, List<Double> enumeration) {
+  public SchemaBuilder addDecimalEnumAttribute(
+      String name,
+      String technicalName,
+      String description,
+      Boolean required,
+      List<Double> enumeration) {
     this.decimalEnumAttributes.add(
-        new DecimalEnumAttributeDescriptor(name, technicalName, description, required, enumeration).toProto());
+        new DecimalEnumAttributeDescriptor(name, technicalName, description, required, enumeration)
+            .toProto());
     return this;
   }
 

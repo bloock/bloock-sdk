@@ -14,9 +14,7 @@ public class IssuerStateReceipt {
   }
 
   public IdentityEntitiesV2.IssuerStateReceipt toProto() {
-    return IdentityEntitiesV2.IssuerStateReceipt.newBuilder()
-        .setTxHash(this.txHash)
-        .build();
+    return IdentityEntitiesV2.IssuerStateReceipt.newBuilder().setTxHash(this.txHash).build();
   }
 
   public String getTxHash() {

@@ -1,8 +1,8 @@
 package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.IdentityV2;
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
+import com.bloock.sdk.bridge.proto.IdentityV2;
 import com.bloock.sdk.bridge.proto.Shared;
 import com.bloock.sdk.config.Config;
 import java.util.List;
@@ -80,7 +80,8 @@ public class Credential {
             .setJson(json)
             .build();
 
-    IdentityV2.CredentialFromJsonResponseV2 response = bridge.getIdentityV2().credentialFromJson(req);
+    IdentityV2.CredentialFromJsonResponseV2 response =
+        bridge.getIdentityV2().credentialFromJson(req);
 
     if (response.getError() != Shared.Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
@@ -123,7 +124,7 @@ public class Credential {
     return issuanceDate;
   }
 
-   public String getExpiration() {
+  public String getExpiration() {
     return expiration;
   }
 
