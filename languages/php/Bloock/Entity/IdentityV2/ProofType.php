@@ -5,7 +5,7 @@ namespace Bloock\Entity\IdentityV2;
 class ProofType
 {
     const INTEGRITY_PROOF_TYPE = "INTEGRITY_PROOF_TYPE";
-    const SPARSE_MT_PROOF = "SPARSE_MT_PROOF";
+    const SPARSE_MT_PROOF_TYPE = "SPARSE_MT_PROOF_TYPE";
 
     public static function fromProto(\Bloock\ProofType $proofType): string
     {
@@ -13,7 +13,7 @@ class ProofType
             case \Bloock\ProofType::IntegrityProofType:
                 return ProofType::INTEGRITY_PROOF_TYPE;
             case \Bloock\ProofType::SparseMtProofType:
-                return ProofType::SPARSE_MT_PROOF;
+                return ProofType::SPARSE_MT_PROOF_TYPE;
             default:
                 return null;
         }
@@ -24,7 +24,7 @@ class ProofType
         switch ($proofType) {
             case ProofType::INTEGRITY_PROOF_TYPE:
                 return \Bloock\ProofType::IntegrityProofType;
-            case ProofType::SPARSE_MT_PROOF:
+            case ProofType::SPARSE_MT_PROOF_TYPE:
                 return \Bloock\ProofType::SparseMtProofType;
             default:
                 return null;

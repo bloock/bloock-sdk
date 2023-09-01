@@ -74,7 +74,7 @@ final class IdentityV2Test extends TestCase
         $issuers = $identityClient->getIssuerList();
         $this->assertNotNull($issuers);
 
-        $proofType = [ProofType::INTEGRITY_PROOF_TYPE, ProofType::SPARSE_MT_PROOF];
+        $proofType = [ProofType::INTEGRITY_PROOF_TYPE, ProofType::SPARSE_MT_PROOF_TYPE];
 
         $schema = $identityClient->buildSchema("Driving License", self::drivingLicenseSchemaType, "1.0", "driving license schema", $issuer)
             ->addIntegerAttribute("License Type", "license_type", "license type", false)
