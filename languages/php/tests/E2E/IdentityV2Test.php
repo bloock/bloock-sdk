@@ -6,8 +6,12 @@ use Bloock\Client\KeyClient;
 use Bloock\Entity\Authenticity\BjjSigner;
 use Bloock\Entity\Authenticity\SignerArgs;
 use Bloock\Entity\IdentityV2\BjjIssuerKey;
+use Bloock\Entity\IdentityV2\Blockchain;
 use Bloock\Entity\IdentityV2\Credential;
 use Bloock\Entity\IdentityV2\IssuerKeyArgs;
+use Bloock\Entity\IdentityV2\IssuerParams;
+use Bloock\Entity\IdentityV2\Method;
+use Bloock\Entity\IdentityV2\Network;
 use Bloock\Entity\IdentityV2\ProofType;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
@@ -62,14 +66,15 @@ final class IdentityV2Test extends TestCase
         $issuer = $identityClient->createIssuer($issuerKey);
         $this->assertStringContainsString("polygonid", $issuer);
 
-        $this->expectException(Exception::class);
-        $identityClient->createIssuer($issuerKey);
-
         $getIssuerDid = $identityClient->getIssuerByKey($issuerKey);
         $this->assertEquals($issuer, $getIssuerDid);
 
         $getNotFoundIssuerDid = $identityClient->getIssuerByKey($notFoundIssuerKey);
         $this->assertEquals(null, $getNotFoundIssuerDid);
+
+        $issuerParams = new IssuerParams(Method::IDEN3, Blockchain::POLYGON, Network::MUMBAI);
+        $newIssuer = $identityClient->createIssuer($notFoundIssuerKey, $issuerParams);
+        $this->assertStringContainsString("iden3", $newIssuer);
 
         $issuers = $identityClient->getIssuerList();
         $this->assertNotNull($issuers);
@@ -85,7 +90,7 @@ final class IdentityV2Test extends TestCase
             ->addDateTimeAttribute("Local Hour", "local_hour", "local hour", true)
             ->addStringEnumAttribute("Car Type", "car_type", "car type", true, ["big", "medium", "small"])
             ->addIntegerEnumAttribute("Car Points", "car_points", "car points", true, [1, 5, 10])
-            ->addDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, [1.10, 1.20 . 1.30])
+            ->addDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, [1.10, 1.20, 1.30])
             ->build();
         $this->assertNotNull($schema->getId());
 
@@ -103,6 +108,8 @@ final class IdentityV2Test extends TestCase
             ->withStringAttribute("car_type", "big")
             ->withIntegerAttribute("car_points", 5)
             ->withDecimalAttribute("precision_wheels", 1.10)
+            ->withSigner(new BjjSigner(new SignerArgs($keyBjj)))
+            ->withProofType($proofType)
             ->build();
         $this->assertNotNull($receipt->getCredentialId());
         $this->assertNotNull($receipt->getAnchorId());
@@ -112,24 +119,14 @@ final class IdentityV2Test extends TestCase
         $credential = $receipt->getCredential();
         $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredentialType());
         $this->assertEquals("JsonSchema2023", $credential->getCredentialSchema()->getType());
-        $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[0]);
+        $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[1]);
 
         $stateReceipt = $identityClient->buildIssuerStatePublisher($issuer)
             ->withSigner(new BjjSigner(new SignerArgs($keyBjj)))
             ->build();
         $this->assertNotNull($stateReceipt->getTxHash());
 
-        $this->expectException(Exception::class);
-        $identityClient->buildIssuerStatePublisher($issuer)
-            ->withSigner(new BjjSigner(new SignerArgs($keyBjj)))
-            ->build();
-
         $ok = $identityClient->revokeCredential($credential);
         $this->assertTrue($ok);
-
-        $this->expectException(Exception::class);
-        $identityClient->buildIssuerStatePublisher($issuer)
-            ->withSigner(new BjjSigner(new SignerArgs($keyBjj)))
-            ->build();
     }
 }

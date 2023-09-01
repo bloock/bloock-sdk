@@ -40,8 +40,11 @@ class IdentityV2Client
     {
         $req = new CreateIssuerRequest();
         $req->setIssuerKey($issuerKey->toProto());
-        $req->setIssuerParams($issuerParams->toProto());
         $req->setConfigData($this->config);
+
+        if ($issuerParams != null) {
+            $req->setIssuerParams($issuerParams->toProto());
+        }
 
         $res = $this->bridge->identityV2->CreateIssuer($req);
 
@@ -63,15 +66,21 @@ class IdentityV2Client
             throw new Exception($res->getError()->getMessage());
         }
 
-        return $res->getDid();
+        $didList = [];
+        foreach ($res->getDid() as $did) {
+            $didList[] = $did;
+        }
+        return $didList;
     }
 
     public function getIssuerByKey(IssuerKey $issuerKey, IssuerParams $issuerParams = null): string
     {
         $req = new GetIssuerByKeyRequest();
         $req->setIssuerKey($issuerKey->toProto());
-        $req->setIssuerParams($issuerParams->toProto());
         $req->setConfigData($this->config);
+        if ($issuerParams != null) {
+            $req->setIssuerParams($issuerParams->toProto());
+        }
 
         $res = $this->bridge->identityV2->GetIssuerByKey($req);
 

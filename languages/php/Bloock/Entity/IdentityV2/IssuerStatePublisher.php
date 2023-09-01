@@ -19,7 +19,7 @@ class IssuerStatePublisher
     public function __construct(string $issuerDid, ConfigData $configData)
     {
         $this->issuerDid = $issuerDid;
-        $this->signer = null;
+        $this->signer = new SingerProto();
         $this->configData = $configData;
     }
 
@@ -44,6 +44,6 @@ class IssuerStatePublisher
             throw new Exception($res->getError()->getMessage());
         }
 
-        return IssuerStateReceipt::fromProto($res);
+        return IssuerStateReceipt::fromProto($res->getStateReceipt());
     }
 }

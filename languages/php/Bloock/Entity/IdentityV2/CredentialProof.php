@@ -52,9 +52,19 @@ class CredentialProof
     public function toProto(): \Bloock\CredentialProofV2
     {
         $p = new \Bloock\CredentialProofV2();
-        $p->setSignatureProof($this->signatureProof);
-        $p->setIntegrityProof($this->integrityProof);
-        $p->setSparseMtProof($this->sparseMtProof);
+
+        if ($this->signatureProof != null) {
+            $p->setSignatureProof($this->signatureProof);
+        }
+
+        if ($this->integrityProof != null) {
+            $p->setIntegrityProof($this->integrityProof);
+        }
+
+        if ($this->sparseMtProof != null) {
+            $p->setSparseMtProof($this->sparseMtProof);
+        }
+    
         return $p;
     }
 }

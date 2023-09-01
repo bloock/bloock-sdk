@@ -37,7 +37,7 @@ class CredentialBuilder
         $this->expiration = $expiration;
         $this->version = $version;
         $this->apiManagedHost = $apiManagedHost;
-        $this->signer = null;
+        $this->signer = new SingerProto();
         $this->proofType = [];
         $this->configData = $configData;
 
@@ -79,14 +79,16 @@ class CredentialBuilder
 
     public function withDateAttribute(string $key, DateTime $value): CredentialBuilder
     {
-        $attribute = new DateAttribute($key, $value);
+        $formated = $value->format('Y-m-d');
+        $attribute = new DateAttribute($key, $formated);
         $this->dateAttributes[] = $attribute->toProto();
         return $this;
     }
 
     public function withDatetimeAttribute(string $key, DateTime $value): CredentialBuilder
     {
-        $attribute = new DatetimeAttribute($key, $value);
+        $formated = $value->format('Y-m-d\TH:i:sP');
+        $attribute = new DatetimeAttribute($key, $formated);
         $this->datetimeAttributes[] = $attribute->toProto();
         return $this;
     }
@@ -102,7 +104,6 @@ class CredentialBuilder
         foreach ($proofs as $value) {
             $this->proofType[] = ProofType::toProto($value);
         }
-        $this->proofType = $proofs;
         return $this;
     }
 

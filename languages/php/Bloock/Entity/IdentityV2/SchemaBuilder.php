@@ -96,7 +96,7 @@ class SchemaBuilder
             $repeatedField[] = $value;
         }
         $attribute = new StringEnumAttributeDescriptor($name, $technicalName, $description, $required, $repeatedField);
-        $this->stringAttributes[] = $attribute->toProto();
+        $this->stringEnumAttributes[] = $attribute->toProto();
         return $this;
     }
 
@@ -107,7 +107,7 @@ class SchemaBuilder
             $repeatedField[] = $value;
         }
         $attribute = new IntegerEnumAttributeDescriptor($name, $technicalName, $description, $required, $repeatedField);
-        $this->stringAttributes[] = $attribute->toProto();
+        $this->integerEnumAttributes[] = $attribute->toProto();
         return $this;
     }
 
@@ -118,7 +118,7 @@ class SchemaBuilder
             $repeatedField[] = $value;
         }
         $attribute = new DecimalEnumAttributeDescriptor($name, $technicalName, $description, $required, $repeatedField);
-        $this->stringAttributes[] = $attribute->toProto();
+        $this->decimalEnumAttributes[] = $attribute->toProto();
         return $this;
     }
 
