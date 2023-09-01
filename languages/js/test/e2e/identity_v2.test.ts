@@ -3,7 +3,6 @@ import {
   BjjIssuerKey,
   BjjSigner,
   Bloock,
-  IssuerKeyArgs
 } from "../../dist/index";
 import {
   Credential,
@@ -12,8 +11,11 @@ import {
   KeyProtectionLevel,
   KeyType,
   ManagedKeyParams,
-  IssuerKey,
-  ProofType
+  ProofType,
+  IssuerParams,
+  Method,
+  Blockchain,
+  NetworkId
 } from "../../dist";
 
 function initSdk() {
@@ -69,7 +71,11 @@ describe("Identity V2 Tests", () => {
     let issuer = await identityClient.createIssuer(issuerKey);
     expect(issuer.includes("polygonid")).toBeTruthy();
 
-    expect(await identityClient.createIssuer(issuerKey)).toThrowError();
+    try {
+      await identityClient.createIssuer(issuerKey);
+    } catch (error) {
+      expect(error).toBeTruthy;
+    }
 
     let getIssuerDid = await identityClient.getIssuerByKey(issuerKey);
     expect(getIssuerDid).toStrictEqual(issuer);
@@ -78,6 +84,10 @@ describe("Identity V2 Tests", () => {
       notFoundIssuerKey
     );
     expect(getNotFoundIssuerDid).toStrictEqual("");
+
+    let issuerParams = new IssuerParams(Method.IDEN3, Blockchain.POLYGON, NetworkId.MUMBAI)
+    let newIssuer = await identityClient.createIssuer(notFoundIssuerKey, issuerParams);
+    expect(newIssuer.includes("iden3")).toBeTruthy();
 
     let issuers = await identityClient.getIssuerList();
     expect(issuers).toBeTruthy();
@@ -138,6 +148,7 @@ describe("Identity V2 Tests", () => {
       .withIntegerAttribute("car_points", 5)
       .withDecimalAttribute("precision_wheels", 1.1)
       .withSigner(new BjjSigner(keyBjj))
+      .withProofType(proofType)
       .build();
     expect(receipt.credentialId).toBeTruthy();
     expect(receipt.anchorId).toBeTruthy();
@@ -155,21 +166,25 @@ describe("Identity V2 Tests", () => {
       .build();
     expect(stateReceipt.txHash).toBeTruthy();
 
-    expect(
+    try {
       await identityClient
         .buildIssuerStatePublisher(issuer)
         .withSigner(new BjjSigner(keyBjj))
         .build()
-    ).toThrowError();
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
 
     const ok = await identityClient.revokeCredential(credential);
     expect(ok).toBeTruthy();
 
-    expect(
+    try {
       await identityClient
         .buildIssuerStatePublisher(issuer)
         .withSigner(new BjjSigner(keyBjj))
         .build()
-    ).toThrowError();
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
   });
 });

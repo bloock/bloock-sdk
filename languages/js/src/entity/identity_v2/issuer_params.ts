@@ -16,9 +16,9 @@ export class IssuerParams {
 
   public toProto(): identityEntitiesProto.IssuerParams {
     return identityEntitiesProto.IssuerParams.fromPartial({
-      method: this.method,
-      blockchain: this.blockchain,
-      networkId: this.network
+      method: Method.toProto(this.method),
+      blockchain: Blockchain.toProto(this.blockchain),
+      networkId: NetworkId.toProto(this.network)
     });
   }
 }
