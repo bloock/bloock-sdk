@@ -141,9 +141,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.True(t, ok)
 
-		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
-			Build()
+		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).Build()
 		assert.Error(t, err)
 	})
 
