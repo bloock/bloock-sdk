@@ -14,7 +14,7 @@ from bloock.entity.identity_v2.integer_attribute import IntegerAttribute
 from bloock.entity.identity_v2.decimal_attribute import DecimalAttribute
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.identity_v2.credential_receipt import CredentialReceipt
-from languages.python.bloock.entity.identity_v2.proof_type import ProofType
+from bloock.entity.identity_v2.proof_type import ProofType
 
 
 class CredentialBuilder:
@@ -53,11 +53,13 @@ class CredentialBuilder:
         return self
 
     def with_date_attribute(self, key: str, value: datetime.date) -> CredentialBuilder:
-        self.date_attributes.append(DateAttribute(key, value))
+        formatted_date = value.strftime("%Y-%m-%d")
+        self.date_attributes.append(DateAttribute(key, formatted_date))
         return self
 
     def with_datetime_attribute(self, key: str, value: datetime.datetime) -> CredentialBuilder:
-        self.datetime_attributes.append(DatetimeAttribute(key, value))
+        rfc3339_string = value.strftime("%Y-%m-%dT%H:%M:%SZ")
+        self.datetime_attributes.append(DatetimeAttribute(key, rfc3339_string))
         return self
 
     def with_signer(self, signer: Signer) -> CredentialBuilder:
@@ -102,6 +104,7 @@ class CredentialBuilder:
             holder_did=self.holder_did,
             version=self.version,
             expiration=self.expiration,
+            api_managed_host=self.api_managed_host,
             string_attributes=string_attributes,
             integer_attributes=integer_attributes,
             decimal_attributes=decimal_attributes,

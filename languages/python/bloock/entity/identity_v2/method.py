@@ -15,5 +15,5 @@ class Method(Enum):
     def to_proto(method: Method) -> MethodProto.ValueType:
         if method == Method.IDEN3:
             return MethodProto.IDEN3
-        elif method == Method.IDEN3:
+        elif method == Method.POLYGON_ID:
             return MethodProto.POLYGON_ID

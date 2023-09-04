@@ -9,7 +9,7 @@ from bloock.entity.identity_v2.blockchain import Blockchain
 from bloock.entity.identity_v2.issuer_params import IssuerParams
 from bloock.entity.identity_v2.method import Method
 from bloock.entity.identity_v2.network import Network
-from python.bloock.client.identity_v2 import IdentityV2Client
+from bloock.client.identity_v2 import IdentityV2Client
 from bloock.client.key import KeyClient
 from bloock.entity.identity_v2.bjj_issuer_key import BjjIssuerKey
 from bloock.entity.identity_v2.issuer_key_args import IssuerKeyArgs
@@ -58,14 +58,14 @@ class TestIdentityV2(unittest.TestCase):
         issuer = identity_client.create_issuer(issuer_key)
 
         with self.assertRaises(Exception):
-            identity_client.create_issuer(not_found_issuer_key)
+            identity_client.create_issuer(issuer_key)
 
         get_issuer_did = identity_client.get_issuer_by_key(issuer_key)
         self.assertTrue(get_issuer_did.__contains__("polygonid"))
 
         get_not_found_issuer_did = identity_client.get_issuer_by_key(
             not_found_issuer_key)
-        self.assertIsNone(get_not_found_issuer_did)
+        self.assertEqual("", get_not_found_issuer_did)
 
         issuer_params = IssuerParams(
             Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI)
@@ -79,7 +79,7 @@ class TestIdentityV2(unittest.TestCase):
         proof_type = [ProofType.INTEGRITY_PROOF_TYPE,
                       ProofType.SPARSE_MT_PROOF_TYPE]
 
-        schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license", issuer) \
+        schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema", issuer) \
             .add_integer_attribute("License Type", "license_type", "license type", False) \
             .add_decimal_attribute("Quantity Oil", "quantity_oil", "quantity oil", True) \
             .add_string_attribute("Nif", "nif", "nif", True) \
@@ -99,7 +99,8 @@ class TestIdentityV2(unittest.TestCase):
             .with_boolean_attribute("is_spanish", True) \
             .with_date_attribute("birth_date", datetime.date(1999, 3, 20)) \
             .with_datetime_attribute("local_hour", datetime.datetime.now()) \
-            .with_string_attribute("car_type", "big").with_integer_attribute("car_points", 5) \
+            .with_string_attribute("car_type", "big") \
+            .with_integer_attribute("car_points", 5) \
             .with_decimal_attribute("precision_wheels", 1.10) \
             .with_signer(BjjSigner(SignerArgs(key_bjj))) \
             .with_proof_type(proof_type) \

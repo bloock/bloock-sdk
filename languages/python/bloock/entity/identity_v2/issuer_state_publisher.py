@@ -5,7 +5,7 @@ from bloock._bridge.proto.config_pb2 import ConfigData
 from bloock._bridge.proto.identity_v2_pb2 import PublishIssuerStateRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.entity.authenticity.signer import Signer
-from languages.python.bloock.entity.identity_v2.issuer_state_receipt import IssuerStateReceipt
+from bloock.entity.identity_v2.issuer_state_receipt import IssuerStateReceipt
 
 
 class IssuerStatePublisher:

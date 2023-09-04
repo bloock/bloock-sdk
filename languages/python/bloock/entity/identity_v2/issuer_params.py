@@ -7,13 +7,13 @@ from bloock.entity.identity_v2.network import Network
 class IssuerParams:
 
     def __init__(self, method: Method, blockchain: Blockchain, network: Network) -> None:
-        self.method = method,
+        self.method = method
         self.blockchain = blockchain
         self.network = network
 
     def to_proto(self) -> proto.IssuerParams:
         return proto.IssuerParams(
-            method=self.method.to_proto()
-            blockchain=self.blockchain.to_proto()
-            network_id=self.network.to_proto()
+            method=Method.to_proto(self.method),
+            blockchain=Blockchain.to_proto(self.blockchain),
+            network_id=Network.to_proto(self.network)
         )

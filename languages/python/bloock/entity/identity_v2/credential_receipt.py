@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import bloock._bridge.proto.identity_entities_v2_pb2 as proto
-from languages.python.bloock.entity.identity_v2.credential import Credential
+from bloock.entity.identity_v2.credential import Credential
 
 
 class CredentialReceipt:
