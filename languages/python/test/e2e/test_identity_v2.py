@@ -3,8 +3,12 @@ import unittest
 
 import bloock
 from bloock.entity.identity_v2.credential import Credential
-from languages.python.bloock.entity.authenticity.bjj_signer import BjjSigner
-from languages.python.bloock.entity.authenticity.signer_args import SignerArgs
+from bloock.entity.authenticity.bjj_signer import BjjSigner
+from bloock.entity.authenticity.signer_args import SignerArgs
+from bloock.entity.identity_v2.blockchain import Blockchain
+from bloock.entity.identity_v2.issuer_params import IssuerParams
+from bloock.entity.identity_v2.method import Method
+from bloock.entity.identity_v2.network import Network
 from python.bloock.client.identity_v2 import IdentityV2Client
 from bloock.client.key import KeyClient
 from bloock.entity.identity_v2.bjj_issuer_key import BjjIssuerKey
@@ -63,6 +67,12 @@ class TestIdentityV2(unittest.TestCase):
             not_found_issuer_key)
         self.assertIsNone(get_not_found_issuer_did)
 
+        issuer_params = IssuerParams(
+            Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI)
+        new_issuer = identity_client.create_issuer(
+            not_found_issuer_key, issuer_params)
+        self.assertTrue(new_issuer.__contains__("iden3"))
+
         issuers = identity_client.get_issuer_list()
         self.assertIsNotNone(issuers)
 
@@ -114,7 +124,7 @@ class TestIdentityV2(unittest.TestCase):
             identity_client.build_issuer_state_publisher(issuer) \
                 .with_signer(BjjSigner(SignerArgs(key_bjj))) \
                 .build()
-        
+
         ok = identity_client.revoke_credential(credential)
         self.assertTrue(ok)
 
