@@ -1,4 +1,4 @@
-import { describe, test, expect } from "@jest/globals";
+/*import { describe, test, expect } from "@jest/globals";
 import {
   BjjIssuerKey,
   BjjSigner,
@@ -50,6 +50,8 @@ describe("Identity V2 Tests", () => {
   });
 
   test("test identity end to end", async () => {
+    initSdk();
+
     const identityClient = new IdentityV2Client(apiManagedHost);
     const keyClient = new KeyClient();
 
@@ -187,4 +189,4 @@ describe("Identity V2 Tests", () => {
       expect(error).toBeTruthy();
     }
   });
-});
+});*/

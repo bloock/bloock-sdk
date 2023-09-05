@@ -17,6 +17,7 @@ from bloock.entity.identity_v2.proof_type import ProofType
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed_key_params import ManagedKeyParams
+from test.e2e.util import init_dev_sdk
 
 
 class TestIdentityV2(unittest.TestCase):
@@ -28,8 +29,7 @@ class TestIdentityV2(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        bloock.api_key = "tFD-hh1QYTj1TQEp3LulhHAredSkekobuuZI8vduysc7sx2RZTdpnX6A5FSQuSvT"
-        bloock.api_host = "https://api.bloock.dev"
+        init_dev_sdk()
 
     def test_credential_from_to_json(self):
         credential = Credential.from_json(self.credentialJson)

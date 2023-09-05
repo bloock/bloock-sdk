@@ -29,8 +29,8 @@ final class IdentityV2Test extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        Bloock::$apiKey = "tFD-hh1QYTj1TQEp3LulhHAredSkekobuuZI8vduysc7sx2RZTdpnX6A5FSQuSvT";
-        Bloock::$apiHost = "https://api.bloock.dev";
+        Bloock::$apiKey = getenv("DEV_API_KEY");
+        Bloock::$apiHost = getenv("DEV_API_HOST");
         Bloock::$disableAnalytics = true;
     }
 

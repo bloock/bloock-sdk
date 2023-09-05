@@ -133,7 +133,9 @@ jobs:
       os: ubuntu-latest
     secrets:
       api_host: ${{ secrets.API_HOST }}
+      dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
+      dev_api_key: ${{ secrets.DEV_API_KEY }}
 
   test_go:
     needs: [build_go]
@@ -143,7 +145,9 @@ jobs:
       lang-version: 1.19
     secrets:
       api_host: ${{ secrets.API_HOST }}
+      dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
+      dev_api_key: ${{ secrets.DEV_API_KEY }}
 
   test_python:
     needs: [build_python]
@@ -153,7 +157,9 @@ jobs:
       lang-version: "3.10"
     secrets:
       api_host: ${{ secrets.API_HOST }}
+      dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
+      dev_api_key: ${{ secrets.DEV_API_KEY }}
 
   test_java:
     needs: [build_java]
@@ -163,7 +169,9 @@ jobs:
       lang-version: 8
     secrets:
       api_host: ${{ secrets.API_HOST }}
+      dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
+      dev_api_key: ${{ secrets.DEV_API_KEY }}
 
   test_php:
     needs: [build_php]
@@ -173,7 +181,9 @@ jobs:
       lang-version: 8.2
     secrets:
       api_host: ${{ secrets.API_HOST }}
+      dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
+      dev_api_key: ${{ secrets.DEV_API_KEY }}
 
   test_js:
     needs: [build_js]
@@ -183,7 +193,9 @@ jobs:
       lang-version: 18
     secrets:
       api_host: ${{ secrets.API_HOST }}
+      dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
+      dev_api_key: ${{ secrets.DEV_API_KEY }}
 
   compat_go:
     needs: [test_go]

@@ -124,7 +124,7 @@ impl VC {
         };
 
         let expiration_date = NaiveDateTime::from_timestamp_opt(expiration, 0).unwrap();
-        let credential_id = format!("{}/v1/{}/claims/{}", api_managed_host, issuer.clone(), uuid);
+        let credential_id = format!("{}/v1/claims/{}", api_managed_host, uuid);
 
         let credential_subject_map: Map<String, Value> = attributes.into_iter().collect();
 
