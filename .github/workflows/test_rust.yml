@@ -9,7 +9,7 @@ on:
     secrets:
       api_host:
         required: true
-      dev_api_key:
+      dev_api_host:
         required: true
       api_key:
         required: true
