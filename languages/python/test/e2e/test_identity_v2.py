@@ -29,7 +29,7 @@ class TestIdentityV2(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        init_dev_sdk()
+        init_dev_sdk()  
 
     def test_credential_from_to_json(self):
         credential = Credential.from_json(self.credentialJson)
