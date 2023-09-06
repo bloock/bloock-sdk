@@ -1,7 +1,6 @@
 import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
-import { CredentialOffer, Credential } from "../../dist/entity/identity";
-import { IdentityClient } from "../../dist/client/identity";
+import { CredentialOffer, IdentityClient, Credential } from "../../dist";
 
 describe("Identity Tests", () => {
   const credentialOfferJson =
