@@ -3,6 +3,7 @@ export * from "./availability";
 export * from "./encryption";
 export * from "./bloock";
 export * from "./identity";
+export * from "./identity_v2";
 export * from "./integrity";
 export * from "./key";
 export * from "./record";

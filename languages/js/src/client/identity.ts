@@ -22,6 +22,9 @@ export class IdentityClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
     this.configData = NewConfigData(configData);

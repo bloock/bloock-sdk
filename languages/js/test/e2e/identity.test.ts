@@ -1,6 +1,6 @@
 import { describe, test, expect } from "@jest/globals";
-import { Credential, CredentialOffer, IdentityClient } from "../../dist";
 import { initSdk } from "./util";
+import { CredentialOffer, IdentityClient, Credential } from "../../dist";
 
 describe("Identity Tests", () => {
   const credentialOfferJson =
@@ -51,11 +51,7 @@ describe("Identity Tests", () => {
     const schema = await identityClient
       .buildSchema("Test Schema", "test_schema")
       .addBooleanAttribute("Boolean Attribute", "bool_attr", "")
-      .addStringAttribute(
-        "String Attribute",
-        "string_attr",
-        ""
-      )
+      .addStringAttribute("String Attribute", "string_attr", "")
       .build();
 
     const receipt = await identityClient

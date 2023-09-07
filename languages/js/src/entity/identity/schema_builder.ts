@@ -73,11 +73,7 @@ export class SchemaBuilder {
     description?: string
   ): SchemaBuilder {
     this.stringAttributes.push(
-      new StringAttributeDescriptor(
-        name,
-        technicalName,
-        description
-      )
+      new StringAttributeDescriptor(name, technicalName, description)
     );
     return this;
   }

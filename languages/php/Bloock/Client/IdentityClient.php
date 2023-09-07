@@ -27,6 +27,9 @@ class IdentityClient
     private $bridge;
     private $config;
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function __construct(ConfigData $config = null)
     {
         $this->bridge = new Bridge();

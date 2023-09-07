@@ -10,4 +10,14 @@ public class Utils {
     }
     Bloock.disableAnalytics = true;
   }
+
+  static void initDevSdk() {
+    Bloock.apiKey = System.getenv("DEV_API_KEY");
+    String apiHost = System.getenv("DEV_API_HOST");
+
+    if (apiHost != null) {
+      Bloock.apiHost = apiHost;
+    }
+    Bloock.disableAnalytics = true;
+  }
 }

@@ -74,7 +74,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .post_json(
                 format!(
-                    "{}/identity/v1/issuers",
+                    "{}/identityV2/v1/issuers",
                     self.config_service.get_api_base_url(),
                 ),
                 req,
@@ -95,7 +95,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .get_json(
                 format!(
-                    "{}/identity/v1/issuers/key/{}?method={}&blockchain={}&network={}",
+                    "{}/identityV2/v1/issuers/key/{}?method={}&blockchain={}&network={}",
                     self.config_service.get_api_base_url(),
                     public_key,
                     did_metadata.method.get_method_type(),
@@ -115,7 +115,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .get_json(
                 format!(
-                    "{}/identity/v1/issuers",
+                    "{}/identityV2/v1/issuers",
                     self.config_service.get_api_base_url(),
                 ),
                 None,
@@ -158,7 +158,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .post_json(
                 format!(
-                    "{}/identity/v1/{}/schemas",
+                    "{}/identityV2/v1/{}/schemas",
                     self.config_service.get_api_base_url(),
                     issuer_did
                 ),
@@ -263,7 +263,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .post_json(
                 format!(
-                    "{}/identity/v1/{}/claims?{}",
+                    "{}/identityV2/v1/{}/claims?{}",
                     self.config_service.get_api_base_url(),
                     issuer_did.to_string(),
                     proof_types
@@ -282,7 +282,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .get_json(
                 format!(
-                    "{}/identity/v1/{}/claims/{}/proof",
+                    "{}/identityV2/v1/{}/claims/{}/proof",
                     self.config_service.get_api_base_url(),
                     issuer_did.to_string(),
                     res.id.clone(),
@@ -335,7 +335,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .get_json(
                 format!(
-                    "{}/identity/v1/{}/state",
+                    "{}/identityV2/v1/{}/state",
                     self.config_service.get_api_base_url(),
                     issuer_did.to_string()
                 ),
@@ -364,7 +364,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .post_json(
                 format!(
-                    "{}/identity/v1/{}/state/publish",
+                    "{}/identityV2/v1/{}/state/publish",
                     self.config_service.get_api_base_url(),
                     issuer_did.to_string(),
                 ),
@@ -389,7 +389,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .get_json(
                 format!(
-                    "{}/identity/v1/{}/claims/{}/proof",
+                    "{}/identityV2/v1/{}/claims/{}/proof",
                     self.config_service.get_api_base_url(),
                     issuer_did,
                     credential_id,
@@ -418,7 +418,7 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .post_json(
                 format!(
-                    "{}/identity/v1/{}/claims/revoke/{}",
+                    "{}/identityV2/v1/{}/claims/revoke/{}",
                     self.config_service.get_api_base_url(),
                     credential.issuer.clone(),
                     credential.credential_status.revocation_nonce,

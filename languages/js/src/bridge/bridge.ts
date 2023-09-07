@@ -13,6 +13,10 @@ import {
 } from "./proto/encryption";
 import { IdentityService, IdentityServiceClientImpl } from "./proto/identity";
 import {
+  IdentityServiceV2,
+  IdentityServiceV2ClientImpl
+} from "./proto/identity_v2";
+import {
   IntegrityService,
   IntegrityServiceClientImpl
 } from "./proto/integrity";
@@ -25,6 +29,7 @@ export class BloockBridge {
   private availability: AvailabilityService;
   private encryption: EncryptionService;
   private identity: IdentityService;
+  private identityV2: IdentityServiceV2;
   private integrity: IntegrityService;
   private key: KeyService;
   private record: RecordService;
@@ -39,6 +44,7 @@ export class BloockBridge {
     this.key = new KeyServiceClientImpl(connection);
     this.integrity = new IntegrityServiceClientImpl(connection);
     this.identity = new IdentityServiceClientImpl(connection);
+    this.identityV2 = new IdentityServiceV2ClientImpl(connection);
     this.record = new RecordServiceClientImpl(connection);
     this.webhook = new WebhookServiceClientImpl(connection);
   }
@@ -57,6 +63,10 @@ export class BloockBridge {
 
   public getIdentity(): IdentityService {
     return this.identity;
+  }
+
+  public getIdentityV2(): IdentityServiceV2 {
+    return this.identityV2;
   }
 
   public getIntegrity(): IntegrityService {

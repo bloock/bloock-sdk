@@ -7,7 +7,7 @@ export enum KeyType {
   Rsa4096,
   Aes128,
   Aes256,
-  Bjj,
+  Bjj
 }
 
 export namespace KeyType {

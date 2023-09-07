@@ -7,6 +7,7 @@ public class Bridge {
   private final AvailabilityServiceGrpc.AvailabilityServiceBlockingStub availability;
   private final EncryptionServiceGrpc.EncryptionServiceBlockingStub encryption;
   private final IdentityServiceGrpc.IdentityServiceBlockingStub identity;
+  private final IdentityServiceV2Grpc.IdentityServiceV2BlockingStub identityV2;
   private final IntegrityServiceGrpc.IntegrityServiceBlockingStub integrity;
   private final KeyServiceGrpc.KeyServiceBlockingStub key;
   private final RecordServiceGrpc.RecordServiceBlockingStub record;
@@ -18,6 +19,7 @@ public class Bridge {
     availability = AvailabilityServiceGrpc.newBlockingStub(conn);
     encryption = EncryptionServiceGrpc.newBlockingStub(conn);
     identity = IdentityServiceGrpc.newBlockingStub(conn);
+    identityV2 = IdentityServiceV2Grpc.newBlockingStub(conn);
     integrity = IntegrityServiceGrpc.newBlockingStub(conn);
     key = KeyServiceGrpc.newBlockingStub(conn);
     record = RecordServiceGrpc.newBlockingStub(conn);
@@ -50,6 +52,10 @@ public class Bridge {
 
   public IdentityServiceGrpc.IdentityServiceBlockingStub getIdentity() {
     return identity;
+  }
+
+  public IdentityServiceV2Grpc.IdentityServiceV2BlockingStub getIdentityV2() {
+    return identityV2;
   }
 
   public KeyServiceGrpc.KeyServiceBlockingStub getKey() {

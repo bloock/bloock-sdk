@@ -1,4 +1,4 @@
-__version__ = "2.6.0-beta.8"
+__version__ = "2.6.0"
 
 from typing import Dict
 
@@ -16,7 +16,8 @@ def set_provider(network: Network, provider: str):
     if int(network) in bloock.network_config:
         bloock.network_config[int(network)].HttpProvider = provider
     else:
-        bloock.network_config[int(network)] = NetworkConfig(HttpProvider=provider)
+        bloock.network_config[int(network)] = NetworkConfig(
+            HttpProvider=provider)
 
 
 def set_contract_address(network: Network, contract_address: str):

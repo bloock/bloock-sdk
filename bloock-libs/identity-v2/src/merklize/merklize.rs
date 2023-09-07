@@ -75,6 +75,7 @@ impl Relationship {
     }
 }
 
+#[derive(Debug)]
 struct Path {
     parts: Vec<RdfEntryValue>,
 }
@@ -146,6 +147,7 @@ pub enum NodeTypes {
     NodeTypeLiteral = 3,
 }
 
+#[derive(Debug)]
 pub struct RdfEntry {
     key: Path,
     value: RdfEntryValue,
@@ -212,7 +214,7 @@ pub async fn add_entries_to_merkle_tree(
                 &BigUint::from_bytes_be(&value),
             )
             .await
-            .unwrap();
+            .map_err(|e| MerklizeError::ErrorInsertMerkleTree(e.to_string()))?;
     }
 
     Ok(merkle.merkle_tree.root().bigint().into())
@@ -512,7 +514,8 @@ fn convert_string_to_xsd_value(
             if date_re.is_match(value) {
                 let parsed_date = chrono::NaiveDate::parse_from_str(value, "%Y-%m-%d")
                     .map_err(|e| MerklizeError::ErrorParsingDate(e.to_string()))?;
-                result_value = RdfEntryValue::DateTime(NaiveDateTime::new(parsed_date, NaiveTime::default()));
+                result_value =
+                    RdfEntryValue::DateTime(NaiveDateTime::new(parsed_date, NaiveTime::default()));
             } else {
                 result_value = RdfEntryValue::DateTime(
                     chrono::DateTime::parse_from_rfc3339(value)

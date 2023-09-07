@@ -34,4 +34,6 @@ pub enum MerklizeError {
     ErrorParsingDate(String),
     #[error("Error parsing date-time: {0}")]
     ErrorParsingDateTime(String),
+    #[error("Error inserting merkle tree: {0}")]
+    ErrorInsertMerkleTree(String),
 }
