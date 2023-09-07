@@ -105,7 +105,7 @@ impl VC {
         };
 
         let credential_status_id = format!(
-            "{}/identity/v1/{}/claims/revocation/status/{}",
+            "{}/identityV2/v1/{}/claims/revocation/status/{}",
             api_host,
             issuer.clone(),
             nonce
@@ -313,7 +313,7 @@ mod tests {
             ),
         ];
         let api_host = "https://api.bloock.dev".to_string();
-        let api_managed_host = "https://api.bloock.dev/identity".to_string();
+        let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
         let nonce: u64 = 3825417065;
@@ -347,9 +347,9 @@ mod tests {
 
         vc.validate_schema(schema.to_string()).unwrap();
 
-        let expected_claim_core_hex = "b9064d46baefd34de66fd370f0f3f0f92a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b00f79f40114c92814ee55fac46cdebf21d77ce80a5c9f439cd85a18461a888aa170000000000000000000000000000000000000000000000000000000000000000693b03e4000000003b5df36d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
+        let expected_claim_core_hex = "b9064d46baefd34de66fd370f0f3f0f92a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b008b44cff5b241d48c99b954bd92e6bd5e2f5e6fbe7b328a86b78e0ff79ae822080000000000000000000000000000000000000000000000000000000000000000693b03e4000000003b5df36d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
         let expected_hash_index_value =
-            "27c13d7cc2f2f738943ce0d1bf364ac656616ab241189974a33a564dca4d0f05".to_string();
+            "07654c0834b96b41fd6594afaa6c06c8d5388846ebaac0a8632b2d0c15be7daf".to_string();
 
         let core_claim = vc.get_core_claim().await.unwrap();
         let core_claim_hex = core_claim.hex().unwrap();
@@ -396,7 +396,7 @@ mod tests {
             ),
         ];
         let api_host = "https://api.bloock.dev".to_string();
-        let api_managed_host = "https://api.bloock.dev/identity".to_string();
+        let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
         let nonce: u64 = 3825417065;
@@ -568,7 +568,7 @@ mod tests {
             ),
         ];
         let api_host = "https://api.bloock.dev".to_string();
-        let api_managed_host = "https://api.bloock.dev/identity".to_string();
+        let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
         let nonce: u64 = 3825417065;
@@ -815,7 +815,7 @@ mod tests {
         let valid_boolean: Vec<(String, Value)> =
             vec![("boolean_example".to_string(), Value::Bool(true))];
         let api_host = "https://api.bloock.dev".to_string();
-        let api_managed_host = "https://api.bloock.dev/identity".to_string();
+        let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
         let nonce: u64 = 3825417065;

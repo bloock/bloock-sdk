@@ -11,11 +11,19 @@ public class IdentityClient {
   private final Bridge bridge;
   private final ConfigData configData;
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
+  @Deprecated
   public IdentityClient() {
     this.bridge = new Bridge();
     this.configData = Config.newConfigDataDefault();
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
+  @Deprecated
   public IdentityClient(ConfigData configData) {
     this.bridge = new Bridge();
     this.configData = Config.newConfigData(configData);
