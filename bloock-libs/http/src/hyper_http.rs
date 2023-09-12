@@ -12,9 +12,9 @@ use std::str::FromStr;
 
 pub struct SimpleHttpClient {}
 
-#[async_trait(?Send)]
+#[async_trait]
 impl Client for SimpleHttpClient {
-    async fn get<U: ToString + 'static>(
+    async fn get<U: ToString + Send + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
@@ -23,7 +23,7 @@ impl Client for SimpleHttpClient {
         self.request(req, None, headers).await
     }
 
-    async fn get_json<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn get_json<U: ToString + Send + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
@@ -33,7 +33,7 @@ impl Client for SimpleHttpClient {
         serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 
-    async fn post<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post<U: ToString + Send + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         body: &[u8],
@@ -45,9 +45,9 @@ impl Client for SimpleHttpClient {
     }
 
     async fn post_json<
-        U: ToString + 'static,
-        B: Serialize + 'static,
-        T: DeserializeOwned + 'static,
+        U: ToString + Send + 'static,
+        B: Serialize + Send + 'static,
+        T: DeserializeOwned + Send + 'static,
     >(
         &self,
         url: U,
@@ -62,48 +62,13 @@ impl Client for SimpleHttpClient {
         serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 
-    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post_file<U: ToString + Send + 'static, T: DeserializeOwned + Send + 'static>(
         &self,
         url: U,
         files: Vec<(String, Vec<u8>)>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let mut m = Multipart::new();
-
-        for file in files.iter() {
-            let content_type = match infer::get(&file.1) {
-                Some(t) => t.mime_type(),
-                None => "application/octet-stream",
-            };
-
-            let mime = match mime::Mime::from_str(content_type) {
-                Ok(m) => m,
-                Err(_) => mime::APPLICATION_OCTET_STREAM,
-            };
-            m.add_stream(file.0.clone(), file.1.as_slice(), Some("blob"), Some(mime));
-        }
-
-        let mdata = m.prepare().unwrap();
-
-        let headers = match headers {
-            Some(mut h) => {
-                h.push((
-                    "Content-Type".to_owned(),
-                    format!("multipart/form-data; boundary={}", mdata.boundary()),
-                ));
-                h
-            }
-            None => vec![(
-                "Content-Type".to_owned(),
-                format!("multipart/form-data; boundary={}", mdata.boundary()),
-            )],
-        };
-
-        let mut reader = BufReader::new(mdata);
-        let mut buffer = Vec::new();
-        reader
-            .read_to_end(&mut buffer)
-            .map_err(|_| HttpError::WriteFormDataError())?;
+        let (headers, buffer) = self.prepare_files(files, headers)?;
 
         let req = ureq::post(&url.to_string());
         let res = self
@@ -153,6 +118,51 @@ impl SimpleHttpClient {
                 .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
             Err(HttpError::HttpClientError(response.message))
         }
+    }
+
+    fn prepare_files(
+        &self,
+        files: Vec<(String, Vec<u8>)>,
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<(Vec<(String, String)>, Vec<u8>)> {
+        let mut m = Multipart::new();
+
+        for file in files.iter() {
+            let content_type = match infer::get(&file.1) {
+                Some(t) => t.mime_type(),
+                None => "application/octet-stream",
+            };
+
+            let mime = match mime::Mime::from_str(content_type) {
+                Ok(m) => m,
+                Err(_) => mime::APPLICATION_OCTET_STREAM,
+            };
+            m.add_stream(file.0.clone(), file.1.as_slice(), Some("blob"), Some(mime));
+        }
+
+        let mdata = m.prepare().unwrap();
+
+        let headers = match headers {
+            Some(mut h) => {
+                h.push((
+                    "Content-Type".to_owned(),
+                    format!("multipart/form-data; boundary={}", mdata.boundary()),
+                ));
+                h
+            }
+            None => vec![(
+                "Content-Type".to_owned(),
+                format!("multipart/form-data; boundary={}", mdata.boundary()),
+            )],
+        };
+
+        let mut reader = BufReader::new(mdata);
+        let mut buffer = Vec::new();
+        reader
+            .read_to_end(&mut buffer)
+            .map_err(|_| HttpError::WriteFormDataError())?;
+
+        Ok((headers, buffer))
     }
 }
 
