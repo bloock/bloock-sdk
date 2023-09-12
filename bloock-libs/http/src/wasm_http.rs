@@ -122,18 +122,6 @@ impl SimpleHttpClient {
             }
         }
 
-        let (status, response_bytes) = self.send_request(req).await?;
-
-        if (200..300).contains(&status) {
-            return Ok(response_bytes);
-        } else {
-            let response: ApiError = serde_json::from_slice(&response_bytes)
-                .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
-            return Err(HttpError::HttpClientError(response.message));
-        }
-    }
-
-    async fn send_request(&self, req: UnsafeSend<Request>) -> Result<(u16, Vec<u8>)> {
         let future: UnsafeSend<JsFuture> = UnsafeSend::new(JsFuture::from(fetch(req)));
 
         let resp: UnsafeSend<Response> = future
@@ -153,11 +141,18 @@ impl SimpleHttpClient {
             .map_err(|e| HttpError::JsError(e.into()))?
             .unchecked_into();
         let typed_buff: Uint8Array = Uint8Array::new(&array_buffer);
-        let mut body = vec![0; typed_buff.length() as usize];
-        typed_buff.copy_to(&mut body);
+        let mut response_bytes = vec![0; typed_buff.length() as usize];
+        typed_buff.copy_to(&mut response_bytes);
 
         let status = resp.0.status();
-        Ok((status, body))
+
+        if (200..300).contains(&status) {
+            return Ok(response_bytes);
+        } else {
+            let response: ApiError = serde_json::from_slice(&response_bytes)
+                .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
+            return Err(HttpError::HttpClientError(response.message));
+        }
     }
 
     fn prepare_req(
