@@ -25,9 +25,6 @@ impl Loader<IriBuf, Span> for BloockLoader {
             let url: IriBuf = url.into();
             let client = SimpleHttpClient {};
 
-            #[cfg(target_arch = "wasm32")]
-            web_sys::console::log_1(&"1".into());
-
             let req = client.get(
                 url.as_str().to_string(),
                 Some(vec![(
@@ -36,14 +33,7 @@ impl Loader<IriBuf, Span> for BloockLoader {
                 )]),
             );
 
-            #[cfg(target_arch = "wasm32")]
-            web_sys::console::log_1(&"2".into());
-
-            //let res = Executor::block_on(req).unwrap().unwrap();
             let res = req.await.unwrap();
-
-            #[cfg(target_arch = "wasm32")]
-            web_sys::console::log_1(&"3".into());
 
             let text = std::str::from_utf8(&res).unwrap();
 
