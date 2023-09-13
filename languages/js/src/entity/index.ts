@@ -29,7 +29,7 @@ export {
   CredentialReceipt,
   CredentialSchema,
   CredentialStatus,
-  Credential,
+  Credential as CredentialV2,
   IssuerKeyArgs,
   IssuerKey,
   IssuerParams,

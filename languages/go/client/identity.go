@@ -15,6 +15,7 @@ type IdentityClient struct {
 	configData   *proto.ConfigData
 }
 
+// Deprecated: Will be deleted in future versions. Use NewIdentityV2Client function instead.
 func NewIdentityClient() IdentityClient {
 	return IdentityClient{
 		bridgeClient: bridge.NewBloockBridge(),

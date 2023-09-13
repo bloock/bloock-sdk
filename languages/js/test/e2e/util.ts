@@ -9,3 +9,13 @@ export function initSdk() {
   }
   Bloock.setDisableAnalytics(true);
 }
+
+export function initDevSdk() {
+  const apiKey = process.env["DEV_API_KEY"] || "";
+  const apiHost = process.env["DEV_API_HOST"] || "";
+  Bloock.setApiKey(apiKey);
+  if (apiHost) {
+    Bloock.setApiHost(apiHost);
+  }
+  Bloock.setDisableAnalytics(true);
+}

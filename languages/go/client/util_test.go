@@ -17,3 +17,13 @@ func InitSdk() {
 
 	bloock.DisableAnalytics = true
 }
+
+func InitDevSdk() {
+	bloock.ApiKey = os.Getenv("DEV_API_KEY")
+	apiHost := os.Getenv("DEV_API_HOST")
+	if apiHost != "" {
+		bloock.ApiHost = apiHost
+	}
+
+	bloock.DisableAnalytics = true
+}

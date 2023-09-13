@@ -14,6 +14,7 @@ final class AvailabilityTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         Bloock::$apiKey = getenv("API_KEY");
+        Bloock::$apiHost = getenv("API_HOST");
         Bloock::$disableAnalytics = true;
     }
 
