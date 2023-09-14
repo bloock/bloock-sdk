@@ -2,6 +2,8 @@
 
 use Bloock\Bloock;
 use Bloock\Client\KeyClient;
+use Bloock\Client\RecordClient;
+use Bloock\Client\AuthenticityClient;
 use Bloock\Entity\Key\CertificateType;
 use Bloock\Entity\Key\ImportCertificateParams;
 use Bloock\Entity\Key\KeyProtectionLevel;
@@ -9,6 +11,8 @@ use Bloock\Entity\Key\KeyType;
 use Bloock\Entity\Key\ManagedCertificateParams;
 use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\SubjectCertificateParams;
+use Bloock\Entity\Authenticity\EcdsaSigner;
+use Bloock\Entity\Authenticity\SignerArgs;
 use PHPUnit\Framework\TestCase;
 
 final class KeyTest extends TestCase
@@ -216,5 +220,13 @@ final class KeyTest extends TestCase
         $this->assertEquals($loadedCertificate->key, $certificate->key);
         $this->assertEquals($loadedCertificate->keyType, $certificate->keyType);
         $this->assertEquals($loadedCertificate->protection, $certificate->protection);
+
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+        $signature = $authenticityClient->sign($record, new EcdsaSigner(new SignerArgs($loadedCertificate)));
+
+        $this->assertNotNull($signature);
     }
 }
