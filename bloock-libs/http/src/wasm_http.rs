@@ -96,7 +96,7 @@ impl Client for SimpleHttpClient {
         filename: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let (headers, buffer) = self.prepare_files(files, headers)?;
+        let (headers, buffer) = self.prepare_files(files, texts, filename, headers)?;
 
         let request = self.prepare_req("POST", url.to_string(), Some(&buffer))?;
 
@@ -182,6 +182,8 @@ impl SimpleHttpClient {
     fn prepare_files(
         &self,
         files: Vec<(String, Vec<u8>)>,
+        texts: Vec<(String, String)>,
+        filename: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<(Vec<(String, String)>, Vec<u8>)> {
         let mut m = Multipart::new();

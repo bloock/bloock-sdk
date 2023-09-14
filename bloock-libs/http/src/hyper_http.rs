@@ -146,7 +146,7 @@ impl SimpleHttpClient {
                 Some(f) => f,
                 None => "blob".to_string(),
             };
-            m.add_stream(file.0.clone(), file.1.as_slice(), Some("blob"), Some(mime));
+            m.add_stream(file.0.clone(), file.1.as_slice(), Some(name), Some(mime));
         }
         for text in texts.iter() {
             m.add_text(text.0.clone(), text.1.clone());
