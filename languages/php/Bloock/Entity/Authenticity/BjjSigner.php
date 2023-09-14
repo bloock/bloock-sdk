@@ -28,6 +28,10 @@ class BjjSigner implements Signer
             $s->setManagedKey($this->args->managedKey->toProto());
         }
 
+        if ($this->args->managedCertificate != null) {
+            $s->setManagedCertificate($this->args->managedCertificate->toProto());
+        }
+
         if ($this->args->commonName != null) {
             $s->setCommonName($this->args->commonName);
         }

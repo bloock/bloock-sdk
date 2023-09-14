@@ -26,7 +26,15 @@ class Signer extends \Google\Protobuf\Internal\Message
      */
     protected $managed_key = null;
     /**
-     * Generated from protobuf field <code>optional string common_name = 4;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 4;</code>
+     */
+    protected $local_certificate = null;
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 5;</code>
+     */
+    protected $managed_certificate = null;
+    /**
+     * Generated from protobuf field <code>optional string common_name = 6;</code>
      */
     protected $common_name = null;
 
@@ -39,6 +47,8 @@ class Signer extends \Google\Protobuf\Internal\Message
      *     @type int $alg
      *     @type \Bloock\LocalKey $local_key
      *     @type \Bloock\ManagedKey $managed_key
+     *     @type \Bloock\LocalCertificate $local_certificate
+     *     @type \Bloock\ManagedCertificate $managed_certificate
      *     @type string $common_name
      * }
      */
@@ -134,7 +144,71 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional string common_name = 4;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 4;</code>
+     * @return \Bloock\LocalCertificate|null
+     */
+    public function getLocalCertificate()
+    {
+        return $this->local_certificate;
+    }
+
+    public function hasLocalCertificate()
+    {
+        return isset($this->local_certificate);
+    }
+
+    public function clearLocalCertificate()
+    {
+        unset($this->local_certificate);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 4;</code>
+     * @param \Bloock\LocalCertificate $var
+     * @return $this
+     */
+    public function setLocalCertificate($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\LocalCertificate::class);
+        $this->local_certificate = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 5;</code>
+     * @return \Bloock\ManagedCertificate|null
+     */
+    public function getManagedCertificate()
+    {
+        return $this->managed_certificate;
+    }
+
+    public function hasManagedCertificate()
+    {
+        return isset($this->managed_certificate);
+    }
+
+    public function clearManagedCertificate()
+    {
+        unset($this->managed_certificate);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 5;</code>
+     * @param \Bloock\ManagedCertificate $var
+     * @return $this
+     */
+    public function setManagedCertificate($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\ManagedCertificate::class);
+        $this->managed_certificate = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string common_name = 6;</code>
      * @return string
      */
     public function getCommonName()
@@ -153,7 +227,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional string common_name = 4;</code>
+     * Generated from protobuf field <code>optional string common_name = 6;</code>
      * @param string $var
      * @return $this
      */
