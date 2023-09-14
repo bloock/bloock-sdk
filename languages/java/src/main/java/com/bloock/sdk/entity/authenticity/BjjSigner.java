@@ -29,6 +29,10 @@ public class BjjSigner implements Signer {
       builder.setCommonName(this.args.commonName);
     }
 
+    if (this.args.managedCertificate != null) {
+      builder.setManagedCertificate(this.args.managedCertificate.toProto());
+    }
+
     return builder.build();
   }
 }

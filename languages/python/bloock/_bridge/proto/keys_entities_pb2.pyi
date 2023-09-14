@@ -56,6 +56,21 @@ SOFTWARE: KeyProtectionLevel.ValueType  # 0
 HSM: KeyProtectionLevel.ValueType  # 1
 global___KeyProtectionLevel = KeyProtectionLevel
 
+class _CertificateType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _CertificateTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_CertificateType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    PEM: _CertificateType.ValueType  # 0
+    PFX: _CertificateType.ValueType  # 1
+
+class CertificateType(_CertificateType, metaclass=_CertificateTypeEnumTypeWrapper): ...
+
+PEM: CertificateType.ValueType  # 0
+PFX: CertificateType.ValueType  # 1
+global___CertificateType = CertificateType
+
 @typing_extensions.final
 class LocalKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -137,3 +152,75 @@ class ManagedKey(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["expiration", b"expiration", "id", b"id", "key", b"key", "key_type", b"key_type", "name", b"name", "protection", b"protection"]) -> None: ...
 
 global___ManagedKey = ManagedKey
+
+@typing_extensions.final
+class LocalCertificate(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    KEY_FIELD_NUMBER: builtins.int
+    key: builtins.str
+    def __init__(
+        self,
+        *,
+        key: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["key", b"key"]) -> None: ...
+
+global___LocalCertificate = LocalCertificate
+
+@typing_extensions.final
+class ManagedCertificateParams(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    KEY_TYPE_FIELD_NUMBER: builtins.int
+    CN_FIELD_NUMBER: builtins.int
+    O_FIELD_NUMBER: builtins.int
+    OU_FIELD_NUMBER: builtins.int
+    C_FIELD_NUMBER: builtins.int
+    EXPIRATION_FIELD_NUMBER: builtins.int
+    key_type: global___KeyType.ValueType
+    cn: builtins.str
+    o: builtins.str
+    ou: builtins.str
+    c: builtins.str
+    expiration: builtins.int
+    def __init__(
+        self,
+        *,
+        key_type: global___KeyType.ValueType = ...,
+        cn: builtins.str = ...,
+        o: builtins.str = ...,
+        ou: builtins.str = ...,
+        c: builtins.str = ...,
+        expiration: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["c", b"c", "cn", b"cn", "expiration", b"expiration", "key_type", b"key_type", "o", b"o", "ou", b"ou"]) -> None: ...
+
+global___ManagedCertificateParams = ManagedCertificateParams
+
+@typing_extensions.final
+class ManagedCertificate(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ID_FIELD_NUMBER: builtins.int
+    KEY_FIELD_NUMBER: builtins.int
+    PROTECTION_FIELD_NUMBER: builtins.int
+    KEY_TYPE_FIELD_NUMBER: builtins.int
+    EXPIRATION_FIELD_NUMBER: builtins.int
+    id: builtins.str
+    key: builtins.str
+    protection: global___KeyProtectionLevel.ValueType
+    key_type: global___KeyType.ValueType
+    expiration: builtins.int
+    def __init__(
+        self,
+        *,
+        id: builtins.str = ...,
+        key: builtins.str = ...,
+        protection: global___KeyProtectionLevel.ValueType = ...,
+        key_type: global___KeyType.ValueType = ...,
+        expiration: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["expiration", b"expiration", "id", b"id", "key", b"key", "key_type", b"key_type", "protection", b"protection"]) -> None: ...
+
+global___ManagedCertificate = ManagedCertificate

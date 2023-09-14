@@ -1,8 +1,16 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.bloock.sdk.client.AuthenticityClient;
 import com.bloock.sdk.client.KeyClient;
+import com.bloock.sdk.client.RecordClient;
+import com.bloock.sdk.entity.authenticity.EcdsaSigner;
+import com.bloock.sdk.entity.authenticity.Signature;
+import com.bloock.sdk.entity.authenticity.SignerArgs;
 import com.bloock.sdk.entity.key.*;
+import com.bloock.sdk.entity.record.Record;
+import java.io.File;
+import java.io.FileInputStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +18,7 @@ class KeyTest {
 
   @BeforeAll
   static void beforeAll() {
-    Utils.initSdk();
+    Utils.initDevSdk();
   }
 
   @Test
@@ -148,5 +156,97 @@ class KeyTest {
     assertEquals(managedKey.getKey(), loadedKey.getKey());
     assertEquals(managedKey.getKeyType(), loadedKey.getKeyType());
     assertEquals(managedKey.getProtection(), loadedKey.getProtection());
+  }
+
+  @Test
+  void generateManagedCertificate() throws Exception {
+    KeyClient keyClient = new KeyClient();
+
+    KeyType keyType = KeyType.EcP256k;
+    SubjectCertificateParams subjectParams =
+        new SubjectCertificateParams(
+            "Google internet Authority G2", "US", "IT Department", "Google Inc");
+
+    ManagedCertificate managedCertificate =
+        keyClient.newManagedCertificate(new ManagedCertificateParams(keyType, subjectParams, 5));
+
+    assertNotNull(managedCertificate.getKey());
+    assertEquals(managedCertificate.getKeyType(), keyType);
+    assertEquals(managedCertificate.getProtection(), KeyProtectionLevel.SOFTWARE);
+
+    ManagedCertificate loadedCertificate =
+        keyClient.loadManagedCertificate(managedCertificate.getId());
+    assertEquals(managedCertificate.getId(), loadedCertificate.getId());
+    assertEquals(managedCertificate.getKey(), loadedCertificate.getKey());
+    assertEquals(managedCertificate.getKeyType(), loadedCertificate.getKeyType());
+    assertEquals(managedCertificate.getProtection(), loadedCertificate.getProtection());
+  }
+
+  @Test
+  void importManagedCertificatePEM() throws Exception {
+    KeyClient keyClient = new KeyClient();
+
+    String currentDirectory = System.getProperty("user.dir");
+    File file = new File(currentDirectory + "/src/test/test_utils/test.pem");
+    int fileSize = (int) file.length();
+    byte[] bytes = new byte[fileSize];
+
+    try (FileInputStream inputStream = new FileInputStream(file)) {
+      inputStream.read(bytes);
+    }
+
+    ManagedCertificate managedCertificate =
+        keyClient.importManagedCertificate(
+            CertificateType.PEM, bytes, new ImportCertificateParams());
+
+    assertNotNull(managedCertificate.getKey());
+    assertEquals(managedCertificate.getKeyType(), KeyType.Rsa2048);
+    assertEquals(managedCertificate.getProtection(), KeyProtectionLevel.SOFTWARE);
+
+    ManagedCertificate loadedCertificate =
+        keyClient.loadManagedCertificate(managedCertificate.getId());
+    assertEquals(managedCertificate.getId(), loadedCertificate.getId());
+    assertEquals(managedCertificate.getKey(), loadedCertificate.getKey());
+    assertEquals(managedCertificate.getKeyType(), loadedCertificate.getKeyType());
+    assertEquals(managedCertificate.getProtection(), loadedCertificate.getProtection());
+  }
+
+  @Test
+  void importManagedCertificatePFX() throws Exception {
+    KeyClient keyClient = new KeyClient();
+
+    String currentDirectory = System.getProperty("user.dir");
+    File file = new File(currentDirectory + "/src/test/test_utils/test2.pfx");
+    int fileSize = (int) file.length();
+    byte[] bytes = new byte[fileSize];
+
+    try (FileInputStream inputStream = new FileInputStream(file)) {
+      inputStream.read(bytes);
+    }
+    String password = "bloock";
+
+    ManagedCertificate managedCertificate =
+        keyClient.importManagedCertificate(
+            CertificateType.PFX, bytes, new ImportCertificateParams(password));
+
+    assertNotNull(managedCertificate.getKey());
+    assertEquals(managedCertificate.getKeyType(), KeyType.EcP256k);
+    assertEquals(managedCertificate.getProtection(), KeyProtectionLevel.SOFTWARE);
+
+    ManagedCertificate loadedCertificate =
+        keyClient.loadManagedCertificate(managedCertificate.getId());
+    assertEquals(managedCertificate.getId(), loadedCertificate.getId());
+    assertEquals(managedCertificate.getKey(), loadedCertificate.getKey());
+    assertEquals(managedCertificate.getKeyType(), loadedCertificate.getKeyType());
+    assertEquals(managedCertificate.getProtection(), loadedCertificate.getProtection());
+
+    RecordClient recordClient = new RecordClient();
+    Record record = recordClient.fromString("Hello world").build();
+
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+    Signature signature =
+        authenticityClient.sign(record, new EcdsaSigner(new SignerArgs(loadedCertificate)));
+
+    assertNotNull(signature);
   }
 }

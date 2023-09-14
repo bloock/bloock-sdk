@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 from . import keys_entities_pb2 as keys__entities__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1b\x61uthenticity_entities.proto\x12\x06\x62loock\x1a\x13keys_entities.proto\"\xc8\x01\n\x06Signer\x12\x1e\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x11.bloock.SignerAlg\x12(\n\tlocal_key\x18\x02 \x01(\x0b\x32\x10.bloock.LocalKeyH\x00\x88\x01\x01\x12,\n\x0bmanaged_key\x18\x03 \x01(\x0b\x32\x12.bloock.ManagedKeyH\x01\x88\x01\x01\x12\x18\n\x0b\x63ommon_name\x18\x04 \x01(\tH\x02\x88\x01\x01\x42\x0c\n\n_local_keyB\x0e\n\x0c_managed_keyB\x0e\n\x0c_common_name\"p\n\tSignature\x12\x11\n\tsignature\x18\x01 \x01(\t\x12\x11\n\tprotected\x18\x02 \x01(\t\x12\'\n\x06header\x18\x03 \x01(\x0b\x32\x17.bloock.SignatureHeader\x12\x14\n\x0cmessage_hash\x18\x04 \x01(\t\"+\n\x0fSignatureHeader\x12\x0b\n\x03\x61lg\x18\x01 \x01(\t\x12\x0b\n\x03kid\x18\x02 \x01(\t*)\n\tSignerAlg\x12\n\n\x06\x45S256K\x10\x00\x12\x07\n\x03\x45NS\x10\x01\x12\x07\n\x03\x42JJ\x10\x02\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1b\x61uthenticity_entities.proto\x12\x06\x62loock\x1a\x13keys_entities.proto\"\xee\x02\n\x06Signer\x12\x1e\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x11.bloock.SignerAlg\x12(\n\tlocal_key\x18\x02 \x01(\x0b\x32\x10.bloock.LocalKeyH\x00\x88\x01\x01\x12,\n\x0bmanaged_key\x18\x03 \x01(\x0b\x32\x12.bloock.ManagedKeyH\x01\x88\x01\x01\x12\x38\n\x11local_certificate\x18\x04 \x01(\x0b\x32\x18.bloock.LocalCertificateH\x02\x88\x01\x01\x12<\n\x13managed_certificate\x18\x05 \x01(\x0b\x32\x1a.bloock.ManagedCertificateH\x03\x88\x01\x01\x12\x18\n\x0b\x63ommon_name\x18\x06 \x01(\tH\x04\x88\x01\x01\x42\x0c\n\n_local_keyB\x0e\n\x0c_managed_keyB\x14\n\x12_local_certificateB\x16\n\x14_managed_certificateB\x0e\n\x0c_common_name\"p\n\tSignature\x12\x11\n\tsignature\x18\x01 \x01(\t\x12\x11\n\tprotected\x18\x02 \x01(\t\x12\'\n\x06header\x18\x03 \x01(\x0b\x32\x17.bloock.SignatureHeader\x12\x14\n\x0cmessage_hash\x18\x04 \x01(\t\"+\n\x0fSignatureHeader\x12\x0b\n\x03\x61lg\x18\x01 \x01(\t\x12\x0b\n\x03kid\x18\x02 \x01(\t*)\n\tSignerAlg\x12\n\n\x06\x45S256K\x10\x00\x12\x07\n\x03\x45NS\x10\x01\x12\x07\n\x03\x42JJ\x10\x02\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'authenticity_entities_pb2', globals())
@@ -22,12 +22,12 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
-  _SIGNERALG._serialized_start=422
-  _SIGNERALG._serialized_end=463
+  _SIGNERALG._serialized_start=588
+  _SIGNERALG._serialized_end=629
   _SIGNER._serialized_start=61
-  _SIGNER._serialized_end=261
-  _SIGNATURE._serialized_start=263
-  _SIGNATURE._serialized_end=375
-  _SIGNATUREHEADER._serialized_start=377
-  _SIGNATUREHEADER._serialized_end=420
+  _SIGNER._serialized_end=427
+  _SIGNATURE._serialized_start=429
+  _SIGNATURE._serialized_end=541
+  _SIGNATUREHEADER._serialized_start=543
+  _SIGNATUREHEADER._serialized_end=586
 # @@protoc_insertion_point(module_scope)
