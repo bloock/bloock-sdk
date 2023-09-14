@@ -165,8 +165,8 @@ final class KeyTest extends TestCase
         $certificate = $keyClient->newManagedCertificate($params);
 
         $this->assertNotNull($certificate->key);
-        $this->assertEquals($certificate->keyType, $keyType);
-        $this->assertEquals($certificate->protection, KeyType::EcP256k);
+        $this->assertEquals($certificate->keyType, KeyType::EcP256k);
+        $this->assertEquals($certificate->protection, KeyProtectionLevel::SOFTWARE);
 
         $loadedCertificate = $keyClient->loadManagedCertificate($certificate->id);
         $this->assertEquals($loadedCertificate->id, $certificate->id);
@@ -179,7 +179,8 @@ final class KeyTest extends TestCase
     {
         $keyClient = new KeyClient();
 
-        $fileContents = file_get_contents("./TestUtils/test.pem");
+        $currentDirectory = getcwd();
+        $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/test.pem");
         $byteArray = unpack('C*', $fileContents);
 
         $certificate = $keyClient->importManagedCertificate(CertificateType::PEM, $byteArray, new ImportCertificateParams());
@@ -199,7 +200,8 @@ final class KeyTest extends TestCase
     {
         $keyClient = new KeyClient();
 
-        $fileContents = file_get_contents("./TestUtils/test2.pfx");
+        $currentDirectory = getcwd();
+        $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/test2.pfx");
         $byteArray = unpack('C*', $fileContents);
         $password = "bloock";
 
