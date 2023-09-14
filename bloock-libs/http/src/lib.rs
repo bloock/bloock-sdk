@@ -25,35 +25,35 @@ cfg_wasm! {
 pub type Result<T> = std::result::Result<T, HttpError>;
 
 #[cfg_attr(any(test, feature = "testing"), automock)]
-#[async_trait(?Send)]
+#[async_trait]
 pub trait Client {
-    async fn get<U: ToString + 'static>(
+    async fn get<U: ToString + Send + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<Vec<u8>>;
-    async fn get_json<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn get_json<U: ToString + Send + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T>;
-    async fn post<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post<U: ToString + Send + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         body: &[u8],
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T>;
     async fn post_json<
-        U: ToString + 'static,
-        B: Serialize + 'static,
-        T: DeserializeOwned + 'static,
+        U: ToString + Send + 'static,
+        B: Serialize + Send + 'static,
+        T: DeserializeOwned + Send + 'static,
     >(
         &self,
         url: U,
         body: B,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T>;
-    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post_file<U: ToString + Send + 'static, T: DeserializeOwned + Send + 'static>(
         &self,
         url: U,
         files: Vec<(String, Vec<u8>)>,

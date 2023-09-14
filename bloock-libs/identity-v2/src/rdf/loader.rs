@@ -1,6 +1,6 @@
 use bloock_http::Client;
 use bloock_http::SimpleHttpClient;
-use futures::{future::BoxFuture, FutureExt};
+use futures::future::BoxFuture;
 use iref::IriBuf;
 use json_ld::{syntax::ErrorCode, Loader, RemoteDocument};
 use json_syntax::Parse;
@@ -21,9 +21,10 @@ impl Loader<IriBuf, Span> for BloockLoader {
     where
         IriBuf: 'a,
     {
-        async move {
+        Box::pin(async move {
             let url: IriBuf = url.into();
             let client = SimpleHttpClient {};
+
             let req = client.get(
                 url.as_str().to_string(),
                 Some(vec![(
@@ -31,7 +32,8 @@ impl Loader<IriBuf, Span> for BloockLoader {
                     "application/ld+json".to_string(),
                 )]),
             );
-            let res = futures::executor::block_on(req).unwrap();
+
+            let res = req.await.unwrap();
 
             let text = std::str::from_utf8(&res).unwrap();
 
@@ -45,7 +47,6 @@ impl Loader<IriBuf, Span> for BloockLoader {
             } else {
                 return Err(ErrorCode::LoadingDocumentFailed.into());
             }
-        }
-        .boxed()
+        })
     }
 }

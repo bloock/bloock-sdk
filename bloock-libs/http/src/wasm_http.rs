@@ -10,9 +10,15 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde::Serializer;
 use std::fmt;
+use std::future::Future;
 use std::io::BufReader;
 use std::io::Read;
+use std::pin::Pin;
 use std::str::FromStr;
+use std::task::Context;
+use std::task::Poll;
+use wasm_bindgen::convert::IntoWasmAbi;
+use wasm_bindgen::describe::WasmDescribe;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::JsValue;
@@ -25,68 +31,48 @@ use web_sys::Response;
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_name = fetch)]
-    fn fetch(input: web_sys::Request) -> Promise;
+    fn fetch(input: UnsafeSend<web_sys::Request>) -> Promise;
 }
 
 pub struct SimpleHttpClient {}
 
-#[async_trait(?Send)]
+#[async_trait]
 impl Client for SimpleHttpClient {
-    async fn get<U: ToString + 'static>(
+    async fn get<U: ToString + Send + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<Vec<u8>> {
-        let mut opts = RequestInit::new();
-        opts.method("GET");
-        opts.mode(RequestMode::Cors);
-
-        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
-            .map_err(|e| HttpError::JsError(e.into()))?;
-
+        let request = self.prepare_req("GET", url.to_string(), None)?;
         self.request(request, headers).await
     }
 
-    async fn get_json<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn get_json<U: ToString + Send + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let mut opts = RequestInit::new();
-        opts.method("GET");
-        opts.mode(RequestMode::Cors);
-
-        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
-            .map_err(|e| HttpError::JsError(e.into()))?;
-
+        let request = self.prepare_req("GET", url.to_string(), None)?;
         let res = self.request(request, headers).await?;
         serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 
-    async fn post<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post<U: ToString + Send + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         body: &[u8],
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let mut opts = RequestInit::new();
-        opts.method("POST");
-        opts.mode(RequestMode::Cors);
-        let body_array: js_sys::Uint8Array = body.into();
-        let js_value: &JsValue = body_array.as_ref();
-        opts.body(Some(js_value));
-
-        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
-            .map_err(|e| HttpError::JsError(e.into()))?;
+        let request = self.prepare_req("POST", url.to_string(), Some(body))?;
 
         let res = self.request(request, headers).await?;
         serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 
     async fn post_json<
-        U: ToString + 'static,
-        B: Serialize + 'static,
-        T: DeserializeOwned + 'static,
+        U: ToString + Send + 'static,
+        B: Serialize + Send + 'static,
+        T: DeserializeOwned + Send + 'static,
     >(
         &self,
         url: U,
@@ -96,21 +82,13 @@ impl Client for SimpleHttpClient {
         let bytes =
             serde_json::to_vec(&body).map_err(|e| HttpError::SerializeError(e.to_string()))?;
 
-        let mut opts = RequestInit::new();
-        opts.method("POST");
-        opts.mode(RequestMode::Cors);
-        let body_array: js_sys::Uint8Array = bytes.as_slice().into();
-        let js_value: &JsValue = body_array.as_ref();
-        opts.body(Some(js_value));
-
-        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
-            .map_err(|e| HttpError::JsError(e.into()))?;
+        let request = self.prepare_req("POST", url.to_string(), Some(bytes.as_slice()))?;
 
         let res = self.request(request, headers).await?;
         serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
     }
 
-    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post_file<U: ToString + Send + 'static, T: DeserializeOwned + Send + 'static>(
         &self,
         url: U,
         files: Vec<(String, Vec<u8>)>,
@@ -118,6 +96,94 @@ impl Client for SimpleHttpClient {
         filename: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
+        let (headers, buffer) = self.prepare_files(files, headers)?;
+
+        let request = self.prepare_req("POST", url.to_string(), Some(&buffer))?;
+
+        let res = self.request(request, Some(headers)).await?;
+        serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
+    }
+}
+
+impl SimpleHttpClient {
+    pub fn new() -> Self {
+        Self {}
+    }
+
+    async fn request(
+        &self,
+        req: UnsafeSend<Request>,
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<Vec<u8>> {
+        if headers.is_some() {
+            for header in headers.unwrap() {
+                req.0
+                    .headers()
+                    .set(&header.0, &header.1)
+                    .map_err(|e| HttpError::JsError(e.into()))?;
+            }
+        }
+
+        let future: UnsafeSend<JsFuture> = UnsafeSend::new(JsFuture::from(fetch(req)));
+
+        let resp: UnsafeSend<Response> = future
+            .await
+            .map_err(|e| HttpError::JsError(e.into()))?
+            .dyn_into::<Response>()
+            .map_err(|e| HttpError::JsError(e.into()))?
+            .into();
+
+        let future: UnsafeSend<JsFuture> = UnsafeSend::new(JsFuture::from(
+            resp.0
+                .array_buffer()
+                .map_err(|e| HttpError::JsError(e.into()))?,
+        ));
+        let array_buffer: ArrayBuffer = future
+            .await
+            .map_err(|e| HttpError::JsError(e.into()))?
+            .unchecked_into();
+        let typed_buff: Uint8Array = Uint8Array::new(&array_buffer);
+        let mut response_bytes = vec![0; typed_buff.length() as usize];
+        typed_buff.copy_to(&mut response_bytes);
+
+        let status = resp.0.status();
+
+        if (200..300).contains(&status) {
+            return Ok(response_bytes);
+        } else {
+            let response: ApiError = serde_json::from_slice(&response_bytes)
+                .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
+            return Err(HttpError::HttpClientError(response.message));
+        }
+    }
+
+    fn prepare_req(
+        &self,
+        method: &'static str,
+        url: String,
+        body: Option<&[u8]>,
+    ) -> Result<UnsafeSend<Request>> {
+        let mut opts = RequestInit::new();
+        opts.method(method);
+        opts.mode(RequestMode::Cors);
+
+        if let Some(body) = body {
+            let body_array: js_sys::Uint8Array = body.into();
+            let js_value: &JsValue = body_array.as_ref();
+            opts.body(Some(js_value));
+        }
+
+        Ok(UnsafeSend::new(
+            Request::new_with_str_and_init(&url, &opts)
+                .map_err(|e| HttpError::JsError(e.into()))?,
+        ))
+    }
+
+    fn prepare_files(
+        &self,
+        files: Vec<(String, Vec<u8>)>,
+        headers: Option<Vec<(String, String)>>,
+    ) -> Result<(Vec<(String, String)>, Vec<u8>)> {
         let mut m = Multipart::new();
 
         for file in files.iter() {
@@ -163,75 +229,8 @@ impl Client for SimpleHttpClient {
             .read_to_end(&mut buffer)
             .map_err(|_| HttpError::WriteFormDataError())?;
 
-        let mut opts = RequestInit::new();
-        opts.method("POST");
-        opts.mode(RequestMode::Cors);
-        let body_array: js_sys::Uint8Array = buffer.as_slice().into();
-        let js_value: &JsValue = body_array.as_ref();
-        opts.body(Some(js_value));
-
-        let request = Request::new_with_str_and_init(&url.to_string(), &opts)
-            .map_err(|e| HttpError::JsError(e.into()))?;
-
-        let res = self.request(request, Some(headers)).await?;
-        serde_json::from_slice(&res).map_err(|e| HttpError::DeserializeError(e.to_string()))
+        Ok((headers, buffer))
     }
-}
-
-impl SimpleHttpClient {
-    pub fn new() -> Self {
-        Self {}
-    }
-
-    async fn request(
-        &self,
-        req: Request,
-        headers: Option<Vec<(String, String)>>,
-    ) -> Result<Vec<u8>> {
-        if headers.is_some() {
-            for header in headers.unwrap() {
-                req.headers()
-                    .set(&header.0, &header.1)
-                    .map_err(|e| HttpError::JsError(e.into()))?;
-            }
-        }
-
-        let resp_value = JsFuture::from(fetch(req))
-            .await
-            .map_err(|e| HttpError::JsError(e.into()))?;
-
-        assert!(resp_value.is_instance_of::<Response>());
-
-        let resp: Response = resp_value
-            .dyn_into()
-            .map_err(|e| HttpError::JsError(e.into()))?;
-
-        let status = resp.status();
-
-        let response_bytes = parse_response(&resp).await?;
-
-        if (200..300).contains(&status) {
-            return Ok(response_bytes);
-        } else {
-            let response: ApiError = serde_json::from_slice(&response_bytes)
-                .map_err(|e| HttpError::DeserializeError(e.to_string()))?;
-            return Err(HttpError::HttpClientError(response.message));
-        }
-    }
-}
-
-async fn parse_response(response: &Response) -> Result<Vec<u8>> {
-    let promise = response
-        .array_buffer()
-        .map_err(|e| HttpError::JsError(e.into()))?;
-    let array_buffer: ArrayBuffer = JsFuture::from(promise)
-        .await
-        .map_err(|e| HttpError::JsError(e.into()))?
-        .unchecked_into();
-    let typed_buff: Uint8Array = Uint8Array::new(&array_buffer);
-    let mut body = vec![0; typed_buff.length() as usize];
-    typed_buff.copy_to(&mut body);
-    Ok(body)
 }
 
 #[derive(Debug, Clone)]
@@ -273,3 +272,41 @@ impl PartialEq for JsError {
 }
 
 impl Eq for JsError {}
+
+struct UnsafeSend<T>(T);
+
+unsafe impl<T> Send for UnsafeSend<T> {}
+
+impl<T> UnsafeSend<T> {
+    pub fn new(data: T) -> Self {
+        UnsafeSend(data)
+    }
+}
+
+impl<T> From<T> for UnsafeSend<T> {
+    fn from(other: T) -> Self {
+        Self::new(other)
+    }
+}
+
+impl<T: Future + Unpin> Future for UnsafeSend<T> {
+    type Output = T::Output;
+
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        Pin::new(&mut self.0).poll(cx)
+    }
+}
+
+impl<T: WasmDescribe> WasmDescribe for UnsafeSend<T> {
+    fn describe() {
+        T::describe()
+    }
+}
+
+impl<T: IntoWasmAbi> IntoWasmAbi for UnsafeSend<T> {
+    type Abi = T::Abi;
+
+    fn into_abi(self) -> Self::Abi {
+        self.0.into_abi()
+    }
+}

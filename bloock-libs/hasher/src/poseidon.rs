@@ -4,7 +4,6 @@ use bloock_poseidon_rs::poseidon::Fr;
 use bloock_poseidon_rs::PrimeField;
 use bloock_poseidon_rs::POSEIDON;
 use num_bigint::BigInt;
-use num_traits::Num;
 
 const POSEIDON_HASH_OUTPUT_LENGTH: usize = 32;
 const Q_STRING: &str =
@@ -46,7 +45,7 @@ pub fn check_poseidon_hash(payload: &[u8]) -> bool {
     if payload.len() != POSEIDON_HASH_OUTPUT_LENGTH {
         return false;
     }
-    return true
+    return true;
     //check_big_int_in_field(BigInt::from_signed_bytes_be(payload))
 }
 
