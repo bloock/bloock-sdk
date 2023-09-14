@@ -3,7 +3,6 @@
 package client
 
 import (
-	"log"
 	"os"
 	"testing"
 
@@ -210,7 +209,6 @@ func TestKey(t *testing.T) {
 		keyClient := NewKeyClient()
 
 		certificateBytes, err := os.ReadFile("./../test/test_utils/test.pem")
-		log.Panicln(certificateBytes)
 		assert.NoError(t, err)
 		managedCertificate, err := keyClient.ImportManagedCertificate(key.PEM, certificateBytes, key.NewImportCertificateParams())
 		assert.NoError(t, err)
