@@ -63,6 +63,10 @@ hasher-wasm-test:
 	cd hasher && wasm-pack test --chrome --headless --release
 	cd hasher && wasm-pack test --node --release
 
+executor-wasm-test:
+	cd executor && wasm-pack test --firefox --release
+	cd executor && wasm-pack test --node --release
+
 signer-wasm-test:
 	cd signer && wasm-pack test --chrome --headless --release
 	cd signer && wasm-pack test --node --release

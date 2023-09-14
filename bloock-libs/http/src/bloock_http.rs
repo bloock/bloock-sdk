@@ -19,9 +19,9 @@ pub struct BloockHttpClient {
     api_version: String,
 }
 
-#[async_trait(?Send)]
+#[async_trait]
 impl Client for BloockHttpClient {
-    async fn get<U: ToString + 'static>(
+    async fn get<U: ToString + Send + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
@@ -42,7 +42,7 @@ impl Client for BloockHttpClient {
         client.get(url, Some(headers)).await
     }
 
-    async fn get_json<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn get_json<U: ToString + Send + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         headers: Option<Vec<(String, String)>>,
@@ -63,7 +63,7 @@ impl Client for BloockHttpClient {
         client.get_json(url, Some(headers)).await
     }
 
-    async fn post<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post<U: ToString + Send + 'static, T: DeserializeOwned + 'static>(
         &self,
         url: U,
         body: &[u8],
@@ -86,9 +86,9 @@ impl Client for BloockHttpClient {
     }
 
     async fn post_json<
-        U: ToString + 'static,
-        B: Serialize + 'static,
-        T: DeserializeOwned + 'static,
+        U: ToString + Send + 'static,
+        B: Serialize + Send + 'static,
+        T: DeserializeOwned + Send + 'static,
     >(
         &self,
         url: U,
@@ -111,7 +111,7 @@ impl Client for BloockHttpClient {
         client.post_json(url, body, Some(headers)).await
     }
 
-    async fn post_file<U: ToString + 'static, T: DeserializeOwned + 'static>(
+    async fn post_file<U: ToString + Send + 'static, T: DeserializeOwned + Send + 'static>(
         &self,
         url: U,
         files: Vec<(String, Vec<u8>)>,
