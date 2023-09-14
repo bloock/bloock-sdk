@@ -25,6 +25,8 @@ impl<H: Client> AvailabilityService<H> {
             .post_file(
                 url,
                 vec![("payload".to_owned(), record.serialize()?.to_vec())],
+                vec![],
+                None,
                 None,
             )
             .await
@@ -56,6 +58,8 @@ impl<H: Client> AvailabilityService<H> {
             .post_file(
                 url,
                 vec![("payload".to_owned(), record.serialize()?.to_vec())],
+                vec![],
+                None,
                 None,
             )
             .await
@@ -100,9 +104,11 @@ mod tests {
             .with(
                 eq("https://api.bloock.com/hosting/v1/hosted/upload".to_owned()),
                 eq(vec![("payload".to_owned(), payload.to_vec())]),
+                eq(vec![]),
+                eq(None),
                 eq(None),
             )
-            .return_once(|_, _, _| Ok(response));
+            .return_once(|_, _, _, _, _| Ok(response));
 
         let service = availability::configure_test(Arc::new(http));
 
@@ -154,9 +160,11 @@ mod tests {
             .with(
                 eq("https://api.bloock.com/hosting/v1/ipfs/upload".to_owned()),
                 eq(vec![("payload".to_owned(), payload.to_vec())]),
+                eq(vec![]),
+                eq(None),
                 eq(None),
             )
-            .return_once(|_, _, _| Ok(response));
+            .return_once(|_, _, _, _, _| Ok(response));
 
         let service = availability::configure_test(Arc::new(http));
 

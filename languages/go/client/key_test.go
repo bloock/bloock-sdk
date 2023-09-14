@@ -3,14 +3,17 @@
 package client
 
 import (
+	"log"
+	"os"
 	"testing"
 
+	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
 	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestKey(t *testing.T) {
-	InitSdk()
+	InitDevSdk()
 
 	t.Run("generate local ecdsa", func(t *testing.T) {
 		keyClient := NewKeyClient()
@@ -169,5 +172,95 @@ func TestKey(t *testing.T) {
 		assert.Equal(t, loadedKey.Key, managedKey.Key)
 		assert.Equal(t, loadedKey.Protection, managedKey.Protection)
 		assert.Equal(t, loadedKey.KeyType, managedKey.KeyType)
+	})
+
+	t.Run("generate managed certificate", func(t *testing.T) {
+		keyClient := NewKeyClient()
+
+		keyType := key.EcP256k
+		expiration := int32(5)
+		subjectParams := key.SubjectCertificateParams{
+			CN: "Google internet Authority G2",
+			O:  "Google Inc",
+			OU: "IT Department",
+			C:  "US",
+		}
+		params := key.ManagedCertificateParams{
+			KeyType:          keyType,
+			Subject:          subjectParams,
+			ExpirationMonths: expiration,
+		}
+		managedCertificate, err := keyClient.NewManagedCertificate(params)
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, managedCertificate.Key)
+		assert.Equal(t, key.KEY_PROTECTION_SOFTWARE, managedCertificate.Protection)
+		assert.Equal(t, keyType, managedCertificate.KeyType)
+
+		loadedCertificate, err := keyClient.LoadManagedCertificate(managedCertificate.ID)
+		assert.NoError(t, err)
+
+		assert.Equal(t, managedCertificate.ID, loadedCertificate.ID)
+		assert.Equal(t, managedCertificate.Key, loadedCertificate.Key)
+		assert.Equal(t, managedCertificate.Protection, loadedCertificate.Protection)
+		assert.Equal(t, managedCertificate.KeyType, loadedCertificate.KeyType)
+	})
+
+	t.Run("import managed certificate pem", func(t *testing.T) {
+		keyClient := NewKeyClient()
+
+		certificateBytes, err := os.ReadFile("./../test/test_utils/test.pem")
+		log.Panicln(certificateBytes)
+		assert.NoError(t, err)
+		managedCertificate, err := keyClient.ImportManagedCertificate(key.PEM, certificateBytes, key.NewImportCertificateParams())
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, managedCertificate.Key)
+		assert.Equal(t, key.KEY_PROTECTION_SOFTWARE, managedCertificate.Protection)
+		assert.Equal(t, key.Rsa2048, managedCertificate.KeyType)
+
+		loadedCertificate, err := keyClient.LoadManagedCertificate(managedCertificate.ID)
+		assert.NoError(t, err)
+
+		assert.Equal(t, managedCertificate.ID, loadedCertificate.ID)
+		assert.Equal(t, managedCertificate.Key, loadedCertificate.Key)
+		assert.Equal(t, managedCertificate.Protection, loadedCertificate.Protection)
+		assert.Equal(t, managedCertificate.KeyType, loadedCertificate.KeyType)
+	})
+
+	t.Run("import managed certificate pfx", func(t *testing.T) {
+		keyClient := NewKeyClient()
+		authenticityClient := NewAuthenticityClient()
+		recordClient := NewRecordClient()
+
+		certificateBytes, err := os.ReadFile("./../test/test_utils/test2.pfx")
+		assert.NoError(t, err)
+		params := key.NewImportCertificateParams()
+		params.Password = "bloock"
+		managedCertificate, err := keyClient.ImportManagedCertificate(key.PFX, certificateBytes, params)
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, managedCertificate.Key)
+		assert.Equal(t, key.KEY_PROTECTION_SOFTWARE, managedCertificate.Protection)
+		assert.Equal(t, key.EcP256k, managedCertificate.KeyType)
+
+		loadedCertificate, err := keyClient.LoadManagedCertificate(managedCertificate.ID)
+		assert.NoError(t, err)
+
+		assert.Equal(t, managedCertificate.ID, loadedCertificate.ID)
+		assert.Equal(t, managedCertificate.Key, loadedCertificate.Key)
+		assert.Equal(t, managedCertificate.Protection, loadedCertificate.Protection)
+		assert.Equal(t, managedCertificate.KeyType, loadedCertificate.KeyType)
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewEcdsaSigner(authenticity.SignerArgs{ManagedCertificate: &loadedCertificate}))
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, signature.Signature)
 	})
 }

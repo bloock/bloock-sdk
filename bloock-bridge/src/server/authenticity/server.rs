@@ -40,6 +40,8 @@ impl AuthenticityServiceHandler for AuthenticityServer {
 
         let local_key = signer.local_key;
         let managed_key = signer.managed_key;
+        let local_certificate = signer.local_certificate;
+        let managed_certificate = signer.managed_certificate;
 
         let signer: Box<dyn Signer> = if let Some(key) = managed_key {
             match signer_alg {
@@ -69,6 +71,29 @@ impl AuthenticityServiceHandler for AuthenticityServer {
                 }
                 Some(SignerAlg::Ens) => LocalEnsSigner::new_boxed(key.into()),
                 Some(SignerAlg::Bjj) => todo!(),
+                None => return Err("invalid signer provided".to_string()),
+            }
+        } else if let Some(key) = managed_certificate {
+            match signer_alg {
+                Some(SignerAlg::Es256k) => ManagedEcdsaSigner::new_boxed(
+                    key.into(),
+                    signer.common_name,
+                    config_data.config.host,
+                    config_data.config.api_key,
+                ),
+                Some(SignerAlg::Bjj) => {
+                    return Err("algorithm not supported for this certificate".to_string())
+                }
+                Some(SignerAlg::Ens) => {
+                    return Err("algorithm not supported for this certificate".to_string())
+                }
+                None => return Err("invalid signer provided".to_string()),
+            }
+        } else if let Some(key) = local_certificate {
+            match signer_alg {
+                Some(SignerAlg::Es256k) => return Err("algorithm not supported for this certificate".to_string()),
+                Some(SignerAlg::Ens) => return Err("algorithm not supported for this certificate".to_string()),
+                Some(SignerAlg::Bjj) => return Err("algorithm not supported for this certificate".to_string()),
                 None => return Err("invalid signer provided".to_string()),
             }
         } else {

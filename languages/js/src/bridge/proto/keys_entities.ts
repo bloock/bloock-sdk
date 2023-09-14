@@ -98,6 +98,39 @@ export function keyProtectionLevelToJSON(object: KeyProtectionLevel): string {
   }
 }
 
+export enum CertificateType {
+  PEM = 0,
+  PFX = 1,
+  UNRECOGNIZED = -1,
+}
+
+export function certificateTypeFromJSON(object: any): CertificateType {
+  switch (object) {
+    case 0:
+    case "PEM":
+      return CertificateType.PEM;
+    case 1:
+    case "PFX":
+      return CertificateType.PFX;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return CertificateType.UNRECOGNIZED;
+  }
+}
+
+export function certificateTypeToJSON(object: CertificateType): string {
+  switch (object) {
+    case CertificateType.PEM:
+      return "PEM";
+    case CertificateType.PFX:
+      return "PFX";
+    case CertificateType.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface LocalKey {
   key: string;
   keyType: KeyType;
@@ -117,6 +150,27 @@ export interface ManagedKey {
   protection: KeyProtectionLevel;
   keyType: KeyType;
   name: string;
+  expiration: number;
+}
+
+export interface LocalCertificate {
+  key: string;
+}
+
+export interface ManagedCertificateParams {
+  keyType: KeyType;
+  cn: string;
+  o: string;
+  ou: string;
+  c: string;
+  expiration: number;
+}
+
+export interface ManagedCertificate {
+  id: string;
+  key: string;
+  protection: KeyProtectionLevel;
+  keyType: KeyType;
   expiration: number;
 }
 
@@ -352,6 +406,232 @@ export const ManagedKey = {
     message.protection = object.protection ?? 0;
     message.keyType = object.keyType ?? 0;
     message.name = object.name ?? "";
+    message.expiration = object.expiration ?? 0;
+    return message;
+  },
+};
+
+function createBaseLocalCertificate(): LocalCertificate {
+  return { key: "" };
+}
+
+export const LocalCertificate = {
+  encode(message: LocalCertificate, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): LocalCertificate {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLocalCertificate();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LocalCertificate {
+    return { key: isSet(object.key) ? String(object.key) : "" };
+  },
+
+  toJSON(message: LocalCertificate): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<LocalCertificate>, I>>(object: I): LocalCertificate {
+    const message = createBaseLocalCertificate();
+    message.key = object.key ?? "";
+    return message;
+  },
+};
+
+function createBaseManagedCertificateParams(): ManagedCertificateParams {
+  return { keyType: 0, cn: "", o: "", ou: "", c: "", expiration: 0 };
+}
+
+export const ManagedCertificateParams = {
+  encode(message: ManagedCertificateParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.keyType !== 0) {
+      writer.uint32(8).int32(message.keyType);
+    }
+    if (message.cn !== "") {
+      writer.uint32(18).string(message.cn);
+    }
+    if (message.o !== "") {
+      writer.uint32(26).string(message.o);
+    }
+    if (message.ou !== "") {
+      writer.uint32(34).string(message.ou);
+    }
+    if (message.c !== "") {
+      writer.uint32(42).string(message.c);
+    }
+    if (message.expiration !== 0) {
+      writer.uint32(48).int32(message.expiration);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ManagedCertificateParams {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseManagedCertificateParams();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.keyType = reader.int32() as any;
+          break;
+        case 2:
+          message.cn = reader.string();
+          break;
+        case 3:
+          message.o = reader.string();
+          break;
+        case 4:
+          message.ou = reader.string();
+          break;
+        case 5:
+          message.c = reader.string();
+          break;
+        case 6:
+          message.expiration = reader.int32();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ManagedCertificateParams {
+    return {
+      keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
+      cn: isSet(object.cn) ? String(object.cn) : "",
+      o: isSet(object.o) ? String(object.o) : "",
+      ou: isSet(object.ou) ? String(object.ou) : "",
+      c: isSet(object.c) ? String(object.c) : "",
+      expiration: isSet(object.expiration) ? Number(object.expiration) : 0,
+    };
+  },
+
+  toJSON(message: ManagedCertificateParams): unknown {
+    const obj: any = {};
+    message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
+    message.cn !== undefined && (obj.cn = message.cn);
+    message.o !== undefined && (obj.o = message.o);
+    message.ou !== undefined && (obj.ou = message.ou);
+    message.c !== undefined && (obj.c = message.c);
+    message.expiration !== undefined && (obj.expiration = Math.round(message.expiration));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ManagedCertificateParams>, I>>(object: I): ManagedCertificateParams {
+    const message = createBaseManagedCertificateParams();
+    message.keyType = object.keyType ?? 0;
+    message.cn = object.cn ?? "";
+    message.o = object.o ?? "";
+    message.ou = object.ou ?? "";
+    message.c = object.c ?? "";
+    message.expiration = object.expiration ?? 0;
+    return message;
+  },
+};
+
+function createBaseManagedCertificate(): ManagedCertificate {
+  return { id: "", key: "", protection: 0, keyType: 0, expiration: 0 };
+}
+
+export const ManagedCertificate = {
+  encode(message: ManagedCertificate, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.key !== "") {
+      writer.uint32(18).string(message.key);
+    }
+    if (message.protection !== 0) {
+      writer.uint32(24).int32(message.protection);
+    }
+    if (message.keyType !== 0) {
+      writer.uint32(32).int32(message.keyType);
+    }
+    if (message.expiration !== 0) {
+      writer.uint32(48).int64(message.expiration);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ManagedCertificate {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseManagedCertificate();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.string();
+          break;
+        case 2:
+          message.key = reader.string();
+          break;
+        case 3:
+          message.protection = reader.int32() as any;
+          break;
+        case 4:
+          message.keyType = reader.int32() as any;
+          break;
+        case 6:
+          message.expiration = longToNumber(reader.int64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ManagedCertificate {
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      key: isSet(object.key) ? String(object.key) : "",
+      protection: isSet(object.protection) ? keyProtectionLevelFromJSON(object.protection) : 0,
+      keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
+      expiration: isSet(object.expiration) ? Number(object.expiration) : 0,
+    };
+  },
+
+  toJSON(message: ManagedCertificate): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    message.key !== undefined && (obj.key = message.key);
+    message.protection !== undefined && (obj.protection = keyProtectionLevelToJSON(message.protection));
+    message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
+    message.expiration !== undefined && (obj.expiration = Math.round(message.expiration));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ManagedCertificate>, I>>(object: I): ManagedCertificate {
+    const message = createBaseManagedCertificate();
+    message.id = object.id ?? "";
+    message.key = object.key ?? "";
+    message.protection = object.protection ?? 0;
+    message.keyType = object.keyType ?? 0;
     message.expiration = object.expiration ?? 0;
     return message;
   },

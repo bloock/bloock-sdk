@@ -57,6 +57,8 @@ pub trait Client {
         &self,
         url: U,
         files: Vec<(String, Vec<u8>)>,
+        texts: Vec<(String, String)>,
+        filename: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T>;
 }

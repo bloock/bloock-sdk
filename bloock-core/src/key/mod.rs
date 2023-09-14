@@ -21,6 +21,12 @@ pub enum KeyError {
     LoadLocalKeyError(String),
     #[error("Error loading managed key: {0}")]
     LoadManagedKeyError(String),
+    #[error("Error generating managed certificate: {0}")]
+    GenerateManagedCertificateError(String),
+    #[error("Error loading managed certificate: {0}")]
+    LoadManagedCertificateError(String),
+    #[error("Error importing managed certificate: {0}")]
+    ImportManagedCertificateError(String),
 }
 
 impl From<KeyError> for BloockError {

@@ -115,6 +115,8 @@ impl Client for BloockHttpClient {
         &self,
         url: U,
         files: Vec<(String, Vec<u8>)>,
+        texts: Vec<(String, String)>,
+        filename: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
         let headers = match headers {
@@ -130,7 +132,9 @@ impl Client for BloockHttpClient {
         };
 
         let client = SimpleHttpClient {};
-        client.post_file(url, files, Some(headers)).await
+        client
+            .post_file(url, files, texts, filename, Some(headers))
+            .await
     }
 }
 

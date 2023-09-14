@@ -26,6 +26,11 @@ type KeyServiceClient interface {
 	GenerateManagedKey(ctx context.Context, in *GenerateManagedKeyRequest, opts ...grpc.CallOption) (*GenerateManagedKeyResponse, error)
 	LoadLocalKey(ctx context.Context, in *LoadLocalKeyRequest, opts ...grpc.CallOption) (*LoadLocalKeyResponse, error)
 	LoadManagedKey(ctx context.Context, in *LoadManagedKeyRequest, opts ...grpc.CallOption) (*LoadManagedKeyResponse, error)
+	GenerateLocalCertificate(ctx context.Context, in *GenerateLocalCertificateRequest, opts ...grpc.CallOption) (*GenerateLocalCertificateResponse, error)
+	GenerateManagedCertificate(ctx context.Context, in *GenerateManagedCertificateRequest, opts ...grpc.CallOption) (*GenerateManagedCertificateResponse, error)
+	LoadLocalCertificate(ctx context.Context, in *LoadLocalCertificateRequest, opts ...grpc.CallOption) (*LoadLocalCertificateResponse, error)
+	LoadManagedCertificate(ctx context.Context, in *LoadManagedCertificateRequest, opts ...grpc.CallOption) (*LoadManagedCertificateResponse, error)
+	ImportManagedCertificate(ctx context.Context, in *ImportManagedCertificateRequest, opts ...grpc.CallOption) (*ImportManagedCertificateResponse, error)
 }
 
 type keyServiceClient struct {
@@ -72,6 +77,51 @@ func (c *keyServiceClient) LoadManagedKey(ctx context.Context, in *LoadManagedKe
 	return out, nil
 }
 
+func (c *keyServiceClient) GenerateLocalCertificate(ctx context.Context, in *GenerateLocalCertificateRequest, opts ...grpc.CallOption) (*GenerateLocalCertificateResponse, error) {
+	out := new(GenerateLocalCertificateResponse)
+	err := c.cc.Invoke(ctx, "/bloock.KeyService/GenerateLocalCertificate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keyServiceClient) GenerateManagedCertificate(ctx context.Context, in *GenerateManagedCertificateRequest, opts ...grpc.CallOption) (*GenerateManagedCertificateResponse, error) {
+	out := new(GenerateManagedCertificateResponse)
+	err := c.cc.Invoke(ctx, "/bloock.KeyService/GenerateManagedCertificate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keyServiceClient) LoadLocalCertificate(ctx context.Context, in *LoadLocalCertificateRequest, opts ...grpc.CallOption) (*LoadLocalCertificateResponse, error) {
+	out := new(LoadLocalCertificateResponse)
+	err := c.cc.Invoke(ctx, "/bloock.KeyService/LoadLocalCertificate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keyServiceClient) LoadManagedCertificate(ctx context.Context, in *LoadManagedCertificateRequest, opts ...grpc.CallOption) (*LoadManagedCertificateResponse, error) {
+	out := new(LoadManagedCertificateResponse)
+	err := c.cc.Invoke(ctx, "/bloock.KeyService/LoadManagedCertificate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *keyServiceClient) ImportManagedCertificate(ctx context.Context, in *ImportManagedCertificateRequest, opts ...grpc.CallOption) (*ImportManagedCertificateResponse, error) {
+	out := new(ImportManagedCertificateResponse)
+	err := c.cc.Invoke(ctx, "/bloock.KeyService/ImportManagedCertificate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KeyServiceServer is the server API for KeyService service.
 // All implementations must embed UnimplementedKeyServiceServer
 // for forward compatibility
@@ -80,6 +130,11 @@ type KeyServiceServer interface {
 	GenerateManagedKey(context.Context, *GenerateManagedKeyRequest) (*GenerateManagedKeyResponse, error)
 	LoadLocalKey(context.Context, *LoadLocalKeyRequest) (*LoadLocalKeyResponse, error)
 	LoadManagedKey(context.Context, *LoadManagedKeyRequest) (*LoadManagedKeyResponse, error)
+	GenerateLocalCertificate(context.Context, *GenerateLocalCertificateRequest) (*GenerateLocalCertificateResponse, error)
+	GenerateManagedCertificate(context.Context, *GenerateManagedCertificateRequest) (*GenerateManagedCertificateResponse, error)
+	LoadLocalCertificate(context.Context, *LoadLocalCertificateRequest) (*LoadLocalCertificateResponse, error)
+	LoadManagedCertificate(context.Context, *LoadManagedCertificateRequest) (*LoadManagedCertificateResponse, error)
+	ImportManagedCertificate(context.Context, *ImportManagedCertificateRequest) (*ImportManagedCertificateResponse, error)
 	mustEmbedUnimplementedKeyServiceServer()
 }
 
@@ -98,6 +153,21 @@ func (UnimplementedKeyServiceServer) LoadLocalKey(context.Context, *LoadLocalKey
 }
 func (UnimplementedKeyServiceServer) LoadManagedKey(context.Context, *LoadManagedKeyRequest) (*LoadManagedKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadManagedKey not implemented")
+}
+func (UnimplementedKeyServiceServer) GenerateLocalCertificate(context.Context, *GenerateLocalCertificateRequest) (*GenerateLocalCertificateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateLocalCertificate not implemented")
+}
+func (UnimplementedKeyServiceServer) GenerateManagedCertificate(context.Context, *GenerateManagedCertificateRequest) (*GenerateManagedCertificateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateManagedCertificate not implemented")
+}
+func (UnimplementedKeyServiceServer) LoadLocalCertificate(context.Context, *LoadLocalCertificateRequest) (*LoadLocalCertificateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadLocalCertificate not implemented")
+}
+func (UnimplementedKeyServiceServer) LoadManagedCertificate(context.Context, *LoadManagedCertificateRequest) (*LoadManagedCertificateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadManagedCertificate not implemented")
+}
+func (UnimplementedKeyServiceServer) ImportManagedCertificate(context.Context, *ImportManagedCertificateRequest) (*ImportManagedCertificateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ImportManagedCertificate not implemented")
 }
 func (UnimplementedKeyServiceServer) mustEmbedUnimplementedKeyServiceServer() {}
 
@@ -184,6 +254,96 @@ func _KeyService_LoadManagedKey_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _KeyService_GenerateLocalCertificate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateLocalCertificateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).GenerateLocalCertificate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.KeyService/GenerateLocalCertificate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).GenerateLocalCertificate(ctx, req.(*GenerateLocalCertificateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KeyService_GenerateManagedCertificate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateManagedCertificateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).GenerateManagedCertificate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.KeyService/GenerateManagedCertificate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).GenerateManagedCertificate(ctx, req.(*GenerateManagedCertificateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KeyService_LoadLocalCertificate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadLocalCertificateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).LoadLocalCertificate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.KeyService/LoadLocalCertificate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).LoadLocalCertificate(ctx, req.(*LoadLocalCertificateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KeyService_LoadManagedCertificate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadManagedCertificateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).LoadManagedCertificate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.KeyService/LoadManagedCertificate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).LoadManagedCertificate(ctx, req.(*LoadManagedCertificateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KeyService_ImportManagedCertificate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImportManagedCertificateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyServiceServer).ImportManagedCertificate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.KeyService/ImportManagedCertificate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyServiceServer).ImportManagedCertificate(ctx, req.(*ImportManagedCertificateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // KeyService_ServiceDesc is the grpc.ServiceDesc for KeyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +366,26 @@ var KeyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoadManagedKey",
 			Handler:    _KeyService_LoadManagedKey_Handler,
+		},
+		{
+			MethodName: "GenerateLocalCertificate",
+			Handler:    _KeyService_GenerateLocalCertificate_Handler,
+		},
+		{
+			MethodName: "GenerateManagedCertificate",
+			Handler:    _KeyService_GenerateManagedCertificate_Handler,
+		},
+		{
+			MethodName: "LoadLocalCertificate",
+			Handler:    _KeyService_LoadLocalCertificate_Handler,
+		},
+		{
+			MethodName: "LoadManagedCertificate",
+			Handler:    _KeyService_LoadManagedCertificate_Handler,
+		},
+		{
+			MethodName: "ImportManagedCertificate",
+			Handler:    _KeyService_ImportManagedCertificate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

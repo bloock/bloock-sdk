@@ -41,3 +41,30 @@ message ManagedKey {
     string name = 5;
     int64 expiration = 6;
 }
+
+
+message LocalCertificate {
+    string key = 1;
+}
+
+message ManagedCertificateParams {
+    KeyType key_type = 1;
+    string cn = 2;
+    string o = 3;
+    string ou = 4;
+    string c = 5;
+    int32 expiration = 6;
+}
+
+message ManagedCertificate {
+    string id = 1;
+    string key = 2;
+    KeyProtectionLevel protection = 3;
+    KeyType key_type = 4;
+    int64 expiration = 6;
+}
+
+enum CertificateType {
+	PEM = 0;
+	PFX = 1;
+}

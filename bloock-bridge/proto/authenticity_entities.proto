@@ -17,7 +17,9 @@ message Signer {
     SignerAlg alg = 1;
     optional LocalKey local_key = 2;
     optional ManagedKey managed_key = 3;
-    optional string common_name = 4;
+    optional LocalCertificate local_certificate = 4;
+    optional ManagedCertificate managed_certificate = 5;
+    optional string common_name = 6;
 }
 
 message Signature {

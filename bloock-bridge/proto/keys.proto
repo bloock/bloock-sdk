@@ -15,6 +15,12 @@ service KeyService {
     rpc GenerateManagedKey(GenerateManagedKeyRequest) returns (GenerateManagedKeyResponse);
     rpc LoadLocalKey(LoadLocalKeyRequest) returns (LoadLocalKeyResponse);
     rpc LoadManagedKey(LoadManagedKeyRequest) returns (LoadManagedKeyResponse);
+
+    rpc GenerateLocalCertificate(GenerateLocalCertificateRequest) returns (GenerateLocalCertificateResponse);
+    rpc GenerateManagedCertificate(GenerateManagedCertificateRequest) returns (GenerateManagedCertificateResponse);
+    rpc LoadLocalCertificate(LoadLocalCertificateRequest) returns (LoadLocalCertificateResponse);
+    rpc LoadManagedCertificate(LoadManagedCertificateRequest) returns (LoadManagedCertificateResponse);
+    rpc ImportManagedCertificate(ImportManagedCertificateRequest) returns (ImportManagedCertificateResponse);
 }
 
 message GenerateLocalKeyRequest {
@@ -56,5 +62,58 @@ message LoadManagedKeyRequest {
 
 message LoadManagedKeyResponse {
     ManagedKey managed_key = 1;
+    optional Error error = 2;
+}
+
+
+message GenerateLocalCertificateRequest {
+    ConfigData config_data = 1;
+    KeyType key_type = 2;
+}
+
+message GenerateLocalCertificateResponse {
+    LocalCertificate local_certificate = 1;
+    optional Error error = 2;
+}
+
+message GenerateManagedCertificateRequest {
+    ConfigData config_data = 1;
+    ManagedCertificateParams params = 2;
+}
+
+message GenerateManagedCertificateResponse {
+    ManagedCertificate managed_certificate = 1;
+    optional Error error = 2;
+}
+
+message LoadLocalCertificateRequest {
+    ConfigData config_data = 1;
+    string key = 3;
+}
+
+message LoadLocalCertificateResponse {
+    LocalCertificate local_certificate = 1;
+    optional Error error = 2;
+}
+
+message LoadManagedCertificateRequest {
+    ConfigData config_data = 1;
+    string id = 2;
+}
+
+message LoadManagedCertificateResponse {
+    ManagedCertificate managed_certificate = 1;
+    optional Error error = 2;
+}
+
+message ImportManagedCertificateRequest {
+    ConfigData config_data = 1;
+    bytes certificate = 2;
+    optional string password = 3;
+    CertificateType certificate_type = 4; 
+}
+
+message ImportManagedCertificateResponse {
+    ManagedCertificate managed_certificate = 1;
     optional Error error = 2;
 }
