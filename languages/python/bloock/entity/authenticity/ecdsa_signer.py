@@ -20,9 +20,14 @@ class EcdsaSigner(Signer):
         if self.args.common_name is not None:
             common_name = self.args.common_name
 
+        managed_certificate = None
+        if self.args.managed_certificate is not None:
+            managed_certificate = self.args.managed_certificate.to_proto()
+
         return proto.Signer(
             alg=self.alg,
             local_key=local_key,
             managed_key=managed_key,
+            managed_certificate=managed_certificate,
             common_name=common_name
         )

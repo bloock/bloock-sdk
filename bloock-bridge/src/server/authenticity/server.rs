@@ -1,3 +1,4 @@
+use super::entity::SignerProvider;
 use crate::{
     error::BridgeError,
     items::{
@@ -10,7 +11,6 @@ use crate::{
 use async_trait::async_trait;
 use bloock_core::{
     authenticity, config::entity::network::Network, record::entity::record::Record as RecordCore,
-    LocalEcdsaSigner, LocalEnsSigner, ManagedBJJSigner, ManagedEcdsaSigner, ManagedEnsSigner,
     Signature as SignatureCore, Signer,
 };
 
@@ -38,42 +38,15 @@ impl AuthenticityServiceHandler for AuthenticityServer {
 
         let signer_alg = SignerAlg::from_i32(signer.alg);
 
-        let local_key = signer.local_key;
-        let managed_key = signer.managed_key;
-
-        let signer: Box<dyn Signer> = if let Some(key) = managed_key {
-            match signer_alg {
-                Some(SignerAlg::Es256k) => ManagedEcdsaSigner::new_boxed(
-                    key.into(),
-                    signer.common_name,
-                    config_data.config.host,
-                    config_data.config.api_key,
-                ),
-                Some(SignerAlg::Bjj) => ManagedBJJSigner::new_boxed(
-                    key.into(),
-                    signer.common_name,
-                    config_data.config.host,
-                    config_data.config.api_key,
-                ),
-                Some(SignerAlg::Ens) => ManagedEnsSigner::new_boxed(
-                    key.into(),
-                    config_data.config.host,
-                    config_data.config.api_key,
-                ),
-                None => return Err("invalid signer provided".to_string()),
-            }
-        } else if let Some(key) = local_key {
-            match signer_alg {
-                Some(SignerAlg::Es256k) => {
-                    LocalEcdsaSigner::new_boxed(key.into(), signer.common_name)
-                }
-                Some(SignerAlg::Ens) => LocalEnsSigner::new_boxed(key.into()),
-                Some(SignerAlg::Bjj) => todo!(),
-                None => return Err("invalid signer provided".to_string()),
-            }
-        } else {
-            return Err("invalid key provided".to_string());
-        };
+        let signer: Box<dyn Signer> = (
+            signer.managed_key,
+            signer.local_key,
+            signer.local_certificate,
+            signer.managed_certificate,
+            signer_alg,
+        )
+            .get_signer(&config_data, signer.common_name)
+            .map_err(|e| e.to_string())?;
 
         let signature: SignatureCore = client
             .sign(record, signer)

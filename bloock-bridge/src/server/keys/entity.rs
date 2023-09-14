@@ -1,7 +1,11 @@
-use crate::items::{KeyProtectionLevel, KeyType, LocalKey, ManagedKey};
+use crate::items::{
+    CertificateType, KeyProtectionLevel, KeyType, LocalKey, ManagedCertificate, ManagedKey,
+};
 use bloock_keys::{
-    local::LocalKey as CoreLocalKey, managed::ManagedKey as CoreManagedKey,
-    managed::ProtectionLevel, KeyType as CoreKeyType,
+    local::LocalKey as CoreLocalKey,
+    managed::ProtectionLevel,
+    managed::{ManagedCertificate as CoreManagedCertificate, ManagedKey as CoreManagedKey},
+    CertificateType as CoreCertificateType, KeyType as CoreKeyType,
 };
 
 impl From<KeyType> for CoreKeyType {
@@ -107,6 +111,67 @@ impl From<CoreLocalKey<String>> for LocalKey {
             key_type: key_type.into(),
             key: key.key,
             private_key: key.private_key,
+        }
+    }
+}
+
+impl From<ManagedCertificate> for CoreManagedCertificate {
+    fn from(key: ManagedCertificate) -> Self {
+        let key_protection: ProtectionLevel = key.protection().into();
+        let key_type: CoreKeyType = key.key_type().into();
+
+        Self {
+            id: key.id,
+            public_key: key.key,
+            protection: key_protection,
+            key_type,
+            expiration: match key.expiration {
+                0 => None,
+                _ => Some(key.expiration),
+            },
+        }
+    }
+}
+
+impl From<ManagedCertificate> for CoreManagedKey {
+    fn from(key: ManagedCertificate) -> Self {
+        let key_protection: ProtectionLevel = key.protection().into();
+        let key_type: CoreKeyType = key.key_type().into();
+
+        Self {
+            id: key.id,
+            public_key: key.key,
+            protection: key_protection,
+            key_type,
+            expiration: match key.expiration {
+                0 => None,
+                _ => Some(key.expiration),
+            },
+            name: None,
+        }
+    }
+}
+
+impl From<CoreManagedCertificate> for ManagedCertificate {
+    fn from(key: CoreManagedCertificate) -> Self {
+        let key_protection: KeyProtectionLevel = key.protection.into();
+        let key_type: KeyType = key.key_type.into();
+
+        Self {
+            id: key.id,
+            key: key.public_key,
+            protection: key_protection.into(),
+            key_type: key_type.into(),
+            expiration: key.expiration.unwrap_or(0),
+        }
+    }
+}
+
+impl From<CertificateType> for CoreCertificateType {
+    fn from(n: CertificateType) -> Self {
+        match n {
+            CertificateType::Pem => CoreCertificateType::PEM,
+            CertificateType::Pfx => CoreCertificateType::PFX,
         }
     }
 }

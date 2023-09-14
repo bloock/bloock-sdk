@@ -7,7 +7,9 @@ use crate::items::CredentialToJsonResponseV2;
 use crate::items::DecryptResponse;
 use crate::items::EncryptResponse;
 use crate::items::EncryptionAlgResponse;
+use crate::items::GenerateLocalCertificateResponse;
 use crate::items::GenerateLocalKeyResponse;
+use crate::items::GenerateManagedCertificateResponse;
 use crate::items::GenerateManagedKeyResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetCredentialProofResponse;
@@ -17,7 +19,10 @@ use crate::items::GetIssuerListResponse;
 use crate::items::GetOfferResponse;
 use crate::items::GetProofResponse;
 use crate::items::GetSignaturesResponse;
+use crate::items::ImportManagedCertificateResponse;
+use crate::items::LoadLocalCertificateResponse;
 use crate::items::LoadLocalKeyResponse;
+use crate::items::LoadManagedCertificateResponse;
 use crate::items::LoadManagedKeyResponse;
 use crate::items::PublishIssuerStateResponse;
 use crate::items::PublishResponse;
@@ -99,7 +104,12 @@ pub enum ResponseType {
     CredentialFromJsonResponseV2(CredentialFromJsonResponseV2),
     GetCredentialProofResponse(GetCredentialProofResponse),
     GetIssuerListResponse(GetIssuerListResponse),
-    GetIssuerByKeyResponse(GetIssuerByKeyResponse)
+    GetIssuerByKeyResponse(GetIssuerByKeyResponse),
+    GenerateLocalCertificateResponse(GenerateLocalCertificateResponse),
+    GenerateManagedCertificateResponse(GenerateManagedCertificateResponse),
+    LoadLocalCertificateResponse(LoadLocalCertificateResponse),
+    LoadManagedCertificateResponse(LoadManagedCertificateResponse),
+    ImportManagedCertificateResponse(ImportManagedCertificateResponse),
 }
 
 impl ResponseType {
@@ -156,6 +166,11 @@ impl ResponseType {
             ResponseType::GetCredentialProofResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetIssuerListResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetIssuerByKeyResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GenerateLocalCertificateResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GenerateManagedCertificateResponse(r) => r.encode(&mut result_vec),
+            ResponseType::LoadLocalCertificateResponse(r) => r.encode(&mut result_vec),
+            ResponseType::LoadManagedCertificateResponse(r) => r.encode(&mut result_vec),
+            ResponseType::ImportManagedCertificateResponse(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -212,6 +227,11 @@ impl ResponseType {
             ResponseType::GetCredentialProofResponse(r) => r.encoded_len(),
             ResponseType::GetIssuerListResponse(r) => r.encoded_len(),
             ResponseType::GetIssuerByKeyResponse(r) => r.encoded_len(),
+            ResponseType::GenerateLocalCertificateResponse(r) => r.encoded_len(),
+            ResponseType::GenerateManagedCertificateResponse(r) => r.encoded_len(),
+            ResponseType::LoadLocalCertificateResponse(r) => r.encoded_len(),
+            ResponseType::LoadManagedCertificateResponse(r) => r.encoded_len(),
+            ResponseType::ImportManagedCertificateResponse(r) => r.encoded_len(),
         }
     }
 }

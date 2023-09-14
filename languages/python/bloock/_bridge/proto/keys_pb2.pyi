@@ -192,3 +192,221 @@ class LoadManagedKeyResponse(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___LoadManagedKeyResponse = LoadManagedKeyResponse
+
+@typing_extensions.final
+class GenerateLocalCertificateRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    KEY_TYPE_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    key_type: keys_entities_pb2.KeyType.ValueType
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        key_type: keys_entities_pb2.KeyType.ValueType = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key_type", b"key_type"]) -> None: ...
+
+global___GenerateLocalCertificateRequest = GenerateLocalCertificateRequest
+
+@typing_extensions.final
+class GenerateLocalCertificateResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    LOCAL_CERTIFICATE_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def local_certificate(self) -> keys_entities_pb2.LocalCertificate: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        local_certificate: keys_entities_pb2.LocalCertificate | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "local_certificate", b"local_certificate"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "local_certificate", b"local_certificate"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___GenerateLocalCertificateResponse = GenerateLocalCertificateResponse
+
+@typing_extensions.final
+class GenerateManagedCertificateRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    PARAMS_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    @property
+    def params(self) -> keys_entities_pb2.ManagedCertificateParams: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        params: keys_entities_pb2.ManagedCertificateParams | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "params", b"params"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "params", b"params"]) -> None: ...
+
+global___GenerateManagedCertificateRequest = GenerateManagedCertificateRequest
+
+@typing_extensions.final
+class GenerateManagedCertificateResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MANAGED_CERTIFICATE_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def managed_certificate(self) -> keys_entities_pb2.ManagedCertificate: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        managed_certificate: keys_entities_pb2.ManagedCertificate | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "managed_certificate", b"managed_certificate"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "managed_certificate", b"managed_certificate"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___GenerateManagedCertificateResponse = GenerateManagedCertificateResponse
+
+@typing_extensions.final
+class LoadLocalCertificateRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    KEY_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    key: builtins.str
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        key: builtins.str = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key", b"key"]) -> None: ...
+
+global___LoadLocalCertificateRequest = LoadLocalCertificateRequest
+
+@typing_extensions.final
+class LoadLocalCertificateResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    LOCAL_CERTIFICATE_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def local_certificate(self) -> keys_entities_pb2.LocalCertificate: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        local_certificate: keys_entities_pb2.LocalCertificate | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "local_certificate", b"local_certificate"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "local_certificate", b"local_certificate"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___LoadLocalCertificateResponse = LoadLocalCertificateResponse
+
+@typing_extensions.final
+class LoadManagedCertificateRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    id: builtins.str
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        id: builtins.str = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "id", b"id"]) -> None: ...
+
+global___LoadManagedCertificateRequest = LoadManagedCertificateRequest
+
+@typing_extensions.final
+class LoadManagedCertificateResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MANAGED_CERTIFICATE_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def managed_certificate(self) -> keys_entities_pb2.ManagedCertificate: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        managed_certificate: keys_entities_pb2.ManagedCertificate | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "managed_certificate", b"managed_certificate"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "managed_certificate", b"managed_certificate"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___LoadManagedCertificateResponse = LoadManagedCertificateResponse
+
+@typing_extensions.final
+class ImportManagedCertificateRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    CERTIFICATE_FIELD_NUMBER: builtins.int
+    PASSWORD_FIELD_NUMBER: builtins.int
+    CERTIFICATE_TYPE_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    certificate: builtins.bytes
+    password: builtins.str
+    certificate_type: keys_entities_pb2.CertificateType.ValueType
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        certificate: builtins.bytes = ...,
+        password: builtins.str | None = ...,
+        certificate_type: keys_entities_pb2.CertificateType.ValueType = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_password", b"_password", "config_data", b"config_data", "password", b"password"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_password", b"_password", "certificate", b"certificate", "certificate_type", b"certificate_type", "config_data", b"config_data", "password", b"password"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_password", b"_password"]) -> typing_extensions.Literal["password"] | None: ...
+
+global___ImportManagedCertificateRequest = ImportManagedCertificateRequest
+
+@typing_extensions.final
+class ImportManagedCertificateResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MANAGED_CERTIFICATE_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def managed_certificate(self) -> keys_entities_pb2.ManagedCertificate: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        managed_certificate: keys_entities_pb2.ManagedCertificate | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "managed_certificate", b"managed_certificate"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "managed_certificate", b"managed_certificate"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___ImportManagedCertificateResponse = ImportManagedCertificateResponse

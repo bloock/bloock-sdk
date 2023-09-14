@@ -1,6 +1,6 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
-import { LocalKey, ManagedKey } from "./keys_entities";
+import { LocalCertificate, LocalKey, ManagedCertificate, ManagedKey } from "./keys_entities";
 
 export enum SignerAlg {
   ES256K = 0,
@@ -45,6 +45,8 @@ export interface Signer {
   alg: SignerAlg;
   localKey?: LocalKey | undefined;
   managedKey?: ManagedKey | undefined;
+  localCertificate?: LocalCertificate | undefined;
+  managedCertificate?: ManagedCertificate | undefined;
   commonName?: string | undefined;
 }
 
@@ -61,7 +63,14 @@ export interface SignatureHeader {
 }
 
 function createBaseSigner(): Signer {
-  return { alg: 0, localKey: undefined, managedKey: undefined, commonName: undefined };
+  return {
+    alg: 0,
+    localKey: undefined,
+    managedKey: undefined,
+    localCertificate: undefined,
+    managedCertificate: undefined,
+    commonName: undefined,
+  };
 }
 
 export const Signer = {
@@ -75,8 +84,14 @@ export const Signer = {
     if (message.managedKey !== undefined) {
       ManagedKey.encode(message.managedKey, writer.uint32(26).fork()).ldelim();
     }
+    if (message.localCertificate !== undefined) {
+      LocalCertificate.encode(message.localCertificate, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.managedCertificate !== undefined) {
+      ManagedCertificate.encode(message.managedCertificate, writer.uint32(42).fork()).ldelim();
+    }
     if (message.commonName !== undefined) {
-      writer.uint32(34).string(message.commonName);
+      writer.uint32(50).string(message.commonName);
     }
     return writer;
   },
@@ -98,6 +113,12 @@ export const Signer = {
           message.managedKey = ManagedKey.decode(reader, reader.uint32());
           break;
         case 4:
+          message.localCertificate = LocalCertificate.decode(reader, reader.uint32());
+          break;
+        case 5:
+          message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
+          break;
+        case 6:
           message.commonName = reader.string();
           break;
         default:
@@ -113,6 +134,10 @@ export const Signer = {
       alg: isSet(object.alg) ? signerAlgFromJSON(object.alg) : 0,
       localKey: isSet(object.localKey) ? LocalKey.fromJSON(object.localKey) : undefined,
       managedKey: isSet(object.managedKey) ? ManagedKey.fromJSON(object.managedKey) : undefined,
+      localCertificate: isSet(object.localCertificate) ? LocalCertificate.fromJSON(object.localCertificate) : undefined,
+      managedCertificate: isSet(object.managedCertificate)
+        ? ManagedCertificate.fromJSON(object.managedCertificate)
+        : undefined,
       commonName: isSet(object.commonName) ? String(object.commonName) : undefined,
     };
   },
@@ -123,6 +148,11 @@ export const Signer = {
     message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
     message.managedKey !== undefined &&
       (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
+    message.localCertificate !== undefined &&
+      (obj.localCertificate = message.localCertificate ? LocalCertificate.toJSON(message.localCertificate) : undefined);
+    message.managedCertificate !== undefined && (obj.managedCertificate = message.managedCertificate
+      ? ManagedCertificate.toJSON(message.managedCertificate)
+      : undefined);
     message.commonName !== undefined && (obj.commonName = message.commonName);
     return obj;
   },
@@ -135,6 +165,12 @@ export const Signer = {
       : undefined;
     message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
       ? ManagedKey.fromPartial(object.managedKey)
+      : undefined;
+    message.localCertificate = (object.localCertificate !== undefined && object.localCertificate !== null)
+      ? LocalCertificate.fromPartial(object.localCertificate)
+      : undefined;
+    message.managedCertificate = (object.managedCertificate !== undefined && object.managedCertificate !== null)
+      ? ManagedCertificate.fromPartial(object.managedCertificate)
       : undefined;
     message.commonName = object.commonName ?? undefined;
     return message;

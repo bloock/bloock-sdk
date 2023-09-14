@@ -66,9 +66,11 @@ impl Client for SimpleHttpClient {
         &self,
         url: U,
         files: Vec<(String, Vec<u8>)>,
+        texts: Vec<(String, String)>,
+        filename: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let (headers, buffer) = self.prepare_files(files, headers)?;
+        let (headers, buffer) = self.prepare_files(files, texts, filename, headers)?;
 
         let req = ureq::post(&url.to_string());
         let res = self
@@ -123,6 +125,8 @@ impl SimpleHttpClient {
     fn prepare_files(
         &self,
         files: Vec<(String, Vec<u8>)>,
+        texts: Vec<(String, String)>,
+        filename: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<(Vec<(String, String)>, Vec<u8>)> {
         let mut m = Multipart::new();
@@ -137,7 +141,15 @@ impl SimpleHttpClient {
                 Ok(m) => m,
                 Err(_) => mime::APPLICATION_OCTET_STREAM,
             };
-            m.add_stream(file.0.clone(), file.1.as_slice(), Some("blob"), Some(mime));
+
+            let name = match filename.clone() {
+                Some(f) => f,
+                None => "blob".to_string(),
+            };
+            m.add_stream(file.0.clone(), file.1.as_slice(), Some(name), Some(mime));
+        }
+        for text in texts.iter() {
+            m.add_text(text.0.clone(), text.1.clone());
         }
 
         let mdata = m.prepare().unwrap();

@@ -341,6 +341,51 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::KeyServiceGenerateLocalCertificate => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .generate_local_certificate(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceGenerateManagedCertificate => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .generate_managed_certificate(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceLoadLocalCertificate => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .load_local_certificate(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceLoadManagedCertificate => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .load_managed_certificate(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceImportManagedCertificate => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .import_managed_certificate(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::IdentityServiceCreateIdentity => {
                 let req = self.serialize_request(payload)?;
                 Ok(self

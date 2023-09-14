@@ -98,3 +98,61 @@ func (c *KeyClient) LoadManagedKey(id string) (key.ManagedKey, error) {
 
 	return key.NewManagedKeyFromProto(res.GetManagedKey()), nil
 }
+
+func (c *KeyClient) NewManagedCertificate(params key.ManagedCertificateParams) (key.ManagedCertificate, error) {
+	res, err := c.bridgeClient.Key().GenerateManagedCertificate(context.Background(), &proto.GenerateManagedCertificateRequest{
+		ConfigData: c.configData,
+		Params:     params.ToProto(),
+	})
+
+	if err != nil {
+		return key.ManagedCertificate{}, err
+	}
+
+	if res.Error != nil {
+		return key.ManagedCertificate{}, errors.New(res.Error.Message)
+	}
+
+	return key.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
+}
+
+func (c *KeyClient) LoadManagedCertificate(id string) (key.ManagedCertificate, error) {
+	res, err := c.bridgeClient.Key().LoadManagedCertificate(context.Background(), &proto.LoadManagedCertificateRequest{
+		ConfigData: c.configData,
+		Id:         id,
+	})
+
+	if err != nil {
+		return key.ManagedCertificate{}, err
+	}
+
+	if res.Error != nil {
+		return key.ManagedCertificate{}, errors.New(res.Error.Message)
+	}
+
+	return key.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
+}
+
+func (c *KeyClient) ImportManagedCertificate(_type key.CertificateType, certificate []byte, params key.ImportCertificateParams) (key.ManagedCertificate, error) {
+	var password *string
+	if params.Password != "" {
+		password = &params.Password
+	}
+
+	res, err := c.bridgeClient.Key().ImportManagedCertificate(context.Background(), &proto.ImportManagedCertificateRequest{
+		ConfigData:      c.configData,
+		Certificate:     certificate,
+		CertificateType: key.CertificateTypeToProto[_type],
+		Password:        password,
+	})
+
+	if err != nil {
+		return key.ManagedCertificate{}, err
+	}
+
+	if res.Error != nil {
+		return key.ManagedCertificate{}, errors.New(res.Error.Message)
+	}
+
+	return key.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
+}

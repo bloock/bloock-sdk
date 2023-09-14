@@ -2,17 +2,25 @@
 
 use Bloock\Bloock;
 use Bloock\Client\KeyClient;
+use Bloock\Client\RecordClient;
+use Bloock\Client\AuthenticityClient;
+use Bloock\Entity\Key\CertificateType;
+use Bloock\Entity\Key\ImportCertificateParams;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
+use Bloock\Entity\Key\ManagedCertificateParams;
 use Bloock\Entity\Key\ManagedKeyParams;
+use Bloock\Entity\Key\SubjectCertificateParams;
+use Bloock\Entity\Authenticity\EcdsaSigner;
+use Bloock\Entity\Authenticity\SignerArgs;
 use PHPUnit\Framework\TestCase;
 
 final class KeyTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        Bloock::$apiKey = getenv("API_KEY");
-        Bloock::$apiHost = getenv("API_HOST");
+        Bloock::$apiKey = getenv("DEV_API_KEY");
+        Bloock::$apiHost = getenv("DEV_API_HOST");
         Bloock::$disableAnalytics = true;
     }
 
@@ -148,5 +156,77 @@ final class KeyTest extends TestCase
         $this->assertEquals($key->key, $loadedKey->key);
         $this->assertEquals($key->keyType, $loadedKey->keyType);
         $this->assertEquals($key->protection, $loadedKey->protection);
+    }
+
+    public function testGenerateManagedCertificate()
+    {
+        $keyClient = new KeyClient();
+
+        $keyType = KeyType::EcP256k;
+        $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "US", "IT Department", "Google Inc");
+
+        $params = new ManagedCertificateParams($keyType, $subjectParams, 5);
+        $certificate = $keyClient->newManagedCertificate($params);
+
+        $this->assertNotNull($certificate->key);
+        $this->assertEquals($certificate->keyType, KeyType::EcP256k);
+        $this->assertEquals($certificate->protection, KeyProtectionLevel::SOFTWARE);
+
+        $loadedCertificate = $keyClient->loadManagedCertificate($certificate->id);
+        $this->assertEquals($loadedCertificate->id, $certificate->id);
+        $this->assertEquals($loadedCertificate->key, $certificate->key);
+        $this->assertEquals($loadedCertificate->keyType, $certificate->keyType);
+        $this->assertEquals($loadedCertificate->protection, $certificate->protection);
+    }
+
+    public function testImportManagedCertificatePEM()
+    {
+        $keyClient = new KeyClient();
+
+        $currentDirectory = getcwd();
+        $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/test.pem");
+        $byteArray = unpack('C*', $fileContents);
+
+        $certificate = $keyClient->importManagedCertificate(CertificateType::PEM, $byteArray, new ImportCertificateParams());
+
+        $this->assertNotNull($certificate->key);
+        $this->assertEquals($certificate->keyType, KeyType::Rsa2048);
+        $this->assertEquals($certificate->protection, KeyProtectionLevel::SOFTWARE);
+
+        $loadedCertificate = $keyClient->loadManagedCertificate($certificate->id);
+        $this->assertEquals($loadedCertificate->id, $certificate->id);
+        $this->assertEquals($loadedCertificate->key, $certificate->key);
+        $this->assertEquals($loadedCertificate->keyType, $certificate->keyType);
+        $this->assertEquals($loadedCertificate->protection, $certificate->protection);
+    }
+
+    public function testImportManagedCertificatePFX()
+    {
+        $keyClient = new KeyClient();
+
+        $currentDirectory = getcwd();
+        $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/test2.pfx");
+        $byteArray = unpack('C*', $fileContents);
+        $password = "bloock";
+
+        $certificate = $keyClient->importManagedCertificate(CertificateType::PFX, $byteArray, new ImportCertificateParams($password));
+
+        $this->assertNotNull($certificate->key);
+        $this->assertEquals($certificate->keyType, KeyType::EcP256k);
+        $this->assertEquals($certificate->protection, KeyProtectionLevel::SOFTWARE);
+
+        $loadedCertificate = $keyClient->loadManagedCertificate($certificate->id);
+        $this->assertEquals($loadedCertificate->id, $certificate->id);
+        $this->assertEquals($loadedCertificate->key, $certificate->key);
+        $this->assertEquals($loadedCertificate->keyType, $certificate->keyType);
+        $this->assertEquals($loadedCertificate->protection, $certificate->protection);
+
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+        $signature = $authenticityClient->sign($record, new EcdsaSigner(new SignerArgs($loadedCertificate)));
+
+        $this->assertNotNull($signature);
     }
 }

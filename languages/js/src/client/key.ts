@@ -2,14 +2,19 @@ import { BloockBridge } from "../bridge/bridge";
 import { ConfigData } from "../bridge/proto/config";
 import {
   GenerateLocalKeyRequest,
+  GenerateManagedCertificateRequest,
   GenerateManagedKeyRequest,
+  ImportManagedCertificateRequest,
   LoadLocalKeyRequest,
+  LoadManagedCertificateRequest,
   LoadManagedKeyRequest
 } from "../bridge/proto/keys";
 import { NewConfigData } from "../config/config";
-import { KeyType } from "../entity/key";
+import { CertificateType, KeyType } from "../entity/key";
 import { LocalKey } from "../entity/key";
 import { ManagedKey, ManagedKeyParams } from "../entity/key";
+import { ManagedCertificate } from "../entity/key/managed_certificate";
+import { ImportCertificateParams, ManagedCertificateParams } from "../entity/key/managed_certificate_params";
 
 export class KeyClient {
   private bridge: BloockBridge;
@@ -89,6 +94,59 @@ export class KeyClient {
           throw res.error;
         }
         return ManagedKey.fromProto(res.managedKey!);
+      });
+  }
+
+  async newManagedCertificate(params: ManagedCertificateParams): Promise<ManagedCertificate> {
+    const request = GenerateManagedCertificateRequest.fromPartial({
+      configData: this.configData,
+      params: params.toProto()
+    });
+
+    return this.bridge
+      .getKey()
+      .GenerateManagedCertificate(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return ManagedCertificate.fromProto(res.managedCertificate!);
+      });
+  }
+
+  async loadManagedCertificate(id: string): Promise<ManagedCertificate> {
+    const request = LoadManagedCertificateRequest.fromPartial({
+      configData: this.configData,
+      id
+    });
+
+    return this.bridge
+      .getKey()
+      .LoadManagedCertificate(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return ManagedCertificate.fromProto(res.managedCertificate!);
+      });
+  }
+
+  async importManagedCertificate(type: CertificateType, certificate: Uint8Array, params: ImportCertificateParams): Promise<ManagedCertificate> {
+    const request = ImportManagedCertificateRequest.fromPartial({
+      configData: this.configData,
+      certificate: certificate,
+      certificateType: CertificateType.toProto(type),
+      password: params.password,
+    });
+
+    return this.bridge
+      .getKey()
+      .ImportManagedCertificate(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return ManagedCertificate.fromProto(res.managedCertificate!);
       });
   }
 }

@@ -32,10 +32,16 @@ func (s EcdsaSigner) ToProto() *proto.Signer {
 		managedKey = s.Args.ManagedKey.ToProto()
 	}
 
+	var managedCertificate *proto.ManagedCertificate
+	if s.Args.ManagedCertificate != nil {
+		managedCertificate = s.Args.ManagedCertificate.ToProto()
+	}
+
 	return &proto.Signer{
-		Alg:        s.Alg,
-		LocalKey:   localKey,
-		ManagedKey: managedKey,
-		CommonName: s.Args.CommonName,
+		Alg:                s.Alg,
+		LocalKey:           localKey,
+		ManagedKey:         managedKey,
+		ManagedCertificate: managedCertificate,
+		CommonName:         s.Args.CommonName,
 	}
 }

@@ -45,6 +45,35 @@ impl KeyType {
     }
 }
 
+pub enum CertificateType {
+    PEM,
+    PFX,
+}
+
+impl CertificateType {
+    pub fn new(extension: &str) -> Result<CertificateType> {
+        match extension {
+            "pem" => Ok(CertificateType::PEM),
+            "pfx" => Ok(CertificateType::PFX),
+            _ => Err(KeysError::InvalidCertificateTypeError()),
+        }
+    }
+
+    pub fn get_certificate_type(&self) -> String {
+        match self {
+            CertificateType::PEM => ".pem".to_string(),
+            CertificateType::PFX => ".pfx".to_string(),
+        }
+    }
+}
+
+pub struct CertificateSubject {
+    pub cn: String,
+    pub o: String,
+    pub ou: String,
+    pub c: String,
+}
+
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
 pub enum KeysError {
     #[error("Failed to generate EC key: {0}")]
@@ -53,6 +82,10 @@ pub enum KeysError {
     GenerateRsaKeyError(String),
     #[error("Invalid key type provided")]
     InvalidKeyTypeError(),
+    #[error("Invalid certificate type provided")]
+    InvalidCertificateTypeError(),
     #[error("Failed to create managed key: {0}")]
     ManagedKeyRequestError(String),
+    #[error("Failed to create managed certificate: {0}")]
+    ManagedCertificateRequestError(String),
 }
