@@ -1,6 +1,6 @@
 use crate::{entity::alg::RSA_ALG, Decrypter, Encrypter, EncrypterError, Result};
 use async_trait::async_trait;
-use bloock_keys::local::LocalKey;
+use bloock_keys::keys::local::LocalKey;
 use rsa::{
     pkcs8::{DecodePrivateKey, DecodePublicKey},
     PaddingScheme, PublicKey, RsaPrivateKey, RsaPublicKey,
@@ -69,13 +69,13 @@ mod tests {
         local::rsa::{LocalRsaDecrypter, LocalRsaEncrypter},
         Decrypter, Encrypter,
     };
-    use bloock_keys::local::LocalKey;
+    use bloock_keys::keys::local::LocalKey;
 
     #[tokio::test]
     async fn test_rsa_encryption() {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::Rsa2048,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -99,7 +99,7 @@ mod tests {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
 
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::Rsa2048,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -124,7 +124,7 @@ mod tests {
     async fn test_rsa_decryption_invalid_payload() {
         let unencrypted_payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::Rsa2048,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();

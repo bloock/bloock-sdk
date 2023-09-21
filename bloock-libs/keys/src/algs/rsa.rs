@@ -1,4 +1,4 @@
-use crate::{local::LocalKey, KeyType, KeysError, Result};
+use crate::{keys::local::LocalKey, KeyType, KeysError, Result};
 use rsa::{
     pkcs8::{EncodePrivateKey, EncodePublicKey, LineEnding},
     RsaPrivateKey, RsaPublicKey,

@@ -4,7 +4,7 @@ use aes_gcm::{
     AeadInPlace, Aes256Gcm, KeyInit,
 };
 use async_trait::async_trait;
-use bloock_keys::local::LocalKey;
+use bloock_keys::keys::local::LocalKey;
 use hmac::Hmac;
 use pbkdf2::pbkdf2;
 use rand::RngCore;
@@ -135,7 +135,7 @@ impl<S: ToString> Decrypter for LocalAesDecrypter<S> {
 
 #[cfg(test)]
 mod tests {
-    use bloock_keys::local::LocalKey;
+    use bloock_keys::keys::local::LocalKey;
 
     use crate::{
         local::aes::{LocalAesDecrypter, LocalAesEncrypter},
@@ -147,7 +147,7 @@ mod tests {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
 
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -170,7 +170,7 @@ mod tests {
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
 
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -195,7 +195,7 @@ mod tests {
     async fn test_aes_decryption_invalid_payload() {
         let unencrypted_payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();

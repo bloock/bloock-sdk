@@ -173,16 +173,50 @@ func TestKey(t *testing.T) {
 		assert.Equal(t, loadedKey.KeyType, managedKey.KeyType)
 	})
 
+	t.Run("generate local certificate ecdsa", func(t *testing.T) {
+		keyClient := NewKeyClient()
+
+		keyType := key.EcP256k
+		org := "Google Inc"
+		orgUnit := "IT Department"
+		country := "US"
+
+		subjectParams := key.SubjectCertificateParams{
+			CommonName:       "Google internet Authority G2",
+			Organization:     &org,
+			OrganizationUnit: &orgUnit,
+			Country:          &country,
+		}
+		params := key.LocalCertificateParams{
+			KeyType:  keyType,
+			Subject:  subjectParams,
+			Password: "password",
+		}
+		localCertificate, err := keyClient.NewLocalCertificate(params)
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, localCertificate.Pkcs11)
+
+		loadedCertificate, err := keyClient.LoadLocalCertificate(localCertificate.Pkcs11)
+		assert.NoError(t, err)
+
+		assert.Equal(t, localCertificate.Pkcs11, loadedCertificate.Pkcs11)
+	})
+
 	t.Run("generate managed certificate", func(t *testing.T) {
 		keyClient := NewKeyClient()
 
 		keyType := key.EcP256k
 		expiration := int32(5)
+		org := "Google Inc"
+		orgUnit := "IT Department"
+		country := "US"
+
 		subjectParams := key.SubjectCertificateParams{
-			CN: "Google internet Authority G2",
-			O:  "Google Inc",
-			OU: "IT Department",
-			C:  "US",
+			CommonName:       "Google internet Authority G2",
+			Organization:     &org,
+			OrganizationUnit: &orgUnit,
+			Country:          &country,
 		}
 		params := key.ManagedCertificateParams{
 			KeyType:          keyType,

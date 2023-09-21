@@ -1,10 +1,16 @@
 use crate::items::{
-    CertificateType, KeyProtectionLevel, KeyType, LocalKey, ManagedCertificate, ManagedKey,
+    CertificateSubject, CertificateType, KeyProtectionLevel, KeyType, LocalCertificate, LocalKey,
+    ManagedCertificate, ManagedKey,
 };
 use bloock_keys::{
-    local::LocalKey as CoreLocalKey,
-    managed::ProtectionLevel,
-    managed::{ManagedCertificate as CoreManagedCertificate, ManagedKey as CoreManagedKey},
+    certificates::{
+        local::LocalCertificate as CoreLocalCertificate,
+        managed::ManagedCertificate as CoreManagedCertificate,
+        CertificateSubject as CoreCertificateSubject,
+    },
+    entity::protection_level::ProtectionLevel,
+    keys::local::LocalKey as CoreLocalKey,
+    keys::managed::ManagedKey as CoreManagedKey,
     CertificateType as CoreCertificateType, KeyType as CoreKeyType,
 };
 
@@ -112,6 +118,25 @@ impl From<CoreLocalKey<String>> for LocalKey {
             key: key.key,
             private_key: key.private_key,
         }
+    }
+}
+
+impl From<CertificateSubject> for CoreCertificateSubject {
+    fn from(subject: CertificateSubject) -> Self {
+        Self {
+            common_name: subject.common_name,
+            organizational_unit: subject.organizational_unit,
+            organization: subject.organization,
+            location: subject.location,
+            state: subject.state,
+            country: subject.country,
+        }
+    }
+}
+
+impl From<CoreLocalCertificate<String>> for LocalCertificate {
+    fn from(key: CoreLocalCertificate<String>) -> Self {
+        Self { pkcs12: key.pkcs12 }
     }
 }
 

@@ -1,43 +1,30 @@
 use crate::entity::signature::Signature;
 use async_trait::async_trait;
-use entity::alg::Algorithms;
-use local::ecdsa::LocalEcdsaVerifier;
-use local::ens::LocalEnsVerifier;
-use managed::bjj::ManagedBJJVerifier;
-use managed::ecdsa::ManagedEcdsaVerifier;
-use managed::ens::ManagedEnsVerifier;
+use bloock_hasher::H256;
+use bloock_keys::entity::key::Key;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
+pub mod bjj;
+pub mod ecdsa;
+pub mod ens;
 pub mod entity;
-pub mod local;
-pub mod managed;
+pub mod format;
 
 pub type Result<T> = std::result::Result<T, SignerError>;
 
 #[async_trait(?Send)]
 pub trait Signer {
-    async fn sign(&self, payload: &[u8]) -> Result<Signature>;
-}
-
-#[async_trait(?Send)]
-pub trait Verifier {
+    async fn sign(&self, payload: &[u8], key: Key) -> Result<Signature>;
     async fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool>;
+    async fn recover_public_key(&self, signature: &Signature) -> Result<Vec<u8>>;
+    async fn get_common_name(&self, signature: &Signature) -> Result<String>;
 }
 
-pub fn create_verifier_from_signature(
-    signature: &Signature,
-    api_host: String,
-    api_key: String,
-    api_version: Option<String>,
-) -> Result<Box<dyn Verifier>> {
-    match Algorithms::try_from(signature.header.alg.as_str())? {
-        Algorithms::Es256k => Ok(Box::<LocalEcdsaVerifier>::default()),
-        Algorithms::Ens => Ok(Box::<LocalEnsVerifier>::default()),
-        Algorithms::Es256kM => Ok(ManagedEcdsaVerifier::new_boxed(api_host, api_key, api_version)),
-        Algorithms::EnsM => Ok(ManagedEnsVerifier::new_boxed(api_host, api_key, api_version)),
-        Algorithms::BjjM => Ok(ManagedBJJVerifier::new_boxed(api_host, api_key, api_version)),
-    }
+pub trait SignFormat {
+    fn prepare_payload(&self, payload: &[u8]) -> Vec<u8>;
+    fn serialize(&self, signature: Vec<Signature>) -> String;
+    fn deserialize(&self, signature: String) -> Vec<Signature>;
 }
 
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]

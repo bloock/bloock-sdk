@@ -64,7 +64,7 @@ mod tests {
     use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_encrypter::local::rsa::{LocalRsaDecrypter, LocalRsaEncrypter};
     use bloock_http::MockClient;
-    use bloock_keys::local::{LocalKey, LocalKeyParams};
+    use bloock_keys::keys::local::{LocalKey, LocalKeyParams};
     use bloock_keys::KeyType;
     use std::sync::Arc;
 

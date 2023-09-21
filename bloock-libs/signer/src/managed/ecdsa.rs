@@ -4,7 +4,7 @@ use crate::{Signer, SignerError, Verifier};
 use async_trait::async_trait;
 use bloock_hasher::{keccak::Keccak256, sha256::Sha256, Hasher};
 use bloock_http::{BloockHttpClient, Client};
-use bloock_keys::managed::ManagedKey;
+use bloock_keys::keys::managed::ManagedKey;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
@@ -112,30 +112,7 @@ impl Signer for ManagedEcdsaSigner {
 
         Ok(signature)
     }
-}
 
-pub struct ManagedEcdsaVerifier {
-    api_host: String,
-    api_key: String,
-    api_version: Option<String>,
-}
-
-impl ManagedEcdsaVerifier {
-    pub fn new(api_host: String, api_key: String, api_version: Option<String>) -> Self {
-        Self {
-            api_host,
-            api_key,
-            api_version,
-        }
-    }
-
-    pub fn new_boxed(api_host: String, api_key: String, api_version: Option<String>) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key, api_version))
-    }
-}
-
-#[async_trait(?Send)]
-impl Verifier for ManagedEcdsaVerifier {
     async fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
         let payload_with_protected = &[signature.protected.clone(), base64_url::encode(payload)]
             .join(".")
@@ -174,8 +151,8 @@ impl Verifier for ManagedEcdsaVerifier {
 #[cfg(test)]
 mod tests {
     use bloock_hasher::{sha256::Sha256, Hasher};
-    use bloock_keys::local::LocalKey;
-    use bloock_keys::managed::ManagedKey;
+    use bloock_keys::keys::local::LocalKey;
+    use bloock_keys::keys::managed::ManagedKey;
 
     use crate::entity::alg::Algorithms;
     use crate::entity::signature::{Signature, SignatureHeader};
@@ -191,10 +168,10 @@ mod tests {
     async fn test_sign_and_verify_ok() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::EcP256k,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let managed_key =
@@ -227,10 +204,10 @@ mod tests {
     async fn test_sign_and_verify_ok_set_common_name() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::EcP256k,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let managed_key =
@@ -269,10 +246,10 @@ mod tests {
     async fn test_sign_and_verify_ok_get_common_name_without_set() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::EcP256k,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let managed_key =
@@ -294,10 +271,10 @@ mod tests {
     async fn test_verify_invalid_signature() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::EcP256k,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let managed_key =
@@ -365,10 +342,10 @@ mod tests {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::EcP256k,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let managed_key =
@@ -406,7 +383,7 @@ mod tests {
 
     #[tokio::test]
     async fn recover_public_key_ok() {
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();

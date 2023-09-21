@@ -1,9 +1,10 @@
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
+pub mod algs;
+pub mod certificates;
+pub mod entity;
 pub mod keys;
-pub mod local;
-pub mod managed;
 
 pub type Result<T> = std::result::Result<T, KeysError>;
 
@@ -67,13 +68,6 @@ impl CertificateType {
     }
 }
 
-pub struct CertificateSubject {
-    pub cn: String,
-    pub o: String,
-    pub ou: String,
-    pub c: String,
-}
-
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
 pub enum KeysError {
     #[error("Failed to generate EC key: {0}")]
@@ -88,4 +82,6 @@ pub enum KeysError {
     ManagedKeyRequestError(String),
     #[error("Failed to create managed certificate: {0}")]
     ManagedCertificateRequestError(String),
+    #[error("Only the RSA_2048 certificate type is supported for local certificates")]
+    NotSupportedLocalCertificateType(),
 }

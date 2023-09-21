@@ -99,6 +99,40 @@ func (c *KeyClient) LoadManagedKey(id string) (key.ManagedKey, error) {
 	return key.NewManagedKeyFromProto(res.GetManagedKey()), nil
 }
 
+func (c *KeyClient) NewLocalCertificate(params key.LocalCertificateParams) (key.LocalCertificate, error) {
+	res, err := c.bridgeClient.Key().GenerateLocalCertificate(context.Background(), &proto.GenerateLocalCertificateRequest{
+		ConfigData: c.configData,
+		Params:     params.ToProto(),
+	})
+
+	if err != nil {
+		return key.LocalCertificate{}, err
+	}
+
+	if res.Error != nil {
+		return key.LocalCertificate{}, errors.New(res.Error.Message)
+	}
+
+	return key.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
+}
+
+func (c *KeyClient) LoadLocalCertificate(pkcs12 []byte) (key.LocalCertificate, error) {
+	res, err := c.bridgeClient.Key().LoadLocalCertificate(context.Background(), &proto.LoadLocalCertificateRequest{
+		ConfigData: c.configData,
+		Pkcs12:     pkcs12,
+	})
+
+	if err != nil {
+		return key.LocalCertificate{}, err
+	}
+
+	if res.Error != nil {
+		return key.LocalCertificate{}, errors.New(res.Error.Message)
+	}
+
+	return key.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
+}
+
 func (c *KeyClient) NewManagedCertificate(params key.ManagedCertificateParams) (key.ManagedCertificate, error) {
 	res, err := c.bridgeClient.Key().GenerateManagedCertificate(context.Background(), &proto.GenerateManagedCertificateRequest{
 		ConfigData: c.configData,

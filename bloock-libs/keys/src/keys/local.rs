@@ -1,5 +1,5 @@
 use crate::{
-    keys::{aes::AesKey, ec::EcKey, rsa::RsaKey},
+    algs::{aes::AesKey, ec::EcKey, rsa::RsaKey},
     KeyType, KeysError, Result,
 };
 
@@ -48,7 +48,7 @@ impl LocalKey<String> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        local::{LocalKey, LocalKeyParams},
+        keys::local::{LocalKey, LocalKeyParams},
         KeyType,
     };
 

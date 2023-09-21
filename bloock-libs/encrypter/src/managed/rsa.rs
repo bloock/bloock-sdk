@@ -1,7 +1,7 @@
 use crate::{entity::alg::RSA_ALG, Decrypter, Encrypter, EncrypterError, Result};
 use async_trait::async_trait;
 use bloock_http::{BloockHttpClient, Client};
-use bloock_keys::managed::ManagedKey;
+use bloock_keys::keys::managed::ManagedKey;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
@@ -108,16 +108,16 @@ mod tests {
         managed::rsa::{ManagedRsaDecrypter, ManagedRsaEncrypter},
         Decrypter, Encrypter,
     };
-    use bloock_keys::managed::ManagedKey;
+    use bloock_keys::keys::managed::ManagedKey;
 
     #[tokio::test]
     async fn test_rsa_encryption() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::Rsa2048,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let managed_key =
@@ -147,10 +147,10 @@ mod tests {
     async fn test_rsa_encryption_invalid_decryption_key() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::Rsa2048,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let managed_key =
@@ -166,10 +166,10 @@ mod tests {
 
         let ciphertext = encrypter.encrypt(payload_bytes).await.unwrap();
 
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::Rsa2048,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let invalid_key =
@@ -187,10 +187,10 @@ mod tests {
     async fn test_rsa_decryption_invalid_payload() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
-        let managed_key_params = bloock_keys::managed::ManagedKeyParams {
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
             name: None,
             key_type: bloock_keys::KeyType::Rsa2048,
-            protection: bloock_keys::managed::ProtectionLevel::SOFTWARE,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
         let managed_key =

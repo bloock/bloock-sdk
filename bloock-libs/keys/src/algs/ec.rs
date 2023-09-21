@@ -1,5 +1,6 @@
+use crate::keys::local::LocalKey;
+use crate::KeysError;
 use crate::Result;
-use crate::{local::LocalKey, KeysError};
 use bip39::{Language, Mnemonic, MnemonicType, Seed};
 use libsecp256k1::{PublicKey, SecretKey};
 use std::str::FromStr;

@@ -7,7 +7,7 @@ use crate::{availability::service::AvailabilityService, config::service::ConfigS
 use async_std::task;
 use bloock_http::Client;
 use bloock_identity::did::Did;
-use bloock_keys::local::{LocalKey, LocalKeyParams};
+use bloock_keys::keys::local::{LocalKey, LocalKeyParams};
 use bloock_signer::entity::signature::Signature;
 use bloock_signer::local::ecdsa::LocalEcdsaSigner;
 use bloock_signer::{create_verifier_from_signature, Signer};

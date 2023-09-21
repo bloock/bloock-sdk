@@ -67,7 +67,7 @@ mod tests {
     use crate::record::document::Document;
     use crate::record::entity::record::Record;
     use bloock_http::MockClient;
-    use bloock_keys::local::LocalKey;
+    use bloock_keys::keys::local::LocalKey;
     use bloock_signer::entity::alg::Algorithms;
     use bloock_signer::local::ecdsa::LocalEcdsaSigner;
     use bloock_signer::local::ens::LocalEnsSigner;
@@ -75,7 +75,7 @@ mod tests {
 
     #[tokio::test]
     async fn sign_ecdsa_local() {
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -96,7 +96,7 @@ mod tests {
 
     #[tokio::test]
     async fn sign_ens_local() {
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -117,7 +117,7 @@ mod tests {
 
     #[tokio::test]
     async fn sign_ecdsa_managed() {
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -138,7 +138,7 @@ mod tests {
 
     #[tokio::test]
     async fn sign_ens_managed() {
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();

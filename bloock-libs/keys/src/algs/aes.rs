@@ -1,4 +1,4 @@
-use crate::{local::LocalKey, KeyType, Result};
+use crate::{keys::local::LocalKey, KeyType, Result};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 
 pub struct AesKey {

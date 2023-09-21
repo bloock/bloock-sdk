@@ -212,7 +212,7 @@ mod tests {
     };
     use bloock_hasher::{keccak::Keccak256, Hasher};
     use bloock_keys::{
-        local::{LocalKey, LocalKeyParams},
+        keys::local::{LocalKey, LocalKeyParams},
         KeyType,
     };
     use bloock_signer::{

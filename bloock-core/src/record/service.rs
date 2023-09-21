@@ -49,7 +49,7 @@ mod tests {
     use super::*;
     use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_hasher::{keccak::Keccak256, Hasher};
-    use bloock_keys::local::LocalKey;
+    use bloock_keys::keys::local::LocalKey;
     use bloock_signer::{
         entity::{
             alg::{ECDSA_ALG, ENS_ALG},
@@ -590,7 +590,7 @@ mod hash_tests {
     use super::RecordService;
     use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_hasher::{keccak::Keccak256, Hasher};
-    use bloock_keys::local::LocalKey;
+    use bloock_keys::keys::local::LocalKey;
     use bloock_signer::local::ecdsa::LocalEcdsaSigner;
 
     const PAYLOAD: &str = "hello world";

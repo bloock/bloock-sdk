@@ -1,88 +1,73 @@
-use crate::Result;
-use crate::{entity::alg::Algorithms, SignerError};
+use crate::{
+    local::{ecdsa::LocalEcdsaSigner, ens::LocalEnsSigner},
+    managed::{
+        bjj::{ManagedBJJSigner, ManagedBJJVerifier},
+        ecdsa::{ManagedEcdsaSigner, ManagedEcdsaVerifier},
+        ens::{ManagedEnsSigner, ManagedEnsVerifier},
+    },
+    Result, Signer,
+};
 use bloock_hasher::H256;
-use serde::{Deserialize, Serialize};
-use std::str::from_utf8;
+use bloock_keys::entity::key::Key;
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct JWSignatures {
-    pub signatures: Vec<Signature>,
-    pub payload: String,
-}
+use super::alg::SignAlg;
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone)]
 pub struct Signature {
-    pub header: SignatureHeader,
-    pub protected: String,
+    pub alg: SignAlg,
+    pub key: Key,
     pub signature: String,
     pub message_hash: String,
 }
 
 impl Signature {
     pub async fn get_common_name(&self, ens_provider: String, api_key: String) -> Result<String> {
-        let alg = Algorithms::try_from(self.header.alg.as_str())?;
-        match alg {
-            Algorithms::Es256k => crate::local::ecdsa::get_common_name(self),
-            Algorithms::Ens => {
-                crate::local::ens::get_common_name(self, ens_provider, api_key).await
-            }
-            Algorithms::Es256kM => crate::local::ecdsa::get_common_name(self),
-            Algorithms::EnsM => {
-                crate::local::ens::get_common_name(self, ens_provider, api_key).await
-            },
-            Algorithms::BjjM => crate::local::ecdsa::get_common_name(self)
-        }
+        let signer: Box<dyn Signer> = match SignAlg::try_from(self.alg.to_string().as_str())? {
+            SignAlg::Es256k => LocalEcdsaSigner::new_boxed(),
+            SignAlg::Ens => LocalEnsSigner::new_boxed(),
+            SignAlg::Es256kM => ManagedEcdsaSigner::new_boxed(api_host, api_key, api_version),
+            SignAlg::EnsM => ManagedEnsSigner::new_boxed(api_host, api_key, api_version),
+            SignAlg::BjjM => ManagedBJJSigner::new_boxed(api_host, api_key, api_version),
+        };
+
+        signer.get_common_name(self).await
     }
 
     pub fn recover_public_key(&self, message_hash: H256) -> Result<Vec<u8>> {
-        let alg = Algorithms::try_from(self.header.alg.as_str())?;
+        let alg = SignAlg::try_from(self.alg.to_string().as_str())?;
         match alg {
-            Algorithms::Es256k => crate::local::ecdsa::recover_public_key(self, message_hash),
-            Algorithms::Ens => crate::local::ens::recover_public_key(self, message_hash),
-            Algorithms::Es256kM => crate::local::ecdsa::recover_public_key(self, message_hash),
-            Algorithms::EnsM => crate::local::ens::recover_public_key(self, message_hash),
-            Algorithms::BjjM => crate::local::ecdsa::recover_public_key(self, message_hash),
+            SignAlg::Es256k => crate::local::ecdsa::recover_public_key(self, message_hash),
+            SignAlg::Ens => crate::local::ens::recover_public_key(self, message_hash),
+            SignAlg::Es256kM => crate::local::ecdsa::recover_public_key(self, message_hash),
+            SignAlg::EnsM => crate::local::ens::recover_public_key(self, message_hash),
+            SignAlg::BjjM => crate::local::ecdsa::recover_public_key(self, message_hash),
         }
     }
-}
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct SignatureHeader {
-    pub alg: String,
-    pub kid: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ProtectedHeader {
-    pub common_name: Option<String>,
-}
-
-impl ProtectedHeader {
-    pub fn serialize(&self) -> Result<String> {
-        Ok(base64_url::encode(&serde_json::to_string(self).map_err(
-            |err| SignerError::GeneralSerializeError(err.to_string()),
-        )?))
-    }
-
-    pub fn deserialize(protected: &str) -> Result<Self> {
-        serde_json::from_str(
-            from_utf8(
-                &base64_url::decode(&protected)
-                    .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
-            )
-            .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?,
-        )
-        .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))
-    }
-}
-
-impl From<JWSignatures> for Signature {
-    fn from(s: JWSignatures) -> Self {
-        Self {
-            protected: s.signatures[0].protected.clone(),
-            signature: s.signatures[0].signature.clone(),
-            header: s.signatures[0].header.clone(),
-            message_hash: s.signatures[0].message_hash.clone(),
+    pub fn get_signer(
+        &self,
+        api_host: String,
+        api_key: String,
+        api_version: Option<String>,
+    ) -> Result<Box<dyn Signer>> {
+        match SignAlg::try_from(self.alg.to_string().as_str())? {
+            SignAlg::Es256k => Ok(Box::<LocalEcdsaVerifier>::default()),
+            SignAlg::Ens => Ok(Box::<LocalEnsVerifier>::default()),
+            SignAlg::Es256kM => Ok(ManagedEcdsaVerifier::new_boxed(
+                api_host,
+                api_key,
+                api_version,
+            )),
+            SignAlg::EnsM => Ok(ManagedEnsVerifier::new_boxed(
+                api_host,
+                api_key,
+                api_version,
+            )),
+            SignAlg::BjjM => Ok(ManagedBJJVerifier::new_boxed(
+                api_host,
+                api_key,
+                api_version,
+            )),
         }
     }
 }

@@ -1,39 +1,9 @@
-use crate::entity::alg::Algorithms;
-use crate::entity::signature::{ProtectedHeader, Signature, SignatureHeader};
-use crate::{Result, Signer, SignerError, Verifier};
+use crate::entity::signature::Signature;
+use crate::{Result, Signer, SignerError};
 use async_trait::async_trait;
 use bloock_hasher::{keccak::Keccak256, sha256::Sha256, Hasher, H256};
-use bloock_keys::local::LocalKey;
+use bloock_keys::keys::local::LocalKey;
 use libsecp256k1::{Message, PublicKey, RecoveryId, SecretKey};
-
-pub fn get_common_name(signature: &Signature) -> Result<String> {
-    ProtectedHeader::deserialize(&signature.protected)
-        .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
-        .common_name
-        .ok_or_else(|| {
-            SignerError::CommonNameNotSetOrInvalidFormat("common name not set".to_string())
-        })
-}
-
-pub fn recover_public_key(signature: &Signature, message_hash: H256) -> Result<Vec<u8>> {
-    let signature_bytes = hex::decode(signature.signature.clone())
-        .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
-
-    if signature_bytes.len() != 65 {
-        return Err(SignerError::InvalidSignature(
-            "Invalid signature length".to_string(),
-        ));
-    }
-
-    let message = Message::parse(&message_hash);
-    let recovery_id = RecoveryId::parse(signature_bytes[64]).unwrap();
-    let parsed_sig = libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64]).unwrap();
-
-    Ok(libsecp256k1::recover(&message, &parsed_sig, &recovery_id)
-        .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
-        .serialize()
-        .to_vec())
-}
 
 pub struct LocalEcdsaSigner<S: ToString> {
     local_key: LocalKey<S>,
@@ -108,13 +78,7 @@ impl<S: ToString + AsRef<[u8]> + Clone> Signer for LocalEcdsaSigner<S> {
 
         Ok(signature)
     }
-}
 
-#[derive(Default)]
-pub struct LocalEcdsaVerifier {}
-
-#[async_trait(?Send)]
-impl Verifier for LocalEcdsaVerifier {
     async fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
         let public_key_hex = hex::decode(signature.header.kid.as_bytes())
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
@@ -145,12 +109,42 @@ impl Verifier for LocalEcdsaVerifier {
 
         Ok(libsecp256k1::verify(&message, &signature, &public_key))
     }
+
+    async fn get_common_name(&self, signature: &Signature) -> Result<String> {
+        ProtectedHeader::deserialize(&signature.protected)
+            .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
+            .common_name
+            .ok_or_else(|| {
+                SignerError::CommonNameNotSetOrInvalidFormat("common name not set".to_string())
+            })
+    }
+
+    async fn recover_public_key(&self, signature: &Signature) -> Result<Vec<u8>> {
+        let signature_bytes = hex::decode(signature.signature.clone())
+            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
+
+        if signature_bytes.len() != 65 {
+            return Err(SignerError::InvalidSignature(
+                "Invalid signature length".to_string(),
+            ));
+        }
+
+        let message = Message::parse(&self.message_hash);
+        let recovery_id = RecoveryId::parse(signature_bytes[64]).unwrap();
+        let parsed_sig =
+            libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64]).unwrap();
+
+        Ok(libsecp256k1::recover(&message, &parsed_sig, &recovery_id)
+            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
+            .serialize()
+            .to_vec())
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use bloock_hasher::{sha256::Sha256, Hasher};
-    use bloock_keys::local::LocalKey;
+    use bloock_keys::keys::local::LocalKey;
 
     use super::recover_public_key;
     use crate::entity::signature::{Signature, SignatureHeader};
@@ -165,7 +159,7 @@ mod tests {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -192,7 +186,7 @@ mod tests {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -217,7 +211,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_and_verify_ok_get_common_name_without_set() {
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
@@ -334,7 +328,7 @@ mod tests {
 
     #[tokio::test]
     async fn recover_public_key_ok() {
-        let local_key_params = bloock_keys::local::LocalKeyParams {
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
             key_type: bloock_keys::KeyType::EcP256k,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();

@@ -110,8 +110,22 @@ impl KeyServiceHandler for KeyServer {
 
         let client = key::configure(config_data);
 
+        let params = req
+            .params
+            .clone()
+            .ok_or_else(|| "invalid params".to_string())?;
+
+        let subject = params
+            .subject
+            .clone()
+            .ok_or_else(|| "invalid subject".to_string())?;
+
+        let certificate = client
+            .generate_local_certificate(params.key_type().into(), params.password, subject.into())
+            .map_err(|e| e.to_string())?;
+
         Ok(GenerateLocalCertificateResponse {
-            local_certificate: None,
+            local_certificate: Some(certificate.into()),
             error: None,
         })
     }
@@ -127,16 +141,18 @@ impl KeyServiceHandler for KeyServer {
             .clone()
             .ok_or_else(|| "invalid params".to_string())?;
 
+        let subject = params
+            .subject
+            .clone()
+            .ok_or_else(|| "invalid subject".to_string())?;
+
         let client = key::configure(config_data.clone());
 
         let certificate = client
             .generate_managed_certificate(
                 params.key_type().into(),
                 params.expiration,
-                params.cn,
-                params.o,
-                params.ou,
-                params.c,
+                subject.into(),
             )
             .await
             .map_err(|e| e.to_string())?;
@@ -151,12 +167,16 @@ impl KeyServiceHandler for KeyServer {
         &self,
         req: &LoadLocalCertificateRequest,
     ) -> Result<LoadLocalCertificateResponse, String> {
-        let config_data = req.get_config_data()?;
+        let config_data = req.clone().get_config_data()?;
 
         let client = key::configure(config_data);
 
+        let certificate = client
+            .load_local_certificate(&req.pkcs12, req.password.clone())
+            .map_err(|e| e.to_string())?;
+
         Ok(LoadLocalCertificateResponse {
-            local_certificate: None,
+            local_certificate: Some(certificate.into()),
             error: None,
         })
     }
