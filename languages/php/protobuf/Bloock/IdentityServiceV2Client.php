@@ -73,6 +73,20 @@ class IdentityServiceV2Client extends \Bloock\Bridge\Connection {
     }
 
     /**
+     * @param \Bloock\GetSchemaRequestV2 $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GetSchema(\Bloock\GetSchemaRequestV2 $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityServiceV2/GetSchema',
+        $argument,
+        ['\Bloock\GetSchemaResponseV2', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
      * @param \Bloock\CreateCredentialRequestV2 $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
