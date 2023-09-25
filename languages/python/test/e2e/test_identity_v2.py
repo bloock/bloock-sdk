@@ -29,7 +29,7 @@ class TestIdentityV2(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        init_dev_sdk()  
+        init_dev_sdk()
 
     def test_credential_from_to_json(self):
         credential = Credential.from_json(self.credentialJson)
@@ -93,8 +93,9 @@ class TestIdentityV2(unittest.TestCase):
         self.assertIsNotNone(schema.cid)
 
         get_schema = identity_client.get_schema(schema.cid)
-        self.assertIsNotNone(schema.cid_json_ld)
-        self.assertIsNotNone(schema.json)
+        self.assertIsNotNone(get_schema.cid_json_ld)
+        self.assertIsNotNone(get_schema.json)
+        self.assertIsNotNone(get_schema.schema_type)
 
         receipt = identity_client.build_credential(schema.cid, issuer, self.holderDid, self.expiration, 0) \
             .with_integer_attribute("license_type", 1) \

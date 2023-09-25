@@ -271,6 +271,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             schema: Some(SchemaV2 {
                 cid: schema.cid,
                 cid_json_ld: schema.cid_json_ld,
+                schema_type: schema.schema_type,
                 json: schema.json,
             }),
             error: None,
@@ -291,6 +292,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             schema: Some(SchemaV2 {
                 cid: schema.cid,
                 cid_json_ld: schema.cid_json_ld,
+                schema_type: schema.schema_type,
                 json: schema.json,
             }),
             error: None,

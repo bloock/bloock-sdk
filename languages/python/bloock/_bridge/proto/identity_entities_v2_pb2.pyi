@@ -611,18 +611,21 @@ class SchemaV2(google.protobuf.message.Message):
 
     CID_FIELD_NUMBER: builtins.int
     CID_JSON_LD_FIELD_NUMBER: builtins.int
+    SCHEMA_TYPE_FIELD_NUMBER: builtins.int
     JSON_FIELD_NUMBER: builtins.int
     cid: builtins.str
     cid_json_ld: builtins.str
+    schema_type: builtins.str
     json: builtins.str
     def __init__(
         self,
         *,
         cid: builtins.str = ...,
         cid_json_ld: builtins.str = ...,
+        schema_type: builtins.str = ...,
         json: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["cid", b"cid", "cid_json_ld", b"cid_json_ld", "json", b"json"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["cid", b"cid", "cid_json_ld", b"cid_json_ld", "json", b"json", "schema_type", b"schema_type"]) -> None: ...
 
 global___SchemaV2 = SchemaV2
 

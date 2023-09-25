@@ -120,6 +120,7 @@ public class IdentityV2Test {
     Schema getSchema = identityClient.getSchema(schema.getCid());
     assertNotNull(getSchema.getCidJsonLD());
     assertNotNull(getSchema.getJson());
+    assertNotNull(getSchema.getSchemaType());
 
     CredentialReceipt receipt =
         identityClient

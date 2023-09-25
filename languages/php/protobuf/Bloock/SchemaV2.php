@@ -22,7 +22,11 @@ class SchemaV2 extends \Google\Protobuf\Internal\Message
      */
     protected $cid_json_ld = '';
     /**
-     * Generated from protobuf field <code>string json = 3;</code>
+     * Generated from protobuf field <code>string schema_type = 3;</code>
+     */
+    protected $schema_type = '';
+    /**
+     * Generated from protobuf field <code>string json = 4;</code>
      */
     protected $json = '';
 
@@ -34,6 +38,7 @@ class SchemaV2 extends \Google\Protobuf\Internal\Message
      *
      *     @type string $cid
      *     @type string $cid_json_ld
+     *     @type string $schema_type
      *     @type string $json
      * }
      */
@@ -87,7 +92,29 @@ class SchemaV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string json = 3;</code>
+     * Generated from protobuf field <code>string schema_type = 3;</code>
+     * @return string
+     */
+    public function getSchemaType()
+    {
+        return $this->schema_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>string schema_type = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setSchemaType($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->schema_type = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string json = 4;</code>
      * @return string
      */
     public function getJson()
@@ -96,7 +123,7 @@ class SchemaV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string json = 3;</code>
+     * Generated from protobuf field <code>string json = 4;</code>
      * @param string $var
      * @return $this
      */

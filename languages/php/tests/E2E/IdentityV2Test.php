@@ -97,6 +97,7 @@ final class IdentityV2Test extends TestCase
         $getSchema = $identityClient->getSchema($schema->getCid());
         $this->assertNotNull($getSchema->getCidJsonLd());
         $this->assertNotNull($getSchema->getJson());
+        $this->assertNotNull($getSchema->getSchemaType());
 
         $dateString = "1999-03-20";
         $format = "Y-m-d";

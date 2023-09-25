@@ -99,6 +99,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, schema.CidJsonLd)
 		assert.NotNil(t, schema.Json)
+		assert.NotNil(t, schema.SchemaType)
 
 		res, err := identityClient.BuildCredential(schema.Cid, issuer, holderDid, expiration, 0).
 			WithIntegerAttribute("license_type", 1).

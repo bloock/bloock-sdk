@@ -134,7 +134,8 @@ describe("Identity V2 Tests", () => {
     schema = await identityClient.getSchema(schema.cid)
     expect(schema.cidJsonLd).toBeTruthy();
     expect(schema.json).toBeTruthy();
-
+    expect(schema.schemaType).toBeTruthy();
+        
     const receipt = await identityClient
       .buildCredential(schema.cid, issuer, holderDid, expiration, 0)
       .withIntegerAttribute("license_type", 1)

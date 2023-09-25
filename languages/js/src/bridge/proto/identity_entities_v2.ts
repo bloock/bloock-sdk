@@ -310,6 +310,7 @@ export interface IssuerStateReceipt {
 export interface SchemaV2 {
   cid: string;
   cidJsonLd: string;
+  schemaType: string;
   json: string;
 }
 
@@ -1949,7 +1950,7 @@ export const IssuerStateReceipt = {
 };
 
 function createBaseSchemaV2(): SchemaV2 {
-  return { cid: "", cidJsonLd: "", json: "" };
+  return { cid: "", cidJsonLd: "", schemaType: "", json: "" };
 }
 
 export const SchemaV2 = {
@@ -1960,8 +1961,11 @@ export const SchemaV2 = {
     if (message.cidJsonLd !== "") {
       writer.uint32(18).string(message.cidJsonLd);
     }
+    if (message.schemaType !== "") {
+      writer.uint32(26).string(message.schemaType);
+    }
     if (message.json !== "") {
-      writer.uint32(26).string(message.json);
+      writer.uint32(34).string(message.json);
     }
     return writer;
   },
@@ -1980,6 +1984,9 @@ export const SchemaV2 = {
           message.cidJsonLd = reader.string();
           break;
         case 3:
+          message.schemaType = reader.string();
+          break;
+        case 4:
           message.json = reader.string();
           break;
         default:
@@ -1994,6 +2001,7 @@ export const SchemaV2 = {
     return {
       cid: isSet(object.cid) ? String(object.cid) : "",
       cidJsonLd: isSet(object.cidJsonLd) ? String(object.cidJsonLd) : "",
+      schemaType: isSet(object.schemaType) ? String(object.schemaType) : "",
       json: isSet(object.json) ? String(object.json) : "",
     };
   },
@@ -2002,6 +2010,7 @@ export const SchemaV2 = {
     const obj: any = {};
     message.cid !== undefined && (obj.cid = message.cid);
     message.cidJsonLd !== undefined && (obj.cidJsonLd = message.cidJsonLd);
+    message.schemaType !== undefined && (obj.schemaType = message.schemaType);
     message.json !== undefined && (obj.json = message.json);
     return obj;
   },
@@ -2010,6 +2019,7 @@ export const SchemaV2 = {
     const message = createBaseSchemaV2();
     message.cid = object.cid ?? "";
     message.cidJsonLd = object.cidJsonLd ?? "";
+    message.schemaType = object.schemaType ?? "";
     message.json = object.json ?? "";
     return message;
   },

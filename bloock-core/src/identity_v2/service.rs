@@ -188,12 +188,12 @@ impl<H: Client> IdentityServiceV2<H> {
 
         let schema_json = self.get_schema(schema_id.clone()).await?;
 
-        let schema_type = get_schema_type_from_json(schema_json.json.clone())
-            .map_err(|e| IdentityErrorV2::SchemaParseError(e.to_string()))?;
-
-        let schema_json_ld = self.get_schema_json_ld(schema_json.cid_json_ld.clone()).await?;
-        let credential_type = get_type_id_from_context(schema_json_ld, schema_type.clone())
-            .map_err(|e| IdentityErrorV2::SchemaParseError(e.to_string()))?;
+        let schema_json_ld = self
+            .get_schema_json_ld(schema_json.cid_json_ld.clone())
+            .await?;
+        let credential_type =
+            get_type_id_from_context(schema_json_ld, schema_json.schema_type.clone())
+                .map_err(|e| IdentityErrorV2::SchemaParseError(e.to_string()))?;
 
         let version = match version {
             Some(v) => v,
@@ -201,12 +201,15 @@ impl<H: Client> IdentityServiceV2<H> {
         };
 
         attributes.push(("id".to_string(), Value::String(holder_did.clone())));
-        attributes.push(("type".to_string(), Value::String(schema_type.clone())));
+        attributes.push((
+            "type".to_string(),
+            Value::String(schema_json.schema_type.clone()),
+        ));
 
         let vc = VC::new(
-            schema_json.cid_json_ld,
+            schema_json.cid_json_ld.clone(),
             schema_json.cid.clone(),
-            schema_type.clone(),
+            schema_json.schema_type.clone(),
             issuer_did.clone(),
             holder_did,
             expiration,
@@ -298,7 +301,7 @@ impl<H: Client> IdentityServiceV2<H> {
         Ok(CreateCredentialReceipt {
             credential,
             credential_id: res.id,
-            schema_type,
+            schema_type: schema_json.schema_type,
             anchor_id: res.anchor_id,
         })
     }
@@ -318,9 +321,13 @@ impl<H: Client> IdentityServiceV2<H> {
         let cid_json_ld = get_json_ld_context_from_json(json.to_string().clone())
             .map_err(|e| IdentityErrorV2::SchemaParseError(e.to_string()))?;
 
+        let schema_type = get_schema_type_from_json(json.to_string().clone())
+            .map_err(|e| IdentityErrorV2::SchemaParseError(e.to_string()))?;
+
         Ok(Schema {
             cid: id,
             cid_json_ld,
+            schema_type,
             json: json.to_string(),
         })
     }
