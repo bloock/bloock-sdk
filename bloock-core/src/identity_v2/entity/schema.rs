@@ -1,5 +1,6 @@
 pub struct Schema {
     pub cid: String,
+    pub cid_json_ld: String,
     pub json: String,
 }
 

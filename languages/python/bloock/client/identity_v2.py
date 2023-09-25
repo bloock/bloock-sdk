@@ -6,7 +6,7 @@ from bloock._bridge.proto.shared_pb2 import Error
 
 
 from bloock.entity.identity_v2.issuer_params import IssuerParams
-from bloock._bridge.proto.identity_v2_pb2 import CreateIssuerRequest
+from bloock._bridge.proto.identity_v2_pb2 import CreateIssuerRequest, GetSchemaRequestV2
 from bloock._bridge.proto.identity_v2_pb2 import GetIssuerListRequest
 from bloock._bridge.proto.identity_v2_pb2 import GetIssuerByKeyRequest
 from bloock._bridge.proto.identity_v2_pb2 import GetCredentialProofRequest
@@ -16,6 +16,7 @@ from bloock.entity.identity_v2.credential_builder import CredentialBuilder
 from bloock.entity.identity_v2.issuer_state_publisher import IssuerStatePublisher
 from bloock.entity.identity_v2.credential_proof import CredentialProof
 from bloock.entity.identity_v2.credential import Credential
+from bloock.entity.identity_v2.schema import Schema
 
 
 class IdentityV2Client:
@@ -65,6 +66,18 @@ class IdentityV2Client:
 
     def build_schema(self, display_name: str, schema_type: str, version: str, description: str, issuer_did: str) -> SchemaBuilder:
         return SchemaBuilder(display_name, schema_type, version, description, issuer_did, self.config_data)
+
+    def get_schema(self, schema_id: str) -> Schema:
+        res = self.bridge_client.identity_v2().GetSchema(
+            GetSchemaRequestV2(
+                config_data=self.config_data,
+                id=schema_id
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return Schema.from_proto(res.schema)
 
     def build_credential(self, display_name: str, issuer_did: str, holder_did: str, expiration: int, version: int) -> CredentialBuilder:
         return CredentialBuilder(display_name, issuer_did, holder_did, expiration, version, self.api_managed_host, self.config_data)

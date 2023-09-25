@@ -115,11 +115,15 @@ public class IdentityV2Test {
             .addDecimalEnumAttribute(
                 "Precision wheels", "precision_wheels", "precision wheels", true, doubleList)
             .build();
-    assertNotNull(schema.getId());
+    assertNotNull(schema.getCid());
+
+    Schema getSchema = identityClient.getSchema(schema.getCid());
+    assertNotNull(getSchema.getCidJsonLD());
+    assertNotNull(getSchema.getJson());
 
     CredentialReceipt receipt =
         identityClient
-            .buildCredential(schema.getId(), issuer, holderDid, expiration, 0)
+            .buildCredential(schema.getCid(), issuer, holderDid, expiration, 0)
             .withIntegerAttribute("license_type", 1L)
             .withDecimalAttribute("quantity_oil", 2.25555)
             .withStringAttribute("nif", "54688188M")

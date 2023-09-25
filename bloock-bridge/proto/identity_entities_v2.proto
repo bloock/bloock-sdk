@@ -155,8 +155,9 @@ message IssuerStateReceipt {
 }
 
 message SchemaV2 {
-    string id = 1;
-    string json_ld = 2;
+    string cid = 1;
+    string cid_json_ld = 2;
+    string json = 3;
 }
 
 message CredentialRevocationV2 {

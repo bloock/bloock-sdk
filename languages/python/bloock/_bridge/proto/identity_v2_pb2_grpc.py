@@ -34,6 +34,11 @@ class IdentityServiceV2Stub(object):
                 request_serializer=identity__v2__pb2.BuildSchemaRequestV2.SerializeToString,
                 response_deserializer=identity__v2__pb2.BuildSchemaResponseV2.FromString,
                 )
+        self.GetSchema = channel.unary_unary(
+                '/bloock.IdentityServiceV2/GetSchema',
+                request_serializer=identity__v2__pb2.GetSchemaRequestV2.SerializeToString,
+                response_deserializer=identity__v2__pb2.GetSchemaResponseV2.FromString,
+                )
         self.CreateCredential = channel.unary_unary(
                 '/bloock.IdentityServiceV2/CreateCredential',
                 request_serializer=identity__v2__pb2.CreateCredentialRequestV2.SerializeToString,
@@ -88,6 +93,12 @@ class IdentityServiceV2Servicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def BuildSchema(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSchema(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -151,6 +162,11 @@ def add_IdentityServiceV2Servicer_to_server(servicer, server):
                     servicer.BuildSchema,
                     request_deserializer=identity__v2__pb2.BuildSchemaRequestV2.FromString,
                     response_serializer=identity__v2__pb2.BuildSchemaResponseV2.SerializeToString,
+            ),
+            'GetSchema': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSchema,
+                    request_deserializer=identity__v2__pb2.GetSchemaRequestV2.FromString,
+                    response_serializer=identity__v2__pb2.GetSchemaResponseV2.SerializeToString,
             ),
             'CreateCredential': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateCredential,
@@ -257,6 +273,23 @@ class IdentityServiceV2(object):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityServiceV2/BuildSchema',
             identity__v2__pb2.BuildSchemaRequestV2.SerializeToString,
             identity__v2__pb2.BuildSchemaResponseV2.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetSchema(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.IdentityServiceV2/GetSchema',
+            identity__v2__pb2.GetSchemaRequestV2.SerializeToString,
+            identity__v2__pb2.GetSchemaResponseV2.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

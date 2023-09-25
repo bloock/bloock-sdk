@@ -92,7 +92,7 @@ describe("Identity V2 Tests", () => {
       ProofType.SPARSE_MT_PROOF_TYPE
     ];
 
-    const schema = await identityClient
+    let schema = await identityClient
       .buildSchema(
         "Driving License",
         drivingLicenseSchemaType,
@@ -129,10 +129,14 @@ describe("Identity V2 Tests", () => {
         [1.1, 1.2, 1.3]
       )
       .build();
-    expect(schema.id).toBeTruthy();
+    expect(schema.cid).toBeTruthy();
+
+    schema = await identityClient.getSchema(schema.cid)
+    expect(schema.cidJsonLd).toBeTruthy();
+    expect(schema.json).toBeTruthy();
 
     const receipt = await identityClient
-      .buildCredential(schema.id, issuer, holderDid, expiration, 0)
+      .buildCredential(schema.cid, issuer, holderDid, expiration, 0)
       .withIntegerAttribute("license_type", 1)
       .withDecimalAttribute("quantity_oil", 2.25555)
       .withStringAttribute("nif", "54688188M")

@@ -24,7 +24,7 @@ class AvailabilityClient:
         res = client.availability().Publish(req)
         if res.error != Error():
             raise Exception(res.error.message)
-        return res.id
+        return res.cid
 
     def retrieve(self, loader: Loader) -> Record:
         client = bridge.BloockBridge()

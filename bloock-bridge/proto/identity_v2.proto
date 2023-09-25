@@ -16,6 +16,7 @@ service IdentityServiceV2 {
     rpc GetIssuerByKey(GetIssuerByKeyRequest) returns (GetIssuerByKeyResponse);
 
     rpc BuildSchema(BuildSchemaRequestV2) returns (BuildSchemaResponseV2);
+    rpc GetSchema(GetSchemaRequestV2) returns (GetSchemaResponseV2);
 
     rpc CreateCredential(CreateCredentialRequestV2) returns (CreateCredentialResponseV2);
     rpc GetCredentialProof(GetCredentialProofRequest) returns (GetCredentialProofResponse);
@@ -25,6 +26,16 @@ service IdentityServiceV2 {
     rpc CredentialFromJson(CredentialFromJsonRequestV2) returns (CredentialFromJsonResponseV2);
 
     rpc PublishIssuerState(PublishIssuerStateRequest) returns (PublishIssuerStateResponse);
+}
+
+message GetSchemaRequestV2 {
+    ConfigData config_data = 1;
+    string id = 2;
+}
+
+message GetSchemaResponseV2 {
+    SchemaV2 schema = 1;
+    optional Error error = 2;
 }
 
 message GetIssuerListRequest {

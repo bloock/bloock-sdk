@@ -26,6 +26,7 @@ type IdentityServiceV2Client interface {
 	GetIssuerList(ctx context.Context, in *GetIssuerListRequest, opts ...grpc.CallOption) (*GetIssuerListResponse, error)
 	GetIssuerByKey(ctx context.Context, in *GetIssuerByKeyRequest, opts ...grpc.CallOption) (*GetIssuerByKeyResponse, error)
 	BuildSchema(ctx context.Context, in *BuildSchemaRequestV2, opts ...grpc.CallOption) (*BuildSchemaResponseV2, error)
+	GetSchema(ctx context.Context, in *GetSchemaRequestV2, opts ...grpc.CallOption) (*GetSchemaResponseV2, error)
 	CreateCredential(ctx context.Context, in *CreateCredentialRequestV2, opts ...grpc.CallOption) (*CreateCredentialResponseV2, error)
 	GetCredentialProof(ctx context.Context, in *GetCredentialProofRequest, opts ...grpc.CallOption) (*GetCredentialProofResponse, error)
 	RevokeCredential(ctx context.Context, in *RevokeCredentialRequestV2, opts ...grpc.CallOption) (*RevokeCredentialResponseV2, error)
@@ -72,6 +73,15 @@ func (c *identityServiceV2Client) GetIssuerByKey(ctx context.Context, in *GetIss
 func (c *identityServiceV2Client) BuildSchema(ctx context.Context, in *BuildSchemaRequestV2, opts ...grpc.CallOption) (*BuildSchemaResponseV2, error) {
 	out := new(BuildSchemaResponseV2)
 	err := c.cc.Invoke(ctx, "/bloock.IdentityServiceV2/BuildSchema", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityServiceV2Client) GetSchema(ctx context.Context, in *GetSchemaRequestV2, opts ...grpc.CallOption) (*GetSchemaResponseV2, error) {
+	out := new(GetSchemaResponseV2)
+	err := c.cc.Invoke(ctx, "/bloock.IdentityServiceV2/GetSchema", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,6 +150,7 @@ type IdentityServiceV2Server interface {
 	GetIssuerList(context.Context, *GetIssuerListRequest) (*GetIssuerListResponse, error)
 	GetIssuerByKey(context.Context, *GetIssuerByKeyRequest) (*GetIssuerByKeyResponse, error)
 	BuildSchema(context.Context, *BuildSchemaRequestV2) (*BuildSchemaResponseV2, error)
+	GetSchema(context.Context, *GetSchemaRequestV2) (*GetSchemaResponseV2, error)
 	CreateCredential(context.Context, *CreateCredentialRequestV2) (*CreateCredentialResponseV2, error)
 	GetCredentialProof(context.Context, *GetCredentialProofRequest) (*GetCredentialProofResponse, error)
 	RevokeCredential(context.Context, *RevokeCredentialRequestV2) (*RevokeCredentialResponseV2, error)
@@ -164,6 +175,9 @@ func (UnimplementedIdentityServiceV2Server) GetIssuerByKey(context.Context, *Get
 }
 func (UnimplementedIdentityServiceV2Server) BuildSchema(context.Context, *BuildSchemaRequestV2) (*BuildSchemaResponseV2, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildSchema not implemented")
+}
+func (UnimplementedIdentityServiceV2Server) GetSchema(context.Context, *GetSchemaRequestV2) (*GetSchemaResponseV2, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSchema not implemented")
 }
 func (UnimplementedIdentityServiceV2Server) CreateCredential(context.Context, *CreateCredentialRequestV2) (*CreateCredentialResponseV2, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCredential not implemented")
@@ -264,6 +278,24 @@ func _IdentityServiceV2_BuildSchema_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentityServiceV2Server).BuildSchema(ctx, req.(*BuildSchemaRequestV2))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityServiceV2_GetSchema_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSchemaRequestV2)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceV2Server).GetSchema(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.IdentityServiceV2/GetSchema",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceV2Server).GetSchema(ctx, req.(*GetSchemaRequestV2))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -398,6 +430,10 @@ var IdentityServiceV2_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BuildSchema",
 			Handler:    _IdentityServiceV2_BuildSchema_Handler,
+		},
+		{
+			MethodName: "GetSchema",
+			Handler:    _IdentityServiceV2_GetSchema_Handler,
 		},
 		{
 			MethodName: "CreateCredential",

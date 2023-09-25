@@ -93,9 +93,14 @@ func TestIdentityV2(t *testing.T) {
 			AddDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, []float64{1.10, 1.20, 1.30}).
 			Build()
 		assert.NoError(t, err)
-		assert.NotNil(t, schema.Id)
+		assert.NotNil(t, schema.Cid)
 
-		res, err := identityClient.BuildCredential(schema.Id, issuer, holderDid, expiration, 0).
+		schema, err = identityClient.GetSchema(schema.Cid)
+		assert.NoError(t, err)
+		assert.NotNil(t, schema.CidJsonLd)
+		assert.NotNil(t, schema.Json)
+
+		res, err := identityClient.BuildCredential(schema.Cid, issuer, holderDid, expiration, 0).
 			WithIntegerAttribute("license_type", 1).
 			WithDecimalAttribute("quantity_oil", 2.25555).
 			WithStringAttribute("nif", "54688188M").
@@ -164,9 +169,9 @@ func TestIdentityV2(t *testing.T) {
 			AddIntegerAttribute("Document Type", "document_type", "your document type", false).
 			Build()
 		assert.NoError(t, err)
-		assert.NotNil(t, schema2.Id)
+		assert.NotNil(t, schema2.Cid)
 
-		res, err := identityClient.BuildCredential(schema2.Id, issuer, holderDid, expiration, 0).
+		res, err := identityClient.BuildCredential(schema2.Cid, issuer, holderDid, expiration, 0).
 			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
 			WithIntegerAttribute("document_type", 1).

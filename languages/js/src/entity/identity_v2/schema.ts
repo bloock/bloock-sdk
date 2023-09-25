@@ -1,22 +1,25 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 
 export class Schema {
-  id: string;
-  jsonLd: string;
+  cid: string;
+  cidJsonLd: string;
+  json: string;
 
-  constructor(id: string, jsonLd: string) {
-    this.id = id;
-    this.jsonLd = jsonLd;
+  constructor(cid: string, cidJsonLd: string, json: string) {
+    this.cid = cid;
+    this.cidJsonLd = cidJsonLd;
+    this.json = json;
   }
 
   public toProto(): identityEntitiesProto.SchemaV2 {
     return identityEntitiesProto.SchemaV2.fromPartial({
-      id: this.id,
-      jsonLd: this.jsonLd
+      cid: this.cid,
+      cidJsonLd: this.cidJsonLd,
+      json: this.json
     });
   }
 
   static fromProto(r: identityEntitiesProto.SchemaV2): Schema {
-    return new Schema(r.id, r.jsonLd);
+    return new Schema(r.cid, r.cidJsonLd, r.json);
   }
 }
