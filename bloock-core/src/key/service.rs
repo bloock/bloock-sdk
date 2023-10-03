@@ -42,7 +42,6 @@ impl<H: Client> KeyService<H> {
             &params,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            None,
         )
         .await
         .map_err(|e| KeyError::GenerateManagedKeyError(e.to_string()).into())
@@ -108,7 +107,6 @@ impl<H: Client> KeyService<H> {
             &params,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            None,
         )
         .await
         .map_err(|e| KeyError::GenerateManagedCertificateError(e.to_string()).into())

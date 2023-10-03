@@ -4,11 +4,12 @@ use crate::{
     record::document::Document,
 };
 use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
+use bloock_keys::entity::key::Key;
 use bloock_signer::Signer;
 
 pub struct Builder {
     document: Document,
-    signer: Option<Box<dyn Signer>>,
+    signer: Option<Key>,
     encrypter: Option<Box<dyn Encrypter>>,
     decrypter: Option<Box<dyn Decrypter>>,
 }
@@ -33,8 +34,8 @@ impl Builder {
         }
     }
 
-    pub fn with_signer(mut self, signer: Box<dyn Signer>) -> Self {
-        self.signer = Some(signer);
+    pub fn with_signer(mut self, key: Key) -> Self {
+        self.signer = Some(key);
         self
     }
 
@@ -67,8 +68,7 @@ impl Builder {
         if let Some(signer) = &self.signer {
             let payload = self.document.get_payload();
 
-            let signature = signer
-                .sign(&payload)
+            let signature = bloock_signer::sign(api_host, api_key, &payload, signer)
                 .await
                 .map_err(InfrastructureError::SignerError)?;
 

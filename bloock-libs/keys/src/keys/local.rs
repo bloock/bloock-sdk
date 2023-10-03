@@ -1,5 +1,5 @@
 use crate::{
-    algs::{aes::AesKey, ec::EcKey, rsa::RsaKey},
+    algs::{aes::AesKey, bjj::BjjKey, ec::EcKey, rsa::RsaKey},
     KeyType, KeysError, Result,
 };
 
@@ -19,7 +19,7 @@ impl LocalKey<String> {
     pub fn new(params: &LocalKeyParams) -> Result<LocalKey<String>> {
         match params.key_type {
             KeyType::EcP256k => Ok(EcKey::new_ec_p256k()?.into()),
-            KeyType::BJJ => todo!(),
+            KeyType::BJJ => Ok(BjjKey::new()?.into()),
             KeyType::Rsa2048 => Ok(RsaKey::new_rsa_2048()?.into()),
             KeyType::Rsa3072 => Ok(RsaKey::new_rsa_3072()?.into()),
             KeyType::Rsa4096 => Ok(RsaKey::new_rsa_4096()?.into()),
@@ -149,6 +149,21 @@ mod tests {
     #[test]
     fn test_local_aes_256() {
         let key_type = KeyType::Aes256;
+
+        let params = LocalKeyParams {
+            key_type: key_type.clone(),
+        };
+        let key = LocalKey::new(&params).unwrap();
+
+        assert_eq!(key.key_type, key_type);
+        assert_ne!(key.key, "".to_string());
+        assert!(key.private_key.is_none());
+        assert!(key.mnemonic.is_none());
+    }
+
+    #[test]
+    fn test_local_bjj() {
+        let key_type = KeyType::BJJ;
 
         let params = LocalKeyParams {
             key_type: key_type.clone(),

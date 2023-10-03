@@ -10,6 +10,7 @@ use bloock_identity_rs::{
     },
     vc::VC,
 };
+use bloock_keys::entity::key::Key;
 use bloock_signer::Signer;
 use serde_json::{json, Map, Value};
 
@@ -179,7 +180,7 @@ impl<H: Client> IdentityServiceV2<H> {
         expiration: i64,
         version: Option<i32>,
         mut attributes: Vec<(String, Value)>,
-        signer: Box<dyn Signer>,
+        key: Key,
         proof_types: Vec<ProofType>,
         api_managed_host: String,
     ) -> BloockResult<CreateCredentialReceipt> {
@@ -247,10 +248,14 @@ impl<H: Client> IdentityServiceV2<H> {
         let mut credential: Credential = serde_json::from_str(&credential_json)
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
 
-        let signature = signer
-            .sign(&core_claim_hash_decoded)
-            .await
-            .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
+        let signature = bloock_signer::sign(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            &core_claim_hash_decoded,
+            &key,
+        )
+        .await
+        .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
 
         let req = CreateCredentialRequest {
             credential_id,
@@ -326,7 +331,7 @@ impl<H: Client> IdentityServiceV2<H> {
     pub async fn publish_issuer_state(
         &self,
         issuer_did: String,
-        signer: Box<dyn Signer>,
+        key: Key,
     ) -> BloockResult<PublishIssuerStateResponse> {
         parse_did(issuer_did.clone())
             .map_err(|e| IdentityErrorV2::PublishIssuerStateError(e.to_string()))?;
@@ -350,10 +355,14 @@ impl<H: Client> IdentityServiceV2<H> {
         let new_state_hash_decoded = hex::decode(new_state_hash.clone())
             .map_err(|e| IdentityErrorV2::PublishIssuerStateError(e.to_string()))?;
 
-        let signature = signer
-            .sign(&new_state_hash_decoded)
-            .await
-            .map_err(|e| IdentityErrorV2::PublishIssuerStateError(e.to_string()))?;
+        let signature = bloock_signer::sign(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            &new_state_hash_decoded,
+            &key,
+        )
+        .await
+        .map_err(|e| IdentityErrorV2::PublishIssuerStateError(e.to_string()))?;
 
         let req = PublishIssuerStateRequest {
             new_state_hash: new_state_hash.clone(),

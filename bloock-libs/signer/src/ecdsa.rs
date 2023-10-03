@@ -1,107 +1,58 @@
+use crate::entity::alg::SignAlg;
 use crate::entity::signature::Signature;
-use crate::{Result, Signer, SignerError};
+use crate::{Signer, SignerError};
 use async_trait::async_trait;
-use bloock_hasher::{keccak::Keccak256, sha256::Sha256, Hasher, H256};
-use bloock_keys::entity::key::Key;
+use bloock_hasher::{keccak::Keccak256, sha256::Sha256, Hasher};
+use bloock_http::{BloockHttpClient, Client};
 use bloock_keys::keys::local::LocalKey;
 use bloock_keys::keys::managed::ManagedKey;
-use libsecp256k1::{Message, PublicKey, RecoveryId, SecretKey};
+use libsecp256k1::{Message, PublicKey, SecretKey};
+use serde::{Deserialize, Serialize};
 
-pub struct LocalEcdsaSigner<S: ToString> {
-    local_key: LocalKey<S>,
-    common_name: Option<String>,
+#[derive(Serialize)]
+struct SignRequest {
+    key_id: String,
+    algorithm: String,
+    payload: String,
 }
 
-impl<S: ToString> LocalEcdsaSigner<S> {
-    pub fn new(key: LocalKey<S>, common_name: Option<String>) -> Self {
-        Self {
-            local_key: key,
-            common_name,
-        }
+#[derive(Deserialize)]
+struct SignResponse {
+    signature: String,
+}
+
+#[derive(Serialize)]
+struct VerifyRequest {
+    key_id: String,
+    algorithm: String,
+    signature: String,
+    payload: String,
+}
+
+#[derive(Deserialize)]
+struct VerifyResponse {
+    verify: bool,
+}
+
+pub struct EcdsaSigner {
+    api_host: String,
+    api_key: String,
+}
+
+impl EcdsaSigner {
+    pub fn new(api_host: String, api_key: String) -> Self {
+        Self { api_host, api_key }
     }
 
-    pub fn new_boxed(key: LocalKey<S>, common_name: Option<String>) -> Box<Self> {
-        Box::new(Self::new(key, common_name))
+    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key))
     }
 }
 
 #[async_trait(?Send)]
-impl<S: ToString + AsRef<[u8]> + Clone> Signer for LocalEcdsaSigner<S> {
-    async fn sign(&self, payload: &[u8], key: Key) -> crate::Result<Signature> {
-        match key {
-            Key::LocalKey(k) => self.sign_local(payload, k),
-            Key::ManagedKey(k) => self.sign_managed(payload, k),
-            Key::LocalCertificate(k) => self.sign_local(payload, k.key),
-            Key::ManagedCertificate(k) => self.sign_managed(payload, k.key),
-        }
-    }
-
-    async fn verify(&self, payload: &[u8], signature: Signature) -> crate::Result<bool> {
-        let public_key_hex = hex::decode(signature.key.as_bytes())
-            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
-
-        let public_key = PublicKey::parse_slice(&public_key_hex, None)
-            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
-
-        let payload_with_protected = &[signature.protected.clone(), base64_url::encode(payload)]
-            .join(".")
-            .as_bytes()
-            .to_owned();
-
-        let hash: [u8; 32];
-        if signature.protected == base64_url::encode("{}") {
-            // To keep backwards compatibility if the protected header is empty, we just verify the payload
-            hash = Sha256::generate_hash(&[payload]);
-        } else {
-            hash = Sha256::generate_hash(&[payload_with_protected.as_slice()]);
-        }
-
-        let message = Message::parse(&hash);
-
-        let signature_bytes = hex::decode(signature.signature)
-            .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
-
-        let signature = libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64])
-            .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
-
-        Ok(libsecp256k1::verify(&message, &signature, &public_key))
-    }
-
-    async fn get_common_name(&self, signature: &Signature) -> Result<String> {
-        ProtectedHeader::deserialize(&signature.protected)
-            .map_err(|err| SignerError::CommonNameNotSetOrInvalidFormat(err.to_string()))?
-            .common_name
-            .ok_or_else(|| {
-                SignerError::CommonNameNotSetOrInvalidFormat("common name not set".to_string())
-            })
-    }
-
-    async fn recover_public_key(&self, signature: &Signature) -> Result<Vec<u8>> {
-        let signature_bytes = hex::decode(signature.signature.clone())
-            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
-
-        if signature_bytes.len() != 65 {
-            return Err(SignerError::InvalidSignature(
-                "Invalid signature length".to_string(),
-            ));
-        }
-
-        let message = Message::parse(&self.message_hash);
-        let recovery_id = RecoveryId::parse(signature_bytes[64]).unwrap();
-        let parsed_sig =
-            libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64]).unwrap();
-
-        Ok(libsecp256k1::recover(&message, &parsed_sig, &recovery_id)
-            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?
-            .serialize()
-            .to_vec())
-    }
-}
-
-impl<S: ToString + AsRef<[u8]> + Clone> LocalEcdsaSigner<S> {
-    async fn sign_local(&self, payload: &[u8], key: LocalKey<S>) -> crate::Result<Signature> {
-        let private_key = self
-            .local_key
+impl Signer for EcdsaSigner {
+    async fn sign_local(&self, payload: &[u8], key: &LocalKey<String>) -> crate::Result<Signature> {
+        let private_key = key
             .private_key
             .clone()
             .ok_or_else(|| SignerError::InvalidSecretKey("no private key found".to_string()))?;
@@ -111,25 +62,7 @@ impl<S: ToString + AsRef<[u8]> + Clone> LocalEcdsaSigner<S> {
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let public_key = PublicKey::from_secret_key(&secret_key);
 
-        let protected = match self.common_name.clone() {
-            Some(common_name) => ProtectedHeader {
-                common_name: Some(common_name),
-            }
-            .serialize()?,
-            None => base64_url::encode("{}"),
-        };
-
-        let payload_with_protected = &[protected.clone(), base64_url::encode(payload)]
-            .join(".")
-            .as_bytes()
-            .to_owned();
-
-        let hash = Sha256::generate_hash(&[if protected == base64_url::encode("{}") {
-            // to keep backwards compatibility if the protected header is empty we just sign the payload
-            payload
-        } else {
-            payload_with_protected
-        }]);
+        let hash = Sha256::generate_hash(&[payload]);
 
         let message = Message::parse(&hash);
 
@@ -141,35 +74,92 @@ impl<S: ToString + AsRef<[u8]> + Clone> LocalEcdsaSigner<S> {
         buffer[64] = recovery_id.serialize();
 
         let signature = Signature {
-            protected,
+            alg: SignAlg::Es256k,
+            kid: hex::encode(public_key.serialize()),
             signature: hex::encode(buffer),
-            header: SignatureHeader {
-                alg: Algorithms::Es256k.to_string(),
-                kid: hex::encode(public_key.serialize()),
-            },
+            message_hash: hex::encode(hash),
+        };
+
+        Ok(signature)
+    }
+
+    async fn sign_managed(&self, payload: &[u8], key: &ManagedKey) -> crate::Result<Signature> {
+        let hash = Sha256::generate_hash(&[payload]);
+
+        let http = BloockHttpClient::new(self.api_key.clone());
+
+        let req = SignRequest {
+            key_id: key.id.clone(),
+            algorithm: "ES256K".to_string(),
+            payload: hex::encode(hash),
+        };
+        let res: SignResponse = http
+            .post_json(format!("{}/keys/v1/sign", self.api_host), req, None)
+            .await
+            .map_err(|e| SignerError::SignerError(e.to_string()))?;
+
+        let signature = Signature {
+            alg: SignAlg::Es256kM,
+            kid: key.id.clone(),
+            signature: res.signature,
             message_hash: hex::encode(Keccak256::generate_hash(&[payload])),
         };
 
         Ok(signature)
     }
-    async fn sign_managed(&self, payload: &[u8], key: ManagedKey) -> crate::Result<Signature> {}
+
+    async fn verify_local(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
+        let public_key_hex = hex::decode(signature.kid.as_bytes())
+            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
+        let public_key = PublicKey::parse_slice(&public_key_hex, None)
+            .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
+
+        let hash: [u8; 32] = Sha256::generate_hash(&[payload]);
+        let message = Message::parse(&hash);
+
+        let signature_bytes = hex::decode(signature.signature.clone())
+            .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
+        let signature = libsecp256k1::Signature::parse_standard_slice(&signature_bytes[..64])
+            .map_err(|e| SignerError::InvalidSignature(e.to_string()))?;
+
+        Ok(libsecp256k1::verify(&message, &signature, &public_key))
+    }
+
+    async fn verify_managed(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
+        let hash = Sha256::generate_hash(&[payload]);
+
+        let http = BloockHttpClient::new(self.api_key.clone());
+
+        let req = VerifyRequest {
+            key_id: signature.kid.clone(),
+            algorithm: "ES256K".to_string(),
+            payload: hex::encode(hash),
+            signature: signature.signature.clone(),
+        };
+
+        let res: VerifyResponse = match http
+            .post_json(format!("{}/keys/v1/verify", self.api_host), req, None)
+            .await
+        {
+            Ok(res) => res,
+            Err(_) => return Ok(false),
+        };
+
+        Ok(res.verify)
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use bloock_hasher::{sha256::Sha256, Hasher};
-    use bloock_keys::keys::local::LocalKey;
-
-    use super::recover_public_key;
-    use crate::entity::signature::{Signature, SignatureHeader};
     use crate::{
-        create_verifier_from_signature,
-        local::ecdsa::{get_common_name, LocalEcdsaSigner},
+        ecdsa::EcdsaSigner,
+        entity::{alg::SignAlg, signature::Signature},
         Signer,
     };
+    use bloock_keys::keys::{local::LocalKey, managed::ManagedKey};
 
     #[tokio::test]
-    async fn test_sign_and_verify_ok() {
+    async fn test_sign_local_ok() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
@@ -180,15 +170,18 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let c = LocalEcdsaSigner::new(local_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key);
 
-        let signature = c.sign(string_payload.as_bytes()).await.unwrap();
+        let signature = signer
+            .sign_local(string_payload.as_bytes(), &local_key)
+            .await
+            .unwrap();
 
-        assert_eq!(signature.header.alg.as_str(), "ES256K");
+        assert_eq!(signature.alg, SignAlg::Es256k);
+        assert_eq!(signature.kid, local_key.key);
 
-        let result = create_verifier_from_signature(&signature, api_host, api_key, None)
-            .unwrap()
-            .verify(string_payload.as_bytes(), signature)
+        let result = signer
+            .verify_local(string_payload.as_bytes(), &signature)
             .await
             .unwrap();
 
@@ -196,52 +189,10 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_sign_and_verify_ok_set_common_name() {
+    async fn test_sign_local_invalid_private_key() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
-        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
-            key_type: bloock_keys::KeyType::EcP256k,
-        };
-        let local_key = LocalKey::new(&local_key_params).unwrap();
-
-        let string_payload = "hello world";
-
-        let c = LocalEcdsaSigner::new(local_key, Some("a name".to_string()));
-
-        let signature = c.sign(string_payload.as_bytes()).await.unwrap();
-
-        assert_eq!(signature.header.alg.as_str(), "ES256K");
-        assert_eq!(get_common_name(&signature).unwrap().as_str(), "a name");
-
-        let result = create_verifier_from_signature(&signature, api_host, api_key, None)
-            .unwrap()
-            .verify(string_payload.as_bytes(), signature)
-            .await
-            .unwrap();
-
-        assert!(result);
-    }
-
-    #[tokio::test]
-    async fn test_sign_and_verify_ok_get_common_name_without_set() {
-        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
-            key_type: bloock_keys::KeyType::EcP256k,
-        };
-        let local_key = LocalKey::new(&local_key_params).unwrap();
-
-        let string_payload = "hello world";
-
-        let c = LocalEcdsaSigner::new(local_key, None);
-
-        let signature = c.sign(string_payload.as_bytes()).await.unwrap();
-
-        assert_eq!(signature.header.alg.as_str(), "ES256K");
-        assert!(get_common_name(&signature).is_err());
-    }
-
-    #[tokio::test]
-    async fn test_sign_invalid_private_key() {
         let string_payload = "hello world";
         let local_key = LocalKey {
             key_type: bloock_keys::KeyType::EcP256k,
@@ -252,33 +203,29 @@ mod tests {
             mnemonic: None,
         };
 
-        let c = LocalEcdsaSigner::new(local_key, None);
-        let result = c.sign(string_payload.as_bytes()).await;
+        let c = EcdsaSigner::new(api_host, api_key);
+        let result = c.sign_local(string_payload.as_bytes(), &local_key).await;
         assert!(result.is_err());
     }
 
     #[tokio::test]
-    async fn test_verify_invalid_signature() {
+    async fn test_verify_local_invalid_signature() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "hello world";
 
-        let json_header = SignatureHeader {
-            alg: "ES256K".to_string(),
+        let signature = Signature {
+            alg: SignAlg::Es256k,
             kid: "02c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
-        };
-
-        let json_signature = Signature {
-            protected: "e30".to_string(),
-            header: json_header,
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
-            .unwrap()
-            .verify(string_payload.as_bytes(), json_signature)
+        let signer = EcdsaSigner::new(api_host, api_key);
+
+        let result = signer
+            .verify_local(string_payload.as_bytes(), &signature)
             .await
             .unwrap();
 
@@ -286,54 +233,46 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_verify_invalid_public_key() {
+    async fn test_verify_local_invalid_public_key() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "hello world";
 
-        let json_header = SignatureHeader {
-            alg: "ES256K".to_string(),
+        let signature = Signature {
+            alg: SignAlg::Es256k,
             kid: "12c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
-        };
-
-        let json_signature = Signature {
-            protected: "e30".to_string(),
-            header: json_header,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
-            .unwrap()
-            .verify(string_payload.as_bytes(), json_signature)
+        let signer = EcdsaSigner::new(api_host, api_key);
+
+        let result = signer
+            .verify_local(string_payload.as_bytes(), &signature)
             .await;
 
         assert!(result.is_err());
     }
 
     #[tokio::test]
-    async fn test_verify_invalid_payload() {
+    async fn test_verify_local_invalid_payload() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "end world";
 
-        let json_header = SignatureHeader {
-            alg: "ES256K".to_string(),
+        let signature = Signature {
+            alg: SignAlg::Es256k,
             kid: "02c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
-        };
-
-        let json_signature = Signature {
-            protected: "e30".to_string(),
-            header: json_header,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let result = create_verifier_from_signature(&json_signature, api_host, api_key, None)
-            .unwrap()
-            .verify(string_payload.as_bytes(), json_signature)
+        let signer = EcdsaSigner::new(api_host, api_key);
+
+        let result = signer
+            .verify_local(string_payload.as_bytes(), &signature)
             .await
             .unwrap();
 
@@ -341,24 +280,129 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn recover_public_key_ok() {
-        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
+    async fn test_sign_managed_ok() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
+            name: None,
             key_type: bloock_keys::KeyType::EcP256k,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
+            expiration: None,
         };
-        let local_key = LocalKey::new(&local_key_params).unwrap();
+        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
+            .await
+            .unwrap();
 
         let string_payload = "hello world";
 
-        let c = LocalEcdsaSigner::new(local_key.clone(), None);
+        let signer = EcdsaSigner::new(api_host, api_key);
 
-        let signature = c.sign(string_payload.as_bytes()).await.unwrap();
+        let signature = signer
+            .sign_managed(string_payload.as_bytes(), &managed_key)
+            .await
+            .unwrap();
 
-        let result_key = recover_public_key(
-            &signature,
-            Sha256::generate_hash(&[string_payload.as_bytes()]),
-        )
-        .unwrap();
+        assert_eq!(signature.alg, SignAlg::Es256kM);
+        assert_eq!(signature.kid, managed_key.id);
 
-        assert_eq!(hex::encode(result_key), local_key.key);
+        let result = signer
+            .verify_managed(string_payload.as_bytes(), &signature)
+            .await
+            .unwrap();
+
+        assert!(result);
+    }
+
+    #[tokio::test]
+    async fn test_verify_managed_invalid_signature() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let string_payload = "hello world";
+
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
+            name: None,
+            key_type: bloock_keys::KeyType::EcP256k,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
+            expiration: None,
+        };
+        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
+            .await
+            .unwrap();
+
+        let signature = Signature {
+            alg: SignAlg::Es256k,
+            kid: managed_key.id.to_string(),
+            signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+        };
+
+        let signer = EcdsaSigner::new(api_host, api_key);
+
+        let result: bool = signer
+            .verify_managed(string_payload.as_bytes(), &signature)
+            .await
+            .unwrap();
+
+        assert!(!result);
+    }
+
+    #[tokio::test]
+    async fn test_verify_managed_invalid_key() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let string_payload = "hello world";
+
+        let signature = Signature {
+            alg: SignAlg::Es256k,
+            kid: "00000000-0000-0000-0000-000000000000".to_string(),
+            signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+        };
+
+        let signer = EcdsaSigner::new(api_host, api_key);
+
+        let result = signer
+            .verify_managed(string_payload.as_bytes(), &signature)
+            .await
+            .unwrap();
+
+        assert_eq!(result, false);
+    }
+
+    #[tokio::test]
+    async fn test_verify_managed_invalid_payload() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let string_payload = "end world";
+
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
+            name: None,
+            key_type: bloock_keys::KeyType::EcP256k,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
+            expiration: None,
+        };
+        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
+            .await
+            .unwrap();
+
+        let signature = Signature {
+            alg: SignAlg::Es256k,
+            kid: managed_key.id.to_string(),
+            signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
+            message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+        };
+
+        let signer = EcdsaSigner::new(api_host, api_key);
+
+        let result = signer
+            .verify_managed(string_payload.as_bytes(), &signature)
+            .await
+            .unwrap();
+
+        assert!(!result);
     }
 }

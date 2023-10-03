@@ -1,7 +1,12 @@
 use crate::entity::signature::Signature;
 use async_trait::async_trait;
-use bloock_hasher::H256;
-use bloock_keys::entity::key::Key;
+use bjj::BJJSigner;
+use bloock_keys::{
+    entity::key::Key,
+    keys::{local::LocalKey, managed::ManagedKey},
+};
+use ecdsa::EcdsaSigner;
+use ens::EnsSigner;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
@@ -13,18 +18,80 @@ pub mod format;
 
 pub type Result<T> = std::result::Result<T, SignerError>;
 
+pub async fn sign(
+    api_host: String,
+    api_key: String,
+    payload: &[u8],
+    key: &Key,
+) -> Result<Signature> {
+    let alg = match key {
+        Key::LocalKey(k) => k.key_type.clone(),
+        Key::ManagedKey(k) => k.key_type.clone(),
+        Key::LocalCertificate(k) => k.key.key_type.clone(),
+        Key::ManagedCertificate(k) => k.key.key_type.clone(),
+    };
+
+    let signer: Box<dyn Signer> = match alg {
+        bloock_keys::KeyType::EcP256k => EcdsaSigner::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::BJJ => BJJSigner::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa2048 => todo!(),
+        bloock_keys::KeyType::Rsa3072 => todo!(),
+        bloock_keys::KeyType::Rsa4096 => todo!(),
+        bloock_keys::KeyType::Aes128 => todo!(),
+        bloock_keys::KeyType::Aes256 => todo!(),
+    };
+
+    match key {
+        Key::LocalKey(k) => signer.sign_local(payload, &k).await,
+        Key::ManagedKey(k) => signer.sign_managed(payload, &k).await,
+        Key::LocalCertificate(k) => signer.sign_local(payload, &k.key).await,
+        Key::ManagedCertificate(k) => signer.sign_managed(payload, &k.key).await,
+    }
+}
+
+pub async fn verify(
+    api_host: String,
+    api_key: String,
+    payload: &[u8],
+    signature: &Signature,
+) -> Result<bool> {
+    match signature.alg {
+        entity::alg::SignAlg::Es256k => {
+            EcdsaSigner::new_boxed(api_host, api_key)
+                .verify_local(payload, signature)
+                .await
+        }
+        entity::alg::SignAlg::Es256kM => {
+            EcdsaSigner::new_boxed(api_host, api_key)
+                .verify_managed(payload, signature)
+                .await
+        }
+        entity::alg::SignAlg::Bjj => {
+            BJJSigner::new_boxed(api_host, api_key)
+                .verify_local(payload, signature)
+                .await
+        }
+        entity::alg::SignAlg::BjjM => {
+            BJJSigner::new_boxed(api_host, api_key)
+                .verify_managed(payload, signature)
+                .await
+        }
+    }
+}
+
 #[async_trait(?Send)]
 pub trait Signer {
-    async fn sign(&self, payload: &[u8], key: Key) -> Result<Signature>;
-    async fn verify(&self, payload: &[u8], signature: Signature) -> Result<bool>;
-    async fn recover_public_key(&self, signature: &Signature) -> Result<Vec<u8>>;
-    async fn get_common_name(&self, signature: &Signature) -> Result<String>;
+    async fn sign_local(&self, payload: &[u8], key: &LocalKey<String>) -> Result<Signature>;
+    async fn sign_managed(&self, payload: &[u8], key: &ManagedKey) -> Result<Signature>;
+
+    async fn verify_local(&self, payload: &[u8], signature: &Signature) -> Result<bool>;
+    async fn verify_managed(&self, payload: &[u8], signature: &Signature) -> Result<bool>;
 }
 
 pub trait SignFormat {
     fn prepare_payload(&self, payload: &[u8]) -> Vec<u8>;
-    fn serialize(&self, signature: Vec<Signature>) -> String;
-    fn deserialize(&self, signature: String) -> Vec<Signature>;
+    fn serialize(&self, signature: Vec<Signature>) -> Result<String>;
+    fn deserialize(&self, signature: String) -> Result<Vec<Signature>>;
 }
 
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]

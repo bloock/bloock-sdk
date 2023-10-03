@@ -17,29 +17,39 @@ impl SignFormat for JwsFormatter {
             .to_owned()
     }
 
-    fn serialize(&self, signatures: Vec<Signature>) -> String {
-        let signatures: Vec<JwsSignature> = signatures.iter().map(|s| JwsSignature {
-            protected: s.protected,
-            signature: s.signature,
-            header: JwsSignatureHeader {
-                alg: s.alg.to_string(),
-                kid: hex::encode(s.key.serialize()),
-            },
-            message_hash: s.message_hash,
-        });
+    fn serialize(&self, signatures: Vec<Signature>) -> Result<String> {
+        let signatures: Vec<JwsSignature> = signatures
+            .iter()
+            .map(|s| JwsSignature {
+                protected: base64_url::encode("{}"),
+                signature: s.signature.clone(),
+                header: JwsSignatureHeader {
+                    alg: s.alg.to_string(),
+                    kid: s.kid.clone(),
+                },
+                message_hash: s.message_hash.clone(),
+            })
+            .collect();
 
         serde_json::to_string(&signatures)
+            .map_err(|err| SignerError::GeneralSerializeError(err.to_string()))
     }
 
-    fn deserialize(&self, signatures: String) -> Vec<Signature> {
-        let signatures: Vec<JwsSignature> = serde_json::from_str(&signatures);
-        let signatures: Vec<Signature> = signatures.iter().map(|s| Signature {
-            alg: todo!(),
-            key: todo!(),
-            signature: s.signature,
-            message_hash: s.message_hash,
-        });
-        signatures
+    fn deserialize(&self, signatures: String) -> Result<Vec<Signature>> {
+        let signatures: Vec<JwsSignature> = serde_json::from_str(&signatures)
+            .map_err(|err| SignerError::GeneralDeserializeError(err.to_string()))?;
+        let signatures: Vec<Signature> = signatures
+            .iter()
+            .map(|s| {
+                Ok(Signature {
+                    alg: SignAlg::try_from(s.header.alg.as_str())?,
+                    kid: s.header.kid.clone(),
+                    signature: s.signature.clone(),
+                    message_hash: s.message_hash.clone(),
+                })
+            })
+            .collect::<Result<Vec<Signature>>>()?;
+        Ok(signatures)
     }
 }
 

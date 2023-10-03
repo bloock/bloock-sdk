@@ -4,12 +4,13 @@ use crate::{
 };
 use bloock_encrypter::{entity::alg::EncryptionAlg, EncrypterError};
 use bloock_metadata::{FileParser, MetadataParser};
-use bloock_signer::entity::signature::Signature;
+use bloock_signer::{entity::signature::Signature, format::jws::JwsFormatter, SignFormat};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Metadata {
-    pub signatures: Option<Vec<Signature>>,
+    pub signatures: Option<Value>,
     pub proof: Option<Proof>,
     pub is_encrypted: bool,
 }
@@ -30,7 +31,7 @@ impl Document {
 
         let is_encrypted = parser.get("is_encrypted").unwrap_or(false);
         let proof = parser.get("proof");
-        let signatures = parser.get("signatures");
+        let signatures: Option<Value> = parser.get("signatures");
 
         let payload = parser
             .get_data()
@@ -51,6 +52,7 @@ impl Document {
         if self.is_encrypted {
             return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
+
         let signatures = match self.signatures.clone() {
             Some(mut s) => {
                 s.push(signature);
