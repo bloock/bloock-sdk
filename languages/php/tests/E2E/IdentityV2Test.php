@@ -92,13 +92,18 @@ final class IdentityV2Test extends TestCase
             ->addIntegerEnumAttribute("Car Points", "car_points", "car points", true, [1, 5, 10])
             ->addDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, [1.10, 1.20, 1.30])
             ->build();
-        $this->assertNotNull($schema->getId());
+        $this->assertNotNull($schema->getCid());
+
+        $getSchema = $identityClient->getSchema($schema->getCid());
+        $this->assertNotNull($getSchema->getCidJsonLd());
+        $this->assertNotNull($getSchema->getJson());
+        $this->assertNotNull($getSchema->getSchemaType());
 
         $dateString = "1999-03-20";
         $format = "Y-m-d";
         $dateTime = DateTime::createFromFormat($format, $dateString);
 
-        $receipt = $identityClient->buildCredential($schema->getId(), $issuer, self::holderDid, self::expiration, 0)
+        $receipt = $identityClient->buildCredential($schema->getCid(), $issuer, self::holderDid, self::expiration, 0)
             ->withIntegerAttribute("license_type", 1)
             ->withDecimalAttribute("quantity_oil", 2.25555)
             ->withStringAttribute("nif", "54688188M")

@@ -21,9 +21,10 @@ use crate::{
         CredentialReceiptV2, CredentialRevocationV2, CredentialToJsonRequestV2,
         CredentialToJsonResponseV2, CredentialV2, GetCredentialProofRequest,
         GetCredentialProofResponse, GetIssuerByKeyRequest, GetIssuerByKeyResponse,
-        GetIssuerListRequest, GetIssuerListResponse, IdentityServiceV2Handler, IssuerStateReceipt,
-        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
-        RevokeCredentialResponseV2, SchemaV2, SignerAlg,
+        GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2, GetSchemaResponseV2,
+        IdentityServiceV2Handler, IssuerStateReceipt, PublishIssuerStateRequest,
+        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
+        SchemaV2, SignerAlg,
     },
     server::response_types::RequestConfigData,
 };
@@ -268,8 +269,31 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
 
         Ok(BuildSchemaResponseV2 {
             schema: Some(SchemaV2 {
-                id: schema.cid,
-                json_ld: schema.json,
+                cid: schema.cid,
+                cid_json_ld: schema.cid_json_ld,
+                schema_type: schema.schema_type,
+                json: schema.json,
+            }),
+            error: None,
+        })
+    }
+
+    async fn get_schema(&self, req: &GetSchemaRequestV2) -> Result<GetSchemaResponseV2, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity_v2::configure(config_data.clone());
+
+        let schema = client
+            .get_schema(req.id.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(GetSchemaResponseV2 {
+            schema: Some(SchemaV2 {
+                cid: schema.cid,
+                cid_json_ld: schema.cid_json_ld,
+                schema_type: schema.schema_type,
+                json: schema.json,
             }),
             error: None,
         })

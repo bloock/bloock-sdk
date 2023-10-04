@@ -87,6 +87,23 @@ func (c *IdentityV2Client) BuildSchema(displayName string, schemaType, version, 
 	return identityV2.NewSchemaBuilder(displayName, schemaType, version, description, issuerDid, c.configData)
 }
 
+func (c *IdentityV2Client) GetSchema(id string) (identityV2.Schema, error) {
+	res, err := c.bridgeClient.IdentityV2().GetSchema(context.Background(), &proto.GetSchemaRequestV2{
+		ConfigData: c.configData,
+		Id:         id,
+	})
+
+	if err != nil {
+		return identityV2.Schema{}, err
+	}
+
+	if res.Error != nil {
+		return identityV2.Schema{}, errors.New(res.Error.Message)
+	}
+
+	return identityV2.NewSchemaFromProto(res.GetSchema()), nil
+}
+
 func (c *IdentityV2Client) BuildCredential(schemaId, issuerDid, holderDid string, expiration int64, version int32) identityV2.CredentialBuilder {
 	return identityV2.NewCredentialBuilder(schemaId, issuerDid, holderDid, expiration, version, c.apiManagedHost, c.configData)
 }

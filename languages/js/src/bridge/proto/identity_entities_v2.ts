@@ -308,8 +308,10 @@ export interface IssuerStateReceipt {
 }
 
 export interface SchemaV2 {
-  id: string;
-  jsonLd: string;
+  cid: string;
+  cidJsonLd: string;
+  schemaType: string;
+  json: string;
 }
 
 export interface CredentialRevocationV2 {
@@ -1948,16 +1950,22 @@ export const IssuerStateReceipt = {
 };
 
 function createBaseSchemaV2(): SchemaV2 {
-  return { id: "", jsonLd: "" };
+  return { cid: "", cidJsonLd: "", schemaType: "", json: "" };
 }
 
 export const SchemaV2 = {
   encode(message: SchemaV2, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
+    if (message.cid !== "") {
+      writer.uint32(10).string(message.cid);
     }
-    if (message.jsonLd !== "") {
-      writer.uint32(18).string(message.jsonLd);
+    if (message.cidJsonLd !== "") {
+      writer.uint32(18).string(message.cidJsonLd);
+    }
+    if (message.schemaType !== "") {
+      writer.uint32(26).string(message.schemaType);
+    }
+    if (message.json !== "") {
+      writer.uint32(34).string(message.json);
     }
     return writer;
   },
@@ -1970,10 +1978,16 @@ export const SchemaV2 = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = reader.string();
+          message.cid = reader.string();
           break;
         case 2:
-          message.jsonLd = reader.string();
+          message.cidJsonLd = reader.string();
+          break;
+        case 3:
+          message.schemaType = reader.string();
+          break;
+        case 4:
+          message.json = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1984,20 +1998,29 @@ export const SchemaV2 = {
   },
 
   fromJSON(object: any): SchemaV2 {
-    return { id: isSet(object.id) ? String(object.id) : "", jsonLd: isSet(object.jsonLd) ? String(object.jsonLd) : "" };
+    return {
+      cid: isSet(object.cid) ? String(object.cid) : "",
+      cidJsonLd: isSet(object.cidJsonLd) ? String(object.cidJsonLd) : "",
+      schemaType: isSet(object.schemaType) ? String(object.schemaType) : "",
+      json: isSet(object.json) ? String(object.json) : "",
+    };
   },
 
   toJSON(message: SchemaV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.jsonLd !== undefined && (obj.jsonLd = message.jsonLd);
+    message.cid !== undefined && (obj.cid = message.cid);
+    message.cidJsonLd !== undefined && (obj.cidJsonLd = message.cidJsonLd);
+    message.schemaType !== undefined && (obj.schemaType = message.schemaType);
+    message.json !== undefined && (obj.json = message.json);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<SchemaV2>, I>>(object: I): SchemaV2 {
     const message = createBaseSchemaV2();
-    message.id = object.id ?? "";
-    message.jsonLd = object.jsonLd ?? "";
+    message.cid = object.cid ?? "";
+    message.cidJsonLd = object.cidJsonLd ?? "";
+    message.schemaType = object.schemaType ?? "";
+    message.json = object.json ?? "";
     return message;
   },
 };

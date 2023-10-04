@@ -616,6 +616,15 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::IdentityServiceV2GetSchema => {
+                let req: crate::items::GetSchemaRequestV2 = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .get_schema(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::Unknown => Err(BridgeError::ServiceNotFound),
         }
     }

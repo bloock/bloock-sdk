@@ -29,7 +29,7 @@ class TestIdentityV2(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        init_dev_sdk()  
+        init_dev_sdk()
 
     def test_credential_from_to_json(self):
         credential = Credential.from_json(self.credentialJson)
@@ -90,9 +90,14 @@ class TestIdentityV2(unittest.TestCase):
             .add_integer_enum_attribute("Car Points", "car_points", "car points", True, [1, 5, 10]) \
             .add_decimal_enum_attribute("Precision Wheels", "precision_wheels", "precision wheels", True, [1.10, 1.20, 1.30]) \
             .build()
-        self.assertIsNotNone(schema.id)
+        self.assertIsNotNone(schema.cid)
 
-        receipt = identity_client.build_credential(schema.id, issuer, self.holderDid, self.expiration, 0) \
+        get_schema = identity_client.get_schema(schema.cid)
+        self.assertIsNotNone(get_schema.cid_json_ld)
+        self.assertIsNotNone(get_schema.json)
+        self.assertIsNotNone(get_schema.schema_type)
+
+        receipt = identity_client.build_credential(schema.cid, issuer, self.holderDid, self.expiration, 0) \
             .with_integer_attribute("license_type", 1) \
             .with_decimal_attribute("quantity_oil", 2.25555) \
             .with_string_attribute("nif", "54688188M") \
