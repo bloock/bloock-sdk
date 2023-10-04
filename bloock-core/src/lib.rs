@@ -20,9 +20,3 @@ pub use bloock_encrypter::{
 pub use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
 pub use bloock_hasher::{from_hex, to_hex, Hasher, HasherError, H256};
 pub use bloock_http::{BloockHttpClient, SimpleHttpClient};
-pub use bloock_signer::{
-    create_verifier_from_signature, entity::signature::Signature,
-    entity::signature::SignatureHeader, local::ecdsa::LocalEcdsaSigner, local::ens::LocalEnsSigner,
-    managed::bjj::ManagedBJJSigner, managed::ecdsa::ManagedEcdsaSigner,
-    managed::ens::ManagedEnsSigner, Signer, SignerError,
-};

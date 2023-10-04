@@ -139,14 +139,10 @@ impl Client for BloockHttpClient {
 }
 
 impl BloockHttpClient {
-    pub fn new(api_key: String, api_version: Option<String>) -> Self {
-        let new_api_version = match api_version {
-            Some(a) => a,
-            None => API_VERSION.to_string(),
-        };
+    pub fn new(api_key: String) -> Self {
         Self {
             api_key,
-            api_version: new_api_version,
+            api_version: API_VERSION.to_string(),
         }
     }
 

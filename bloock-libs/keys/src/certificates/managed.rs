@@ -1,5 +1,6 @@
 use crate::{
-    entity::protection_level::ProtectionLevel, CertificateType, KeyType, KeysError, Result,
+    entity::protection_level::ProtectionLevel, keys::managed::ManagedKey, CertificateType, KeyType,
+    KeysError, Result,
 };
 use bloock_http::Client;
 use serde::{Deserialize, Serialize};
@@ -15,8 +16,7 @@ pub struct ManagedCertificateParams {
 #[derive(Clone)]
 pub struct ManagedCertificate {
     pub id: String,
-    pub key_type: KeyType,
-    pub public_key: String,
+    pub key: ManagedKey,
     pub protection: ProtectionLevel,
     pub expiration: Option<i64>,
 }
@@ -42,9 +42,8 @@ impl ManagedCertificate {
         params: &ManagedCertificateParams,
         api_host: String,
         api_key: String,
-        api_version: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, api_version);
+        let client = bloock_http::BloockHttpClient::new(api_key);
 
         let req = CreateManagedCertificateRequest {
             key_type: params.key_type.get_key_type(),
@@ -57,16 +56,22 @@ impl ManagedCertificate {
             .map_err(|e| KeysError::ManagedCertificateRequestError(e.to_string()))?;
 
         Ok(ManagedCertificate {
-            id: res.certificate_id,
-            key_type: KeyType::new(&res.key_type)?,
-            public_key: res.pub_key,
+            id: res.certificate_id.clone(),
+            key: ManagedKey {
+                id: res.certificate_id,
+                name: None,
+                key_type: KeyType::new(&res.key_type)?,
+                public_key: res.pub_key,
+                protection: res.key_protection.into(),
+                expiration: Some(res.expiration),
+            },
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),
         })
     }
 
     pub async fn load(id: String, api_host: String, api_key: String) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, None);
+        let client = bloock_http::BloockHttpClient::new(api_key);
 
         let res: ManagedCertificateResponse = client
             .get_json(format!("{}/keys/v1/certificates/{}", api_host, id), None)
@@ -74,9 +79,15 @@ impl ManagedCertificate {
             .map_err(|e| KeysError::ManagedCertificateRequestError(e.to_string()))?;
 
         Ok(ManagedCertificate {
-            id: res.certificate_id,
-            key_type: KeyType::new(&res.key_type)?,
-            public_key: res.pub_key,
+            id: res.certificate_id.clone(),
+            key: ManagedKey {
+                id: res.certificate_id,
+                name: None,
+                key_type: KeyType::new(&res.key_type)?,
+                public_key: res.pub_key,
+                protection: res.key_protection.into(),
+                expiration: Some(res.expiration),
+            },
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),
         })
@@ -90,7 +101,7 @@ impl ManagedCertificate {
         api_key: String,
         api_version: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, api_version);
+        let client = bloock_http::BloockHttpClient::new(api_key);
 
         let res: ManagedCertificateResponse = client
             .post_file(
@@ -106,12 +117,24 @@ impl ManagedCertificate {
             .map_err(|e| KeysError::ManagedCertificateRequestError(e.to_string()))?;
 
         Ok(ManagedCertificate {
-            id: res.certificate_id,
-            key_type: KeyType::new(&res.key_type)?,
-            public_key: res.pub_key,
+            id: res.certificate_id.clone(),
+            key: ManagedKey {
+                id: res.certificate_id,
+                name: None,
+                key_type: KeyType::new(&res.key_type)?,
+                public_key: res.pub_key,
+                protection: res.key_protection.into(),
+                expiration: Some(res.expiration),
+            },
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),
         })
+    }
+}
+
+impl Into<ManagedKey> for ManagedCertificate {
+    fn into(self) -> ManagedKey {
+        self.key
     }
 }
 
@@ -144,14 +167,13 @@ mod tests {
             &params,
             "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
-            None,
         )
         .await
         .unwrap();
 
-        assert_eq!(certificate.key_type, key_type);
+        assert_eq!(certificate.key.key_type, key_type);
         assert_eq!(certificate.protection, ProtectionLevel::SOFTWARE);
-        assert_ne!(certificate.public_key, "".to_string());
+        assert_ne!(certificate.key.public_key, "".to_string());
     }
 
     #[tokio::test]
@@ -175,13 +197,12 @@ mod tests {
             &params,
             "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
-            None,
         )
         .await
         .unwrap();
 
-        assert_eq!(certificate.key_type, key_type);
+        assert_eq!(certificate.key.key_type, key_type);
         assert_eq!(certificate.protection, ProtectionLevel::SOFTWARE);
-        assert_ne!(certificate.public_key, "".to_string());
+        assert_ne!(certificate.key.public_key, "".to_string());
     }
 }

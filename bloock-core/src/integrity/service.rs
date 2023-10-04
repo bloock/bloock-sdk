@@ -170,17 +170,14 @@ impl<H: Client> IntegrityService<H> {
             };
 
             for signature in signatures {
-                let verifier = bloock_signer::create_verifier_from_signature(
-                    signature,
+                let verification_response = bloock_signer::verify(
                     self.config_service.get_api_base_url(),
                     self.config_service.get_api_key(),
-                    None,
+                    &document.payload,
+                    signature,
                 )
+                .await
                 .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
-                let verification_response = verifier
-                    .verify(&document.payload, signature.clone())
-                    .await
-                    .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
                 if !verification_response {
                     return Err(IntegrityError::InvalidVerification.into());
                 }

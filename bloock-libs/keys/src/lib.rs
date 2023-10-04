@@ -74,6 +74,8 @@ pub enum KeysError {
     GenerateECKeyError(String),
     #[error("Failed to generate rsa key: {0}")]
     GenerateRsaKeyError(String),
+    #[error("Failed to generate bjj key")]
+    GenerateBjjKeyError,
     #[error("Invalid key type provided")]
     InvalidKeyTypeError(),
     #[error("Invalid certificate type provided")]

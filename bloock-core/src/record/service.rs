@@ -51,11 +51,11 @@ mod tests {
     use bloock_hasher::{keccak::Keccak256, Hasher};
     use bloock_keys::keys::local::LocalKey;
     use bloock_signer::{
+        ecdsa::EcdsaSigner,
         entity::{
             alg::{ECDSA_ALG, ENS_ALG},
-            signature::{Signature, SignatureHeader},
+            signature::Signature,
         },
-        local::{ecdsa::LocalEcdsaSigner, ens::LocalEnsSigner},
     };
 
     #[tokio::test]

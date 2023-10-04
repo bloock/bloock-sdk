@@ -1,20 +1,3 @@
-use crate::config::entity::network::Network;
-use crate::error::BloockResult;
-use crate::integrity::entity::proof::Proof;
-use crate::integrity::service::IntegrityService;
-use crate::shared::util;
-use crate::{availability::service::AvailabilityService, config::service::ConfigService};
-use async_std::task;
-use bloock_http::Client;
-use bloock_identity::did::Did;
-use bloock_keys::keys::local::{LocalKey, LocalKeyParams};
-use bloock_signer::entity::signature::Signature;
-use bloock_signer::local::ecdsa::LocalEcdsaSigner;
-use bloock_signer::{create_verifier_from_signature, Signer};
-use serde_json::{json, Map, Value};
-use std::sync::Arc;
-use std::time::Duration;
-
 use super::entity::credential::Credential;
 use super::entity::credential_offer::CredentialOffer;
 use super::entity::credential_verification::CredentialVerification;
@@ -39,6 +22,20 @@ use super::{
     },
     IdentityError,
 };
+use crate::config::entity::network::Network;
+use crate::error::BloockResult;
+use crate::integrity::entity::proof::Proof;
+use crate::integrity::service::IntegrityService;
+use crate::shared::util;
+use crate::{availability::service::AvailabilityService, config::service::ConfigService};
+use async_std::task;
+use bloock_http::Client;
+use bloock_identity::did::Did;
+use bloock_keys::keys::local::{LocalKey, LocalKeyParams};
+use bloock_signer::entity::signature::Signature;
+use serde_json::{json, Map, Value};
+use std::sync::Arc;
+use std::time::Duration;
 
 pub struct IdentityService<H: Client> {
     pub http: Arc<H>,
@@ -242,11 +239,14 @@ impl<H: Client> IdentityService<H> {
             "".to_string(),
             Some(holder_private_key),
         );
-        let signer = LocalEcdsaSigner::new(key, None);
-        let signature = signer
-            .sign(id.as_bytes())
-            .await
-            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
+        let signature = bloock_signer::sign(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            id.as_bytes(),
+            &key.into(),
+        )
+        .await
+        .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
 
         let req = RedeemCredentialRequest {
             thread_id,
@@ -349,18 +349,14 @@ impl<H: Client> IdentityService<H> {
         payload: &[u8],
         signature: Signature,
     ) -> BloockResult<bool> {
-        let verifier = create_verifier_from_signature(
-            &signature,
+        let valid = bloock_signer::verify(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            Some("2023-01-01".to_string()),
+            payload,
+            &signature,
         )
+        .await
         .map_err(|_| IdentityError::InvalidSignatureError())?;
-
-        let valid = verifier
-            .verify(payload, signature)
-            .await
-            .map_err(|_| IdentityError::InvalidSignatureError())?;
 
         Ok(valid)
     }

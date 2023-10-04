@@ -237,10 +237,8 @@ impl TryFrom<&String> for Record {
 #[cfg(test)]
 mod tests {
 
-    use crate::integrity::entity::proof::ProofAnchor;
-
     use super::*;
-    use bloock_signer::entity::signature::SignatureHeader;
+    use crate::integrity::entity::proof::ProofAnchor;
 
     #[test]
     fn new_record() {
