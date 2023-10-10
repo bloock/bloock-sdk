@@ -1,4 +1,4 @@
-use super::CertificateSubject;
+use super::{CertificateSubject, from_now};
 use crate::{
     keys::local::{LocalKey, LocalKeyParams},
     KeyType, Result,
@@ -17,7 +17,6 @@ use x509_cert::{
     name::Name,
     serial_number::SerialNumber,
     spki::SubjectPublicKeyInfoOwned,
-    time::Validity,
     Certificate,
 };
 
@@ -42,9 +41,10 @@ impl LocalCertificate<String> {
         }
 
         let serial_number = SerialNumber::from(42u32);
-        let validity = Validity::from_now(Duration::new(5, 0)).unwrap();
-        let profile = Profile::Root;
+        let now = Duration::new(5, 0);
+        let validity = from_now(now).unwrap();
 
+        let profile = Profile::Root;
         let subject = Name::from_str(&params.subject.serialize()).unwrap();
 
         let key = LocalKey::new(&LocalKeyParams {
@@ -56,17 +56,14 @@ impl LocalCertificate<String> {
         let pub_key =
             SubjectPublicKeyInfoOwned::try_from(pub_key.to_public_key_der().unwrap().as_bytes())
                 .unwrap();
-
         let private_key =
             rsa::RsaPrivateKey::from_pkcs8_pem(&key.private_key.clone().unwrap()).unwrap();
         let signer = SigningKey::<Sha256>::new(private_key.clone());
-
         let builder =
             CertificateBuilder::new(profile, serial_number, validity, subject, pub_key, &signer)
                 .expect("Create certificate");
-
         let certificate: CertificateInner = builder.build().unwrap();
-
+        
         let p12 = PFX::new(
             certificate.to_der().unwrap().as_slice(),
             private_key.to_pkcs8_der().unwrap().as_bytes(),

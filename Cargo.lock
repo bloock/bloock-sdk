@@ -699,6 +699,7 @@ dependencies = [
  "bloock-http",
  "getrandom 0.2.7",
  "hex",
+ "js-sys",
  "libsecp256k1 0.7.1",
  "num-bigint 0.4.3",
  "p12",
@@ -5616,9 +5617,9 @@ dependencies = [
 
 [[package]]
 name = "web-sys"
-version = "0.3.59"
+version = "0.3.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed055ab27f941423197eb86b2035720b1a3ce40504df082cac2ecc6ed73335a1"
+checksum = "9b85cbef8c220a6abc02aefd892dfc0fc23afb1c6a426316ec33253a3877249b"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
