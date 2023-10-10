@@ -1,9 +1,9 @@
-use super::{CertificateSubject, from_now};
+use super::p12::PFX;
+use super::{from_now, CertificateSubject};
 use crate::{
     keys::local::{LocalKey, LocalKeyParams},
     KeyType, Result,
 };
-use p12::PFX;
 use rsa::{
     pkcs1v15::SigningKey,
     pkcs8::{DecodePrivateKey, DecodePublicKey, EncodePrivateKey, EncodePublicKey, LineEnding},
@@ -63,7 +63,7 @@ impl LocalCertificate<String> {
             CertificateBuilder::new(profile, serial_number, validity, subject, pub_key, &signer)
                 .expect("Create certificate");
         let certificate: CertificateInner = builder.build().unwrap();
-        
+
         let p12 = PFX::new(
             certificate.to_der().unwrap().as_slice(),
             private_key.to_pkcs8_der().unwrap().as_bytes(),

@@ -1,5 +1,5 @@
 use core::time::Duration;
-use std::time::{SystemTime, Duration as TimeDuration};
+use std::time::{Duration as TimeDuration, SystemTime};
 
 use x509_cert::{
     der,
@@ -8,6 +8,7 @@ use x509_cert::{
 
 pub mod local;
 pub mod managed;
+mod p12;
 
 pub struct CertificateSubject {
     pub common_name: String,

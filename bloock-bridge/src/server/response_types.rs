@@ -294,7 +294,7 @@ where
             );
 
             let service = bloock_core::event::configure(config.clone());
-            let _ = service.send_event(event).await;
+            //let _ = service.send_event(event).await;
         }
     }
 }
