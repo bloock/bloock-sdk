@@ -7,6 +7,8 @@ export * from "./managed_key_params";
 export * from "./managed_key";
 export * from "./rsa_key_pair";
 export * from "./managed_certificate";
+export * from "./local_certificate";
+export * from "./local_certificate_args";
 export * from "./managed_certificate_params";
 export * from "./subject_certificate_params";
 export * from "./certificate_type";

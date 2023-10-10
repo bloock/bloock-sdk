@@ -9,6 +9,7 @@ import {
   keyTypeFromJSON,
   keyTypeToJSON,
   LocalCertificate,
+  LocalCertificateParams,
   LocalKey,
   ManagedCertificate,
   ManagedCertificateParams,
@@ -61,7 +62,7 @@ export interface LoadManagedKeyResponse {
 
 export interface GenerateLocalCertificateRequest {
   configData?: ConfigData;
-  keyType: KeyType;
+  params?: LocalCertificateParams;
 }
 
 export interface GenerateLocalCertificateResponse {
@@ -81,7 +82,8 @@ export interface GenerateManagedCertificateResponse {
 
 export interface LoadLocalCertificateRequest {
   configData?: ConfigData;
-  key: string;
+  pkcs12: Uint8Array;
+  password: string;
 }
 
 export interface LoadLocalCertificateResponse {
@@ -618,7 +620,7 @@ export const LoadManagedKeyResponse = {
 };
 
 function createBaseGenerateLocalCertificateRequest(): GenerateLocalCertificateRequest {
-  return { configData: undefined, keyType: 0 };
+  return { configData: undefined, params: undefined };
 }
 
 export const GenerateLocalCertificateRequest = {
@@ -626,8 +628,8 @@ export const GenerateLocalCertificateRequest = {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
-    if (message.keyType !== 0) {
-      writer.uint32(16).int32(message.keyType);
+    if (message.params !== undefined) {
+      LocalCertificateParams.encode(message.params, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -643,7 +645,7 @@ export const GenerateLocalCertificateRequest = {
           message.configData = ConfigData.decode(reader, reader.uint32());
           break;
         case 2:
-          message.keyType = reader.int32() as any;
+          message.params = LocalCertificateParams.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -656,7 +658,7 @@ export const GenerateLocalCertificateRequest = {
   fromJSON(object: any): GenerateLocalCertificateRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
+      params: isSet(object.params) ? LocalCertificateParams.fromJSON(object.params) : undefined,
     };
   },
 
@@ -664,7 +666,8 @@ export const GenerateLocalCertificateRequest = {
     const obj: any = {};
     message.configData !== undefined &&
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
+    message.params !== undefined &&
+      (obj.params = message.params ? LocalCertificateParams.toJSON(message.params) : undefined);
     return obj;
   },
 
@@ -675,7 +678,9 @@ export const GenerateLocalCertificateRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.keyType = object.keyType ?? 0;
+    message.params = (object.params !== undefined && object.params !== null)
+      ? LocalCertificateParams.fromPartial(object.params)
+      : undefined;
     return message;
   },
 };
@@ -876,7 +881,7 @@ export const GenerateManagedCertificateResponse = {
 };
 
 function createBaseLoadLocalCertificateRequest(): LoadLocalCertificateRequest {
-  return { configData: undefined, key: "" };
+  return { configData: undefined, pkcs12: new Uint8Array(), password: "" };
 }
 
 export const LoadLocalCertificateRequest = {
@@ -884,8 +889,11 @@ export const LoadLocalCertificateRequest = {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
     }
-    if (message.key !== "") {
-      writer.uint32(26).string(message.key);
+    if (message.pkcs12.length !== 0) {
+      writer.uint32(18).bytes(message.pkcs12);
+    }
+    if (message.password !== "") {
+      writer.uint32(26).string(message.password);
     }
     return writer;
   },
@@ -900,8 +908,11 @@ export const LoadLocalCertificateRequest = {
         case 1:
           message.configData = ConfigData.decode(reader, reader.uint32());
           break;
+        case 2:
+          message.pkcs12 = reader.bytes();
+          break;
         case 3:
-          message.key = reader.string();
+          message.password = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -914,7 +925,8 @@ export const LoadLocalCertificateRequest = {
   fromJSON(object: any): LoadLocalCertificateRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      key: isSet(object.key) ? String(object.key) : "",
+      pkcs12: isSet(object.pkcs12) ? bytesFromBase64(object.pkcs12) : new Uint8Array(),
+      password: isSet(object.password) ? String(object.password) : "",
     };
   },
 
@@ -922,7 +934,9 @@ export const LoadLocalCertificateRequest = {
     const obj: any = {};
     message.configData !== undefined &&
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.key !== undefined && (obj.key = message.key);
+    message.pkcs12 !== undefined &&
+      (obj.pkcs12 = base64FromBytes(message.pkcs12 !== undefined ? message.pkcs12 : new Uint8Array()));
+    message.password !== undefined && (obj.password = message.password);
     return obj;
   },
 
@@ -931,7 +945,8 @@ export const LoadLocalCertificateRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.key = object.key ?? "";
+    message.pkcs12 = object.pkcs12 ?? new Uint8Array();
+    message.password = object.password ?? "";
     return message;
   },
 };

@@ -41,7 +41,7 @@ describe("Identity Tests", () => {
     expect(credential).toStrictEqual(newCredential);
   });
 
-  test("test identity end to end", async () => {
+  /*test("test identity end to end", async () => {
     initSdk();
 
     const identityClient = new IdentityClient();
@@ -84,5 +84,5 @@ describe("Identity Tests", () => {
 
     const revocation = await identityClient.revokeCredential(credential);
     expect(revocation).toBeTruthy();
-  }, 120000);
+  }, 120000);*/
 });

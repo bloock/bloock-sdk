@@ -2,36 +2,26 @@ import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
 import { KeyType } from "./key_type";
 import { SubjectCertificateParams } from "./subject_certificate_params";
 
-export class ManagedCertificateParams {
+export class LocalCertificateParams {
     public keyType: KeyType;
     public subject: SubjectCertificateParams;
-    public expiration: number;
+    public password: string;
 
     constructor(
         keyType: KeyType,
         subject: SubjectCertificateParams,
-        expiration: number
+        password: string
     ) {
         this.keyType = keyType;
         this.subject = subject
-        this.expiration = expiration;
+        this.password = password;
     }
 
-    public toProto(): keysEntitiesProto.ManagedCertificateParams {
-        return keysEntitiesProto.ManagedCertificateParams.fromPartial({
+    public toProto(): keysEntitiesProto.LocalCertificateParams {
+        return keysEntitiesProto.LocalCertificateParams.fromPartial({
             keyType: KeyType.toProto(this.keyType),
             subject: this.subject.toProto(),
-            expiration: this.expiration
+            password: this.password
         });
-    }
-}
-
-export class ImportCertificateParams {
-    public password?: string
-
-    constructor(
-        password?: string
-    ) {
-        this.password = password
     }
 }

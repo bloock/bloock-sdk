@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { BjjIssuerKey, BjjSigner } from "../../dist/index";
+import { BjjIssuerKey, Signer } from "../../dist/index";
 import {
   CredentialV2,
   IdentityV2Client,
@@ -135,7 +135,7 @@ describe("Identity V2 Tests", () => {
     expect(schema.cidJsonLd).toBeTruthy();
     expect(schema.json).toBeTruthy();
     expect(schema.schemaType).toBeTruthy();
-        
+
     const receipt = await identityClient
       .buildCredential(schema.cid, issuer, holderDid, expiration, 0)
       .withIntegerAttribute("license_type", 1)
@@ -147,7 +147,7 @@ describe("Identity V2 Tests", () => {
       .withStringAttribute("car_type", "big")
       .withIntegerAttribute("car_points", 5)
       .withDecimalAttribute("precision_wheels", 1.1)
-      .withSigner(new BjjSigner(keyBjj))
+      .withSigner(new Signer(keyBjj))
       .withProofType(proofType)
       .build();
     expect(receipt.credentialId).toBeTruthy();
@@ -162,14 +162,14 @@ describe("Identity V2 Tests", () => {
 
     const stateReceipt = await identityClient
       .buildIssuerStatePublisher(issuer)
-      .withSigner(new BjjSigner(keyBjj))
+      .withSigner(new Signer(keyBjj))
       .build();
     expect(stateReceipt.txHash).toBeTruthy();
 
     try {
       await identityClient
         .buildIssuerStatePublisher(issuer)
-        .withSigner(new BjjSigner(keyBjj))
+        .withSigner(new Signer(keyBjj))
         .build();
     } catch (error) {
       expect(error).toBeTruthy();
@@ -181,7 +181,7 @@ describe("Identity V2 Tests", () => {
     try {
       await identityClient
         .buildIssuerStatePublisher(issuer)
-        .withSigner(new BjjSigner(keyBjj))
+        .withSigner(new Signer(keyBjj))
         .build();
     } catch (error) {
       expect(error).toBeTruthy();

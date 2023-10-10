@@ -3,7 +3,7 @@ import { initDevSdk, initSdk } from "./util";
 import {
   AuthenticityClient,
   CertificateType,
-  EcdsaSigner,
+  Signer,
   ImportCertificateParams,
   KeyClient,
   KeyProtectionLevel,
@@ -11,7 +11,8 @@ import {
   ManagedCertificateParams,
   ManagedKeyParams,
   RecordClient,
-  SubjectCertificateParams
+  SubjectCertificateParams,
+  LocalCertificateParams
 } from "../../dist";
 import { readFileSync } from "fs";
 import path from "path";
@@ -173,11 +174,51 @@ describe("Key Tests", () => {
     expect(key.protection).toEqual(loadedKey.protection);
   });
 
+  test("generate local certificate and sign", async () => {
+    initDevSdk();
+
+    let keyType = KeyType.Rsa2048;
+    let subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", undefined, undefined, "US");
+    let keyClient = new KeyClient();
+    let certificate = await keyClient.newLocalCertificate(
+      new LocalCertificateParams(keyType, subjectParams, "password")
+    );
+    
+    expect(certificate.pkcs12).toBeDefined();
+
+    let loadedCertificate = await keyClient.loadLocalCertificate(certificate.pkcs12, certificate.password);
+
+    expect([...loadedCertificate.pkcs12]).toEqual([...certificate.pkcs12]);
+
+    //TODO not yet implemented signature with RSA on local
+    /*let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new Signer(loadedCertificate));
+
+    expect(signature.signature).toBeTruthy();*/
+  });
+
+  test("import local p12 certificate", async () => {
+    initDevSdk();
+
+    const dirPath = path.join(__dirname, '/test_utils/test.p12');
+    let buffer = readFileSync(dirPath);
+
+    let keyClient = new KeyClient();
+    let certificate = await keyClient.loadLocalCertificate(
+      buffer, "bloock"
+    );
+
+    expect([...certificate.pkcs12]).toEqual([...buffer]);
+  });
+
   test("generate managed certificate", async () => {
     initDevSdk();
 
     let keyType = KeyType.EcP256k;
-    let subjectParams = new SubjectCertificateParams("Google internet Authority G2", "US", "Google Inc", "IT Department");
+    let subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", undefined, undefined, "US");
     let keyClient = new KeyClient();
     let certificate = await keyClient.newManagedCertificate(
       new ManagedCertificateParams(keyType, subjectParams, 5)
@@ -218,7 +259,7 @@ describe("Key Tests", () => {
 
   test("import pfx managed certificate", async () => {
     initDevSdk();
-    
+
     const dirPath = path.join(__dirname, '/test_utils/test2.pfx');
     let buffer = readFileSync(dirPath);
     let password = "bloock"
@@ -241,7 +282,7 @@ describe("Key Tests", () => {
     let record = await recordClient.fromString("Hello world").build();
 
     let authenticityClient = new AuthenticityClient();
-    let signature = await authenticityClient.sign(record, new EcdsaSigner(loadedCertificate));
+    let signature = await authenticityClient.sign(record, new Signer(loadedCertificate));
 
     expect(signature.signature).toBeTruthy();
   });

@@ -1,18 +1,21 @@
 import { BloockBridge } from "../bridge/bridge";
 import { ConfigData } from "../bridge/proto/config";
 import {
+  GenerateLocalCertificateRequest,
   GenerateLocalKeyRequest,
   GenerateManagedCertificateRequest,
   GenerateManagedKeyRequest,
   ImportManagedCertificateRequest,
+  LoadLocalCertificateRequest,
   LoadLocalKeyRequest,
   LoadManagedCertificateRequest,
   LoadManagedKeyRequest
 } from "../bridge/proto/keys";
 import { NewConfigData } from "../config/config";
-import { CertificateType, KeyType } from "../entity/key";
+import { CertificateType, KeyType, LocalCertificate } from "../entity/key";
 import { LocalKey } from "../entity/key";
 import { ManagedKey, ManagedKeyParams } from "../entity/key";
+import { LocalCertificateParams } from "../entity/key/local_certificate_args";
 import { ManagedCertificate } from "../entity/key/managed_certificate";
 import { ImportCertificateParams, ManagedCertificateParams } from "../entity/key/managed_certificate_params";
 
@@ -94,6 +97,41 @@ export class KeyClient {
           throw res.error;
         }
         return ManagedKey.fromProto(res.managedKey!);
+      });
+  }
+
+  async newLocalCertificate(params: LocalCertificateParams): Promise<LocalCertificate> {
+    const request = GenerateLocalCertificateRequest.fromPartial({
+      configData: this.configData,
+      params: params.toProto()
+    });
+
+    return this.bridge
+      .getKey()
+      .GenerateLocalCertificate(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return LocalCertificate.fromProto(res.localCertificate!);
+      });
+  }
+
+  async loadLocalCertificate(pkcs12: Uint8Array, password: string): Promise<LocalCertificate> {
+    const request = LoadLocalCertificateRequest.fromPartial({
+      configData: this.configData,
+      pkcs12: pkcs12,
+      password: password,
+    });
+
+    return this.bridge
+      .getKey()
+      .LoadLocalCertificate(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return LocalCertificate.fromProto(res.localCertificate!);
       });
   }
 
