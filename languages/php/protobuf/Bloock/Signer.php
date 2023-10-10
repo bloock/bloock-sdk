@@ -14,27 +14,23 @@ use Google\Protobuf\Internal\GPBUtil;
 class Signer extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>.bloock.SignerAlg alg = 1;</code>
-     */
-    protected $alg = 0;
-    /**
-     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 1;</code>
      */
     protected $local_key = null;
     /**
-     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 2;</code>
      */
     protected $managed_key = null;
     /**
-     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 4;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 3;</code>
      */
     protected $local_certificate = null;
     /**
-     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 5;</code>
+     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 4;</code>
      */
     protected $managed_certificate = null;
     /**
-     * Generated from protobuf field <code>optional string common_name = 6;</code>
+     * Generated from protobuf field <code>optional string common_name = 5;</code>
      */
     protected $common_name = null;
 
@@ -44,7 +40,6 @@ class Signer extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type int $alg
      *     @type \Bloock\LocalKey $local_key
      *     @type \Bloock\ManagedKey $managed_key
      *     @type \Bloock\LocalCertificate $local_certificate
@@ -58,29 +53,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.SignerAlg alg = 1;</code>
-     * @return int
-     */
-    public function getAlg()
-    {
-        return $this->alg;
-    }
-
-    /**
-     * Generated from protobuf field <code>.bloock.SignerAlg alg = 1;</code>
-     * @param int $var
-     * @return $this
-     */
-    public function setAlg($var)
-    {
-        GPBUtil::checkEnum($var, \Bloock\SignerAlg::class);
-        $this->alg = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 1;</code>
      * @return \Bloock\LocalKey|null
      */
     public function getLocalKey()
@@ -99,7 +72,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 2;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalKey local_key = 1;</code>
      * @param \Bloock\LocalKey $var
      * @return $this
      */
@@ -112,7 +85,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 2;</code>
      * @return \Bloock\ManagedKey|null
      */
     public function getManagedKey()
@@ -131,7 +104,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 3;</code>
+     * Generated from protobuf field <code>optional .bloock.ManagedKey managed_key = 2;</code>
      * @param \Bloock\ManagedKey $var
      * @return $this
      */
@@ -144,7 +117,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 4;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 3;</code>
      * @return \Bloock\LocalCertificate|null
      */
     public function getLocalCertificate()
@@ -163,7 +136,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 4;</code>
+     * Generated from protobuf field <code>optional .bloock.LocalCertificate local_certificate = 3;</code>
      * @param \Bloock\LocalCertificate $var
      * @return $this
      */
@@ -176,7 +149,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 5;</code>
+     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 4;</code>
      * @return \Bloock\ManagedCertificate|null
      */
     public function getManagedCertificate()
@@ -195,7 +168,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 5;</code>
+     * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 4;</code>
      * @param \Bloock\ManagedCertificate $var
      * @return $this
      */
@@ -208,7 +181,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional string common_name = 6;</code>
+     * Generated from protobuf field <code>optional string common_name = 5;</code>
      * @return string
      */
     public function getCommonName()
@@ -227,7 +200,7 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional string common_name = 6;</code>
+     * Generated from protobuf field <code>optional string common_name = 5;</code>
      * @param string $var
      * @return $this
      */

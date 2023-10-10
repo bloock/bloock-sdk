@@ -1,15 +1,11 @@
 use async_trait::async_trait;
-use bloock_core::{
-    identity_v2::{
-        self,
-        entity::{
-            credential::Credential, did_metadata::DidMetadata, proof_type::ProofType,
-            schema::Attribute,
-        },
+use bloock_core::identity_v2::{
+    self,
+    entity::{
+        credential::Credential, did_metadata::DidMetadata, proof_type::ProofType, schema::Attribute,
     },
-    ManagedBJJSigner, Signer,
 };
-use bloock_keys::KeyType;
+use bloock_keys::{entity::key::Key, KeyType};
 use serde_json::{Number, Value};
 
 use crate::{
@@ -24,10 +20,12 @@ use crate::{
         GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2, GetSchemaResponseV2,
         IdentityServiceV2Handler, IssuerStateReceipt, PublishIssuerStateRequest,
         PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
-        SchemaV2, SignerAlg,
+        SchemaV2,
     },
     server::response_types::RequestConfigData,
 };
+use bloock_keys::keys::local::LocalKey as LocalKeyCore;
+use bloock_keys::keys::managed::ManagedKey as ManagedKeyCore;
 
 pub struct IdentityServerV2 {}
 
@@ -310,28 +308,13 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             .clone()
             .signer
             .ok_or_else(|| "no signer provided".to_string())?;
-        let signer_alg = SignerAlg::from_i32(signer.alg);
 
-        let local_key = signer.local_key;
-        let managed_key = signer.managed_key;
-
-        let signer: Box<dyn Signer> = if let Some(key) = managed_key {
-            if signer_alg == Some(SignerAlg::Bjj) {
-                ManagedBJJSigner::new_boxed(
-                    key.into(),
-                    signer.common_name,
-                    config_data.config.host,
-                    config_data.config.api_key,
-                )
-            } else {
-                return Err("invalid signer provided".to_string());
-            }
-        } else if let Some(_key) = local_key {
-            if signer_alg == Some(SignerAlg::Bjj) {
-                todo!()
-            } else {
-                return Err("invalid signer provided".to_string());
-            }
+        let key: Key = if let Some(managed_key) = signer.managed_key {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.into()
+        } else if let Some(local_key) = signer.local_key {
+            let local_key_core: LocalKeyCore<String> = local_key.into();
+            local_key_core.into()
         } else {
             return Err("invalid key provided".to_string());
         };
@@ -393,7 +376,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 req.expiration.clone(),
                 req.version.clone(),
                 attributes,
-                signer,
+                key,
                 core_proof_types,
                 req.api_managed_host.clone(),
             )
@@ -430,34 +413,19 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             .clone()
             .signer
             .ok_or_else(|| "no signer provided".to_string())?;
-        let signer_alg = SignerAlg::from_i32(signer.alg);
 
-        let local_key = signer.local_key;
-        let managed_key = signer.managed_key;
-
-        let signer: Box<dyn Signer> = if let Some(key) = managed_key {
-            if signer_alg == Some(SignerAlg::Bjj) {
-                ManagedBJJSigner::new_boxed(
-                    key.into(),
-                    signer.common_name,
-                    config_data.config.host,
-                    config_data.config.api_key,
-                )
-            } else {
-                return Err("invalid signer provided".to_string());
-            }
-        } else if let Some(_key) = local_key {
-            if signer_alg == Some(SignerAlg::Bjj) {
-                todo!()
-            } else {
-                return Err("invalid signer provided".to_string());
-            }
+        let key: Key = if let Some(managed_key) = signer.managed_key {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.into()
+        } else if let Some(local_key) = signer.local_key {
+            let local_key_core: LocalKeyCore<String> = local_key.into();
+            local_key_core.into()
         } else {
             return Err("invalid key provided".to_string());
         };
 
         let receipt = client
-            .publish_issuer_state(req.issuer_did.clone(), signer)
+            .publish_issuer_state(req.issuer_did.clone(), key)
             .await
             .map_err(|e| e.to_string())?;
 

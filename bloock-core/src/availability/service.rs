@@ -37,7 +37,7 @@ impl<H: Client> AvailabilityService<H> {
     pub async fn retrieve_hosted(&self, id: String) -> BloockResult<Vec<u8>> {
         let url = format!(
             "{}/hosting/v1/hosted/{}",
-            self.config_service.get_api_base_url(),
+            self.config_service.get_cdn_base_url(),
             id
         );
 
@@ -70,7 +70,7 @@ impl<H: Client> AvailabilityService<H> {
     pub async fn retrieve_ipfs(&self, id: String) -> BloockResult<Vec<u8>> {
         let url = format!(
             "{}/hosting/v1/ipfs/{}",
-            self.config_service.get_api_base_url(),
+            self.config_service.get_cdn_base_url(),
             id
         );
 
@@ -130,7 +130,7 @@ mod tests {
         let mut http = MockClient::default();
         http.expect_get::<String>()
             .with(
-                eq(format!("https://api.bloock.com/hosting/v1/hosted/{id}")),
+                eq(format!("https://cdn.bloock.com/hosting/v1/hosted/{id}")),
                 eq(None),
             )
             .return_once(move |_, _| Ok(payload.to_vec()));
@@ -186,7 +186,7 @@ mod tests {
         let mut http = MockClient::default();
         http.expect_get::<String>()
             .with(
-                eq(format!("https://api.bloock.com/hosting/v1/ipfs/{id}")),
+                eq(format!("https://cdn.bloock.com/hosting/v1/ipfs/{id}")),
                 eq(None),
             )
             .return_once(move |_, _| Ok(payload.to_vec()));

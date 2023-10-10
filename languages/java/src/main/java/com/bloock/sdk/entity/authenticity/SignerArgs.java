@@ -1,5 +1,6 @@
 package com.bloock.sdk.entity.authenticity;
 
+import com.bloock.sdk.entity.key.LocalCertificate;
 import com.bloock.sdk.entity.key.LocalKey;
 import com.bloock.sdk.entity.key.ManagedCertificate;
 import com.bloock.sdk.entity.key.ManagedKey;
@@ -9,6 +10,8 @@ public class SignerArgs {
   LocalKey localKey;
   ManagedKey managedKey;
   ManagedCertificate managedCertificate;
+  LocalCertificate localCertificate;
+
   String commonName;
 
   public SignerArgs(LocalKey localKey) {
@@ -35,6 +38,15 @@ public class SignerArgs {
 
   public SignerArgs(ManagedCertificate managedCertificate, String commonName) {
     this.managedCertificate = managedCertificate;
+    this.commonName = commonName;
+  }
+
+  public SignerArgs(LocalCertificate localCertificate) {
+    this.localCertificate = localCertificate;
+  }
+
+  public SignerArgs(LocalCertificate localCertificate, String commonName) {
+    this.localCertificate = localCertificate;
     this.commonName = commonName;
   }
 }

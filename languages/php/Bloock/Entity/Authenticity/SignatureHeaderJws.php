@@ -2,7 +2,7 @@
 
 namespace Bloock\Entity\Authenticity;
 
-class SignatureHeader
+class SignatureHeaderJws
 {
     private string $alg;
     private string $kid;
@@ -13,9 +13,9 @@ class SignatureHeader
         $this->kid = $kid;
     }
 
-    public static function fromProto(\Bloock\SignatureHeader $header): SignatureHeader
+    public static function fromProto(\Bloock\SignatureHeaderJWS $header): SignatureHeaderJws
     {
-        return new SignatureHeader($header->getAlg(), $header->getKid());
+        return new SignatureHeaderJws($header->getAlg(), $header->getKid());
     }
 
     /**
@@ -34,9 +34,9 @@ class SignatureHeader
         return $this->kid;
     }
 
-    public function toProto(): \Bloock\SignatureHeader
+    public function toProto(): \Bloock\SignatureHeaderJWS
     {
-        $p = new \Bloock\SignatureHeader();
+        $p = new \Bloock\SignatureHeaderJWS();
         $p->setAlg($this->alg);
         $p->setKid($this->kid);
         return $p;

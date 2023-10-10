@@ -2,17 +2,16 @@ package com.bloock.sdk.client;
 
 import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
-import com.bloock.sdk.bridge.proto.Identity;
 import com.bloock.sdk.bridge.proto.IdentityV2;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.identity_v2.Schema;
 import com.bloock.sdk.entity.identity_v2.Credential;
 import com.bloock.sdk.entity.identity_v2.CredentialBuilder;
 import com.bloock.sdk.entity.identity_v2.CredentialProof;
 import com.bloock.sdk.entity.identity_v2.IssuerKey;
 import com.bloock.sdk.entity.identity_v2.IssuerParams;
 import com.bloock.sdk.entity.identity_v2.IssuerStatePublisher;
+import com.bloock.sdk.entity.identity_v2.Schema;
 import com.bloock.sdk.entity.identity_v2.SchemaBuilder;
 import java.util.List;
 
@@ -96,7 +95,7 @@ public class IdentityClientV2 {
 
   public Schema getSchema(String id) throws Exception {
     IdentityV2.GetSchemaRequestV2 request =
-            IdentityV2.GetSchemaRequestV2.newBuilder().setConfigData(this.configData).setId(id).build();
+        IdentityV2.GetSchemaRequestV2.newBuilder().setConfigData(this.configData).setId(id).build();
 
     IdentityV2.GetSchemaResponseV2 response = bridge.getIdentityV2().getSchema(request);
 

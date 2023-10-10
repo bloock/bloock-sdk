@@ -1,18 +1,18 @@
 package com.bloock.sdk.entity.authenticity;
 
-import com.bloock.sdk.bridge.proto.AuthenticityEntities;
+import com.bloock.sdk.bridge.proto.IdentityEntities;
 
-public class SignatureHeader {
+public class SignatureHeaderJws {
   String alg;
   String kid;
 
-  SignatureHeader(String alg, String kid) {
+  SignatureHeaderJws(String alg, String kid) {
     this.alg = alg;
     this.kid = kid;
   }
 
-  public static SignatureHeader fromProto(AuthenticityEntities.SignatureHeader header) {
-    return new SignatureHeader(header.getAlg(), header.getKid());
+  public static SignatureHeaderJws fromProto(IdentityEntities.SignatureHeaderJWS header) {
+    return new SignatureHeaderJws(header.getAlg(), header.getKid());
   }
 
   public String getAlg() {
@@ -23,8 +23,8 @@ public class SignatureHeader {
     return kid;
   }
 
-  public AuthenticityEntities.SignatureHeader toProto() {
-    return AuthenticityEntities.SignatureHeader.newBuilder()
+  public IdentityEntities.SignatureHeaderJWS toProto() {
+    return IdentityEntities.SignatureHeaderJWS.newBuilder()
         .setAlg(this.alg)
         .setKid(this.kid)
         .build();

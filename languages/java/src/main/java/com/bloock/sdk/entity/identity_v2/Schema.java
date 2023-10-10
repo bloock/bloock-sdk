@@ -20,7 +20,12 @@ public class Schema {
   }
 
   public IdentityEntitiesV2.SchemaV2 toProto() {
-    return IdentityEntitiesV2.SchemaV2.newBuilder().setCid(this.cid).setCidJsonLd(this.cidJsonLD).setSchemaType(this.schemaType).setJson(this.json).build();
+    return IdentityEntitiesV2.SchemaV2.newBuilder()
+        .setCid(this.cid)
+        .setCidJsonLd(this.cidJsonLD)
+        .setSchemaType(this.schemaType)
+        .setJson(this.json)
+        .build();
   }
 
   public String getCid() {

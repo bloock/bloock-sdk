@@ -18,7 +18,7 @@ class CredentialProof extends \Google\Protobuf\Internal\Message
      */
     protected $bloock_proof = null;
     /**
-     * Generated from protobuf field <code>.bloock.Signature signature_proof = 2;</code>
+     * Generated from protobuf field <code>.bloock.SignatureJWS signature_proof = 2;</code>
      */
     protected $signature_proof = null;
 
@@ -29,7 +29,7 @@ class CredentialProof extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type \Bloock\Proof $bloock_proof
-     *     @type \Bloock\Signature $signature_proof
+     *     @type \Bloock\SignatureJWS $signature_proof
      * }
      */
     public function __construct($data = NULL) {
@@ -70,8 +70,8 @@ class CredentialProof extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.Signature signature_proof = 2;</code>
-     * @return \Bloock\Signature|null
+     * Generated from protobuf field <code>.bloock.SignatureJWS signature_proof = 2;</code>
+     * @return \Bloock\SignatureJWS|null
      */
     public function getSignatureProof()
     {
@@ -89,13 +89,13 @@ class CredentialProof extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.Signature signature_proof = 2;</code>
-     * @param \Bloock\Signature $var
+     * Generated from protobuf field <code>.bloock.SignatureJWS signature_proof = 2;</code>
+     * @param \Bloock\SignatureJWS $var
      * @return $this
      */
     public function setSignatureProof($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\Signature::class);
+        GPBUtil::checkMessage($var, \Bloock\SignatureJWS::class);
         $this->signature_proof = $var;
 
         return $this;

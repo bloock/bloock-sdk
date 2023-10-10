@@ -7,29 +7,17 @@ option java_package = "com.bloock.sdk.bridge.proto";
 
 import "keys_entities.proto";
 
-enum SignerAlg {
-    ES256K = 0;
-    ENS = 1;
-    BJJ = 2;
-}
-
 message Signer {
-    SignerAlg alg = 1;
-    optional LocalKey local_key = 2;
-    optional ManagedKey managed_key = 3;
-    optional LocalCertificate local_certificate = 4;
-    optional ManagedCertificate managed_certificate = 5;
-    optional string common_name = 6;
+    optional LocalKey local_key = 1;
+    optional ManagedKey managed_key = 2;
+    optional LocalCertificate local_certificate = 3;
+    optional ManagedCertificate managed_certificate = 4;
+    optional string common_name = 5;
 }
 
 message Signature {
     string signature = 1;
-    string protected = 2;
-    SignatureHeader header = 3;
+    string alg = 2;
+    string kid = 3;
     string message_hash = 4;
-}
-
-message SignatureHeader {
-    string alg = 1;
-    string kid = 2;
 }

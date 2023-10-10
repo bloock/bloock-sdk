@@ -3,7 +3,8 @@ package key
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 type LocalCertificate struct {
-	Pkcs11 []byte
+	Pkcs12   []byte
+	Password string
 }
 
 func NewLocalCertificateFromProto(s *proto.LocalCertificate) LocalCertificate {
@@ -11,12 +12,14 @@ func NewLocalCertificateFromProto(s *proto.LocalCertificate) LocalCertificate {
 		return LocalCertificate{}
 	}
 	return LocalCertificate{
-		Pkcs11: s.Pkcs12,
+		Pkcs12:   s.Pkcs12,
+		Password: s.Password,
 	}
 }
 
 func (s LocalCertificate) ToProto() *proto.LocalCertificate {
 	return &proto.LocalCertificate{
-		Pkcs12: s.Pkcs11,
+		Pkcs12:   s.Pkcs12,
+		Password: s.Password,
 	}
 }

@@ -1,4 +1,4 @@
-use bloock_signer::entity::signature::Signature;
+use bloock_signer::{format::jws::JwsSignature, entity::signature::Signature};
 use serde::{
     ser::{Error, SerializeTuple},
     Deserialize, Serialize,
@@ -43,7 +43,7 @@ pub struct CredentialSchema {
 }
 
 #[derive(Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct CredentialProof(pub Signature, pub Proof);
+pub struct CredentialProof(pub JwsSignature, pub Proof);
 
 impl Serialize for CredentialProof {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

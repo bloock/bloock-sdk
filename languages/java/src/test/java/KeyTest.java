@@ -1,11 +1,12 @@
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.bloock.sdk.client.AuthenticityClient;
 import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.client.RecordClient;
-import com.bloock.sdk.entity.authenticity.EcdsaSigner;
 import com.bloock.sdk.entity.authenticity.Signature;
+import com.bloock.sdk.entity.authenticity.Signer;
 import com.bloock.sdk.entity.authenticity.SignerArgs;
 import com.bloock.sdk.entity.key.*;
 import com.bloock.sdk.entity.record.Record;
@@ -159,13 +160,62 @@ class KeyTest {
   }
 
   @Test
+  void generateLocalCertificate() throws Exception {
+    KeyClient keyClient = new KeyClient();
+
+    KeyType keyType = KeyType.Rsa2048;
+    SubjectCertificateParams subjectParams =
+        new SubjectCertificateParams(
+            "Google internet Authority G2", "Google Inc", "IT Department", "", "", "US");
+
+    LocalCertificate localCertificate =
+        keyClient.newLocalCertificate(
+            new LocalCertificateParams(keyType, subjectParams, "password"));
+
+    assertNotNull(localCertificate.getPkcs12());
+
+    LocalCertificate loadedCertificate =
+        keyClient.loadLocalCertificate(
+            localCertificate.getPkcs12(), localCertificate.getPassword());
+    assertArrayEquals(localCertificate.getPkcs12(), loadedCertificate.getPkcs12());
+
+    // TODO not yet implemented signature with RSA on local
+    /*RecordClient recordClient = new RecordClient();
+    Record record = recordClient.fromString("Hello world").build();
+
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+    Signature signature =
+            authenticityClient.sign(record, new Signer(new SignerArgs(loadedCertificate)));
+
+    assertNotNull(signature);*/
+  }
+
+  @Test
+  void importLocalP12Certificate() throws Exception {
+    KeyClient keyClient = new KeyClient();
+
+    String currentDirectory = System.getProperty("user.dir");
+    File file = new File(currentDirectory + "/src/test/test_utils/test.p12");
+    int fileSize = (int) file.length();
+    byte[] bytes = new byte[fileSize];
+
+    try (FileInputStream inputStream = new FileInputStream(file)) {
+      inputStream.read(bytes);
+    }
+
+    LocalCertificate localCertificate = keyClient.loadLocalCertificate(bytes, "bloock");
+
+    assertArrayEquals(localCertificate.getPkcs12(), bytes);
+  }
+
+  @Test
   void generateManagedCertificate() throws Exception {
     KeyClient keyClient = new KeyClient();
 
     KeyType keyType = KeyType.EcP256k;
     SubjectCertificateParams subjectParams =
         new SubjectCertificateParams(
-            "Google internet Authority G2", "US", "IT Department", "Google Inc");
+            "Google internet Authority G2", "Google Inc", "IT Department", "", "", "US");
 
     ManagedCertificate managedCertificate =
         keyClient.newManagedCertificate(new ManagedCertificateParams(keyType, subjectParams, 5));
@@ -245,7 +295,7 @@ class KeyTest {
 
     AuthenticityClient authenticityClient = new AuthenticityClient();
     Signature signature =
-        authenticityClient.sign(record, new EcdsaSigner(new SignerArgs(loadedCertificate)));
+        authenticityClient.sign(record, new Signer(new SignerArgs(loadedCertificate)));
 
     assertNotNull(signature);
   }

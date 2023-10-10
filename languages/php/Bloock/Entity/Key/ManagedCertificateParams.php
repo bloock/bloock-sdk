@@ -24,12 +24,7 @@ class ManagedCertificateParams
     {
         return new ManagedCertificateParams(
             $res->getKeyType(),
-            new SubjectCertificateParams(
-                $res->getCn(),
-                $res->getC(),
-                $res->getOu(),
-                $res->getO()
-            ),
+            SubjectCertificateParams::fromProto($res->getSubject()),
             $res->getExpiration()
         );
     }
@@ -38,10 +33,7 @@ class ManagedCertificateParams
     {
         $p = new \Bloock\ManagedCertificateParams();
         $p->setKeyType(KeyType::toProto($this->keyType));
-        $p->setCn($this->subjectParams->cn);
-        $p->setC($this->subjectParams->c);
-        $p->setOu($this->subjectParams->ou);
-        $p->setO($this->subjectParams->o);
+        $p->setSubject($this->subjectParams->toProto());
         $p->setExpiration($this->expiration);
 
         return $p;

@@ -154,17 +154,84 @@ class ManagedKey(google.protobuf.message.Message):
 global___ManagedKey = ManagedKey
 
 @typing_extensions.final
-class LocalCertificate(google.protobuf.message.Message):
+class CertificateSubject(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    KEY_FIELD_NUMBER: builtins.int
-    key: builtins.str
+    COMMON_NAME_FIELD_NUMBER: builtins.int
+    ORGANIZATIONAL_UNIT_FIELD_NUMBER: builtins.int
+    ORGANIZATION_FIELD_NUMBER: builtins.int
+    LOCATION_FIELD_NUMBER: builtins.int
+    STATE_FIELD_NUMBER: builtins.int
+    COUNTRY_FIELD_NUMBER: builtins.int
+    common_name: builtins.str
+    organizational_unit: builtins.str
+    organization: builtins.str
+    location: builtins.str
+    state: builtins.str
+    country: builtins.str
     def __init__(
         self,
         *,
-        key: builtins.str = ...,
+        common_name: builtins.str = ...,
+        organizational_unit: builtins.str | None = ...,
+        organization: builtins.str | None = ...,
+        location: builtins.str | None = ...,
+        state: builtins.str | None = ...,
+        country: builtins.str | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["key", b"key"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_country", b"_country", "_location", b"_location", "_organization", b"_organization", "_organizational_unit", b"_organizational_unit", "_state", b"_state", "country", b"country", "location", b"location", "organization", b"organization", "organizational_unit", b"organizational_unit", "state", b"state"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_country", b"_country", "_location", b"_location", "_organization", b"_organization", "_organizational_unit", b"_organizational_unit", "_state", b"_state", "common_name", b"common_name", "country", b"country", "location", b"location", "organization", b"organization", "organizational_unit", b"organizational_unit", "state", b"state"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_country", b"_country"]) -> typing_extensions.Literal["country"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_location", b"_location"]) -> typing_extensions.Literal["location"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_organization", b"_organization"]) -> typing_extensions.Literal["organization"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_organizational_unit", b"_organizational_unit"]) -> typing_extensions.Literal["organizational_unit"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_state", b"_state"]) -> typing_extensions.Literal["state"] | None: ...
+
+global___CertificateSubject = CertificateSubject
+
+@typing_extensions.final
+class LocalCertificateParams(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    KEY_TYPE_FIELD_NUMBER: builtins.int
+    PASSWORD_FIELD_NUMBER: builtins.int
+    SUBJECT_FIELD_NUMBER: builtins.int
+    key_type: global___KeyType.ValueType
+    password: builtins.str
+    @property
+    def subject(self) -> global___CertificateSubject: ...
+    def __init__(
+        self,
+        *,
+        key_type: global___KeyType.ValueType = ...,
+        password: builtins.str = ...,
+        subject: global___CertificateSubject | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["subject", b"subject"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["key_type", b"key_type", "password", b"password", "subject", b"subject"]) -> None: ...
+
+global___LocalCertificateParams = LocalCertificateParams
+
+@typing_extensions.final
+class LocalCertificate(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PKCS12_FIELD_NUMBER: builtins.int
+    PASSWORD_FIELD_NUMBER: builtins.int
+    pkcs12: builtins.bytes
+    password: builtins.str
+    def __init__(
+        self,
+        *,
+        pkcs12: builtins.bytes = ...,
+        password: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["password", b"password", "pkcs12", b"pkcs12"]) -> None: ...
 
 global___LocalCertificate = LocalCertificate
 
@@ -173,28 +240,21 @@ class ManagedCertificateParams(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     KEY_TYPE_FIELD_NUMBER: builtins.int
-    CN_FIELD_NUMBER: builtins.int
-    O_FIELD_NUMBER: builtins.int
-    OU_FIELD_NUMBER: builtins.int
-    C_FIELD_NUMBER: builtins.int
     EXPIRATION_FIELD_NUMBER: builtins.int
+    SUBJECT_FIELD_NUMBER: builtins.int
     key_type: global___KeyType.ValueType
-    cn: builtins.str
-    o: builtins.str
-    ou: builtins.str
-    c: builtins.str
     expiration: builtins.int
+    @property
+    def subject(self) -> global___CertificateSubject: ...
     def __init__(
         self,
         *,
         key_type: global___KeyType.ValueType = ...,
-        cn: builtins.str = ...,
-        o: builtins.str = ...,
-        ou: builtins.str = ...,
-        c: builtins.str = ...,
         expiration: builtins.int = ...,
+        subject: global___CertificateSubject | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["c", b"c", "cn", b"cn", "expiration", b"expiration", "key_type", b"key_type", "o", b"o", "ou", b"ou"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["subject", b"subject"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["expiration", b"expiration", "key_type", b"key_type", "subject", b"subject"]) -> None: ...
 
 global___ManagedCertificateParams = ManagedCertificateParams
 

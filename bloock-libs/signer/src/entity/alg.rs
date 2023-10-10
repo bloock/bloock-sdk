@@ -1,4 +1,7 @@
 use crate::{Result, SignerError};
+use serde::{
+    Deserialize, Serialize,
+};
 use std::fmt;
 
 pub const ECDSA_ALG: &str = "ES256K";
@@ -8,7 +11,7 @@ pub const MANAGED_ENS_ALG: &str = "ENS_M";
 pub const BJJ_ALG: &str = "BJJ";
 pub const MANAGED_BJJ_ALG: &str = "BJJ_M";
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub enum SignAlg {
     Es256k,
     Es256kM,

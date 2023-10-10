@@ -6,7 +6,6 @@ use bloock_keys::{
     keys::{local::LocalKey, managed::ManagedKey},
 };
 use ecdsa::EcdsaSigner;
-use ens::EnsSigner;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
@@ -89,9 +88,9 @@ pub trait Signer {
 }
 
 pub trait SignFormat {
-    fn prepare_payload(&self, payload: &[u8]) -> Vec<u8>;
-    fn serialize(&self, signature: Vec<Signature>) -> Result<String>;
-    fn deserialize(&self, signature: String) -> Result<Vec<Signature>>;
+    fn prepare_payload(payload: &[u8]) -> Vec<u8>;
+    fn serialize(signature: Vec<Signature>) -> Result<String>;
+    fn deserialize(signature: String) -> Result<Vec<Signature>>;
 }
 
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]

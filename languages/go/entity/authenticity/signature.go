@@ -6,8 +6,8 @@ import (
 
 type Signature struct {
 	Signature   string
-	Protected   string
-	Header      SignatureHeader
+	Alg         string
+	Kid         string
 	MessageHash string
 }
 
@@ -17,14 +17,14 @@ func NewSignatureFromProto(s *proto.Signature) Signature {
 	}
 	return Signature{
 		Signature:   s.Signature,
-		Protected:   s.Protected,
-		Header:      NewSignatureHeaderFromProto(s.Header),
+		Alg:         s.Alg,
+		Kid:         s.Kid,
 		MessageHash: s.MessageHash,
 	}
 }
 
 func (s *Signature) GetAlg() SignatureAlg {
-	if alg, ok := SignatureAlgFromProto[s.Header.Alg]; ok {
+	if alg, ok := SignatureAlgFromProto[s.Alg]; ok {
 		return alg
 	}
 	return UNRECOGNIZED_SIGNATURE_ALG
@@ -33,8 +33,8 @@ func (s *Signature) GetAlg() SignatureAlg {
 func (s Signature) ToProto() *proto.Signature {
 	return &proto.Signature{
 		Signature:   s.Signature,
-		Protected:   s.Protected,
-		Header:      s.Header.ToProto(),
+		Alg:         s.Alg,
+		Kid:         s.Kid,
 		MessageHash: s.MessageHash,
 	}
 }

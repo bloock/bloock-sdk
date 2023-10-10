@@ -32,6 +32,7 @@ pub struct LocalCertificate<S: ToString> {
     pub key: LocalKey<S>,
     pub certificate: CertificateInner,
     pub pkcs12: Vec<u8>,
+    pub password: String,
 }
 
 impl LocalCertificate<String> {
@@ -70,7 +71,7 @@ impl LocalCertificate<String> {
             certificate.to_der().unwrap().as_slice(),
             private_key.to_pkcs8_der().unwrap().as_bytes(),
             None,
-            &params.password,
+            &params.password.clone(),
             "",
         )
         .unwrap();
@@ -79,6 +80,7 @@ impl LocalCertificate<String> {
             key,
             certificate,
             pkcs12: p12.to_der(),
+            password: params.password.clone(),
         })
     }
 
@@ -111,6 +113,7 @@ impl LocalCertificate<String> {
             key,
             certificate,
             pkcs12: p12.to_der(),
+            password: password.to_owned(),
         })
     }
 }

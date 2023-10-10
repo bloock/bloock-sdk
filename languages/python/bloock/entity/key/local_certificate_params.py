@@ -5,7 +5,7 @@ from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.subject_certificate_params import SubjectCertificateParams
 
 
-class LocalCertificateArgs:
+class LocalCertificateParams:
     def __init__(
             self,
             key_type: KeyType,
@@ -17,8 +17,8 @@ class LocalCertificateArgs:
         self.password= password
 
     @staticmethod
-    def from_proto(certificate: proto.LocalCertificateParams) -> LocalCertificateArgs:
-        return LocalCertificateArgs(
+    def from_proto(certificate: proto.LocalCertificateParams) -> LocalCertificateParams:
+        return LocalCertificateParams(
             key_type=KeyType.from_proto(certificate.key_type),
             subject=SubjectCertificateParams.from_proto(certificate.subject),
             password=certificate.password

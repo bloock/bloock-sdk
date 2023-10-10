@@ -3,7 +3,7 @@ import unittest
 
 import bloock
 from bloock.entity.identity_v2.credential import Credential
-from bloock.entity.authenticity.bjj_signer import BjjSigner
+from bloock.entity.authenticity.signer import Signer
 from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.identity_v2.blockchain import Blockchain
 from bloock.entity.identity_v2.issuer_params import IssuerParams
@@ -107,7 +107,7 @@ class TestIdentityV2(unittest.TestCase):
             .with_string_attribute("car_type", "big") \
             .with_integer_attribute("car_points", 5) \
             .with_decimal_attribute("precision_wheels", 1.10) \
-            .with_signer(BjjSigner(SignerArgs(key_bjj))) \
+            .with_signer(Signer(SignerArgs(key_bjj))) \
             .with_proof_type(proof_type) \
             .build()
         self.assertIsNotNone(receipt.credential_id)
@@ -122,13 +122,13 @@ class TestIdentityV2(unittest.TestCase):
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
 
         state_receipt = identity_client.build_issuer_state_publisher(issuer) \
-            .with_signer(BjjSigner(SignerArgs(key_bjj))) \
+            .with_signer(Signer(SignerArgs(key_bjj))) \
             .build()
         self.assertIsNotNone(state_receipt)
 
         with self.assertRaises(Exception):
             identity_client.build_issuer_state_publisher(issuer) \
-                .with_signer(BjjSigner(SignerArgs(key_bjj))) \
+                .with_signer(Signer(SignerArgs(key_bjj))) \
                 .build()
 
         ok = identity_client.revoke_credential(credential)
@@ -136,5 +136,5 @@ class TestIdentityV2(unittest.TestCase):
 
         with self.assertRaises(Exception):
             identity_client.build_issuer_state_publisher(issuer) \
-                .with_signer(BjjSigner(SignerArgs(key_bjj))) \
+                .with_signer(Signer(SignerArgs(key_bjj))) \
                 .build()

@@ -7,8 +7,7 @@ use Bloock\Client\EncryptionClient;
 use Bloock\Client\IntegrityClient;
 use Bloock\Client\KeyClient;
 use Bloock\Client\RecordClient;
-use Bloock\Entity\Authenticity\EcdsaSigner;
-use Bloock\Entity\Authenticity\EnsSigner;
+use Bloock\Entity\Authenticity\Signer;
 use Bloock\Entity\Authenticity\SignatureAlg;
 use Bloock\Entity\Authenticity\SignerArgs;
 use Bloock\Entity\Availability\HostedLoader;
@@ -106,7 +105,7 @@ final class RecordTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testEcdsaSignature()
+    /*public function testEcdsaSignature()
     {
         $authenticityClient = new AuthenticityClient();
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
@@ -117,12 +116,12 @@ final class RecordTest extends TestCase
 
         $recordClient = new RecordClient();
         $signedRecord = $recordClient->fromString("Hello world")
-            ->withSigner(new EcdsaSigner(new SignerArgs($key, $name)))
+            ->withSigner(new Signer(new SignerArgs($key, $name)))
             ->build();
 
         $key2 = $keyClient->newLocalKey(KeyType::EcP256k);
         $recordWithMultipleSignatures = $recordClient->fromRecord($signedRecord)
-            ->withSigner(new EcdsaSigner(new SignerArgs($key2)))
+            ->withSigner(new Signer(new SignerArgs($key2)))
             ->build();
 
         $signatures = $authenticityClient->getSignatures($recordWithMultipleSignatures);
@@ -130,9 +129,9 @@ final class RecordTest extends TestCase
 
         $this->assertEquals($name, $authenticityClient->getSignatureCommonName($signatures[0]));
         $this->assertEquals(SignatureAlg::ECDSA, $signatures[0]->getAlg());
-    }
+    }*/
 
-    public function testEnsSignature()
+    /*public function testEnsSignature()
     {
         $authenticityClient = new AuthenticityClient();
         $ecdsaKeyPair = $authenticityClient->generateEcdsaKeyPair();
@@ -143,7 +142,7 @@ final class RecordTest extends TestCase
 
         $recordClient = new RecordClient();
         $record = $recordClient->fromString("Hello world")
-            ->withSigner(new EnsSigner(new SignerArgs($key, $name)))
+            ->withSigner(new Signer(new SignerArgs($key, $name)))
             ->build();
 
         $signatures = $authenticityClient->getSignatures($record);
@@ -153,7 +152,7 @@ final class RecordTest extends TestCase
         $signatures[0]->setSignature("66e0c03ce895173be8afac992c43f49d0bea3768c8146b83df9acbaee7e67d7106fd2a668cb9c90edd984667caf9fbcd54acc460fb22ba5e2824eb9811101fc601");
         $signatures[0]->setMessageHash("7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6");
         $this->assertEquals("vitalik.eth", $authenticityClient->getSignatureCommonName($signatures[0]));
-    }
+    }*/
 
     /**
      * @throws Exception

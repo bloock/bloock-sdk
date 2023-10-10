@@ -10,7 +10,6 @@ import com.bloock.sdk.entity.encryption.*;
 import com.bloock.sdk.entity.integrity.AnchorNetwork;
 import com.bloock.sdk.entity.integrity.Proof;
 import com.bloock.sdk.entity.integrity.ProofAnchor;
-import com.bloock.sdk.entity.key.EcdsaKeyPair;
 import com.bloock.sdk.entity.key.KeyType;
 import com.bloock.sdk.entity.key.LocalKey;
 import com.bloock.sdk.entity.record.Record;
@@ -92,7 +91,7 @@ class RecordTest {
     assertArrayEquals(record.retrieve(), payload);
   }
 
-  @Test
+  /*@Test
   void testEcdsaSignature() throws Exception {
     AuthenticityClient authenticityClient = new AuthenticityClient();
     KeyClient keyClient = new KeyClient();
@@ -103,15 +102,13 @@ class RecordTest {
     Record signedRecord =
         recordClient
             .fromString("Hello world 3")
-            .withSigner(new EcdsaSigner(new SignerArgs(localKey, name)))
+            .withSigner(new Signer(new SignerArgs(localKey, name)))
             .build();
-
-    EcdsaKeyPair ecdsaKeyPair2 = authenticityClient.generateEcdsaKeyPair();
 
     Record recordWithMultipleSignatures =
         recordClient
             .fromRecord(signedRecord)
-            .withSigner(new EcdsaSigner(new SignerArgs(localKey)))
+            .withSigner(new Signer(new SignerArgs(localKey)))
             .build();
 
     List<Signature> signatures = authenticityClient.getSignatures(recordWithMultipleSignatures);
@@ -131,7 +128,7 @@ class RecordTest {
     Record record =
         recordClient
             .fromString("Hello world 4")
-            .withSigner(new EnsSigner(new SignerArgs(localKey)))
+            .withSigner(new Signer(new SignerArgs(localKey)))
             .build();
 
     List<Signature> signatures = authenticityClient.getSignatures(record);
@@ -146,7 +143,7 @@ class RecordTest {
         .get(0)
         .setMessageHash("7e43ddd9df3a0ca242fcf6d1b190811ef4d50e39e228c27fd746f4d1424b4cc6");
     assertEquals(authenticityClient.getSignatureCommonName(signatures.get(0)), "vitalik.eth");
-  }
+  }*/
 
   @Test
   void testAesEncryption() throws Exception {

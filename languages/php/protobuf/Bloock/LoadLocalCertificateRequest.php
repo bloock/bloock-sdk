@@ -18,9 +18,13 @@ class LoadLocalCertificateRequest extends \Google\Protobuf\Internal\Message
      */
     protected $config_data = null;
     /**
-     * Generated from protobuf field <code>string key = 3;</code>
+     * Generated from protobuf field <code>bytes pkcs12 = 2;</code>
      */
-    protected $key = '';
+    protected $pkcs12 = '';
+    /**
+     * Generated from protobuf field <code>string password = 3;</code>
+     */
+    protected $password = '';
 
     /**
      * Constructor.
@@ -29,7 +33,8 @@ class LoadLocalCertificateRequest extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type \Bloock\ConfigData $config_data
-     *     @type string $key
+     *     @type string $pkcs12
+     *     @type string $password
      * }
      */
     public function __construct($data = NULL) {
@@ -70,23 +75,45 @@ class LoadLocalCertificateRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string key = 3;</code>
+     * Generated from protobuf field <code>bytes pkcs12 = 2;</code>
      * @return string
      */
-    public function getKey()
+    public function getPkcs12()
     {
-        return $this->key;
+        return $this->pkcs12;
     }
 
     /**
-     * Generated from protobuf field <code>string key = 3;</code>
+     * Generated from protobuf field <code>bytes pkcs12 = 2;</code>
      * @param string $var
      * @return $this
      */
-    public function setKey($var)
+    public function setPkcs12($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->pkcs12 = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string password = 3;</code>
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Generated from protobuf field <code>string password = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setPassword($var)
     {
         GPBUtil::checkString($var, True);
-        $this->key = $var;
+        $this->password = $var;
 
         return $this;
     }

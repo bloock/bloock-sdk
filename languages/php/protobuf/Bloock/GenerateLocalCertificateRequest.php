@@ -18,9 +18,9 @@ class GenerateLocalCertificateRequest extends \Google\Protobuf\Internal\Message
      */
     protected $config_data = null;
     /**
-     * Generated from protobuf field <code>.bloock.KeyType key_type = 2;</code>
+     * Generated from protobuf field <code>.bloock.LocalCertificateParams params = 2;</code>
      */
-    protected $key_type = 0;
+    protected $params = null;
 
     /**
      * Constructor.
@@ -29,7 +29,7 @@ class GenerateLocalCertificateRequest extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type \Bloock\ConfigData $config_data
-     *     @type int $key_type
+     *     @type \Bloock\LocalCertificateParams $params
      * }
      */
     public function __construct($data = NULL) {
@@ -70,23 +70,33 @@ class GenerateLocalCertificateRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.KeyType key_type = 2;</code>
-     * @return int
+     * Generated from protobuf field <code>.bloock.LocalCertificateParams params = 2;</code>
+     * @return \Bloock\LocalCertificateParams|null
      */
-    public function getKeyType()
+    public function getParams()
     {
-        return $this->key_type;
+        return $this->params;
+    }
+
+    public function hasParams()
+    {
+        return isset($this->params);
+    }
+
+    public function clearParams()
+    {
+        unset($this->params);
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.KeyType key_type = 2;</code>
-     * @param int $var
+     * Generated from protobuf field <code>.bloock.LocalCertificateParams params = 2;</code>
+     * @param \Bloock\LocalCertificateParams $var
      * @return $this
      */
-    public function setKeyType($var)
+    public function setParams($var)
     {
-        GPBUtil::checkEnum($var, \Bloock\KeyType::class);
-        $this->key_type = $var;
+        GPBUtil::checkMessage($var, \Bloock\LocalCertificateParams::class);
+        $this->params = $var;
 
         return $this;
     }

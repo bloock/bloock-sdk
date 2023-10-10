@@ -57,9 +57,9 @@ message LocalCertificateParams {
     CertificateSubject subject = 3;
 }
 
-
 message LocalCertificate {
     bytes pkcs12 = 1;
+    string password = 2;
 }
 
 message ManagedCertificateParams {

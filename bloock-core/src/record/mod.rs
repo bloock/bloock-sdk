@@ -1,4 +1,4 @@
-use crate::error::{BloockError, ErrorKind};
+use crate::{error::{BloockError, ErrorKind}, config::{config_data::ConfigData, self}};
 use serde::Serialize;
 use thiserror::Error;
 pub mod builder;
@@ -30,11 +30,15 @@ impl From<RecordError> for BloockError {
     }
 }
 
-pub fn configure() -> service::RecordService {
-    service::RecordService {}
+pub fn configure(config_data: ConfigData) -> service::RecordService {
+    service::RecordService {
+        config_service: config::configure(config_data),
+    }
 }
 
 #[cfg(test)]
-pub fn configure_test() -> service::RecordService {
-    service::RecordService {}
+pub fn configure_test(config_data: ConfigData) -> service::RecordService {
+    service::RecordService {
+        config_service: config::configure(config_data),
+    }
 }

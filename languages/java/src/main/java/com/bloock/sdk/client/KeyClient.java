@@ -85,6 +85,40 @@ public class KeyClient {
     return ManagedKey.fromProto(response.getManagedKey());
   }
 
+  public LocalCertificate newLocalCertificate(LocalCertificateParams params) throws Exception {
+    Keys.GenerateLocalCertificateRequest request =
+        Keys.GenerateLocalCertificateRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setParams(params.toProto())
+            .build();
+
+    Keys.GenerateLocalCertificateResponse response =
+        bridge.getKey().generateLocalCertificate(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return LocalCertificate.fromProto(response.getLocalCertificate());
+  }
+
+  public LocalCertificate loadLocalCertificate(byte[] pkcs12, String password) throws Exception {
+    Keys.LoadLocalCertificateRequest request =
+        Keys.LoadLocalCertificateRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setPkcs12(ByteString.copyFrom(pkcs12))
+            .setPassword(password)
+            .build();
+
+    Keys.LoadLocalCertificateResponse response = bridge.getKey().loadLocalCertificate(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return LocalCertificate.fromProto(response.getLocalCertificate());
+  }
+
   public ManagedCertificate newManagedCertificate(ManagedCertificateParams params)
       throws Exception {
     Keys.GenerateManagedCertificateRequest request =

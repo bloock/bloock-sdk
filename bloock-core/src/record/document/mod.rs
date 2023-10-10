@@ -4,13 +4,12 @@ use crate::{
 };
 use bloock_encrypter::{entity::alg::EncryptionAlg, EncrypterError};
 use bloock_metadata::{FileParser, MetadataParser};
-use bloock_signer::{entity::signature::Signature, format::jws::JwsFormatter, SignFormat};
+use bloock_signer::entity::signature::Signature;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Metadata {
-    pub signatures: Option<Value>,
+    pub signatures: Option<Vec<Signature>>,
     pub proof: Option<Proof>,
     pub is_encrypted: bool,
 }
@@ -31,7 +30,7 @@ impl Document {
 
         let is_encrypted = parser.get("is_encrypted").unwrap_or(false);
         let proof = parser.get("proof");
-        let signatures: Option<Value> = parser.get("signatures");
+        let signatures = parser.get_signatures();
 
         let payload = parser
             .get_data()
@@ -108,7 +107,8 @@ impl Document {
 
         self.is_encrypted = false;
         self.proof = self.parser.get("proof");
-        self.signatures = self.parser.get("signatures");
+        self.signatures = self.parser.get_signatures();
+
         Ok(self)
     }
 
@@ -183,7 +183,7 @@ impl Document {
 
         if let Some(signatures) = metadata.signatures {
             parser
-                .set("signatures", &signatures)
+                .set_signatures(signatures)
                 .map_err(InfrastructureError::MetadataError)?;
         }
 
@@ -205,6 +205,7 @@ mod tests {
 
     use super::*;
     use crate::{
+        config,
         integrity::entity::{anchor::AnchorNetwork, proof::ProofAnchor},
         record::entity::record::Record,
     };
@@ -217,9 +218,7 @@ mod tests {
         keys::local::{LocalKey, LocalKeyParams},
         KeyType,
     };
-    use bloock_signer::{
-        entity::signature::SignatureHeader, local::ecdsa::LocalEcdsaSigner, Signer,
-    };
+    use bloock_signer::{ecdsa::EcdsaSigner, Signer};
 
     #[tokio::test]
     async fn test_signed_pdf() {
@@ -232,14 +231,18 @@ mod tests {
             ),
             mnemonic: None,
         };
-        let signer = LocalEcdsaSigner::new(local_key, None);
+        let config_service = config::configure_test();
+        let signer = EcdsaSigner::new(
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        );
 
         let mut document = Document::new(payload).unwrap();
-        let signature = signer.sign(payload).await.unwrap();
+        let signature = signer.sign_local(payload, &local_key).await.unwrap();
         document.add_signature(signature.clone()).unwrap();
         let built_doc = document.build().unwrap();
-        let signed_doc = Document::new(&built_doc).unwrap();
-        assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
+        let signed_doc: Document = Document::new(&built_doc).unwrap();
+        assert_eq!(signed_doc.get_signatures(), Some(vec![signature]));
     }
 
     #[tokio::test]
@@ -365,11 +368,8 @@ mod tests {
         };
 
         let signature = Signature {
-            header: SignatureHeader {
-                alg: "ES256K".to_string(),
-                kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
-            },
-            protected: "e30".to_string(),
+            alg: bloock_signer::entity::alg::SignAlg::Es256k,
+            kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
             signature: "945efccb10955499e50bd4e1eeadb51aac9136f3e91b8d29c1b817cb42284268500b5f191693a0d927601df5f282804a6eacf5ff8a1522bda5c2ec4dc681750b".to_string(),
             message_hash: hex::encode(Keccak256::generate_hash(&[payload])),
         };
@@ -402,7 +402,7 @@ mod tests {
         let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
-        assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
+        assert_eq!(decrypted_record.get_signatures(), Some(vec![signature]));
         assert!(decrypted_record.get_proof().is_none());
     }
 }

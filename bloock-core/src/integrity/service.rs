@@ -300,6 +300,7 @@ fn merge(left: &H256, right: &H256) -> H256 {
 #[cfg(test)]
 mod tests {
     use crate::{
+        config,
         error::ErrorKind,
         integrity::{
             configure_test,
@@ -316,7 +317,7 @@ mod tests {
             service::merge,
             IntegrityError,
         },
-        record::service::RecordService,
+        record::configure_test as record_configure_test,
     };
     use bloock_hasher::from_hex;
     use bloock_http::{HttpError, MockClient};
@@ -339,9 +340,11 @@ mod tests {
         http.expect_post_json::<String, RecordWriteRequest, RecordWriteResponse>()
             .return_once(|_, _, _| Ok(response));
 
-        let record_service = configure_test(Arc::new(http));
-        let result = record_service
-            .send_records(Vec::from([RecordService::from_string("Some String")
+        let integrity_service = configure_test(Arc::new(http));
+        let record_service = record_configure_test(config::configure_test().config_data);
+        let result = integrity_service
+            .send_records(Vec::from([record_service
+                .from_string("Some String")
                 .unwrap()
                 .build()
                 .await
@@ -493,8 +496,10 @@ mod tests {
             .return_once(|_, _, _| Ok(response));
 
         let service = configure_test(Arc::new(http));
+        let record_service = record_configure_test(config::configure_test().config_data);
         let final_response = service
-            .get_proof(vec![RecordService::from_string("Some String")
+            .get_proof(vec![record_service
+                .from_string("Some String")
                 .unwrap()
                 .build()
                 .await

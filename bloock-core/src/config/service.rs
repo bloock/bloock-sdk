@@ -17,6 +17,10 @@ impl ConfigService {
         self.get_config().host
     }
 
+    pub fn get_cdn_base_url(&self) -> String {
+        self.get_config().cdn_host
+    }
+
     pub fn get_network_config(&self, network: Network) -> NetworkConfiguration {
         self.config_data.get_network_config(network)
     }

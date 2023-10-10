@@ -1,6 +1,8 @@
 use crate::{MetadataError, MetadataParser, Result};
+use bloock_signer::{entity::signature::Signature, format::jws::JwsFormatter, SignFormat};
 use lopdf::{Dictionary, Document, Object};
 use serde::{de::DeserializeOwned, Serialize};
+use serde_json::Value;
 
 #[derive(Debug, Clone)]
 pub struct PdfParser {
@@ -32,6 +34,27 @@ impl MetadataParser for PdfParser {
             .and_then(|v| serde_json::from_slice(v).ok())
     }
 
+    fn get_signatures(&self) -> Option<Vec<Signature>> {
+        let dictionary = self.get_metadata_dict().ok()?;
+
+        let object = Object::from("signatures");
+        let value: Option<Value> = dictionary
+            .get(object.as_name().ok()?)
+            .ok()
+            .and_then(|v| v.as_str().ok())
+            .and_then(|v| serde_json::from_slice(v).ok());
+        match value {
+            Some(signature) => {
+                let sig_string = serde_json::to_string(&signature).ok();
+                match sig_string {
+                    Some(s) => JwsFormatter::deserialize(s).ok(),
+                    None => None,
+                }             
+            }
+            None => None,
+        }
+    }
+
     fn set<T: Serialize>(&mut self, key: &str, value: &T) -> Result<()> {
         self.modified = true;
 
@@ -45,6 +68,22 @@ impl MetadataParser for PdfParser {
         let v = serde_json::to_string(value).map_err(|_| MetadataError::SerializeError)?;
         dictionary.set(object_key, Object::string_literal(v));
 
+        Ok(())
+    }
+
+    fn set_signatures(&mut self, signatures: Vec<Signature>) -> Result<()> {
+        self.modified = true;
+
+        let dictionary = self.get_metadata_dict_mut()?;
+
+        let object = Object::from("signatures");
+        let object_key = object
+            .as_name()
+            .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))?;
+
+        let v = JwsFormatter::serialize(signatures).map_err(|_| MetadataError::SerializeError)?;
+        dictionary.set(object_key, Object::string_literal(v));
+        
         Ok(())
     }
 

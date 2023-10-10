@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct Configuration {
     pub library_name: String,
     pub host: String,
+    pub cdn_host: String,
     pub api_key: String,
     pub wait_message_interval_factor: u128,
     pub wait_message_interval_default: u128,
@@ -19,6 +20,7 @@ impl Default for Configuration {
         Self {
             library_name: String::from("unknown"),
             host: String::from(""),
+            cdn_host: String::from(""),
             api_key: String::from(""),
             wait_message_interval_factor: 2,
             wait_message_interval_default: 1000,

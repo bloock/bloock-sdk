@@ -1,30 +1,30 @@
 package com.bloock.sdk.entity.authenticity;
 
-import com.bloock.sdk.bridge.proto.AuthenticityEntities;
+import com.bloock.sdk.bridge.proto.IdentityEntities;
 
-public class Signature {
+public class SignatureJws {
   String signature;
   String protected_;
-  SignatureHeader header;
+  SignatureHeaderJws header;
   String messageHash;
 
-  Signature(String signature, String protected_, SignatureHeader header, String messageHash) {
+  SignatureJws(String signature, String protected_, SignatureHeaderJws header, String messageHash) {
     this.signature = signature;
     this.protected_ = protected_;
     this.header = header;
     this.messageHash = messageHash;
   }
 
-  public static Signature fromProto(AuthenticityEntities.Signature signature) {
-    return new Signature(
+  public static SignatureJws fromProto(IdentityEntities.SignatureJWS signature) {
+    return new SignatureJws(
         signature.getSignature(),
         signature.getProtected(),
-        SignatureHeader.fromProto(signature.getHeader()),
+        SignatureHeaderJws.fromProto(signature.getHeader()),
         signature.getMessageHash());
   }
 
-  public AuthenticityEntities.Signature toProto() {
-    return AuthenticityEntities.Signature.newBuilder()
+  public IdentityEntities.SignatureJWS toProto() {
+    return IdentityEntities.SignatureJWS.newBuilder()
         .setSignature(this.signature)
         .setProtected(this.protected_)
         .setHeader(this.header.toProto())
@@ -44,7 +44,7 @@ public class Signature {
     return protected_;
   }
 
-  public SignatureHeader getHeader() {
+  public SignatureHeaderJws getHeader() {
     return header;
   }
 

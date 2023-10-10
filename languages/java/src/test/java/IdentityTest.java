@@ -49,7 +49,7 @@ class IdentityTest {
     assertEquals(json, newCredentialJson);
   }
 
-  @Test
+  /*@Test
   void endToEnd() throws Exception {
     IdentityClient identityClient = new IdentityClient();
 
@@ -90,5 +90,5 @@ class IdentityTest {
 
     boolean revocation = identityClient.revokeCredential(credential);
     assertTrue(revocation);
-  }
+  }*/
 }

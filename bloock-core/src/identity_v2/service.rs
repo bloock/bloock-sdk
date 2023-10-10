@@ -11,7 +11,6 @@ use bloock_identity_rs::{
     vc::VC,
 };
 use bloock_keys::entity::key::Key;
-use bloock_signer::Signer;
 use serde_json::{json, Map, Value};
 
 use crate::{

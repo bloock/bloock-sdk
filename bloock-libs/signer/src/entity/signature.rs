@@ -1,6 +1,9 @@
 use super::alg::SignAlg;
+use serde::{
+    Deserialize, Serialize,
+};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Signature {
     pub alg: SignAlg,
     pub kid: String,

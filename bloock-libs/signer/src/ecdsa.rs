@@ -102,7 +102,7 @@ impl Signer for EcdsaSigner {
             alg: SignAlg::Es256kM,
             kid: key.id.clone(),
             signature: res.signature,
-            message_hash: hex::encode(Keccak256::generate_hash(&[payload])),
+            message_hash: hex::encode(hash),
         };
 
         Ok(signature)

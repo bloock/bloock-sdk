@@ -1,11 +1,10 @@
 import bloock._bridge.proto.authenticity_entities_pb2 as proto
-from bloock.entity.authenticity.signer import Signer
 from bloock.entity.authenticity.signer_args import SignerArgs
 
 
-class EcdsaSigner(Signer):
+class Signer:
     def __init__(self, args: SignerArgs) -> None:
-        super().__init__(alg=proto.ES256K, args=args)
+        self.args = args
 
     def to_proto(self) -> proto.Signer:
         local_key = None
@@ -24,10 +23,14 @@ class EcdsaSigner(Signer):
         if self.args.managed_certificate is not None:
             managed_certificate = self.args.managed_certificate.to_proto()
 
+        local_certificate = None
+        if self.args.local_certificate is not None:
+            local_certificate = self.args.local_certificate.to_proto()
+
         return proto.Signer(
-            alg=self.alg,
             local_key=local_key,
             managed_key=managed_key,
             managed_certificate=managed_certificate,
+            local_certificate=local_certificate,
             common_name=common_name
         )

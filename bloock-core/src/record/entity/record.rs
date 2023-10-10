@@ -237,8 +237,10 @@ impl TryFrom<&String> for Record {
 #[cfg(test)]
 mod tests {
 
+    use bloock_hasher::sha256::Sha256;
+
     use super::*;
-    use crate::integrity::entity::proof::ProofAnchor;
+    use crate::{integrity::entity::proof::ProofAnchor, record};
 
     #[test]
     fn new_record() {
@@ -286,13 +288,10 @@ mod tests {
         let record_no_signature = Record::new(document.clone()).unwrap();
 
         document.signatures = Some(vec![Signature {
-            protected: "e30".to_string(),
-            header: SignatureHeader {
-                alg: "ES256K".to_string(),
-                kid: "12c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
-            },
+            alg: bloock_signer::entity::alg::SignAlg::Es256k,
+            kid: "12c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
-            message_hash: hex::encode(Keccak256::generate_hash(&[document.get_payload().as_slice()])),
+            message_hash: hex::encode(Sha256::generate_hash(&[document.get_payload().as_slice()])),
         }]);
 
         let record_with_signature = Record::new(document).unwrap();
@@ -309,7 +308,7 @@ mod tests {
         );
 
         assert_eq!(
-            "0aeac2e7a80b7ae3e8d0e22ecda4902eb943d2354579ef2772d9b82ffc42f016",
+            "198b50d25946e0678dd84389eb4d0724e249b86f246f897c3c43ed8ff26ef58d",
             record_with_signature.get_hash(),
             "Wrong record hash received"
         );

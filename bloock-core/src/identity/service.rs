@@ -33,6 +33,8 @@ use bloock_http::Client;
 use bloock_identity::did::Did;
 use bloock_keys::keys::local::{LocalKey, LocalKeyParams};
 use bloock_signer::entity::signature::Signature;
+use bloock_signer::format::jws::{JwsFormatter, JwsSignature};
+use bloock_signer::SignFormat;
 use serde_json::{json, Map, Value};
 use std::sync::Arc;
 use std::time::Duration;
@@ -248,9 +250,13 @@ impl<H: Client> IdentityService<H> {
         .await
         .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
 
+        let singature_serialized = JwsFormatter::serialize([signature].to_vec())
+            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
+        let jws_signatures: Vec<JwsSignature> = serde_json::from_str(&singature_serialized).unwrap();
+
         let req = RedeemCredentialRequest {
             thread_id,
-            signature,
+            signature: jws_signatures.get(0).unwrap().to_owned(),
         };
 
         let res: RedeemCredentialResponse = self
@@ -307,11 +313,15 @@ impl<H: Client> IdentityService<H> {
             .clone()
             .ok_or(IdentityError::InvalidSignatureError())?
             .0;
+        let signature_string = serde_json::to_string(&signature_proof).unwrap();
+        let signatures = JwsFormatter::deserialize(signature_string)
+            .map_err(|_| IdentityError::InvalidProofError())?;
+
         let payload_value = serde_json::to_value(&credential_payload).unwrap();
         let payload = serde_json::to_vec(&payload_value).unwrap();
 
         let signature_valid = self
-            .verify_credential_signature(&payload, signature_proof)
+            .verify_credential_signature(&payload, signatures.get(0).unwrap().to_owned())
             .await?;
 
         if !signature_valid {

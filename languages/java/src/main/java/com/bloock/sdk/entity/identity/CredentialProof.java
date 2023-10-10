@@ -1,21 +1,21 @@
 package com.bloock.sdk.entity.identity;
 
 import com.bloock.sdk.bridge.proto.IdentityEntities;
-import com.bloock.sdk.entity.authenticity.Signature;
+import com.bloock.sdk.entity.authenticity.SignatureJws;
 import com.bloock.sdk.entity.integrity.Proof;
 
 public class CredentialProof {
   private final Proof bloockProof;
-  private final Signature signatureProof;
+  private final SignatureJws signatureProof;
 
-  public CredentialProof(Proof bloockProof, Signature signatureProof) {
+  public CredentialProof(Proof bloockProof, SignatureJws signatureProof) {
     this.bloockProof = bloockProof;
     this.signatureProof = signatureProof;
   }
 
   public static CredentialProof fromProto(IdentityEntities.CredentialProof res) {
     return new CredentialProof(
-        Proof.fromProto(res.getBloockProof()), Signature.fromProto(res.getSignatureProof()));
+        Proof.fromProto(res.getBloockProof()), SignatureJws.fromProto(res.getSignatureProof()));
   }
 
   public IdentityEntities.CredentialProof toProto() {
@@ -29,7 +29,7 @@ public class CredentialProof {
     return bloockProof;
   }
 
-  public Signature getSignatureProof() {
+  public SignatureJws getSignatureProof() {
     return signatureProof;
   }
 }

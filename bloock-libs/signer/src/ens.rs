@@ -1,10 +1,7 @@
 use crate::{ecdsa::EcdsaSigner, entity::alg::SignAlg, Result, Signature, Signer, SignerError};
 use async_trait::async_trait;
 use bloock_hasher::{keccak::Keccak256, Hasher};
-use bloock_keys::{
-    entity::key::Key,
-    keys::{local::LocalKey, managed::ManagedKey},
-};
+use bloock_keys::keys::{local::LocalKey, managed::ManagedKey};
 use libsecp256k1::PublicKey;
 
 pub struct EnsSigner {

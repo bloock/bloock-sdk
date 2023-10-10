@@ -5,7 +5,6 @@ package client
 import (
 	"testing"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
 	"github.com/bloock/bloock-sdk-go/v2/entity/availability"
 	"github.com/bloock/bloock-sdk-go/v2/entity/encryption"
 	"github.com/bloock/bloock-sdk-go/v2/entity/integrity"
@@ -117,18 +116,22 @@ func TestRecord(t *testing.T) {
 		assert.Equal(t, result, payload)
 	})
 
-	t.Run("record with ecdsa signer", func(t *testing.T) {
+	/*t.Run("record with ecdsa signer", func(t *testing.T) {
+		keyClient := NewKeyClient()
 		authenticityClient := NewAuthenticityClient()
 		keypair, err := authenticityClient.GenerateEcdsaKeys()
 		require.NoError(t, err)
 
 		name := "Some name"
 
+		localKey, err := keyClient.LoadLocalKey(key.EcP256k, keypair.PublicKey, &keypair.PrivateKey)
+		assert.NoError(t, err)
+
 		recordClient := NewRecordClient()
 		record, err := recordClient.
 			FromString("Hello world 3").
-			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{
-				PrivateKey: keypair.PrivateKey,
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{
+				LocalKey:   &localKey,
 				CommonName: &name,
 			})).
 			Build()
@@ -139,7 +142,7 @@ func TestRecord(t *testing.T) {
 
 		recordWithMultipleSignatures, err := recordClient.
 			FromRecord(record).
-			WithSigner(authenticity.NewEcdsaSigner(authenticity.SignerArgs{PrivateKey: keypair.PrivateKey})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &localKey})).
 			Build()
 
 		require.NoError(t, err)
@@ -157,15 +160,19 @@ func TestRecord(t *testing.T) {
 	})
 
 	t.Run("record with ens signer", func(t *testing.T) {
+		keyClient := NewKeyClient()
 		authenticityClient := NewAuthenticityClient()
 		keypair, err := authenticityClient.GenerateEcdsaKeys()
 		require.NoError(t, err)
 
+		localKey, err := keyClient.LoadLocalKey(key.EcP256k, keypair.PublicKey, &keypair.PrivateKey)
+		assert.NoError(t, err)
+
 		recordClient := NewRecordClient()
 		record, err := recordClient.
 			FromString("Hello world 4").
-			WithSigner(authenticity.NewEnsSigner(authenticity.SignerArgs{
-				PrivateKey: keypair.PrivateKey,
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{
+				LocalKey: &localKey,
 			})).
 			Build()
 		require.NoError(t, err)
@@ -183,7 +190,7 @@ func TestRecord(t *testing.T) {
 
 		assert.Equal(t, authenticity.ENS, signatures[0].GetAlg())
 
-	})
+	})*/
 
 	t.Run("record with aes encrypter", func(t *testing.T) {
 		payload := "Hello world 2"

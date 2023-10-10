@@ -1,6 +1,6 @@
 [package]
 name = "bloock_bridge"
-version = "2.6.0"
+version = "2.7.0-beta.1"
 edition = "2021"
 
 [lib]
@@ -20,6 +20,7 @@ serde_json = "1.0.82"
 bloock-encrypter = { path = "../bloock-libs/encrypter" }
 bloock-keys = { path = "../bloock-libs/keys" }
 bloock-identity-rs = { path = "../bloock-libs/identity-v2" }
+bloock-signer = { path = "../bloock-libs/signer" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "0.2.84"

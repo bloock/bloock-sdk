@@ -116,10 +116,11 @@ func (c *KeyClient) NewLocalCertificate(params key.LocalCertificateParams) (key.
 	return key.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
 }
 
-func (c *KeyClient) LoadLocalCertificate(pkcs12 []byte) (key.LocalCertificate, error) {
+func (c *KeyClient) LoadLocalCertificate(pkcs12 []byte, password string) (key.LocalCertificate, error) {
 	res, err := c.bridgeClient.Key().LoadLocalCertificate(context.Background(), &proto.LoadLocalCertificateRequest{
 		ConfigData: c.configData,
 		Pkcs12:     pkcs12,
+		Password:   password,
 	})
 
 	if err != nil {

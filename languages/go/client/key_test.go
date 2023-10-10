@@ -173,10 +173,10 @@ func TestKey(t *testing.T) {
 		assert.Equal(t, loadedKey.KeyType, managedKey.KeyType)
 	})
 
-	t.Run("generate local certificate ecdsa", func(t *testing.T) {
+	t.Run("generate local certificate ecdsa and sign", func(t *testing.T) {
 		keyClient := NewKeyClient()
 
-		keyType := key.EcP256k
+		keyType := key.Rsa2048
 		org := "Google Inc"
 		orgUnit := "IT Department"
 		country := "US"
@@ -195,12 +195,39 @@ func TestKey(t *testing.T) {
 		localCertificate, err := keyClient.NewLocalCertificate(params)
 		assert.NoError(t, err)
 
-		assert.NotEmpty(t, localCertificate.Pkcs11)
+		assert.NotEmpty(t, localCertificate.Pkcs12)
 
-		loadedCertificate, err := keyClient.LoadLocalCertificate(localCertificate.Pkcs11)
+		loadedCertificate, err := keyClient.LoadLocalCertificate(localCertificate.Pkcs12, localCertificate.Password)
 		assert.NoError(t, err)
 
-		assert.Equal(t, localCertificate.Pkcs11, loadedCertificate.Pkcs11)
+		assert.Equal(t, localCertificate.Pkcs12, loadedCertificate.Pkcs12)
+
+		//TODO not yet implemented signature with RSA on local
+		/*authenticityClient := NewAuthenticityClient()
+		recordClient := NewRecordClient()
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewSigner(authenticity.SignerArgs{LocalCertificate: &loadedCertificate}))
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, signature.Signature)*/
+	})
+
+	t.Run("import local p12 certificate", func(t *testing.T) {
+		keyClient := NewKeyClient()
+
+		certificateBytes, err := os.ReadFile("./../test/test_utils/test.p12")
+		assert.NoError(t, err)
+		password := "bloock"
+
+		loadedCertificate, err := keyClient.LoadLocalCertificate(certificateBytes, password)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedCertificate.Pkcs12, certificateBytes)
 	})
 
 	t.Run("generate managed certificate", func(t *testing.T) {
@@ -290,7 +317,7 @@ func TestKey(t *testing.T) {
 		assert.NoError(t, err)
 
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewEcdsaSigner(authenticity.SignerArgs{ManagedCertificate: &loadedCertificate}))
+			Sign(record, authenticity.NewSigner(authenticity.SignerArgs{ManagedCertificate: &loadedCertificate}))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
