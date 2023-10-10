@@ -366,7 +366,7 @@ mod tests {
         let context_json_ld =
             "https://api.bloock.dev/hosting/v1/ipfs/QmbJwqUuZDTkJPH6Bjhhpe6tUWD3mL5GvYkWrmopqG1kaA"
                 .to_string();
-        let schema_cid = "Qmd2tQAyGvTKM2wW9u8TJnCJFqNMGJ3cgyr4G3nooLbk8Z".to_string();
+        let schema_cid = "QmYvtkz2ReofDtvCyGs4Z73d9j55TLXPVueyBTFqfRWvPp".to_string();
         let schema_type = "TestCredentialEnums".to_string();
         let issuer =
             "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
@@ -538,7 +538,7 @@ mod tests {
         let context_json_ld =
             "https://api.bloock.dev/hosting/v1/ipfs/QmXbALbWJSpz2K1zbxMoA8HxUCqkazSun8G8bWyMeegv3p"
                 .to_string();
-        let schema_cid = "QmY3Qn8k3NMoVFrVk76kLVoFUErCE8bZwj41jk8KaoYaDN".to_string();
+        let schema_cid = "QmZjVNVwRQqLiwQ3KZjopcJu12nidPW9BqGWLLw8ooG9oe".to_string();
         let schema_type = "TestStringTypes".to_string();
         let issuer =
             "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
@@ -706,7 +706,7 @@ mod tests {
         let context_json_ld =
             "https://api.bloock.dev/hosting/v1/ipfs/QmQUQDGbwJEdcFTxUeaP7wj6TmbBha7EHfvQjLXBWpMRw3"
                 .to_string();
-        let schema_cid = "QmSt7zgfpaGppzdn852DzE1FdeYCzD1Ybu8ghjj8aD5aLv".to_string();
+        let schema_cid = "QmNzd7J2n3csL6vu4QdqLYSJCg8JkRBgVMtCNsRp6G7ZXR".to_string();
         let schema_type = "TestIntegerTypes".to_string();
         let issuer =
             "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
