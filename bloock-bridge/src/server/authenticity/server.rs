@@ -58,7 +58,7 @@ impl AuthenticityServiceHandler for AuthenticityServer {
             return Err("invalid key provided".to_string());
         };
 
-        let signature: SignatureCore = client.sign(record, key).await.map_err(|e| e.to_string())?;
+        let signature: SignatureCore = client.sign(record, &key).await.map_err(|e| e.to_string())?;
 
         Ok(SignResponse {
             signature: Some(signature.into()),

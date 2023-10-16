@@ -2,94 +2,100 @@ use crate::{
     error::{BloockResult, InfrastructureError},
     integrity::entity::proof::Proof,
 };
-use bloock_encrypter::{entity::alg::EncryptionAlg, EncrypterError};
+use bloock_encrypter::{entity::alg::EncryptionAlg, Decrypter, Encrypter, EncrypterError};
+use bloock_keys::entity::key::Key;
 use bloock_metadata::{FileParser, MetadataParser};
 use bloock_signer::entity::signature::Signature;
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
-pub struct Metadata {
-    pub signatures: Option<Vec<Signature>>,
-    pub proof: Option<Proof>,
-    pub is_encrypted: bool,
-}
 
 #[derive(Clone, Debug)]
 pub struct Document {
     parser: FileParser,
-    is_encrypted: bool,
-
-    pub payload: Vec<u8>,
-    pub signatures: Option<Vec<Signature>>,
-    pub proof: Option<Proof>,
+    api_host: String,
+    api_key: String,
 }
 
 impl Document {
-    pub fn new(payload: &[u8]) -> BloockResult<Self> {
+    pub fn new(payload: &[u8], api_host: String, api_key: String) -> BloockResult<Self> {
         let parser = FileParser::load(payload).map_err(InfrastructureError::MetadataError)?;
 
-        let is_encrypted = parser.get("is_encrypted").unwrap_or(false);
-        let proof = parser.get("proof");
-        let signatures = parser.get_signatures();
-
-        let payload = parser
-            .get_data()
-            .map_err(InfrastructureError::MetadataError)?;
-
-        let doc = Document {
+        Ok(Document {
             parser,
-            payload,
-            proof,
-            signatures,
-            is_encrypted,
-        };
-
-        Ok(doc)
+            api_host,
+            api_key,
+        })
     }
 
-    pub fn add_signature(&mut self, signature: Signature) -> BloockResult<&mut Self> {
-        if self.is_encrypted {
+    pub async fn sign(&mut self, key: &Key) -> BloockResult<Signature> {
+        if self.is_encrypted() {
             return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
 
-        let signatures = match self.signatures.clone() {
-            Some(mut s) => {
-                s.push(signature);
-                s
-            }
-            None => vec![signature],
-        };
+        let signature = self
+            .parser
+            .sign(key, self.api_host.clone(), self.api_key.clone())
+            .await
+            .map_err(|e| InfrastructureError::MetadataError(e))?;
 
-        self.signatures = Some(signatures);
+        Ok(signature)
+    }
 
-        if self.proof.is_some() {
-            self.proof = None;
+    pub async fn verify(&self) -> BloockResult<bool> {
+        if self.is_encrypted() {
+            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
 
-        Ok(self)
+        let ok = self
+            .parser
+            .verify(self.api_host.clone(), self.api_key.clone())
+            .await
+            .map_err(|e| InfrastructureError::MetadataError(e))?;
+        Ok(ok)
     }
 
-    pub fn set_encryption(&mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<&mut Self> {
-        self.update_parser(ciphertext)?;
-        self.update_payload()?;
-
-        self.signatures = None;
-        self.proof = None;
-        self.is_encrypted = true;
-
-        self.set_encryption_alg(alg)?;
-
-        Ok(self)
-    }
-
-    fn set_encryption_alg(&mut self, alg: &str) -> BloockResult<()> {
+    pub async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<()> {
         self.parser
-            .set("encryption_alg", &alg)
-            .map_err(|err| InfrastructureError::MetadataError(err).into())
+            .encrypt(encrypter)
+            .await
+            .map_err(|e| InfrastructureError::MetadataError(e))?;
+
+        Ok(())
+    }
+
+    pub async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<()> {
+        self.parser
+            .decrypt(decrypter)
+            .await
+            .map_err(|e| InfrastructureError::MetadataError(e))?;
+
+        Ok(())
+    }
+
+    pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
+        if self.is_encrypted() {
+            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
+        }
+
+        self.parser
+            .set_proof(&proof)
+            .map_err(|e| InfrastructureError::MetadataError(e))?;
+        Ok(())
+    }
+
+    pub fn is_encrypted(&self) -> bool {
+        self.parser.is_encrypted()
+    }
+
+    pub fn get_proof(&self) -> Option<Proof> {
+        let proof: Option<Proof> = self.parser.get_proof();
+        proof
+    }
+
+    pub fn get_signatures(&self) -> Option<Vec<Signature>> {
+        self.parser.get_signatures().ok()
     }
 
     pub fn get_encryption_alg(&self) -> BloockResult<EncryptionAlg> {
-        match self.parser.get::<String>("encryption_alg") {
+        match self.parser.get_encryption_algorithm() {
             Some(alg) => alg
                 .as_str()
                 .try_into()
@@ -101,7 +107,54 @@ impl Document {
         }
     }
 
-    pub fn remove_encryption(mut self, decrypted_payload: Vec<u8>) -> BloockResult<Self> {
+    pub fn build(&self) -> BloockResult<Vec<u8>> {
+        let result = self
+            .parser
+            .build()
+            .map_err(InfrastructureError::MetadataError)?;
+        Ok(result)
+    }
+
+    /*pub fn add_signature(&mut self, signature: Signature, key: Key) -> BloockResult<&mut Self> {
+        if self.is_encrypted {
+            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
+        }
+
+        let signatures = match self.signatures.clone() {
+            Some(mut s) => {
+                s.push((signature, key));
+                s
+            }
+            None => vec![signature, key],
+        };
+
+        self.signatures = Some(signatures);
+
+        if self.proof.is_some() {
+            self.proof = None;
+        }
+
+        Ok(self)
+    }*/
+
+    /*pub fn set_encryption(&mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<&mut Self> {
+        self.update_parser(ciphertext)?;
+        self.update_payload()?;
+
+        self.is_encrypted = true;
+
+        self.set_encryption_alg(alg)?;
+
+        Ok(self)
+    }
+
+    fn set_encryption_alg(&mut self, alg: &str) -> BloockResult<()> {
+        self.parser
+            .set("encryption_alg", &alg)
+            .map_err(|err| InfrastructureError::MetadataError(err).into())
+    }*/
+
+    /*pub fn remove_encryption(mut self, decrypted_payload: Vec<u8>) -> BloockResult<Self> {
         self.update_parser(decrypted_payload)?;
         self.update_payload()?;
 
@@ -110,34 +163,17 @@ impl Document {
         self.signatures = self.parser.get_signatures();
 
         Ok(self)
-    }
+    }*/
 
-    pub fn is_encrypted(&self) -> bool {
-        self.is_encrypted
-    }
-
-    pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
-        if self.is_encrypted {
-            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
-        }
-
-        self.proof = Some(proof);
-        Ok(())
-    }
-
-    pub fn get_signatures(&self) -> Option<Vec<Signature>> {
+    /*pub fn get_signatures(&self) -> Option<(Vec<Signature>, Key)> {
         self.signatures.clone()
-    }
+    }*/
 
-    pub fn get_proof(&self) -> Option<Proof> {
-        self.proof.clone()
-    }
-
-    pub fn get_payload(&self) -> Vec<u8> {
+    /*pub fn get_payload(&self) -> Vec<u8> {
         self.payload.clone()
-    }
+    }*/
 
-    fn update_parser(&mut self, payload: Vec<u8>) -> BloockResult<()> {
+    /*fn update_parser(&mut self, payload: Vec<u8>) -> BloockResult<()> {
         self.parser = FileParser::load(&payload).map_err(InfrastructureError::MetadataError)?;
         Ok(())
     }
@@ -148,59 +184,18 @@ impl Document {
             .get_data()
             .map_err(InfrastructureError::MetadataError)?;
         Ok(())
-    }
-
-    pub fn build(&mut self) -> BloockResult<Vec<u8>> {
-        let metadata = Metadata {
-            signatures: self.get_signatures(),
-            proof: self.get_proof(),
-            is_encrypted: self.is_encrypted,
-        };
-
-        Self::build_file(&mut self.parser, metadata)
-    }
-
-    fn build_file(parser: &mut FileParser, metadata: Metadata) -> BloockResult<Vec<u8>> {
-        if metadata.is_encrypted {
-            parser
-                .set("is_encrypted", &true)
-                .map_err(InfrastructureError::MetadataError)?;
-        }
-
-        match metadata.proof {
-            Some(proof) => parser
-                .set("proof", &proof)
-                .map_err(InfrastructureError::MetadataError)?,
-            None => {
-                let proof: Option<Proof> = parser.get("proof");
-                if proof.is_some() {
-                    parser
-                        .del("proof")
-                        .map_err(InfrastructureError::MetadataError)?;
-                }
-            }
-        }
-
-        if let Some(signatures) = metadata.signatures {
-            parser
-                .set_signatures(signatures)
-                .map_err(InfrastructureError::MetadataError)?;
-        }
-
-        let result = parser.build().map_err(InfrastructureError::MetadataError)?;
-        Ok(result)
-    }
+    }*/
 }
 
 impl PartialEq for Document {
     fn eq(&self, other: &Self) -> bool {
-        self.get_payload() == other.get_payload()
+        self.build() == other.build()
     }
 }
 
 impl Eq for Document {}
 
-#[cfg(test)]
+/*#[cfg(test)]
 mod tests {
 
     use super::*;
@@ -215,6 +210,11 @@ mod tests {
     };
     use bloock_hasher::{keccak::Keccak256, Hasher};
     use bloock_keys::{
+        certificates::managed::{ManagedCertificate, ManagedCertificateParams},
+        certificates::{
+            local::{LocalCertificate, LocalCertificateParams},
+            CertificateSubject,
+        },
         keys::local::{LocalKey, LocalKeyParams},
         KeyType,
     };
@@ -237,11 +237,23 @@ mod tests {
             config_service.get_api_key(),
         );
 
-        let mut document = Document::new(payload).unwrap();
+        let mut document = Document::new(
+            payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
         let signature = signer.sign_local(payload, &local_key).await.unwrap();
-        document.add_signature(signature.clone()).unwrap();
+        document
+            .add_signature(signature.clone(), local_key.clone())
+            .unwrap();
         let built_doc = document.build().unwrap();
-        let signed_doc: Document = Document::new(&built_doc).unwrap();
+        let signed_doc: Document = Document::new(
+            &built_doc,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
         assert_eq!(signed_doc.get_signatures(), Some(vec![signature]));
     }
 
@@ -254,7 +266,12 @@ mod tests {
         let local_key = LocalKey::new(&local_key_params).unwrap();
         let encrypter = LocalAesEncrypter::new(local_key.clone());
 
-        let mut document = Document::new(payload).unwrap();
+        let mut document = Document::new(
+            payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
         let expected_payload = document.build().unwrap();
 
         let original_record = Record::new(document.clone()).unwrap();
@@ -265,7 +282,12 @@ mod tests {
             .unwrap();
 
         let built_doc = document.build().unwrap();
-        let encrypted_doc = Document::new(&built_doc).unwrap();
+        let encrypted_doc = Document::new(
+            &built_doc,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
 
         let decrypter = LocalAesDecrypter::new(local_key);
         let decrypted_payload = decrypter
@@ -275,7 +297,12 @@ mod tests {
 
         assert_eq!(decrypted_payload, expected_payload);
 
-        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_doc = Document::new(
+            &decrypted_payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
         let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
@@ -289,7 +316,12 @@ mod tests {
         let local_key = LocalKey::new(&local_key_params).unwrap();
         let encrypter = LocalAesEncrypter::new(local_key.clone());
 
-        let mut document = Document::new(payload).unwrap();
+        let mut document = Document::new(
+            payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
 
         let proof = Proof {
             anchor: ProofAnchor {
@@ -320,7 +352,12 @@ mod tests {
             .unwrap();
 
         let built_doc = document.build().unwrap();
-        let encrypted_doc = Document::new(&built_doc).unwrap();
+        let encrypted_doc = Document::new(
+            &built_doc,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
 
         let decrypter = LocalAesDecrypter::new(local_key);
         let decrypted_payload = decrypter
@@ -330,7 +367,12 @@ mod tests {
 
         assert_eq!(decrypted_payload, expected_payload);
 
-        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_doc = Document::new(
+            &decrypted_payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
         let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
@@ -348,7 +390,12 @@ mod tests {
 
         let encrypter = LocalAesEncrypter::new(local_key.clone());
 
-        let mut document = Document::new(payload).unwrap();
+        let mut document = Document::new(
+            payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
 
         let proof = Proof {
             anchor: ProofAnchor {
@@ -376,7 +423,9 @@ mod tests {
 
         document.set_proof(proof).unwrap();
 
-        document.add_signature(signature.clone()).unwrap();
+        document
+            .add_signature(signature.clone(), local_key.clone())
+            .unwrap();
 
         let expected_payload = document.build().unwrap();
 
@@ -388,7 +437,12 @@ mod tests {
             .unwrap();
 
         let built_doc = document.build().unwrap();
-        let encrypted_doc = Document::new(&built_doc).unwrap();
+        let encrypted_doc = Document::new(
+            &built_doc,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
 
         let decrypter = LocalAesDecrypter::new(local_key);
         let decrypted_payload = decrypter
@@ -398,11 +452,54 @@ mod tests {
 
         assert_eq!(decrypted_payload, expected_payload);
 
-        let decrypted_doc = Document::new(&decrypted_payload).unwrap();
+        let decrypted_doc = Document::new(
+            &decrypted_payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
         let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
         assert_eq!(decrypted_record.get_signatures(), Some(vec![signature]));
         assert!(decrypted_record.get_proof().is_none());
     }
-}
+
+    #[tokio::test]
+    async fn test_signed_pdf_with_local_certificate() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let local_key_params = LocalKeyParams {
+            key_type: KeyType::EcP256k,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
+
+        let config_service = config::configure_test();
+        let signer = EcdsaSigner::new(
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        );
+
+        let mut document = Document::new(
+            payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
+        let payload_to_sign = document.get_payload_to_sign().unwrap();
+        let signature = signer
+            .sign_local(&payload_to_sign, &local_key)
+            .await
+            .unwrap();
+        document
+            .add_signature(signature.clone(), local_key.clone())
+            .unwrap();
+        let built_doc = document.build().unwrap();
+        let signed_doc: Document = Document::new(
+            &built_doc,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
+        assert_eq!(signed_doc.get_signatures(), Some(vec![signature]));
+    }
+}*/

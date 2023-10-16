@@ -14,7 +14,7 @@ use bloock_core::{
     Encrypter as EncrypterCore, LocalAesDecrypter, LocalAesEncrypter, LocalRsaDecrypter,
     LocalRsaEncrypter, ManagedRsaDecrypter, ManagedRsaEncrypter,
 };
-use bloock_keys::entity::key::Key;
+use bloock_keys::{entity::key::Key, certificates::{managed::ManagedCertificate as ManagedCertificateCore, local::LocalCertificate as LocalCertificateCore}};
 use bloock_keys::keys::local::LocalKey as LocalKeyCore;
 use bloock_keys::keys::managed::ManagedKey as ManagedKeyCore;
 use std::convert::TryInto;
@@ -287,6 +287,14 @@ async fn build_record(
         } else if let Some(local_key) = signer.local_key {
             let local_key_core: LocalKeyCore<String> = local_key.into();
             local_key_core.into()
+        } else if let Some(managed_certificate) = signer.managed_certificate {
+            let managed_certificate_core: ManagedCertificateCore = managed_certificate.into();
+            managed_certificate_core.into()
+        } else if let Some(local_certificate) = signer.local_certificate {
+            let local_certificate_core: LocalCertificateCore<String> = local_certificate
+                .try_into()
+                .map_err(|e: BridgeError| e.to_string())?;
+            local_certificate_core.into()
         } else {
             return Err("invalid key provided".to_string());
         };

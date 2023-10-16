@@ -1,7 +1,5 @@
 use crate::{
-    config::service::ConfigService,
-    error::{BloockResult, InfrastructureError},
-    integrity::IntegrityError,
+    config::service::ConfigService, error::BloockResult, integrity::IntegrityError,
     record::entity::record::Record,
 };
 use bloock_http::Client;
@@ -9,33 +7,29 @@ use bloock_keys::entity::key::Key;
 use bloock_signer::entity::signature::Signature;
 use std::sync::Arc;
 
-use super::AuthenticityError;
-
 pub struct AuthenticityService<H: Client> {
     pub http: Arc<H>,
     pub config_service: ConfigService,
 }
 
 impl<H: Client> AuthenticityService<H> {
-    pub async fn sign(&self, record: Record, key: Key) -> BloockResult<Signature> {
-        let payload = record
-            .get_payload()
-            .ok_or(AuthenticityError::PayloadNotFoundError())?;
+    pub async fn sign(&self, mut record: Record, key: &Key) -> BloockResult<Signature> {
+        let signature = record.sign(key).await?;
 
-        let signature = bloock_signer::sign(
+        /*let signature = bloock_signer::sign(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
             payload,
             &key,
         )
         .await
-        .map_err(InfrastructureError::SignerError)?;
+        .map_err(InfrastructureError::SignerError)?;*/
 
         Ok(signature)
     }
 
     pub async fn verify(&self, record: Record) -> BloockResult<bool> {
-        let signatures = match record.get_signatures() {
+        /*let signatures = match record.get_signatures() {
             Some(s) => s,
             None => return Err(IntegrityError::InvalidVerification.into()),
         };
@@ -57,6 +51,14 @@ impl<H: Client> AuthenticityService<H> {
             if !verification_response {
                 return Ok(false);
             }
+        }*/
+
+        let verification_response = record
+            .verify()
+            .await
+            .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
+        if !verification_response {
+            return Ok(false);
         }
 
         Ok(true)
@@ -85,9 +87,20 @@ mod tests {
         let http = MockClient::default();
         let service = authenticity::configure_test(Arc::new(http));
 
-        let record = Record::new(Document::new(&payload).unwrap()).unwrap();
+        let record = Record::new(
+            Document::new(
+                &payload,
+                service.config_service.get_api_base_url(),
+                service.config_service.get_api_key(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
 
-        let result = service.sign(record, local_key.into()).await.unwrap();
+        let result = service
+            .sign(record, &bloock_keys::entity::key::Key::LocalKey(local_key))
+            .await
+            .unwrap();
 
         assert_eq!(result.alg, SignAlg::Es256k);
         assert_ne!(result.signature.len(), 0);
@@ -105,9 +118,20 @@ mod tests {
         let http = MockClient::default();
         let service = authenticity::configure_test(Arc::new(http));
 
-        let record = Record::new(Document::new(&payload).unwrap()).unwrap();
+        let record = Record::new(
+            Document::new(
+                &payload,
+                service.config_service.get_api_base_url(),
+                service.config_service.get_api_key(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
 
-        let result = service.sign(record, local_key.into()).await.unwrap();
+        let result = service
+            .sign(record, &bloock_keys::entity::key::Key::LocalKey(local_key))
+            .await
+            .unwrap();
 
         assert_eq!(result.alg, SignAlg::Es256k);
         assert_ne!(result.signature.len(), 0);

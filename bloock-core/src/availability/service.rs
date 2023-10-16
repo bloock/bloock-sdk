@@ -112,7 +112,14 @@ mod tests {
 
         let service = availability::configure_test(Arc::new(http));
 
-        let record = Record::new(Document::new(&payload).unwrap());
+        let record = Record::new(
+            Document::new(
+                &payload,
+                service.config_service.get_api_base_url(),
+                service.config_service.get_api_key(),
+            )
+            .unwrap(),
+        );
 
         let result = service.publish_hosted(record.unwrap()).await.unwrap();
 
@@ -168,7 +175,14 @@ mod tests {
 
         let service = availability::configure_test(Arc::new(http));
 
-        let record = Record::new(Document::new(&payload).unwrap());
+        let record = Record::new(
+            Document::new(
+                &payload,
+                service.config_service.get_api_base_url(),
+                service.config_service.get_api_key(),
+            )
+            .unwrap(),
+        );
 
         let result = service.publish_ipfs(record.unwrap()).await.unwrap();
 

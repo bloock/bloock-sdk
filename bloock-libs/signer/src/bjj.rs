@@ -9,6 +9,7 @@ use bloock_http::{BloockHttpClient, Client};
 use bloock_keys::keys::local::LocalKey;
 use bloock_keys::keys::managed::ManagedKey;
 use serde::{Deserialize, Serialize};
+use num_bigint::BigInt;
 
 #[derive(Serialize)]
 struct SignRequest {

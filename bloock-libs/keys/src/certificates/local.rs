@@ -113,6 +113,10 @@ impl LocalCertificate<String> {
             password: password.to_owned(),
         })
     }
+
+    pub fn get_certificate_inner(&self) -> Result<Certificate> {
+        Ok(self.certificate.clone())
+    }
 }
 
 #[cfg(test)]

@@ -1,8 +1,4 @@
-use crate::{
-    config::service::ConfigService,
-    error::BloockResult,
-    record::{document::Document, entity::record::Record},
-};
+use crate::{config::service::ConfigService, error::BloockResult, record::entity::record::Record};
 use bloock_encrypter::{Decrypter, Encrypter};
 use bloock_http::Client;
 use std::sync::Arc;
@@ -17,26 +13,22 @@ pub struct EncryptionService<H: Client> {
 impl<H: Client> EncryptionService<H> {
     pub async fn encrypt(
         &self,
-        record: Record,
+        mut record: Record,
         encrypter: Box<dyn Encrypter>,
     ) -> BloockResult<Record> {
-        let mut payload = record.clone();
-        let bytes = record.serialize()?;
-        let ciphertext = encrypter
-            .encrypt(&bytes)
+        record
+            .encrypt(encrypter)
             .await
             .map_err(|e| EncryptionError::EncryptionError(e.to_string()))?;
-
-        payload.set_encryption(ciphertext, encrypter.get_alg())?;
-        Ok(payload)
+        Ok(record)
     }
 
     pub async fn decrypt(
         &self,
-        record: Record,
+        mut record: Record,
         decrypter: Box<dyn Decrypter>,
     ) -> BloockResult<Record> {
-        let doc = match record.document {
+        let doc = match record.document.clone() {
             Some(doc) => doc,
             None => return Err(EncryptionError::PayloadNotFoundError().into()),
         };
@@ -45,14 +37,12 @@ impl<H: Client> EncryptionService<H> {
             return Err(EncryptionError::NotEncryptedError().into());
         }
 
-        let payload = doc.get_payload();
-
-        let decrypted_payload = decrypter
-            .decrypt(&payload)
+        record
+            .decrypt(decrypter)
             .await
             .map_err(|e| EncryptionError::DecryptionError(e.to_string()))?;
 
-        Record::new(Document::new(&decrypted_payload)?)
+        Ok(record)
     }
 }
 
@@ -75,7 +65,15 @@ mod tests {
         let http = MockClient::default();
         let service = encryption::configure_test(Arc::new(http));
 
-        let record = Record::new(Document::new(&payload).unwrap()).unwrap();
+        let record = Record::new(
+            Document::new(
+                &payload,
+                service.config_service.get_api_base_url(),
+                service.config_service.get_api_key(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
 
         let local_key = LocalKey::load(
             bloock_keys::KeyType::Aes128,
@@ -88,8 +86,8 @@ mod tests {
             .unwrap();
 
         assert_ne!(
-            record.get_payload().unwrap().clone(),
-            encrypted.get_payload().unwrap().clone(),
+            record.clone().serialize().unwrap(),
+            encrypted.clone().serialize().unwrap(),
             "Should not return same hash"
         );
 
@@ -99,8 +97,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            record.get_payload().unwrap().clone(),
-            decrypted.get_payload().unwrap().clone(),
+            record.serialize().unwrap().clone(),
+            decrypted.serialize().unwrap().clone(),
             "Should not return same hash"
         )
     }
@@ -112,7 +110,15 @@ mod tests {
         let http = MockClient::default();
         let service = encryption::configure_test(Arc::new(http));
 
-        let record = Record::new(Document::new(&payload).unwrap()).unwrap();
+        let record = Record::new(
+            Document::new(
+                &payload,
+                service.config_service.get_api_base_url(),
+                service.config_service.get_api_key(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
 
         let local_key_params = LocalKeyParams {
             key_type: KeyType::Rsa2048,
@@ -124,8 +130,8 @@ mod tests {
             .unwrap();
 
         assert_ne!(
-            record.get_payload().unwrap().clone(),
-            encrypted.get_payload().unwrap().clone(),
+            record.clone().serialize().unwrap(),
+            encrypted.clone().serialize().unwrap(),
             "Should not return same hash"
         );
 
@@ -135,8 +141,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            record.get_payload().unwrap().clone(),
-            decrypted.get_payload().unwrap().clone(),
+            record.serialize().unwrap().clone(),
+            decrypted.serialize().unwrap().clone(),
             "Should not return same hash"
         )
     }

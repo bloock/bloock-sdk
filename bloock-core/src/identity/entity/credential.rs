@@ -1,4 +1,4 @@
-use bloock_signer::{format::jws::JwsSignature, entity::signature::Signature};
+use bloock_signer::format::jws::JwsSignature;
 use serde::{
     ser::{Error, SerializeTuple},
     Deserialize, Serialize,

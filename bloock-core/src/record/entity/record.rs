@@ -3,8 +3,9 @@ use crate::{
     integrity::{entity::proof::Proof, IntegrityError},
     record::{document::Document, RecordError},
 };
-use bloock_encrypter::entity::alg::EncryptionAlg;
+use bloock_encrypter::{entity::alg::EncryptionAlg, Decrypter, Encrypter};
 use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
+use bloock_keys::entity::key::Key;
 use bloock_signer::entity::signature::Signature;
 use std::cmp::Ordering;
 
@@ -15,7 +16,7 @@ pub struct Record {
 }
 
 impl Record {
-    pub fn new(mut document: Document) -> BloockResult<Self> {
+    pub fn new(document: Document) -> BloockResult<Self> {
         if document.is_encrypted() {
             return Err(OperationalError::CannotCreateRecordFromEncryptedDocument().into());
         }
@@ -47,98 +48,45 @@ impl Record {
         }
     }
 
-    pub fn set_encryption(&mut self, cipher_text: Vec<u8>, alg: &str) -> BloockResult<()> {
+    pub async fn sign(&mut self, key: &Key) -> BloockResult<Signature> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
 
-        doc.set_encryption(cipher_text, alg)?;
+        let signature = doc.sign(key).await?;
+        Ok(signature)
+    }
+
+    pub async fn verify(&self) -> BloockResult<bool> {
+        let doc = match self.document.clone() {
+            Some(doc) => doc,
+            None => return Err(RecordError::DocumentNotFound.into()),
+        };
+
+        let signature = doc.verify().await?;
+        Ok(signature)
+    }
+
+    pub async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<()> {
+        let doc = match &mut self.document {
+            Some(doc) => doc,
+            None => return Err(RecordError::DocumentNotFound.into()),
+        };
+
+        doc.encrypt(encrypter).await?;
         Ok(())
     }
 
-    // pub fn encrypt(mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<Self> {
-    //     let mut doc = match self.document {
-    //         Some(doc) => doc,
-    //         None => return Err(RecordError::DocumentNotFound.into()),
-    //     };
+    pub async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<()> {
+        let doc = match &mut self.document {
+            Some(doc) => doc,
+            None => return Err(RecordError::DocumentNotFound.into()),
+        };
 
-    //     let payload = doc.build()?;
-    //     let ciphertext = encrypter
-    //         .encrypt(&payload)
-    //         .map_err(InfrastructureError::EncrypterError)?;
-
-    //     doc = doc.set_encryption(ciphertext, encrypter.get_alg())?;
-
-    //     self.document = Some(doc);
-    //     Ok(self)
-    // }
-
-    // pub fn decrypt(mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<Self> {
-    //     let mut doc = match self.document {
-    //         Some(doc) => doc,
-    //         None => return Err(RecordError::DocumentNotFound.into()),
-    //     };
-
-    //     if !doc.is_encrypted() {
-    //         Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
-    //     }
-
-    //     let payload = doc.get_payload();
-
-    //     let decrypted_payload = decrypter
-    //         .decrypt(&payload)
-    //         .map_err(InfrastructureError::EncrypterError)?;
-
-    //     doc = doc.remove_encryption(decrypted_payload)?;
-
-    //     self.document = Some(doc);
-    //     Ok(self)
-    // }
-
-    // pub async fn sign(&mut self, signer: Box<dyn Signer>) -> BloockResult<Signature> {
-    //     let doc = match &mut self.document {
-    //         Some(doc) => doc,
-    //         None => return Err(RecordError::DocumentNotFound.into()),
-    //     };
-
-    //     let payload = doc.get_payload();
-
-    //     let signature = signer
-    //         .sign(&payload)
-    //         .await
-    //         .map_err(InfrastructureError::SignerError)?;
-
-    //     doc.add_signature(signature.clone())?;
-
-    //     Ok(signature)
-    // }
-
-    // pub async fn verify(&mut self) -> BloockResult<bool> {
-    //     let signatures = match self.get_signatures() {
-    //         Some(s) => s,
-    //         None => return Err(IntegrityError::InvalidVerification.into()),
-    //     };
-
-    //     let payload = match self.get_payload() {
-    //         Some(s) => s,
-    //         None => return Err(IntegrityError::InvalidVerification.into()),
-    //     };
-
-    //     for signature in signatures {
-    //         let verifier = bloock_signer::create_verifier_from_signature(&signature)
-    //             .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
-    //         let verification_response = verifier
-    //             .verify(payload, signature.clone())
-    //             .await
-    //             .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
-    //         if !verification_response {
-    //             return Ok(false);
-    //         }
-    //     }
-
-    //     Ok(true)
-    // }
+        doc.decrypt(decrypter).await?;
+        Ok(())
+    }
 
     pub fn get_hash(&self) -> String {
         hex::encode(self.hash)
@@ -148,12 +96,12 @@ impl Record {
         self.hash
     }
 
-    pub fn get_payload(&self) -> Option<&Vec<u8>> {
+    /*pub fn get_payload(&self) -> Option<&Vec<u8>> {
         match &self.document {
             Some(d) => Some(&d.payload),
             None => None,
         }
-    }
+    }*/
 
     pub fn get_signatures(&self) -> Option<Vec<Signature>> {
         match &self.document {
@@ -187,7 +135,7 @@ impl Record {
 
     pub fn serialize(self) -> BloockResult<Vec<u8>> {
         match self.document {
-            Some(mut d) => d.build(),
+            Some(d) => d.build(),
             None => Err(RecordError::DocumentNotFound.into()),
         }
     }
@@ -236,15 +184,23 @@ impl TryFrom<&String> for Record {
 
 #[cfg(test)]
 mod tests {
-
-    use bloock_hasher::sha256::Sha256;
+    use bloock_keys::{
+        keys::local::{LocalKey, LocalKeyParams},
+        KeyType,
+    };
 
     use super::*;
-    use crate::{integrity::entity::proof::ProofAnchor, record};
+    use crate::{config, integrity::entity::proof::ProofAnchor, record};
 
     #[test]
     fn new_record() {
-        let document = Document::new("Some String".as_bytes()).unwrap();
+        let config_service = config::configure_test();
+        let document = Document::new(
+            "Some String".as_bytes(),
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
         let record = Record::new(document).unwrap();
 
         assert_eq!(
@@ -256,7 +212,13 @@ mod tests {
 
     #[test]
     fn new_record_from_document_with_proof() {
-        let mut document = Document::new("Some String".as_bytes()).unwrap();
+        let config_service = config::configure_test();
+        let mut document = Document::new(
+            "Some String".as_bytes(),
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
 
         let hash = "02aae7e86eb50f61a62083a320475d9d60cbd52749dbf08fa942b1b97f50aee5";
 
@@ -281,18 +243,31 @@ mod tests {
         assert_eq!(hash, record.get_hash(), "Wrong record hash received");
     }
 
-    #[test]
-    fn new_record_from_document_with_signature() {
-        let mut document = Document::new("Some String".as_bytes()).unwrap();
+    #[tokio::test]
+    async fn new_record_from_document_with_signature() {
+        let config_service = config::configure_test();
+        let mut document = Document::new(
+            "Some String".as_bytes(),
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
 
         let record_no_signature = Record::new(document.clone()).unwrap();
 
-        document.signatures = Some(vec![Signature {
-            alg: bloock_signer::entity::alg::SignAlg::Es256k,
-            kid: "12c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
-            signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
-            message_hash: hex::encode(Sha256::generate_hash(&[document.get_payload().as_slice()])),
-        }]);
+        let local_key = LocalKey {
+            key_type: bloock_keys::KeyType::EcP256k,
+            key: "".to_string(),
+            private_key: Some(
+                "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
+            ),
+            mnemonic: None,
+        };
+
+        let signature = document
+            .sign(&bloock_keys::entity::key::Key::LocalKey(local_key))
+            .await
+            .unwrap();
 
         let record_with_signature = Record::new(document).unwrap();
 
@@ -308,9 +283,14 @@ mod tests {
         );
 
         assert_eq!(
-            "198b50d25946e0678dd84389eb4d0724e249b86f246f897c3c43ed8ff26ef58d",
+            "b33acf7862a66ac2b0b52eb8c5e590b3e2dc792577b88b7f77920a2d9c038871",
             record_with_signature.get_hash(),
             "Wrong record hash received"
         );
+
+        assert_eq!(
+            vec![signature],
+            record_with_signature.get_signatures().unwrap()
+        )
     }
 }

@@ -355,6 +355,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b645a089122eccb6111b4f81cbc1a49f5900ac4666bb93ac027feaecf15607bf"
 
 [[package]]
+name = "bcder"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf16bec990f8ea25cab661199904ef452fcf11f565c404ce6cffbdf3f8cbbc47"
+dependencies = [
+ "bytes",
+ "smallvec",
+]
+
+[[package]]
 name = "bip32"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -743,13 +753,30 @@ dependencies = [
 name = "bloock-metadata"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
+ "bcder",
+ "bloock-encrypter",
+ "bloock-hasher",
+ "bloock-keys",
  "bloock-signer",
+ "bytes",
+ "chrono",
+ "cms",
+ "const-oid 0.9.5",
+ "hex",
  "infer",
  "lopdf",
+ "pem 2.0.1",
+ "reqwest",
+ "ring",
  "serde",
  "serde_json",
+ "signature 2.1.0",
  "thiserror",
+ "tokio",
  "wasm-bindgen-test",
+ "x509-cert",
+ "x509-certificate",
 ]
 
 [[package]]
@@ -779,6 +806,7 @@ dependencies = [
  "bloock-web3",
  "hex",
  "libsecp256k1 0.7.1",
+ "num-bigint 0.4.3",
  "serde",
  "serde_json",
  "thiserror",
@@ -869,9 +897,9 @@ checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
 name = "bytes"
-version = "1.3.0"
+version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dfb24e866b15a1af2a1b663f10c6b6b8f397a84aadb828f12e5b289ec23a3a3c"
+checksum = "a2bd12c1caf447e69cd4528f47f94d203fd2582878ecb9e9465484c4148a8223"
 
 [[package]]
 name = "cacaos"
@@ -1018,6 +1046,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38508a63f4979f0048febc9966fadbd48e5dab31fd0ec6a3f151bbf4a74f7423"
 dependencies = [
  "cc",
+]
+
+[[package]]
+name = "cms"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01b1b34bce0eaafd63b374fa6b58178d72c0b6670e92db786bdd3cde9e37a1f1"
+dependencies = [
+ "const-oid 0.9.5",
+ "der 0.7.8",
+ "spki 0.7.2",
+ "x509-cert",
 ]
 
 [[package]]
@@ -3533,6 +3573,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "pem"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8835c273a76a90455d7344889b0964598e3316e2a79ede8e36f16bdcf2228b8"
+dependencies = [
+ "base64 0.13.0",
+]
+
+[[package]]
+name = "pem"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6b13fe415cdf3c8e44518e18a7c95a13431d9bdf6d15367d82b23c377fdd441a"
+dependencies = [
+ "base64 0.21.2",
+ "serde",
+]
+
+[[package]]
 name = "pem-rfc7468"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5839,6 +5898,24 @@ dependencies = [
  "sha1",
  "signature 2.1.0",
  "spki 0.7.2",
+]
+
+[[package]]
+name = "x509-certificate"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf14059fbc1dce14de1d08535c411ba0b18749c2550a12550300da90b7ba350b"
+dependencies = [
+ "bcder",
+ "bytes",
+ "chrono",
+ "der 0.7.8",
+ "hex",
+ "pem 1.1.1",
+ "ring",
+ "signature 2.1.0",
+ "spki 0.7.2",
+ "thiserror",
 ]
 
 [[package]]

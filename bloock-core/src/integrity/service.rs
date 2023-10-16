@@ -164,23 +164,9 @@ impl<H: Client> IntegrityService<H> {
                 None => continue,
             };
 
-            let signatures = match &document.signatures {
-                Some(s) => s,
-                None => continue,
-            };
-
-            for signature in signatures {
-                let verification_response = bloock_signer::verify(
-                    self.config_service.get_api_base_url(),
-                    self.config_service.get_api_key(),
-                    &document.payload,
-                    signature,
-                )
-                .await
-                .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
-                if !verification_response {
-                    return Err(IntegrityError::InvalidVerification.into());
-                }
+            let ok = document.verify().await?;
+            if !ok {
+                return Err(IntegrityError::InvalidVerification.into());
             }
         }
         let proof = match self.get_proof(records).await {

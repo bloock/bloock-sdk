@@ -2,9 +2,15 @@ use core::time::Duration;
 use std::time::{Duration as TimeDuration, SystemTime};
 
 use x509_cert::{
+    certificate::CertificateInner,
     der,
     time::{Time, Validity},
+    Certificate,
 };
+
+use crate::{entity::key::Key, keys::{local::LocalKey, managed::ManagedKey}, KeyType};
+
+use self::local::{LocalCertificateParams, LocalCertificate};
 
 pub mod local;
 pub mod managed;
@@ -46,6 +52,41 @@ impl CertificateSubject {
 
         subject_names.join(",")
     }
+}
+
+//TODO get X509
+pub trait GetX509Certficate {
+    fn get_certificate(&self) -> Option<Certificate>;
+}
+
+impl GetX509Certficate for Key {
+    fn get_certificate(&self) -> Option<Certificate> {
+        match self {
+            Key::LocalKey(_) => Some(create_self_certificate()),
+            Key::ManagedKey(_) => Some(create_self_certificate()),
+            Key::LocalCertificate(local_certificate) => {
+                local_certificate.get_certificate_inner().ok()
+            }
+            Key::ManagedCertificate(managed_certificate) => todo!(),
+        }
+    }
+}
+
+fn create_self_certificate() -> Certificate {
+    let params = LocalCertificateParams {
+        key_type: KeyType::Rsa2048,
+        password: "password".to_string(),
+        subject: CertificateSubject {
+            common_name: "Bloock".to_string(),
+            organizational_unit: None,
+            organization: None,
+            location: None,
+            state: None,
+            country: None,
+        },
+    };
+    let certificate = LocalCertificate::new(&params).unwrap();
+    certificate.certificate
 }
 
 pub fn from_now(duration: Duration) -> der::Result<Validity> {
