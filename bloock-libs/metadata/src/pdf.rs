@@ -16,7 +16,7 @@ use crate::{
 use async_trait::async_trait;
 use bcder::{
     encode::{PrimitiveContent, Values},
-    Captured, Mode, OctetString, Oid,
+    Captured, Mode, Oid,
 };
 use bloock_encrypter::{Decrypter, Encrypter};
 use bloock_keys::{certificates::GetX509Certficate, entity::key::Key};
@@ -41,7 +41,10 @@ use serde::{de::DeserializeOwned, Serialize};
 use std::collections::HashSet;
 use x509_cert::{
     attr::Attribute,
-    der::asn1::SetOfVec,
+    der::{
+        asn1::{OctetString, OctetStringRef, SetOfVec},
+        Any,
+    },
     spki::{AlgorithmIdentifier, AlgorithmIdentifierOwned},
 };
 use x509_cert::{attr::AttributeValue, der::Encode};
@@ -419,7 +422,7 @@ impl PdfParser {
     }
 
     fn get_signed_data(&self, signature: Signature, key: &Key) -> Result<Vec<u8>> {
-        let mut signer_infos = SetOfVec::<SignerInfo>::default();
+        let mut signer_infos = SetOfVec::default();
         let certificate = match key.get_certificate() {
             Some(c) => c,
             None => Err(MetadataError::GetSignedDataError(
@@ -432,7 +435,7 @@ impl PdfParser {
 
         signed_attributes.insert(Attribute {
             oid: ID_CONTENT_TYPE,
-            values: vec![Captured::from_values(Mode::Der, content_type.encode_ref())],
+            values: SetOfVec::try_from(vec![Any::from(content_type)]).unwrap(),
         });
 
         let digest = hex::decode(signature.message_hash).unwrap();
@@ -440,7 +443,8 @@ impl PdfParser {
         let aa = ID_MESSAGE_DIGEST;
         signed_attributes.insert(Attribute {
             oid: ID_MESSAGE_DIGEST,
-            values: vec![Captured::from_values(Mode::Der, digest.encode())],
+            values: SetOfVec::try_from(vec![Any::from(OctetStringRef::new(&digest).unwrap())])
+                .unwrap(),
         });
 
         /*let mut signed_attributes = signed_attributes
