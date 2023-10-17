@@ -1,53 +1,41 @@
+use crate::cms::SignedData as CmsSignedData;
 use crate::{
-    cms::{
-        asn1::rfc5035::{
-            ESSCertIDv2, ESSCertIDv2Sequence, SigningCertificateV2,
-            ESSCERTIDV2_DEFAULT_HASH_ALGORITHM, OID_SIGNING_CERTIFICATE_V2,
-        },
-        SignedData as CmsSignedData,
-    },
-    default,
     dictionary::{
         acro_form::AcroForm as AcroFormDictionary, annotation::PdfAnnotationWidget, error::Error,
         signature_dictionary::SignatureDictionary, utils,
     },
-    MetadataError, MetadataParser, Result,
+    MetadataError, MetadataParser, Result as BloockResult,
 };
 use async_trait::async_trait;
-use bcder::{
-    encode::{PrimitiveContent, Values},
-    Captured, Mode, Oid,
-};
 use bloock_encrypter::{Decrypter, Encrypter};
 use bloock_keys::{certificates::GetX509Certficate, entity::key::Key};
 use bloock_signer::entity::{alg::SignAlg, signature::Signature};
-use bytes::Bytes;
 use cms::{
+    attr,
     cert::{CertificateChoices, IssuerAndSerialNumber},
     content_info::CmsVersion,
     signed_data::{
-        CertificateSet, DigestAlgorithmIdentifiers, EncapsulatedContentInfo, SignatureValue,
-        SignedAttributes, SignedData, SignerIdentifier, SignerInfo, SignerInfos,
+        DigestAlgorithmIdentifiers, EncapsulatedContentInfo, SignatureValue, SignedAttributes,
+        SignedData, SignerIdentifier, SignerInfo, SignerInfos,
     },
-    *,
 };
+use const_oid::db::rfc5912::{ECDSA_WITH_SHA_256, ID_SHA_256, SHA_256_WITH_RSA_ENCRYPTION};
 use const_oid::db::rfc6268::{ID_CONTENT_TYPE, ID_DATA, ID_MESSAGE_DIGEST};
-use const_oid::{
-    db::rfc5912::{ECDSA_WITH_SHA_256, ID_SHA_256},
-    *,
-};
 use lopdf::{Dictionary, IncrementalDocument, Object};
 use serde::{de::DeserializeOwned, Serialize};
-use std::collections::HashSet;
 use x509_cert::{
     attr::Attribute,
     der::{
-        asn1::{OctetString, OctetStringRef, SetOfVec},
+        asn1::{OctetStringRef, SetOfVec},
         Any,
     },
     spki::{AlgorithmIdentifier, AlgorithmIdentifierOwned},
 };
-use x509_cert::{attr::AttributeValue, der::Encode};
+use x509_cert::{
+    certificate::CertificateInner,
+    der::{Decode, Encode},
+    Certificate,
+};
 
 #[derive(Debug, Clone)]
 pub struct PdfParser {
@@ -58,7 +46,7 @@ pub struct PdfParser {
 
 #[async_trait(?Send)]
 impl MetadataParser for PdfParser {
-    fn load(payload: &[u8]) -> Result<Self> {
+    fn load(payload: &[u8]) -> BloockResult<Self> {
         let mut document = IncrementalDocument::load_from(payload)
             .map_err(|e| MetadataError::LoadError(e.to_string()))?;
         let root_obj_id = document
@@ -80,7 +68,12 @@ impl MetadataParser for PdfParser {
         Ok(parser)
     }
 
-    async fn sign(&mut self, key: &Key, api_host: String, api_key: String) -> Result<Signature> {
+    async fn sign(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+    ) -> BloockResult<Signature> {
         self.modified = true;
 
         // Preparation of the file
@@ -150,9 +143,20 @@ impl MetadataParser for PdfParser {
 
         root.set(b"AcroForm".to_vec(), acro_form_dict);
 
-        //Get payload to sign
+        // Compute ByteRange
         let pdf_payload = self.build()?;
-        let effective_payload = self.compute_byte_range(pdf_payload)?;
+        signature_dict.compute_byte_range(pdf_payload.clone()).unwrap();
+        let dictionary: Dictionary = signature_dict
+            .clone()
+            .try_into()
+            .map_err(|e| MetadataError::LoadMetadataError("".to_string()))?;
+        self.document
+            .new_document
+            .set_object(signature_id, dictionary);
+
+        //Get payload to sign
+        let byte_range_payload = self.compute_byte_range(pdf_payload)?;
+        let effective_payload = self.get_signed_content(byte_range_payload)?;
 
         //Sign
         let signature =
@@ -167,18 +171,18 @@ impl MetadataParser for PdfParser {
         signature_dict
             .compute_content(signature_payload)
             .map_err(|e| MetadataError::LoadMetadataError("".to_string()))?;
-        let sign_dict: Dictionary = signature_dict
+        let dictionary: Dictionary = signature_dict
             .clone()
             .try_into()
             .map_err(|e| MetadataError::LoadMetadataError("".to_string()))?;
         self.document
             .new_document
-            .set_object(signature_id, sign_dict);
+            .set_object(signature_id, dictionary);
 
         Ok(signature)
     }
 
-    async fn verify(&self, api_host: String, api_key: String) -> Result<bool> {
+    async fn verify(&self, api_host: String, api_key: String) -> BloockResult<bool> {
         let verifications = self.get_signatures_and_payload()?;
 
         for verification in verifications.iter() {
@@ -195,7 +199,7 @@ impl MetadataParser for PdfParser {
         Ok(true)
     }
 
-    async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> Result<()> {
+    async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<()> {
         let payload = self.build()?;
         let alg = encrypter.get_alg();
 
@@ -216,7 +220,7 @@ impl MetadataParser for PdfParser {
         Ok(())
     }
 
-    async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> Result<()> {
+    async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<()> {
         self.del("is_encrypted")?;
         self.del("encryption_alg")?;
 
@@ -236,7 +240,7 @@ impl MetadataParser for PdfParser {
         Ok(())
     }
 
-    fn set_proof<T: Serialize>(&mut self, value: &T) -> Result<()> {
+    fn set_proof<T: Serialize>(&mut self, value: &T) -> BloockResult<()> {
         self.set("proof", value)
     }
 
@@ -244,7 +248,7 @@ impl MetadataParser for PdfParser {
         self.get("proof")
     }
 
-    fn get_signatures(&self) -> Result<Vec<Signature>> {
+    fn get_signatures(&self) -> BloockResult<Vec<Signature>> {
         let mut signatures = Vec::new();
         let verifications = self.get_signatures_and_payload()?;
 
@@ -267,9 +271,9 @@ impl MetadataParser for PdfParser {
         }
     }
 
-    fn build(&self) -> Result<Vec<u8>> {
+    fn build(&self) -> BloockResult<Vec<u8>> {
         // document.save_to alters the original document (even if it hasn't been modified) and thus
-        // results in a different hash. To avoid this, we return the original payload if it has not
+        // BloockResults in a different hash. To avoid this, we return the original payload if it has not
         // been modified
         if self.modified {
             let mut out: Vec<u8> = Vec::new();
@@ -289,7 +293,7 @@ const BYTE_RANGE_PLACEHOLDER: &str = "/ByteRange[0 10000 20000 100]";
 const CONTENT_PLACEHOLDER: [u8; 3000] = [48u8; 3000];
 
 impl PdfParser {
-    fn del(&mut self, key: &str) -> Result<()> {
+    fn del(&mut self, key: &str) -> BloockResult<()> {
         self.modified = true;
 
         let dictionary = self.get_metadata_dict_mut()?;
@@ -303,7 +307,7 @@ impl PdfParser {
         Ok(())
     }
 
-    fn set<T: Serialize>(&mut self, key: &str, value: &T) -> Result<()> {
+    fn set<T: Serialize>(&mut self, key: &str, value: &T) -> BloockResult<()> {
         self.modified = true;
 
         let dictionary = self.get_metadata_dict_mut()?;
@@ -330,7 +334,7 @@ impl PdfParser {
             .and_then(|v| serde_json::from_slice(v).ok())
     }
 
-    fn get_metadata_dict(&self) -> Result<&Dictionary> {
+    fn get_metadata_dict(&self) -> BloockResult<&Dictionary> {
         self.document
             .new_document
             .trailer
@@ -341,7 +345,7 @@ impl PdfParser {
             .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
     }
 
-    fn get_metadata_dict_mut(&mut self) -> Result<&mut Dictionary> {
+    fn get_metadata_dict_mut(&mut self) -> BloockResult<&mut Dictionary> {
         self.document
             .new_document
             .trailer
@@ -352,7 +356,7 @@ impl PdfParser {
             .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
     }
 
-    fn compute_byte_range(&self, content: Vec<u8>) -> Result<Vec<u8>> {
+    fn compute_byte_range(&self, content: Vec<u8>) -> BloockResult<Vec<i64>> {
         let byte_range_pos = content
             .windows(BYTE_RANGE_PLACEHOLDER.len())
             .rposition(|window| window == BYTE_RANGE_PLACEHOLDER.as_bytes())
@@ -397,10 +401,10 @@ impl PdfParser {
 
         let byte_range = byte_range.to_vec();
 
-        self.get_signed_content(byte_range)
+        Ok(byte_range)
     }
 
-    fn get_signed_content(&self, byte_range: Vec<i64>) -> Result<Vec<u8>> {
+    fn get_signed_content(&self, byte_range: Vec<i64>) -> BloockResult<Vec<u8>> {
         let payload = self
             .build()
             .map_err(|e| MetadataError::GetPayloadToSignError(e.to_string()))?;
@@ -421,31 +425,38 @@ impl PdfParser {
         Ok(signed_data)
     }
 
-    fn get_signed_data(&self, signature: Signature, key: &Key) -> Result<Vec<u8>> {
+    fn get_signed_data(&self, signature: Signature, key: &Key) -> BloockResult<Vec<u8>> {
         let mut signer_infos = SetOfVec::default();
-        let certificate = match key.get_certificate() {
+        let mut certificates = SetOfVec::default();
+        let cert = match key.get_certificate() {
             Some(c) => c,
             None => Err(MetadataError::GetSignedDataError(
                 "Error getting certificate".to_string(),
             ))?,
         };
+        certificates
+            .insert(CertificateChoices::Certificate(cert.clone()))
+            .unwrap();
 
         let mut signed_attributes = SignedAttributes::default();
         let content_type = ID_DATA;
 
-        signed_attributes.insert(Attribute {
-            oid: ID_CONTENT_TYPE,
-            values: SetOfVec::try_from(vec![Any::from(content_type)]).unwrap(),
-        });
+        signed_attributes
+            .insert(Attribute {
+                oid: ID_CONTENT_TYPE,
+                values: SetOfVec::try_from(vec![Any::from(content_type)]).unwrap(),
+            })
+            .unwrap();
 
         let digest = hex::decode(signature.message_hash).unwrap();
 
-        let aa = ID_MESSAGE_DIGEST;
-        signed_attributes.insert(Attribute {
-            oid: ID_MESSAGE_DIGEST,
-            values: SetOfVec::try_from(vec![Any::from(OctetStringRef::new(&digest).unwrap())])
-                .unwrap(),
-        });
+        signed_attributes
+            .insert(Attribute {
+                oid: ID_MESSAGE_DIGEST,
+                values: SetOfVec::try_from(vec![Any::from(OctetStringRef::new(&digest).unwrap())])
+                    .unwrap(),
+            })
+            .unwrap();
 
         /*let mut signed_attributes = signed_attributes
         .as_sorted()
@@ -472,15 +483,30 @@ impl PdfParser {
         .as_sorted()
         .map_err(|e| MetadataError::GetPayloadToSignError(e.to_string()))?;*/
 
-        let mut signer_info = SignerInfo {
+        let attributes: Vec<(Vec<u8>, Attribute)> = signed_attributes
+            .iter()
+            .map(|x| {
+                let mut encoded = vec![];
+                x.values.encode_to_vec(&mut encoded).unwrap();
+
+                Ok((encoded, x.clone()))
+            })
+            .collect::<Result<Vec<(_, _)>, std::io::Error>>()
+            .unwrap();
+        let mut signed_sorted_attributes = SignedAttributes::default();
+        for attr in attributes {
+            signed_sorted_attributes.insert(attr.1).unwrap();
+        }
+
+        let signer_info = SignerInfo {
             version: CmsVersion::V1,
             sid: SignerIdentifier::IssuerAndSerialNumber(IssuerAndSerialNumber {
-                issuer: certificate.tbs_certificate.issuer,
-                serial_number: certificate.tbs_certificate.serial_number,
+                issuer: cert.tbs_certificate.issuer,
+                serial_number: cert.tbs_certificate.serial_number,
             }),
-            signed_attrs: Some(signed_attributes),
+            signed_attrs: Some(SignedAttributes::from(signed_sorted_attributes)),
             signature_algorithm: AlgorithmIdentifierOwned {
-                oid: ECDSA_WITH_SHA_256,
+                oid: SHA_256_WITH_RSA_ENCRYPTION,
                 parameters: None,
             },
             signature: SignatureValue::new(signature.signature.as_bytes()).unwrap(),
@@ -491,20 +517,15 @@ impl PdfParser {
             unsigned_attrs: None,
         };
 
-        signer_infos.insert(signer_info);
-
-        let mut certificates = CertificateSet;
-        certificates.insert(
-            seen_certificates
-                .into_iter()
-                .map(|cert| CertificateChoices::Certificate(cert.into())),
-        );
+        signer_infos.insert(signer_info).unwrap();
 
         let mut digest_algorithms = DigestAlgorithmIdentifiers::default();
-        digest_algorithms.insert(AlgorithmIdentifier {
-            oid: ID_SHA_256,
-            parameters: None,
-        });
+        digest_algorithms
+            .insert(AlgorithmIdentifier {
+                oid: ID_SHA_256,
+                parameters: None,
+            })
+            .unwrap();
 
         let signed_data = SignedData {
             version: CmsVersion::V1,
@@ -516,7 +537,7 @@ impl PdfParser {
             certificates: if certificates.is_empty() {
                 None
             } else {
-                Some(certificates)
+                Some(cms::signed_data::CertificateSet(certificates))
             },
             crls: None,
             signer_infos: SignerInfos(signer_infos),
@@ -527,7 +548,7 @@ impl PdfParser {
             .map_err(|e| MetadataError::GetSignedDataError(e.to_string()))
     }
 
-    fn get_signatures_and_payload(&self) -> Result<Vec<(Signature, Vec<u8>)>> {
+    fn get_signatures_and_payload(&self) -> BloockResult<Vec<(Signature, Vec<u8>)>> {
         let mut document = self.document.clone();
         let root = utils::get_root(&document).map_err(|e| MetadataError::DeserializeError)?;
 
@@ -577,29 +598,62 @@ impl PdfParser {
             let signed_content = signature
                 .get_signed_content(&pdf_payload)
                 .ok()
-                .zip(CmsSignedData::parse_ber(&signature.contents).ok());
-            let signed_data = match signed_content {
+                .zip(SignedData::from_der(&signature.contents).ok());
+            let res_signed_content = match signed_content {
                 Some(s) => (s.0, s.1),
                 None => return Err(MetadataError::DeserializeError),
             };
+            let signed_payload = res_signed_content.0.clone();
+            let signed_data = res_signed_content.1.clone();
 
-            for signer in signed_data.1.signers() {
-                let raw_signature = signer.signature();
+            for signer in signed_data.signer_infos.0.iter() {
+                let raw_signature = signer.signature.as_bytes();
                 let algorithm = SignAlg::Es256k;
-                let unparsed_public_key = signer
-                    .signature_verifier(signed_data.1.certificates())
-                    .map_err(|e| MetadataError::DeserializeError)?;
-                let message_hash = match signer.signed_attributes() {
-                    Some(s) => s.message_digest().to_vec(),
+                let message_hash = match signer.signed_attrs.clone() {
+                    Some(s) => {
+                        let mut vv = vec![];
+                        for attribute in s.iter() {
+                            if attribute.oid.eq(&ID_MESSAGE_DIGEST) {
+                                for value in attribute.values.iter() {
+                                    vv = value.value().to_vec();
+                                    break;
+                                }
+                            }
+                        }
+                        if vv.is_empty() {
+                            return Err(MetadataError::DeserializeError);
+                        }
+                        vv
+                    }
                     None => return Err(MetadataError::DeserializeError),
                 };
+
+                let unparsed_public_key = match signed_data.certificates.clone() {
+                    Some(c) => {
+                        let mut vv = vec![];
+                        for certificate in c.0.iter() {
+                            let cert: CertificateInner =
+                                CertificateInner::from_der(&certificate.to_der().unwrap()).unwrap();
+                            vv = cert
+                                .tbs_certificate
+                                .subject_public_key_info
+                                .subject_public_key
+                                .raw_bytes()
+                                .to_vec();
+                            break;
+                        }
+                        vv
+                    }
+                    None => return Err(MetadataError::DeserializeError),
+                };
+
                 let signature = Signature {
                     alg: algorithm,
-                    kid: hex::encode(unparsed_public_key.bytes()),
+                    kid: hex::encode(unparsed_public_key),
                     signature: hex::encode(raw_signature),
                     message_hash: hex::encode(message_hash),
                 };
-                response.push((signature, signed_data.0.clone()));
+                response.push((signature, signed_payload.clone()));
             }
         }
         Ok(response)

@@ -1,4 +1,5 @@
 use crate::entity::signature::Signature;
+use crate::rsa::RsaSigner;
 use async_trait::async_trait;
 use bjj::BJJSigner;
 use bloock_keys::{
@@ -14,6 +15,7 @@ pub mod ecdsa;
 pub mod ens;
 pub mod entity;
 pub mod format;
+pub mod rsa;
 
 pub type Result<T> = std::result::Result<T, SignerError>;
 
@@ -33,7 +35,7 @@ pub async fn sign(
     let signer: Box<dyn Signer> = match alg {
         bloock_keys::KeyType::EcP256k => EcdsaSigner::new_boxed(api_host, api_key),
         bloock_keys::KeyType::BJJ => BJJSigner::new_boxed(api_host, api_key),
-        bloock_keys::KeyType::Rsa2048 => todo!(),
+        bloock_keys::KeyType::Rsa2048 => RsaSigner::new_boxed(api_host, api_key),
         bloock_keys::KeyType::Rsa3072 => todo!(),
         bloock_keys::KeyType::Rsa4096 => todo!(),
         bloock_keys::KeyType::Aes128 => todo!(),
@@ -72,6 +74,16 @@ pub async fn verify(
         }
         entity::alg::SignAlg::BjjM => {
             BJJSigner::new_boxed(api_host, api_key)
+                .verify_managed(payload, signature)
+                .await
+        }
+        entity::alg::SignAlg::Rsa2048 => {
+            RsaSigner::new_boxed(api_host, api_key)
+                .verify_local(payload, signature)
+                .await
+        }
+        entity::alg::SignAlg::Rsa2048M => {
+            RsaSigner::new_boxed(api_host, api_key)
                 .verify_managed(payload, signature)
                 .await
         }

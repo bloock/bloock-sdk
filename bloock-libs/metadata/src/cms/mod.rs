@@ -1,9 +1,13 @@
-use ring::{error, signature::VerificationAlgorithm};
+use ring::{signature::VerificationAlgorithm, error};
+use x509_cert::attr::Attributes;
 
 pub mod asn1;
 mod signing;
 
-pub use {bcder::Oid, bytes::Bytes};
+pub use {
+    bcder::Oid,
+    bytes::Bytes,
+};
 
 use {
     crate::cms::asn1::{
@@ -15,7 +19,7 @@ use {
     },
     bcder::{Integer, OctetString},
     pem::PemError,
-    ring::digest::Digest,
+    ring::{digest::Digest},
     std::{
         collections::HashSet,
         fmt::{Debug, Display, Formatter},
@@ -394,6 +398,7 @@ impl Debug for SignerInfo {
     }
 }
 
+
 /// An unparsed, possibly malformed, public key for signature verification.
 pub struct UnparsedPublicKey<B: AsRef<[u8]>> {
     algorithm: &'static dyn VerificationAlgorithm,
@@ -432,7 +437,7 @@ impl<B: AsRef<[u8]>> UnparsedPublicKey<B> {
     ///
     /// See the [crate::signature] module-level documentation for examples.
     pub fn verify(&self, message: &[u8], signature: &[u8]) -> Result<(), error::Unspecified> {
-        Ok(())
+       Ok(())
     }
 }
 
@@ -597,6 +602,8 @@ impl SignerInfo {
             Err(CmsError::DigestNotEqual)
         }
     }
+
+    
 
     /// Obtain an entity for validating the signature described by this instance.
     ///
