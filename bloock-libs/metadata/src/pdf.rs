@@ -1,5 +1,7 @@
-use crate::cms::SignedData as CmsSignedData;
 use crate::{
+    cms::asn1::rfc5035::{
+        ESSCertIDv2, ESSCertIDv2Sequence, SigningCertificateV2, ESSCERTIDV2_DEFAULT_HASH_ALGORITHM,
+    },
     dictionary::{
         acro_form::AcroForm as AcroFormDictionary, annotation::PdfAnnotationWidget, error::Error,
         signature_dictionary::SignatureDictionary, utils,
@@ -7,9 +9,11 @@ use crate::{
     MetadataError, MetadataParser, Result as BloockResult,
 };
 use async_trait::async_trait;
+use bcder::{encode, Captured, Mode, OctetString};
 use bloock_encrypter::{Decrypter, Encrypter};
 use bloock_keys::{certificates::GetX509Certficate, entity::key::Key};
 use bloock_signer::entity::{alg::SignAlg, signature::Signature};
+use cms::content_info::ContentInfo;
 use cms::{
     attr,
     cert::{CertificateChoices, IssuerAndSerialNumber},
@@ -19,10 +23,13 @@ use cms::{
         SignedData, SignerIdentifier, SignerInfo, SignerInfos,
     },
 };
+use const_oid::db::rfc5911::{ID_AA_SIGNING_CERTIFICATE_V_2, ID_SIGNED_DATA};
 use const_oid::db::rfc5912::{ECDSA_WITH_SHA_256, ID_SHA_256, SHA_256_WITH_RSA_ENCRYPTION};
 use const_oid::db::rfc6268::{ID_CONTENT_TYPE, ID_DATA, ID_MESSAGE_DIGEST};
 use lopdf::{Dictionary, IncrementalDocument, Object};
 use serde::{de::DeserializeOwned, Serialize};
+use x509_cert::der::asn1::SequenceOf;
+use x509_cert::der::{AnyRef, Sequence};
 use x509_cert::{
     attr::Attribute,
     der::{
@@ -145,7 +152,9 @@ impl MetadataParser for PdfParser {
 
         // Compute ByteRange
         let pdf_payload = self.build()?;
-        signature_dict.compute_byte_range(pdf_payload.clone()).unwrap();
+        signature_dict
+            .compute_byte_range(pdf_payload.clone())
+            .unwrap();
         let dictionary: Dictionary = signature_dict
             .clone()
             .try_into()
@@ -458,11 +467,7 @@ impl PdfParser {
             })
             .unwrap();
 
-        /*let mut signed_attributes = signed_attributes
-        .as_sorted()
-        .map_err(|e| MetadataError::GetPayloadToSignError(e.to_string()))?;*/
-
-        /*let signing_certificate = SigningCertificateV2 {
+        let signing_certificate = SigningCertificateV2 {
             certs: ESSCertIDv2Sequence(vec![ESSCertIDv2 {
                 hash_algorithm: ESSCERTIDV2_DEFAULT_HASH_ALGORITHM.into(),
                 cert_hash: OctetString::new("a hash".as_bytes().into()),
@@ -470,18 +475,17 @@ impl PdfParser {
             }]),
             policies: None,
         };
+        let captured_signing_certificate =
+            Captured::from_values(Mode::Der, signing_certificate.encode_ref());
+        let signing_certificate_bytes = captured_signing_certificate.as_slice();
 
-        signed_attributes.push(Attribute {
-            typ: Oid(Bytes::copy_from_slice(OID_SIGNING_CERTIFICATE_V2.as_ref())),
-            values: vec![AttributeValue::new(Captured::from_values(
-                Mode::Der,
-                signing_certificate.encode_ref(),
-            ))],
-        });*/
-
-        /*let signed_attributes = signed_attributes
-        .as_sorted()
-        .map_err(|e| MetadataError::GetPayloadToSignError(e.to_string()))?;*/
+        signed_attributes
+            .insert(Attribute {
+                oid: ID_AA_SIGNING_CERTIFICATE_V_2,
+                values: SetOfVec::try_from(vec![Any::from_der(signing_certificate_bytes).unwrap()])
+                    .unwrap(),
+            })
+            .unwrap();
 
         let attributes: Vec<(Vec<u8>, Attribute)> = signed_attributes
             .iter()
@@ -509,7 +513,7 @@ impl PdfParser {
                 oid: SHA_256_WITH_RSA_ENCRYPTION,
                 parameters: None,
             },
-            signature: SignatureValue::new(signature.signature.as_bytes()).unwrap(),
+            signature: SignatureValue::new(hex::decode(signature.signature).unwrap()).unwrap(),
             digest_alg: AlgorithmIdentifierOwned {
                 oid: ID_SHA_256,
                 parameters: None,
@@ -541,6 +545,17 @@ impl PdfParser {
             },
             crls: None,
             signer_infos: SignerInfos(signer_infos),
+        };
+
+        let signed_data_der = signed_data
+            .to_der()
+            .map_err(|e| MetadataError::GetSignedDataError(e.to_string()))?;
+
+        let content = AnyRef::try_from(signed_data_der.as_slice()).unwrap();
+
+        let signed_data = ContentInfo {
+            content_type: ID_SIGNED_DATA,
+            content: Any::from(content),
         };
 
         signed_data
