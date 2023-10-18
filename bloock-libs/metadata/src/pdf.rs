@@ -388,14 +388,15 @@ impl PdfParser {
             .ok_or(MetadataError::GetPayloadToSignError("Malformed PDF".into()))?
             + placeholder_pos;
         let placeholder_length_with_brackets = (placeholder_end + 1) - placeholder_pos;
-        let _placeholder_length = placeholder_length_with_brackets - 2;
+        let placeholder_length = placeholder_length_with_brackets - 2;
 
         let mut byte_range = [0i64; 4];
-        byte_range[1] = placeholder_pos as i64;
-        byte_range[2] = byte_range[1] + placeholder_length_with_brackets as i64;
+        byte_range[1] = placeholder_pos as i64 + 1;
+        byte_range[2] = byte_range[1] + placeholder_length as i64;
         byte_range[3] = content.len() as i64 - byte_range[2];
 
-        let original_length = BYTE_RANGE_PLACEHOLDER.len();
+        // /ByteRange[0 10000 20000 100]
+        let original_length = BYTE_RANGE_PLACEHOLDER.len() - 12;
 
         let actual_length = byte_range
             .iter()
