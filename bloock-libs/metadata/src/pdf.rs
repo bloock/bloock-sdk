@@ -1,3 +1,5 @@
+use std::fs;
+
 use crate::{
     cms::asn1::rfc5035::{
         ESSCertIDv2, ESSCertIDv2Sequence, SigningCertificateV2, ESSCERTIDV2_DEFAULT_HASH_ALGORITHM,
@@ -11,6 +13,8 @@ use crate::{
 use async_trait::async_trait;
 use bcder::{Captured, Mode, OctetString};
 use bloock_encrypter::{Decrypter, Encrypter};
+use bloock_hasher::sha256::Sha256;
+use bloock_hasher::Hasher;
 use bloock_keys::{certificates::GetX509Certficate, entity::key::Key};
 use bloock_signer::entity::{alg::SignAlg, signature::Signature};
 use cms::content_info::ContentInfo;
@@ -25,7 +29,7 @@ use cms::{
 use const_oid::db::rfc5911::{ID_AA_SIGNING_CERTIFICATE_V_2, ID_SIGNED_DATA};
 use const_oid::db::rfc5912::{ID_SHA_256, SHA_256_WITH_RSA_ENCRYPTION};
 use const_oid::db::rfc6268::{ID_CONTENT_TYPE, ID_DATA, ID_MESSAGE_DIGEST};
-use lopdf::{Dictionary, IncrementalDocument, Object};
+use lopdf::{Dictionary, Document, IncrementalDocument, Object};
 use rsa::{
     pkcs8::{DecodePublicKey, EncodePublicKey, LineEnding},
     RsaPublicKey,
@@ -48,31 +52,27 @@ use x509_cert::{
 #[derive(Debug, Clone)]
 pub struct PdfParser {
     modified: bool,
-    document: IncrementalDocument,
+    document: Document,
     original_payload: Vec<u8>,
 }
 
 #[async_trait(?Send)]
 impl MetadataParser for PdfParser {
     fn load(payload: &[u8]) -> BloockResult<Self> {
-        let mut document = IncrementalDocument::load_from(payload)
-            .map_err(|e| MetadataError::LoadError(e.to_string()))?;
+        let mut document =
+            Document::load_from(payload).map_err(|e| MetadataError::LoadError(e.to_string()))?;
         let root_obj_id = document
-            .new_document
             .trailer
             .get(b"Root")
             .unwrap()
             .as_reference()
-            .unwrap();
-        document
-            .opt_clone_object_to_new_document(root_obj_id)
             .unwrap();
         let parser = PdfParser {
             modified: false,
             document,
             original_payload: payload.to_vec(),
         };
-        
+
         Ok(parser)
     }
 
@@ -85,20 +85,14 @@ impl MetadataParser for PdfParser {
         self.modified = true;
 
         // Preparation of the file
-        let page_id = self
-            .document
-            .get_prev_documents()
-            .get_pages()
-            .get(&1)
-            .unwrap()
-            .to_owned();
+        let page_id = self.document.get_pages().get(&1).unwrap().to_owned();
 
         let mut signature_dict = SignatureDictionary::default();
         let dictionary: Dictionary = signature_dict
             .clone()
             .try_into()
             .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
-        let signature_id = self.document.new_document.add_object(dictionary);
+        let signature_id = self.document.add_object(dictionary);
 
         // Create signature annotation
         let annotation = PdfAnnotationWidget {
@@ -111,14 +105,10 @@ impl MetadataParser for PdfParser {
         let annotation_dict: Dictionary = annotation
             .try_into()
             .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
-        let annotation_id = self.document.new_document.add_object(annotation_dict);
+        let annotation_id = self.document.add_object(annotation_dict);
 
-        self.document
-            .opt_clone_object_to_new_document(page_id)
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
         let page_dict = self
             .document
-            .new_document
             .get_dictionary_mut(page_id)
             .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
 
@@ -159,9 +149,7 @@ impl MetadataParser for PdfParser {
             .clone()
             .try_into()
             .map_err(|e| MetadataError::LoadMetadataError("".to_string()))?;
-        self.document
-            .new_document
-            .set_object(signature_id, dictionary);
+        self.document.set_object(signature_id, dictionary);
 
         //Get payload to sign
         let effective_payload = self.get_signed_content(byte_range_payload.clone())?;
@@ -183,9 +171,7 @@ impl MetadataParser for PdfParser {
             .clone()
             .try_into()
             .map_err(|e| MetadataError::LoadMetadataError("".to_string()))?;
-        self.document
-            .new_document
-            .set_object(signature_id, dictionary);
+        self.document.set_object(signature_id, dictionary);
 
         Ok(signature)
     }
@@ -253,7 +239,7 @@ impl MetadataParser for PdfParser {
         if self.modified {
             let mut out: Vec<u8> = Vec::new();
             let mut raw_document = self.document.clone();
-            raw_document.new_document.compress();
+            raw_document.compress();
             raw_document
                 .save_to(&mut out)
                 .map_err(|e| MetadataError::WriteError(e.to_string()))?;
@@ -310,22 +296,20 @@ impl PdfParser {
 
     fn get_metadata_dict(&self) -> BloockResult<&Dictionary> {
         self.document
-            .get_prev_documents()
             .trailer
             .get(b"Info")
             .and_then(Object::as_reference)
-            .and_then(|id| self.document.new_document.get_object(id))
+            .and_then(|id| self.document.get_object(id))
             .and_then(Object::as_dict)
             .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
     }
 
     fn get_metadata_dict_mut(&mut self) -> BloockResult<&mut Dictionary> {
         self.document
-            .get_prev_documents()
             .trailer
             .get(b"Info")
             .and_then(Object::as_reference)
-            .and_then(|id| self.document.new_document.get_object_mut(id))
+            .and_then(|id| self.document.get_object_mut(id))
             .and_then(Object::as_dict_mut)
             .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
     }
@@ -356,8 +340,8 @@ impl PdfParser {
         let placeholder_length = placeholder_length_with_brackets - 2;
 
         let mut byte_range = [0i64; 4];
-        byte_range[1] = placeholder_pos as i64 + 1;
-        byte_range[2] = byte_range[1] + placeholder_length as i64;
+        byte_range[1] = placeholder_pos as i64;
+        byte_range[2] = byte_range[1] + placeholder_length_with_brackets as i64;
         byte_range[3] = content.len() as i64 - byte_range[2];
 
         // /ByteRange[0 10000 20000 100]
@@ -433,10 +417,13 @@ impl PdfParser {
             })
             .unwrap();
 
+        let cert_der = cert.to_der().unwrap();
+        let cert_hash = Sha256::generate_hash(&[&cert_der]).to_vec();
+
         let signing_certificate = SigningCertificateV2 {
             certs: ESSCertIDv2Sequence(vec![ESSCertIDv2 {
                 hash_algorithm: ESSCERTIDV2_DEFAULT_HASH_ALGORITHM.into(),
-                cert_hash: OctetString::new("a hash".as_bytes().into()),
+                cert_hash: OctetString::new(cert_hash.into()),
                 issuer_serial: None,
             }]),
             policies: None,
@@ -535,7 +522,8 @@ impl PdfParser {
 
         let acro_form = match root.get(b"AcroForm") {
             Ok(a) => AcroFormDictionary::try_from(
-                a.as_dict().map_err(|e| MetadataError::LoadError(e.to_string()))?,
+                a.as_dict()
+                    .map_err(|e| MetadataError::LoadError(e.to_string()))?,
             )
             .map_err(|e| MetadataError::DeserializeError)?,
             Err(_) => AcroFormDictionary::default(),
@@ -547,8 +535,7 @@ impl PdfParser {
             .filter_map(|f| {
                 let id = f.to_owned().to_owned();
                 document
-                    .opt_clone_object_to_new_document(id)
-                    .and_then(|_| document.new_document.get_object(id))
+                    .get_object(id)
                     .and_then(|o| o.as_dict())
                     .map_err(Error::LoPdf)
                     .and_then(PdfAnnotationWidget::try_from)
@@ -563,8 +550,7 @@ impl PdfParser {
             .filter_map(|s| {
                 let id = s.to_owned();
                 document
-                    .opt_clone_object_to_new_document(id)
-                    .and_then(|_| document.new_document.get_object(id))
+                    .get_object(id)
                     .and_then(|o| o.as_dict())
                     .map_err(Error::LoPdf)
                     .and_then(SignatureDictionary::try_from)

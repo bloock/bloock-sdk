@@ -60,8 +60,8 @@ impl SignatureDictionary {
         let placeholder_length = placeholder_length_with_brackets - 2;
 
         let mut byte_range = [0i64; 4];
-        byte_range[1] = placeholder_pos as i64 + 1;
-        byte_range[2] = byte_range[1] + placeholder_length as i64;
+        byte_range[1] = placeholder_pos as i64;
+        byte_range[2] = byte_range[1] + placeholder_length_with_brackets as i64;
         byte_range[3] = content.len() as i64 - byte_range[2];
 
         // /ByteRange[0 10000 20000 100]

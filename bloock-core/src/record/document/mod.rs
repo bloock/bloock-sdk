@@ -252,11 +252,11 @@ mod tests {
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
-        // fs::write(
-        //     "./src/record/document/assets/dummy_out.pdf",
-        //     built_doc.clone(),
-        // )
-        // .unwrap();
+        fs::write(
+            "./src/record/document/assets/dummy_out.pdf",
+            built_doc.clone(),
+        )
+        .unwrap();
         let signed_doc: Document = Document::new(
             &built_doc,
             config_service.get_api_base_url(),
@@ -390,7 +390,7 @@ mod tests {
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
     }
-    
+
     #[tokio::test]
     async fn test_encrypted_pdf_with_proof() {
         let payload = include_bytes!("./assets/dummy.pdf");
