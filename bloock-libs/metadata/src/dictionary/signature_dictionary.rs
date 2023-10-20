@@ -1,5 +1,6 @@
 use super::{error::Error, utils};
 use chrono::Utc;
+use cms::signed_data;
 use lopdf::Dictionary;
 
 const BYTE_RANGE_PLACEHOLDER: &str = "/ByteRange[0 10000 20000 100]";
@@ -112,7 +113,7 @@ impl SignatureDictionary {
         let mut signed_data = Vec::with_capacity(capacity);
         signed_data.extend_from_slice(first_part);
         signed_data.extend_from_slice(second_part);
-
+    
         Ok(signed_data)
     }
 }

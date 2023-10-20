@@ -36,10 +36,10 @@ pub async fn sign(
         bloock_keys::KeyType::EcP256k => EcdsaSigner::new_boxed(api_host, api_key),
         bloock_keys::KeyType::BJJ => BJJSigner::new_boxed(api_host, api_key),
         bloock_keys::KeyType::Rsa2048 => RsaSigner::new_boxed(api_host, api_key),
-        bloock_keys::KeyType::Rsa3072 => todo!(),
-        bloock_keys::KeyType::Rsa4096 => todo!(),
-        bloock_keys::KeyType::Aes128 => todo!(),
-        bloock_keys::KeyType::Aes256 => todo!(),
+        bloock_keys::KeyType::Rsa3072 => RsaSigner::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa4096 => RsaSigner::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Aes128 => Err(SignerError::InvalidSignatureAlg())?,
+        bloock_keys::KeyType::Aes256 => Err(SignerError::InvalidSignatureAlg())?,
     };
 
     match key {
@@ -77,12 +77,12 @@ pub async fn verify(
                 .verify_managed(payload, signature)
                 .await
         }
-        entity::alg::SignAlg::Rsa2048 => {
+        entity::alg::SignAlg::Rsa => {
             RsaSigner::new_boxed(api_host, api_key)
                 .verify_local(payload, signature)
                 .await
         }
-        entity::alg::SignAlg::Rsa2048M => {
+        entity::alg::SignAlg::RsaM => {
             RsaSigner::new_boxed(api_host, api_key)
                 .verify_managed(payload, signature)
                 .await

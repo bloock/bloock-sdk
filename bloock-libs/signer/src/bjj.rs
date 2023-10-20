@@ -1,4 +1,8 @@
 use crate::entity::alg::SignAlg;
+use crate::entity::dto::sign_request::SignRequest;
+use crate::entity::dto::sign_response::SignResponse;
+use crate::entity::dto::verify_request::VerifyRequest;
+use crate::entity::dto::verify_response::VerifyResponse;
 use crate::entity::signature::Signature;
 use crate::{Signer, SignerError};
 use async_trait::async_trait;
@@ -8,33 +12,6 @@ use bloock_hasher::Hasher;
 use bloock_http::{BloockHttpClient, Client};
 use bloock_keys::keys::local::LocalKey;
 use bloock_keys::keys::managed::ManagedKey;
-use serde::{Deserialize, Serialize};
-use num_bigint::BigInt;
-
-#[derive(Serialize)]
-struct SignRequest {
-    key_id: String,
-    algorithm: String,
-    payload: String,
-}
-
-#[derive(Deserialize)]
-struct SignResponse {
-    signature: String,
-}
-
-#[derive(Serialize)]
-struct VerifyRequest {
-    key_id: String,
-    algorithm: String,
-    signature: String,
-    payload: String,
-}
-
-#[derive(Deserialize)]
-struct VerifyResponse {
-    verify: bool,
-}
 
 pub struct BJJSigner {
     api_host: String,
@@ -92,7 +69,7 @@ impl Signer for BJJSigner {
         let signature = Signature {
             signature: res.signature,
             alg: SignAlg::BjjM,
-            kid: key.id.clone(),
+            kid: key.public_key.clone(),
             message_hash: encoded_hash,
         };
 
@@ -109,7 +86,7 @@ impl Signer for BJJSigner {
         let http = BloockHttpClient::new(self.api_key.clone());
 
         let req = VerifyRequest {
-            key_id: signature.kid.clone(),
+            public_key: signature.kid.clone(),
             algorithm: "BJJ".to_string(),
             payload: hex::encode(hash),
             signature: signature.signature.clone(),
@@ -160,7 +137,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(signature.alg, SignAlg::BjjM);
-        assert_eq!(signature.kid, managed_key.id);
+        assert_eq!(signature.kid, managed_key.public_key);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)

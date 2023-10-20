@@ -12,7 +12,7 @@ cfg_wasm! {
     use crate::wasm_http::SimpleHttpClient;
 }
 
-const API_VERSION: &str = "2023-07-13";
+const API_VERSION: &str = "2023-10-19";
 
 pub struct BloockHttpClient {
     api_key: String,

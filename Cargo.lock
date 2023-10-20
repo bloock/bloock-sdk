@@ -769,6 +769,7 @@ dependencies = [
  "pem 2.0.1",
  "reqwest",
  "ring",
+ "rsa 0.9.2",
  "serde",
  "serde_json",
  "signature 2.1.0",
