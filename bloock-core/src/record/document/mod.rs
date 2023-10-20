@@ -229,12 +229,12 @@ mod tests {
         let certificate_params = LocalCertificateParams {
             key_type: bloock_keys::KeyType::Rsa2048,
             subject: CertificateSubject {
-                common_name: "bloock".to_string(),
-                organizational_unit: None,
-                organization: None,
-                location: None,
+                common_name: "Google internet Authority G2".to_string(),
+                organization: Some("Google Inc".to_string()),
+                organizational_unit: Some("IT Department".to_string()),
+                country: Some("US".to_string()),
                 state: None,
-                country: None,
+                location: None,
             },
             password: "password".to_string(),
         };

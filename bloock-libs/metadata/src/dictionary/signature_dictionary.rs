@@ -4,7 +4,7 @@ use cms::signed_data;
 use lopdf::Dictionary;
 
 const BYTE_RANGE_PLACEHOLDER: &str = "/ByteRange[0 10000 20000 100]";
-const CONTENT_PLACEHOLDER: [u8; 3000] = [48u8; 3000];
+const CONTENT_PLACEHOLDER: [u8; 3000] = [0u8; 3000];
 
 #[derive(Debug, Clone)]
 pub struct SignatureDictionary {
@@ -26,7 +26,7 @@ impl Default for SignatureDictionary {
             filter: "Adobe.PPKLite".to_string(),
             sub_filter: Some("ETSI.CAdES.detached".to_string()),
             byte_range: vec![0, 10000, 20000, 100],
-            contents: vec![0u8; 1500],
+            contents: CONTENT_PLACEHOLDER.to_vec(),
             m: Some(now.format("D:%Y%m%d%H%M%S+00'00'").to_string()),
             name: Some("Bloock".to_string()),
         }
@@ -113,7 +113,7 @@ impl SignatureDictionary {
         let mut signed_data = Vec::with_capacity(capacity);
         signed_data.extend_from_slice(first_part);
         signed_data.extend_from_slice(second_part);
-    
+
         Ok(signed_data)
     }
 }
