@@ -5,7 +5,7 @@ use crate::{
 use bloock_http::Client;
 use der::Decode;
 use serde::{Deserialize, Serialize};
-use x509_cert::certificate::CertificateInner;
+use x509_cert::{certificate::CertificateInner, Certificate};
 
 use super::CertificateSubject;
 
@@ -114,7 +114,7 @@ impl ManagedCertificate {
         id: String,
         api_host: String,
         api_key: String,
-    ) -> Result<CertificateInner> {
+    ) -> Result<Certificate> {
         let client = bloock_http::BloockHttpClient::new(api_key);
 
         let res: ManagedCertificateResponse = client
@@ -179,6 +179,7 @@ mod tests {
     };
 
     use super::{ManagedCertificate, ManagedCertificateParams};
+    use std::{thread::sleep, time::Duration};
 
     #[tokio::test]
     async fn test_managed_certificate_ec() {
@@ -239,10 +240,10 @@ mod tests {
         assert_eq!(certificate.protection, ProtectionLevel::SOFTWARE);
         assert_ne!(certificate.key.public_key, "".to_string());
 
-        let x509_certificate =
-            ManagedCertificate::load_x509_certificate(certificate.id, api_host, api_key)
-                .await
-                .unwrap();
-        let xx = x509_certificate;
+        sleep(Duration::from_secs(2));
+
+        ManagedCertificate::load_x509_certificate(certificate.id, api_host, api_key)
+            .await
+            .unwrap();
     }
 }

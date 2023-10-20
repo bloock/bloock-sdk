@@ -2,15 +2,18 @@ use core::time::Duration;
 use std::time::{Duration as TimeDuration, SystemTime};
 
 use x509_cert::{
-    certificate::CertificateInner,
     der,
     time::{Time, Validity},
     Certificate,
 };
 
-use crate::{entity::key::Key, keys::{local::LocalKey, managed::ManagedKey}, KeyType};
+use crate::{entity::key::Key, KeyType};
 
-use self::local::{LocalCertificateParams, LocalCertificate};
+use self::{
+    local::{LocalCertificate, LocalCertificateParams},
+    managed::ManagedCertificate,
+};
+use async_trait::async_trait;
 
 pub mod local;
 pub mod managed;
@@ -54,20 +57,29 @@ impl CertificateSubject {
     }
 }
 
-//TODO get X509
+#[async_trait(?Send)]
 pub trait GetX509Certficate {
-    fn get_certificate(&self) -> Option<Certificate>;
+    async fn get_certificate(&self, api_host: String, api_key: String) -> Option<Certificate>;
 }
 
+#[async_trait(?Send)]
 impl GetX509Certficate for Key {
-    fn get_certificate(&self) -> Option<Certificate> {
+    async fn get_certificate(&self, api_host: String, api_key: String) -> Option<Certificate> {
         match self {
             Key::LocalKey(_) => Some(create_self_certificate()),
             Key::ManagedKey(_) => Some(create_self_certificate()),
             Key::LocalCertificate(local_certificate) => {
                 local_certificate.get_certificate_inner().ok()
             }
-            Key::ManagedCertificate(managed_certificate) => todo!(),
+            Key::ManagedCertificate(managed_certificate) => {
+                ManagedCertificate::load_x509_certificate(
+                    managed_certificate.id.clone(),
+                    api_host,
+                    api_key,
+                )
+                .await
+                .ok()
+            }
         }
     }
 }

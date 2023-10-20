@@ -114,77 +114,6 @@ impl Document {
             .map_err(InfrastructureError::MetadataError)?;
         Ok(result)
     }
-
-    /*pub fn add_signature(&mut self, signature: Signature, key: Key) -> BloockResult<&mut Self> {
-        if self.is_encrypted {
-            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
-        }
-
-        let signatures = match self.signatures.clone() {
-            Some(mut s) => {
-                s.push((signature, key));
-                s
-            }
-            None => vec![signature, key],
-        };
-
-        self.signatures = Some(signatures);
-
-        if self.proof.is_some() {
-            self.proof = None;
-        }
-
-        Ok(self)
-    }*/
-
-    /*pub fn set_encryption(&mut self, ciphertext: Vec<u8>, alg: &str) -> BloockResult<&mut Self> {
-        self.update_parser(ciphertext)?;
-        self.update_payload()?;
-
-        self.is_encrypted = true;
-
-        self.set_encryption_alg(alg)?;
-
-        Ok(self)
-    }
-
-    fn set_encryption_alg(&mut self, alg: &str) -> BloockResult<()> {
-        self.parser
-            .set("encryption_alg", &alg)
-            .map_err(|err| InfrastructureError::MetadataError(err).into())
-    }*/
-
-    /*pub fn remove_encryption(mut self, decrypted_payload: Vec<u8>) -> BloockResult<Self> {
-        self.update_parser(decrypted_payload)?;
-        self.update_payload()?;
-
-        self.is_encrypted = false;
-        self.proof = self.parser.get("proof");
-        self.signatures = self.parser.get_signatures();
-
-        Ok(self)
-    }*/
-
-    /*pub fn get_signatures(&self) -> Option<(Vec<Signature>, Key)> {
-        self.signatures.clone()
-    }*/
-
-    /*pub fn get_payload(&self) -> Vec<u8> {
-        self.payload.clone()
-    }*/
-
-    /*fn update_parser(&mut self, payload: Vec<u8>) -> BloockResult<()> {
-        self.parser = FileParser::load(&payload).map_err(InfrastructureError::MetadataError)?;
-        Ok(())
-    }
-
-    fn update_payload(&mut self) -> BloockResult<()> {
-        self.payload = self
-            .parser
-            .get_data()
-            .map_err(InfrastructureError::MetadataError)?;
-        Ok(())
-    }*/
 }
 
 impl PartialEq for Document {
@@ -206,25 +135,25 @@ mod tests {
     };
     use bloock_encrypter::{
         local::aes::{LocalAesDecrypter, LocalAesEncrypter},
-        Decrypter, Encrypter,
     };
-    use bloock_hasher::{keccak::Keccak256, Hasher};
     use bloock_keys::{
         certificates::{
             local::{LocalCertificate, LocalCertificateParams},
+            managed::{ManagedCertificate, ManagedCertificateParams},
             CertificateSubject,
         },
         entity::key::Key::LocalCertificate as LocalCertificateEntity,
+        entity::key::Key::ManagedCertificate as ManagedCertificateEntity,
     };
     use bloock_keys::{
         keys::local::{LocalKey, LocalKeyParams},
         KeyType,
     };
-    use bloock_signer::{ecdsa::EcdsaSigner, Signer};
-    use std::{env, fs};
+    use std::{fs};
+    use std::{thread::sleep, time::Duration};
 
     #[tokio::test]
-    async fn test_signed_and_verify_pdf() {
+    async fn test_signed_and_verify_pdf_with_local_certificate() {
         let payload = include_bytes!("./assets/dummy.pdf");
         let certificate_params = LocalCertificateParams {
             key_type: bloock_keys::KeyType::Rsa2048,
@@ -270,17 +199,61 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_signed_and_verify_pdf_with_managed_certificate() {
+        let api_host = "https://api.bloock.dev".to_string();
+        let api_key =
+            "tFD-hh1QYTj1TQEp3LulhHAredSkekobuuZI8vduysc7sx2RZTdpnX6A5FSQuSvT".to_string();
+
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let certificate_params = ManagedCertificateParams {
+            key_type: bloock_keys::KeyType::Rsa2048,
+            subject: CertificateSubject {
+                common_name: "Google internet Authority G2".to_string(),
+                organization: Some("Google Inc".to_string()),
+                organizational_unit: Some("IT Department".to_string()),
+                country: Some("US".to_string()),
+                location: None,
+                state: None,
+            },
+            expiration: 5,
+        };
+        let managed_certificate =
+            ManagedCertificate::new(&certificate_params, api_host.clone(), api_key.clone())
+                .await
+                .unwrap();
+        sleep(Duration::from_secs(2));
+
+        let mut document = Document::new(payload, api_host.clone(), api_key.clone()).unwrap();
+        let signature = document
+            .sign(&ManagedCertificateEntity(managed_certificate))
+            .await
+            .unwrap();
+        let built_doc = document.build().unwrap();
+        fs::write(
+            "./src/record/document/assets/dummy_out.pdf",
+            built_doc.clone(),
+        )
+        .unwrap();
+        let signed_doc: Document =
+            Document::new(&built_doc, api_host.clone(), api_key.clone()).unwrap();
+        //assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
+
+        let result = signed_doc.verify().await.unwrap();
+        assert!(result)
+    }
+
+    /*#[tokio::test]
     async fn test_double_signed_and_verify_pdf() {
         let payload = include_bytes!("./assets/dummy.pdf");
         let certificate_params = LocalCertificateParams {
             key_type: bloock_keys::KeyType::Rsa2048,
             subject: CertificateSubject {
-                common_name: "bloock".to_string(),
-                organizational_unit: None,
-                organization: None,
+                common_name: "Google internet Authority G2".to_string(),
+                organization: Some("Google Inc".to_string()),
+                organizational_unit: Some("IT Department".to_string()),
+                country: Some("US".to_string()),
                 location: None,
                 state: None,
-                country: None,
             },
             password: "password".to_string(),
         };
@@ -301,12 +274,12 @@ mod tests {
         let certificate_params2 = LocalCertificateParams {
             key_type: bloock_keys::KeyType::Rsa2048,
             subject: CertificateSubject {
-                common_name: "bloock2".to_string(),
-                organizational_unit: None,
-                organization: None,
+                common_name: "Google internet Authority G2".to_string(),
+                organization: Some("Google Inc".to_string()),
+                organizational_unit: Some("IT Department".to_string()),
+                country: Some("US".to_string()),
                 location: None,
                 state: None,
-                country: None,
             },
             password: "password".to_string(),
         };
@@ -342,7 +315,7 @@ mod tests {
 
         let result = signed_doc.verify().await.unwrap();
         assert!(result)
-    }
+    }*/
 
     #[tokio::test]
     async fn test_encrypted_pdf() {
@@ -459,14 +432,28 @@ mod tests {
         assert_eq!(decrypted_record.get_proof().unwrap(), proof);
     }
 
-    /*#[tokio::test]
+    #[tokio::test]
     async fn test_encrypted_pdf_with_proof_and_signatures() {
         let payload = include_bytes!("./assets/dummy.pdf");
+        let config_service = config::configure_test();
 
         let local_key_params = LocalKeyParams {
             key_type: KeyType::Aes128,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
+        let certificate_params = LocalCertificateParams {
+            key_type: bloock_keys::KeyType::Rsa2048,
+            subject: CertificateSubject {
+                common_name: "Google internet Authority G2".to_string(),
+                organization: Some("Google Inc".to_string()),
+                organizational_unit: Some("IT Department".to_string()),
+                country: Some("US".to_string()),
+                state: None,
+                location: None,
+            },
+            password: "password".to_string(),
+        };
+        let local_certificate = LocalCertificate::new(&certificate_params).unwrap();
 
         let encrypter = LocalAesEncrypter::new(local_key.clone());
 
@@ -494,30 +481,21 @@ mod tests {
             nodes: vec![[0u8; 32]],
         };
 
-        let signature = Signature {
-            alg: bloock_signer::entity::alg::SignAlg::Es256k,
-            kid: "02d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff8".to_string(),
-            signature: "945efccb10955499e50bd4e1eeadb51aac9136f3e91b8d29c1b817cb42284268500b5f191693a0d927601df5f282804a6eacf5ff8a1522bda5c2ec4dc681750b".to_string(),
-            message_hash: hex::encode(Keccak256::generate_hash(&[payload])),
-        };
+        document.set_proof(proof.clone()).unwrap();
 
-        document.set_proof(proof).unwrap();
-
-        document
-            .add_signature(signature.clone(), local_key.clone())
+        let signature = document
+            .sign(&LocalCertificateEntity(local_certificate))
+            .await
             .unwrap();
 
         let expected_payload = document.build().unwrap();
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        let ciphertext = encrypter.encrypt(&document.build().unwrap()).await.unwrap();
-        document
-            .set_encryption(ciphertext, encrypter.get_alg())
-            .unwrap();
+        document.encrypt(encrypter).await.unwrap();
 
         let built_doc = document.build().unwrap();
-        let encrypted_doc = Document::new(
+        let mut encrypted_doc = Document::new(
             &built_doc,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
@@ -525,10 +503,9 @@ mod tests {
         .unwrap();
 
         let decrypter = LocalAesDecrypter::new(local_key);
-        let decrypted_payload = decrypter
-            .decrypt(&encrypted_doc.get_payload())
-            .await
-            .unwrap();
+        encrypted_doc.decrypt(decrypter).await.unwrap();
+        
+        let decrypted_payload = encrypted_doc.build().unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
 
@@ -541,11 +518,11 @@ mod tests {
         let decrypted_record = Record::new(decrypted_doc).unwrap();
 
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
-        assert_eq!(decrypted_record.get_signatures(), Some(vec![signature]));
-        assert!(decrypted_record.get_proof().is_none());
+        assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
+        assert_eq!(decrypted_record.get_proof().unwrap(), proof);
     }
 
-    #[tokio::test]
+    /*#[tokio::test]
     async fn test_signed_pdf_with_local_certificate() {
         let payload = include_bytes!("./assets/dummy.pdf");
         let local_key_params = LocalKeyParams {

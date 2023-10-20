@@ -1,5 +1,5 @@
 use super::error::Error;
-use lopdf::{Dictionary, Document, IncrementalDocument, Object, ObjectId};
+use lopdf::{Dictionary, Document, Object, ObjectId};
 
 pub(crate) fn get_root(doc: &Document) -> Result<&Dictionary, Error> {
     let root_obj_id = doc.trailer.get(b"Root")?.as_reference()?;

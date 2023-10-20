@@ -1,5 +1,3 @@
-use std::fs;
-
 use crate::{
     cms::asn1::rfc5035::{
         ESSCertIDv2, ESSCertIDv2Sequence, SigningCertificateV2, ESSCERTIDV2_DEFAULT_HASH_ALGORITHM,
@@ -29,13 +27,12 @@ use cms::{
 use const_oid::db::rfc5911::{ID_AA_SIGNING_CERTIFICATE_V_2, ID_SIGNED_DATA};
 use const_oid::db::rfc5912::{ID_SHA_256, SHA_256_WITH_RSA_ENCRYPTION};
 use const_oid::db::rfc6268::{ID_CONTENT_TYPE, ID_DATA, ID_MESSAGE_DIGEST};
-use lopdf::{Dictionary, Document, IncrementalDocument, Object};
+use lopdf::{Dictionary, Document, Object};
 use rsa::{
     pkcs8::{DecodePublicKey, EncodePublicKey, LineEnding},
     RsaPublicKey,
 };
 use serde::{de::DeserializeOwned, Serialize};
-use x509_cert::der::AnyRef;
 use x509_cert::{
     attr::Attribute,
     der::{
@@ -48,6 +45,7 @@ use x509_cert::{
     certificate::CertificateInner,
     der::{Decode, Encode},
 };
+use x509_cert::{der::AnyRef, Certificate};
 
 #[derive(Debug, Clone)]
 pub struct PdfParser {
@@ -59,14 +57,8 @@ pub struct PdfParser {
 #[async_trait(?Send)]
 impl MetadataParser for PdfParser {
     fn load(payload: &[u8]) -> BloockResult<Self> {
-        let mut document =
+        let document =
             Document::load_from(payload).map_err(|e| MetadataError::LoadError(e.to_string()))?;
-        let root_obj_id = document
-            .trailer
-            .get(b"Root")
-            .unwrap()
-            .as_reference()
-            .unwrap();
         let parser = PdfParser {
             modified: false,
             document,
@@ -153,15 +145,30 @@ impl MetadataParser for PdfParser {
 
         //Get payload to sign
         let effective_payload = self.get_signed_content(byte_range_payload.clone())?;
+        let cert = match key.get_certificate(api_host.clone(), api_key.clone()).await {
+            Some(c) => c,
+            None => Err(MetadataError::GetSignedDataError(
+                "Error getting certificate".to_string(),
+            ))?,
+        };
+        let signed_attributes = self.get_signed_attributes(effective_payload, cert.clone())?;
+        let signed_attributes_encoded =
+            self.get_signed_attributes_encoded(signed_attributes.clone())?;
 
         //Sign
-        let signature =
-            bloock_signer::sign(api_host.clone(), api_key.clone(), &effective_payload, &key)
-                .await
-                .map_err(|e| MetadataError::LoadError(e.to_string()))?;
+        let signature = bloock_signer::sign(
+            api_host.clone(),
+            api_key.clone(),
+            &signed_attributes_encoded,
+            &key,
+        )
+        .await
+        .map_err(|e| MetadataError::LoadError(e.to_string()))?;
 
         //Prepare sign inclusion
-        let signature_payload = self.get_signed_data(signature.clone(), key)?;
+        let signature_payload = self
+            .get_signed_data(signature.clone(), cert, signed_attributes)
+            .await?;
 
         //Add signature
         signature_dict
@@ -384,19 +391,11 @@ impl PdfParser {
         Ok(signed_data)
     }
 
-    fn get_signed_data(&self, signature: Signature, key: &Key) -> BloockResult<Vec<u8>> {
-        let mut signer_infos = SetOfVec::default();
-        let mut certificates = SetOfVec::default();
-        let cert = match key.get_certificate() {
-            Some(c) => c,
-            None => Err(MetadataError::GetSignedDataError(
-                "Error getting certificate".to_string(),
-            ))?,
-        };
-        certificates
-            .insert(CertificateChoices::Certificate(cert.clone()))
-            .unwrap();
-
+    fn get_signed_attributes(
+        &self,
+        effective_payload: Vec<u8>,
+        cert: Certificate,
+    ) -> BloockResult<SignedAttributes> {
         let mut signed_attributes = SignedAttributes::default();
         let content_type = ID_DATA;
 
@@ -407,7 +406,7 @@ impl PdfParser {
             })
             .unwrap();
 
-        let digest = hex::decode(signature.message_hash).unwrap();
+        let digest = Sha256::generate_hash(&[&effective_payload]);
 
         signed_attributes
             .insert(Attribute {
@@ -455,13 +454,40 @@ impl PdfParser {
             signed_sorted_attributes.insert(attr.1).unwrap();
         }
 
+        Ok(signed_sorted_attributes)
+    }
+
+    fn get_signed_attributes_encoded(
+        &self,
+        signed_attributes: SignedAttributes,
+    ) -> BloockResult<Vec<u8>> {
+        let mut signed_attributes_der = Vec::new();
+        signed_attributes
+            .encode_to_vec(&mut signed_attributes_der)
+            .unwrap();
+
+        Ok(signed_attributes_der)
+    }
+    async fn get_signed_data(
+        &self,
+        signature: Signature,
+        cert: Certificate,
+        signed_attributes: SignedAttributes,
+    ) -> BloockResult<Vec<u8>> {
+        let mut signer_infos = SetOfVec::default();
+        let mut certificates = SetOfVec::default();
+
+        certificates
+            .insert(CertificateChoices::Certificate(cert.clone()))
+            .unwrap();
+
         let signer_info = SignerInfo {
             version: CmsVersion::V1,
             sid: SignerIdentifier::IssuerAndSerialNumber(IssuerAndSerialNumber {
                 issuer: cert.tbs_certificate.issuer,
                 serial_number: cert.tbs_certificate.serial_number,
             }),
-            signed_attrs: Some(SignedAttributes::from(signed_sorted_attributes)),
+            signed_attrs: Some(signed_attributes),
             signature_algorithm: AlgorithmIdentifierOwned {
                 oid: SHA_256_WITH_RSA_ENCRYPTION,
                 parameters: None,
@@ -517,7 +543,7 @@ impl PdfParser {
     }
 
     fn get_signatures_and_payload(&self) -> BloockResult<Vec<(Signature, Vec<u8>)>> {
-        let mut document = self.document.clone();
+        let document = self.document.clone();
         let root = utils::get_root(&document).map_err(|e| MetadataError::DeserializeError)?;
 
         let acro_form = match root.get(b"AcroForm") {
@@ -581,19 +607,8 @@ impl PdfParser {
                 let algorithm = SignAlg::Rsa;
                 let message_hash = match signer.signed_attrs.clone() {
                     Some(s) => {
-                        let mut vv = vec![];
-                        for attribute in s.iter() {
-                            if attribute.oid.eq(&ID_MESSAGE_DIGEST) {
-                                for value in attribute.values.iter() {
-                                    vv = value.value().to_vec();
-                                    break;
-                                }
-                            }
-                        }
-                        if vv.is_empty() {
-                            return Err(MetadataError::DeserializeError);
-                        }
-                        vv
+                        let signed_attributes_encoded = self.get_signed_attributes_encoded(s)?;
+                        Sha256::generate_hash(&[&signed_attributes_encoded]).to_vec()
                     }
                     None => return Err(MetadataError::DeserializeError),
                 };

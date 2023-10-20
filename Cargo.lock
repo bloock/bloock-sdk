@@ -704,6 +704,7 @@ dependencies = [
 name = "bloock-keys"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "babyjubjub-rs",
  "bip32",
  "bloock-http",
