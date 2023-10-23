@@ -55,6 +55,7 @@ message LocalCertificateParams {
     KeyType key_type = 1;
     string password = 2;
     CertificateSubject subject = 3;
+    int32 expiration = 4;
 }
 
 message LocalCertificate {

@@ -121,7 +121,12 @@ impl KeyServiceHandler for KeyServer {
             .ok_or_else(|| "invalid subject".to_string())?;
 
         let certificate = client
-            .generate_local_certificate(params.key_type().into(), params.password, subject.into())
+            .generate_local_certificate(
+                params.key_type().into(),
+                params.password,
+                subject.into(),
+                params.expiration,
+            )
             .map_err(|e| e.to_string())?;
 
         Ok(GenerateLocalCertificateResponse {
