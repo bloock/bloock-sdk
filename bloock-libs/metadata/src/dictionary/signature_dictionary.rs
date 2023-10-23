@@ -1,6 +1,5 @@
 use super::{error::Error, utils};
 use chrono::Utc;
-use cms::signed_data;
 use lopdf::Dictionary;
 
 const BYTE_RANGE_PLACEHOLDER: &str = "/ByteRange[0 10000 20000 100]";
@@ -57,7 +56,6 @@ impl SignatureDictionary {
             .ok_or(Error::Other("Malformed PDF".into()))?
             + placeholder_pos;
         let placeholder_length_with_brackets = (placeholder_end + 1) - placeholder_pos;
-        let placeholder_length = placeholder_length_with_brackets - 2;
 
         let mut byte_range = [0i64; 4];
         byte_range[1] = placeholder_pos as i64;

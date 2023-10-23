@@ -213,7 +213,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(signature.alg, SignAlg::Es256kM);
-        assert_eq!(signature.kid, managed_key.id);
+        assert_eq!(signature.kid, managed_key.public_key);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)

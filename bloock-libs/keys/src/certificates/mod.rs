@@ -10,7 +10,7 @@ use x509_cert::{
 use crate::{entity::key::Key, KeyType};
 
 use self::{
-    local::{LocalCertificate, LocalCertificateParams},
+    local::{LocalCertificate, LocalCertificateParams, LocalCertificateWithKeyParams},
     managed::ManagedCertificate,
 };
 use async_trait::async_trait;
@@ -66,7 +66,23 @@ pub trait GetX509Certficate {
 impl GetX509Certficate for Key {
     async fn get_certificate(&self, api_host: String, api_key: String) -> Option<Certificate> {
         match self {
-            Key::LocalKey(_) => Some(create_self_certificate()),
+            Key::LocalKey(key) => {
+                let params = LocalCertificateWithKeyParams {
+                    key,
+                    password: "bloock".to_string(),
+                    subject: CertificateSubject {
+                        common_name: "Self Bloock".to_string(),
+                        organizational_unit: None,
+                        organization: None,
+                        location: None,
+                        state: None,
+                        country: None,
+                    },
+                    expiration: 1,
+                };
+                let certificate = LocalCertificate::new_from_key(&params).unwrap();
+                Some(certificate.certificate)
+            }
             Key::ManagedKey(_) => Some(create_self_certificate()),
             Key::LocalCertificate(local_certificate) => {
                 local_certificate.get_certificate_inner().ok()
@@ -96,6 +112,7 @@ fn create_self_certificate() -> Certificate {
             state: None,
             country: None,
         },
+        expiration: 2,
     };
     let certificate = LocalCertificate::new(&params).unwrap();
     certificate.certificate

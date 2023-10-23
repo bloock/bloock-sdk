@@ -184,13 +184,10 @@ impl TryFrom<&String> for Record {
 
 #[cfg(test)]
 mod tests {
-    use bloock_keys::{
-        keys::local::{LocalKey, LocalKeyParams},
-        KeyType,
-    };
+    use bloock_keys::keys::local::LocalKey;
 
     use super::*;
-    use crate::{config, integrity::entity::proof::ProofAnchor, record};
+    use crate::{config, integrity::entity::proof::ProofAnchor};
 
     #[test]
     fn new_record() {

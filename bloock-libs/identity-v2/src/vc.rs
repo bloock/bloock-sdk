@@ -312,7 +312,7 @@ mod tests {
                 Value::String("Escoruela".to_string()),
             ),
         ];
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
@@ -395,7 +395,7 @@ mod tests {
                 Value::String("invalid enum".to_string()),
             ),
         ];
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
@@ -567,7 +567,7 @@ mod tests {
                 Value::String("5c9b42c2-13c6-4fcf-b76b-57e104ee8f9c".to_string()),
             ),
         ];
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
@@ -731,7 +731,7 @@ mod tests {
                 Value::Number(Number::from_f64(1.15).unwrap()),
             ),
         ];
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_managed_host = "https://api.bloock.dev/identity".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
@@ -814,7 +814,7 @@ mod tests {
         .unwrap();
         let valid_boolean: Vec<(String, Value)> =
             vec![("boolean_example".to_string(), Value::Bool(true))];
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;

@@ -6,7 +6,7 @@
 use der::{Decode, Encode};
 use getrandom::getrandom;
 use lazy_static::lazy_static;
-use pkcs5::{pbes2::Parameters, EncryptionScheme};
+use pkcs5::pbes2::Parameters;
 use yasna::{models::ObjectIdentifier, ASN1Error, ASN1ErrorKind, BERReader, DERWriter, Tag};
 
 use hmac::{Hmac, Mac};

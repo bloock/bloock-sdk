@@ -189,7 +189,7 @@ impl DefaultParser {
 mod tests {
     use std::{collections::HashMap, vec};
 
-    use bloock_encrypter::local::aes::{LocalAesEncrypter, LocalAesDecrypter};
+    use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_keys::keys::local::LocalKey;
     use bloock_signer::{
         entity::{alg::SignAlg, signature::Signature},

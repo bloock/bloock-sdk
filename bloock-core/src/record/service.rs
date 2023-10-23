@@ -71,10 +71,9 @@ mod tests {
     };
 
     use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
-    use bloock_hasher::{sha256::Sha256, Hasher};
-    use bloock_keys::entity::key::Key::LocalKey as LocalKeyEntity;
     use bloock_keys::keys::local::LocalKey;
-    use bloock_signer::entity::{alg::SignAlg, signature::Signature};
+    use bloock_keys::{entity::key::Key::LocalKey as LocalKeyEntity, keys::local::LocalKeyParams};
+    use bloock_signer::entity::alg::SignAlg;
 
     #[tokio::test]
     async fn test_from_record() {
@@ -366,18 +365,14 @@ mod tests {
         );
     }
 
-    /*#[tokio::test]
+    #[tokio::test]
     async fn test_build_record_from_pdf_set_encryption() {
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_key = LocalKey {
-            key_type: bloock_keys::KeyType::EcP256k,
-            key: "".to_string(),
-            private_key: Some(
-                "8d4b1adbe150fb4e77d033236667c7e1a146b3118b20afc0ab43d0560efd6dbb".to_string(),
-            ),
-            mnemonic: None,
+        let params = LocalKeyParams {
+            key_type: bloock_keys::KeyType::Rsa2048,
         };
+        let local_key = LocalKey::new(&params).unwrap();
 
         let local_aes_key = LocalKey {
             key_type: bloock_keys::KeyType::Aes128,
@@ -394,6 +389,7 @@ mod tests {
             .build()
             .await
             .unwrap();
+        let expected_signatures = default_record.get_signatures();
 
         let encrypted_record = service
             .from_file(payload.to_vec())
@@ -414,21 +410,9 @@ mod tests {
             .await
             .unwrap();
 
-        let expected_signatures = vec![
-            Signature {
-                alg: bloock_signer::entity::alg::SignAlg::Es256k,
-                kid: "04d922c1e1d0a0e1f1837c2358fd899c8668b6654595e3e4aa88a69f7f66b00ff888ceff77fc0d48a6f1bcaab3a0833b880ffda5981c35ce09f1c8f60b8528bb22".to_string(),
-                signature: "30d9b2f48b3504c86dbf1072417de52b0f64651582b2002bc180ddb950aa21a23f121bfaaed6a967df08b6a7d2c8e6d54b7203c0a7b84286c85b79564e61141600".to_string(),
-                message_hash: hex::encode(Sha256::generate_hash(&[unencrypted_record.get_payload().unwrap().as_slice()])),
-            }
-        ];
-
-        assert_eq!(
-            unencrypted_record.get_signatures(),
-            Some(expected_signatures)
-        );
+        assert_eq!(unencrypted_record.get_signatures(), expected_signatures);
         assert_eq!(default_record.get_hash(), unencrypted_record.get_hash());
-    }*/
+    }
 
     #[tokio::test]
     async fn test_build_record_with_encryption_and_decryption() {
@@ -504,7 +488,10 @@ mod tests {
             .await
             .unwrap();
 
-        assert_ne!(record.serialize().unwrap(), decrypted_record.serialize().unwrap());
+        assert_ne!(
+            record.serialize().unwrap(),
+            decrypted_record.serialize().unwrap()
+        );
     }
 
     #[tokio::test]
@@ -558,7 +545,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(encrypted_record.get_proof(), None);
-        assert_ne!(encrypted_record.clone().serialize().unwrap(), record.clone().serialize().unwrap());
+        assert_ne!(
+            encrypted_record.clone().serialize().unwrap(),
+            record.clone().serialize().unwrap()
+        );
 
         let decrypted_record = service
             .from_record(encrypted_record)
@@ -568,7 +558,10 @@ mod tests {
             .await
             .unwrap();
 
-        assert_eq!(record.serialize().unwrap(), decrypted_record.serialize().unwrap());
+        assert_eq!(
+            record.serialize().unwrap(),
+            decrypted_record.serialize().unwrap()
+        );
     }
 
     #[tokio::test]

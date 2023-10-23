@@ -543,6 +543,8 @@ impl PdfParser {
     }
 
     fn get_signatures_and_payload(&self) -> BloockResult<Vec<(Signature, Vec<u8>)>> {
+        println!("Enter get signatures and payload");
+
         let document = self.document.clone();
         let root = utils::get_root(&document).map_err(|e| MetadataError::DeserializeError)?;
 

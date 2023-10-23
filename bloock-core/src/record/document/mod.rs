@@ -133,9 +133,7 @@ mod tests {
         integrity::entity::{anchor::AnchorNetwork, proof::ProofAnchor},
         record::entity::record::Record,
     };
-    use bloock_encrypter::{
-        local::aes::{LocalAesDecrypter, LocalAesEncrypter},
-    };
+    use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_keys::{
         certificates::{
             local::{LocalCertificate, LocalCertificateParams},
@@ -143,17 +141,18 @@ mod tests {
             CertificateSubject,
         },
         entity::key::Key::LocalCertificate as LocalCertificateEntity,
+        entity::key::Key::LocalKey as LocalKeyEntity,
         entity::key::Key::ManagedCertificate as ManagedCertificateEntity,
     };
     use bloock_keys::{
         keys::local::{LocalKey, LocalKeyParams},
         KeyType,
     };
-    use std::{fs};
+    use std::fs;
     use std::{thread::sleep, time::Duration};
 
     #[tokio::test]
-    async fn test_signed_and_verify_pdf_with_local_certificate() {
+    async fn test_signed_and_verify_pdf_with_local_certificate_rsa_2048() {
         let payload = include_bytes!("./assets/dummy.pdf");
         let certificate_params = LocalCertificateParams {
             key_type: bloock_keys::KeyType::Rsa2048,
@@ -165,6 +164,7 @@ mod tests {
                 state: None,
                 location: None,
             },
+            expiration: 1,
             password: "password".to_string(),
         };
         let local_certificate = LocalCertificate::new(&certificate_params).unwrap();
@@ -181,11 +181,85 @@ mod tests {
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
-        fs::write(
-            "./src/record/document/assets/dummy_out.pdf",
-            built_doc.clone(),
+        // fs::write(
+        //     "./src/record/document/assets/dummy_out.pdf",
+        //     built_doc.clone(),
+        // )
+        // .unwrap();
+        let signed_doc: Document = Document::new(
+            &built_doc,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
         )
         .unwrap();
+        assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
+
+        let result = signed_doc.verify().await.unwrap();
+        assert!(result)
+    }
+
+    #[tokio::test]
+    async fn test_signed_and_verify_pdf_with_local_certificate_rsa_3072() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let certificate_params = LocalCertificateParams {
+            key_type: bloock_keys::KeyType::Rsa3072,
+            subject: CertificateSubject {
+                common_name: "Google internet Authority G2".to_string(),
+                organization: Some("Google Inc".to_string()),
+                organizational_unit: Some("IT Department".to_string()),
+                country: Some("US".to_string()),
+                state: None,
+                location: None,
+            },
+            expiration: 1,
+            password: "password".to_string(),
+        };
+        let local_certificate = LocalCertificate::new(&certificate_params).unwrap();
+        let config_service = config::configure_test();
+
+        let mut document = Document::new(
+            payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
+        let signature = document
+            .sign(&LocalCertificateEntity(local_certificate))
+            .await
+            .unwrap();
+        let built_doc = document.build().unwrap();
+
+        let signed_doc: Document = Document::new(
+            &built_doc,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
+        assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
+
+        let result = signed_doc.verify().await.unwrap();
+        assert!(result)
+    }
+
+    #[tokio::test]
+    async fn test_signed_and_verify_pdf_with_local_key_rsa_2048() {
+        let payload = include_bytes!("./assets/dummy.pdf");
+        let key_params = LocalKeyParams {
+            key_type: KeyType::Rsa2048,
+        };
+        let key = LocalKey::new(&key_params).unwrap();
+
+        let config_service = config::configure_test();
+
+        let mut document = Document::new(
+            payload,
+            config_service.get_api_base_url(),
+            config_service.get_api_key(),
+        )
+        .unwrap();
+        let signature = document.sign(&LocalKeyEntity(key)).await.unwrap();
+        let built_doc = document.build().unwrap();
+
         let signed_doc: Document = Document::new(
             &built_doc,
             config_service.get_api_base_url(),
@@ -200,9 +274,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_signed_and_verify_pdf_with_managed_certificate() {
-        let api_host = "https://api.bloock.dev".to_string();
-        let api_key =
-            "tFD-hh1QYTj1TQEp3LulhHAredSkekobuuZI8vduysc7sx2RZTdpnX6A5FSQuSvT".to_string();
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let payload = include_bytes!("./assets/dummy.pdf");
         let certificate_params = ManagedCertificateParams {
@@ -451,6 +524,7 @@ mod tests {
                 state: None,
                 location: None,
             },
+            expiration: 1,
             password: "password".to_string(),
         };
         let local_certificate = LocalCertificate::new(&certificate_params).unwrap();
@@ -504,7 +578,7 @@ mod tests {
 
         let decrypter = LocalAesDecrypter::new(local_key);
         encrypted_doc.decrypt(decrypter).await.unwrap();
-        
+
         let decrypted_payload = encrypted_doc.build().unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
@@ -521,42 +595,4 @@ mod tests {
         assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
         assert_eq!(decrypted_record.get_proof().unwrap(), proof);
     }
-
-    /*#[tokio::test]
-    async fn test_signed_pdf_with_local_certificate() {
-        let payload = include_bytes!("./assets/dummy.pdf");
-        let local_key_params = LocalKeyParams {
-            key_type: KeyType::EcP256k,
-        };
-        let local_key = LocalKey::new(&local_key_params).unwrap();
-
-        let config_service = config::configure_test();
-        let signer = EcdsaSigner::new(
-            config_service.get_api_base_url(),
-            config_service.get_api_key(),
-        );
-
-        let mut document = Document::new(
-            payload,
-            config_service.get_api_base_url(),
-            config_service.get_api_key(),
-        )
-        .unwrap();
-        let payload_to_sign = document.get_payload_to_sign().unwrap();
-        let signature = signer
-            .sign_local(&payload_to_sign, &local_key)
-            .await
-            .unwrap();
-        document
-            .add_signature(signature.clone(), local_key.clone())
-            .unwrap();
-        let built_doc = document.build().unwrap();
-        let signed_doc: Document = Document::new(
-            &built_doc,
-            config_service.get_api_base_url(),
-            config_service.get_api_key(),
-        )
-        .unwrap();
-        assert_eq!(signed_doc.get_signatures(), Some(vec![signature]));
-    }*/
 }

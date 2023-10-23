@@ -133,7 +133,6 @@ impl ManagedCertificate {
         certificate_type: CertificateType,
         api_host: String,
         api_key: String,
-        api_version: Option<String>,
     ) -> Result<ManagedCertificate> {
         let client = bloock_http::BloockHttpClient::new(api_key);
 
@@ -200,7 +199,7 @@ mod tests {
         };
         let certificate = ManagedCertificate::new(
             &params,
-            "https://api.bloock.com".to_string(),
+            "https://api.bloock.dev".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
         )
         .await
@@ -213,7 +212,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_managed_certificate_rsa() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key =
             "tFD-hh1QYTj1TQEp3LulhHAredSkekobuuZI8vduysc7sx2RZTdpnX6A5FSQuSvT".to_string();
 

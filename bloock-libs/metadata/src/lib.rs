@@ -62,7 +62,12 @@ impl MetadataParser for FileParser {
     async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> Result<()> {
         match self {
             FileParser::Pdf(p) => p.decrypt(decrypter).await,
-            FileParser::Default(p) => p.decrypt(decrypter).await,
+            FileParser::Default(p) => {
+                p.decrypt(decrypter).await?;
+                let payload = &p.build()?;
+                *self = FileParser::load(payload)?;
+                Ok(())
+            }
         }
     }
 

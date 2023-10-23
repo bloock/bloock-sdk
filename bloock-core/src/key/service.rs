@@ -71,11 +71,13 @@ impl<H: Client> KeyService<H> {
         key_type: KeyType,
         password: String,
         subject: CertificateSubject,
+        expiration: i32,
     ) -> BloockResult<LocalCertificate<String>> {
         let params = LocalCertificateParams {
             key_type,
             subject,
             password,
+            expiration
         };
 
         LocalCertificate::new(&params)
@@ -134,7 +136,6 @@ impl<H: Client> KeyService<H> {
             certificate_type,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            None,
         )
         .await
         .map_err(|e| KeyError::ImportManagedCertificateError(e.to_string()).into())
