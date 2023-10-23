@@ -41,7 +41,7 @@ impl LocalCertificate<String> {
         }
 
         let serial_number = SerialNumber::from(42u32);
-        let now = Duration::new(5, 0);
+        let now = Duration::new(31536000, 0);
         let validity = from_now(now).unwrap();
 
         let profile = Profile::Root;
