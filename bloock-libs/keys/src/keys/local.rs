@@ -161,7 +161,7 @@ mod tests {
         assert!(key.mnemonic.is_none());
     }
 
-    /*#[test]
+    #[test]
     fn test_local_bjj() {
         let key_type = KeyType::BJJ;
 
@@ -172,7 +172,7 @@ mod tests {
 
         assert_eq!(key.key_type, key_type);
         assert_ne!(key.key, "".to_string());
-        assert!(key.private_key.is_none());
+        assert!(key.private_key.is_some());
         assert!(key.mnemonic.is_none());
-    }*/
+    }
 }

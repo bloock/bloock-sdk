@@ -55,6 +55,46 @@ func TestAuthenticity(t *testing.T) {
 		assert.NotEmpty(t, signature.Signature)
 	})
 
+	t.Run("sign local bjj", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.Bjj)
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &key}))
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, signature.Signature)
+	})
+
+	t.Run("sign local rsa", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.Rsa2048)
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &key}))
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, signature.Signature)
+	})
+
 	t.Run("sign managed ecdsa", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
@@ -101,11 +141,74 @@ func TestAuthenticity(t *testing.T) {
 		assert.NotEmpty(t, signature.Signature)
 	})
 
+	t.Run("sign managed rsa", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.Rsa2048,
+		})
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &key}))
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, signature.Signature)
+	})
+
 	t.Run("verify local ecdsa", func(t *testing.T) {
 		recordClient := NewRecordClient()
 
 		keyClient := NewKeyClient()
 		key, err := keyClient.NewLocalKey(key.EcP256k)
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		record, err := recordClient.
+			FromString("Hello world").
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &key})).
+			Build()
+		assert.NoError(t, err)
+
+		valid, err := authenticityClient.Verify(record)
+		assert.NoError(t, err)
+
+		assert.True(t, valid)
+	})
+
+	t.Run("verify local bjj", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.Bjj)
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+		record, err := recordClient.
+			FromString("Hello world").
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &key})).
+			Build()
+		assert.NoError(t, err)
+
+		valid, err := authenticityClient.Verify(record)
+		assert.NoError(t, err)
+
+		assert.True(t, valid)
+	})
+
+	t.Run("verify local rsa", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewLocalKey(key.Rsa2048)
 		assert.NoError(t, err)
 
 		authenticityClient := NewAuthenticityClient()
@@ -152,6 +255,30 @@ func TestAuthenticity(t *testing.T) {
 		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
 			Protection: key.KEY_PROTECTION_SOFTWARE,
 			KeyType:    key.Bjj,
+		})
+		assert.NoError(t, err)
+
+		authenticityClient := NewAuthenticityClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &key})).
+			Build()
+		assert.NoError(t, err)
+
+		valid, err := authenticityClient.Verify(record)
+		assert.NoError(t, err)
+
+		assert.True(t, valid)
+	})
+
+	t.Run("verify managed rsa", func(t *testing.T) {
+		recordClient := NewRecordClient()
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.Rsa2048,
 		})
 		assert.NoError(t, err)
 

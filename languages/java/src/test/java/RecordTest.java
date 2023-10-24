@@ -14,7 +14,6 @@ import com.bloock.sdk.entity.key.KeyType;
 import com.bloock.sdk.entity.key.LocalKey;
 import com.bloock.sdk.entity.record.Record;
 import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

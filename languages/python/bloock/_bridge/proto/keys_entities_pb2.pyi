@@ -201,19 +201,22 @@ class LocalCertificateParams(google.protobuf.message.Message):
     KEY_TYPE_FIELD_NUMBER: builtins.int
     PASSWORD_FIELD_NUMBER: builtins.int
     SUBJECT_FIELD_NUMBER: builtins.int
+    EXPIRATION_FIELD_NUMBER: builtins.int
     key_type: global___KeyType.ValueType
     password: builtins.str
     @property
     def subject(self) -> global___CertificateSubject: ...
+    expiration: builtins.int
     def __init__(
         self,
         *,
         key_type: global___KeyType.ValueType = ...,
         password: builtins.str = ...,
         subject: global___CertificateSubject | None = ...,
+        expiration: builtins.int = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["subject", b"subject"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["key_type", b"key_type", "password", b"password", "subject", b"subject"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["expiration", b"expiration", "key_type", b"key_type", "password", b"password", "subject", b"subject"]) -> None: ...
 
 global___LocalCertificateParams = LocalCertificateParams
 

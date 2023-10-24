@@ -25,6 +25,10 @@ class LocalCertificateParams extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>.bloock.CertificateSubject subject = 3;</code>
      */
     protected $subject = null;
+    /**
+     * Generated from protobuf field <code>int32 expiration = 4;</code>
+     */
+    protected $expiration = 0;
 
     /**
      * Constructor.
@@ -35,6 +39,7 @@ class LocalCertificateParams extends \Google\Protobuf\Internal\Message
      *     @type int $key_type
      *     @type string $password
      *     @type \Bloock\CertificateSubject $subject
+     *     @type int $expiration
      * }
      */
     public function __construct($data = NULL) {
@@ -114,6 +119,28 @@ class LocalCertificateParams extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkMessage($var, \Bloock\CertificateSubject::class);
         $this->subject = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>int32 expiration = 4;</code>
+     * @return int
+     */
+    public function getExpiration()
+    {
+        return $this->expiration;
+    }
+
+    /**
+     * Generated from protobuf field <code>int32 expiration = 4;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setExpiration($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->expiration = $var;
 
         return $this;
     }

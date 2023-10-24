@@ -36,6 +36,30 @@ class TestAuthenticity(unittest.TestCase):
         signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
         self.assertNotEqual(signature, "")
 
+    def test_sign_local_bjj(self):
+        record_client = RecordClient()
+
+        record = record_client.from_string("Hello world").build()
+
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.Bjj)
+
+        authenticity_client = AuthenticityClient()
+        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        self.assertNotEqual(signature, "")
+
+    def test_sign_local_rsa(self):
+        record_client = RecordClient()
+
+        record = record_client.from_string("Hello world").build()
+
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.Rsa2048)
+
+        authenticity_client = AuthenticityClient()
+        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        self.assertNotEqual(signature, "")
+
     def test_sign_managed_bjj(self):
         record_client = RecordClient()
 
@@ -43,6 +67,18 @@ class TestAuthenticity(unittest.TestCase):
 
         key_client = KeyClient()
         key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
+
+        authenticity_client = AuthenticityClient()
+        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        self.assertNotEqual(signature, "")
+
+    def test_sign_managed_rsa(self):
+        record_client = RecordClient()
+
+        record = record_client.from_string("Hello world").build()
+
+        key_client = KeyClient()
+        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
 
         authenticity_client = AuthenticityClient()
         signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
@@ -64,12 +100,59 @@ class TestAuthenticity(unittest.TestCase):
         valid = authenticity_client.verify(record)
         self.assertTrue(valid)
 
-    def test_verify_managed_bjj(self):
+    def test_verify_local_bjj(self):
+        authenticity_client = AuthenticityClient()
+
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.Bjj)
+
         record_client = RecordClient()
+        record = (
+            record_client.from_string("Hello world")
+            .with_signer(Signer(SignerArgs(key)))
+            .build()
+        )
+
+        valid = authenticity_client.verify(record)
+        self.assertTrue(valid)
+
+    def test_verify_local_rsa(self):
+        authenticity_client = AuthenticityClient()
+
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.Rsa2048)
+
+        record_client = RecordClient()
+        record = (
+            record_client.from_string("Hello world")
+            .with_signer(Signer(SignerArgs(key)))
+            .build()
+        )
+
+        valid = authenticity_client.verify(record)
+        self.assertTrue(valid)
+
+    def test_verify_managed_bjj(self):
         authenticity_client = AuthenticityClient()
 
         key_client = KeyClient()
         key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
+
+        record_client = RecordClient()
+        record = (
+            record_client.from_string("Hello world")
+            .with_signer(Signer(SignerArgs(key)))
+            .build()
+        )
+
+        valid = authenticity_client.verify(record)
+        self.assertTrue(valid)
+
+    def test_verify_managed_rsa(self):
+        authenticity_client = AuthenticityClient()
+
+        key_client = KeyClient()
+        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
 
         record_client = RecordClient()
         record = (

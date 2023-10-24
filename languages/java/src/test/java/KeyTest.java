@@ -37,6 +37,20 @@ class KeyTest {
   }
 
   @Test
+  void generateLocalBjj() throws Exception {
+    KeyClient keyClient = new KeyClient();
+    LocalKey localKey = keyClient.newLocalKey(KeyType.Bjj);
+
+    assertNotNull(localKey.getKey());
+    assertNotNull(localKey.getPrivateKey());
+
+    LocalKey loadedKey =
+        keyClient.loadLocalKey(KeyType.Bjj, localKey.getKey(), localKey.getPrivateKey());
+    assertEquals(localKey.getKey(), loadedKey.getKey());
+    assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
+  }
+
+  @Test
   void generateLocalRsa() throws Exception {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
@@ -170,7 +184,7 @@ class KeyTest {
 
     LocalCertificate localCertificate =
         keyClient.newLocalCertificate(
-            new LocalCertificateParams(keyType, subjectParams, "password"));
+            new LocalCertificateParams(keyType, subjectParams, "password", 2));
 
     assertNotNull(localCertificate.getPkcs12());
 
@@ -179,15 +193,14 @@ class KeyTest {
             localCertificate.getPkcs12(), localCertificate.getPassword());
     assertArrayEquals(localCertificate.getPkcs12(), loadedCertificate.getPkcs12());
 
-    // TODO not yet implemented signature with RSA on local
-    /*RecordClient recordClient = new RecordClient();
+    RecordClient recordClient = new RecordClient();
     Record record = recordClient.fromString("Hello world").build();
 
     AuthenticityClient authenticityClient = new AuthenticityClient();
     Signature signature =
-            authenticityClient.sign(record, new Signer(new SignerArgs(loadedCertificate)));
+        authenticityClient.sign(record, new Signer(new SignerArgs(loadedCertificate)));
 
-    assertNotNull(signature);*/
+    assertNotNull(signature);
   }
 
   @Test

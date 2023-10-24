@@ -29,6 +29,21 @@ func TestKey(t *testing.T) {
 		assert.Equal(t, loadedKey.PrivateKey, localKey.PrivateKey)
 	})
 
+	t.Run("generate local bjj", func(t *testing.T) {
+		keyClient := NewKeyClient()
+		localKey, err := keyClient.NewLocalKey(key.Bjj)
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, localKey.Key)
+		assert.NotEmpty(t, localKey.PrivateKey)
+
+		loadedKey, err := keyClient.LoadLocalKey(key.Bjj, localKey.Key, &localKey.PrivateKey)
+		assert.NoError(t, err)
+
+		assert.Equal(t, loadedKey.Key, localKey.Key)
+		assert.Equal(t, loadedKey.PrivateKey, localKey.PrivateKey)
+	})
+
 	t.Run("generate local rsa", func(t *testing.T) {
 		keyClient := NewKeyClient()
 		localKey, err := keyClient.NewLocalKey(key.Rsa2048)
@@ -188,9 +203,10 @@ func TestKey(t *testing.T) {
 			Country:          &country,
 		}
 		params := key.LocalCertificateParams{
-			KeyType:  keyType,
-			Subject:  subjectParams,
-			Password: "password",
+			KeyType:          keyType,
+			Subject:          subjectParams,
+			Password:         "password",
+			ExpirationMonths: 2,
 		}
 		localCertificate, err := keyClient.NewLocalCertificate(params)
 		assert.NoError(t, err)
@@ -202,9 +218,9 @@ func TestKey(t *testing.T) {
 
 		assert.Equal(t, localCertificate.Pkcs12, loadedCertificate.Pkcs12)
 
-		//TODO not yet implemented signature with RSA on local
-		/*authenticityClient := NewAuthenticityClient()
+		authenticityClient := NewAuthenticityClient()
 		recordClient := NewRecordClient()
+
 		record, err := recordClient.
 			FromString("Hello world").
 			Build()
@@ -214,7 +230,10 @@ func TestKey(t *testing.T) {
 			Sign(record, authenticity.NewSigner(authenticity.SignerArgs{LocalCertificate: &loadedCertificate}))
 		assert.NoError(t, err)
 
-		assert.NotEmpty(t, signature.Signature)*/
+		assert.NotEmpty(t, signature.Signature)
+		assert.NotEmpty(t, signature.Kid)
+		assert.NotEmpty(t, signature.Alg)
+		assert.NotEmpty(t, signature.MessageHash)
 	})
 
 	t.Run("import local p12 certificate", func(t *testing.T) {

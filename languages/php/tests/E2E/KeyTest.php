@@ -38,6 +38,19 @@ final class KeyTest extends TestCase
         $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }
 
+    public function testGenerateLocalBjj()
+    {
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Bjj);
+
+        $this->assertNotNull($key->key);
+        $this->assertNotNull($key->privateKey);
+
+        $loadedKey = $keyClient->loadLocalKey(KeyType::Bjj, $key->key, $key->privateKey);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->privateKey, $loadedKey->privateKey);
+    }
+
     public function testGenerateLocalRsa()
     {
         $keyClient = new KeyClient();
@@ -166,7 +179,7 @@ final class KeyTest extends TestCase
         $keyType = KeyType::Rsa2048;
         $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", null, null, "US");
 
-        $params = new LocalCertificateArgs($keyType, $subjectParams, "password");
+        $params = new LocalCertificateArgs($keyType, $subjectParams, "password", 2);
         $certificate = $keyClient->newLocalCertificate($params);
 
         $this->assertNotNull($certificate->pkcs12);
@@ -174,14 +187,13 @@ final class KeyTest extends TestCase
         $loadedCertificate = $keyClient->loadLocalCertificate($certificate->pkcs12, $certificate->password);
         $this->assertEquals($loadedCertificate->pkcs12, $certificate->pkcs12);
 
-        //TODO not yet implemented signature with RSA on local
-        /*$recordClient = new RecordClient();
+        $recordClient = new RecordClient();
         $authenticityClient = new AuthenticityClient();
 
         $record = $recordClient->fromString("Hello world")->build();
         $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($loadedCertificate)));
 
-        $this->assertNotNull($signature);*/
+        $this->assertNotNull($signature);
     }
 
     public function testImportLocalCertificateP12()
