@@ -52,6 +52,42 @@ final class AuthenticityTest extends TestCase
     /**
      * @throws Exception
      */
+    public function testSignLocalBjj()
+    {
+        $recordClient = new RecordClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Bjj);
+        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+
+        $this->assertNotNull($signature);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSignLocalRsa()
+    {
+        $recordClient = new RecordClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Rsa2048);
+        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+
+        $this->assertNotNull($signature);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testSignManagedEcdsa()
     {
         $recordClient = new RecordClient();
@@ -88,6 +124,24 @@ final class AuthenticityTest extends TestCase
     /**
      * @throws Exception
      */
+    public function testSignManagedRsa()
+    {
+        $recordClient = new RecordClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Rsa2048));
+        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+
+        $this->assertNotNull($signature);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testVerifyLocalEcdsa()
     {
         $recordClient = new RecordClient();
@@ -95,6 +149,40 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::EcP256k);
+
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+
+        $valid = $authenticityClient->verify($record);
+        $this->assertTrue($valid);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testVerifyLocalBjj()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Bjj);
+
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+
+        $valid = $authenticityClient->verify($record);
+        $this->assertTrue($valid);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testVerifyLocalRsa()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Rsa2048);
 
         $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
 
@@ -129,6 +217,23 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Bjj));
+
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+
+        $valid = $authenticityClient->verify($record);
+        $this->assertTrue($valid);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testVerifyManagedRsa()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Rsa2048));
 
         $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
 

@@ -148,13 +148,10 @@ func TestIdentityV2(t *testing.T) {
 		identityClient := NewIdentityV2Client(apiManagedHost)
 		keyClient := NewKeyClient()
 
-		keyBjj, err := keyClient.NewManagedKey(key.ManagedKeyParams{
-			KeyType:    key.Bjj,
-			Protection: key.KEY_PROTECTION_SOFTWARE,
-		})
+		keyBjj, err := keyClient.NewLocalKey(key.Bjj)
 		assert.NoError(t, err)
 
-		issuerKey := identityV2.NewBjjIssuerKey(identityV2.IssuerKeyArgs{ManagedKey: &keyBjj})
+		issuerKey := identityV2.NewBjjIssuerKey(identityV2.IssuerKeyArgs{LocalKey: &keyBjj})
 		issuerParams := identityV2.NewIssuerParams()
 		issuerParams.Method = identityV2.ListOfMethods().Iden3
 		issuerParams.Blockchain = identityV2.ListOfBlockchains().Polygon
@@ -176,7 +173,7 @@ func TestIdentityV2(t *testing.T) {
 			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
 			WithIntegerAttribute("document_type", 1).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, res.CredentialId)
@@ -190,7 +187,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, KYCAgeSchemaType, credential.Type[1])
 
 		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
@@ -199,7 +196,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.Error(t, err)
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
 			Build()
 		assert.Error(t, err)
 

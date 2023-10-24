@@ -34,6 +34,18 @@ class TestKey(unittest.TestCase):
         self.assertEqual(local_key.key, loaded_key.key)
         self.assertEqual(local_key.private_key, loaded_key.private_key)
 
+    def test_generate_local_bjj(self):
+        key_client = KeyClient()
+        local_key = key_client.new_local_key(KeyType.Bjj)
+
+        self.assertNotEqual(local_key.key, "")
+        self.assertNotEqual(local_key.private_key, "")
+
+        loaded_key = key_client.load_local_key(
+            KeyType.EcP256k, local_key.key, local_key.private_key)
+        self.assertEqual(local_key.key, loaded_key.key)
+        self.assertEqual(local_key.private_key, loaded_key.private_key)
+
     def test_generate_local_rsa(self):
         key_client = KeyClient()
         local_key = key_client.new_local_key(KeyType.Rsa2048)
@@ -143,24 +155,23 @@ class TestKey(unittest.TestCase):
         key_type = KeyType.Rsa2048
         subject_params = SubjectCertificateParams(
             "Google internet Authority G2", "IT Department", "IT Department", None, None, "US")
-        params = LocalCertificateParams(key_type, subject_params, "password")
+        params = LocalCertificateParams(key_type, subject_params, "password", 2)
         local_certificate = key_client.new_local_certificate(params)
 
         self.assertIsNotNone(local_certificate.pkcs12)
 
         loaded_certificate = key_client.load_local_certificate(
             local_certificate.pkcs12, local_certificate.password)
-        
+
         self.assertEqual(local_certificate.pkcs12, loaded_certificate.pkcs12)
 
-        '''TODO not yet implemented signature with RSA on local'''
-        '''record_client = RecordClient()
+        record_client = RecordClient()
         record = record_client.from_string("Hello world").build()
 
         authenticity_client = AuthenticityClient()
         signature = authenticity_client.sign(
             record, Signer(SignerArgs(loaded_certificate)))
-        self.assertNotEqual(signature, "")'''
+        self.assertNotEqual(signature, "")
 
     def test_import_local_certificate_p12(self):
         key_client = KeyClient()

@@ -16,43 +16,10 @@ impl<H: Client> AuthenticityService<H> {
     pub async fn sign(&self, mut record: Record, key: &Key) -> BloockResult<Signature> {
         let signature = record.sign(key).await?;
 
-        /*let signature = bloock_signer::sign(
-            self.config_service.get_api_base_url(),
-            self.config_service.get_api_key(),
-            payload,
-            &key,
-        )
-        .await
-        .map_err(InfrastructureError::SignerError)?;*/
-
         Ok(signature)
     }
 
     pub async fn verify(&self, record: Record) -> BloockResult<bool> {
-        /*let signatures = match record.get_signatures() {
-            Some(s) => s,
-            None => return Err(IntegrityError::InvalidVerification.into()),
-        };
-
-        let payload = match record.get_payload() {
-            Some(s) => s,
-            None => return Err(IntegrityError::InvalidVerification.into()),
-        };
-
-        for signature in signatures {
-            let verification_response = bloock_signer::verify(
-                self.config_service.get_api_base_url(),
-                self.config_service.get_api_key(),
-                payload,
-                &signature,
-            )
-            .await
-            .map_err(|e| IntegrityError::VerificationError(e.to_string()))?;
-            if !verification_response {
-                return Ok(false);
-            }
-        }*/
-
         let verification_response = record
             .verify()
             .await

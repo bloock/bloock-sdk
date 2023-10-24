@@ -2,6 +2,7 @@ package com.bloock.sdk.entity.encryption;
 
 import com.bloock.sdk.bridge.proto.EncryptionEntities;
 import com.bloock.sdk.bridge.proto.EncryptionEntities.EncryptionAlg;
+import com.bloock.sdk.entity.key.KeyType;
 import com.bloock.sdk.entity.key.LocalKey;
 import com.bloock.sdk.entity.key.ManagedKey;
 
@@ -11,7 +12,7 @@ public class AesEncrypter implements Encrypter {
 
   public AesEncrypter(String password) {
     this.alg = EncryptionAlg.A256GCM;
-    this.args = new EncrypterArgs(new LocalKey(password, null));
+    this.args = new EncrypterArgs(new LocalKey(password, null, KeyType.Aes256));
   }
 
   public AesEncrypter(LocalKey localKey) {

@@ -6,12 +6,14 @@ public class LocalCertificateParams {
   KeyType keyType;
   SubjectCertificateParams subject;
   String password;
+  int expiration;
 
   public LocalCertificateParams(
-      KeyType keyType, SubjectCertificateParams subject, String password) {
+      KeyType keyType, SubjectCertificateParams subject, String password, int expirationMonths) {
     this.keyType = keyType;
     this.subject = subject;
     this.password = password;
+    this.expiration = expirationMonths;
   }
 
   public static LocalCertificateParams fromProto(KeysEntities.LocalCertificateParams params) {
@@ -24,7 +26,8 @@ public class LocalCertificateParams {
             params.getSubject().getLocation(),
             params.getSubject().getState(),
             params.getSubject().getCountry()),
-        params.getPassword());
+        params.getPassword(),
+        params.getExpiration());
   }
 
   public KeysEntities.LocalCertificateParams toProto() {
@@ -32,7 +35,8 @@ public class LocalCertificateParams {
         KeysEntities.LocalCertificateParams.newBuilder()
             .setKeyType(this.keyType.toProto())
             .setSubject(this.subject.toProto())
-            .setPassword(this.password);
+            .setPassword(this.password)
+            .setExpiration(this.expiration);
 
     return params.build();
   }

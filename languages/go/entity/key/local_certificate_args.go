@@ -3,9 +3,10 @@ package key
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
 type LocalCertificateParams struct {
-	KeyType  KeyType
-	Password string
-	Subject  SubjectCertificateParams
+	KeyType          KeyType
+	Password         string
+	Subject          SubjectCertificateParams
+	ExpirationMonths int32
 }
 
 func NewLocalCertificateParamsFromProto(s *proto.LocalCertificateParams) LocalCertificateParams {
@@ -22,6 +23,7 @@ func NewLocalCertificateParamsFromProto(s *proto.LocalCertificateParams) LocalCe
 			State:            s.GetSubject().State,
 			Country:          s.GetSubject().Country,
 		},
+		ExpirationMonths: s.GetExpiration(),
 	}
 }
 
@@ -37,5 +39,6 @@ func (s LocalCertificateParams) ToProto() *proto.LocalCertificateParams {
 			State:              s.Subject.State,
 			Country:            s.Subject.Country,
 		},
+		Expiration: s.ExpirationMonths,
 	}
 }

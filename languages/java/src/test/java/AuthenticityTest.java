@@ -42,6 +42,34 @@ class AuthenticityTest {
   }
 
   @Test
+  void signLocalBjj() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    Record record = recordClient.fromString("Hello world").build();
+
+    KeyClient keyClient = new KeyClient();
+    LocalKey localKey = keyClient.newLocalKey(KeyType.Bjj);
+
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+    Signature signature = authenticityClient.sign(record, new Signer(new SignerArgs(localKey)));
+
+    assertNotNull(signature);
+  }
+
+  @Test
+  void signLocalRsa() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    Record record = recordClient.fromString("Hello world").build();
+
+    KeyClient keyClient = new KeyClient();
+    LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
+
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+    Signature signature = authenticityClient.sign(record, new Signer(new SignerArgs(localKey)));
+
+    assertNotNull(signature);
+  }
+
+  @Test
   void signManagedEcdsa() throws Exception {
     RecordClient recordClient = new RecordClient();
     Record record = recordClient.fromString("Hello world").build();
@@ -72,12 +100,63 @@ class AuthenticityTest {
   }
 
   @Test
+  void signManagedRsa() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    Record record = recordClient.fromString("Hello world").build();
+
+    KeyClient keyClient = new KeyClient();
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
+
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+    Signature signature = authenticityClient.sign(record, new Signer(new SignerArgs(managedKey)));
+
+    assertNotNull(signature);
+  }
+
+  @Test
   void verifyLocalEcdsa() throws Exception {
     RecordClient recordClient = new RecordClient();
     AuthenticityClient authenticityClient = new AuthenticityClient();
 
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
+
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new Signer(new SignerArgs(localKey)))
+            .build();
+
+    boolean valid = authenticityClient.verify(record);
+    assertTrue(valid);
+  }
+
+  @Test
+  void verifyLocalBjj() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+
+    KeyClient keyClient = new KeyClient();
+    LocalKey localKey = keyClient.newLocalKey(KeyType.Bjj);
+
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new Signer(new SignerArgs(localKey)))
+            .build();
+
+    boolean valid = authenticityClient.verify(record);
+    assertTrue(valid);
+  }
+
+  @Test
+  void verifyLocalRsa() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+
+    KeyClient keyClient = new KeyClient();
+    LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
 
     Record record =
         recordClient
@@ -116,6 +195,25 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     ManagedKey managedKey =
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj));
+
+    Record record =
+        recordClient
+            .fromString("Hello world")
+            .withSigner(new Signer(new SignerArgs(managedKey)))
+            .build();
+
+    boolean valid = authenticityClient.verify(record);
+    assertTrue(valid);
+  }
+
+  @Test
+  void verifyManagedRsa() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+
+    KeyClient keyClient = new KeyClient();
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
 
     Record record =
         recordClient
