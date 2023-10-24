@@ -6,7 +6,7 @@ use crate::entity::dto::verify_response::VerifyResponse;
 use crate::entity::signature::Signature;
 use crate::{Signer, SignerError};
 use async_trait::async_trait;
-use babyjubjub_rs::{decompress_point, decompress_signature, verify, PrivateKey};
+use bloock_babyjubjub_rs::{decompress_point, decompress_signature, verify, PrivateKey};
 use bloock_hasher::poseidon::{check_poseidon_hash, Poseidon};
 use bloock_hasher::Hasher;
 use bloock_http::{BloockHttpClient, Client};

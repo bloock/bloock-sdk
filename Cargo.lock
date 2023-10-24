@@ -277,7 +277,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2f742656563ea50a992ad19d0f4d2eb5c1cd4f88d318eade61e604b349a152c3"
 dependencies = [
  "arrayref",
- "blake",
  "blake-hash",
  "ff_ce 0.11.0",
  "generic-array 0.14.6",
@@ -567,6 +566,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "bloock-babyjubjub-rs"
+version = "0.0.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9152cb6687f5eeb02519463a41b038d7fef1b6dc093efebf1754ac8e7944e1e5"
+dependencies = [
+ "arrayref",
+ "blake",
+ "blake-hash",
+ "bloock-poseidon-rs",
+ "ff_ce 0.13.1",
+ "generic-array 0.14.6",
+ "getrandom 0.2.7",
+ "lazy_static",
+ "num",
+ "num-bigint 0.4.3",
+ "num-traits",
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "bloock-core"
 version = "2.7.0-beta.1"
 dependencies = [
@@ -811,8 +830,8 @@ name = "bloock-signer"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "babyjubjub-rs",
  "base64-url",
+ "bloock-babyjubjub-rs",
  "bloock-hasher",
  "bloock-http",
  "bloock-keys",
