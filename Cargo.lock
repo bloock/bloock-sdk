@@ -410,27 +410,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "blake"
-version = "2.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee55e9ca33be1f257d8356cfb29b10b1c8f86dc38cf1344ca01525464356cd0c"
-dependencies = [
- "cc",
- "libc",
-]
-
-[[package]]
-name = "blake-hash"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "94d1988118c887f61418940e322d574e8a2dd67165f1f1556eaae22e4019c6af"
-dependencies = [
- "block-buffer 0.9.0",
- "digest 0.9.0",
- "ppv-lite86",
-]
-
-[[package]]
 name = "blake2"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -549,13 +528,12 @@ dependencies = [
 
 [[package]]
 name = "bloock-babyjubjub-rs"
-version = "0.0.10"
+version = "0.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9152cb6687f5eeb02519463a41b038d7fef1b6dc093efebf1754ac8e7944e1e5"
+checksum = "80128578b9bb3bbb3f25cc258d1b5fd3d80c8f6665c4c75d352e83e8bc901348"
 dependencies = [
  "arrayref",
- "blake",
- "blake-hash",
+ "bloock-blake-rs",
  "bloock-poseidon-rs",
  "ff_ce",
  "generic-array 0.14.6",
@@ -565,6 +543,16 @@ dependencies = [
  "num-bigint",
  "num-traits",
  "rand 0.8.5",
+]
+
+[[package]]
+name = "bloock-blake-rs"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88c221eb2487d75ad10789b5d88ac88eed74fb207eddf4958478c8d869d2fb3f"
+dependencies = [
+ "block-buffer 0.9.0",
+ "digest 0.9.0",
 ]
 
 [[package]]
