@@ -163,7 +163,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_local_ok() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let local_key_params = bloock_keys::keys::local::LocalKeyParams {
@@ -193,7 +193,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_local_invalid_private_key() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "hello world";
@@ -213,7 +213,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_local_invalid_signature() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "hello world";
@@ -237,7 +237,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_local_invalid_public_key() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "hello world";
@@ -260,7 +260,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_local_invalid_payload() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "end world";
@@ -284,7 +284,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sign_managed_ok() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
@@ -324,7 +324,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_managed_invalid_signature() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "hello world";
@@ -358,7 +358,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_managed_invalid_key() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "hello world";
@@ -382,7 +382,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_managed_invalid_payload() {
-        let api_host = "https://api.bloock.dev".to_string();
+        let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let string_payload = "end world";

@@ -1,4 +1,4 @@
-import { LocalKey, ManagedKey, ManagedCertificate, LocalCertificate } from "../key";
+import { LocalKey, ManagedKey, ManagedCertificate, LocalCertificate, KeyType } from "../key";
 
 export class SignerArgs {
   localKey?: LocalKey;
@@ -17,7 +17,7 @@ export class SignerArgs {
     } else if (key instanceof LocalCertificate) {
       this.localCertificate = key;
     } else {
-      this.localKey = new LocalKey("", key);
+      this.localKey = new LocalKey("", KeyType.Aes256, key);
     }
 
     this.commonName = commonName;
