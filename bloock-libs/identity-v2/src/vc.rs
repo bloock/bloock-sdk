@@ -312,7 +312,7 @@ mod tests {
                 Value::String("Escoruela".to_string()),
             ),
         ];
-        let api_host = "https://api.bloock.com".to_string();
+        let api_host = "https://api.bloock.dev".to_string();
         let api_managed_host = "https://api.bloock.dev/identityV2".to_string();
         let credential_type = "urn:uuid:40762daa-16e5-4a6c-aa0e-b7730596f8b4".to_string();
         let version = 0;
