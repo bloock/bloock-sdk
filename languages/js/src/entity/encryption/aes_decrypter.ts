@@ -1,5 +1,5 @@
 import * as proto from "../../bridge/proto/encryption_entities";
-import { LocalKey, ManagedKey } from "../key";
+import { KeyType, LocalKey, ManagedKey } from "../key";
 import { Decrypter } from "./decrypter";
 import { DecrypterArgs } from "./decrypter_args";
 
@@ -16,7 +16,7 @@ export class AesDecrypter implements Decrypter {
     } else if (key instanceof ManagedKey) {
       encrypter_key = key;
     } else {
-      encrypter_key = new LocalKey(key);
+      encrypter_key = new LocalKey(key, KeyType.Aes256);
     }
     this.args = new DecrypterArgs(encrypter_key);
   }

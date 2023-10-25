@@ -37,6 +37,36 @@ describe("Authenticity Tests", () => {
     expect(signature.signature).toBeTruthy();
   });
 
+  test("sign local bjj", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Bjj);
+
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new Signer(key));
+
+    expect(signature.signature).toBeTruthy();
+  });
+
+  test("sign local rsa", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Rsa2048);
+
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new Signer(key));
+
+    expect(signature.signature).toBeTruthy();
+  });
+
   test("sign managed ecdsa", async () => {
     initSdk();
 
@@ -71,11 +101,62 @@ describe("Authenticity Tests", () => {
     expect(signature.signature).toBeTruthy();
   });
 
+  test("sign managed rsa", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048)
+    );
+
+    let authenticityClient = new AuthenticityClient();
+    let signature = await authenticityClient.sign(record, new Signer(key));
+
+    expect(signature.signature).toBeTruthy();
+  });
+
   test("verify local ecdsa", async () => {
     initSdk();
 
     let keyClient = new KeyClient();
     let key = await keyClient.newLocalKey(KeyType.EcP256k);
+
+    let recordClient = new RecordClient();
+    let record = await recordClient
+      .fromString("Hello world")
+      .withSigner(new Signer(key))
+      .build();
+
+    let authenticityClient = new AuthenticityClient();
+    let valid = await authenticityClient.verify(record);
+    expect(valid).toBeTruthy();
+  });
+
+  test("verify local bjj", async () => {
+    initSdk();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Bjj);
+
+    let recordClient = new RecordClient();
+    let record = await recordClient
+      .fromString("Hello world")
+      .withSigner(new Signer(key))
+      .build();
+
+    let authenticityClient = new AuthenticityClient();
+    let valid = await authenticityClient.verify(record);
+    expect(valid).toBeTruthy();
+  });
+
+  test("verify local rsa", async () => {
+    initSdk();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Rsa2048);
 
     let recordClient = new RecordClient();
     let record = await recordClient
@@ -113,6 +194,25 @@ describe("Authenticity Tests", () => {
     let keyClient = new KeyClient();
     let key = await keyClient.newManagedKey(
       new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj)
+    );
+
+    let recordClient = new RecordClient();
+    let record = await recordClient
+      .fromString("Hello world")
+      .withSigner(new Signer(key))
+      .build();
+
+    let authenticityClient = new AuthenticityClient();
+    let valid = await authenticityClient.verify(record);
+    expect(valid).toBeTruthy();
+  });
+
+  test("verify managed rsa", async () => {
+    initSdk();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048)
     );
 
     let recordClient = new RecordClient();

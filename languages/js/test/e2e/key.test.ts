@@ -37,6 +37,25 @@ describe("Key Tests", () => {
     expect(key.privateKey).toEqual(loadedKey.privateKey);
   });
 
+  test("generate local bjj", async () => {
+    initSdk();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Bjj);
+
+    expect(key.key).toBeDefined();
+    expect(key.privateKey).toBeDefined();
+
+    let loadedKey = await keyClient.loadLocalKey(
+      KeyType.Bjj,
+      key.key,
+      key.privateKey
+    );
+
+    expect(key.key).toEqual(loadedKey.key);
+    expect(key.privateKey).toEqual(loadedKey.privateKey);
+  });
+
   test("generate local rsa", async () => {
     initSdk();
 
@@ -181,23 +200,22 @@ describe("Key Tests", () => {
     let subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", undefined, undefined, "US");
     let keyClient = new KeyClient();
     let certificate = await keyClient.newLocalCertificate(
-      new LocalCertificateParams(keyType, subjectParams, "password")
+      new LocalCertificateParams(keyType, subjectParams, "password", 2)
     );
-    
+
     expect(certificate.pkcs12).toBeDefined();
 
     let loadedCertificate = await keyClient.loadLocalCertificate(certificate.pkcs12, certificate.password);
 
     expect([...loadedCertificate.pkcs12]).toEqual([...certificate.pkcs12]);
 
-    //TODO not yet implemented signature with RSA on local
-    /*let recordClient = new RecordClient();
+    let recordClient = new RecordClient();
     let record = await recordClient.fromString("Hello world").build();
 
     let authenticityClient = new AuthenticityClient();
     let signature = await authenticityClient.sign(record, new Signer(loadedCertificate));
 
-    expect(signature.signature).toBeTruthy();*/
+    expect(signature.signature).toBeTruthy();
   });
 
   test("import local p12 certificate", async () => {

@@ -1,5 +1,5 @@
 import * as proto from "../../bridge/proto/encryption_entities";
-import { LocalKey, ManagedKey } from "../key";
+import { KeyType, LocalKey, ManagedKey } from "../key";
 import { Encrypter } from "./encrypter";
 import { EncrypterArgs } from "./encrypter_args";
 
@@ -16,7 +16,7 @@ export class RsaEncrypter implements Encrypter {
     } else if (key instanceof ManagedKey) {
       encrypter_key = key;
     } else {
-      encrypter_key = new LocalKey(key);
+      encrypter_key = new LocalKey(key, KeyType.Rsa2048);
     }
     this.args = new EncrypterArgs(encrypter_key);
   }

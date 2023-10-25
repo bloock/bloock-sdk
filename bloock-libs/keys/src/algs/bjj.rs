@@ -1,5 +1,5 @@
 use crate::{keys::local::LocalKey, KeyType, KeysError, Result};
-use babyjubjub_rs::PrivateKey;
+use bloock_babyjubjub_rs::PrivateKey;
 use num_bigint::{RandBigInt, ToBigInt};
 
 pub struct BjjKey {

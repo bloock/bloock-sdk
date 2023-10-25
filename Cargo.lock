@@ -271,24 +271,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
-name = "babyjubjub-rs"
-version = "0.0.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f742656563ea50a992ad19d0f4d2eb5c1cd4f88d318eade61e604b349a152c3"
-dependencies = [
- "arrayref",
- "blake-hash",
- "ff_ce 0.11.0",
- "generic-array 0.14.6",
- "lazy_static",
- "num",
- "num-bigint 0.4.3",
- "num-traits",
- "poseidon-rs",
- "rand 0.8.5",
-]
-
-[[package]]
 name = "backtrace"
 version = "0.3.68"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -575,12 +557,12 @@ dependencies = [
  "blake",
  "blake-hash",
  "bloock-poseidon-rs",
- "ff_ce 0.13.1",
+ "ff_ce",
  "generic-array 0.14.6",
  "getrandom 0.2.7",
  "lazy_static",
  "num",
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-traits",
  "rand 0.8.5",
 ]
@@ -650,7 +632,7 @@ version = "0.1.0"
 dependencies = [
  "bloock-poseidon-rs",
  "hex",
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-traits",
  "serde",
  "sha2 0.10.7",
@@ -712,7 +694,7 @@ dependencies = [
  "jsonschema",
  "lazy_static",
  "locspan",
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-traits",
  "rand 0.8.5",
  "rdf-types",
@@ -735,8 +717,8 @@ name = "bloock-keys"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "babyjubjub-rs",
  "bip32",
+ "bloock-babyjubjub-rs",
  "bloock-http",
  "cbc",
  "cipher",
@@ -748,7 +730,7 @@ dependencies = [
  "js-sys",
  "lazy_static",
  "libsecp256k1 0.7.1",
- "num-bigint 0.4.3",
+ "num-bigint",
  "pkcs5",
  "rand 0.8.5",
  "rc2",
@@ -775,7 +757,7 @@ dependencies = [
  "async-trait",
  "bloock-poseidon-rs",
  "lazy_static",
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-traits",
  "thiserror",
 ]
@@ -817,10 +799,10 @@ version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4f0db7a808c759a7043b9edccef64403ba815bf8ff6461eb8029c173bd0ea1b8"
 dependencies = [
- "ff_ce 0.13.1",
+ "ff_ce",
  "hex",
  "lazy_static",
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-traits",
  "rand 0.4.6",
 ]
@@ -838,7 +820,7 @@ dependencies = [
  "bloock-web3",
  "hex",
  "libsecp256k1 0.7.1",
- "num-bigint 0.4.3",
+ "num-bigint",
  "rsa 0.9.2",
  "serde",
  "serde_json",
@@ -1846,40 +1828,14 @@ dependencies = [
 
 [[package]]
 name = "ff_ce"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d3a682c12d0cc98a32ab7540401a5ea1ed21d11571eea11d5829cd721f85ff0"
-dependencies = [
- "byteorder",
- "ff_derive_ce 0.8.0",
- "hex",
- "rand 0.4.6",
-]
-
-[[package]]
-name = "ff_ce"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce9180c0561effb4f0bd2b9ed62d856b039e860d695d51fe690902f7b8157fe5"
 dependencies = [
  "byteorder",
- "ff_derive_ce 0.10.0",
+ "ff_derive_ce",
  "hex",
  "rand 0.4.6",
-]
-
-[[package]]
-name = "ff_derive_ce"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50c052fa6d4c2f12305ec364bfb8ef884836f3f61ea015b202372ff996d1ac4b"
-dependencies = [
- "num-bigint 0.2.6",
- "num-integer",
- "num-traits",
- "proc-macro2",
- "quote",
- "syn 1.0.107",
 ]
 
 [[package]]
@@ -1888,7 +1844,7 @@ version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2c85c41b0578de2b2c68bd3513c2a402cc92ea11961295c55987fc1f8e8310c"
 dependencies = [
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-integer",
  "num-traits",
  "proc-macro2",
@@ -3348,22 +3304,11 @@ version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05180d69e3da0e530ba2a1dae5110317e49e3b7f3d41be227dc5f92e49ee7af"
 dependencies = [
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-complex",
  "num-integer",
  "num-iter",
  "num-rational",
- "num-traits",
-]
-
-[[package]]
-name = "num-bigint"
-version = "0.2.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "090c7f9998ee0ff65aa5b723e4009f7b217707f1fb5ea551329cc4d6231fb304"
-dependencies = [
- "autocfg",
- "num-integer",
  "num-traits",
 ]
 
@@ -3450,7 +3395,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
 dependencies = [
  "autocfg",
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-integer",
  "num-traits",
 ]
@@ -3794,17 +3739,6 @@ dependencies = [
  "cpufeatures",
  "opaque-debug 0.3.0",
  "universal-hash",
-]
-
-[[package]]
-name = "poseidon-rs"
-version = "0.0.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c76e4996e3d9572d8b5cd56f495dda3fb748fd4cd6bdca754270b8b66a9a2dd3"
-dependencies = [
- "ff_ce 0.11.0",
- "rand 0.4.6",
- "serde_json",
 ]
 
 [[package]]
@@ -4738,7 +4672,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8eb4ea60fb301dc81dfc113df680571045d375ab7345d171c5dc7d7e13107a80"
 dependencies = [
  "chrono",
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-traits",
  "thiserror",
 ]
@@ -4981,7 +4915,7 @@ dependencies = [
  "k256",
  "lazy_static",
  "multibase 0.9.1",
- "num-bigint 0.4.3",
+ "num-bigint",
  "num-derive",
  "num-traits",
  "p256",

@@ -166,6 +166,7 @@ export interface LocalCertificateParams {
   keyType: KeyType;
   password: string;
   subject?: CertificateSubject;
+  expiration: number;
 }
 
 export interface LocalCertificate {
@@ -526,7 +527,7 @@ export const CertificateSubject = {
 };
 
 function createBaseLocalCertificateParams(): LocalCertificateParams {
-  return { keyType: 0, password: "", subject: undefined };
+  return { keyType: 0, password: "", subject: undefined, expiration: 0 };
 }
 
 export const LocalCertificateParams = {
@@ -539,6 +540,9 @@ export const LocalCertificateParams = {
     }
     if (message.subject !== undefined) {
       CertificateSubject.encode(message.subject, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.expiration !== 0) {
+      writer.uint32(32).int32(message.expiration);
     }
     return writer;
   },
@@ -559,6 +563,9 @@ export const LocalCertificateParams = {
         case 3:
           message.subject = CertificateSubject.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.expiration = reader.int32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -572,6 +579,7 @@ export const LocalCertificateParams = {
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
       password: isSet(object.password) ? String(object.password) : "",
       subject: isSet(object.subject) ? CertificateSubject.fromJSON(object.subject) : undefined,
+      expiration: isSet(object.expiration) ? Number(object.expiration) : 0,
     };
   },
 
@@ -581,6 +589,7 @@ export const LocalCertificateParams = {
     message.password !== undefined && (obj.password = message.password);
     message.subject !== undefined &&
       (obj.subject = message.subject ? CertificateSubject.toJSON(message.subject) : undefined);
+    message.expiration !== undefined && (obj.expiration = Math.round(message.expiration));
     return obj;
   },
 
@@ -591,6 +600,7 @@ export const LocalCertificateParams = {
     message.subject = (object.subject !== undefined && object.subject !== null)
       ? CertificateSubject.fromPartial(object.subject)
       : undefined;
+    message.expiration = object.expiration ?? 0;
     return message;
   },
 };
