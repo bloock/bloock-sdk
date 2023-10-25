@@ -199,7 +199,7 @@ mod tests {
         };
         let certificate = ManagedCertificate::new(
             &params,
-            "https://api.bloock.dev".to_string(),
+            "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
         )
         .await
@@ -213,8 +213,7 @@ mod tests {
     #[tokio::test]
     async fn test_managed_certificate_rsa() {
         let api_host = "https://api.bloock.com".to_string();
-        let api_key =
-            "tFD-hh1QYTj1TQEp3LulhHAredSkekobuuZI8vduysc7sx2RZTdpnX6A5FSQuSvT".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let key_type = KeyType::Rsa2048;
         let subject_params = CertificateSubject {
