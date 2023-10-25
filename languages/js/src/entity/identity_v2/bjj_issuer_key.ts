@@ -6,7 +6,7 @@ import { IssuerKeyArgs } from "./issuer_key_args";
 export class BjjIssuerKey implements IssuerKey {
   args: IssuerKeyArgs;
 
-  constructor(key: LocalKey | ManagedKey | string) {
+  constructor(key: LocalKey | ManagedKey) {
     this.args = new IssuerKeyArgs(key);
   }
 

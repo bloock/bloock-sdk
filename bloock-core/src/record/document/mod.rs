@@ -302,11 +302,7 @@ mod tests {
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
-        fs::write(
-            "./src/record/document/assets/dummy_out.pdf",
-            built_doc.clone(),
-        )
-        .unwrap();
+       
         let signed_doc: Document =
             Document::new(&built_doc, api_host.clone(), api_key.clone()).unwrap();
         //assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
