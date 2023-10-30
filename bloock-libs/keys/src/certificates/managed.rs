@@ -238,7 +238,7 @@ mod tests {
         assert_eq!(certificate.protection, ProtectionLevel::SOFTWARE);
         assert_ne!(certificate.key.public_key, "".to_string());
 
-        sleep(Duration::from_secs(2));
+        sleep(Duration::from_secs(3));
 
         ManagedCertificate::load_x509_certificate(certificate.id, api_host, api_key)
             .await

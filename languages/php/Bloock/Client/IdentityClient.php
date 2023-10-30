@@ -5,32 +5,29 @@ namespace Bloock\Client;
 use Bloock\Bridge\Bridge;
 use Bloock\Config\Config;
 use Bloock\ConfigData;
-use Bloock\CreateIdentityRequest;
-use Bloock\CredentialOfferRedeemRequest;
-use Bloock\Entity\Identity\Credential;
-use Bloock\Entity\Identity\CredentialBuilder;
-use Bloock\Entity\Identity\CredentialOffer;
-use Bloock\Entity\Identity\CredentialVerification;
-use Bloock\Entity\Identity\Identity;
-use Bloock\Entity\Identity\Schema;
-use Bloock\Entity\Identity\SchemaBuilder;
-use Bloock\GetOfferRequest;
-use Bloock\GetSchemaRequest;
-use Bloock\LoadIdentityRequest;
-use Bloock\RevokeCredentialRequest;
-use Bloock\VerifyCredentialRequest;
-use Bloock\WaitOfferRequest;
+use Bloock\CreateIssuerRequest;
+use Bloock\GetIssuerListRequest;
+use Bloock\Entity\IdentityV2\Credential;
+use Bloock\Entity\IdentityV2\Schema;
+use Bloock\Entity\IdentityV2\CredentialBuilder;
+use Bloock\Entity\IdentityV2\CredentialProof;
+use Bloock\Entity\IdentityV2\IssuerStatePublisher;
+use Bloock\Entity\IdentityV2\SchemaBuilder;
+use Bloock\Entity\IdentityV2\IssuerKey;
+use Bloock\Entity\IdentityV2\IssuerParams;
+use Bloock\GetIssuerByKeyRequest;
+use Bloock\GetCredentialProofRequest;
+use Bloock\GetSchemaRequestV2;
+use Bloock\RevokeCredentialRequestV2;
 use Exception;
 
-class IdentityLegacyClient
+class IdentityClient
 {
     private $bridge;
     private $config;
+    private string $apiManagedHost;
 
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function __construct(ConfigData $config = null)
+    public function __construct(string $apiManagedHost, ConfigData $config = null)
     {
         $this->bridge = new Bridge();
         if ($config != null) {
@@ -38,59 +35,75 @@ class IdentityLegacyClient
         } else {
             $this->config = Config::newConfigDataDefault();
         }
+        $this->apiManagedHost = $apiManagedHost;
     }
 
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function createIdentity(): Identity
+    public function createIssuer(IssuerKey $issuerKey, IssuerParams $issuerParams = null): string
     {
-        $req = new CreateIdentityRequest();
+        $req = new CreateIssuerRequest();
+        $req->setIssuerKey($issuerKey->toProto());
         $req->setConfigData($this->config);
 
-        $res = $this->bridge->identity->CreateIdentity($req);
+        if ($issuerParams != null) {
+            $req->setIssuerParams($issuerParams->toProto());
+        }
+
+        $res = $this->bridge->identityV2->CreateIssuer($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
         }
 
-        return Identity::fromProto($res->getIdentity());
+        return $res->getDid();
     }
 
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function loadIdentity(string $mnemonic): Identity
+    public function getIssuerList(): array
     {
-        $req = new LoadIdentityRequest();
-        $req->setConfigData($this->config)->setMnemonic($mnemonic);
+        $req = new GetIssuerListRequest();
+        $req->setConfigData($this->config);
 
-        $res = $this->bridge->identity->LoadIdentity($req);
+        $res = $this->bridge->identityV2->GetIssuerList($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
         }
 
-        return Identity::fromProto($res->getIdentity());
+        $didList = [];
+        foreach ($res->getDid() as $did) {
+            $didList[] = $did;
+        }
+        return $didList;
     }
 
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function buildSchema(string $displayName, string $technicalName): SchemaBuilder
+    public function getIssuerByKey(IssuerKey $issuerKey, IssuerParams $issuerParams = null): string
     {
-        return new SchemaBuilder($displayName, $technicalName, $this->config);
+        $req = new GetIssuerByKeyRequest();
+        $req->setIssuerKey($issuerKey->toProto());
+        $req->setConfigData($this->config);
+        if ($issuerParams != null) {
+            $req->setIssuerParams($issuerParams->toProto());
+        }
+
+        $res = $this->bridge->identityV2->GetIssuerByKey($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return $res->getDid();
     }
 
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
+    public function buildSchema(string $displayName, string $schemaType, string $version, string $description, $issuerDid): SchemaBuilder
+    {
+        return new SchemaBuilder($displayName, $schemaType, $version, $description, $issuerDid, $this->config);
+    }
+
     public function getSchema(string $id): Schema
     {
-        $req = new GetSchemaRequest();
+        $req = new GetSchemaRequestV2();
         $req->setConfigData($this->config)->setId($id);
 
-        $res = $this->bridge->identity->GetSchema($req);
+        $res = $this->bridge->identityV2->GetSchema($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
@@ -99,91 +112,38 @@ class IdentityLegacyClient
         return Schema::fromProto($res->getSchema());
     }
 
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function buildCredential(string $schemaId, string $holderKey): CredentialBuilder
+    public function buildCredential(string $schemaId, string $issuerDid, string $holderDid, int $expiration, int $version): CredentialBuilder
     {
-        return new CredentialBuilder($schemaId, $holderKey, $this->config);
+        return new CredentialBuilder($schemaId, $issuerDid, $holderDid, $expiration, $version, $this->apiManagedHost, $this->config);
     }
 
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function getOffer(string $id): CredentialOffer
+    public function buildIssuerStatePublisher(string $issuerDid): IssuerStatePublisher
     {
-        $req = new GetOfferRequest();
-        $req->setConfigData($this->config)->setId($id);
+        return new IssuerStatePublisher($issuerDid, $this->config);
+    }
 
-        $res = $this->bridge->identity->GetOffer($req);
+    public function getCredentialProof(string $issuerDid, string $credentialId): CredentialProof
+    {
+        $req = new GetCredentialProofRequest();
+        $req->setIssuerDid($issuerDid);
+        $req->setCredentialId($credentialId);
+        $req->setConfigData($this->config);
+
+        $res = $this->bridge->identityV2->getCredentialProof($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
         }
 
-        return CredentialOffer::fromProto($res->getOffer());
+        return CredentialProof::fromProto($res->getProof());
     }
 
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function waitOffer(string $offerId): CredentialOffer
-    {
-        $req = new WaitOfferRequest();
-        $req->setConfigData($this->config)->setOfferId($offerId);
-
-        $res = $this->bridge->identity->WaitOffer($req);
-
-        if ($res->getError() != null) {
-            throw new Exception($res->getError()->getMessage());
-        }
-
-        return CredentialOffer::fromProto($res->getOffer());
-    }
-
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function redeemOffer(CredentialOffer $offer, string $holderPrivateKey): Credential
-    {
-        $req = new CredentialOfferRedeemRequest();
-        $req->setConfigData($this->config)->setCredentialOffer($offer->toProto())->setIdentityPrivateKey($holderPrivateKey);
-
-        $res = $this->bridge->identity->CredentialOfferRedeem($req);
-
-        if ($res->getError() != null) {
-            throw new Exception($res->getError()->getMessage());
-        }
-
-        return Credential::fromProto($res->getCredential());
-    }
-
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
-    public function verifyCredential(Credential $credential): CredentialVerification
-    {
-        $req = new VerifyCredentialRequest();
-        $req->setConfigData($this->config)->setCredential($credential->toProto());
-
-        $res = $this->bridge->identity->VerifyCredential($req);
-
-        if ($res->getError() != null) {
-            throw new Exception($res->getError()->getMessage());
-        }
-
-        return CredentialVerification::fromProto($res->getResult());
-    }
-
-    /**
-     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-     */
     public function revokeCredential(Credential $credential): bool
     {
-        $req = new RevokeCredentialRequest();
+        $req = new RevokeCredentialRequestV2();
         $req->setConfigData($this->config)->setCredential($credential->toProto());
 
-        $res = $this->bridge->identity->RevokeCredential($req);
+        $res = $this->bridge->identityV2->RevokeCredential($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
