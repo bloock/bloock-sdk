@@ -14,9 +14,13 @@ use Google\Protobuf\Internal\GPBUtil;
 class LocalCertificate extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>string key = 1;</code>
+     * Generated from protobuf field <code>bytes pkcs12 = 1;</code>
      */
-    protected $key = '';
+    protected $pkcs12 = '';
+    /**
+     * Generated from protobuf field <code>string password = 2;</code>
+     */
+    protected $password = '';
 
     /**
      * Constructor.
@@ -24,7 +28,8 @@ class LocalCertificate extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type string $key
+     *     @type string $pkcs12
+     *     @type string $password
      * }
      */
     public function __construct($data = NULL) {
@@ -33,23 +38,45 @@ class LocalCertificate extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string key = 1;</code>
+     * Generated from protobuf field <code>bytes pkcs12 = 1;</code>
      * @return string
      */
-    public function getKey()
+    public function getPkcs12()
     {
-        return $this->key;
+        return $this->pkcs12;
     }
 
     /**
-     * Generated from protobuf field <code>string key = 1;</code>
+     * Generated from protobuf field <code>bytes pkcs12 = 1;</code>
      * @param string $var
      * @return $this
      */
-    public function setKey($var)
+    public function setPkcs12($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->pkcs12 = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string password = 2;</code>
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Generated from protobuf field <code>string password = 2;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setPassword($var)
     {
         GPBUtil::checkString($var, True);
-        $this->key = $var;
+        $this->password = $var;
 
         return $this;
     }

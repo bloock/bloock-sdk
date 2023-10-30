@@ -8,6 +8,7 @@ use Bloock\ConfigData;
 use Bloock\CreateIssuerRequest;
 use Bloock\GetIssuerListRequest;
 use Bloock\Entity\IdentityV2\Credential;
+use Bloock\Entity\IdentityV2\Schema;
 use Bloock\Entity\IdentityV2\CredentialBuilder;
 use Bloock\Entity\IdentityV2\CredentialProof;
 use Bloock\Entity\IdentityV2\IssuerStatePublisher;
@@ -16,10 +17,11 @@ use Bloock\Entity\IdentityV2\IssuerKey;
 use Bloock\Entity\IdentityV2\IssuerParams;
 use Bloock\GetIssuerByKeyRequest;
 use Bloock\GetCredentialProofRequest;
+use Bloock\GetSchemaRequestV2;
 use Bloock\RevokeCredentialRequestV2;
 use Exception;
 
-class IdentityV2Client
+class IdentityClient
 {
     private $bridge;
     private $config;
@@ -94,6 +96,20 @@ class IdentityV2Client
     public function buildSchema(string $displayName, string $schemaType, string $version, string $description, $issuerDid): SchemaBuilder
     {
         return new SchemaBuilder($displayName, $schemaType, $version, $description, $issuerDid, $this->config);
+    }
+
+    public function getSchema(string $id): Schema
+    {
+        $req = new GetSchemaRequestV2();
+        $req->setConfigData($this->config)->setId($id);
+
+        $res = $this->bridge->identityV2->GetSchema($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return Schema::fromProto($res->getSchema());
     }
 
     public function buildCredential(string $schemaId, string $issuerDid, string $holderDid, int $expiration, int $version): CredentialBuilder

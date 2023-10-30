@@ -7,7 +7,7 @@ use crate::{
     server::response_types::RequestConfigData,
 };
 use async_trait::async_trait;
-use bloock_core::record::{entity::record::Record as RecordCore, service::RecordService};
+use bloock_core::record::entity::record::Record as RecordCore;
 
 pub struct AvailabilityServer {}
 
@@ -65,7 +65,10 @@ impl AvailabilityServiceHandler for AvailabilityServer {
 
         let payload = result.map_err(|e| e.to_string())?;
 
-        let builder = RecordService::from_file(payload).map_err(|e| e.to_string())?;
+        let record_service = bloock_core::record::configure(config_data.clone());
+        let builder = record_service
+            .from_file(payload)
+            .map_err(|e| e.to_string())?;
 
         let record = builder.build().await.map_err(|e| e.to_string())?;
 

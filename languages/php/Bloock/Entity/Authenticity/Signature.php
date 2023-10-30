@@ -5,21 +5,21 @@ namespace Bloock\Entity\Authenticity;
 class Signature
 {
     private string $signature;
-    private string $protected;
-    private SignatureHeader $header;
+    private string $alg;
+    private string $kid;
     private string $messageHash;
 
-    public function __construct(string $signature, string $protected, SignatureHeader $signatureHeader, string $messageHash)
+    public function __construct(string $signature, string $alg, string $kid, string $messageHash)
     {
         $this->signature = $signature;
-        $this->protected = $protected;
-        $this->header = $signatureHeader;
+        $this->alg = $alg;
+        $this->kid = $kid;
         $this->messageHash = $messageHash;
     }
 
     public static function fromProto(\Bloock\Signature $signature): Signature
     {
-        return new Signature($signature->getSignature(), $signature->getProtected(), SignatureHeader::fromProto($signature->getHeader()), $signature->getMessageHash());
+        return new Signature($signature->getSignature(), $signature->getAlg(), $signature->getKid(), $signature->getMessageHash());
     }
 
     /**
@@ -38,17 +38,9 @@ class Signature
     /**
      * @return string
      */
-    public function getProtected(): string
+    public function getKid(): string
     {
-        return $this->protected;
-    }
-
-    /**
-     * @return SignatureHeader
-     */
-    public function getHeader(): SignatureHeader
-    {
-        return $this->header;
+        return $this->kid;
     }
 
     /**
@@ -68,14 +60,14 @@ class Signature
     {
         $p = new \Bloock\Signature();
         $p->setSignature($this->signature);
-        $p->setProtected($this->protected);
-        $p->setHeader($this->header->toProto());
+        $p->setAlg($this->alg);
+        $p->setKid($this->kid);
         $p->setMessageHash($this->messageHash);
         return $p;
     }
 
     public function getAlg(): string
     {
-        return SignatureAlg::fromString($this->header->getAlg());
+        return SignatureAlg::fromString($this->alg);
     }
 }

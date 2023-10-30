@@ -18,25 +18,13 @@ class ManagedCertificateParams extends \Google\Protobuf\Internal\Message
      */
     protected $key_type = 0;
     /**
-     * Generated from protobuf field <code>string cn = 2;</code>
-     */
-    protected $cn = '';
-    /**
-     * Generated from protobuf field <code>string o = 3;</code>
-     */
-    protected $o = '';
-    /**
-     * Generated from protobuf field <code>string ou = 4;</code>
-     */
-    protected $ou = '';
-    /**
-     * Generated from protobuf field <code>string c = 5;</code>
-     */
-    protected $c = '';
-    /**
-     * Generated from protobuf field <code>int32 expiration = 6;</code>
+     * Generated from protobuf field <code>int32 expiration = 2;</code>
      */
     protected $expiration = 0;
+    /**
+     * Generated from protobuf field <code>.bloock.CertificateSubject subject = 3;</code>
+     */
+    protected $subject = null;
 
     /**
      * Constructor.
@@ -45,11 +33,8 @@ class ManagedCertificateParams extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type int $key_type
-     *     @type string $cn
-     *     @type string $o
-     *     @type string $ou
-     *     @type string $c
      *     @type int $expiration
+     *     @type \Bloock\CertificateSubject $subject
      * }
      */
     public function __construct($data = NULL) {
@@ -80,95 +65,7 @@ class ManagedCertificateParams extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string cn = 2;</code>
-     * @return string
-     */
-    public function getCn()
-    {
-        return $this->cn;
-    }
-
-    /**
-     * Generated from protobuf field <code>string cn = 2;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setCn($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->cn = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string o = 3;</code>
-     * @return string
-     */
-    public function getO()
-    {
-        return $this->o;
-    }
-
-    /**
-     * Generated from protobuf field <code>string o = 3;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setO($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->o = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string ou = 4;</code>
-     * @return string
-     */
-    public function getOu()
-    {
-        return $this->ou;
-    }
-
-    /**
-     * Generated from protobuf field <code>string ou = 4;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setOu($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->ou = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string c = 5;</code>
-     * @return string
-     */
-    public function getC()
-    {
-        return $this->c;
-    }
-
-    /**
-     * Generated from protobuf field <code>string c = 5;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setC($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->c = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 expiration = 6;</code>
+     * Generated from protobuf field <code>int32 expiration = 2;</code>
      * @return int
      */
     public function getExpiration()
@@ -177,7 +74,7 @@ class ManagedCertificateParams extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 expiration = 6;</code>
+     * Generated from protobuf field <code>int32 expiration = 2;</code>
      * @param int $var
      * @return $this
      */
@@ -185,6 +82,38 @@ class ManagedCertificateParams extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt32($var);
         $this->expiration = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.CertificateSubject subject = 3;</code>
+     * @return \Bloock\CertificateSubject|null
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    public function hasSubject()
+    {
+        return isset($this->subject);
+    }
+
+    public function clearSubject()
+    {
+        unset($this->subject);
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.CertificateSubject subject = 3;</code>
+     * @param \Bloock\CertificateSubject $var
+     * @return $this
+     */
+    public function setSubject($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\CertificateSubject::class);
+        $this->subject = $var;
 
         return $this;
     }

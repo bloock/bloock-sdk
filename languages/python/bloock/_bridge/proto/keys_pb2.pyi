@@ -198,18 +198,19 @@ class GenerateLocalCertificateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
-    KEY_TYPE_FIELD_NUMBER: builtins.int
+    PARAMS_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
-    key_type: keys_entities_pb2.KeyType.ValueType
+    @property
+    def params(self) -> keys_entities_pb2.LocalCertificateParams: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        key_type: keys_entities_pb2.KeyType.ValueType = ...,
+        params: keys_entities_pb2.LocalCertificateParams | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key_type", b"key_type"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "params", b"params"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "params", b"params"]) -> None: ...
 
 global___GenerateLocalCertificateRequest = GenerateLocalCertificateRequest
 
@@ -283,18 +284,21 @@ class LoadLocalCertificateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
-    KEY_FIELD_NUMBER: builtins.int
+    PKCS12_FIELD_NUMBER: builtins.int
+    PASSWORD_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
-    key: builtins.str
+    pkcs12: builtins.bytes
+    password: builtins.str
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        key: builtins.str = ...,
+        pkcs12: builtins.bytes = ...,
+        password: builtins.str = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key", b"key"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "password", b"password", "pkcs12", b"pkcs12"]) -> None: ...
 
 global___LoadLocalCertificateRequest = LoadLocalCertificateRequest
 

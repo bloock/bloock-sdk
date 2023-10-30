@@ -5,9 +5,11 @@ import {
   GetIssuerListRequest,
   GetIssuerByKeyRequest,
   GetCredentialProofRequest,
-  RevokeCredentialRequestV2
+  RevokeCredentialRequestV2,
+  GetSchemaRequestV2
 } from "../bridge/proto/identity_v2";
 import { NewConfigData } from "../config/config";
+import { Schema } from "../entity/identity_v2";
 import { Credential } from "../entity/identity_v2/credential";
 import { CredentialBuilder } from "../entity/identity_v2/credential_builder";
 import { CredentialProof } from "../entity/identity_v2/credential_proof";
@@ -16,7 +18,7 @@ import { IssuerParams } from "../entity/identity_v2/issuer_params";
 import { IssuerStatePublisher } from "../entity/identity_v2/issuer_state_publisher";
 import { SchemaBuilder } from "../entity/identity_v2/schema_builder";
 
-export class IdentityV2Client {
+export class IdentityClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
   private apiManagedHost: string;
@@ -100,6 +102,23 @@ export class IdentityV2Client {
       issuerDid,
       this.configData
     );
+  }
+
+  public getSchema(id: string): Promise<Schema> {
+    const request = GetSchemaRequestV2.fromPartial({
+      configData: this.configData,
+      id: id
+    });
+
+    return this.bridge
+      .getIdentityV2()
+      .GetSchema(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return Schema.fromProto(res.schema!);
+      });
   }
 
   public buildCredential(

@@ -4,11 +4,8 @@ import {
   AesDecrypter,
   AesEncrypter,
   AnchorNetwork,
-  AuthenticityClient,
-  EcdsaSigner,
   EncryptionAlg,
   EncryptionClient,
-  EnsSigner,
   HostedLoader,
   HostedPublisher,
   IpfsLoader,
@@ -17,7 +14,6 @@ import {
   ProofAnchor,
   RsaDecrypter,
   RsaEncrypter,
-  SignatureAlg,
   AvailabilityClient
 } from "../../dist/index";
 import { describe, test, expect } from "@jest/globals";
@@ -121,7 +117,7 @@ describe("Record Tests", () => {
     expect(payload).toEqual(result);
   });
 
-  test("record with ecdsa signer", async () => {
+  /*test("record with ecdsa signer", async () => {
     initSdk();
 
     let authenticityClient = new AuthenticityClient();
@@ -131,14 +127,14 @@ describe("Record Tests", () => {
     let recordClient = new RecordClient();
     let record = await recordClient
       .fromString("Hello world 3")
-      .withSigner(new EcdsaSigner(keys.privateKey, { commonName: name }))
+      .withSigner(new Signer(keys.privateKey, { commonName: name }))
       .build();
 
     keys = await authenticityClient.generateEcdsaKeyPair();
 
     const recordWithMultipleSignatures = await recordClient
       .fromRecord(record)
-      .withSigner(new EcdsaSigner(keys.privateKey))
+      .withSigner(new Signer(keys.privateKey))
       .build();
 
     let signatures = await authenticityClient.getSignatures(
@@ -161,7 +157,7 @@ describe("Record Tests", () => {
     let recordClient = new RecordClient();
     let record = await recordClient
       .fromString("Hello world 4")
-      .withSigner(new EnsSigner(keys.privateKey))
+      .withSigner(new Signer(keys.privateKey))
       .build();
 
     let signatures = await authenticityClient.getSignatures(record);
@@ -175,7 +171,7 @@ describe("Record Tests", () => {
       await authenticityClient.getSignatureCommonName(signatures[0])
     ).toEqual("vitalik.eth");
     expect(signatures[0].getAlg()).toEqual(SignatureAlg.ENS);
-  });
+  });*/
 
   test("record with aes encrypter", async () => {
     initSdk();

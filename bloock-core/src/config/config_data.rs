@@ -16,6 +16,7 @@ impl ConfigData {
             config: Configuration {
                 library_name,
                 host: String::from("https://api.bloock.com"),
+                cdn_host: String::from("https://cdn.bloock.com"),
                 api_key,
                 wait_message_interval_factor: 2,
                 wait_message_interval_default: 5000,

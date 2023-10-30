@@ -8,6 +8,6 @@ type SignerArgs struct {
 	LocalKey           *key.LocalKey
 	ManagedKey         *key.ManagedKey
 	ManagedCertificate *key.ManagedCertificate
-	PrivateKey         string
+	LocalCertificate   *key.LocalCertificate
 	CommonName         *string
 }

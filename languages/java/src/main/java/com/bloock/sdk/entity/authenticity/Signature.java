@@ -4,30 +4,30 @@ import com.bloock.sdk.bridge.proto.AuthenticityEntities;
 
 public class Signature {
   String signature;
-  String protected_;
-  SignatureHeader header;
+  String alg;
+  String kid;
   String messageHash;
 
-  Signature(String signature, String protected_, SignatureHeader header, String messageHash) {
+  Signature(String signature, String alg, String kid, String messageHash) {
     this.signature = signature;
-    this.protected_ = protected_;
-    this.header = header;
+    this.alg = alg;
+    this.kid = kid;
     this.messageHash = messageHash;
   }
 
   public static Signature fromProto(AuthenticityEntities.Signature signature) {
     return new Signature(
         signature.getSignature(),
-        signature.getProtected(),
-        SignatureHeader.fromProto(signature.getHeader()),
+        signature.getAlg(),
+        signature.getKid(),
         signature.getMessageHash());
   }
 
   public AuthenticityEntities.Signature toProto() {
     return AuthenticityEntities.Signature.newBuilder()
         .setSignature(this.signature)
-        .setProtected(this.protected_)
-        .setHeader(this.header.toProto())
+        .setAlg(this.alg)
+        .setKid(this.kid)
         .setMessageHash(this.messageHash)
         .build();
   }
@@ -40,19 +40,15 @@ public class Signature {
     this.signature = signature;
   }
 
-  public String getProtected_() {
-    return protected_;
+  public SignatureAlg getAlg() {
+    return SignatureAlg.fromString(this.alg);
   }
 
-  public SignatureHeader getHeader() {
-    return header;
+  public String getKid() {
+    return kid;
   }
 
   public void setMessageHash(String hash) {
     this.messageHash = hash;
-  }
-
-  public SignatureAlg getAlg() {
-    return SignatureAlg.fromString(this.header.alg);
   }
 }

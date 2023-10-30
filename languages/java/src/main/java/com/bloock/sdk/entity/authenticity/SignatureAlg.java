@@ -3,6 +3,7 @@ package com.bloock.sdk.entity.authenticity;
 public enum SignatureAlg {
   ECDSA,
   ENS,
+  BJJ,
   UNRECOGNIZED;
 
   public static SignatureAlg fromString(String alg) {
@@ -11,6 +12,8 @@ public enum SignatureAlg {
         return SignatureAlg.ECDSA;
       case "ENS":
         return SignatureAlg.ENS;
+      case "BJJ":
+        return SignatureAlg.BJJ;
       default:
         return SignatureAlg.UNRECOGNIZED;
     }

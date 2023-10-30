@@ -121,7 +121,7 @@ message CredentialSchema {
 
 message CredentialProof {
     Proof bloock_proof = 1;
-    Signature signature_proof = 2;
+    SignatureJWS signature_proof = 2;
 }
 
 message CredentialVerification {
@@ -132,4 +132,16 @@ message CredentialVerification {
 
 message CredentialRevocation {
     bool success = 1;
+}
+
+message SignatureJWS {
+    string signature = 1;
+    string protected = 2;
+    SignatureHeaderJWS header = 3;
+    string message_hash = 4;
+}
+
+message SignatureHeaderJWS {
+    string alg = 1;
+    string kid = 2;
 }

@@ -1,7 +1,6 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Signature } from "./authenticity_entities";
 import { Proof } from "./integrity_entities";
 
 export interface Identity {
@@ -117,7 +116,7 @@ export interface CredentialSchema {
 
 export interface CredentialProof {
   bloockProof?: Proof;
-  signatureProof?: Signature;
+  signatureProof?: SignatureJWS;
 }
 
 export interface CredentialVerification {
@@ -128,6 +127,18 @@ export interface CredentialVerification {
 
 export interface CredentialRevocation {
   success: boolean;
+}
+
+export interface SignatureJWS {
+  signature: string;
+  protected: string;
+  header?: SignatureHeaderJWS;
+  messageHash: string;
+}
+
+export interface SignatureHeaderJWS {
+  alg: string;
+  kid: string;
 }
 
 function createBaseIdentity(): Identity {
@@ -1404,7 +1415,7 @@ export const CredentialProof = {
       Proof.encode(message.bloockProof, writer.uint32(10).fork()).ldelim();
     }
     if (message.signatureProof !== undefined) {
-      Signature.encode(message.signatureProof, writer.uint32(18).fork()).ldelim();
+      SignatureJWS.encode(message.signatureProof, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -1420,7 +1431,7 @@ export const CredentialProof = {
           message.bloockProof = Proof.decode(reader, reader.uint32());
           break;
         case 2:
-          message.signatureProof = Signature.decode(reader, reader.uint32());
+          message.signatureProof = SignatureJWS.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -1433,7 +1444,7 @@ export const CredentialProof = {
   fromJSON(object: any): CredentialProof {
     return {
       bloockProof: isSet(object.bloockProof) ? Proof.fromJSON(object.bloockProof) : undefined,
-      signatureProof: isSet(object.signatureProof) ? Signature.fromJSON(object.signatureProof) : undefined,
+      signatureProof: isSet(object.signatureProof) ? SignatureJWS.fromJSON(object.signatureProof) : undefined,
     };
   },
 
@@ -1442,7 +1453,7 @@ export const CredentialProof = {
     message.bloockProof !== undefined &&
       (obj.bloockProof = message.bloockProof ? Proof.toJSON(message.bloockProof) : undefined);
     message.signatureProof !== undefined &&
-      (obj.signatureProof = message.signatureProof ? Signature.toJSON(message.signatureProof) : undefined);
+      (obj.signatureProof = message.signatureProof ? SignatureJWS.toJSON(message.signatureProof) : undefined);
     return obj;
   },
 
@@ -1452,7 +1463,7 @@ export const CredentialProof = {
       ? Proof.fromPartial(object.bloockProof)
       : undefined;
     message.signatureProof = (object.signatureProof !== undefined && object.signatureProof !== null)
-      ? Signature.fromPartial(object.signatureProof)
+      ? SignatureJWS.fromPartial(object.signatureProof)
       : undefined;
     return message;
   },
@@ -1568,6 +1579,140 @@ export const CredentialRevocation = {
   fromPartial<I extends Exact<DeepPartial<CredentialRevocation>, I>>(object: I): CredentialRevocation {
     const message = createBaseCredentialRevocation();
     message.success = object.success ?? false;
+    return message;
+  },
+};
+
+function createBaseSignatureJWS(): SignatureJWS {
+  return { signature: "", protected: "", header: undefined, messageHash: "" };
+}
+
+export const SignatureJWS = {
+  encode(message: SignatureJWS, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.signature !== "") {
+      writer.uint32(10).string(message.signature);
+    }
+    if (message.protected !== "") {
+      writer.uint32(18).string(message.protected);
+    }
+    if (message.header !== undefined) {
+      SignatureHeaderJWS.encode(message.header, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.messageHash !== "") {
+      writer.uint32(34).string(message.messageHash);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SignatureJWS {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSignatureJWS();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.signature = reader.string();
+          break;
+        case 2:
+          message.protected = reader.string();
+          break;
+        case 3:
+          message.header = SignatureHeaderJWS.decode(reader, reader.uint32());
+          break;
+        case 4:
+          message.messageHash = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SignatureJWS {
+    return {
+      signature: isSet(object.signature) ? String(object.signature) : "",
+      protected: isSet(object.protected) ? String(object.protected) : "",
+      header: isSet(object.header) ? SignatureHeaderJWS.fromJSON(object.header) : undefined,
+      messageHash: isSet(object.messageHash) ? String(object.messageHash) : "",
+    };
+  },
+
+  toJSON(message: SignatureJWS): unknown {
+    const obj: any = {};
+    message.signature !== undefined && (obj.signature = message.signature);
+    message.protected !== undefined && (obj.protected = message.protected);
+    message.header !== undefined &&
+      (obj.header = message.header ? SignatureHeaderJWS.toJSON(message.header) : undefined);
+    message.messageHash !== undefined && (obj.messageHash = message.messageHash);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<SignatureJWS>, I>>(object: I): SignatureJWS {
+    const message = createBaseSignatureJWS();
+    message.signature = object.signature ?? "";
+    message.protected = object.protected ?? "";
+    message.header = (object.header !== undefined && object.header !== null)
+      ? SignatureHeaderJWS.fromPartial(object.header)
+      : undefined;
+    message.messageHash = object.messageHash ?? "";
+    return message;
+  },
+};
+
+function createBaseSignatureHeaderJWS(): SignatureHeaderJWS {
+  return { alg: "", kid: "" };
+}
+
+export const SignatureHeaderJWS = {
+  encode(message: SignatureHeaderJWS, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.alg !== "") {
+      writer.uint32(10).string(message.alg);
+    }
+    if (message.kid !== "") {
+      writer.uint32(18).string(message.kid);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SignatureHeaderJWS {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSignatureHeaderJWS();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.alg = reader.string();
+          break;
+        case 2:
+          message.kid = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SignatureHeaderJWS {
+    return { alg: isSet(object.alg) ? String(object.alg) : "", kid: isSet(object.kid) ? String(object.kid) : "" };
+  },
+
+  toJSON(message: SignatureHeaderJWS): unknown {
+    const obj: any = {};
+    message.alg !== undefined && (obj.alg = message.alg);
+    message.kid !== undefined && (obj.kid = message.kid);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<SignatureHeaderJWS>, I>>(object: I): SignatureHeaderJWS {
+    const message = createBaseSignatureHeaderJWS();
+    message.alg = object.alg ?? "";
+    message.kid = object.kid ?? "";
     return message;
   },
 };

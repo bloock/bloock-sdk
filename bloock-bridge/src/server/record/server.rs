@@ -3,21 +3,20 @@ use crate::{
     items::{
         DataAvailabilityType, Decrypter, Encrypter, EncryptionAlg, GetHashRequest, GetHashResponse,
         Loader, LoaderArgs, Record, RecordBuilderResponse, RecordServiceHandler, SetProofRequest,
-        SetProofResponse, Signer, SignerAlg,
+        SetProofResponse, Signer,
     },
     server::response_types::RequestConfigData,
 };
 use async_trait::async_trait;
 use bloock_core::{
-    config::config_data::ConfigData,
-    integrity::entity::proof::Proof,
-    record::entity::record::Record as RecordCore,
-    record::{builder::Builder, service::RecordService},
-    Decrypter as DecrypterCore, Encrypter as EncrypterCore, LocalAesDecrypter, LocalAesEncrypter,
-    LocalEcdsaSigner, LocalEnsSigner, LocalRsaDecrypter, LocalRsaEncrypter, ManagedBJJSigner,
-    ManagedEcdsaSigner, ManagedEnsSigner, ManagedRsaDecrypter, ManagedRsaEncrypter,
-    Signer as SignerCore,
+    config::config_data::ConfigData, integrity::entity::proof::Proof, record::builder::Builder,
+    record::entity::record::Record as RecordCore, Decrypter as DecrypterCore,
+    Encrypter as EncrypterCore, LocalAesDecrypter, LocalAesEncrypter, LocalRsaDecrypter,
+    LocalRsaEncrypter, ManagedRsaDecrypter, ManagedRsaEncrypter,
 };
+use bloock_keys::{entity::key::Key, certificates::{managed::ManagedCertificate as ManagedCertificateCore, local::LocalCertificate as LocalCertificateCore}};
+use bloock_keys::keys::local::LocalKey as LocalKeyCore;
+use bloock_keys::keys::managed::ManagedKey as ManagedKeyCore;
 use std::convert::TryInto;
 
 pub struct RecordServer {}
@@ -29,7 +28,10 @@ impl RecordServiceHandler for RecordServer {
         req: &crate::items::RecordBuilderFromStringRequest,
     ) -> Result<RecordBuilderResponse, String> {
         let config_data = req.get_config_data()?;
-        let builder = RecordService::from_string(req.clone().payload).map_err(|e| e.to_string())?;
+        let service = bloock_core::record::configure(config_data.clone());
+        let builder = service
+            .from_string(req.clone().payload)
+            .map_err(|e| e.to_string())?;
         match build_record(
             builder,
             req.clone().signer,
@@ -52,7 +54,10 @@ impl RecordServiceHandler for RecordServer {
         req: &crate::items::RecordBuilderFromHexRequest,
     ) -> Result<RecordBuilderResponse, String> {
         let config_data = req.get_config_data()?;
-        let builder = RecordService::from_hex(req.clone().payload).map_err(|e| e.to_string())?;
+        let service = bloock_core::record::configure(config_data.clone());
+        let builder = service
+            .from_hex(req.clone().payload)
+            .map_err(|e| e.to_string())?;
 
         match build_record(
             builder,
@@ -76,7 +81,10 @@ impl RecordServiceHandler for RecordServer {
         req: &crate::items::RecordBuilderFromJsonRequest,
     ) -> Result<RecordBuilderResponse, String> {
         let config_data = req.get_config_data()?;
-        let builder = RecordService::from_json(req.clone().payload).map_err(|e| e.to_string())?;
+        let service = bloock_core::record::configure(config_data.clone());
+        let builder = service
+            .from_json(req.clone().payload)
+            .map_err(|e| e.to_string())?;
 
         match build_record(
             builder,
@@ -100,7 +108,10 @@ impl RecordServiceHandler for RecordServer {
         req: &crate::items::RecordBuilderFromFileRequest,
     ) -> Result<RecordBuilderResponse, String> {
         let config_data = req.get_config_data()?;
-        let builder = RecordService::from_file(req.clone().payload).map_err(|e| e.to_string())?;
+        let service = bloock_core::record::configure(config_data.clone());
+        let builder = service
+            .from_file(req.clone().payload)
+            .map_err(|e| e.to_string())?;
 
         match build_record(
             builder,
@@ -124,7 +135,10 @@ impl RecordServiceHandler for RecordServer {
         req: &crate::items::RecordBuilderFromBytesRequest,
     ) -> Result<RecordBuilderResponse, String> {
         let config_data = req.get_config_data()?;
-        let builder = RecordService::from_bytes(req.clone().payload).map_err(|e| e.to_string())?;
+        let service = bloock_core::record::configure(config_data.clone());
+        let builder = service
+            .from_bytes(req.clone().payload)
+            .map_err(|e| e.to_string())?;
 
         match build_record(
             builder,
@@ -155,7 +169,8 @@ impl RecordServiceHandler for RecordServer {
             .try_into()
             .map_err(|e: BridgeError| e.to_string())?;
 
-        let builder = RecordService::from_record(payload).map_err(|e| e.to_string())?;
+        let service = bloock_core::record::configure(config_data.clone());
+        let builder = service.from_record(payload).map_err(|e| e.to_string())?;
 
         match build_record(
             builder,
@@ -199,7 +214,8 @@ impl RecordServiceHandler for RecordServer {
 
         let payload = result.map_err(|e| e.to_string())?;
 
-        let builder = RecordService::from_file(payload).map_err(|e| e.to_string())?;
+        let service = bloock_core::record::configure(config_data.clone());
+        let builder = service.from_file(payload).map_err(|e| e.to_string())?;
 
         match build_record(
             builder,
@@ -265,45 +281,25 @@ async fn build_record(
     config_data: ConfigData,
 ) -> Result<Record, String> {
     if let Some(signer) = signer {
-        let signer_alg = SignerAlg::from_i32(signer.alg);
-
-        let local_key = signer.local_key;
-        let managed_key = signer.managed_key;
-
-        let signer: Box<dyn SignerCore> = if let Some(key) = managed_key {
-            match signer_alg {
-                Some(SignerAlg::Es256k) => ManagedEcdsaSigner::new_boxed(
-                    key.into(),
-                    signer.common_name,
-                    config_data.config.host.clone(),
-                    config_data.config.api_key.clone(),
-                ),
-                Some(SignerAlg::Bjj) => ManagedBJJSigner::new_boxed(
-                    key.into(),
-                    signer.common_name,
-                    config_data.config.host.clone(),
-                    config_data.config.api_key.clone(),
-                ),
-                Some(SignerAlg::Ens) => ManagedEnsSigner::new_boxed(
-                    key.into(),
-                    config_data.config.host.clone(),
-                    config_data.config.api_key.clone(),
-                ),
-                None => return Err("invalid signer provided".to_string()),
-            }
-        } else if let Some(key) = local_key {
-            match signer_alg {
-                Some(SignerAlg::Es256k) => {
-                    LocalEcdsaSigner::new_boxed(key.into(), signer.common_name)
-                }
-                Some(SignerAlg::Ens) => LocalEnsSigner::new_boxed(key.into()),
-                Some(SignerAlg::Bjj) => todo!(),
-                None => return Err("invalid signer provided".to_string()),
-            }
+        let key: Key = if let Some(managed_key) = signer.managed_key {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.into()
+        } else if let Some(local_key) = signer.local_key {
+            let local_key_core: LocalKeyCore<String> = local_key.into();
+            local_key_core.into()
+        } else if let Some(managed_certificate) = signer.managed_certificate {
+            let managed_certificate_core: ManagedCertificateCore = managed_certificate.into();
+            managed_certificate_core.into()
+        } else if let Some(local_certificate) = signer.local_certificate {
+            let local_certificate_core: LocalCertificateCore<String> = local_certificate
+                .try_into()
+                .map_err(|e: BridgeError| e.to_string())?;
+            local_certificate_core.into()
         } else {
             return Err("invalid key provided".to_string());
         };
-        builder = builder.with_signer(signer);
+
+        builder = builder.with_signer(key);
     }
 
     if let Some(encrypt) = encrypter {

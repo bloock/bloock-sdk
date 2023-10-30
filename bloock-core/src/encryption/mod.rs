@@ -30,7 +30,7 @@ impl From<EncryptionError> for BloockError {
 }
 
 pub fn configure(config_data: ConfigData) -> service::EncryptionService<BloockHttpClient> {
-    let bloock_http_client = Arc::new(BloockHttpClient::new(config_data.get_config().api_key, None));
+    let bloock_http_client = Arc::new(BloockHttpClient::new(config_data.get_config().api_key));
 
     service::EncryptionService {
         http: Arc::clone(&bloock_http_client),

@@ -28,9 +28,6 @@ class ManagedCertificateParams:
     def to_proto(self) -> proto.ManagedCertificateParams:
         return proto.ManagedCertificateParams(
             key_type=self.key_type.to_proto(),
-            cn=self.subject.cn,
-            c=self.subject.c,
-            ou=self.subject.ou,
-            o=self.subject.o,
+            subject=self.subject.to_proto(),
             expiration=self.expiration
         )

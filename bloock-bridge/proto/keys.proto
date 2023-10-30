@@ -68,7 +68,7 @@ message LoadManagedKeyResponse {
 
 message GenerateLocalCertificateRequest {
     ConfigData config_data = 1;
-    KeyType key_type = 2;
+    LocalCertificateParams params = 2;
 }
 
 message GenerateLocalCertificateResponse {
@@ -88,7 +88,8 @@ message GenerateManagedCertificateResponse {
 
 message LoadLocalCertificateRequest {
     ConfigData config_data = 1;
-    string key = 3;
+    bytes pkcs12 = 2;
+    string password = 3;
 }
 
 message LoadLocalCertificateResponse {

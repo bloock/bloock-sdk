@@ -1,8 +1,8 @@
 import { describe, test, expect } from "@jest/globals";
-import { BjjIssuerKey, BjjSigner } from "../../dist/index";
+import { BjjIssuerKey, Signer } from "../../dist/index";
 import {
   CredentialV2,
-  IdentityV2Client,
+  IdentityClient,
   KeyClient,
   KeyProtectionLevel,
   KeyType,
@@ -38,7 +38,7 @@ describe("Identity V2 Tests", () => {
   test("test identity end to end", async () => {
     initDevSdk();
 
-    const identityClient = new IdentityV2Client(apiManagedHost);
+    const identityClient = new IdentityClient(apiManagedHost);
     const keyClient = new KeyClient();
 
     let keyProtection = KeyProtectionLevel.SOFTWARE;
@@ -92,7 +92,7 @@ describe("Identity V2 Tests", () => {
       ProofType.SPARSE_MT_PROOF_TYPE
     ];
 
-    const schema = await identityClient
+    let schema = await identityClient
       .buildSchema(
         "Driving License",
         drivingLicenseSchemaType,
@@ -129,10 +129,15 @@ describe("Identity V2 Tests", () => {
         [1.1, 1.2, 1.3]
       )
       .build();
-    expect(schema.id).toBeTruthy();
+    expect(schema.cid).toBeTruthy();
+
+    schema = await identityClient.getSchema(schema.cid)
+    expect(schema.cidJsonLd).toBeTruthy();
+    expect(schema.json).toBeTruthy();
+    expect(schema.schemaType).toBeTruthy();
 
     const receipt = await identityClient
-      .buildCredential(schema.id, issuer, holderDid, expiration, 0)
+      .buildCredential(schema.cid, issuer, holderDid, expiration, 0)
       .withIntegerAttribute("license_type", 1)
       .withDecimalAttribute("quantity_oil", 2.25555)
       .withStringAttribute("nif", "54688188M")
@@ -142,7 +147,7 @@ describe("Identity V2 Tests", () => {
       .withStringAttribute("car_type", "big")
       .withIntegerAttribute("car_points", 5)
       .withDecimalAttribute("precision_wheels", 1.1)
-      .withSigner(new BjjSigner(keyBjj))
+      .withSigner(new Signer(keyBjj))
       .withProofType(proofType)
       .build();
     expect(receipt.credentialId).toBeTruthy();
@@ -157,14 +162,14 @@ describe("Identity V2 Tests", () => {
 
     const stateReceipt = await identityClient
       .buildIssuerStatePublisher(issuer)
-      .withSigner(new BjjSigner(keyBjj))
+      .withSigner(new Signer(keyBjj))
       .build();
     expect(stateReceipt.txHash).toBeTruthy();
 
     try {
       await identityClient
         .buildIssuerStatePublisher(issuer)
-        .withSigner(new BjjSigner(keyBjj))
+        .withSigner(new Signer(keyBjj))
         .build();
     } catch (error) {
       expect(error).toBeTruthy();
@@ -176,7 +181,7 @@ describe("Identity V2 Tests", () => {
     try {
       await identityClient
         .buildIssuerStatePublisher(issuer)
-        .withSigner(new BjjSigner(keyBjj))
+        .withSigner(new Signer(keyBjj))
         .build();
     } catch (error) {
       expect(error).toBeTruthy();

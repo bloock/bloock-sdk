@@ -4,18 +4,18 @@ use crate::{
     record::document::Document,
 };
 use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
-use bloock_signer::Signer;
+use bloock_keys::entity::key::Key;
 
 pub struct Builder {
     document: Document,
-    signer: Option<Box<dyn Signer>>,
+    signer: Option<Key>,
     encrypter: Option<Box<dyn Encrypter>>,
     decrypter: Option<Box<dyn Decrypter>>,
 }
 
 impl Builder {
-    pub fn new(payload: Vec<u8>) -> BloockResult<Self> {
-        let document = Document::new(&payload)?;
+    pub fn new(payload: Vec<u8>, api_host: String, api_key: String) -> BloockResult<Self> {
+        let document = Document::new(&payload, api_host.clone(), api_key.clone())?;
         Ok(Self {
             document,
             signer: None,
@@ -33,8 +33,8 @@ impl Builder {
         }
     }
 
-    pub fn with_signer(mut self, signer: Box<dyn Signer>) -> Self {
-        self.signer = Some(signer);
+    pub fn with_signer(mut self, key: Key) -> Self {
+        self.signer = Some(key);
         self
     }
 
@@ -49,42 +49,22 @@ impl Builder {
     }
 
     pub async fn build(mut self) -> BloockResult<Record> {
-        if let Some(decrypter) = &self.decrypter {
+        if let Some(decrypter) = self.decrypter {
             if !self.document.is_encrypted() {
                 Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
             }
 
-            let payload = self.document.get_payload();
-
-            let decrypted_payload = decrypter
-                .decrypt(&payload)
-                .await
-                .map_err(InfrastructureError::EncrypterError)?;
-
-            self.document = self.document.remove_encryption(decrypted_payload)?;
+            self.document.decrypt(decrypter).await?;
         }
 
         if let Some(signer) = &self.signer {
-            let payload = self.document.get_payload();
-
-            let signature = signer
-                .sign(&payload)
-                .await
-                .map_err(InfrastructureError::SignerError)?;
-
-            self.document.add_signature(signature)?;
+            self.document.sign(signer).await?;
         }
 
         let mut record = Record::new(self.document)?;
 
         if let Some(encrypter) = self.encrypter {
-            let payload = record.clone().serialize()?;
-            let ciphertext = encrypter
-                .encrypt(&payload)
-                .await
-                .map_err(InfrastructureError::EncrypterError)?;
-
-            record.set_encryption(ciphertext, encrypter.get_alg())?;
+            record.encrypt(encrypter).await?;
         }
 
         Ok(record)

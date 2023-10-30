@@ -2,19 +2,19 @@
 
 namespace Bloock\Entity\Identity;
 
-use Bloock\Entity\Authenticity\Signature;
+use Bloock\Entity\Authenticity\SignatureJws;
 use Bloock\Entity\Integrity\Proof;
 
 class CredentialProof
 {
     private Proof $bloockProof;
-    private Signature $signatureProof;
+    private SignatureJws $signatureProof;
 
     /**
      * @param Proof $bloockProof
-     * @param Signature $signatureProof
+     * @param SignatureJws $signatureProof
      */
-    public function __construct(Proof $bloockProof, Signature $signatureProof)
+    public function __construct(Proof $bloockProof, SignatureJws $signatureProof)
     {
         $this->bloockProof = $bloockProof;
         $this->signatureProof = $signatureProof;
@@ -22,7 +22,7 @@ class CredentialProof
 
     public static function fromProto(\Bloock\CredentialProof $res): CredentialProof
     {
-        return new CredentialProof(Proof::fromProto($res->getBloockProof()), Signature::fromProto($res->getSignatureProof()));
+        return new CredentialProof(Proof::fromProto($res->getBloockProof()), SignatureJws::fromProto($res->getSignatureProof()));
     }
 
     /**
@@ -34,9 +34,9 @@ class CredentialProof
     }
 
     /**
-     * @return Signature
+     * @return SignatureJws
      */
-    public function getSignatureProof(): Signature
+    public function getSignatureProof(): SignatureJws
     {
         return $this->signatureProof;
     }

@@ -37,7 +37,7 @@ impl<H: Client> AvailabilityService<H> {
     pub async fn retrieve_hosted(&self, id: String) -> BloockResult<Vec<u8>> {
         let url = format!(
             "{}/hosting/v1/hosted/{}",
-            self.config_service.get_api_base_url(),
+            self.config_service.get_cdn_base_url(),
             id
         );
 
@@ -70,7 +70,7 @@ impl<H: Client> AvailabilityService<H> {
     pub async fn retrieve_ipfs(&self, id: String) -> BloockResult<Vec<u8>> {
         let url = format!(
             "{}/hosting/v1/ipfs/{}",
-            self.config_service.get_api_base_url(),
+            self.config_service.get_cdn_base_url(),
             id
         );
 
@@ -112,7 +112,14 @@ mod tests {
 
         let service = availability::configure_test(Arc::new(http));
 
-        let record = Record::new(Document::new(&payload).unwrap());
+        let record = Record::new(
+            Document::new(
+                &payload,
+                service.config_service.get_api_base_url(),
+                service.config_service.get_api_key(),
+            )
+            .unwrap(),
+        );
 
         let result = service.publish_hosted(record.unwrap()).await.unwrap();
 
@@ -130,7 +137,7 @@ mod tests {
         let mut http = MockClient::default();
         http.expect_get::<String>()
             .with(
-                eq(format!("https://api.bloock.com/hosting/v1/hosted/{id}")),
+                eq(format!("https://cdn.bloock.com/hosting/v1/hosted/{id}")),
                 eq(None),
             )
             .return_once(move |_, _| Ok(payload.to_vec()));
@@ -168,7 +175,14 @@ mod tests {
 
         let service = availability::configure_test(Arc::new(http));
 
-        let record = Record::new(Document::new(&payload).unwrap());
+        let record = Record::new(
+            Document::new(
+                &payload,
+                service.config_service.get_api_base_url(),
+                service.config_service.get_api_key(),
+            )
+            .unwrap(),
+        );
 
         let result = service.publish_ipfs(record.unwrap()).await.unwrap();
 
@@ -186,7 +200,7 @@ mod tests {
         let mut http = MockClient::default();
         http.expect_get::<String>()
             .with(
-                eq(format!("https://api.bloock.com/hosting/v1/ipfs/{id}")),
+                eq(format!("https://cdn.bloock.com/hosting/v1/ipfs/{id}")),
                 eq(None),
             )
             .return_once(move |_, _| Ok(payload.to_vec()));

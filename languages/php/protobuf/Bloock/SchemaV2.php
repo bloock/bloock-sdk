@@ -14,13 +14,21 @@ use Google\Protobuf\Internal\GPBUtil;
 class SchemaV2 extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>string id = 1;</code>
+     * Generated from protobuf field <code>string cid = 1;</code>
      */
-    protected $id = '';
+    protected $cid = '';
     /**
-     * Generated from protobuf field <code>string json_ld = 2;</code>
+     * Generated from protobuf field <code>string cid_json_ld = 2;</code>
      */
-    protected $json_ld = '';
+    protected $cid_json_ld = '';
+    /**
+     * Generated from protobuf field <code>string schema_type = 3;</code>
+     */
+    protected $schema_type = '';
+    /**
+     * Generated from protobuf field <code>string json = 4;</code>
+     */
+    protected $json = '';
 
     /**
      * Constructor.
@@ -28,8 +36,10 @@ class SchemaV2 extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type string $id
-     *     @type string $json_ld
+     *     @type string $cid
+     *     @type string $cid_json_ld
+     *     @type string $schema_type
+     *     @type string $json
      * }
      */
     public function __construct($data = NULL) {
@@ -38,45 +48,89 @@ class SchemaV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string id = 1;</code>
+     * Generated from protobuf field <code>string cid = 1;</code>
      * @return string
      */
-    public function getId()
+    public function getCid()
     {
-        return $this->id;
+        return $this->cid;
     }
 
     /**
-     * Generated from protobuf field <code>string id = 1;</code>
+     * Generated from protobuf field <code>string cid = 1;</code>
      * @param string $var
      * @return $this
      */
-    public function setId($var)
+    public function setCid($var)
     {
         GPBUtil::checkString($var, True);
-        $this->id = $var;
+        $this->cid = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>string json_ld = 2;</code>
+     * Generated from protobuf field <code>string cid_json_ld = 2;</code>
      * @return string
      */
-    public function getJsonLd()
+    public function getCidJsonLd()
     {
-        return $this->json_ld;
+        return $this->cid_json_ld;
     }
 
     /**
-     * Generated from protobuf field <code>string json_ld = 2;</code>
+     * Generated from protobuf field <code>string cid_json_ld = 2;</code>
      * @param string $var
      * @return $this
      */
-    public function setJsonLd($var)
+    public function setCidJsonLd($var)
     {
         GPBUtil::checkString($var, True);
-        $this->json_ld = $var;
+        $this->cid_json_ld = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string schema_type = 3;</code>
+     * @return string
+     */
+    public function getSchemaType()
+    {
+        return $this->schema_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>string schema_type = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setSchemaType($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->schema_type = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string json = 4;</code>
+     * @return string
+     */
+    public function getJson()
+    {
+        return $this->json;
+    }
+
+    /**
+     * Generated from protobuf field <code>string json = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setJson($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->json = $var;
 
         return $this;
     }

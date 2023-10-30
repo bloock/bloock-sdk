@@ -20,6 +20,116 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type GetSchemaRequestV2 struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConfigData *ConfigData `protobuf:"bytes,1,opt,name=config_data,json=configData,proto3" json:"config_data,omitempty"`
+	Id         string      `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *GetSchemaRequestV2) Reset() {
+	*x = GetSchemaRequestV2{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_v2_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetSchemaRequestV2) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSchemaRequestV2) ProtoMessage() {}
+
+func (x *GetSchemaRequestV2) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_v2_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSchemaRequestV2.ProtoReflect.Descriptor instead.
+func (*GetSchemaRequestV2) Descriptor() ([]byte, []int) {
+	return file_identity_v2_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *GetSchemaRequestV2) GetConfigData() *ConfigData {
+	if x != nil {
+		return x.ConfigData
+	}
+	return nil
+}
+
+func (x *GetSchemaRequestV2) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetSchemaResponseV2 struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Schema *SchemaV2 `protobuf:"bytes,1,opt,name=schema,proto3" json:"schema,omitempty"`
+	Error  *Error    `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error,omitempty"`
+}
+
+func (x *GetSchemaResponseV2) Reset() {
+	*x = GetSchemaResponseV2{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_v2_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetSchemaResponseV2) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSchemaResponseV2) ProtoMessage() {}
+
+func (x *GetSchemaResponseV2) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_v2_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSchemaResponseV2.ProtoReflect.Descriptor instead.
+func (*GetSchemaResponseV2) Descriptor() ([]byte, []int) {
+	return file_identity_v2_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetSchemaResponseV2) GetSchema() *SchemaV2 {
+	if x != nil {
+		return x.Schema
+	}
+	return nil
+}
+
+func (x *GetSchemaResponseV2) GetError() *Error {
+	if x != nil {
+		return x.Error
+	}
+	return nil
+}
+
 type GetIssuerListRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -31,7 +141,7 @@ type GetIssuerListRequest struct {
 func (x *GetIssuerListRequest) Reset() {
 	*x = GetIssuerListRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[0]
+		mi := &file_identity_v2_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -44,7 +154,7 @@ func (x *GetIssuerListRequest) String() string {
 func (*GetIssuerListRequest) ProtoMessage() {}
 
 func (x *GetIssuerListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[0]
+	mi := &file_identity_v2_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +167,7 @@ func (x *GetIssuerListRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIssuerListRequest.ProtoReflect.Descriptor instead.
 func (*GetIssuerListRequest) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{0}
+	return file_identity_v2_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetIssuerListRequest) GetConfigData() *ConfigData {
@@ -79,7 +189,7 @@ type GetIssuerListResponse struct {
 func (x *GetIssuerListResponse) Reset() {
 	*x = GetIssuerListResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[1]
+		mi := &file_identity_v2_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -92,7 +202,7 @@ func (x *GetIssuerListResponse) String() string {
 func (*GetIssuerListResponse) ProtoMessage() {}
 
 func (x *GetIssuerListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[1]
+	mi := &file_identity_v2_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -105,7 +215,7 @@ func (x *GetIssuerListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIssuerListResponse.ProtoReflect.Descriptor instead.
 func (*GetIssuerListResponse) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{1}
+	return file_identity_v2_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetIssuerListResponse) GetDid() []string {
@@ -134,7 +244,7 @@ type GetIssuerByKeyResponse struct {
 func (x *GetIssuerByKeyResponse) Reset() {
 	*x = GetIssuerByKeyResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[2]
+		mi := &file_identity_v2_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -147,7 +257,7 @@ func (x *GetIssuerByKeyResponse) String() string {
 func (*GetIssuerByKeyResponse) ProtoMessage() {}
 
 func (x *GetIssuerByKeyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[2]
+	mi := &file_identity_v2_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -160,7 +270,7 @@ func (x *GetIssuerByKeyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIssuerByKeyResponse.ProtoReflect.Descriptor instead.
 func (*GetIssuerByKeyResponse) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{2}
+	return file_identity_v2_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetIssuerByKeyResponse) GetDid() string {
@@ -190,7 +300,7 @@ type GetCredentialProofRequest struct {
 func (x *GetCredentialProofRequest) Reset() {
 	*x = GetCredentialProofRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[3]
+		mi := &file_identity_v2_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -203,7 +313,7 @@ func (x *GetCredentialProofRequest) String() string {
 func (*GetCredentialProofRequest) ProtoMessage() {}
 
 func (x *GetCredentialProofRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[3]
+	mi := &file_identity_v2_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -216,7 +326,7 @@ func (x *GetCredentialProofRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCredentialProofRequest.ProtoReflect.Descriptor instead.
 func (*GetCredentialProofRequest) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{3}
+	return file_identity_v2_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetCredentialProofRequest) GetConfigData() *ConfigData {
@@ -252,7 +362,7 @@ type GetCredentialProofResponse struct {
 func (x *GetCredentialProofResponse) Reset() {
 	*x = GetCredentialProofResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[4]
+		mi := &file_identity_v2_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -265,7 +375,7 @@ func (x *GetCredentialProofResponse) String() string {
 func (*GetCredentialProofResponse) ProtoMessage() {}
 
 func (x *GetCredentialProofResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[4]
+	mi := &file_identity_v2_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -278,7 +388,7 @@ func (x *GetCredentialProofResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCredentialProofResponse.ProtoReflect.Descriptor instead.
 func (*GetCredentialProofResponse) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{4}
+	return file_identity_v2_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetCredentialProofResponse) GetProof() *CredentialProofV2 {
@@ -307,7 +417,7 @@ type CredentialToJsonRequestV2 struct {
 func (x *CredentialToJsonRequestV2) Reset() {
 	*x = CredentialToJsonRequestV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[5]
+		mi := &file_identity_v2_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -320,7 +430,7 @@ func (x *CredentialToJsonRequestV2) String() string {
 func (*CredentialToJsonRequestV2) ProtoMessage() {}
 
 func (x *CredentialToJsonRequestV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[5]
+	mi := &file_identity_v2_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -333,7 +443,7 @@ func (x *CredentialToJsonRequestV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CredentialToJsonRequestV2.ProtoReflect.Descriptor instead.
 func (*CredentialToJsonRequestV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{5}
+	return file_identity_v2_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CredentialToJsonRequestV2) GetConfigData() *ConfigData {
@@ -362,7 +472,7 @@ type CredentialToJsonResponseV2 struct {
 func (x *CredentialToJsonResponseV2) Reset() {
 	*x = CredentialToJsonResponseV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[6]
+		mi := &file_identity_v2_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -375,7 +485,7 @@ func (x *CredentialToJsonResponseV2) String() string {
 func (*CredentialToJsonResponseV2) ProtoMessage() {}
 
 func (x *CredentialToJsonResponseV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[6]
+	mi := &file_identity_v2_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -388,7 +498,7 @@ func (x *CredentialToJsonResponseV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CredentialToJsonResponseV2.ProtoReflect.Descriptor instead.
 func (*CredentialToJsonResponseV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{6}
+	return file_identity_v2_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CredentialToJsonResponseV2) GetJson() string {
@@ -417,7 +527,7 @@ type CredentialFromJsonRequestV2 struct {
 func (x *CredentialFromJsonRequestV2) Reset() {
 	*x = CredentialFromJsonRequestV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[7]
+		mi := &file_identity_v2_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -430,7 +540,7 @@ func (x *CredentialFromJsonRequestV2) String() string {
 func (*CredentialFromJsonRequestV2) ProtoMessage() {}
 
 func (x *CredentialFromJsonRequestV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[7]
+	mi := &file_identity_v2_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -443,7 +553,7 @@ func (x *CredentialFromJsonRequestV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CredentialFromJsonRequestV2.ProtoReflect.Descriptor instead.
 func (*CredentialFromJsonRequestV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{7}
+	return file_identity_v2_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CredentialFromJsonRequestV2) GetConfigData() *ConfigData {
@@ -472,7 +582,7 @@ type CredentialFromJsonResponseV2 struct {
 func (x *CredentialFromJsonResponseV2) Reset() {
 	*x = CredentialFromJsonResponseV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[8]
+		mi := &file_identity_v2_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -485,7 +595,7 @@ func (x *CredentialFromJsonResponseV2) String() string {
 func (*CredentialFromJsonResponseV2) ProtoMessage() {}
 
 func (x *CredentialFromJsonResponseV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[8]
+	mi := &file_identity_v2_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -498,7 +608,7 @@ func (x *CredentialFromJsonResponseV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CredentialFromJsonResponseV2.ProtoReflect.Descriptor instead.
 func (*CredentialFromJsonResponseV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{8}
+	return file_identity_v2_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CredentialFromJsonResponseV2) GetCredential() *CredentialV2 {
@@ -540,7 +650,7 @@ type CreateCredentialRequestV2 struct {
 func (x *CreateCredentialRequestV2) Reset() {
 	*x = CreateCredentialRequestV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[9]
+		mi := &file_identity_v2_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -553,7 +663,7 @@ func (x *CreateCredentialRequestV2) String() string {
 func (*CreateCredentialRequestV2) ProtoMessage() {}
 
 func (x *CreateCredentialRequestV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[9]
+	mi := &file_identity_v2_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -566,7 +676,7 @@ func (x *CreateCredentialRequestV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCredentialRequestV2.ProtoReflect.Descriptor instead.
 func (*CreateCredentialRequestV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{9}
+	return file_identity_v2_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CreateCredentialRequestV2) GetConfigData() *ConfigData {
@@ -699,7 +809,7 @@ type BuildSchemaRequestV2 struct {
 func (x *BuildSchemaRequestV2) Reset() {
 	*x = BuildSchemaRequestV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[10]
+		mi := &file_identity_v2_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -712,7 +822,7 @@ func (x *BuildSchemaRequestV2) String() string {
 func (*BuildSchemaRequestV2) ProtoMessage() {}
 
 func (x *BuildSchemaRequestV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[10]
+	mi := &file_identity_v2_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -725,7 +835,7 @@ func (x *BuildSchemaRequestV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BuildSchemaRequestV2.ProtoReflect.Descriptor instead.
 func (*BuildSchemaRequestV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{10}
+	return file_identity_v2_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *BuildSchemaRequestV2) GetConfigData() *ConfigData {
@@ -846,7 +956,7 @@ type CreateIssuerRequest struct {
 func (x *CreateIssuerRequest) Reset() {
 	*x = CreateIssuerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[11]
+		mi := &file_identity_v2_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -859,7 +969,7 @@ func (x *CreateIssuerRequest) String() string {
 func (*CreateIssuerRequest) ProtoMessage() {}
 
 func (x *CreateIssuerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[11]
+	mi := &file_identity_v2_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -872,7 +982,7 @@ func (x *CreateIssuerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateIssuerRequest.ProtoReflect.Descriptor instead.
 func (*CreateIssuerRequest) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{11}
+	return file_identity_v2_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *CreateIssuerRequest) GetIssuerKey() *IssuerKey {
@@ -909,7 +1019,7 @@ type GetIssuerByKeyRequest struct {
 func (x *GetIssuerByKeyRequest) Reset() {
 	*x = GetIssuerByKeyRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[12]
+		mi := &file_identity_v2_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -922,7 +1032,7 @@ func (x *GetIssuerByKeyRequest) String() string {
 func (*GetIssuerByKeyRequest) ProtoMessage() {}
 
 func (x *GetIssuerByKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[12]
+	mi := &file_identity_v2_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -935,7 +1045,7 @@ func (x *GetIssuerByKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIssuerByKeyRequest.ProtoReflect.Descriptor instead.
 func (*GetIssuerByKeyRequest) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{12}
+	return file_identity_v2_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetIssuerByKeyRequest) GetIssuerKey() *IssuerKey {
@@ -972,7 +1082,7 @@ type PublishIssuerStateRequest struct {
 func (x *PublishIssuerStateRequest) Reset() {
 	*x = PublishIssuerStateRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[13]
+		mi := &file_identity_v2_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -985,7 +1095,7 @@ func (x *PublishIssuerStateRequest) String() string {
 func (*PublishIssuerStateRequest) ProtoMessage() {}
 
 func (x *PublishIssuerStateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[13]
+	mi := &file_identity_v2_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -998,7 +1108,7 @@ func (x *PublishIssuerStateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishIssuerStateRequest.ProtoReflect.Descriptor instead.
 func (*PublishIssuerStateRequest) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{13}
+	return file_identity_v2_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *PublishIssuerStateRequest) GetConfigData() *ConfigData {
@@ -1034,7 +1144,7 @@ type CreateCredentialResponseV2 struct {
 func (x *CreateCredentialResponseV2) Reset() {
 	*x = CreateCredentialResponseV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[14]
+		mi := &file_identity_v2_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1047,7 +1157,7 @@ func (x *CreateCredentialResponseV2) String() string {
 func (*CreateCredentialResponseV2) ProtoMessage() {}
 
 func (x *CreateCredentialResponseV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[14]
+	mi := &file_identity_v2_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1060,7 +1170,7 @@ func (x *CreateCredentialResponseV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCredentialResponseV2.ProtoReflect.Descriptor instead.
 func (*CreateCredentialResponseV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{14}
+	return file_identity_v2_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *CreateCredentialResponseV2) GetCredentialReceipt() *CredentialReceiptV2 {
@@ -1089,7 +1199,7 @@ type CreateIssuerResponse struct {
 func (x *CreateIssuerResponse) Reset() {
 	*x = CreateIssuerResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[15]
+		mi := &file_identity_v2_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1102,7 +1212,7 @@ func (x *CreateIssuerResponse) String() string {
 func (*CreateIssuerResponse) ProtoMessage() {}
 
 func (x *CreateIssuerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[15]
+	mi := &file_identity_v2_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1115,7 +1225,7 @@ func (x *CreateIssuerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateIssuerResponse.ProtoReflect.Descriptor instead.
 func (*CreateIssuerResponse) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{15}
+	return file_identity_v2_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *CreateIssuerResponse) GetDid() string {
@@ -1144,7 +1254,7 @@ type BuildSchemaResponseV2 struct {
 func (x *BuildSchemaResponseV2) Reset() {
 	*x = BuildSchemaResponseV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[16]
+		mi := &file_identity_v2_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1157,7 +1267,7 @@ func (x *BuildSchemaResponseV2) String() string {
 func (*BuildSchemaResponseV2) ProtoMessage() {}
 
 func (x *BuildSchemaResponseV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[16]
+	mi := &file_identity_v2_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1170,7 +1280,7 @@ func (x *BuildSchemaResponseV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BuildSchemaResponseV2.ProtoReflect.Descriptor instead.
 func (*BuildSchemaResponseV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{16}
+	return file_identity_v2_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *BuildSchemaResponseV2) GetSchema() *SchemaV2 {
@@ -1199,7 +1309,7 @@ type PublishIssuerStateResponse struct {
 func (x *PublishIssuerStateResponse) Reset() {
 	*x = PublishIssuerStateResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[17]
+		mi := &file_identity_v2_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1212,7 +1322,7 @@ func (x *PublishIssuerStateResponse) String() string {
 func (*PublishIssuerStateResponse) ProtoMessage() {}
 
 func (x *PublishIssuerStateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[17]
+	mi := &file_identity_v2_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1225,7 +1335,7 @@ func (x *PublishIssuerStateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishIssuerStateResponse.ProtoReflect.Descriptor instead.
 func (*PublishIssuerStateResponse) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{17}
+	return file_identity_v2_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *PublishIssuerStateResponse) GetStateReceipt() *IssuerStateReceipt {
@@ -1254,7 +1364,7 @@ type RevokeCredentialRequestV2 struct {
 func (x *RevokeCredentialRequestV2) Reset() {
 	*x = RevokeCredentialRequestV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[18]
+		mi := &file_identity_v2_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1267,7 +1377,7 @@ func (x *RevokeCredentialRequestV2) String() string {
 func (*RevokeCredentialRequestV2) ProtoMessage() {}
 
 func (x *RevokeCredentialRequestV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[18]
+	mi := &file_identity_v2_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1280,7 +1390,7 @@ func (x *RevokeCredentialRequestV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeCredentialRequestV2.ProtoReflect.Descriptor instead.
 func (*RevokeCredentialRequestV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{18}
+	return file_identity_v2_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *RevokeCredentialRequestV2) GetConfigData() *ConfigData {
@@ -1309,7 +1419,7 @@ type RevokeCredentialResponseV2 struct {
 func (x *RevokeCredentialResponseV2) Reset() {
 	*x = RevokeCredentialResponseV2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_v2_proto_msgTypes[19]
+		mi := &file_identity_v2_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1322,7 +1432,7 @@ func (x *RevokeCredentialResponseV2) String() string {
 func (*RevokeCredentialResponseV2) ProtoMessage() {}
 
 func (x *RevokeCredentialResponseV2) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_v2_proto_msgTypes[19]
+	mi := &file_identity_v2_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1335,7 +1445,7 @@ func (x *RevokeCredentialResponseV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeCredentialResponseV2.ProtoReflect.Descriptor instead.
 func (*RevokeCredentialResponseV2) Descriptor() ([]byte, []int) {
-	return file_identity_v2_proto_rawDescGZIP(), []int{19}
+	return file_identity_v2_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *RevokeCredentialResponseV2) GetResult() *CredentialRevocationV2 {
@@ -1362,6 +1472,19 @@ var file_identity_v2_proto_rawDesc = []byte{
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x0c, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1a, 0x69, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x5f, 0x65,
 	0x6e, 0x74, 0x69, 0x74, 0x69, 0x65, 0x73, 0x5f, 0x76, 0x32, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x22, 0x59, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x56, 0x32, 0x12, 0x33, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x62, 0x6c,
+	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x44, 0x61, 0x74, 0x61, 0x52,
+	0x0a, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x73, 0x0a, 0x13, 0x47,
+	0x65, 0x74, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x56, 0x32, 0x12, 0x28, 0x0a, 0x06, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x10, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x53, 0x63, 0x68, 0x65,
+	0x6d, 0x61, 0x56, 0x32, 0x52, 0x06, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x12, 0x28, 0x0a, 0x05,
+	0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6c,
+	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x48, 0x00, 0x52, 0x05, 0x65, 0x72,
+	0x72, 0x6f, 0x72, 0x88, 0x01, 0x01, 0x42, 0x08, 0x0a, 0x06, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72,
 	0x22, 0x4b, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x49, 0x73, 0x73, 0x75, 0x65, 0x72, 0x4c, 0x69, 0x73,
 	0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x33, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x66,
 	0x69, 0x67, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e,
@@ -1627,8 +1750,8 @@ var file_identity_v2_proto_rawDesc = []byte{
 	0x56, 0x32, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x28, 0x0a, 0x05, 0x65, 0x72,
 	0x72, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6c, 0x6f, 0x6f,
 	0x63, 0x6b, 0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x48, 0x00, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f,
-	0x72, 0x88, 0x01, 0x01, 0x42, 0x08, 0x0a, 0x06, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x32, 0xf5,
-	0x06, 0x0a, 0x11, 0x49, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x72, 0x88, 0x01, 0x01, 0x42, 0x08, 0x0a, 0x06, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x32, 0xbb,
+	0x07, 0x0a, 0x11, 0x49, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69,
 	0x63, 0x65, 0x56, 0x32, 0x12, 0x49, 0x0a, 0x0c, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x73,
 	0x73, 0x75, 0x65, 0x72, 0x12, 0x1b, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72,
 	0x65, 0x61, 0x74, 0x65, 0x49, 0x73, 0x73, 0x75, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
@@ -1648,48 +1771,52 @@ var file_identity_v2_proto_rawDesc = []byte{
 	0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x53, 0x63, 0x68, 0x65,
 	0x6d, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x56, 0x32, 0x1a, 0x1d, 0x2e, 0x62, 0x6c,
 	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x42, 0x75, 0x69, 0x6c, 0x64, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x59, 0x0a, 0x10, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x12, 0x21,
-	0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x72,
-	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x56,
-	0x32, 0x1a, 0x22, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74,
-	0x65, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x5b, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x43, 0x72, 0x65, 0x64,
-	0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x12, 0x21, 0x2e, 0x62, 0x6c,
-	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69,
-	0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x22,
-	0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x72, 0x65, 0x64, 0x65,
-	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x59, 0x0a, 0x10, 0x52, 0x65, 0x76, 0x6f, 0x6b, 0x65, 0x43, 0x72, 0x65, 0x64,
-	0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x12, 0x21, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e,
-	0x52, 0x65, 0x76, 0x6f, 0x6b, 0x65, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x56, 0x32, 0x1a, 0x22, 0x2e, 0x62, 0x6c, 0x6f, 0x6f,
-	0x63, 0x6b, 0x2e, 0x52, 0x65, 0x76, 0x6f, 0x6b, 0x65, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74,
-	0x69, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x59, 0x0a,
-	0x10, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x54, 0x6f, 0x4a, 0x73, 0x6f,
-	0x6e, 0x12, 0x21, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65,
-	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x54, 0x6f, 0x4a, 0x73, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x56, 0x32, 0x1a, 0x22, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72,
-	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x54, 0x6f, 0x4a, 0x73, 0x6f, 0x6e, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x5f, 0x0a, 0x12, 0x43, 0x72, 0x65, 0x64,
-	0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x46, 0x72, 0x6f, 0x6d, 0x4a, 0x73, 0x6f, 0x6e, 0x12, 0x23,
-	0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69,
-	0x61, 0x6c, 0x46, 0x72, 0x6f, 0x6d, 0x4a, 0x73, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x56, 0x32, 0x1a, 0x24, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65,
-	0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x46, 0x72, 0x6f, 0x6d, 0x4a, 0x73, 0x6f, 0x6e, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x5b, 0x0a, 0x12, 0x50, 0x75, 0x62,
-	0x6c, 0x69, 0x73, 0x68, 0x49, 0x73, 0x73, 0x75, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12,
-	0x21, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x73, 0x68,
-	0x49, 0x73, 0x73, 0x75, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x22, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x50, 0x75, 0x62, 0x6c,
-	0x69, 0x73, 0x68, 0x49, 0x73, 0x73, 0x75, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x57, 0x0a, 0x1b, 0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x6c,
-	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x5a, 0x38, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2d,
-	0x73, 0x64, 0x6b, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e,
-	0x61, 0x6c, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x44, 0x0a, 0x09, 0x47, 0x65,
+	0x74, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x12, 0x1a, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b,
+	0x2e, 0x47, 0x65, 0x74, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x56, 0x32, 0x1a, 0x1b, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x47, 0x65, 0x74,
+	0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32,
+	0x12, 0x59, 0x0a, 0x10, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e,
+	0x74, 0x69, 0x61, 0x6c, 0x12, 0x21, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x56, 0x32, 0x1a, 0x22, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b,
+	0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61,
+	0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x5b, 0x0a, 0x12, 0x47,
+	0x65, 0x74, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f,
+	0x66, 0x12, 0x21, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x72,
+	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x47, 0x65,
+	0x74, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f, 0x66,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59, 0x0a, 0x10, 0x52, 0x65, 0x76, 0x6f,
+	0x6b, 0x65, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x12, 0x21, 0x2e, 0x62,
+	0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x52, 0x65, 0x76, 0x6f, 0x6b, 0x65, 0x43, 0x72, 0x65, 0x64,
+	0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x56, 0x32, 0x1a,
+	0x22, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x52, 0x65, 0x76, 0x6f, 0x6b, 0x65, 0x43,
+	0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x56, 0x32, 0x12, 0x59, 0x0a, 0x10, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61,
+	0x6c, 0x54, 0x6f, 0x4a, 0x73, 0x6f, 0x6e, 0x12, 0x21, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b,
+	0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x54, 0x6f, 0x4a, 0x73, 0x6f,
+	0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x56, 0x32, 0x1a, 0x22, 0x2e, 0x62, 0x6c, 0x6f,
+	0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x54, 0x6f,
+	0x4a, 0x73, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12, 0x5f,
+	0x0a, 0x12, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x46, 0x72, 0x6f, 0x6d,
+	0x4a, 0x73, 0x6f, 0x6e, 0x12, 0x23, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72,
+	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x46, 0x72, 0x6f, 0x6d, 0x4a, 0x73, 0x6f, 0x6e,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x56, 0x32, 0x1a, 0x24, 0x2e, 0x62, 0x6c, 0x6f, 0x6f,
+	0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x46, 0x72, 0x6f,
+	0x6d, 0x4a, 0x73, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x32, 0x12,
+	0x5b, 0x0a, 0x12, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x73, 0x68, 0x49, 0x73, 0x73, 0x75, 0x65, 0x72,
+	0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x21, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x50,
+	0x75, 0x62, 0x6c, 0x69, 0x73, 0x68, 0x49, 0x73, 0x73, 0x75, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63,
+	0x6b, 0x2e, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x73, 0x68, 0x49, 0x73, 0x73, 0x75, 0x65, 0x72, 0x53,
+	0x74, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x57, 0x0a, 0x1b,
+	0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x62,
+	0x72, 0x69, 0x64, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x5a, 0x38, 0x67, 0x69, 0x74,
+	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2f, 0x62,
+	0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2d, 0x73, 0x64, 0x6b, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f,
+	0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1704,132 +1831,139 @@ func file_identity_v2_proto_rawDescGZIP() []byte {
 	return file_identity_v2_proto_rawDescData
 }
 
-var file_identity_v2_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_identity_v2_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_identity_v2_proto_goTypes = []interface{}{
-	(*GetIssuerListRequest)(nil),             // 0: bloock.GetIssuerListRequest
-	(*GetIssuerListResponse)(nil),            // 1: bloock.GetIssuerListResponse
-	(*GetIssuerByKeyResponse)(nil),           // 2: bloock.GetIssuerByKeyResponse
-	(*GetCredentialProofRequest)(nil),        // 3: bloock.GetCredentialProofRequest
-	(*GetCredentialProofResponse)(nil),       // 4: bloock.GetCredentialProofResponse
-	(*CredentialToJsonRequestV2)(nil),        // 5: bloock.CredentialToJsonRequestV2
-	(*CredentialToJsonResponseV2)(nil),       // 6: bloock.CredentialToJsonResponseV2
-	(*CredentialFromJsonRequestV2)(nil),      // 7: bloock.CredentialFromJsonRequestV2
-	(*CredentialFromJsonResponseV2)(nil),     // 8: bloock.CredentialFromJsonResponseV2
-	(*CreateCredentialRequestV2)(nil),        // 9: bloock.CreateCredentialRequestV2
-	(*BuildSchemaRequestV2)(nil),             // 10: bloock.BuildSchemaRequestV2
-	(*CreateIssuerRequest)(nil),              // 11: bloock.CreateIssuerRequest
-	(*GetIssuerByKeyRequest)(nil),            // 12: bloock.GetIssuerByKeyRequest
-	(*PublishIssuerStateRequest)(nil),        // 13: bloock.PublishIssuerStateRequest
-	(*CreateCredentialResponseV2)(nil),       // 14: bloock.CreateCredentialResponseV2
-	(*CreateIssuerResponse)(nil),             // 15: bloock.CreateIssuerResponse
-	(*BuildSchemaResponseV2)(nil),            // 16: bloock.BuildSchemaResponseV2
-	(*PublishIssuerStateResponse)(nil),       // 17: bloock.PublishIssuerStateResponse
-	(*RevokeCredentialRequestV2)(nil),        // 18: bloock.RevokeCredentialRequestV2
-	(*RevokeCredentialResponseV2)(nil),       // 19: bloock.RevokeCredentialResponseV2
-	(*ConfigData)(nil),                       // 20: bloock.ConfigData
-	(*Error)(nil),                            // 21: bloock.Error
-	(*CredentialProofV2)(nil),                // 22: bloock.CredentialProofV2
-	(*CredentialV2)(nil),                     // 23: bloock.CredentialV2
-	(*Signer)(nil),                           // 24: bloock.Signer
-	(*StringAttributeV2)(nil),                // 25: bloock.StringAttributeV2
-	(*IntegerAttributeV2)(nil),               // 26: bloock.IntegerAttributeV2
-	(*DecimalAttributeV2)(nil),               // 27: bloock.DecimalAttributeV2
-	(*BooleanAttributeV2)(nil),               // 28: bloock.BooleanAttributeV2
-	(*DateAttributeV2)(nil),                  // 29: bloock.DateAttributeV2
-	(*DateTimeAttributeV2)(nil),              // 30: bloock.DateTimeAttributeV2
-	(ProofType)(0),                           // 31: bloock.ProofType
-	(*StringAttributeDefinitionV2)(nil),      // 32: bloock.StringAttributeDefinitionV2
-	(*IntegerAttributeDefinitionV2)(nil),     // 33: bloock.IntegerAttributeDefinitionV2
-	(*DecimalAttributeDefinitionV2)(nil),     // 34: bloock.DecimalAttributeDefinitionV2
-	(*BooleanAttributeDefinitionV2)(nil),     // 35: bloock.BooleanAttributeDefinitionV2
-	(*DateAttributeDefinitionV2)(nil),        // 36: bloock.DateAttributeDefinitionV2
-	(*DateTimeAttributeDefinitionV2)(nil),    // 37: bloock.DateTimeAttributeDefinitionV2
-	(*StringEnumAttributeDefinitionV2)(nil),  // 38: bloock.StringEnumAttributeDefinitionV2
-	(*IntegerEnumAttributeDefinitionV2)(nil), // 39: bloock.IntegerEnumAttributeDefinitionV2
-	(*DecimalEnumAttributeDefinitionV2)(nil), // 40: bloock.DecimalEnumAttributeDefinitionV2
-	(*IssuerKey)(nil),                        // 41: bloock.IssuerKey
-	(*IssuerParams)(nil),                     // 42: bloock.IssuerParams
-	(*CredentialReceiptV2)(nil),              // 43: bloock.CredentialReceiptV2
-	(*SchemaV2)(nil),                         // 44: bloock.SchemaV2
-	(*IssuerStateReceipt)(nil),               // 45: bloock.IssuerStateReceipt
-	(*CredentialRevocationV2)(nil),           // 46: bloock.CredentialRevocationV2
+	(*GetSchemaRequestV2)(nil),               // 0: bloock.GetSchemaRequestV2
+	(*GetSchemaResponseV2)(nil),              // 1: bloock.GetSchemaResponseV2
+	(*GetIssuerListRequest)(nil),             // 2: bloock.GetIssuerListRequest
+	(*GetIssuerListResponse)(nil),            // 3: bloock.GetIssuerListResponse
+	(*GetIssuerByKeyResponse)(nil),           // 4: bloock.GetIssuerByKeyResponse
+	(*GetCredentialProofRequest)(nil),        // 5: bloock.GetCredentialProofRequest
+	(*GetCredentialProofResponse)(nil),       // 6: bloock.GetCredentialProofResponse
+	(*CredentialToJsonRequestV2)(nil),        // 7: bloock.CredentialToJsonRequestV2
+	(*CredentialToJsonResponseV2)(nil),       // 8: bloock.CredentialToJsonResponseV2
+	(*CredentialFromJsonRequestV2)(nil),      // 9: bloock.CredentialFromJsonRequestV2
+	(*CredentialFromJsonResponseV2)(nil),     // 10: bloock.CredentialFromJsonResponseV2
+	(*CreateCredentialRequestV2)(nil),        // 11: bloock.CreateCredentialRequestV2
+	(*BuildSchemaRequestV2)(nil),             // 12: bloock.BuildSchemaRequestV2
+	(*CreateIssuerRequest)(nil),              // 13: bloock.CreateIssuerRequest
+	(*GetIssuerByKeyRequest)(nil),            // 14: bloock.GetIssuerByKeyRequest
+	(*PublishIssuerStateRequest)(nil),        // 15: bloock.PublishIssuerStateRequest
+	(*CreateCredentialResponseV2)(nil),       // 16: bloock.CreateCredentialResponseV2
+	(*CreateIssuerResponse)(nil),             // 17: bloock.CreateIssuerResponse
+	(*BuildSchemaResponseV2)(nil),            // 18: bloock.BuildSchemaResponseV2
+	(*PublishIssuerStateResponse)(nil),       // 19: bloock.PublishIssuerStateResponse
+	(*RevokeCredentialRequestV2)(nil),        // 20: bloock.RevokeCredentialRequestV2
+	(*RevokeCredentialResponseV2)(nil),       // 21: bloock.RevokeCredentialResponseV2
+	(*ConfigData)(nil),                       // 22: bloock.ConfigData
+	(*SchemaV2)(nil),                         // 23: bloock.SchemaV2
+	(*Error)(nil),                            // 24: bloock.Error
+	(*CredentialProofV2)(nil),                // 25: bloock.CredentialProofV2
+	(*CredentialV2)(nil),                     // 26: bloock.CredentialV2
+	(*Signer)(nil),                           // 27: bloock.Signer
+	(*StringAttributeV2)(nil),                // 28: bloock.StringAttributeV2
+	(*IntegerAttributeV2)(nil),               // 29: bloock.IntegerAttributeV2
+	(*DecimalAttributeV2)(nil),               // 30: bloock.DecimalAttributeV2
+	(*BooleanAttributeV2)(nil),               // 31: bloock.BooleanAttributeV2
+	(*DateAttributeV2)(nil),                  // 32: bloock.DateAttributeV2
+	(*DateTimeAttributeV2)(nil),              // 33: bloock.DateTimeAttributeV2
+	(ProofType)(0),                           // 34: bloock.ProofType
+	(*StringAttributeDefinitionV2)(nil),      // 35: bloock.StringAttributeDefinitionV2
+	(*IntegerAttributeDefinitionV2)(nil),     // 36: bloock.IntegerAttributeDefinitionV2
+	(*DecimalAttributeDefinitionV2)(nil),     // 37: bloock.DecimalAttributeDefinitionV2
+	(*BooleanAttributeDefinitionV2)(nil),     // 38: bloock.BooleanAttributeDefinitionV2
+	(*DateAttributeDefinitionV2)(nil),        // 39: bloock.DateAttributeDefinitionV2
+	(*DateTimeAttributeDefinitionV2)(nil),    // 40: bloock.DateTimeAttributeDefinitionV2
+	(*StringEnumAttributeDefinitionV2)(nil),  // 41: bloock.StringEnumAttributeDefinitionV2
+	(*IntegerEnumAttributeDefinitionV2)(nil), // 42: bloock.IntegerEnumAttributeDefinitionV2
+	(*DecimalEnumAttributeDefinitionV2)(nil), // 43: bloock.DecimalEnumAttributeDefinitionV2
+	(*IssuerKey)(nil),                        // 44: bloock.IssuerKey
+	(*IssuerParams)(nil),                     // 45: bloock.IssuerParams
+	(*CredentialReceiptV2)(nil),              // 46: bloock.CredentialReceiptV2
+	(*IssuerStateReceipt)(nil),               // 47: bloock.IssuerStateReceipt
+	(*CredentialRevocationV2)(nil),           // 48: bloock.CredentialRevocationV2
 }
 var file_identity_v2_proto_depIdxs = []int32{
-	20, // 0: bloock.GetIssuerListRequest.config_data:type_name -> bloock.ConfigData
-	21, // 1: bloock.GetIssuerListResponse.error:type_name -> bloock.Error
-	21, // 2: bloock.GetIssuerByKeyResponse.error:type_name -> bloock.Error
-	20, // 3: bloock.GetCredentialProofRequest.config_data:type_name -> bloock.ConfigData
-	22, // 4: bloock.GetCredentialProofResponse.proof:type_name -> bloock.CredentialProofV2
-	21, // 5: bloock.GetCredentialProofResponse.error:type_name -> bloock.Error
-	20, // 6: bloock.CredentialToJsonRequestV2.config_data:type_name -> bloock.ConfigData
-	23, // 7: bloock.CredentialToJsonRequestV2.credential:type_name -> bloock.CredentialV2
-	21, // 8: bloock.CredentialToJsonResponseV2.error:type_name -> bloock.Error
-	20, // 9: bloock.CredentialFromJsonRequestV2.config_data:type_name -> bloock.ConfigData
-	23, // 10: bloock.CredentialFromJsonResponseV2.credential:type_name -> bloock.CredentialV2
-	21, // 11: bloock.CredentialFromJsonResponseV2.error:type_name -> bloock.Error
-	20, // 12: bloock.CreateCredentialRequestV2.config_data:type_name -> bloock.ConfigData
-	24, // 13: bloock.CreateCredentialRequestV2.signer:type_name -> bloock.Signer
-	25, // 14: bloock.CreateCredentialRequestV2.string_attributes:type_name -> bloock.StringAttributeV2
-	26, // 15: bloock.CreateCredentialRequestV2.integer_attributes:type_name -> bloock.IntegerAttributeV2
-	27, // 16: bloock.CreateCredentialRequestV2.decimal_attributes:type_name -> bloock.DecimalAttributeV2
-	28, // 17: bloock.CreateCredentialRequestV2.boolean_attributes:type_name -> bloock.BooleanAttributeV2
-	29, // 18: bloock.CreateCredentialRequestV2.date_attributes:type_name -> bloock.DateAttributeV2
-	30, // 19: bloock.CreateCredentialRequestV2.datetime_attributes:type_name -> bloock.DateTimeAttributeV2
-	31, // 20: bloock.CreateCredentialRequestV2.proof_type:type_name -> bloock.ProofType
-	20, // 21: bloock.BuildSchemaRequestV2.config_data:type_name -> bloock.ConfigData
-	32, // 22: bloock.BuildSchemaRequestV2.string_attributes:type_name -> bloock.StringAttributeDefinitionV2
-	33, // 23: bloock.BuildSchemaRequestV2.integer_attributes:type_name -> bloock.IntegerAttributeDefinitionV2
-	34, // 24: bloock.BuildSchemaRequestV2.decimal_attributes:type_name -> bloock.DecimalAttributeDefinitionV2
-	35, // 25: bloock.BuildSchemaRequestV2.boolean_attributes:type_name -> bloock.BooleanAttributeDefinitionV2
-	36, // 26: bloock.BuildSchemaRequestV2.date_attributes:type_name -> bloock.DateAttributeDefinitionV2
-	37, // 27: bloock.BuildSchemaRequestV2.datetime_attributes:type_name -> bloock.DateTimeAttributeDefinitionV2
-	38, // 28: bloock.BuildSchemaRequestV2.string_enum_attributes:type_name -> bloock.StringEnumAttributeDefinitionV2
-	39, // 29: bloock.BuildSchemaRequestV2.integer_enum_attributes:type_name -> bloock.IntegerEnumAttributeDefinitionV2
-	40, // 30: bloock.BuildSchemaRequestV2.decimal_enum_attributes:type_name -> bloock.DecimalEnumAttributeDefinitionV2
-	41, // 31: bloock.CreateIssuerRequest.issuer_key:type_name -> bloock.IssuerKey
-	20, // 32: bloock.CreateIssuerRequest.config_data:type_name -> bloock.ConfigData
-	42, // 33: bloock.CreateIssuerRequest.issuer_params:type_name -> bloock.IssuerParams
-	41, // 34: bloock.GetIssuerByKeyRequest.issuer_key:type_name -> bloock.IssuerKey
-	20, // 35: bloock.GetIssuerByKeyRequest.config_data:type_name -> bloock.ConfigData
-	42, // 36: bloock.GetIssuerByKeyRequest.issuer_params:type_name -> bloock.IssuerParams
-	20, // 37: bloock.PublishIssuerStateRequest.config_data:type_name -> bloock.ConfigData
-	24, // 38: bloock.PublishIssuerStateRequest.signer:type_name -> bloock.Signer
-	43, // 39: bloock.CreateCredentialResponseV2.credential_receipt:type_name -> bloock.CredentialReceiptV2
-	21, // 40: bloock.CreateCredentialResponseV2.error:type_name -> bloock.Error
-	21, // 41: bloock.CreateIssuerResponse.error:type_name -> bloock.Error
-	44, // 42: bloock.BuildSchemaResponseV2.schema:type_name -> bloock.SchemaV2
-	21, // 43: bloock.BuildSchemaResponseV2.error:type_name -> bloock.Error
-	45, // 44: bloock.PublishIssuerStateResponse.state_receipt:type_name -> bloock.IssuerStateReceipt
-	21, // 45: bloock.PublishIssuerStateResponse.error:type_name -> bloock.Error
-	20, // 46: bloock.RevokeCredentialRequestV2.config_data:type_name -> bloock.ConfigData
-	23, // 47: bloock.RevokeCredentialRequestV2.credential:type_name -> bloock.CredentialV2
-	46, // 48: bloock.RevokeCredentialResponseV2.result:type_name -> bloock.CredentialRevocationV2
-	21, // 49: bloock.RevokeCredentialResponseV2.error:type_name -> bloock.Error
-	11, // 50: bloock.IdentityServiceV2.CreateIssuer:input_type -> bloock.CreateIssuerRequest
-	0,  // 51: bloock.IdentityServiceV2.GetIssuerList:input_type -> bloock.GetIssuerListRequest
-	12, // 52: bloock.IdentityServiceV2.GetIssuerByKey:input_type -> bloock.GetIssuerByKeyRequest
-	10, // 53: bloock.IdentityServiceV2.BuildSchema:input_type -> bloock.BuildSchemaRequestV2
-	9,  // 54: bloock.IdentityServiceV2.CreateCredential:input_type -> bloock.CreateCredentialRequestV2
-	3,  // 55: bloock.IdentityServiceV2.GetCredentialProof:input_type -> bloock.GetCredentialProofRequest
-	18, // 56: bloock.IdentityServiceV2.RevokeCredential:input_type -> bloock.RevokeCredentialRequestV2
-	5,  // 57: bloock.IdentityServiceV2.CredentialToJson:input_type -> bloock.CredentialToJsonRequestV2
-	7,  // 58: bloock.IdentityServiceV2.CredentialFromJson:input_type -> bloock.CredentialFromJsonRequestV2
-	13, // 59: bloock.IdentityServiceV2.PublishIssuerState:input_type -> bloock.PublishIssuerStateRequest
-	15, // 60: bloock.IdentityServiceV2.CreateIssuer:output_type -> bloock.CreateIssuerResponse
-	1,  // 61: bloock.IdentityServiceV2.GetIssuerList:output_type -> bloock.GetIssuerListResponse
-	2,  // 62: bloock.IdentityServiceV2.GetIssuerByKey:output_type -> bloock.GetIssuerByKeyResponse
-	16, // 63: bloock.IdentityServiceV2.BuildSchema:output_type -> bloock.BuildSchemaResponseV2
-	14, // 64: bloock.IdentityServiceV2.CreateCredential:output_type -> bloock.CreateCredentialResponseV2
-	4,  // 65: bloock.IdentityServiceV2.GetCredentialProof:output_type -> bloock.GetCredentialProofResponse
-	19, // 66: bloock.IdentityServiceV2.RevokeCredential:output_type -> bloock.RevokeCredentialResponseV2
-	6,  // 67: bloock.IdentityServiceV2.CredentialToJson:output_type -> bloock.CredentialToJsonResponseV2
-	8,  // 68: bloock.IdentityServiceV2.CredentialFromJson:output_type -> bloock.CredentialFromJsonResponseV2
-	17, // 69: bloock.IdentityServiceV2.PublishIssuerState:output_type -> bloock.PublishIssuerStateResponse
-	60, // [60:70] is the sub-list for method output_type
-	50, // [50:60] is the sub-list for method input_type
-	50, // [50:50] is the sub-list for extension type_name
-	50, // [50:50] is the sub-list for extension extendee
-	0,  // [0:50] is the sub-list for field type_name
+	22, // 0: bloock.GetSchemaRequestV2.config_data:type_name -> bloock.ConfigData
+	23, // 1: bloock.GetSchemaResponseV2.schema:type_name -> bloock.SchemaV2
+	24, // 2: bloock.GetSchemaResponseV2.error:type_name -> bloock.Error
+	22, // 3: bloock.GetIssuerListRequest.config_data:type_name -> bloock.ConfigData
+	24, // 4: bloock.GetIssuerListResponse.error:type_name -> bloock.Error
+	24, // 5: bloock.GetIssuerByKeyResponse.error:type_name -> bloock.Error
+	22, // 6: bloock.GetCredentialProofRequest.config_data:type_name -> bloock.ConfigData
+	25, // 7: bloock.GetCredentialProofResponse.proof:type_name -> bloock.CredentialProofV2
+	24, // 8: bloock.GetCredentialProofResponse.error:type_name -> bloock.Error
+	22, // 9: bloock.CredentialToJsonRequestV2.config_data:type_name -> bloock.ConfigData
+	26, // 10: bloock.CredentialToJsonRequestV2.credential:type_name -> bloock.CredentialV2
+	24, // 11: bloock.CredentialToJsonResponseV2.error:type_name -> bloock.Error
+	22, // 12: bloock.CredentialFromJsonRequestV2.config_data:type_name -> bloock.ConfigData
+	26, // 13: bloock.CredentialFromJsonResponseV2.credential:type_name -> bloock.CredentialV2
+	24, // 14: bloock.CredentialFromJsonResponseV2.error:type_name -> bloock.Error
+	22, // 15: bloock.CreateCredentialRequestV2.config_data:type_name -> bloock.ConfigData
+	27, // 16: bloock.CreateCredentialRequestV2.signer:type_name -> bloock.Signer
+	28, // 17: bloock.CreateCredentialRequestV2.string_attributes:type_name -> bloock.StringAttributeV2
+	29, // 18: bloock.CreateCredentialRequestV2.integer_attributes:type_name -> bloock.IntegerAttributeV2
+	30, // 19: bloock.CreateCredentialRequestV2.decimal_attributes:type_name -> bloock.DecimalAttributeV2
+	31, // 20: bloock.CreateCredentialRequestV2.boolean_attributes:type_name -> bloock.BooleanAttributeV2
+	32, // 21: bloock.CreateCredentialRequestV2.date_attributes:type_name -> bloock.DateAttributeV2
+	33, // 22: bloock.CreateCredentialRequestV2.datetime_attributes:type_name -> bloock.DateTimeAttributeV2
+	34, // 23: bloock.CreateCredentialRequestV2.proof_type:type_name -> bloock.ProofType
+	22, // 24: bloock.BuildSchemaRequestV2.config_data:type_name -> bloock.ConfigData
+	35, // 25: bloock.BuildSchemaRequestV2.string_attributes:type_name -> bloock.StringAttributeDefinitionV2
+	36, // 26: bloock.BuildSchemaRequestV2.integer_attributes:type_name -> bloock.IntegerAttributeDefinitionV2
+	37, // 27: bloock.BuildSchemaRequestV2.decimal_attributes:type_name -> bloock.DecimalAttributeDefinitionV2
+	38, // 28: bloock.BuildSchemaRequestV2.boolean_attributes:type_name -> bloock.BooleanAttributeDefinitionV2
+	39, // 29: bloock.BuildSchemaRequestV2.date_attributes:type_name -> bloock.DateAttributeDefinitionV2
+	40, // 30: bloock.BuildSchemaRequestV2.datetime_attributes:type_name -> bloock.DateTimeAttributeDefinitionV2
+	41, // 31: bloock.BuildSchemaRequestV2.string_enum_attributes:type_name -> bloock.StringEnumAttributeDefinitionV2
+	42, // 32: bloock.BuildSchemaRequestV2.integer_enum_attributes:type_name -> bloock.IntegerEnumAttributeDefinitionV2
+	43, // 33: bloock.BuildSchemaRequestV2.decimal_enum_attributes:type_name -> bloock.DecimalEnumAttributeDefinitionV2
+	44, // 34: bloock.CreateIssuerRequest.issuer_key:type_name -> bloock.IssuerKey
+	22, // 35: bloock.CreateIssuerRequest.config_data:type_name -> bloock.ConfigData
+	45, // 36: bloock.CreateIssuerRequest.issuer_params:type_name -> bloock.IssuerParams
+	44, // 37: bloock.GetIssuerByKeyRequest.issuer_key:type_name -> bloock.IssuerKey
+	22, // 38: bloock.GetIssuerByKeyRequest.config_data:type_name -> bloock.ConfigData
+	45, // 39: bloock.GetIssuerByKeyRequest.issuer_params:type_name -> bloock.IssuerParams
+	22, // 40: bloock.PublishIssuerStateRequest.config_data:type_name -> bloock.ConfigData
+	27, // 41: bloock.PublishIssuerStateRequest.signer:type_name -> bloock.Signer
+	46, // 42: bloock.CreateCredentialResponseV2.credential_receipt:type_name -> bloock.CredentialReceiptV2
+	24, // 43: bloock.CreateCredentialResponseV2.error:type_name -> bloock.Error
+	24, // 44: bloock.CreateIssuerResponse.error:type_name -> bloock.Error
+	23, // 45: bloock.BuildSchemaResponseV2.schema:type_name -> bloock.SchemaV2
+	24, // 46: bloock.BuildSchemaResponseV2.error:type_name -> bloock.Error
+	47, // 47: bloock.PublishIssuerStateResponse.state_receipt:type_name -> bloock.IssuerStateReceipt
+	24, // 48: bloock.PublishIssuerStateResponse.error:type_name -> bloock.Error
+	22, // 49: bloock.RevokeCredentialRequestV2.config_data:type_name -> bloock.ConfigData
+	26, // 50: bloock.RevokeCredentialRequestV2.credential:type_name -> bloock.CredentialV2
+	48, // 51: bloock.RevokeCredentialResponseV2.result:type_name -> bloock.CredentialRevocationV2
+	24, // 52: bloock.RevokeCredentialResponseV2.error:type_name -> bloock.Error
+	13, // 53: bloock.IdentityServiceV2.CreateIssuer:input_type -> bloock.CreateIssuerRequest
+	2,  // 54: bloock.IdentityServiceV2.GetIssuerList:input_type -> bloock.GetIssuerListRequest
+	14, // 55: bloock.IdentityServiceV2.GetIssuerByKey:input_type -> bloock.GetIssuerByKeyRequest
+	12, // 56: bloock.IdentityServiceV2.BuildSchema:input_type -> bloock.BuildSchemaRequestV2
+	0,  // 57: bloock.IdentityServiceV2.GetSchema:input_type -> bloock.GetSchemaRequestV2
+	11, // 58: bloock.IdentityServiceV2.CreateCredential:input_type -> bloock.CreateCredentialRequestV2
+	5,  // 59: bloock.IdentityServiceV2.GetCredentialProof:input_type -> bloock.GetCredentialProofRequest
+	20, // 60: bloock.IdentityServiceV2.RevokeCredential:input_type -> bloock.RevokeCredentialRequestV2
+	7,  // 61: bloock.IdentityServiceV2.CredentialToJson:input_type -> bloock.CredentialToJsonRequestV2
+	9,  // 62: bloock.IdentityServiceV2.CredentialFromJson:input_type -> bloock.CredentialFromJsonRequestV2
+	15, // 63: bloock.IdentityServiceV2.PublishIssuerState:input_type -> bloock.PublishIssuerStateRequest
+	17, // 64: bloock.IdentityServiceV2.CreateIssuer:output_type -> bloock.CreateIssuerResponse
+	3,  // 65: bloock.IdentityServiceV2.GetIssuerList:output_type -> bloock.GetIssuerListResponse
+	4,  // 66: bloock.IdentityServiceV2.GetIssuerByKey:output_type -> bloock.GetIssuerByKeyResponse
+	18, // 67: bloock.IdentityServiceV2.BuildSchema:output_type -> bloock.BuildSchemaResponseV2
+	1,  // 68: bloock.IdentityServiceV2.GetSchema:output_type -> bloock.GetSchemaResponseV2
+	16, // 69: bloock.IdentityServiceV2.CreateCredential:output_type -> bloock.CreateCredentialResponseV2
+	6,  // 70: bloock.IdentityServiceV2.GetCredentialProof:output_type -> bloock.GetCredentialProofResponse
+	21, // 71: bloock.IdentityServiceV2.RevokeCredential:output_type -> bloock.RevokeCredentialResponseV2
+	8,  // 72: bloock.IdentityServiceV2.CredentialToJson:output_type -> bloock.CredentialToJsonResponseV2
+	10, // 73: bloock.IdentityServiceV2.CredentialFromJson:output_type -> bloock.CredentialFromJsonResponseV2
+	19, // 74: bloock.IdentityServiceV2.PublishIssuerState:output_type -> bloock.PublishIssuerStateResponse
+	64, // [64:75] is the sub-list for method output_type
+	53, // [53:64] is the sub-list for method input_type
+	53, // [53:53] is the sub-list for extension type_name
+	53, // [53:53] is the sub-list for extension extendee
+	0,  // [0:53] is the sub-list for field type_name
 }
 
 func init() { file_identity_v2_proto_init() }
@@ -1843,7 +1977,7 @@ func file_identity_v2_proto_init() {
 	file_identity_entities_v2_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_identity_v2_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetIssuerListRequest); i {
+			switch v := v.(*GetSchemaRequestV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1855,7 +1989,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetIssuerListResponse); i {
+			switch v := v.(*GetSchemaResponseV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1867,7 +2001,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetIssuerByKeyResponse); i {
+			switch v := v.(*GetIssuerListRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1879,7 +2013,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetCredentialProofRequest); i {
+			switch v := v.(*GetIssuerListResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1891,7 +2025,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetCredentialProofResponse); i {
+			switch v := v.(*GetIssuerByKeyResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1903,7 +2037,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialToJsonRequestV2); i {
+			switch v := v.(*GetCredentialProofRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1915,7 +2049,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialToJsonResponseV2); i {
+			switch v := v.(*GetCredentialProofResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1927,7 +2061,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialFromJsonRequestV2); i {
+			switch v := v.(*CredentialToJsonRequestV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1939,7 +2073,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialFromJsonResponseV2); i {
+			switch v := v.(*CredentialToJsonResponseV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1951,7 +2085,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateCredentialRequestV2); i {
+			switch v := v.(*CredentialFromJsonRequestV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1963,7 +2097,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BuildSchemaRequestV2); i {
+			switch v := v.(*CredentialFromJsonResponseV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1975,7 +2109,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateIssuerRequest); i {
+			switch v := v.(*CreateCredentialRequestV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1987,7 +2121,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetIssuerByKeyRequest); i {
+			switch v := v.(*BuildSchemaRequestV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1999,7 +2133,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PublishIssuerStateRequest); i {
+			switch v := v.(*CreateIssuerRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2011,7 +2145,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateCredentialResponseV2); i {
+			switch v := v.(*GetIssuerByKeyRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2023,7 +2157,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateIssuerResponse); i {
+			switch v := v.(*PublishIssuerStateRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2035,7 +2169,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BuildSchemaResponseV2); i {
+			switch v := v.(*CreateCredentialResponseV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2047,7 +2181,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PublishIssuerStateResponse); i {
+			switch v := v.(*CreateIssuerResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2059,7 +2193,7 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RevokeCredentialRequestV2); i {
+			switch v := v.(*BuildSchemaResponseV2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2071,6 +2205,30 @@ func file_identity_v2_proto_init() {
 			}
 		}
 		file_identity_v2_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PublishIssuerStateResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_v2_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RevokeCredentialRequestV2); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_v2_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RevokeCredentialResponseV2); i {
 			case 0:
 				return &v.state
@@ -2084,25 +2242,26 @@ func file_identity_v2_proto_init() {
 		}
 	}
 	file_identity_v2_proto_msgTypes[1].OneofWrappers = []interface{}{}
-	file_identity_v2_proto_msgTypes[2].OneofWrappers = []interface{}{}
+	file_identity_v2_proto_msgTypes[3].OneofWrappers = []interface{}{}
 	file_identity_v2_proto_msgTypes[4].OneofWrappers = []interface{}{}
 	file_identity_v2_proto_msgTypes[6].OneofWrappers = []interface{}{}
 	file_identity_v2_proto_msgTypes[8].OneofWrappers = []interface{}{}
-	file_identity_v2_proto_msgTypes[9].OneofWrappers = []interface{}{}
+	file_identity_v2_proto_msgTypes[10].OneofWrappers = []interface{}{}
 	file_identity_v2_proto_msgTypes[11].OneofWrappers = []interface{}{}
-	file_identity_v2_proto_msgTypes[12].OneofWrappers = []interface{}{}
+	file_identity_v2_proto_msgTypes[13].OneofWrappers = []interface{}{}
 	file_identity_v2_proto_msgTypes[14].OneofWrappers = []interface{}{}
-	file_identity_v2_proto_msgTypes[15].OneofWrappers = []interface{}{}
 	file_identity_v2_proto_msgTypes[16].OneofWrappers = []interface{}{}
 	file_identity_v2_proto_msgTypes[17].OneofWrappers = []interface{}{}
+	file_identity_v2_proto_msgTypes[18].OneofWrappers = []interface{}{}
 	file_identity_v2_proto_msgTypes[19].OneofWrappers = []interface{}{}
+	file_identity_v2_proto_msgTypes[21].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_identity_v2_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   20,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

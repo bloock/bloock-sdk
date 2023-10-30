@@ -40,7 +40,7 @@ func TestIdentityV2(t *testing.T) {
 	})
 
 	t.Run("identity v2 end to end first flow", func(t *testing.T) {
-		identityClient := NewIdentityV2Client(apiManagedHost)
+		identityClient := NewIdentityClient(apiManagedHost)
 		keyClient := NewKeyClient()
 
 		keys, err := keyClient.NewManagedKey(key.ManagedKeyParams{
@@ -93,9 +93,15 @@ func TestIdentityV2(t *testing.T) {
 			AddDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, []float64{1.10, 1.20, 1.30}).
 			Build()
 		assert.NoError(t, err)
-		assert.NotNil(t, schema.Id)
+		assert.NotNil(t, schema.Cid)
 
-		res, err := identityClient.BuildCredential(schema.Id, issuer, holderDid, expiration, 0).
+		schema, err = identityClient.GetSchema(schema.Cid)
+		assert.NoError(t, err)
+		assert.NotNil(t, schema.CidJsonLd)
+		assert.NotNil(t, schema.Json)
+		assert.NotNil(t, schema.SchemaType)
+
+		res, err := identityClient.BuildCredential(schema.Cid, issuer, holderDid, expiration, 0).
 			WithIntegerAttribute("license_type", 1).
 			WithDecimalAttribute("quantity_oil", 2.25555).
 			WithStringAttribute("nif", "54688188M").
@@ -105,7 +111,7 @@ func TestIdentityV2(t *testing.T) {
 			WithStringAttribute("car_type", "big").
 			WithIntegerAttribute("car_points", 5).
 			WithDecimalAttribute("precision_wheels", 1.10).
-			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
 			WithProofType(proofType).
 			Build()
 		assert.NoError(t, err)
@@ -120,13 +126,13 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
 
 		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
 			Build()
 		assert.Error(t, err)
 
@@ -139,16 +145,13 @@ func TestIdentityV2(t *testing.T) {
 	})
 
 	t.Run("identity v2 end to end second flow", func(t *testing.T) {
-		identityClient := NewIdentityV2Client(apiManagedHost)
+		identityClient := NewIdentityClient(apiManagedHost)
 		keyClient := NewKeyClient()
 
-		keyBjj, err := keyClient.NewManagedKey(key.ManagedKeyParams{
-			KeyType:    key.Bjj,
-			Protection: key.KEY_PROTECTION_SOFTWARE,
-		})
+		keyBjj, err := keyClient.NewLocalKey(key.Bjj)
 		assert.NoError(t, err)
 
-		issuerKey := identityV2.NewBjjIssuerKey(identityV2.IssuerKeyArgs{ManagedKey: &keyBjj})
+		issuerKey := identityV2.NewBjjIssuerKey(identityV2.IssuerKeyArgs{LocalKey: &keyBjj})
 		issuerParams := identityV2.NewIssuerParams()
 		issuerParams.Method = identityV2.ListOfMethods().Iden3
 		issuerParams.Blockchain = identityV2.ListOfBlockchains().Polygon
@@ -164,13 +167,13 @@ func TestIdentityV2(t *testing.T) {
 			AddIntegerAttribute("Document Type", "document_type", "your document type", false).
 			Build()
 		assert.NoError(t, err)
-		assert.NotNil(t, schema2.Id)
+		assert.NotNil(t, schema2.Cid)
 
-		res, err := identityClient.BuildCredential(schema2.Id, issuer, holderDid, expiration, 0).
+		res, err := identityClient.BuildCredential(schema2.Cid, issuer, holderDid, expiration, 0).
 			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
 			WithIntegerAttribute("document_type", 1).
-			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, res.CredentialId)
@@ -184,7 +187,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, KYCAgeSchemaType, credential.Type[1])
 
 		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
@@ -193,7 +196,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.Error(t, err)
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewBjjSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
 			Build()
 		assert.Error(t, err)
 

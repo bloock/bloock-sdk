@@ -1,10 +1,19 @@
-use crate::items::{
-    CertificateType, KeyProtectionLevel, KeyType, LocalKey, ManagedCertificate, ManagedKey,
+use crate::{
+    error::{BridgeError, BridgeResult},
+    items::{
+        CertificateSubject, CertificateType, KeyProtectionLevel, KeyType, LocalCertificate,
+        LocalKey, ManagedCertificate, ManagedKey,
+    },
 };
 use bloock_keys::{
-    local::LocalKey as CoreLocalKey,
-    managed::ProtectionLevel,
-    managed::{ManagedCertificate as CoreManagedCertificate, ManagedKey as CoreManagedKey},
+    certificates::{
+        local::LocalCertificate as CoreLocalCertificate,
+        managed::ManagedCertificate as CoreManagedCertificate,
+        CertificateSubject as CoreCertificateSubject,
+    },
+    entity::protection_level::ProtectionLevel,
+    keys::local::LocalKey as CoreLocalKey,
+    keys::managed::ManagedKey as CoreManagedKey,
     CertificateType as CoreCertificateType, KeyType as CoreKeyType,
 };
 
@@ -115,16 +124,63 @@ impl From<CoreLocalKey<String>> for LocalKey {
     }
 }
 
+impl From<CertificateSubject> for CoreCertificateSubject {
+    fn from(subject: CertificateSubject) -> Self {
+        Self {
+            common_name: subject.common_name,
+            organizational_unit: subject.organizational_unit,
+            organization: subject.organization,
+            location: subject.location,
+            state: subject.state,
+            country: subject.country,
+        }
+    }
+}
+
+impl From<CoreLocalCertificate<String>> for LocalCertificate {
+    fn from(key: CoreLocalCertificate<String>) -> Self {
+        Self {
+            pkcs12: key.pkcs12,
+            password: key.password,
+        }
+    }
+}
+
+impl TryFrom<LocalCertificate> for CoreLocalCertificate<String> {
+    type Error = BridgeError;
+
+    fn try_from(l: LocalCertificate) -> BridgeResult<CoreLocalCertificate<String>> {
+        let local_certificate = CoreLocalCertificate::load_pkcs12(&l.pkcs12, &l.password)
+            .map_err(|e| BridgeError::RequestDeserialization(e.to_string()))?;
+
+        Ok(Self {
+            key: local_certificate.key,
+            certificate: local_certificate.certificate,
+            pkcs12: local_certificate.pkcs12,
+            password: local_certificate.password,
+        })
+    }
+}
+
 impl From<ManagedCertificate> for CoreManagedCertificate {
     fn from(key: ManagedCertificate) -> Self {
         let key_protection: ProtectionLevel = key.protection().into();
         let key_type: CoreKeyType = key.key_type().into();
 
         Self {
-            id: key.id,
-            public_key: key.key,
+            id: key.id.clone(),
             protection: key_protection,
-            key_type,
+            key: CoreManagedKey {
+                id: key.id,
+                public_key: key.key,
+                protection: key_protection,
+                key_type,
+                expiration: match key.expiration {
+                    0 => None,
+                    _ => Some(key.expiration),
+                },
+                name: None,
+            },
             expiration: match key.expiration {
                 0 => None,
                 _ => Some(key.expiration),
@@ -155,11 +211,11 @@ impl From<ManagedCertificate> for CoreManagedKey {
 impl From<CoreManagedCertificate> for ManagedCertificate {
     fn from(key: CoreManagedCertificate) -> Self {
         let key_protection: KeyProtectionLevel = key.protection.into();
-        let key_type: KeyType = key.key_type.into();
+        let key_type: KeyType = key.key.key_type.into();
 
         Self {
             id: key.id,
-            key: key.public_key,
+            key: key.key.public_key,
             protection: key_protection.into(),
             key_type: key_type.into(),
             expiration: key.expiration.unwrap_or(0),

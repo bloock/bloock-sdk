@@ -33,6 +33,16 @@ import {
 } from "./identity_entities_v2";
 import { Error } from "./shared";
 
+export interface GetSchemaRequestV2 {
+  configData?: ConfigData;
+  id: string;
+}
+
+export interface GetSchemaResponseV2 {
+  schema?: SchemaV2;
+  error?: Error | undefined;
+}
+
 export interface GetIssuerListRequest {
   configData?: ConfigData;
 }
@@ -161,6 +171,127 @@ export interface RevokeCredentialResponseV2 {
   result?: CredentialRevocationV2;
   error?: Error | undefined;
 }
+
+function createBaseGetSchemaRequestV2(): GetSchemaRequestV2 {
+  return { configData: undefined, id: "" };
+}
+
+export const GetSchemaRequestV2 = {
+  encode(message: GetSchemaRequestV2, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetSchemaRequestV2 {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetSchemaRequestV2();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.id = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetSchemaRequestV2 {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      id: isSet(object.id) ? String(object.id) : "",
+    };
+  },
+
+  toJSON(message: GetSchemaRequestV2): unknown {
+    const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetSchemaRequestV2>, I>>(object: I): GetSchemaRequestV2 {
+    const message = createBaseGetSchemaRequestV2();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBaseGetSchemaResponseV2(): GetSchemaResponseV2 {
+  return { schema: undefined, error: undefined };
+}
+
+export const GetSchemaResponseV2 = {
+  encode(message: GetSchemaResponseV2, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.schema !== undefined) {
+      SchemaV2.encode(message.schema, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetSchemaResponseV2 {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetSchemaResponseV2();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.schema = SchemaV2.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetSchemaResponseV2 {
+    return {
+      schema: isSet(object.schema) ? SchemaV2.fromJSON(object.schema) : undefined,
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: GetSchemaResponseV2): unknown {
+    const obj: any = {};
+    message.schema !== undefined && (obj.schema = message.schema ? SchemaV2.toJSON(message.schema) : undefined);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetSchemaResponseV2>, I>>(object: I): GetSchemaResponseV2 {
+    const message = createBaseGetSchemaResponseV2();
+    message.schema = (object.schema !== undefined && object.schema !== null)
+      ? SchemaV2.fromPartial(object.schema)
+      : undefined;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
 
 function createBaseGetIssuerListRequest(): GetIssuerListRequest {
   return { configData: undefined };
@@ -1816,6 +1947,7 @@ export interface IdentityServiceV2 {
   GetIssuerList(request: GetIssuerListRequest): Promise<GetIssuerListResponse>;
   GetIssuerByKey(request: GetIssuerByKeyRequest): Promise<GetIssuerByKeyResponse>;
   BuildSchema(request: BuildSchemaRequestV2): Promise<BuildSchemaResponseV2>;
+  GetSchema(request: GetSchemaRequestV2): Promise<GetSchemaResponseV2>;
   CreateCredential(request: CreateCredentialRequestV2): Promise<CreateCredentialResponseV2>;
   GetCredentialProof(request: GetCredentialProofRequest): Promise<GetCredentialProofResponse>;
   RevokeCredential(request: RevokeCredentialRequestV2): Promise<RevokeCredentialResponseV2>;
@@ -1832,6 +1964,7 @@ export class IdentityServiceV2ClientImpl implements IdentityServiceV2 {
     this.GetIssuerList = this.GetIssuerList.bind(this);
     this.GetIssuerByKey = this.GetIssuerByKey.bind(this);
     this.BuildSchema = this.BuildSchema.bind(this);
+    this.GetSchema = this.GetSchema.bind(this);
     this.CreateCredential = this.CreateCredential.bind(this);
     this.GetCredentialProof = this.GetCredentialProof.bind(this);
     this.RevokeCredential = this.RevokeCredential.bind(this);
@@ -1861,6 +1994,12 @@ export class IdentityServiceV2ClientImpl implements IdentityServiceV2 {
     const data = BuildSchemaRequestV2.encode(request).finish();
     const promise = this.rpc.request("bloock.IdentityServiceV2", "BuildSchema", data);
     return promise.then((data) => BuildSchemaResponseV2.decode(new _m0.Reader(data)));
+  }
+
+  GetSchema(request: GetSchemaRequestV2): Promise<GetSchemaResponseV2> {
+    const data = GetSchemaRequestV2.encode(request).finish();
+    const promise = this.rpc.request("bloock.IdentityServiceV2", "GetSchema", data);
+    return promise.then((data) => GetSchemaResponseV2.decode(new _m0.Reader(data)));
   }
 
   CreateCredential(request: CreateCredentialRequestV2): Promise<CreateCredentialResponseV2> {
@@ -1934,6 +2073,14 @@ export const IdentityServiceV2Definition = {
       requestType: BuildSchemaRequestV2,
       requestStream: false,
       responseType: BuildSchemaResponseV2,
+      responseStream: false,
+      options: {},
+    },
+    getSchema: {
+      name: "GetSchema",
+      requestType: GetSchemaRequestV2,
+      requestStream: false,
+      responseType: GetSchemaResponseV2,
       responseStream: false,
       options: {},
     },

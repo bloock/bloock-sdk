@@ -1,15 +1,18 @@
+use super::KeyError;
 use crate::{config::service::ConfigService, error::BloockResult};
 use bloock_http::Client;
 use bloock_keys::{
-    local::{LocalKey, LocalKeyParams},
-    managed::{
-        ManagedCertificate, ManagedCertificateParams, ManagedKey, ManagedKeyParams, ProtectionLevel,
+    certificates::CertificateSubject,
+    certificates::{
+        local::{LocalCertificate, LocalCertificateParams},
+        managed::{ManagedCertificate, ManagedCertificateParams},
     },
-    CertificateSubject, CertificateType, KeyType,
+    entity::protection_level::ProtectionLevel,
+    keys::local::{LocalKey, LocalKeyParams},
+    keys::managed::{ManagedKey, ManagedKeyParams},
+    CertificateType, KeyType,
 };
 use std::sync::Arc;
-
-use super::KeyError;
 
 pub struct KeyService<H: Client> {
     pub http: Arc<H>,
@@ -39,7 +42,6 @@ impl<H: Client> KeyService<H> {
             &params,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            None,
         )
         .await
         .map_err(|e| KeyError::GenerateManagedKeyError(e.to_string()).into())
@@ -64,25 +66,49 @@ impl<H: Client> KeyService<H> {
         .map_err(|e| KeyError::LoadManagedKeyError(e.to_string()).into())
     }
 
+    pub fn generate_local_certificate(
+        &self,
+        key_type: KeyType,
+        password: String,
+        subject: CertificateSubject,
+        expiration: i32,
+    ) -> BloockResult<LocalCertificate<String>> {
+        let params = LocalCertificateParams {
+            key_type,
+            subject,
+            password,
+            expiration
+        };
+
+        LocalCertificate::new(&params)
+            .map_err(|e| KeyError::GenerateLocalKeyError(e.to_string()).into())
+    }
+
+    pub fn load_local_certificate(
+        &self,
+        pkcs12: &[u8],
+        password: String,
+    ) -> BloockResult<LocalCertificate<String>> {
+        LocalCertificate::load_pkcs12(pkcs12, &password)
+            .map_err(|e| KeyError::LoadLocalCertificateError(e.to_string()).into())
+    }
+
     pub async fn generate_managed_certificate(
         &self,
         key_type: KeyType,
         expiration: i32,
-        cn: String,
-        o: String,
-        ou: String,
-        c: String,
+        subject: CertificateSubject,
     ) -> BloockResult<ManagedCertificate> {
         let params = ManagedCertificateParams {
             key_type,
             expiration,
-            subject: CertificateSubject { cn, o, ou, c },
+            subject,
         };
+
         ManagedCertificate::new(
             &params,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            None,
         )
         .await
         .map_err(|e| KeyError::GenerateManagedCertificateError(e.to_string()).into())
@@ -110,7 +136,6 @@ impl<H: Client> KeyService<H> {
             certificate_type,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            None,
         )
         .await
         .map_err(|e| KeyError::ImportManagedCertificateError(e.to_string()).into())

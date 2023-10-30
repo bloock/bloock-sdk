@@ -47,6 +47,8 @@ jobs:
           API_KEY: ${{ secrets.api_key }}
         run: make libs-test
       - name: Test Core
+        env:
+          API_KEY: ${{ secrets.api_key }}
         run: make core-test
       - name: Test Bridge
         run: make bridge-test

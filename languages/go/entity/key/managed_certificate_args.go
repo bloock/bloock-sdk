@@ -15,10 +15,12 @@ func NewManagedCertificateParamsFromProto(s *proto.ManagedCertificateParams) Man
 	return ManagedCertificateParams{
 		KeyType: KeyType(s.GetKeyType()),
 		Subject: SubjectCertificateParams{
-			CN: s.GetCn(),
-			O:  s.GetO(),
-			OU: s.GetOu(),
-			C:  s.GetC(),
+			CommonName:       s.GetSubject().GetCommonName(),
+			Organization:     s.GetSubject().Organization,
+			OrganizationUnit: s.GetSubject().OrganizationalUnit,
+			Location:         s.GetSubject().Location,
+			State:            s.GetSubject().State,
+			Country:          s.GetSubject().Country,
 		},
 		ExpirationMonths: s.GetExpiration(),
 	}
@@ -26,11 +28,15 @@ func NewManagedCertificateParamsFromProto(s *proto.ManagedCertificateParams) Man
 
 func (s ManagedCertificateParams) ToProto() *proto.ManagedCertificateParams {
 	return &proto.ManagedCertificateParams{
-		KeyType:    KeyTypeToProto[s.KeyType],
-		Cn:         s.Subject.CN,
-		O:          s.Subject.O,
-		Ou:         s.Subject.OU,
-		C:          s.Subject.C,
+		KeyType: KeyTypeToProto[s.KeyType],
+		Subject: &proto.CertificateSubject{
+			CommonName:         s.Subject.CommonName,
+			OrganizationalUnit: s.Subject.OrganizationUnit,
+			Organization:       s.Subject.Organization,
+			Location:           s.Subject.Location,
+			State:              s.Subject.State,
+			Country:            s.Subject.Country,
+		},
 		Expiration: s.ExpirationMonths,
 	}
 }

@@ -3,7 +3,7 @@ import { NewConfigData } from "../config/config";
 import { AuthenticityClient } from "./authenticity";
 import { AvailabilityClient } from "./availability";
 import { EncryptionClient } from "./encryption";
-import { IdentityClient } from "./identity";
+import { IdentityLegacyClient } from "./identity";
 import { IntegrityClient } from "./integrity";
 import { KeyClient } from "./key";
 import { RecordClient } from "./record";
@@ -15,7 +15,7 @@ export class BloockClient {
   public AuthenticityClient: AuthenticityClient;
   public AvailabilityClient: AvailabilityClient;
   public EncryptionClient: EncryptionClient;
-  public IdentityClient: IdentityClient;
+  public IdentityClient: IdentityLegacyClient;
   public IntegrityClient: IntegrityClient;
   public KeyClient: KeyClient;
   public RecordClient: RecordClient;
@@ -31,7 +31,7 @@ export class BloockClient {
     this.AuthenticityClient = new AuthenticityClient(this.configData);
     this.AvailabilityClient = new AvailabilityClient(this.configData);
     this.EncryptionClient = new EncryptionClient(this.configData);
-    this.IdentityClient = new IdentityClient(this.configData);
+    this.IdentityClient = new IdentityLegacyClient(this.configData);
     this.IntegrityClient = new IntegrityClient(this.configData);
     this.KeyClient = new KeyClient(this.configData);
     this.RecordClient = new RecordClient(this.configData);

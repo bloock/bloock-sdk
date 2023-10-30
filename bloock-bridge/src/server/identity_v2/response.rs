@@ -8,8 +8,8 @@ use crate::{
         CredentialFromJsonRequestV2, CredentialFromJsonResponseV2, CredentialToJsonRequestV2,
         CredentialToJsonResponseV2, Error, GetCredentialProofRequest, GetCredentialProofResponse,
         GetIssuerByKeyRequest, GetIssuerByKeyResponse, GetIssuerListRequest, GetIssuerListResponse,
-        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
-        RevokeCredentialResponseV2,
+        GetSchemaRequestV2, GetSchemaResponseV2, PublishIssuerStateRequest,
+        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
     },
     server::response_types::ResponseTypeError,
 };
@@ -126,6 +126,18 @@ impl ResponseTypeError<GetIssuerByKeyRequest> for GetIssuerByKeyResponse {
     fn build_error(err: String) -> Self {
         Self {
             did: "".to_string(),
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<GetSchemaRequestV2> for GetSchemaResponseV2 {
+    fn build_error(err: String) -> Self {
+        Self {
+            schema: None,
             error: Some(Error {
                 kind: BridgeError::KeysError.to_string(),
                 message: err,

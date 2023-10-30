@@ -18,7 +18,7 @@ class IdentityEntities
         \GPBMetadata\IntegrityEntities::initOnce();
         $pool->internalAddGeneratedFile(
             '
-²
+Ý
 identity_entities.protobloockintegrity_entities.proto">
 Identity
 mnemonic (	
@@ -109,17 +109,25 @@ Credential
 CredentialSchema
 
 id (	
-type (	"b
+type (	"e
 CredentialProof#
-bloock_proof (2.bloock.Proof*
-signature_proof (2.bloock.Signature"O
+bloock_proof (2.bloock.Proof-
+signature_proof (2.bloock.SignatureJWS"O
 CredentialVerification
 	timestamp (
 issuer (	
 
 revocation ("\'
 CredentialRevocation
-success (BW
+success ("v
+SignatureJWS
+	signature (	
+	protected (	*
+header (2.bloock.SignatureHeaderJWS
+message_hash (	".
+SignatureHeaderJWS
+alg (	
+kid (	BW
 com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protobproto3'
         , true);
 

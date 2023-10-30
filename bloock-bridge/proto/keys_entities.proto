@@ -42,18 +42,31 @@ message ManagedKey {
     int64 expiration = 6;
 }
 
+message CertificateSubject {
+    string common_name = 1;
+    optional string organizational_unit = 2;
+    optional string organization = 3;
+    optional string location = 4;
+    optional string state = 5;
+    optional string country = 6;
+}
+
+message LocalCertificateParams {
+    KeyType key_type = 1;
+    string password = 2;
+    CertificateSubject subject = 3;
+    int32 expiration = 4;
+}
 
 message LocalCertificate {
-    string key = 1;
+    bytes pkcs12 = 1;
+    string password = 2;
 }
 
 message ManagedCertificateParams {
     KeyType key_type = 1;
-    string cn = 2;
-    string o = 3;
-    string ou = 4;
-    string c = 5;
-    int32 expiration = 6;
+    int32 expiration = 2;
+    CertificateSubject subject = 3;
 }
 
 message ManagedCertificate {

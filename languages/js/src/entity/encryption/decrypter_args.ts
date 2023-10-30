@@ -1,4 +1,4 @@
-import { LocalKey, ManagedKey } from "../key";
+import { KeyType, LocalKey, ManagedKey } from "../key";
 
 export class DecrypterArgs {
   localKey?: LocalKey;
@@ -10,7 +10,7 @@ export class DecrypterArgs {
     } else if (key instanceof ManagedKey) {
       this.managedKey = key;
     } else {
-      this.localKey = new LocalKey("", key);
+      this.localKey = new LocalKey("", KeyType.Aes256, key);
     }
   }
 }

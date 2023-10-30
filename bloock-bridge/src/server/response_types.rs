@@ -18,6 +18,7 @@ use crate::items::GetIssuerByKeyResponse;
 use crate::items::GetIssuerListResponse;
 use crate::items::GetOfferResponse;
 use crate::items::GetProofResponse;
+use crate::items::GetSchemaResponseV2;
 use crate::items::GetSignaturesResponse;
 use crate::items::ImportManagedCertificateResponse;
 use crate::items::LoadLocalCertificateResponse;
@@ -110,6 +111,7 @@ pub enum ResponseType {
     LoadLocalCertificateResponse(LoadLocalCertificateResponse),
     LoadManagedCertificateResponse(LoadManagedCertificateResponse),
     ImportManagedCertificateResponse(ImportManagedCertificateResponse),
+    GetSchemaResponseV2(GetSchemaResponseV2),
 }
 
 impl ResponseType {
@@ -171,6 +173,7 @@ impl ResponseType {
             ResponseType::LoadLocalCertificateResponse(r) => r.encode(&mut result_vec),
             ResponseType::LoadManagedCertificateResponse(r) => r.encode(&mut result_vec),
             ResponseType::ImportManagedCertificateResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetSchemaResponseV2(r) => r.encode(&mut result_vec),
         }
         .map_err(|e| BridgeError::ResponseSerialization(e.to_string()))?;
 
@@ -232,6 +235,7 @@ impl ResponseType {
             ResponseType::LoadLocalCertificateResponse(r) => r.encoded_len(),
             ResponseType::LoadManagedCertificateResponse(r) => r.encoded_len(),
             ResponseType::ImportManagedCertificateResponse(r) => r.encoded_len(),
+            ResponseType::GetSchemaResponseV2(r) => r.encoded_len(),
         }
     }
 }
@@ -290,7 +294,7 @@ where
             );
 
             let service = bloock_core::event::configure(config.clone());
-            let _ = service.send_event(event).await;
+            //let _ = service.send_event(event).await;
         }
     }
 }

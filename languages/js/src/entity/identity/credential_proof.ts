@@ -1,12 +1,12 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
-import { Signature } from "../authenticity";
+import { SignatureJws } from "../authenticity";
 import { Proof } from "../integrity";
 
 export class CredentialProof {
   bloockProof: Proof;
-  signatureProof: Signature;
+  signatureProof: SignatureJws;
 
-  constructor(bloockProof: Proof, signatureProof: Signature) {
+  constructor(bloockProof: Proof, signatureProof: SignatureJws) {
     this.bloockProof = bloockProof;
     this.signatureProof = signatureProof;
   }
@@ -21,7 +21,7 @@ export class CredentialProof {
   static fromProto(r: identityEntitiesProto.CredentialProof): CredentialProof {
     return new CredentialProof(
       Proof.fromProto(r.bloockProof!),
-      Signature.fromProto(r.signatureProof!)
+      SignatureJws.fromProto(r.signatureProof!)
     );
   }
 }

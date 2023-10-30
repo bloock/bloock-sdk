@@ -4,13 +4,14 @@ import unittest
 from bloock.client.authenticity import AuthenticityClient
 from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
-from bloock.entity.authenticity.ecdsa_signer import EcdsaSigner
+from bloock.entity.authenticity.signer import Signer
 from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.key.certificate_type import CertificateType
 from bloock.entity.key.import_certificate_params import ImportCertificateParams
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed_certificate_params import ManagedCertificateParams
+from bloock.entity.key.local_certificate_params import LocalCertificateParams
 from bloock.entity.key.managed_key_params import ManagedKeyParams
 from bloock.entity.key.subject_certificate_params import SubjectCertificateParams
 from test.e2e.util import init_sdk, init_dev_sdk
@@ -24,6 +25,18 @@ class TestKey(unittest.TestCase):
     def test_generate_local_ecdsa(self):
         key_client = KeyClient()
         local_key = key_client.new_local_key(KeyType.EcP256k)
+
+        self.assertNotEqual(local_key.key, "")
+        self.assertNotEqual(local_key.private_key, "")
+
+        loaded_key = key_client.load_local_key(
+            KeyType.EcP256k, local_key.key, local_key.private_key)
+        self.assertEqual(local_key.key, loaded_key.key)
+        self.assertEqual(local_key.private_key, loaded_key.private_key)
+
+    def test_generate_local_bjj(self):
+        key_client = KeyClient()
+        local_key = key_client.new_local_key(KeyType.Bjj)
 
         self.assertNotEqual(local_key.key, "")
         self.assertNotEqual(local_key.private_key, "")
@@ -136,12 +149,48 @@ class TestKey(unittest.TestCase):
         self.assertEqual(managed_key.key_type, loaded_key.key_type)
         self.assertEqual(managed_key.protection, loaded_key.protection)
 
+    def test_generate_local_certificate(self):
+        key_client = KeyClient()
+
+        key_type = KeyType.Rsa2048
+        subject_params = SubjectCertificateParams(
+            "Google internet Authority G2", "IT Department", "IT Department", None, None, "US")
+        params = LocalCertificateParams(key_type, subject_params, "password", 2)
+        local_certificate = key_client.new_local_certificate(params)
+
+        self.assertIsNotNone(local_certificate.pkcs12)
+
+        loaded_certificate = key_client.load_local_certificate(
+            local_certificate.pkcs12, local_certificate.password)
+
+        self.assertEqual(local_certificate.pkcs12, loaded_certificate.pkcs12)
+
+        record_client = RecordClient()
+        record = record_client.from_string("Hello world").build()
+
+        authenticity_client = AuthenticityClient()
+        signature = authenticity_client.sign(
+            record, Signer(SignerArgs(loaded_certificate)))
+        self.assertNotEqual(signature, "")
+
+    def test_import_local_certificate_p12(self):
+        key_client = KeyClient()
+
+        current_directory = os.getcwd()
+        file_path = current_directory + "/test/e2e/test_utils/test.p12"
+        with open(file_path, 'rb') as file:
+            file_bytes = file.read()
+
+        local_certificate = key_client.load_local_certificate(file_bytes, "bloock")
+
+        self.assertEqual(local_certificate.password, "bloock")
+
     def test_generate_managed_certificate(self):
         key_client = KeyClient()
 
         key_type = KeyType.EcP256k
         subject_params = SubjectCertificateParams(
-            "Google internet Authority G2", "US", "IT Department", "Google Inc")
+            "Google internet Authority G2", "IT Department", "IT Department", None, None, "US")
         params = ManagedCertificateParams(key_type, subject_params, 5)
         managed_certificate = key_client.new_managed_certificate(params)
 
@@ -215,5 +264,5 @@ class TestKey(unittest.TestCase):
 
         authenticity_client = AuthenticityClient()
         signature = authenticity_client.sign(
-            record, EcdsaSigner(SignerArgs(loaded_certificate)))
+            record, Signer(SignerArgs(loaded_certificate)))
         self.assertNotEqual(signature, "")

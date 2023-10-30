@@ -1,4 +1,4 @@
-use bloock_signer::entity::signature::Signature;
+use bloock_signer::format::jws::JwsSignature;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -44,4 +44,4 @@ pub struct RedeemCredentialSchema {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RedeemCredentialProof(pub Signature, pub Proof);
+pub struct RedeemCredentialProof(pub JwsSignature, pub Proof);

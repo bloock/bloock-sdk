@@ -18,13 +18,13 @@ class Signature extends \Google\Protobuf\Internal\Message
      */
     protected $signature = '';
     /**
-     * Generated from protobuf field <code>string protected = 2;</code>
+     * Generated from protobuf field <code>string alg = 2;</code>
      */
-    protected $protected = '';
+    protected $alg = '';
     /**
-     * Generated from protobuf field <code>.bloock.SignatureHeader header = 3;</code>
+     * Generated from protobuf field <code>string kid = 3;</code>
      */
-    protected $header = null;
+    protected $kid = '';
     /**
      * Generated from protobuf field <code>string message_hash = 4;</code>
      */
@@ -37,8 +37,8 @@ class Signature extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type string $signature
-     *     @type string $protected
-     *     @type \Bloock\SignatureHeader $header
+     *     @type string $alg
+     *     @type string $kid
      *     @type string $message_hash
      * }
      */
@@ -70,55 +70,45 @@ class Signature extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string protected = 2;</code>
+     * Generated from protobuf field <code>string alg = 2;</code>
      * @return string
      */
-    public function getProtected()
+    public function getAlg()
     {
-        return $this->protected;
+        return $this->alg;
     }
 
     /**
-     * Generated from protobuf field <code>string protected = 2;</code>
+     * Generated from protobuf field <code>string alg = 2;</code>
      * @param string $var
      * @return $this
      */
-    public function setProtected($var)
+    public function setAlg($var)
     {
         GPBUtil::checkString($var, True);
-        $this->protected = $var;
+        $this->alg = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.SignatureHeader header = 3;</code>
-     * @return \Bloock\SignatureHeader|null
+     * Generated from protobuf field <code>string kid = 3;</code>
+     * @return string
      */
-    public function getHeader()
+    public function getKid()
     {
-        return $this->header;
-    }
-
-    public function hasHeader()
-    {
-        return isset($this->header);
-    }
-
-    public function clearHeader()
-    {
-        unset($this->header);
+        return $this->kid;
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.SignatureHeader header = 3;</code>
-     * @param \Bloock\SignatureHeader $var
+     * Generated from protobuf field <code>string kid = 3;</code>
+     * @param string $var
      * @return $this
      */
-    public function setHeader($var)
+    public function setKid($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\SignatureHeader::class);
-        $this->header = $var;
+        GPBUtil::checkString($var, True);
+        $this->kid = $var;
 
         return $this;
     }

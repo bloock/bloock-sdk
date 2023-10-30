@@ -42,7 +42,7 @@ $(eval $(call BUILD_RECIPE,x86_64-apple-darwin))
 build-wasm: 
 	rm -rfv build/wasm/*
 	mkdir -p build/wasm
-	wasm-pack -q build --out-dir build/wasm --target web
+	wasm-pack build --out-dir build/wasm --target web
 	rm build/wasm/.gitignore
 	rm build/wasm/package.json
 

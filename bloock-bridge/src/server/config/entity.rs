@@ -38,7 +38,8 @@ pub fn map_config(config_data: Option<ConfigData>) -> Result<CoreConfigData, Bri
     }
 
     if !config.host.is_empty() {
-        default_config.config.host = config.host;
+        default_config.config.host = config.host.clone();
+        default_config.config.cdn_host = config.host.replace("api", "cdn");
     }
 
     Ok(default_config)

@@ -3,13 +3,13 @@ import unittest
 
 import bloock
 from bloock.entity.identity_v2.credential import Credential
-from bloock.entity.authenticity.bjj_signer import BjjSigner
+from bloock.entity.authenticity.signer import Signer
 from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.identity_v2.blockchain import Blockchain
 from bloock.entity.identity_v2.issuer_params import IssuerParams
 from bloock.entity.identity_v2.method import Method
 from bloock.entity.identity_v2.network import Network
-from bloock.client.identity_v2 import IdentityV2Client
+from bloock.client.identity_v2 import IdentityClient
 from bloock.client.key import KeyClient
 from bloock.entity.identity_v2.bjj_issuer_key import BjjIssuerKey
 from bloock.entity.identity_v2.issuer_key_args import IssuerKeyArgs
@@ -29,7 +29,7 @@ class TestIdentityV2(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        init_dev_sdk()  
+        init_dev_sdk()
 
     def test_credential_from_to_json(self):
         credential = Credential.from_json(self.credentialJson)
@@ -40,7 +40,7 @@ class TestIdentityV2(unittest.TestCase):
         self.assertEqual(credential_json, new_credential)
 
     def test_end_to_end(self):
-        identity_client = IdentityV2Client(self.apiManagedHost)
+        identity_client = IdentityClient(self.apiManagedHost)
         key_client = KeyClient()
 
         protection = KeyProtectionLevel.SOFTWARE
@@ -90,9 +90,14 @@ class TestIdentityV2(unittest.TestCase):
             .add_integer_enum_attribute("Car Points", "car_points", "car points", True, [1, 5, 10]) \
             .add_decimal_enum_attribute("Precision Wheels", "precision_wheels", "precision wheels", True, [1.10, 1.20, 1.30]) \
             .build()
-        self.assertIsNotNone(schema.id)
+        self.assertIsNotNone(schema.cid)
 
-        receipt = identity_client.build_credential(schema.id, issuer, self.holderDid, self.expiration, 0) \
+        get_schema = identity_client.get_schema(schema.cid)
+        self.assertIsNotNone(get_schema.cid_json_ld)
+        self.assertIsNotNone(get_schema.json)
+        self.assertIsNotNone(get_schema.schema_type)
+
+        receipt = identity_client.build_credential(schema.cid, issuer, self.holderDid, self.expiration, 0) \
             .with_integer_attribute("license_type", 1) \
             .with_decimal_attribute("quantity_oil", 2.25555) \
             .with_string_attribute("nif", "54688188M") \
@@ -102,7 +107,7 @@ class TestIdentityV2(unittest.TestCase):
             .with_string_attribute("car_type", "big") \
             .with_integer_attribute("car_points", 5) \
             .with_decimal_attribute("precision_wheels", 1.10) \
-            .with_signer(BjjSigner(SignerArgs(key_bjj))) \
+            .with_signer(Signer(SignerArgs(key_bjj))) \
             .with_proof_type(proof_type) \
             .build()
         self.assertIsNotNone(receipt.credential_id)
@@ -117,13 +122,13 @@ class TestIdentityV2(unittest.TestCase):
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
 
         state_receipt = identity_client.build_issuer_state_publisher(issuer) \
-            .with_signer(BjjSigner(SignerArgs(key_bjj))) \
+            .with_signer(Signer(SignerArgs(key_bjj))) \
             .build()
         self.assertIsNotNone(state_receipt)
 
         with self.assertRaises(Exception):
             identity_client.build_issuer_state_publisher(issuer) \
-                .with_signer(BjjSigner(SignerArgs(key_bjj))) \
+                .with_signer(Signer(SignerArgs(key_bjj))) \
                 .build()
 
         ok = identity_client.revoke_credential(credential)
@@ -131,5 +136,5 @@ class TestIdentityV2(unittest.TestCase):
 
         with self.assertRaises(Exception):
             identity_client.build_issuer_state_publisher(issuer) \
-                .with_signer(BjjSigner(SignerArgs(key_bjj))) \
+                .with_signer(Signer(SignerArgs(key_bjj))) \
                 .build()

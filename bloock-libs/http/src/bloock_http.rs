@@ -12,7 +12,7 @@ cfg_wasm! {
     use crate::wasm_http::SimpleHttpClient;
 }
 
-const API_VERSION: &str = "2023-07-13";
+const API_VERSION: &str = "2023-10-19";
 
 pub struct BloockHttpClient {
     api_key: String,
@@ -139,14 +139,10 @@ impl Client for BloockHttpClient {
 }
 
 impl BloockHttpClient {
-    pub fn new(api_key: String, api_version: Option<String>) -> Self {
-        let new_api_version = match api_version {
-            Some(a) => a,
-            None => API_VERSION.to_string(),
-        };
+    pub fn new(api_key: String) -> Self {
         Self {
             api_key,
-            api_version: new_api_version,
+            api_version: API_VERSION.to_string(),
         }
     }
 

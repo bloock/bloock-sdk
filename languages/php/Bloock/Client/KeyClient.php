@@ -13,12 +13,16 @@ use Bloock\Entity\Key\ManagedCertificate;
 use Bloock\Entity\Key\ManagedCertificateParams;
 use Bloock\Entity\Key\ManagedKey;
 use Bloock\Entity\Key\ManagedKeyParams;
+use Bloock\Entity\Key\LocalCertificate;
+use Bloock\Entity\Key\LocalCertificateArgs;
 use Bloock\GenerateLocalKeyRequest;
 use Bloock\GenerateManagedKeyRequest;
 use Bloock\LoadLocalKeyRequest;
 use Bloock\LoadManagedKeyRequest;
 use Bloock\GenerateManagedCertificateRequest;
+use Bloock\GenerateLocalCertificateRequest;
 use Bloock\LoadManagedCertificateRequest;
+use Bloock\LoadLocalCertificateRequest;
 use Bloock\ImportManagedCertificateRequest;
 use Exception;
 
@@ -94,6 +98,34 @@ class KeyClient
         }
 
         return ManagedKey::fromProto($res->getManagedKey());
+    }
+
+    public function newLocalCertificate(LocalCertificateArgs $params): LocalCertificate
+    {
+        $req = new GenerateLocalCertificateRequest();
+        $req->setConfigData($this->config)->setParams($params->toProto());
+
+        $res = $this->bridge->key->GenerateLocalCertificate($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return LocalCertificate::fromProto($res->getLocalCertificate());
+    }
+
+    public function loadLocalCertificate(array $pkcs12, string $password): LocalCertificate
+    {
+        $req = new LoadLocalCertificateRequest();
+        $req->setConfigData($this->config)->setPkcs12(implode(array_map("chr", $pkcs12)))->setPassword($password);
+
+        $res = $this->bridge->key->LoadLocalCertificate($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return LocalCertificate::fromProto($res->getLocalCertificate());
     }
 
     public function newManagedCertificate(ManagedCertificateParams $params): ManagedCertificate

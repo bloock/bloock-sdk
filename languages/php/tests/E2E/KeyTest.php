@@ -9,9 +9,10 @@ use Bloock\Entity\Key\ImportCertificateParams;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
 use Bloock\Entity\Key\ManagedCertificateParams;
+use Bloock\Entity\Key\LocalCertificateArgs;
 use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\SubjectCertificateParams;
-use Bloock\Entity\Authenticity\EcdsaSigner;
+use Bloock\Entity\Authenticity\Signer;
 use Bloock\Entity\Authenticity\SignerArgs;
 use PHPUnit\Framework\TestCase;
 
@@ -33,6 +34,19 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->privateKey);
 
         $loadedKey = $keyClient->loadLocalKey(KeyType::EcP256k, $key->key, $key->privateKey);
+        $this->assertEquals($key->key, $loadedKey->key);
+        $this->assertEquals($key->privateKey, $loadedKey->privateKey);
+    }
+
+    public function testGenerateLocalBjj()
+    {
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Bjj);
+
+        $this->assertNotNull($key->key);
+        $this->assertNotNull($key->privateKey);
+
+        $loadedKey = $keyClient->loadLocalKey(KeyType::Bjj, $key->key, $key->privateKey);
         $this->assertEquals($key->key, $loadedKey->key);
         $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }
@@ -158,12 +172,49 @@ final class KeyTest extends TestCase
         $this->assertEquals($key->protection, $loadedKey->protection);
     }
 
+    public function testGenerateLocalCertificate()
+    {
+        $keyClient = new KeyClient();
+
+        $keyType = KeyType::Rsa2048;
+        $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", null, null, "US");
+
+        $params = new LocalCertificateArgs($keyType, $subjectParams, "password", 2);
+        $certificate = $keyClient->newLocalCertificate($params);
+
+        $this->assertNotNull($certificate->pkcs12);
+
+        $loadedCertificate = $keyClient->loadLocalCertificate($certificate->pkcs12, $certificate->password);
+        $this->assertEquals($loadedCertificate->pkcs12, $certificate->pkcs12);
+
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($loadedCertificate)));
+
+        $this->assertNotNull($signature);
+    }
+
+    public function testImportLocalCertificateP12()
+    {
+        $keyClient = new KeyClient();
+
+        $currentDirectory = getcwd();
+        $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/test.p12");
+        $byteArray = unpack('C*', $fileContents);
+
+        $certificate = $keyClient->loadLocalCertificate($byteArray, "bloock");
+
+        $this->assertEquals($certificate->pkcs12, $byteArray);
+    }
+
     public function testGenerateManagedCertificate()
     {
         $keyClient = new KeyClient();
 
         $keyType = KeyType::EcP256k;
-        $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "US", "IT Department", "Google Inc");
+        $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", null, null, "US");
 
         $params = new ManagedCertificateParams($keyType, $subjectParams, 5);
         $certificate = $keyClient->newManagedCertificate($params);
@@ -225,7 +276,7 @@ final class KeyTest extends TestCase
         $authenticityClient = new AuthenticityClient();
 
         $record = $recordClient->fromString("Hello world")->build();
-        $signature = $authenticityClient->sign($record, new EcdsaSigner(new SignerArgs($loadedCertificate)));
+        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($loadedCertificate)));
 
         $this->assertNotNull($signature);
     }

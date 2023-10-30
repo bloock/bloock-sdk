@@ -11,7 +11,7 @@ from bloock.entity.identity_v2.date_attribute_descriptor import DateAttributeDes
 from bloock.entity.identity_v2.datetime_attribute_descriptor import DatetimeAttributeDescriptor
 from bloock.entity.identity_v2.string_attribute_descriptor import StringAttributeDescriptor
 from bloock.entity.identity_v2.integer_attribute_descriptor import IntegerAttributeDescriptor
-from bloock.entity.identity.schema import Schema
+from bloock.entity.identity_v2.schema import Schema
 from bloock.entity.identity_v2.decimal_attribute_descriptor import DecimalAttributeDescriptor
 from bloock.entity.identity_v2.string_enum_attribute_descriptor import StringEnumAttributeDescriptor
 from bloock.entity.identity_v2.integer_enum_attribute_descriptor import IntegerEnumAttributeDescriptor

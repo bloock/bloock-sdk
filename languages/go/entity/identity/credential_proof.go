@@ -8,7 +8,7 @@ import (
 
 type CredentialProof struct {
 	BloockProof    integrity.Proof
-	SignatureProof authenticity.Signature
+	SignatureProof authenticity.SignatureJws
 }
 
 func NewCredentialProofFromProto(s *proto.CredentialProof) CredentialProof {
@@ -17,7 +17,7 @@ func NewCredentialProofFromProto(s *proto.CredentialProof) CredentialProof {
 	}
 	return CredentialProof{
 		BloockProof:    integrity.NewProofFromProto(s.BloockProof),
-		SignatureProof: authenticity.NewSignatureFromProto(s.SignatureProof),
+		SignatureProof: authenticity.NewSignatureJwsFromProto(s.SignatureProof),
 	}
 }
 

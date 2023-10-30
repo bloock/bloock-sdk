@@ -21,6 +21,10 @@ pub enum KeyError {
     LoadLocalKeyError(String),
     #[error("Error loading managed key: {0}")]
     LoadManagedKeyError(String),
+    #[error("Error generating local certificate: {0}")]
+    GenerateLocalCertificateError(String),
+    #[error("Error loading local certificate: {0}")]
+    LoadLocalCertificateError(String),
     #[error("Error generating managed certificate: {0}")]
     GenerateManagedCertificateError(String),
     #[error("Error loading managed certificate: {0}")]
@@ -36,7 +40,7 @@ impl From<KeyError> for BloockError {
 }
 
 pub fn configure(config_data: ConfigData) -> service::KeyService<BloockHttpClient> {
-    let bloock_http_client = Arc::new(BloockHttpClient::new(config_data.get_config().api_key, None));
+    let bloock_http_client = Arc::new(BloockHttpClient::new(config_data.get_config().api_key));
 
     service::KeyService {
         http: Arc::clone(&bloock_http_client),

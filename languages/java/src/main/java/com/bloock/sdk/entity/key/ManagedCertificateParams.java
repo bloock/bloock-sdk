@@ -17,7 +17,13 @@ public class ManagedCertificateParams {
   public static ManagedCertificateParams fromProto(KeysEntities.ManagedCertificateParams params) {
     return new ManagedCertificateParams(
         KeyType.fromProto(params.getKeyType()),
-        new SubjectCertificateParams(params.getCn(), params.getC(), params.getOu(), params.getO()),
+        new SubjectCertificateParams(
+            params.getSubject().getCommonName(),
+            params.getSubject().getOrganization(),
+            params.getSubject().getOrganizationalUnit(),
+            params.getSubject().getLocation(),
+            params.getSubject().getState(),
+            params.getSubject().getCountry()),
         params.getExpiration());
   }
 
@@ -25,10 +31,7 @@ public class ManagedCertificateParams {
     KeysEntities.ManagedCertificateParams.Builder params =
         KeysEntities.ManagedCertificateParams.newBuilder()
             .setKeyType(this.keyType.toProto())
-            .setCn(this.subject.getCn())
-            .setC(this.subject.getC())
-            .setOu(this.subject.getOu())
-            .setO(this.subject.getO())
+            .setSubject(this.subject.toProto())
             .setExpiration(this.expiration);
 
     return params.build();

@@ -1,18 +1,22 @@
-use super::entity::SignerProvider;
 use crate::{
     error::BridgeError,
     items::{
         AuthenticityServiceHandler, GetSignaturesRequest, GetSignaturesResponse, SignRequest,
         SignResponse, Signature, SignatureCommonNameRequest, SignatureCommonNameResponse,
-        SignerAlg, VerifyRequest, VerifyResponse,
+        VerifyRequest, VerifyResponse,
     },
     server::response_types::RequestConfigData,
 };
 use async_trait::async_trait;
 use bloock_core::{
-    authenticity, config::entity::network::Network, record::entity::record::Record as RecordCore,
-    Signature as SignatureCore, Signer,
+    authenticity, record::entity::record::Record as RecordCore,
 };
+use bloock_keys::certificates::local::LocalCertificate as LocalCertificateCore;
+use bloock_keys::certificates::managed::ManagedCertificate as ManagedCertificateCore;
+use bloock_keys::entity::key::Key;
+use bloock_keys::keys::local::LocalKey as LocalKeyCore;
+use bloock_keys::keys::managed::ManagedKey as ManagedKeyCore;
+use bloock_signer::entity::signature::Signature as SignatureCore;
 
 pub struct AuthenticityServer {}
 
@@ -36,22 +40,25 @@ impl AuthenticityServiceHandler for AuthenticityServer {
             .signer
             .ok_or_else(|| "no signer provided".to_string())?;
 
-        let signer_alg = SignerAlg::from_i32(signer.alg);
+        let key: Key = if let Some(managed_key) = signer.managed_key {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.into()
+        } else if let Some(local_key) = signer.local_key {
+            let local_key_core: LocalKeyCore<String> = local_key.into();
+            local_key_core.into()
+        } else if let Some(managed_certificate) = signer.managed_certificate {
+            let managed_certificate_core: ManagedCertificateCore = managed_certificate.into();
+            managed_certificate_core.into()
+        } else if let Some(local_certificate) = signer.local_certificate {
+            let local_certificate_core: LocalCertificateCore<String> = local_certificate
+                .try_into()
+                .map_err(|e: BridgeError| e.to_string())?;
+            local_certificate_core.into()
+        } else {
+            return Err("invalid key provided".to_string());
+        };
 
-        let signer: Box<dyn Signer> = (
-            signer.managed_key,
-            signer.local_key,
-            signer.local_certificate,
-            signer.managed_certificate,
-            signer_alg,
-        )
-            .get_signer(&config_data, signer.common_name)
-            .map_err(|e| e.to_string())?;
-
-        let signature: SignatureCore = client
-            .sign(record, signer)
-            .await
-            .map_err(|e| e.to_string())?;
+        let signature: SignatureCore = client.sign(record, &key).await.map_err(|e| e.to_string())?;
 
         Ok(SignResponse {
             signature: Some(signature.into()),
@@ -92,7 +99,7 @@ impl AuthenticityServiceHandler for AuthenticityServer {
             .try_into()
             .map_err(|e: BridgeError| e.to_string())?;
 
-        let provider = match config_data
+        /*let provider = match config_data
             .clone()
             .networks_config
             .get(&Network::EthereumMainnet)
@@ -104,7 +111,8 @@ impl AuthenticityServiceHandler for AuthenticityServer {
         let common_name = signature
             .get_common_name(provider, config_data.clone().config.api_key)
             .await
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| e.to_string())?;*/
+        let common_name = "".to_string();
 
         Ok(SignatureCommonNameResponse {
             common_name,

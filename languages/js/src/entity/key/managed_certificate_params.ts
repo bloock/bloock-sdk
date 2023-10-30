@@ -20,10 +20,7 @@ export class ManagedCertificateParams {
     public toProto(): keysEntitiesProto.ManagedCertificateParams {
         return keysEntitiesProto.ManagedCertificateParams.fromPartial({
             keyType: KeyType.toProto(this.keyType),
-            cn: this.subject.cn,
-            c: this.subject.c,
-            o: this.subject.o,
-            ou: this.subject.ou,
+            subject: this.subject.toProto(),
             expiration: this.expiration
         });
     }

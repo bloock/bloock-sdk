@@ -2,6 +2,7 @@ package com.bloock.sdk.entity.encryption;
 
 import com.bloock.sdk.bridge.proto.EncryptionEntities;
 import com.bloock.sdk.bridge.proto.EncryptionEntities.EncryptionAlg;
+import com.bloock.sdk.entity.key.KeyType;
 import com.bloock.sdk.entity.key.LocalKey;
 import com.bloock.sdk.entity.key.ManagedKey;
 
@@ -11,7 +12,7 @@ public class RsaEncrypter implements Encrypter {
 
   public RsaEncrypter(String publicKey) {
     this.alg = EncryptionAlg.RSA;
-    this.args = new EncrypterArgs(new LocalKey(publicKey, null));
+    this.args = new EncrypterArgs(new LocalKey(publicKey, null, KeyType.Rsa2048));
   }
 
   public RsaEncrypter(LocalKey localKey) {
