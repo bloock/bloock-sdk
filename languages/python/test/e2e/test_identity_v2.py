@@ -9,7 +9,7 @@ from bloock.entity.identity_v2.blockchain import Blockchain
 from bloock.entity.identity_v2.issuer_params import IssuerParams
 from bloock.entity.identity_v2.method import Method
 from bloock.entity.identity_v2.network import Network
-from bloock.client.identity_v2 import IdentityV2Client
+from bloock.client.identity_v2 import IdentityClient
 from bloock.client.key import KeyClient
 from bloock.entity.identity_v2.bjj_issuer_key import BjjIssuerKey
 from bloock.entity.identity_v2.issuer_key_args import IssuerKeyArgs
@@ -40,7 +40,7 @@ class TestIdentityV2(unittest.TestCase):
         self.assertEqual(credential_json, new_credential)
 
     def test_end_to_end(self):
-        identity_client = IdentityV2Client(self.apiManagedHost)
+        identity_client = IdentityClient(self.apiManagedHost)
         key_client = KeyClient()
 
         protection = KeyProtectionLevel.SOFTWARE

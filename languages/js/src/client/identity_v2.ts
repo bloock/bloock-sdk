@@ -18,7 +18,7 @@ import { IssuerParams } from "../entity/identity_v2/issuer_params";
 import { IssuerStatePublisher } from "../entity/identity_v2/issuer_state_publisher";
 import { SchemaBuilder } from "../entity/identity_v2/schema_builder";
 
-export class IdentityV2Client {
+export class IdentityClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
   private apiManagedHost: string;

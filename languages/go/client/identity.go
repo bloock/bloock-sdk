@@ -16,20 +16,22 @@ type IdentityClient struct {
 }
 
 // Deprecated: Will be deleted in future versions. Use NewIdentityV2Client function instead.
-func NewIdentityClient() IdentityClient {
+func NewIdentityLegacyClient() IdentityClient {
 	return IdentityClient{
 		bridgeClient: bridge.NewBloockBridge(),
 		configData:   config.NewConfigDataDefault(),
 	}
 }
 
-func NewIdentityClientWithConfig(configData *proto.ConfigData) IdentityClient {
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
+func NewIdentityLegacyClientWithConfig(configData *proto.ConfigData) IdentityClient {
 	return IdentityClient{
 		bridgeClient: bridge.NewBloockBridge(),
 		configData:   configData,
 	}
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) CreateIdentity() (identity.Identity, error) {
 	res, err := c.bridgeClient.Identity().CreateIdentity(context.Background(), &proto.CreateIdentityRequest{
 		ConfigData: c.configData,
@@ -46,6 +48,7 @@ func (c *IdentityClient) CreateIdentity() (identity.Identity, error) {
 	return identity.NewIdentityFromProto(res.GetIdentity()), nil
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) LoadIdentity(mnemonic string) (identity.Identity, error) {
 	res, err := c.bridgeClient.Identity().LoadIdentity(context.Background(), &proto.LoadIdentityRequest{
 		ConfigData: c.configData,
@@ -63,10 +66,12 @@ func (c *IdentityClient) LoadIdentity(mnemonic string) (identity.Identity, error
 	return identity.NewIdentityFromProto(res.GetIdentity()), nil
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) BuildSchema(displayName string, technicalName string) identity.SchemaBuilder {
 	return identity.NewSchemaBuilder(displayName, technicalName, c.configData)
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) GetSchema(id string) (identity.Schema, error) {
 	res, err := c.bridgeClient.Identity().GetSchema(context.Background(), &proto.GetSchemaRequest{
 		ConfigData: c.configData,
@@ -84,10 +89,12 @@ func (c *IdentityClient) GetSchema(id string) (identity.Schema, error) {
 	return identity.NewSchemaFromProto(res.GetSchema()), nil
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) BuildCredential(schemaId string, holderKey string) identity.CredentialBuilder {
 	return identity.NewCredentialBuilder(schemaId, holderKey, c.configData)
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) GetOffer(id string) (identity.CredentialOffer, error) {
 	res, err := c.bridgeClient.Identity().GetOffer(context.Background(), &proto.GetOfferRequest{
 		ConfigData: c.configData,
@@ -105,6 +112,7 @@ func (c *IdentityClient) GetOffer(id string) (identity.CredentialOffer, error) {
 	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) WaitOffer(offerID string) (identity.CredentialOffer, error) {
 	res, err := c.bridgeClient.Identity().WaitOffer(context.Background(), &proto.WaitOfferRequest{
 		ConfigData: c.configData,
@@ -122,6 +130,7 @@ func (c *IdentityClient) WaitOffer(offerID string) (identity.CredentialOffer, er
 	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) RedeemOffer(credentialOffer identity.CredentialOffer, holderPrivateKey string) (identity.Credential, error) {
 	res, err := c.bridgeClient.Identity().CredentialOfferRedeem(context.Background(), &proto.CredentialOfferRedeemRequest{
 		ConfigData:         c.configData,
@@ -140,6 +149,7 @@ func (c *IdentityClient) RedeemOffer(credentialOffer identity.CredentialOffer, h
 	return identity.NewCredentialFromProto(res.GetCredential()), nil
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) VerifyCredential(credential identity.Credential) (identity.CredentialVerification, error) {
 	res, err := c.bridgeClient.Identity().VerifyCredential(context.Background(), &proto.VerifyCredentialRequest{
 		ConfigData: c.configData,
@@ -157,6 +167,7 @@ func (c *IdentityClient) VerifyCredential(credential identity.Credential) (ident
 	return identity.NewCredentialVerificationFromProto(res.GetResult()), nil
 }
 
+// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *IdentityClient) RevokeCredential(credential identity.Credential) (bool, error) {
 	res, err := c.bridgeClient.Identity().RevokeCredential(context.Background(), &proto.RevokeCredentialRequest{
 		ConfigData: c.configData,

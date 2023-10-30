@@ -16,7 +16,7 @@ type IdentityV2Client struct {
 	apiManagedHost string
 }
 
-func NewIdentityV2Client(apiManagedHost string) IdentityV2Client {
+func NewIdentityClient(apiManagedHost string) IdentityV2Client {
 	return IdentityV2Client{
 		bridgeClient:   bridge.NewBloockBridge(),
 		configData:     config.NewConfigDataDefault(),
@@ -24,7 +24,7 @@ func NewIdentityV2Client(apiManagedHost string) IdentityV2Client {
 	}
 }
 
-func NewIdentityV2ClientWithConfig(configData *proto.ConfigData, apiManagedHost string) IdentityV2Client {
+func NewIdentityClientWithConfig(configData *proto.ConfigData, apiManagedHost string) IdentityV2Client {
 	return IdentityV2Client{
 		bridgeClient:   bridge.NewBloockBridge(),
 		configData:     configData,

@@ -1,6 +1,6 @@
 import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
-import { CredentialOffer, IdentityClient, Credential } from "../../dist";
+import { CredentialOffer, IdentityLegacyClient, Credential } from "../../dist";
 
 describe("Identity Tests", () => {
   const credentialOfferJson =
@@ -11,7 +11,7 @@ describe("Identity Tests", () => {
   test("test create and load identity", async () => {
     initSdk();
 
-    const identityClient = new IdentityClient();
+    const identityClient = new IdentityLegacyClient();
 
     let created = await identityClient.createIdentity();
     let loaded = await identityClient.loadIdentity(created.mnemonic);

@@ -12,7 +12,7 @@ from bloock.entity.identity.schema import Schema
 from bloock.entity.identity.schema_builder import SchemaBuilder
 
 
-class IdentityClient:
+class IdentityLegacyClient:
     def __init__(self, config_data=None) -> None:
         self.bridge_client = bridge.BloockBridge()
         if config_data is None:

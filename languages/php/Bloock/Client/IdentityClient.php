@@ -22,7 +22,7 @@ use Bloock\VerifyCredentialRequest;
 use Bloock\WaitOfferRequest;
 use Exception;
 
-class IdentityClient
+class IdentityLegacyClient
 {
     private $bridge;
     private $config;
@@ -40,6 +40,9 @@ class IdentityClient
         }
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function createIdentity(): Identity
     {
         $req = new CreateIdentityRequest();
@@ -54,6 +57,9 @@ class IdentityClient
         return Identity::fromProto($res->getIdentity());
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function loadIdentity(string $mnemonic): Identity
     {
         $req = new LoadIdentityRequest();
@@ -68,11 +74,17 @@ class IdentityClient
         return Identity::fromProto($res->getIdentity());
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function buildSchema(string $displayName, string $technicalName): SchemaBuilder
     {
         return new SchemaBuilder($displayName, $technicalName, $this->config);
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function getSchema(string $id): Schema
     {
         $req = new GetSchemaRequest();
@@ -87,11 +99,17 @@ class IdentityClient
         return Schema::fromProto($res->getSchema());
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function buildCredential(string $schemaId, string $holderKey): CredentialBuilder
     {
         return new CredentialBuilder($schemaId, $holderKey, $this->config);
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function getOffer(string $id): CredentialOffer
     {
         $req = new GetOfferRequest();
@@ -106,6 +124,9 @@ class IdentityClient
         return CredentialOffer::fromProto($res->getOffer());
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function waitOffer(string $offerId): CredentialOffer
     {
         $req = new WaitOfferRequest();
@@ -120,6 +141,9 @@ class IdentityClient
         return CredentialOffer::fromProto($res->getOffer());
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function redeemOffer(CredentialOffer $offer, string $holderPrivateKey): Credential
     {
         $req = new CredentialOfferRedeemRequest();
@@ -134,6 +158,9 @@ class IdentityClient
         return Credential::fromProto($res->getCredential());
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function verifyCredential(Credential $credential): CredentialVerification
     {
         $req = new VerifyCredentialRequest();
@@ -148,6 +175,9 @@ class IdentityClient
         return CredentialVerification::fromProto($res->getResult());
     }
 
+    /**
+     * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+     */
     public function revokeCredential(Credential $credential): bool
     {
         $req = new RevokeCredentialRequest();

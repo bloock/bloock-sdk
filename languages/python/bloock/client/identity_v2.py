@@ -19,7 +19,7 @@ from bloock.entity.identity_v2.credential import Credential
 from bloock.entity.identity_v2.schema import Schema
 
 
-class IdentityV2Client:
+class IdentityClient:
     def __init__(self, api_managed_host: str, config_data=None) -> None:
         self.bridge_client = bridge.BloockBridge()
         if config_data is None:

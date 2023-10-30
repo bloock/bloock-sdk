@@ -21,7 +21,7 @@ use Bloock\GetSchemaRequestV2;
 use Bloock\RevokeCredentialRequestV2;
 use Exception;
 
-class IdentityV2Client
+class IdentityClient
 {
     private $bridge;
     private $config;

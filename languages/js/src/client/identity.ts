@@ -18,7 +18,7 @@ import { Identity } from "../entity/identity";
 import { Schema } from "../entity/identity";
 import { SchemaBuilder } from "../entity/identity";
 
-export class IdentityClient {
+export class IdentityLegacyClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
@@ -30,6 +30,9 @@ export class IdentityClient {
     this.configData = NewConfigData(configData);
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public createIdentity(): Promise<Identity> {
     const request = CreateIdentityRequest.fromPartial({
       configData: this.configData
@@ -46,6 +49,9 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public loadIdentity(mnemonic: string): Promise<Identity> {
     const request = LoadIdentityRequest.fromPartial({
       configData: this.configData,
@@ -63,6 +69,9 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public buildSchema(
     displayName: string,
     technicalName: string
@@ -70,6 +79,9 @@ export class IdentityClient {
     return new SchemaBuilder(displayName, technicalName, this.configData);
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public getSchema(id: string): Promise<Schema> {
     const request = GetSchemaRequest.fromPartial({
       configData: this.configData,
@@ -87,6 +99,9 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public buildCredential(
     schemaId: string,
     holderKey: string
@@ -94,6 +109,9 @@ export class IdentityClient {
     return new CredentialBuilder(schemaId, holderKey, this.configData);
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public getOffer(id: string): Promise<CredentialOffer> {
     const request = GetOfferRequest.fromPartial({
       configData: this.configData,
@@ -111,6 +129,9 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public waitOffer(offerId: string): Promise<CredentialOffer> {
     const request = WaitOfferRequest.fromPartial({
       configData: this.configData,
@@ -128,6 +149,9 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public redeemOffer(
     credentialOffer: CredentialOffer,
     holderPrivateKey: string
@@ -149,6 +173,9 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public verifyCredential(
     credential: Credential
   ): Promise<CredentialVerification> {
@@ -168,6 +195,9 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   */
   public revokeCredential(credential: Credential): Promise<boolean> {
     const request = RevokeCredentialRequest.fromPartial({
       configData: this.configData,

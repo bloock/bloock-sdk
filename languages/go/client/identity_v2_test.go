@@ -40,7 +40,7 @@ func TestIdentityV2(t *testing.T) {
 	})
 
 	t.Run("identity v2 end to end first flow", func(t *testing.T) {
-		identityClient := NewIdentityV2Client(apiManagedHost)
+		identityClient := NewIdentityClient(apiManagedHost)
 		keyClient := NewKeyClient()
 
 		keys, err := keyClient.NewManagedKey(key.ManagedKeyParams{
@@ -145,7 +145,7 @@ func TestIdentityV2(t *testing.T) {
 	})
 
 	t.Run("identity v2 end to end second flow", func(t *testing.T) {
-		identityClient := NewIdentityV2Client(apiManagedHost)
+		identityClient := NewIdentityClient(apiManagedHost)
 		keyClient := NewKeyClient()
 
 		keyBjj, err := keyClient.NewLocalKey(key.Bjj)

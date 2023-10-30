@@ -2,7 +2,7 @@ import { describe, test, expect } from "@jest/globals";
 import { BjjIssuerKey, Signer } from "../../dist/index";
 import {
   CredentialV2,
-  IdentityV2Client,
+  IdentityClient,
   KeyClient,
   KeyProtectionLevel,
   KeyType,
@@ -38,7 +38,7 @@ describe("Identity V2 Tests", () => {
   test("test identity end to end", async () => {
     initDevSdk();
 
-    const identityClient = new IdentityV2Client(apiManagedHost);
+    const identityClient = new IdentityClient(apiManagedHost);
     const keyClient = new KeyClient();
 
     let keyProtection = KeyProtectionLevel.SOFTWARE;

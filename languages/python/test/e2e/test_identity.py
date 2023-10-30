@@ -1,6 +1,6 @@
 import unittest
 
-from bloock.client.identity import IdentityClient
+from bloock.client.identity import IdentityLegacyClient
 from bloock.client.integrity import IntegrityClient
 from bloock.entity.identity.credential import Credential
 from bloock.entity.identity.credential_offer import CredentialOffer
@@ -21,7 +21,7 @@ class TestIdentity(unittest.TestCase):
         init_sdk()
 
     def test_create_and_load_identity(self):
-        identity_client = IdentityClient()
+        identity_client = IdentityLegacyClient()
 
         created = identity_client.create_identity()
         loaded = identity_client.load_identity(created.mnemonic)

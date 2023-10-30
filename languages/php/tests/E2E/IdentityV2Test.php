@@ -1,7 +1,7 @@
 <?php
 
 use Bloock\Bloock;
-use Bloock\Client\IdentityV2Client;
+use Bloock\Client\IdentityClient;
 use Bloock\Client\KeyClient;
 use Bloock\Entity\Authenticity\Signer;
 use Bloock\Entity\Authenticity\SignerArgs;
@@ -46,7 +46,7 @@ final class IdentityV2Test extends TestCase
 
     public function testIdentityEndToEnd()
     {
-        $identityClient = new IdentityV2Client(self::apiManahedHost);
+        $identityClient = new IdentityClient(self::apiManahedHost);
         $keyClient = new KeyClient();
 
         $keyProtection = KeyProtectionLevel::SOFTWARE;
