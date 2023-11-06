@@ -39,6 +39,7 @@ impl From<AnchorNetworkCore> for AnchorNetwork {
             name: n.name.clone(),
             state: n.state.clone(),
             tx_hash: n.tx_hash,
+            root: n.root,
         }
     }
 }
@@ -49,6 +50,7 @@ impl From<AnchorNetwork> for AnchorNetworkCore {
             name: n.name.clone(),
             state: n.state.clone(),
             tx_hash: n.tx_hash,
+            root: n.root,
         }
     }
 }
