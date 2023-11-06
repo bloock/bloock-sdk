@@ -42,6 +42,8 @@ pub enum IntegrityError {
     ProofFromAnotherRecord(),
     #[error("Wait Anchor timed out")]
     AnchorTimeout(),
+    #[error("No network available for verification")]
+    NoNetworkAvailable,
 }
 
 impl From<IntegrityError> for BloockError {

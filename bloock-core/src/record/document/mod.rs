@@ -302,7 +302,7 @@ mod tests {
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
-       
+
         let signed_doc: Document =
             Document::new(&built_doc, api_host.clone(), api_key.clone()).unwrap();
         //assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
@@ -457,6 +457,7 @@ mod tests {
                     name: "net".to_string(),
                     state: "state".to_string(),
                     tx_hash: "tx_hash".to_string(),
+                    root: "root".to_string(),
                 }],
                 root: "root".to_string(),
                 status: "status".to_string(),
@@ -541,6 +542,7 @@ mod tests {
                     name: "net".to_string(),
                     state: "state".to_string(),
                     tx_hash: "tx_hash".to_string(),
+                    root: "root".to_string(),
                 }],
                 root: "root".to_string(),
                 status: "status".to_string(),

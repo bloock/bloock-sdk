@@ -34,13 +34,113 @@ impl From<Network> for String {
     }
 }
 
-pub fn select_network(networks: &Vec<AnchorNetwork>) -> Network {
+pub fn select_network(root: String, networks: &Vec<AnchorNetwork>) -> Option<Network> {
+    let mut selected = None;
     for n in networks {
-        let network: String = Network::EthereumMainnet.into();
-        if n.name == network {
-            return Network::EthereumMainnet;
+        if n.root == root {
+            let network: Network = n.name.clone().into();
+            if network == Network::EthereumMainnet {
+                return Some(network);
+            }
+
+            if selected.is_none() {
+                selected = Some(network);
+            }
         }
     }
 
-    Network::from(networks[0].name.clone())
+    selected
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{config::entity::network::Network, integrity::entity::anchor::AnchorNetwork};
+
+    #[test]
+    fn test_select_network() {
+        let root = "root".to_string();
+        let networks = vec![
+            AnchorNetwork {
+                name: Network::GnosisChain.into(),
+                state: "state".to_string(),
+                tx_hash: "tx_hash".to_string(),
+                root: "root".to_string(),
+            },
+            AnchorNetwork {
+                name: Network::PolygonChain.into(),
+                state: "state".to_string(),
+                tx_hash: "tx_hash".to_string(),
+                root: "root".to_string(),
+            },
+        ];
+        let network = super::select_network(root, &networks);
+
+        assert_eq!(network, Some(Network::GnosisChain));
+    }
+
+    #[test]
+    fn test_select_network_mainnet() {
+        let root = "root".to_string();
+        let networks = vec![
+            AnchorNetwork {
+                name: Network::GnosisChain.into(),
+                state: "state".to_string(),
+                tx_hash: "tx_hash".to_string(),
+                root: "root".to_string(),
+            },
+            AnchorNetwork {
+                name: Network::EthereumMainnet.into(),
+                state: "state".to_string(),
+                tx_hash: "tx_hash".to_string(),
+                root: "root".to_string(),
+            },
+        ];
+        let network = super::select_network(root, &networks);
+
+        assert_eq!(network, Some(Network::EthereumMainnet));
+    }
+
+    #[test]
+    fn test_select_network_different_root() {
+        let root = "root".to_string();
+        let networks = vec![
+            AnchorNetwork {
+                name: Network::GnosisChain.into(),
+                state: "state".to_string(),
+                tx_hash: "tx_hash".to_string(),
+                root: "different_root".to_string(),
+            },
+            AnchorNetwork {
+                name: Network::PolygonChain.into(),
+                state: "state".to_string(),
+                tx_hash: "tx_hash".to_string(),
+                root: "root".to_string(),
+            },
+        ];
+        let network = super::select_network(root, &networks);
+
+        assert_eq!(network, Some(Network::PolygonChain));
+    }
+
+    #[test]
+    fn test_select_network_none_valid() {
+        let root = "root".to_string();
+        let networks = vec![
+            AnchorNetwork {
+                name: Network::GnosisChain.into(),
+                state: "state".to_string(),
+                tx_hash: "tx_hash".to_string(),
+                root: "root2".to_string(),
+            },
+            AnchorNetwork {
+                name: Network::EthereumMainnet.into(),
+                state: "state".to_string(),
+                tx_hash: "tx_hash".to_string(),
+                root: "root2".to_string(),
+            },
+        ];
+        let network = super::select_network(root, &networks);
+
+        assert_eq!(network, None);
+    }
 }

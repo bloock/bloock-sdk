@@ -176,7 +176,8 @@ impl<H: Client> IntegrityService<H> {
 
         let network = match network {
             Some(network) => network,
-            None => network::select_network(&proof.anchor.networks),
+            None => network::select_network(proof.anchor.root.clone(), &proof.anchor.networks)
+                .ok_or(IntegrityError::NoNetworkAvailable)?,
         };
 
         let root = match self.verify_proof(proof) {
