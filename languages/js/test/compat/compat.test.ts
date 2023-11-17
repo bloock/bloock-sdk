@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { Bloock, IntegrityClient, RecordClient } from "../../dist";
+import { RecordClient } from "../../dist";
 
 describe("Compat Test", () => {
   test("compat test", async () => {
