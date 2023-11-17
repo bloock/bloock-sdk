@@ -16,7 +16,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class Anchor(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -45,28 +44,31 @@ class Anchor(google.protobuf.message.Message):
 
 global___Anchor = Anchor
 
-@typing_extensions.final
 class AnchorNetwork(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     NAME_FIELD_NUMBER: builtins.int
     STATE_FIELD_NUMBER: builtins.int
     TX_HASH_FIELD_NUMBER: builtins.int
+    ROOT_FIELD_NUMBER: builtins.int
     name: builtins.str
     state: builtins.str
     tx_hash: builtins.str
+    root: builtins.str
     def __init__(
         self,
         *,
         name: builtins.str = ...,
         state: builtins.str = ...,
         tx_hash: builtins.str = ...,
+        root: builtins.str | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["name", b"name", "state", b"state", "tx_hash", b"tx_hash"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_root", b"_root", "root", b"root"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_root", b"_root", "name", b"name", "root", b"root", "state", b"state", "tx_hash", b"tx_hash"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_root", b"_root"]) -> typing_extensions.Literal["root"] | None: ...
 
 global___AnchorNetwork = AnchorNetwork
 
-@typing_extensions.final
 class Proof(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -97,7 +99,6 @@ class Proof(google.protobuf.message.Message):
 
 global___Proof = Proof
 
-@typing_extensions.final
 class ProofAnchor(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -122,7 +123,6 @@ class ProofAnchor(google.protobuf.message.Message):
 
 global___ProofAnchor = ProofAnchor
 
-@typing_extensions.final
 class RecordReceipt(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

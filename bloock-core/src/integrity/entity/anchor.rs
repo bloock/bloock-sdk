@@ -14,5 +14,6 @@ pub struct AnchorNetwork {
     pub name: String,
     pub state: String,
     pub tx_hash: String,
-    pub root: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub root: Option<String>,
 }

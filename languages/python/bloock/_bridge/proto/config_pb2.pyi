@@ -22,7 +22,7 @@ class _Network:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _NetworkEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Network.ValueType], builtins.type):
+class _NetworkEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Network.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ETHEREUM_MAINNET: _Network.ValueType  # 0
     ETHEREUM_GOERLI: _Network.ValueType  # 1
@@ -39,11 +39,9 @@ BLOOCK_CHAIN: Network.ValueType  # 3
 POLYGON_CHAIN: Network.ValueType  # 4
 global___Network = Network
 
-@typing_extensions.final
 class ConfigData(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    @typing_extensions.final
     class NetworksConfigEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -78,7 +76,6 @@ class ConfigData(google.protobuf.message.Message):
 
 global___ConfigData = ConfigData
 
-@typing_extensions.final
 class Configuration(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -117,7 +114,6 @@ class Configuration(google.protobuf.message.Message):
 
 global___Configuration = Configuration
 
-@typing_extensions.final
 class NetworkConfig(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

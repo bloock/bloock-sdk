@@ -14,12 +14,11 @@ class IdentityEntities
         if (static::$is_initialized == true) {
           return;
         }
-        \GPBMetadata\AuthenticityEntities::initOnce();
         \GPBMetadata\IntegrityEntities::initOnce();
         $pool->internalAddGeneratedFile(
             '
-Ý
-identity_entities.protobloockintegrity_entities.proto">
+Ã
+identity_entities.protobloock">
 Identity
 mnemonic (	
 key (	

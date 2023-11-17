@@ -644,6 +644,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "ureq",
+ "uuid",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-bindgen-test",

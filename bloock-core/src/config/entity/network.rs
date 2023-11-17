@@ -37,7 +37,7 @@ impl From<Network> for String {
 pub fn select_network(root: String, networks: &Vec<AnchorNetwork>) -> Option<Network> {
     let mut selected = None;
     for n in networks {
-        if n.root == root {
+        if n.root == Some(root.clone()) {
             let network: Network = n.name.clone().into();
             if network == Network::EthereumMainnet {
                 return Some(network);
@@ -64,13 +64,13 @@ mod tests {
                 name: Network::GnosisChain.into(),
                 state: "state".to_string(),
                 tx_hash: "tx_hash".to_string(),
-                root: "root".to_string(),
+                root: Some("root".to_string()),
             },
             AnchorNetwork {
                 name: Network::PolygonChain.into(),
                 state: "state".to_string(),
                 tx_hash: "tx_hash".to_string(),
-                root: "root".to_string(),
+                root: Some("root".to_string()),
             },
         ];
         let network = super::select_network(root, &networks);
@@ -86,13 +86,13 @@ mod tests {
                 name: Network::GnosisChain.into(),
                 state: "state".to_string(),
                 tx_hash: "tx_hash".to_string(),
-                root: "root".to_string(),
+                root: Some("root".to_string()),
             },
             AnchorNetwork {
                 name: Network::EthereumMainnet.into(),
                 state: "state".to_string(),
                 tx_hash: "tx_hash".to_string(),
-                root: "root".to_string(),
+                root: Some("root".to_string()),
             },
         ];
         let network = super::select_network(root, &networks);
@@ -108,13 +108,13 @@ mod tests {
                 name: Network::GnosisChain.into(),
                 state: "state".to_string(),
                 tx_hash: "tx_hash".to_string(),
-                root: "different_root".to_string(),
+                root: Some("different_root".to_string()),
             },
             AnchorNetwork {
                 name: Network::PolygonChain.into(),
                 state: "state".to_string(),
                 tx_hash: "tx_hash".to_string(),
-                root: "root".to_string(),
+                root: Some("root".to_string()),
             },
         ];
         let network = super::select_network(root, &networks);
@@ -130,13 +130,13 @@ mod tests {
                 name: Network::GnosisChain.into(),
                 state: "state".to_string(),
                 tx_hash: "tx_hash".to_string(),
-                root: "root2".to_string(),
+                root: Some("root2".to_string()),
             },
             AnchorNetwork {
                 name: Network::EthereumMainnet.into(),
                 state: "state".to_string(),
                 tx_hash: "tx_hash".to_string(),
-                root: "root2".to_string(),
+                root: Some("root2".to_string()),
             },
         ];
         let network = super::select_network(root, &networks);

@@ -3,6 +3,7 @@
 package client
 
 import (
+	"log"
 	"testing"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/integrity"
@@ -30,6 +31,9 @@ func TestIntegrity(t *testing.T) {
 		anchor, err := integrityClient.WaitAnchor(receipt[0].Anchor, integrity.NewAnchorParams())
 		require.NoError(t, err)
 		assert.Equal(t, receipt[0].Anchor, anchor.Id)
+
+		h, _ := r.GetHash()
+		log.Printf("MESSAGE HASH: %s", h)
 
 		proof, err := integrityClient.GetProof(records)
 		require.NoError(t, err)

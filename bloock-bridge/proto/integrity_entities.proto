@@ -17,7 +17,7 @@ message AnchorNetwork {
     string name = 1;
     string state = 2;
     string tx_hash = 3;
-    string root = 4;
+    optional string root = 4;
 }
 
 message Proof {

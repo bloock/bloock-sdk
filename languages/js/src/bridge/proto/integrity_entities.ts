@@ -14,6 +14,7 @@ export interface AnchorNetwork {
   name: string;
   state: string;
   txHash: string;
+  root?: string | undefined;
 }
 
 export interface Proof {
@@ -132,7 +133,7 @@ export const Anchor = {
 };
 
 function createBaseAnchorNetwork(): AnchorNetwork {
-  return { name: "", state: "", txHash: "" };
+  return { name: "", state: "", txHash: "", root: undefined };
 }
 
 export const AnchorNetwork = {
@@ -145,6 +146,9 @@ export const AnchorNetwork = {
     }
     if (message.txHash !== "") {
       writer.uint32(26).string(message.txHash);
+    }
+    if (message.root !== undefined) {
+      writer.uint32(34).string(message.root);
     }
     return writer;
   },
@@ -165,6 +169,9 @@ export const AnchorNetwork = {
         case 3:
           message.txHash = reader.string();
           break;
+        case 4:
+          message.root = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -178,6 +185,7 @@ export const AnchorNetwork = {
       name: isSet(object.name) ? String(object.name) : "",
       state: isSet(object.state) ? String(object.state) : "",
       txHash: isSet(object.txHash) ? String(object.txHash) : "",
+      root: isSet(object.root) ? String(object.root) : undefined,
     };
   },
 
@@ -186,6 +194,7 @@ export const AnchorNetwork = {
     message.name !== undefined && (obj.name = message.name);
     message.state !== undefined && (obj.state = message.state);
     message.txHash !== undefined && (obj.txHash = message.txHash);
+    message.root !== undefined && (obj.root = message.root);
     return obj;
   },
 
@@ -194,6 +203,7 @@ export const AnchorNetwork = {
     message.name = object.name ?? "";
     message.state = object.state ?? "";
     message.txHash = object.txHash ?? "";
+    message.root = object.root ?? undefined;
     return message;
   },
 };

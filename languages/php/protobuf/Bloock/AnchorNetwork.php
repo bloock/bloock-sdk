@@ -25,6 +25,10 @@ class AnchorNetwork extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string tx_hash = 3;</code>
      */
     protected $tx_hash = '';
+    /**
+     * Generated from protobuf field <code>optional string root = 4;</code>
+     */
+    protected $root = null;
 
     /**
      * Constructor.
@@ -35,6 +39,7 @@ class AnchorNetwork extends \Google\Protobuf\Internal\Message
      *     @type string $name
      *     @type string $state
      *     @type string $tx_hash
+     *     @type string $root
      * }
      */
     public function __construct($data = NULL) {
@@ -104,6 +109,38 @@ class AnchorNetwork extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->tx_hash = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string root = 4;</code>
+     * @return string
+     */
+    public function getRoot()
+    {
+        return isset($this->root) ? $this->root : '';
+    }
+
+    public function hasRoot()
+    {
+        return isset($this->root);
+    }
+
+    public function clearRoot()
+    {
+        unset($this->root);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string root = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setRoot($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->root = $var;
 
         return $this;
     }

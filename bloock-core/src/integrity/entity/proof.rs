@@ -147,7 +147,9 @@ mod tests {
             state: "Confirmed".to_string(),
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
-            root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            root: Some(
+                "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            ),
         };
         let anchor = ProofAnchor {
             anchor_id: 35554,
@@ -184,7 +186,9 @@ mod tests {
             state: "Confirmed".to_string(),
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
-            root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            root: Some(
+                "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            ),
         };
         let anchor = ProofAnchor {
             anchor_id: 35554,
@@ -214,7 +218,9 @@ mod tests {
             state: "Confirmed".to_string(),
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
-            root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            root: Some(
+                "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            ),
         };
         let anchor = ProofAnchor {
             anchor_id: 35554,
@@ -251,7 +257,9 @@ mod tests {
             state: "Confirmed".to_string(),
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
-            root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            root: Some(
+                "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            ),
         };
         let anchor = ProofAnchor {
             anchor_id: 35554,
@@ -288,7 +296,9 @@ mod tests {
             state: "Confirmed".to_string(),
             tx_hash: "0x82a2226903e043750cd57e2f64281f8a800e4fe524661861a1fab7b00692b4a5"
                 .to_string(),
-            root: "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            root: Some(
+                "9a09a4e4f831092c64e48ba23faf2f809f12f27e99440ca1e4991dd945391695".to_string(),
+            ),
         };
         let anchor = ProofAnchor {
             anchor_id: 35554,

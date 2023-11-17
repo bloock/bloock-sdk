@@ -20,7 +20,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class GetSchemaRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -40,7 +39,6 @@ class GetSchemaRequestV2(google.protobuf.message.Message):
 
 global___GetSchemaRequestV2 = GetSchemaRequestV2
 
-@typing_extensions.final
 class GetSchemaResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -62,7 +60,6 @@ class GetSchemaResponseV2(google.protobuf.message.Message):
 
 global___GetSchemaResponseV2 = GetSchemaResponseV2
 
-@typing_extensions.final
 class GetIssuerListRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -79,7 +76,6 @@ class GetIssuerListRequest(google.protobuf.message.Message):
 
 global___GetIssuerListRequest = GetIssuerListRequest
 
-@typing_extensions.final
 class GetIssuerListResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -101,7 +97,6 @@ class GetIssuerListResponse(google.protobuf.message.Message):
 
 global___GetIssuerListResponse = GetIssuerListResponse
 
-@typing_extensions.final
 class GetIssuerByKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -122,7 +117,6 @@ class GetIssuerByKeyResponse(google.protobuf.message.Message):
 
 global___GetIssuerByKeyResponse = GetIssuerByKeyResponse
 
-@typing_extensions.final
 class GetCredentialProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -145,7 +139,6 @@ class GetCredentialProofRequest(google.protobuf.message.Message):
 
 global___GetCredentialProofRequest = GetCredentialProofRequest
 
-@typing_extensions.final
 class GetCredentialProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -167,7 +160,6 @@ class GetCredentialProofResponse(google.protobuf.message.Message):
 
 global___GetCredentialProofResponse = GetCredentialProofResponse
 
-@typing_extensions.final
 class CredentialToJsonRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -188,7 +180,6 @@ class CredentialToJsonRequestV2(google.protobuf.message.Message):
 
 global___CredentialToJsonRequestV2 = CredentialToJsonRequestV2
 
-@typing_extensions.final
 class CredentialToJsonResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -209,7 +200,6 @@ class CredentialToJsonResponseV2(google.protobuf.message.Message):
 
 global___CredentialToJsonResponseV2 = CredentialToJsonResponseV2
 
-@typing_extensions.final
 class CredentialFromJsonRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -229,7 +219,6 @@ class CredentialFromJsonRequestV2(google.protobuf.message.Message):
 
 global___CredentialFromJsonRequestV2 = CredentialFromJsonRequestV2
 
-@typing_extensions.final
 class CredentialFromJsonResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -251,7 +240,6 @@ class CredentialFromJsonResponseV2(google.protobuf.message.Message):
 
 global___CredentialFromJsonResponseV2 = CredentialFromJsonResponseV2
 
-@typing_extensions.final
 class CreateCredentialRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -319,7 +307,6 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
 
 global___CreateCredentialRequestV2 = CreateCredentialRequestV2
 
-@typing_extensions.final
 class BuildSchemaRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -387,7 +374,6 @@ class BuildSchemaRequestV2(google.protobuf.message.Message):
 
 global___BuildSchemaRequestV2 = BuildSchemaRequestV2
 
-@typing_extensions.final
 class CreateIssuerRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -413,7 +399,6 @@ class CreateIssuerRequest(google.protobuf.message.Message):
 
 global___CreateIssuerRequest = CreateIssuerRequest
 
-@typing_extensions.final
 class GetIssuerByKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -439,7 +424,6 @@ class GetIssuerByKeyRequest(google.protobuf.message.Message):
 
 global___GetIssuerByKeyRequest = GetIssuerByKeyRequest
 
-@typing_extensions.final
 class PublishIssuerStateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -463,7 +447,6 @@ class PublishIssuerStateRequest(google.protobuf.message.Message):
 
 global___PublishIssuerStateRequest = PublishIssuerStateRequest
 
-@typing_extensions.final
 class CreateCredentialResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -485,7 +468,6 @@ class CreateCredentialResponseV2(google.protobuf.message.Message):
 
 global___CreateCredentialResponseV2 = CreateCredentialResponseV2
 
-@typing_extensions.final
 class CreateIssuerResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -506,7 +488,6 @@ class CreateIssuerResponse(google.protobuf.message.Message):
 
 global___CreateIssuerResponse = CreateIssuerResponse
 
-@typing_extensions.final
 class BuildSchemaResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -528,7 +509,6 @@ class BuildSchemaResponseV2(google.protobuf.message.Message):
 
 global___BuildSchemaResponseV2 = BuildSchemaResponseV2
 
-@typing_extensions.final
 class PublishIssuerStateResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -550,7 +530,6 @@ class PublishIssuerStateResponse(google.protobuf.message.Message):
 
 global___PublishIssuerStateResponse = PublishIssuerStateResponse
 
-@typing_extensions.final
 class RevokeCredentialRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -571,7 +550,6 @@ class RevokeCredentialRequestV2(google.protobuf.message.Message):
 
 global___RevokeCredentialRequestV2 = RevokeCredentialRequestV2
 
-@typing_extensions.final
 class RevokeCredentialResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

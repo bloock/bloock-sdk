@@ -201,7 +201,7 @@ impl SimpleHttpClient {
 
             let name = match filename.clone() {
                 Some(f) => f,
-                None => "blob".to_string(),
+                None => uuid::Uuid::new_v4().to_string(),
             };
             m.add_stream(file.0.clone(), file.1.as_slice(), Some(name), Some(mime));
         }
