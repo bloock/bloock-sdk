@@ -59,8 +59,9 @@ impl ManagedCertificate {
         params: &ManagedCertificateParams,
         api_host: String,
         api_key: String,
+        environment: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment);
 
         let req = CreateManagedCertificateRequest {
             key_type: params.key_type.get_key_type(),
@@ -87,8 +88,13 @@ impl ManagedCertificate {
         })
     }
 
-    pub async fn load(id: String, api_host: String, api_key: String) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key);
+    pub async fn load(
+        id: String,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<ManagedCertificate> {
+        let client = bloock_http::BloockHttpClient::new(api_key, environment);
 
         let res: ManagedCertificateResponse = client
             .get_json(format!("{}/keys/v1/certificates/{}", api_host, id), None)
@@ -114,8 +120,9 @@ impl ManagedCertificate {
         id: String,
         api_host: String,
         api_key: String,
+        environment: Option<String>,
     ) -> Result<Certificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment);
 
         let res: ManagedCertificateResponse = client
             .get_json(format!("{}/keys/v1/certificates/{}", api_host, id), None)
@@ -133,8 +140,9 @@ impl ManagedCertificate {
         certificate_type: CertificateType,
         api_host: String,
         api_key: String,
+        environment: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment);
 
         let res: CreateManagedCertificateResponse = client
             .post_file(
@@ -201,6 +209,7 @@ mod tests {
             &params,
             "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
+            None,
         )
         .await
         .unwrap();
@@ -230,7 +239,7 @@ mod tests {
             subject: subject_params,
             expiration: 5,
         };
-        let certificate = ManagedCertificate::new(&params, api_host.clone(), api_key.clone())
+        let certificate = ManagedCertificate::new(&params, api_host.clone(), api_key.clone(), None)
             .await
             .unwrap();
 
@@ -240,7 +249,7 @@ mod tests {
 
         sleep(Duration::from_secs(3));
 
-        ManagedCertificate::load_x509_certificate(certificate.id, api_host, api_key)
+        ManagedCertificate::load_x509_certificate(certificate.id, api_host, api_key, None)
             .await
             .unwrap();
     }

@@ -49,6 +49,7 @@ impl EncryptionServiceHandler for EncryptionServer {
                     key.into(),
                     config_data.config.host.clone(),
                     config_data.config.api_key.clone(),
+                    config_data.config.environment.clone(),
                 ),
                 None => return Err("invalid encrypter provided".to_string()),
             }
@@ -107,6 +108,7 @@ impl EncryptionServiceHandler for EncryptionServer {
                     key.into(),
                     config_data.config.host.clone(),
                     config_data.config.api_key.clone(),
+                    config_data.config.environment.clone(),
                 ),
                 None => return Err("invalid decrypter provided".to_string()),
             }

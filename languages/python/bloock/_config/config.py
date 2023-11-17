@@ -9,6 +9,7 @@ class Config:
             config=Configuration(
                 library_name="Python",
                 api_key=bloock.api_key,
+                environment=bloock.force_env,
                 host=bloock.api_host,
                 disable_analytics=bloock.disable_analytics,
             ),

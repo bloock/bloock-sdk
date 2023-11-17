@@ -15,6 +15,7 @@ impl TryFrom<Record> for RecordCore {
             &r.payload,
             config_data.get_config().host,
             config_data.get_config().api_key,
+            config_data.get_config().environment,
         )?;
         if document.is_encrypted() {
             // when a record is encrypted, we cannot generate the hash,

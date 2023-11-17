@@ -21,11 +21,12 @@ export class BloockClient {
   public RecordClient: RecordClient;
   public WebhookClient: WebhookClient;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, forceEnv?: string) {
     this.configData = NewConfigData(undefined);
 
     if (this.configData.config) {
       this.configData.config.apiKey = apiKey;
+      this.configData.config.environment = forceEnv;
     }
 
     this.AuthenticityClient = new AuthenticityClient(this.configData);

@@ -49,6 +49,10 @@ class Configuration extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>bool disable_analytics = 9;</code>
      */
     protected $disable_analytics = false;
+    /**
+     * Generated from protobuf field <code>optional string environment = 10;</code>
+     */
+    protected $environment = null;
 
     /**
      * Constructor.
@@ -65,6 +69,7 @@ class Configuration extends \Google\Protobuf\Internal\Message
      *     @type string $elliptic_curve_key
      *     @type string $signature_algorithm
      *     @type bool $disable_analytics
+     *     @type string $environment
      * }
      */
     public function __construct($data = NULL) {
@@ -266,6 +271,38 @@ class Configuration extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkBool($var);
         $this->disable_analytics = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string environment = 10;</code>
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return isset($this->environment) ? $this->environment : '';
+    }
+
+    public function hasEnvironment()
+    {
+        return isset($this->environment);
+    }
+
+    public function clearEnvironment()
+    {
+        unset($this->environment);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string environment = 10;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setEnvironment($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->environment = $var;
 
         return $this;
     }

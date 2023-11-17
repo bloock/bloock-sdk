@@ -73,6 +73,7 @@ impl MetadataParser for PdfParser {
         key: &Key,
         api_host: String,
         api_key: String,
+        environment: Option<String>,
     ) -> BloockResult<Signature> {
         self.modified = true;
 
@@ -145,7 +146,10 @@ impl MetadataParser for PdfParser {
 
         //Get payload to sign
         let effective_payload = self.get_signed_content(byte_range_payload.clone())?;
-        let cert = match key.get_certificate(api_host.clone(), api_key.clone()).await {
+        let cert = match key
+            .get_certificate(api_host.clone(), api_key.clone(), environment.clone())
+            .await
+        {
             Some(c) => c,
             None => Err(MetadataError::GetSignedDataError(
                 "Error getting certificate".to_string(),
@@ -159,6 +163,7 @@ impl MetadataParser for PdfParser {
         let signature = bloock_signer::sign(
             api_host.clone(),
             api_key.clone(),
+            environment.clone(),
             &signed_attributes_encoded,
             &key,
         )
@@ -183,13 +188,19 @@ impl MetadataParser for PdfParser {
         Ok(signature)
     }
 
-    async fn verify(&self, api_host: String, api_key: String) -> BloockResult<bool> {
+    async fn verify(
+        &self,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> BloockResult<bool> {
         let verifications = self.get_signatures_and_payload()?;
 
         for verification in verifications.iter() {
             bloock_signer::verify(
                 api_host.clone(),
                 api_key.clone(),
+                environment.clone(),
                 &verification.1,
                 &verification.0,
             )

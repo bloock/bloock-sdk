@@ -6,6 +6,7 @@ import {
 export class Bloock {
   private static instance: Bloock;
   private apiKey?: string;
+  private forceEnv?: string;
   private apiHost?: string;
   private disableAnalytics: boolean = false;
   private networksConfig?: {
@@ -30,6 +31,20 @@ export class Bloock {
       Bloock.instance = new Bloock();
     }
     Bloock.instance.apiKey = apiKey;
+  }
+
+  public static getForceEnv(): string | undefined {
+    if (!Bloock.instance) {
+      Bloock.instance = new Bloock();
+    }
+    return Bloock.instance.forceEnv;
+  }
+
+  public static setForceEnv(forceEnv: string) {
+    if (!Bloock.instance) {
+      Bloock.instance = new Bloock();
+    }
+    Bloock.instance.forceEnv = forceEnv;
   }
 
   public static getApiHost(): string | undefined {

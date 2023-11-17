@@ -72,6 +72,7 @@ export interface Configuration {
   ellipticCurveKey: string;
   signatureAlgorithm: string;
   disableAnalytics: boolean;
+  environment?: string | undefined;
 }
 
 export interface NetworkConfig {
@@ -234,6 +235,7 @@ function createBaseConfiguration(): Configuration {
     ellipticCurveKey: "",
     signatureAlgorithm: "",
     disableAnalytics: false,
+    environment: undefined,
   };
 }
 
@@ -265,6 +267,9 @@ export const Configuration = {
     }
     if (message.disableAnalytics === true) {
       writer.uint32(72).bool(message.disableAnalytics);
+    }
+    if (message.environment !== undefined) {
+      writer.uint32(82).string(message.environment);
     }
     return writer;
   },
@@ -303,6 +308,9 @@ export const Configuration = {
         case 9:
           message.disableAnalytics = reader.bool();
           break;
+        case 10:
+          message.environment = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -324,6 +332,7 @@ export const Configuration = {
       ellipticCurveKey: isSet(object.ellipticCurveKey) ? String(object.ellipticCurveKey) : "",
       signatureAlgorithm: isSet(object.signatureAlgorithm) ? String(object.signatureAlgorithm) : "",
       disableAnalytics: isSet(object.disableAnalytics) ? Boolean(object.disableAnalytics) : false,
+      environment: isSet(object.environment) ? String(object.environment) : undefined,
     };
   },
 
@@ -340,6 +349,7 @@ export const Configuration = {
     message.ellipticCurveKey !== undefined && (obj.ellipticCurveKey = message.ellipticCurveKey);
     message.signatureAlgorithm !== undefined && (obj.signatureAlgorithm = message.signatureAlgorithm);
     message.disableAnalytics !== undefined && (obj.disableAnalytics = message.disableAnalytics);
+    message.environment !== undefined && (obj.environment = message.environment);
     return obj;
   },
 
@@ -354,6 +364,7 @@ export const Configuration = {
     message.ellipticCurveKey = object.ellipticCurveKey ?? "";
     message.signatureAlgorithm = object.signatureAlgorithm ?? "";
     message.disableAnalytics = object.disableAnalytics ?? false;
+    message.environment = object.environment ?? undefined;
     return message;
   },
 };

@@ -8,8 +8,9 @@ impl Transport {
         provider: String,
         req: Request,
         api_key: String,
+        environment: Option<String>,
     ) -> Result<Vec<u8>, BlockchainError> {
-        let client = bloock_http::BloockHttpClient::new(api_key);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment);
         let res: Response = client
             .post_json(provider, req, None)
             .await

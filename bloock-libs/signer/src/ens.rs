@@ -7,44 +7,65 @@ use libsecp256k1::PublicKey;
 pub struct EnsSigner {
     api_host: String,
     api_key: String,
+    environment: Option<String>,
 }
 
 impl EnsSigner {
-    pub fn new(api_host: String, api_key: String) -> Self {
-        Self { api_host, api_key }
+    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+        Self {
+            api_host,
+            api_key,
+            environment,
+        }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key))
+    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key, environment))
     }
 }
 
 #[async_trait(?Send)]
 impl Signer for EnsSigner {
     async fn sign_local(&self, payload: &[u8], key: &LocalKey<String>) -> crate::Result<Signature> {
-        let ecdsa_signer = EcdsaSigner::new(self.api_host.clone(), self.api_key.clone());
+        let ecdsa_signer = EcdsaSigner::new(
+            self.api_host.clone(),
+            self.api_key.clone(),
+            self.environment.clone(),
+        );
         let mut signature = ecdsa_signer.sign_local(payload, key.into()).await?;
         signature.alg = SignAlg::Es256k;
         Ok(signature)
     }
 
     async fn sign_managed(&self, payload: &[u8], key: &ManagedKey) -> crate::Result<Signature> {
-        let ecdsa_signer = EcdsaSigner::new(self.api_host.clone(), self.api_key.clone());
+        let ecdsa_signer = EcdsaSigner::new(
+            self.api_host.clone(),
+            self.api_key.clone(),
+            self.environment.clone(),
+        );
         let mut signature = ecdsa_signer.sign_managed(payload, key).await?;
         signature.alg = SignAlg::Es256kM;
         Ok(signature)
     }
 
     async fn verify_local(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
-        EcdsaSigner::new(self.api_host.clone(), self.api_key.clone())
-            .verify_local(payload, signature)
-            .await
+        EcdsaSigner::new(
+            self.api_host.clone(),
+            self.api_key.clone(),
+            self.environment.clone(),
+        )
+        .verify_local(payload, signature)
+        .await
     }
 
     async fn verify_managed(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
-        EcdsaSigner::new(self.api_host.clone(), self.api_key.clone())
-            .verify_managed(payload, signature)
-            .await
+        EcdsaSigner::new(
+            self.api_host.clone(),
+            self.api_key.clone(),
+            self.environment.clone(),
+        )
+        .verify_managed(payload, signature)
+        .await
     }
 }
 
@@ -79,7 +100,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = EnsSigner::new(api_host, api_key);
+        let signer = EnsSigner::new(api_host, api_key, None);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_key)
@@ -112,7 +133,7 @@ mod tests {
             mnemonic: None,
         };
 
-        let c = EnsSigner::new(api_host, api_key);
+        let c = EnsSigner::new(api_host, api_key, None);
         let result = c.sign_local(string_payload.as_bytes(), &local_key).await;
         assert!(result.is_err());
     }
@@ -131,7 +152,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EnsSigner::new(api_host, api_key);
+        let signer = EnsSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -155,7 +176,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EnsSigner::new(api_host, api_key);
+        let signer = EnsSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -178,7 +199,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EnsSigner::new(api_host, api_key);
+        let signer = EnsSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -199,13 +220,14 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let string_payload = "hello world";
 
-        let signer = EnsSigner::new(api_host, api_key);
+        let signer = EnsSigner::new(api_host, api_key, None);
 
         let signature = signer
             .sign_managed(string_payload.as_bytes(), &managed_key)
@@ -236,9 +258,10 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let signature = Signature {
             alg: SignAlg::Es256k,
@@ -247,7 +270,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EnsSigner::new(api_host, api_key);
+        let signer = EnsSigner::new(api_host, api_key, None);
 
         let result: bool = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -271,7 +294,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EnsSigner::new(api_host, api_key);
+        let signer = EnsSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -294,9 +317,10 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let signature = Signature {
             alg: SignAlg::Es256k,
@@ -305,7 +329,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EnsSigner::new(api_host, api_key);
+        let signer = EnsSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)

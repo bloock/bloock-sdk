@@ -14,9 +14,15 @@ use bloock_core::{
     Encrypter as EncrypterCore, LocalAesDecrypter, LocalAesEncrypter, LocalRsaDecrypter,
     LocalRsaEncrypter, ManagedRsaDecrypter, ManagedRsaEncrypter,
 };
-use bloock_keys::{entity::key::Key, certificates::{managed::ManagedCertificate as ManagedCertificateCore, local::LocalCertificate as LocalCertificateCore}};
 use bloock_keys::keys::local::LocalKey as LocalKeyCore;
 use bloock_keys::keys::managed::ManagedKey as ManagedKeyCore;
+use bloock_keys::{
+    certificates::{
+        local::LocalCertificate as LocalCertificateCore,
+        managed::ManagedCertificate as ManagedCertificateCore,
+    },
+    entity::key::Key,
+};
 use std::convert::TryInto;
 
 pub struct RecordServer {}
@@ -317,6 +323,7 @@ async fn build_record(
                     key.into(),
                     config_data.config.host.clone(),
                     config_data.config.api_key.clone(),
+                    config_data.config.environment.clone(),
                 ),
                 None => return Err("invalid encrypter provided".to_string()),
             }
@@ -348,6 +355,7 @@ async fn build_record(
                     key.into(),
                     config_data.config.host.clone(),
                     config_data.config.api_key.clone(),
+                    config_data.config.environment.clone(),
                 ),
                 None => return Err("invalid decrypter provided".to_string()),
             }

@@ -196,6 +196,7 @@ mod tests {
             "Some String".as_bytes(),
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         let record = Record::new(document).unwrap();
@@ -214,6 +215,7 @@ mod tests {
             "Some String".as_bytes(),
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
 
@@ -247,6 +249,7 @@ mod tests {
             "Some String".as_bytes(),
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
 

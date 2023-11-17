@@ -31,7 +31,10 @@ impl From<AvailabilityError> for BloockError {
 }
 
 pub fn configure(config_data: ConfigData) -> service::AvailabilityService<BloockHttpClient> {
-    let bloock_http_client = Arc::new(BloockHttpClient::new(config_data.get_config().api_key));
+    let bloock_http_client = Arc::new(BloockHttpClient::new(
+        config_data.get_config().api_key,
+        config_data.get_config().environment,
+    ));
 
     service::AvailabilityService {
         http: Arc::clone(&bloock_http_client),

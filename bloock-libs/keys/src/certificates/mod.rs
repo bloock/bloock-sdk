@@ -59,12 +59,22 @@ impl CertificateSubject {
 
 #[async_trait(?Send)]
 pub trait GetX509Certficate {
-    async fn get_certificate(&self, api_host: String, api_key: String) -> Option<Certificate>;
+    async fn get_certificate(
+        &self,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Option<Certificate>;
 }
 
 #[async_trait(?Send)]
 impl GetX509Certficate for Key {
-    async fn get_certificate(&self, api_host: String, api_key: String) -> Option<Certificate> {
+    async fn get_certificate(
+        &self,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Option<Certificate> {
         match self {
             Key::LocalKey(key) => {
                 let params = LocalCertificateWithKeyParams {
@@ -92,6 +102,7 @@ impl GetX509Certficate for Key {
                     managed_certificate.id.clone(),
                     api_host,
                     api_key,
+                    environment,
                 )
                 .await
                 .ok()

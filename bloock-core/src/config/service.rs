@@ -28,4 +28,8 @@ impl ConfigService {
     pub fn get_api_key(&self) -> String {
         self.config_data.get_config().api_key
     }
+
+    pub fn get_environment(&self) -> Option<String> {
+        self.config_data.get_config().environment
+    }
 }

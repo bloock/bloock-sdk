@@ -15,15 +15,20 @@ use libsecp256k1::{Message, PublicKey, SecretKey};
 pub struct EcdsaSigner {
     api_host: String,
     api_key: String,
+    environment: Option<String>,
 }
 
 impl EcdsaSigner {
-    pub fn new(api_host: String, api_key: String) -> Self {
-        Self { api_host, api_key }
+    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+        Self {
+            api_host,
+            api_key,
+            environment,
+        }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key))
+    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key, environment))
     }
 }
 
@@ -64,7 +69,7 @@ impl Signer for EcdsaSigner {
     async fn sign_managed(&self, payload: &[u8], key: &ManagedKey) -> crate::Result<Signature> {
         let hash = Sha256::generate_hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
 
         let req = SignRequest {
             key_id: key.id.clone(),
@@ -106,7 +111,7 @@ impl Signer for EcdsaSigner {
     async fn verify_managed(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
         let hash = Sha256::generate_hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
 
         let req = VerifyRequest {
             public_key: signature.kid.clone(),
@@ -148,7 +153,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = EcdsaSigner::new(api_host, api_key);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_key)
@@ -181,7 +186,7 @@ mod tests {
             mnemonic: None,
         };
 
-        let c = EcdsaSigner::new(api_host, api_key);
+        let c = EcdsaSigner::new(api_host, api_key, None);
         let result = c.sign_local(string_payload.as_bytes(), &local_key).await;
         assert!(result.is_err());
     }
@@ -200,7 +205,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -224,7 +229,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -247,7 +252,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -268,13 +273,14 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let string_payload = "hello world";
 
-        let signer = EcdsaSigner::new(api_host, api_key);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let signature = signer
             .sign_managed(string_payload.as_bytes(), &managed_key)
@@ -312,9 +318,10 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let signature = Signature {
             alg: SignAlg::Es256k,
@@ -323,7 +330,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result: bool = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -347,7 +354,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -370,9 +377,10 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let signature = Signature {
             alg: SignAlg::Es256k,
@@ -381,7 +389,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)

@@ -251,6 +251,7 @@ impl<H: Client> IdentityServiceV2<H> {
         let signature = bloock_signer::sign(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
             &core_claim_hash_decoded,
             &key,
         )
@@ -381,6 +382,7 @@ impl<H: Client> IdentityServiceV2<H> {
         let signature = bloock_signer::sign(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
             &new_state_hash_decoded,
             &key,
         )

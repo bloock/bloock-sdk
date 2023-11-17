@@ -16,6 +16,7 @@ pub fn map_config(config_data: Option<ConfigData>) -> Result<CoreConfigData, Bri
 
     let mut default_config = CoreConfigData::new(
         config.api_key,
+        config.environment,
         config.library_name,
         config.disable_analytics,
     );

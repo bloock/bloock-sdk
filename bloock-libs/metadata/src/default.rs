@@ -28,10 +28,16 @@ impl MetadataParser for DefaultParser {
         Ok(parser)
     }
 
-    async fn sign(&mut self, key: &Key, api_host: String, api_key: String) -> Result<Signature> {
+    async fn sign(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<Signature> {
         let payload = self.get_data()?;
 
-        let signature = bloock_signer::sign(api_host, api_key, &payload, key)
+        let signature = bloock_signer::sign(api_host, api_key, environment, &payload, key)
             .await
             .map_err(|e| MetadataError::SignError(e.to_string()))?;
 
@@ -52,15 +58,26 @@ impl MetadataParser for DefaultParser {
         Ok(signature)
     }
 
-    async fn verify(&self, api_host: String, api_key: String) -> Result<bool> {
+    async fn verify(
+        &self,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<bool> {
         let vec_sig = self.get_signatures();
         let payload = self.get_data()?;
         match vec_sig {
             Some(s) => {
                 for signature in s.iter() {
-                    bloock_signer::verify(api_host.clone(), api_key.clone(), &payload, signature)
-                        .await
-                        .map_err(|e| MetadataError::VerifyError(e.to_string()))?;
+                    bloock_signer::verify(
+                        api_host.clone(),
+                        api_key.clone(),
+                        environment.clone(),
+                        &payload,
+                        signature,
+                    )
+                    .await
+                    .map_err(|e| MetadataError::VerifyError(e.to_string()))?;
                 }
                 Ok(true)
             }
@@ -409,12 +426,16 @@ mod tests {
                 &bloock_keys::entity::key::Key::LocalKey(local_key),
                 "".to_string(),
                 "".to_string(),
+                None,
             )
             .await
             .unwrap();
         assert_eq!(2, parser.get_signatures().unwrap().len());
 
-        let verified = parser.verify("".to_string(), "".to_string()).await.unwrap();
+        let verified = parser
+            .verify("".to_string(), "".to_string(), None)
+            .await
+            .unwrap();
         assert_eq!(true, verified);
     }
 }

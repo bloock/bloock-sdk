@@ -8,6 +8,7 @@ export function NewConfigData(configData: ConfigData | undefined): ConfigData {
     config: Configuration.fromPartial({
       libraryName: "Javascript",
       apiKey: Bloock.getApiKey(),
+      environment: Bloock.getForceEnv(),
       host: Bloock.getApiHost(),
       disableAnalytics: Bloock.getDisableAnalytics()
     }),

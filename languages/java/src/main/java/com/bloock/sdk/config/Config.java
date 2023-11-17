@@ -11,6 +11,7 @@ public class Config {
             .setLibraryName("Java")
             .setHost(Bloock.apiHost)
             .setApiKey(Bloock.apiKey)
+            .setEnvironment(Bloock.forceEnv)
             .setDisableAnalytics(Bloock.disableAnalytics)
             .build();
 

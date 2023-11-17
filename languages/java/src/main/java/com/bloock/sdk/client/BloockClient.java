@@ -13,16 +13,14 @@ public class BloockClient {
   private final RecordClient recordClient;
   private final WebhookClient webhookClient;
 
-  public BloockClient(String apiKey) {
+  public BloockClient(String apiKey, String forceEnv) {
     ConfigData configData = Config.newConfigDataDefault();
-    Configuration configuration =
-        Configuration.newBuilder(this.configData.getConfig()).setApiKey(apiKey).build();
+    Configuration configuration = Configuration.newBuilder(this.configData.getConfig()).setApiKey(apiKey).setEnvironment(forceEnv).build();
 
-    this.configData =
-        ConfigData.newBuilder()
-            .setConfig(configuration)
-            .putAllNetworksConfig(configData.getNetworksConfigMap())
-            .build();
+    this.configData = ConfigData.newBuilder()
+        .setConfig(configuration)
+        .putAllNetworksConfig(configData.getNetworksConfigMap())
+        .build();
 
     this.integrityClient = new IntegrityClient(this.configData);
     this.authenticityClient = new AuthenticityClient(this.configData);

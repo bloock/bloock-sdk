@@ -12,16 +12,23 @@ pub struct Document {
     parser: FileParser,
     api_host: String,
     api_key: String,
+    environment: Option<String>,
 }
 
 impl Document {
-    pub fn new(payload: &[u8], api_host: String, api_key: String) -> BloockResult<Self> {
+    pub fn new(
+        payload: &[u8],
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> BloockResult<Self> {
         let parser = FileParser::load(payload).map_err(InfrastructureError::MetadataError)?;
 
         Ok(Document {
             parser,
             api_host,
             api_key,
+            environment,
         })
     }
 
@@ -32,7 +39,12 @@ impl Document {
 
         let signature = self
             .parser
-            .sign(key, self.api_host.clone(), self.api_key.clone())
+            .sign(
+                key,
+                self.api_host.clone(),
+                self.api_key.clone(),
+                self.environment.clone(),
+            )
             .await
             .map_err(|e| InfrastructureError::MetadataError(e))?;
 
@@ -46,7 +58,11 @@ impl Document {
 
         let ok = self
             .parser
-            .verify(self.api_host.clone(), self.api_key.clone())
+            .verify(
+                self.api_host.clone(),
+                self.api_key.clone(),
+                self.environment.clone(),
+            )
             .await
             .map_err(|e| InfrastructureError::MetadataError(e))?;
         Ok(ok)
@@ -174,6 +190,7 @@ mod tests {
             payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         let signature = document
@@ -190,6 +207,7 @@ mod tests {
             &built_doc,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
@@ -221,6 +239,7 @@ mod tests {
             payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         let signature = document
@@ -233,6 +252,7 @@ mod tests {
             &built_doc,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
@@ -255,6 +275,7 @@ mod tests {
             payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         let signature = document.sign(&LocalKeyEntity(key)).await.unwrap();
@@ -264,6 +285,7 @@ mod tests {
             &built_doc,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
@@ -291,12 +313,12 @@ mod tests {
             expiration: 5,
         };
         let managed_certificate =
-            ManagedCertificate::new(&certificate_params, api_host.clone(), api_key.clone())
+            ManagedCertificate::new(&certificate_params, api_host.clone(), api_key.clone(), None)
                 .await
                 .unwrap();
         sleep(Duration::from_secs(2));
 
-        let mut document = Document::new(payload, api_host.clone(), api_key.clone()).unwrap();
+        let mut document = Document::new(payload, api_host.clone(), api_key.clone(), None).unwrap();
         let signature = document
             .sign(&ManagedCertificateEntity(managed_certificate))
             .await
@@ -304,7 +326,7 @@ mod tests {
         let built_doc = document.build().unwrap();
 
         let signed_doc: Document =
-            Document::new(&built_doc, api_host.clone(), api_key.clone()).unwrap();
+            Document::new(&built_doc, api_host.clone(), api_key.clone(), None).unwrap();
         //assert_eq!(signed_doc.get_signatures().unwrap(), vec![signature]);
 
         let result = signed_doc.verify().await.unwrap();
@@ -400,6 +422,7 @@ mod tests {
             payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         let expected_payload = document.build().unwrap();
@@ -413,6 +436,7 @@ mod tests {
             &built_doc,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
 
@@ -426,6 +450,7 @@ mod tests {
             &decrypted_payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         let decrypted_record = Record::new(decrypted_doc).unwrap();
@@ -447,6 +472,7 @@ mod tests {
             payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
 
@@ -481,6 +507,7 @@ mod tests {
             &built_doc,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
 
@@ -494,6 +521,7 @@ mod tests {
             &decrypted_payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         let decrypted_record = Record::new(decrypted_doc).unwrap();
@@ -532,6 +560,7 @@ mod tests {
             payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
 
@@ -571,6 +600,7 @@ mod tests {
             &built_doc,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
 
@@ -585,6 +615,7 @@ mod tests {
             &decrypted_payload,
             config_service.get_api_base_url(),
             config_service.get_api_key(),
+            config_service.get_environment(),
         )
         .unwrap();
         let decrypted_record = Record::new(decrypted_doc).unwrap();

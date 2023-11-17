@@ -19,9 +19,14 @@ type BloockClient struct {
 	WebhookClient      WebhookClient
 }
 
-func NewBloockClient(apiKey string, apiManagedHost string) BloockClient {
+func NewBloockClient(apiKey, apiManagedHost string, forceEnv *string) BloockClient {
 	configData := config.NewConfigDataDefault()
 	configData.Config.ApiKey = apiKey
+
+	if forceEnv != nil {
+		configData.Config.Environment = forceEnv
+	}
+
 	return BloockClient{
 		configData: configData,
 

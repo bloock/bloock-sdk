@@ -17,6 +17,7 @@ const API_VERSION: &str = "2023-11-16";
 pub struct BloockHttpClient {
     api_key: String,
     api_version: String,
+    environment: Option<String>,
 }
 
 #[async_trait]
@@ -26,17 +27,7 @@ impl Client for BloockHttpClient {
         url: U,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<Vec<u8>> {
-        let headers = match headers {
-            Some(mut h) => {
-                h.push(("X-Api-Key".to_string(), self.get_api_key()));
-                h.push(("api_version".to_string(), self.get_api_version()));
-                h
-            }
-            None => vec![
-                ("X-Api-Key".to_string(), self.get_api_key()),
-                ("api_version".to_string(), self.get_api_version()),
-            ],
-        };
+        let headers = self.set_headers(headers);
 
         let client = SimpleHttpClient {};
         client.get(url, Some(headers)).await
@@ -47,17 +38,7 @@ impl Client for BloockHttpClient {
         url: U,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let headers = match headers {
-            Some(mut h) => {
-                h.push(("X-Api-Key".to_string(), self.get_api_key()));
-                h.push(("api_version".to_string(), self.get_api_version()));
-                h
-            }
-            None => vec![
-                ("X-Api-Key".to_string(), self.get_api_key()),
-                ("api_version".to_string(), self.get_api_version()),
-            ],
-        };
+        let headers = self.set_headers(headers);
 
         let client = SimpleHttpClient {};
         client.get_json(url, Some(headers)).await
@@ -69,17 +50,7 @@ impl Client for BloockHttpClient {
         body: &[u8],
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let headers = match headers {
-            Some(mut h) => {
-                h.push(("X-Api-Key".to_string(), self.get_api_key()));
-                h.push(("api_version".to_string(), self.get_api_version()));
-                h
-            }
-            None => vec![
-                ("X-Api-Key".to_string(), self.get_api_key()),
-                ("api_version".to_string(), self.get_api_version()),
-            ],
-        };
+        let headers = self.set_headers(headers);
 
         let client = SimpleHttpClient {};
         client.post(url, body, Some(headers)).await
@@ -95,17 +66,7 @@ impl Client for BloockHttpClient {
         body: B,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let headers = match headers {
-            Some(mut h) => {
-                h.push(("X-Api-Key".to_string(), self.get_api_key()));
-                h.push(("api_version".to_string(), self.get_api_version()));
-                h
-            }
-            None => vec![
-                ("X-Api-Key".to_string(), self.get_api_key()),
-                ("api_version".to_string(), self.get_api_version()),
-            ],
-        };
+        let headers = self.set_headers(headers);
 
         let client = SimpleHttpClient {};
         client.post_json(url, body, Some(headers)).await
@@ -119,17 +80,7 @@ impl Client for BloockHttpClient {
         filename: Option<String>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<T> {
-        let headers = match headers {
-            Some(mut h) => {
-                h.push(("X-Api-Key".to_string(), self.get_api_key()));
-                h.push(("api_version".to_string(), self.get_api_version()));
-                h
-            }
-            None => vec![
-                ("X-Api-Key".to_string(), self.get_api_key()),
-                ("api_version".to_string(), self.get_api_version()),
-            ],
-        };
+        let headers = self.set_headers(headers);
 
         let client = SimpleHttpClient {};
         client
@@ -139,10 +90,11 @@ impl Client for BloockHttpClient {
 }
 
 impl BloockHttpClient {
-    pub fn new(api_key: String) -> Self {
+    pub fn new(api_key: String, environment: Option<String>) -> Self {
         Self {
             api_key,
             api_version: API_VERSION.to_string(),
+            environment,
         }
     }
 
@@ -152,5 +104,36 @@ impl BloockHttpClient {
 
     pub fn get_api_version(&self) -> String {
         self.api_version.clone()
+    }
+
+    pub fn get_enviornment(&self) -> Option<String> {
+        self.environment.clone()
+    }
+
+    pub fn set_headers(&self, headers: Option<Vec<(String, String)>>) -> Vec<(String, String)> {
+        match headers {
+            Some(mut h) => {
+                h.push(("X-Api-Key".to_string(), self.get_api_key()));
+                h.push(("api_version".to_string(), self.get_api_version()));
+                if let Some(env) = self.get_enviornment() {
+                    if !env.is_empty() {
+                        h.push(("Environment".to_string(), env));
+                    }
+                }
+                h
+            }
+            None => {
+                let mut h = vec![
+                    ("X-Api-Key".to_string(), self.get_api_key()),
+                    ("api_version".to_string(), self.get_api_version()),
+                ];
+                if let Some(env) = self.get_enviornment() {
+                    if !env.is_empty() {
+                        h.push(("Environment".to_string(), env));
+                    }
+                }
+                h
+            }
+        }
     }
 }

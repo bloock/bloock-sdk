@@ -1,16 +1,16 @@
-use bloock_encrypter::{Encrypter, Decrypter};
+use async_trait::async_trait;
+use bloock_encrypter::{Decrypter, Encrypter};
 use bloock_keys::entity::key::Key;
 use bloock_signer::entity::signature::Signature;
 use default::DefaultParser;
 use pdf::PdfParser;
 use serde::{de::DeserializeOwned, Serialize};
 use thiserror::Error as ThisError;
-use async_trait::async_trait;
 
-pub mod default;
-pub mod pdf;
 pub mod cms;
+pub mod default;
 pub mod dictionary;
+pub mod pdf;
 
 pub type Result<T> = std::result::Result<T, MetadataError>;
 
@@ -33,17 +33,28 @@ impl MetadataParser for FileParser {
         Ok(parser)
     }
 
-    async fn sign(&mut self, key: &Key, api_host: String, api_key: String) -> Result<Signature> {
+    async fn sign(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<Signature> {
         match self {
-            FileParser::Pdf(p) => p.sign(key, api_host, api_key).await,
-            FileParser::Default(p) => p.sign(key, api_host, api_key).await,
+            FileParser::Pdf(p) => p.sign(key, api_host, api_key, environment).await,
+            FileParser::Default(p) => p.sign(key, api_host, api_key, environment).await,
         }
     }
 
-    async fn verify(&self, api_host: String, api_key: String) -> Result<bool> {
+    async fn verify(
+        &self,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<bool> {
         match self {
-            FileParser::Pdf(p) => p.verify(api_host, api_key).await,
-            FileParser::Default(p) => p.verify(api_host, api_key).await,
+            FileParser::Pdf(p) => p.verify(api_host, api_key, environment).await,
+            FileParser::Default(p) => p.verify(api_host, api_key, environment).await,
         }
     }
 
@@ -120,8 +131,19 @@ where
     Self: Sized,
 {
     fn load(payload: &[u8]) -> Result<Self>;
-    async fn sign(&mut self, key: &Key, api_host: String, api_key: String) -> Result<Signature>;
-    async fn verify(&self, api_host: String, api_key: String) -> Result<bool>;
+    async fn sign(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<Signature>;
+    async fn verify(
+        &self,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<bool>;
     async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> Result<()>;
     async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> Result<()>;
     fn set_proof<T: Serialize>(&mut self, value: &T) -> Result<()>;

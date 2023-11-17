@@ -88,6 +88,7 @@ class Configuration(google.protobuf.message.Message):
     ELLIPTIC_CURVE_KEY_FIELD_NUMBER: builtins.int
     SIGNATURE_ALGORITHM_FIELD_NUMBER: builtins.int
     DISABLE_ANALYTICS_FIELD_NUMBER: builtins.int
+    ENVIRONMENT_FIELD_NUMBER: builtins.int
     library_name: builtins.str
     host: builtins.str
     api_key: builtins.str
@@ -97,6 +98,7 @@ class Configuration(google.protobuf.message.Message):
     elliptic_curve_key: builtins.str
     signature_algorithm: builtins.str
     disable_analytics: builtins.bool
+    environment: builtins.str
     def __init__(
         self,
         *,
@@ -109,8 +111,11 @@ class Configuration(google.protobuf.message.Message):
         elliptic_curve_key: builtins.str = ...,
         signature_algorithm: builtins.str = ...,
         disable_analytics: builtins.bool = ...,
+        environment: builtins.str | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["api_key", b"api_key", "disable_analytics", b"disable_analytics", "elliptic_curve_key", b"elliptic_curve_key", "host", b"host", "key_type_algorithm", b"key_type_algorithm", "library_name", b"library_name", "signature_algorithm", b"signature_algorithm", "wait_message_interval_default", b"wait_message_interval_default", "wait_message_interval_factor", b"wait_message_interval_factor"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_environment", b"_environment", "environment", b"environment"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_environment", b"_environment", "api_key", b"api_key", "disable_analytics", b"disable_analytics", "elliptic_curve_key", b"elliptic_curve_key", "environment", b"environment", "host", b"host", "key_type_algorithm", b"key_type_algorithm", "library_name", b"library_name", "signature_algorithm", b"signature_algorithm", "wait_message_interval_default", b"wait_message_interval_default", "wait_message_interval_factor", b"wait_message_interval_factor"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_environment", b"_environment"]) -> typing_extensions.Literal["environment"] | None: ...
 
 global___Configuration = Configuration
 

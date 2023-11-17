@@ -26,7 +26,7 @@ pub fn configure(config_data: ConfigData) -> service::ConfigService {
 
 #[cfg(test)]
 pub fn configure_test() -> service::ConfigService {
-    let config_data = ConfigData::new("".to_string(), "".to_string(), false);
+    let config_data = ConfigData::new("".to_string(), None, "".to_string(), false);
 
     service::ConfigService { config_data }
 }

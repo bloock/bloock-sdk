@@ -42,6 +42,7 @@ impl<H: Client> KeyService<H> {
             &params,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
         )
         .await
         .map_err(|e| KeyError::GenerateManagedKeyError(e.to_string()).into())
@@ -61,6 +62,7 @@ impl<H: Client> KeyService<H> {
             id,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
         )
         .await
         .map_err(|e| KeyError::LoadManagedKeyError(e.to_string()).into())
@@ -77,7 +79,7 @@ impl<H: Client> KeyService<H> {
             key_type,
             subject,
             password,
-            expiration
+            expiration,
         };
 
         LocalCertificate::new(&params)
@@ -109,6 +111,7 @@ impl<H: Client> KeyService<H> {
             &params,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
         )
         .await
         .map_err(|e| KeyError::GenerateManagedCertificateError(e.to_string()).into())
@@ -119,6 +122,7 @@ impl<H: Client> KeyService<H> {
             id,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
         )
         .await
         .map_err(|e| KeyError::LoadManagedCertificateError(e.to_string()).into())
@@ -136,6 +140,7 @@ impl<H: Client> KeyService<H> {
             certificate_type,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
         )
         .await
         .map_err(|e| KeyError::ImportManagedCertificateError(e.to_string()).into())

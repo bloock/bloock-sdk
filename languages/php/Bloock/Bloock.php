@@ -5,6 +5,7 @@ namespace Bloock;
 class Bloock
 {
     public static string $apiKey = "";
+    public static string $forceEnv = "";
     public static string $apiHost = "";
     public static bool $disableAnalytics = false;
     public static array $networkConfig = [];

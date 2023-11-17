@@ -244,6 +244,7 @@ impl<H: Client> IdentityService<H> {
         let signature = bloock_signer::sign(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
             id.as_bytes(),
             &key.into(),
         )
@@ -252,7 +253,8 @@ impl<H: Client> IdentityService<H> {
 
         let singature_serialized = JwsFormatter::serialize([signature].to_vec())
             .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
-        let jws_signatures: Vec<JwsSignature> = serde_json::from_str(&singature_serialized).unwrap();
+        let jws_signatures: Vec<JwsSignature> =
+            serde_json::from_str(&singature_serialized).unwrap();
 
         let req = RedeemCredentialRequest {
             thread_id,
@@ -362,6 +364,7 @@ impl<H: Client> IdentityService<H> {
         let valid = bloock_signer::verify(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
+            self.config_service.get_environment(),
             payload,
             &signature,
         )

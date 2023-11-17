@@ -32,14 +32,21 @@ pub struct ManagedRsaEncrypter {
     managed_key: ManagedKey,
     api_host: String,
     api_key: String,
+    environment: Option<String>,
 }
 
 impl ManagedRsaEncrypter {
-    pub fn new(managed_key: ManagedKey, api_host: String, api_key: String) -> Box<Self> {
+    pub fn new(
+        managed_key: ManagedKey,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Box<Self> {
         Box::new(Self {
             managed_key,
             api_host,
             api_key,
+            environment,
         })
     }
 }
@@ -47,7 +54,7 @@ impl ManagedRsaEncrypter {
 #[async_trait(?Send)]
 impl Encrypter for ManagedRsaEncrypter {
     async fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>> {
-        let http = BloockHttpClient::new(self.api_key.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
 
         let req = EncryptRequest {
             key_id: self.managed_key.id.clone(),
@@ -71,14 +78,21 @@ pub struct ManagedRsaDecrypter {
     managed_key: ManagedKey,
     api_host: String,
     api_key: String,
+    environment: Option<String>,
 }
 
 impl ManagedRsaDecrypter {
-    pub fn new(managed_key: ManagedKey, api_host: String, api_key: String) -> Box<Self> {
+    pub fn new(
+        managed_key: ManagedKey,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Box<Self> {
         Box::new(Self {
             managed_key,
             api_host,
             api_key,
+            environment,
         })
     }
 }
@@ -86,7 +100,7 @@ impl ManagedRsaDecrypter {
 #[async_trait(?Send)]
 impl Decrypter for ManagedRsaDecrypter {
     async fn decrypt(&self, cipher_text: &[u8]) -> Result<Vec<u8>> {
-        let http = BloockHttpClient::new(self.api_key.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
 
         let req = DecryptRequest {
             key_id: self.managed_key.id.clone(),
@@ -120,20 +134,21 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
         let encrypter =
-            ManagedRsaEncrypter::new(managed_key.clone(), api_host.clone(), api_key.clone());
+            ManagedRsaEncrypter::new(managed_key.clone(), api_host.clone(), api_key.clone(), None);
 
         let ciphertext = encrypter.encrypt(payload.as_bytes()).await.unwrap();
         assert_ne!(ciphertext, payload.as_bytes());
 
         let decrypter =
-            ManagedRsaDecrypter::new(managed_key.clone(), api_host.clone(), api_key.clone());
+            ManagedRsaDecrypter::new(managed_key.clone(), api_host.clone(), api_key.clone(), None);
 
         let decrypted_payload_bytes = decrypter.decrypt(&ciphertext).await.unwrap();
         let decrypted_payload = std::str::from_utf8(&decrypted_payload_bytes).unwrap();
@@ -152,15 +167,16 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
         let payload_bytes = payload.as_bytes();
 
         let encrypter =
-            ManagedRsaEncrypter::new(managed_key.clone(), api_host.clone(), api_key.clone());
+            ManagedRsaEncrypter::new(managed_key.clone(), api_host.clone(), api_key.clone(), None);
 
         let ciphertext = encrypter.encrypt(payload_bytes).await.unwrap();
 
@@ -170,11 +186,12 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let invalid_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let invalid_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
         let decrypter =
-            ManagedRsaDecrypter::new(invalid_key.clone(), api_host.clone(), api_key.clone());
+            ManagedRsaDecrypter::new(invalid_key.clone(), api_host.clone(), api_key.clone(), None);
 
         let decrypted_payload_bytes = decrypter.decrypt(&ciphertext).await;
         assert!(decrypted_payload_bytes.is_err());
@@ -190,14 +207,15 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-            .await
-            .unwrap();
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
 
         let unencrypted_payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
         let decrypter =
-            ManagedRsaDecrypter::new(managed_key.clone(), api_host.clone(), api_key.clone());
+            ManagedRsaDecrypter::new(managed_key.clone(), api_host.clone(), api_key.clone(), None);
         assert!(decrypter
             .decrypt(unencrypted_payload.as_bytes())
             .await
