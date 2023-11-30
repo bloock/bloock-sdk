@@ -180,10 +180,13 @@ describe("Record Tests", () => {
 
     let payload = "Hello world 2";
     let password = "some_password";
+    let keyClient = new KeyClient();
+    let key = await keyClient.loadLocalKey(KeyType.Aes128, password);
+
     let recordClient = new RecordClient();
     let encrypted_record = await recordClient
       .fromString(payload)
-      .withEncrypter(new Encrypter(password))
+      .withEncrypter(new Encrypter(key))
       .build();
 
     expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
@@ -195,15 +198,19 @@ describe("Record Tests", () => {
       EncryptionAlg.AES256GCM
     );
 
+    let invalidKey = await keyClient.loadLocalKey(
+      KeyType.Aes128,
+      "invalid_password"
+    );
     await expect(
       recordClient
         .fromRecord(encrypted_record)
-        .withDecrypter(new Encrypter("incorrect_password")).build
+        .withDecrypter(new Encrypter(invalidKey)).build
     ).rejects.toThrow();
 
     let decrypted_record = await recordClient
       .fromRecord(encrypted_record)
-      .withDecrypter(new Encrypter(password))
+      .withDecrypter(new Encrypter(key))
       .build();
 
     expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
@@ -254,10 +261,14 @@ describe("Record Tests", () => {
 
     let payload = "Hello world 2";
     let password = "some_password";
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.loadLocalKey(KeyType.Aes128, password);
+
     let recordClient = new RecordClient();
     let encrypted_record = await recordClient
       .fromString(payload)
-      .withEncrypter(new Encrypter(password))
+      .withEncrypter(new Encrypter(key))
       .build();
 
     expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
@@ -272,7 +283,7 @@ describe("Record Tests", () => {
 
     let loaded_record = await recordClient
       .fromLoader(new HostedLoader(result))
-      .withDecrypter(new Encrypter(password))
+      .withDecrypter(new Encrypter(key))
       .build();
 
     expect(String.fromCharCode(...loaded_record.payload)).toEqual(payload);
@@ -288,10 +299,14 @@ describe("Record Tests", () => {
 
     let payload = "Hello world 2";
     let password = "some_password";
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.loadLocalKey(KeyType.Aes128, password);
+
     let recordClient = new RecordClient();
     let encrypted_record = await recordClient
       .fromString(payload)
-      .withEncrypter(new Encrypter(password))
+      .withEncrypter(new Encrypter(key))
       .build();
 
     expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
@@ -306,7 +321,7 @@ describe("Record Tests", () => {
 
     let loaded_record = await recordClient
       .fromLoader(new IpfsLoader(result))
-      .withDecrypter(new Encrypter(password))
+      .withDecrypter(new Encrypter(key))
       .build();
 
     expect(String.fromCharCode(...loaded_record.payload)).toEqual(payload);

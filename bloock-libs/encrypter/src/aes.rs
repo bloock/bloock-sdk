@@ -174,7 +174,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(encryption.alg, EncryptionAlg::A256gcm);
-        assert_eq!(encryption.key.unwrap().key, local_key.key);
+        assert!(encryption.key.is_none());
 
         let result = encrypter
             .decrypt_local(&encryption.ciphertext, &local_key.clone().into())
