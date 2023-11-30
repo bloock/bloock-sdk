@@ -13,13 +13,8 @@ enum EncryptionAlg {
 }
 
 message Encrypter {
-    EncryptionAlg alg = 1;
-    optional LocalKey local_key = 2;
-    optional ManagedKey managed_key = 3;
-}
-
-message Decrypter {
-    EncryptionAlg alg = 1;
-    optional LocalKey local_key = 2;
-    optional ManagedKey managed_key = 3;
+    optional LocalKey local_key = 1;
+    optional ManagedKey managed_key = 2;
+    optional LocalCertificate local_certificate = 3;
+    optional ManagedCertificate managed_certificate = 4;
 }

@@ -24,7 +24,8 @@ impl SignFormat for JwsFormatter {
                 signature: s.signature.clone(),
                 header: JwsSignatureHeader {
                     alg: s.alg.to_string(),
-                    kid: s.kid.clone(),
+                    kid: s.key.clone(),
+                    subject: s.subject.clone(),
                 },
                 message_hash: s.message_hash.clone(),
             })
@@ -42,7 +43,8 @@ impl SignFormat for JwsFormatter {
             .map(|s| {
                 Ok(Signature {
                     alg: SignAlg::try_from(s.header.alg.as_str())?,
-                    kid: s.header.kid.clone(),
+                    key: s.header.kid.clone(),
+                    subject: s.header.subject.clone(),
                     signature: s.signature.clone(),
                     message_hash: s.message_hash.clone(),
                 })
@@ -64,4 +66,6 @@ pub struct JwsSignature {
 pub struct JwsSignatureHeader {
     pub alg: String,
     pub kid: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub subject: Option<String>,
 }

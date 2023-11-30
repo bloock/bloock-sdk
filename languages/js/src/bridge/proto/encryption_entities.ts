@@ -1,6 +1,6 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
-import { LocalKey, ManagedKey } from "./keys_entities";
+import { LocalCertificate, LocalKey, ManagedCertificate, ManagedKey } from "./keys_entities";
 
 export enum EncryptionAlg {
   A256GCM = 0,
@@ -36,31 +36,29 @@ export function encryptionAlgToJSON(object: EncryptionAlg): string {
 }
 
 export interface Encrypter {
-  alg: EncryptionAlg;
   localKey?: LocalKey | undefined;
   managedKey?: ManagedKey | undefined;
-}
-
-export interface Decrypter {
-  alg: EncryptionAlg;
-  localKey?: LocalKey | undefined;
-  managedKey?: ManagedKey | undefined;
+  localCertificate?: LocalCertificate | undefined;
+  managedCertificate?: ManagedCertificate | undefined;
 }
 
 function createBaseEncrypter(): Encrypter {
-  return { alg: 0, localKey: undefined, managedKey: undefined };
+  return { localKey: undefined, managedKey: undefined, localCertificate: undefined, managedCertificate: undefined };
 }
 
 export const Encrypter = {
   encode(message: Encrypter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.alg !== 0) {
-      writer.uint32(8).int32(message.alg);
-    }
     if (message.localKey !== undefined) {
-      LocalKey.encode(message.localKey, writer.uint32(18).fork()).ldelim();
+      LocalKey.encode(message.localKey, writer.uint32(10).fork()).ldelim();
     }
     if (message.managedKey !== undefined) {
-      ManagedKey.encode(message.managedKey, writer.uint32(26).fork()).ldelim();
+      ManagedKey.encode(message.managedKey, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.localCertificate !== undefined) {
+      LocalCertificate.encode(message.localCertificate, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.managedCertificate !== undefined) {
+      ManagedCertificate.encode(message.managedCertificate, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -73,13 +71,16 @@ export const Encrypter = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.alg = reader.int32() as any;
-          break;
-        case 2:
           message.localKey = LocalKey.decode(reader, reader.uint32());
           break;
-        case 3:
+        case 2:
           message.managedKey = ManagedKey.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.localCertificate = LocalCertificate.decode(reader, reader.uint32());
+          break;
+        case 4:
+          message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -91,101 +92,41 @@ export const Encrypter = {
 
   fromJSON(object: any): Encrypter {
     return {
-      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : 0,
       localKey: isSet(object.localKey) ? LocalKey.fromJSON(object.localKey) : undefined,
       managedKey: isSet(object.managedKey) ? ManagedKey.fromJSON(object.managedKey) : undefined,
+      localCertificate: isSet(object.localCertificate) ? LocalCertificate.fromJSON(object.localCertificate) : undefined,
+      managedCertificate: isSet(object.managedCertificate)
+        ? ManagedCertificate.fromJSON(object.managedCertificate)
+        : undefined,
     };
   },
 
   toJSON(message: Encrypter): unknown {
     const obj: any = {};
-    message.alg !== undefined && (obj.alg = encryptionAlgToJSON(message.alg));
     message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
     message.managedKey !== undefined &&
       (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
+    message.localCertificate !== undefined &&
+      (obj.localCertificate = message.localCertificate ? LocalCertificate.toJSON(message.localCertificate) : undefined);
+    message.managedCertificate !== undefined && (obj.managedCertificate = message.managedCertificate
+      ? ManagedCertificate.toJSON(message.managedCertificate)
+      : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Encrypter>, I>>(object: I): Encrypter {
     const message = createBaseEncrypter();
-    message.alg = object.alg ?? 0;
     message.localKey = (object.localKey !== undefined && object.localKey !== null)
       ? LocalKey.fromPartial(object.localKey)
       : undefined;
     message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
       ? ManagedKey.fromPartial(object.managedKey)
       : undefined;
-    return message;
-  },
-};
-
-function createBaseDecrypter(): Decrypter {
-  return { alg: 0, localKey: undefined, managedKey: undefined };
-}
-
-export const Decrypter = {
-  encode(message: Decrypter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.alg !== 0) {
-      writer.uint32(8).int32(message.alg);
-    }
-    if (message.localKey !== undefined) {
-      LocalKey.encode(message.localKey, writer.uint32(18).fork()).ldelim();
-    }
-    if (message.managedKey !== undefined) {
-      ManagedKey.encode(message.managedKey, writer.uint32(26).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Decrypter {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDecrypter();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.alg = reader.int32() as any;
-          break;
-        case 2:
-          message.localKey = LocalKey.decode(reader, reader.uint32());
-          break;
-        case 3:
-          message.managedKey = ManagedKey.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Decrypter {
-    return {
-      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : 0,
-      localKey: isSet(object.localKey) ? LocalKey.fromJSON(object.localKey) : undefined,
-      managedKey: isSet(object.managedKey) ? ManagedKey.fromJSON(object.managedKey) : undefined,
-    };
-  },
-
-  toJSON(message: Decrypter): unknown {
-    const obj: any = {};
-    message.alg !== undefined && (obj.alg = encryptionAlgToJSON(message.alg));
-    message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
-    message.managedKey !== undefined &&
-      (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<Decrypter>, I>>(object: I): Decrypter {
-    const message = createBaseDecrypter();
-    message.alg = object.alg ?? 0;
-    message.localKey = (object.localKey !== undefined && object.localKey !== null)
-      ? LocalKey.fromPartial(object.localKey)
+    message.localCertificate = (object.localCertificate !== undefined && object.localCertificate !== null)
+      ? LocalCertificate.fromPartial(object.localCertificate)
       : undefined;
-    message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
-      ? ManagedKey.fromPartial(object.managedKey)
+    message.managedCertificate = (object.managedCertificate !== undefined && object.managedCertificate !== null)
+      ? ManagedCertificate.fromPartial(object.managedCertificate)
       : undefined;
     return message;
   },

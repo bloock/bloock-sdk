@@ -2,32 +2,47 @@ use std::collections::HashMap;
 
 use crate::{MetadataError, MetadataParser, Result};
 use async_trait::async_trait;
-use bloock_encrypter::{Decrypter, Encrypter};
+use bloock_encrypter::entity::{
+    alg::EncryptionAlg, encryption::Encryption, encryption_key::EncryptionKey,
+};
 use bloock_keys::entity::key::Key;
 use bloock_signer::{entity::signature::Signature, format::jws::JwsFormatter, SignFormat};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct DefaultParser {
+pub struct Payload {
     pub _data_: Vec<u8>,
     pub _metadata_: HashMap<String, Value>,
 }
 
-#[async_trait(?Send)]
-impl MetadataParser for DefaultParser {
-    fn load(payload: &[u8]) -> Result<Self> {
-        let parser: DefaultParser = match serde_json::from_slice(payload) {
+impl Payload {
+    pub fn load(payload: &[u8]) -> Self {
+        match serde_json::from_slice(payload) {
             Ok(p) => p,
-            Err(_) => DefaultParser {
+            Err(_) => Payload {
                 _data_: payload.to_vec(),
                 _metadata_: HashMap::new(),
             },
-        };
-
-        Ok(parser)
+        }
     }
+}
 
+#[derive(Debug, Clone)]
+pub struct DefaultParser {
+    pub payload: Payload,
+}
+
+impl DefaultParser {
+    pub fn load(payload: &[u8]) -> Result<Self> {
+        let p = Payload::load(payload);
+
+        Ok(DefaultParser { payload: p })
+    }
+}
+
+#[async_trait(?Send)]
+impl MetadataParser for DefaultParser {
     async fn sign(
         &mut self,
         key: &Key,
@@ -85,37 +100,48 @@ impl MetadataParser for DefaultParser {
         }
     }
 
-    async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> Result<()> {
+    async fn encrypt(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<Encryption> {
         let payload = self.build()?;
-        let alg = encrypter.get_alg().to_string();
 
-        let ciphertext = encrypter
-            .encrypt(&payload)
+        let encryption = bloock_encrypter::encrypt(api_host, api_key, environment, &payload, key)
             .await
             .map_err(|e| MetadataError::EncryptError(e.to_string()))?;
-        self._data_ = ciphertext;
+        self.payload._data_ = encryption.ciphertext.clone();
 
         self.del("proof")?;
         self.del("signatures")?;
 
         self.set("is_encrypted", &true)?;
-        self.set("encryption_alg", &alg)?;
+        self.set("encryption_alg", &encryption.alg)?;
+        self.set("encryption_key", &encryption.key)?;
 
-        Ok(())
+        Ok(encryption)
     }
 
-    async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> Result<()> {
+    async fn decrypt(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<()> {
         let ciphertext = self.get_data()?;
 
-        let decrypted_payload = decrypter
-            .decrypt(&ciphertext)
-            .await
-            .map_err(|e| MetadataError::EncryptError(e.to_string()))?;
+        let decrypted_payload =
+            bloock_encrypter::decrypt(api_host, api_key, environment, &ciphertext, key)
+                .await
+                .map_err(|e| MetadataError::EncryptError(e.to_string()))?;
 
-        let decrypted_parser = Self::load(&decrypted_payload)?;
+        let decrypted_payload = Payload::load(&decrypted_payload);
 
-        self._data_ = decrypted_parser._data_;
-        self._metadata_ = decrypted_parser._metadata_;
+        self.payload._data_ = decrypted_payload._data_;
+        self.payload._metadata_ = decrypted_payload._metadata_;
 
         Ok(())
     }
@@ -126,18 +152,23 @@ impl MetadataParser for DefaultParser {
 
     fn is_encrypted(&self) -> bool {
         let is_encrypted: Option<bool> = self.get("is_encrypted");
-        match is_encrypted {
-            Some(s) => s,
-            None => false,
-        }
+        is_encrypted.unwrap_or(false)
+    }
+
+    fn get_payload(&self) -> Result<Vec<u8>> {
+        self.get_data()
     }
 
     fn get_proof<T: DeserializeOwned>(&self) -> Option<T> {
         self.get("proof")
     }
 
-    fn get_encryption_algorithm(&self) -> Option<String> {
+    fn get_encryption_alg(&self) -> Option<EncryptionAlg> {
         self.get("encryption_alg")
+    }
+
+    fn get_encryption_key(&self) -> Option<EncryptionKey> {
+        self.get("encryption_key")
     }
 
     fn get_signatures(&self) -> Result<Vec<Signature>> {
@@ -148,20 +179,20 @@ impl MetadataParser for DefaultParser {
     }
 
     fn build(&self) -> Result<Vec<u8>> {
-        match self._metadata_.is_empty() {
-            true => Ok(self._data_.clone()),
-            false => serde_json::to_vec(self).map_err(|_| MetadataError::SerializeError),
+        match self.payload._metadata_.is_empty() {
+            true => Ok(self.payload._data_.clone()),
+            false => serde_json::to_vec(&self.payload).map_err(|_| MetadataError::SerializeError),
         }
     }
 }
 
 impl DefaultParser {
     fn get_data(&self) -> Result<Vec<u8>> {
-        Ok(self._data_.clone())
+        Ok(self.payload._data_.clone())
     }
 
     fn del(&mut self, key: &str) -> Result<()> {
-        self._metadata_.remove(key);
+        self.payload._metadata_.remove(key);
         Ok(())
     }
 
@@ -170,13 +201,13 @@ impl DefaultParser {
             JwsFormatter::serialize(signatures).map_err(|_| MetadataError::SerializeError)?;
 
         let v = serde_json::from_str(&sig_serialized).unwrap();
-        self._metadata_.insert("signatures".to_owned(), v);
+        self.payload._metadata_.insert("signatures".to_owned(), v);
 
         Ok(())
     }
 
     fn get_signatures(&self) -> Option<Vec<Signature>> {
-        let value = match self._metadata_.get("signatures") {
+        let value = match self.payload._metadata_.get("signatures") {
             Some(v) => v,
             None => return None,
         };
@@ -189,12 +220,12 @@ impl DefaultParser {
 
     fn set<T: Serialize>(&mut self, key: &str, value: &T) -> Result<()> {
         let v = serde_json::to_value(value).map_err(|_| MetadataError::SerializeError)?;
-        self._metadata_.insert(key.to_owned(), v);
+        self.payload._metadata_.insert(key.to_owned(), v);
         Ok(())
     }
 
     fn get<T: DeserializeOwned>(&self, key: &str) -> Option<T> {
-        let value = match self._metadata_.get(key) {
+        let value = match self.payload._metadata_.get(key) {
             Some(v) => v,
             None => return None,
         };
@@ -204,22 +235,19 @@ impl DefaultParser {
 
 #[cfg(test)]
 mod tests {
-    use std::{collections::HashMap, vec};
-
-    use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
+    use super::DefaultParser;
+    use crate::{default::Payload, MetadataParser};
+    use bloock_encrypter::entity::alg::EncryptionAlg;
     use bloock_keys::keys::local::LocalKey;
     use bloock_signer::{
         entity::{alg::SignAlg, signature::Signature},
         format::jws::{JwsSignature, JwsSignatureHeader},
     };
-
-    use crate::MetadataParser;
-
-    use super::DefaultParser;
+    use std::{collections::HashMap, vec};
 
     #[test]
     fn test_load_default_parser_with_metadata() {
-        let parser = DefaultParser {
+        let payload = Payload {
             _data_: "some string".as_bytes().to_vec(),
             _metadata_: HashMap::from([
                 ("0".to_string(), serde_json::to_value(0).unwrap()),
@@ -227,40 +255,43 @@ mod tests {
                 ("2".to_string(), serde_json::to_value(2).unwrap()),
             ]),
         };
+        let parser = DefaultParser { payload };
 
         let built_parser = parser.build().unwrap();
 
         let result = DefaultParser::load(&built_parser).unwrap();
 
-        assert_eq!(parser, result);
+        assert_eq!(parser.payload, result.payload);
     }
 
     #[test]
     fn test_load_default_parser_without_metadata() {
-        let parser = DefaultParser {
+        let payload = Payload {
             _data_: "some string".as_bytes().to_vec(),
             _metadata_: HashMap::new(),
         };
+        let parser = DefaultParser { payload };
 
         let built_parser = parser.build().unwrap();
 
         let result = DefaultParser::load(&built_parser).unwrap();
 
-        assert_eq!(parser, result);
+        assert_eq!(parser.payload, result.payload);
     }
 
     #[test]
     fn test_default_parser_get_set_del_metadata() {
         let data = "some string".as_bytes().to_vec();
-        let mut parser = DefaultParser {
+        let payload = Payload {
             _data_: data.clone(),
             _metadata_: HashMap::new(),
         };
+        let mut parser = DefaultParser { payload };
 
         parser.set("1", &serde_json::to_value(1).unwrap()).unwrap();
         assert_eq!(
-            parser,
-            DefaultParser {
+            parser.payload,
+            Payload {
                 _data_: "some string".as_bytes().to_vec(),
                 _metadata_: HashMap::from([("1".to_string(), serde_json::to_value(1).unwrap())]),
             }
@@ -272,8 +303,8 @@ mod tests {
         parser.del("1").unwrap();
 
         assert_eq!(
-            parser,
-            DefaultParser {
+            parser.payload,
+            Payload {
                 _data_: data,
                 _metadata_: HashMap::new(),
             }
@@ -283,23 +314,25 @@ mod tests {
     #[test]
     fn test_default_parser_get_set_del_signatures_metadata() {
         let data = "some string".as_bytes().to_vec();
-        let mut parser = DefaultParser {
+        let payload = Payload {
             _data_: data.clone(),
             _metadata_: HashMap::new(),
         };
+        let mut parser = DefaultParser { payload };
 
         let signatures = vec![Signature {
             alg: SignAlg::BjjM,
-            kid: "00000000-0000-0000-0000-000000000000".to_string(),
+            key: "00000000-0000-0000-0000-000000000000".to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         }];
-        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), }, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
+        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None }, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
 
         parser.set_signatures(signatures.clone()).unwrap();
         assert_eq!(
-            parser,
-            DefaultParser {
+            parser.payload,
+            Payload {
                 _data_: "some string".as_bytes().to_vec(),
                 _metadata_: HashMap::from([(
                     "signatures".to_string(),
@@ -314,8 +347,8 @@ mod tests {
         parser.del("signatures").unwrap();
 
         assert_eq!(
-            parser,
-            DefaultParser {
+            parser.payload,
+            Payload {
                 _data_: data,
                 _metadata_: HashMap::new(),
             }
@@ -324,24 +357,29 @@ mod tests {
 
     #[tokio::test]
     async fn test_default_parser_encrypt_and_decrypt_metadata() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
         let data = "some string".as_bytes().to_vec();
-        let mut parser = DefaultParser {
+        let payload = Payload {
             _data_: data.clone(),
             _metadata_: HashMap::new(),
         };
+        let mut parser = DefaultParser { payload };
 
         let signatures = vec![Signature {
             alg: SignAlg::BjjM,
-            kid: "00000000-0000-0000-0000-000000000000".to_string(),
+            key: "00000000-0000-0000-0000-000000000000".to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         }];
-        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), }, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
+        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None}, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
 
         parser.set_signatures(signatures.clone()).unwrap();
         assert_eq!(
-            parser,
-            DefaultParser {
+            parser.payload,
+            Payload {
                 _data_: "some string".as_bytes().to_vec(),
                 _metadata_: HashMap::from([(
                     "signatures".to_string(),
@@ -356,25 +394,30 @@ mod tests {
             private_key: None,
             mnemonic: None,
         };
-        let encrypter = LocalAesEncrypter::new(local_aes_key.clone());
 
-        parser.encrypt(encrypter).await.unwrap();
+        parser
+            .encrypt(
+                &local_aes_key.clone().into(),
+                api_host.clone(),
+                api_key.clone(),
+                None,
+            )
+            .await
+            .unwrap();
         assert_eq!(true, parser.is_encrypted());
-        assert_eq!(
-            Some("A256GCM".to_string()),
-            parser.get_encryption_algorithm()
-        );
+        assert_eq!(Some(EncryptionAlg::A256gcm), parser.get_encryption_alg());
         assert_eq!(None, parser.get_signatures());
 
-        let decrypter = LocalAesDecrypter::new(local_aes_key.clone());
-
-        parser.decrypt(decrypter).await.unwrap();
+        parser
+            .decrypt(&local_aes_key.into(), api_host, api_key, None)
+            .await
+            .unwrap();
 
         assert_eq!(false, parser.is_encrypted());
-        assert_eq!(None, parser.get_encryption_algorithm());
+        assert_eq!(None, parser.get_encryption_alg());
         assert_eq!(
-            parser,
-            DefaultParser {
+            parser.payload,
+            Payload {
                 _data_: "some string".as_bytes().to_vec(),
                 _metadata_: HashMap::from([(
                     "signatures".to_string(),
@@ -387,23 +430,25 @@ mod tests {
     #[tokio::test]
     async fn test_default_parser_sign_and_verify_metadata() {
         let data = "some string".as_bytes().to_vec();
-        let mut parser = DefaultParser {
+        let payload = Payload {
             _data_: data.clone(),
             _metadata_: HashMap::new(),
         };
+        let mut parser = DefaultParser { payload };
 
         let signatures = vec![Signature {
             alg: SignAlg::BjjM,
-            kid: "00000000-0000-0000-0000-000000000000".to_string(),
+            key: "00000000-0000-0000-0000-000000000000".to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         }];
-        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), }, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
+        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None}, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
 
         parser.set_signatures(signatures.clone()).unwrap();
         assert_eq!(
-            parser,
-            DefaultParser {
+            parser.payload,
+            Payload {
                 _data_: "some string".as_bytes().to_vec(),
                 _metadata_: HashMap::from([(
                     "signatures".to_string(),
@@ -423,7 +468,9 @@ mod tests {
 
         parser
             .sign(
-                &bloock_keys::entity::key::Key::LocalKey(local_key),
+                &bloock_keys::entity::key::Key::Local(bloock_keys::entity::key::Local::Key(
+                    local_key,
+                )),
                 "".to_string(),
                 "".to_string(),
                 None,

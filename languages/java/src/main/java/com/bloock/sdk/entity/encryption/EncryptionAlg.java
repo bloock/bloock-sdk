@@ -8,13 +8,18 @@ public enum EncryptionAlg {
   UNRECOGNIZED;
 
   public static EncryptionAlg fromProto(EncryptionEntities.EncryptionAlg alg) {
-    switch (alg) {
-      case A256GCM:
-        return EncryptionAlg.AES256GCM;
-      case RSA:
-        return EncryptionAlg.RSA;
-      default:
-        return EncryptionAlg.UNRECOGNIZED;
-    }
+    return switch (alg) {
+      case A256GCM -> EncryptionAlg.AES256GCM;
+      case RSA -> EncryptionAlg.RSA;
+      default -> EncryptionAlg.UNRECOGNIZED;
+    };
+  }
+  
+  public EncryptionEntities.EncryptionAlg toProto() {
+    return switch (this) {
+      case AES256GCM -> EncryptionEntities.EncryptionAlg.A256GCM;
+      case RSA -> EncryptionEntities.EncryptionAlg.RSA;
+      case UNRECOGNIZED -> EncryptionEntities.EncryptionAlg.UNRECOGNIZED;
+    };
   }
 }

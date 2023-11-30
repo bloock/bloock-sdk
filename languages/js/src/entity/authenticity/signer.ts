@@ -1,24 +1,39 @@
 import * as proto from "../../bridge/proto/authenticity_entities";
-import { LocalCertificate, LocalKey, ManagedCertificate, ManagedKey } from "../key";
-import { SignerArgs } from "./signer_args";
+import {
+  LocalCertificate,
+  LocalKey,
+  ManagedCertificate,
+  ManagedKey
+} from "../key";
 
 export class Signer {
-  args: SignerArgs;
+  localKey?: LocalKey;
+  managedKey?: ManagedKey;
+  managedCertificate?: ManagedCertificate;
+  localCertificate?: LocalCertificate;
 
   constructor(
-    key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate | string,
-    options?: { commonName?: string }
+    key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate | string
   ) {
-    this.args = new SignerArgs(key, options?.commonName);
+    if (key instanceof LocalKey) {
+      this.localKey = key;
+    } else if (key instanceof ManagedKey) {
+      this.managedKey = key;
+    } else if (key instanceof ManagedCertificate) {
+      this.managedCertificate = key;
+    } else if (key instanceof LocalCertificate) {
+      this.localCertificate = key;
+    } else {
+      throw new Error("invalid key provided");
+    }
   }
 
   public toProto(): proto.Signer {
     return proto.Signer.fromPartial({
-      localKey: this.args.localKey?.toProto(),
-      managedKey: this.args.managedKey?.toProto(),
-      managedCertificate: this.args.managedCertificate?.toProto(),
-      localCertificate: this.args.localCertificate?.toProto(),
-      commonName: this.args.commonName
+      localKey: this.localKey?.toProto(),
+      managedKey: this.managedKey?.toProto(),
+      managedCertificate: this.managedCertificate?.toProto(),
+      localCertificate: this.localCertificate?.toProto()
     });
   }
 }

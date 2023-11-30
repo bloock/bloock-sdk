@@ -9,6 +9,7 @@ type Signature struct {
 	Alg         string
 	Kid         string
 	MessageHash string
+	Subject     *string
 }
 
 func NewSignatureFromProto(s *proto.Signature) Signature {
@@ -20,6 +21,7 @@ func NewSignatureFromProto(s *proto.Signature) Signature {
 		Alg:         s.Alg,
 		Kid:         s.Kid,
 		MessageHash: s.MessageHash,
+		Subject:     s.Subject,
 	}
 }
 
@@ -36,5 +38,6 @@ func (s Signature) ToProto() *proto.Signature {
 		Alg:         s.Alg,
 		Kid:         s.Kid,
 		MessageHash: s.MessageHash,
+		Subject:     s.Subject,
 	}
 }

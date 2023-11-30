@@ -22,7 +22,7 @@ class DecryptRequest extends \Google\Protobuf\Internal\Message
      */
     protected $record = null;
     /**
-     * Generated from protobuf field <code>.bloock.Decrypter decrypter = 3;</code>
+     * Generated from protobuf field <code>.bloock.Encrypter decrypter = 3;</code>
      */
     protected $decrypter = null;
 
@@ -34,7 +34,7 @@ class DecryptRequest extends \Google\Protobuf\Internal\Message
      *
      *     @type \Bloock\ConfigData $config_data
      *     @type \Bloock\Record $record
-     *     @type \Bloock\Decrypter $decrypter
+     *     @type \Bloock\Encrypter $decrypter
      * }
      */
     public function __construct($data = NULL) {
@@ -107,8 +107,8 @@ class DecryptRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.Decrypter decrypter = 3;</code>
-     * @return \Bloock\Decrypter|null
+     * Generated from protobuf field <code>.bloock.Encrypter decrypter = 3;</code>
+     * @return \Bloock\Encrypter|null
      */
     public function getDecrypter()
     {
@@ -126,13 +126,13 @@ class DecryptRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.Decrypter decrypter = 3;</code>
-     * @param \Bloock\Decrypter $var
+     * Generated from protobuf field <code>.bloock.Encrypter decrypter = 3;</code>
+     * @param \Bloock\Encrypter $var
      * @return $this
      */
     public function setDecrypter($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\Decrypter::class);
+        GPBUtil::checkMessage($var, \Bloock\Encrypter::class);
         $this->decrypter = $var;
 
         return $this;

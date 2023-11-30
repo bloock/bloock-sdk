@@ -29,6 +29,10 @@ class Signature extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string message_hash = 4;</code>
      */
     protected $message_hash = '';
+    /**
+     * Generated from protobuf field <code>optional string subject = 5;</code>
+     */
+    protected $subject = null;
 
     /**
      * Constructor.
@@ -40,6 +44,7 @@ class Signature extends \Google\Protobuf\Internal\Message
      *     @type string $alg
      *     @type string $kid
      *     @type string $message_hash
+     *     @type string $subject
      * }
      */
     public function __construct($data = NULL) {
@@ -131,6 +136,38 @@ class Signature extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->message_hash = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string subject = 5;</code>
+     * @return string
+     */
+    public function getSubject()
+    {
+        return isset($this->subject) ? $this->subject : '';
+    }
+
+    public function hasSubject()
+    {
+        return isset($this->subject);
+    }
+
+    public function clearSubject()
+    {
+        unset($this->subject);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string subject = 5;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setSubject($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->subject = $var;
 
         return $this;
     }

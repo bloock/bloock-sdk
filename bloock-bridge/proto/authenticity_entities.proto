@@ -20,4 +20,5 @@ message Signature {
     string alg = 2;
     string kid = 3;
     string message_hash = 4;
+    optional string subject = 5;
 }

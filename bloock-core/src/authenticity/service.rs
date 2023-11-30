@@ -38,6 +38,7 @@ mod tests {
     use crate::record::document::Document;
     use crate::record::entity::record::Record;
     use bloock_http::MockClient;
+    use bloock_keys::entity::key::Key;
     use bloock_keys::keys::local::LocalKey;
     use bloock_signer::entity::alg::SignAlg;
     use std::sync::Arc;
@@ -66,7 +67,10 @@ mod tests {
         .unwrap();
 
         let result = service
-            .sign(record, &bloock_keys::entity::key::Key::LocalKey(local_key))
+            .sign(
+                record,
+                &Key::Local(bloock_keys::entity::key::Local::Key(local_key)),
+            )
             .await
             .unwrap();
 
@@ -98,7 +102,10 @@ mod tests {
         .unwrap();
 
         let result = service
-            .sign(record, &bloock_keys::entity::key::Key::LocalKey(local_key))
+            .sign(
+                record,
+                &Key::Local(bloock_keys::entity::key::Local::Key(local_key)),
+            )
             .await
             .unwrap();
 

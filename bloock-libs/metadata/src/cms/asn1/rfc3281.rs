@@ -199,7 +199,7 @@ impl GeneralNames {
         self.encode_ref_as(Tag::SEQUENCE)
     }
 
-    fn encode_ref_as(&self, tag: Tag) -> impl Values + '_ {
+    fn encode_ref_as(&self, _tag: Tag) -> impl Values + '_ {
         encode::set(encode::slice(&self.0, |x| x.clone().encode()))
     }
 }

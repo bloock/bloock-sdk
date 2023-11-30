@@ -92,10 +92,6 @@ impl EncryptedContentInfo {
         })
     }
 
-    pub fn to_der(&self) -> Vec<u8> {
-        yasna::construct_der(|w| self.write(w))
-    }
-
     pub fn from_safe_bags(safe_bags: &[SafeBag], password: &[u8]) -> Option<EncryptedContentInfo> {
         let data = yasna::construct_der(|w| {
             w.write_sequence_of(|w| {
@@ -195,13 +191,6 @@ impl ContentInfo {
             ContentInfo::Data(data) => Some(data.to_owned()),
             ContentInfo::EncryptedData(encrypted) => encrypted.data(password),
             ContentInfo::OtherContext(_) => None,
-        }
-    }
-    pub fn oid(&self) -> ObjectIdentifier {
-        match self {
-            ContentInfo::Data(_) => OID_DATA_CONTENT_TYPE.clone(),
-            ContentInfo::EncryptedData(_) => OID_ENCRYPTED_DATA_CONTENT_TYPE.clone(),
-            ContentInfo::OtherContext(other) => other.content_type.clone(),
         }
     }
     pub fn write(&self, w: DERWriter) {
@@ -304,7 +293,7 @@ impl AlgorithmIdentifier {
             }
             if algorithm_type == *OID_PBES2 {
                 let der = r.next().read_der()?;
-                return Ok(AlgorithmIdentifier::Pbes2(Pbe2Params { der: der }));
+                return Ok(AlgorithmIdentifier::Pbes2(Pbe2Params { der }));
             }
             let params = r.read_optional(|r| r.read_der())?;
             Ok(AlgorithmIdentifier::OtherAlg(OtherAlgorithmIdentifier {

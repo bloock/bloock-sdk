@@ -227,7 +227,7 @@ func TestKey(t *testing.T) {
 		assert.NoError(t, err)
 
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSigner(authenticity.SignerArgs{LocalCertificate: &loadedCertificate}))
+			Sign(record, authenticity.NewSignerWithLocalCertificate(loadedCertificate))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -336,7 +336,7 @@ func TestKey(t *testing.T) {
 		assert.NoError(t, err)
 
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSigner(authenticity.SignerArgs{ManagedCertificate: &loadedCertificate}))
+			Sign(record, authenticity.NewSignerWithManagedCertificate(loadedCertificate))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)

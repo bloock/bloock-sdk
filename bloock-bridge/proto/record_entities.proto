@@ -6,6 +6,9 @@ option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "com.bloock.sdk.bridge.proto";
 
 import "config.proto";
+import "integrity_entities.proto";
+import "authenticity_entities.proto";
+import "encryption_entities.proto";
 
 enum RecordTypes {
 	STRING = 0;
@@ -25,4 +28,31 @@ message Record {
     optional ConfigData config_data = 1;
     bytes payload = 2;
     string hash = 3;
+}
+
+message IntegrityDetails {
+    string hash = 1;
+    optional Proof proof = 2;
+}
+
+message AuthenticityDetails {
+    repeated Signature signatures = 1;
+}
+
+message EncryptionDetails {
+    optional EncryptionAlg alg = 1;
+    optional string key = 2;
+    optional string subject = 3;
+}
+
+message AvailabilityDetails {
+    int64 size = 1;
+    optional string type = 2;
+}
+
+message RecordDetails {
+    optional IntegrityDetails integrity = 1;
+    optional AuthenticityDetails authenticity = 2;
+    optional EncryptionDetails encryption = 3;
+    optional AvailabilityDetails availability = 4;
 }

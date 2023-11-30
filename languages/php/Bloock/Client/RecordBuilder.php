@@ -5,9 +5,10 @@ namespace Bloock\Client;
 use Bloock\Bridge\Bridge;
 use Bloock\ConfigData;
 use Bloock\Entity\Authenticity\Signer;
-use Bloock\Entity\Encryption\Decrypter;
 use Bloock\Entity\Encryption\Encrypter;
 use Bloock\Entity\Record\Record;
+use Bloock\Entity\Record\RecordDetails;
+use Bloock\GetDetailsRequest;
 use Bloock\RecordBuilderFromBytesRequest;
 use Bloock\RecordBuilderFromFileRequest;
 use Bloock\RecordBuilderFromHexRequest;
@@ -25,7 +26,7 @@ class RecordBuilder
     private ConfigData $configData;
     private ?\Bloock\Signer $signer = null;
     private ?\Bloock\Encrypter $encrypter = null;
-    private ?\Bloock\Decrypter $decrypter = null;
+    private ?\Bloock\Encrypter $decrypter = null;
 
     public function __construct($payload, int $recordTypes, ConfigData $configData)
     {
@@ -46,7 +47,7 @@ class RecordBuilder
         return $this;
     }
 
-    public function withDecrypter(Decrypter $decrypter): RecordBuilder
+    public function withDecrypter(Encrypter $decrypter): RecordBuilder
     {
         $this->decrypter = $decrypter->toProto();
         return $this;
@@ -193,5 +194,21 @@ class RecordBuilder
         }
 
         return Record::fromProto($res->getRecord(), $this->configData);
+    }
+
+    public function getDetails(): RecordDetails
+    {
+        $bridge = new Bridge();
+
+        $req = new GetDetailsRequest();
+        $req->setPayload(implode(array_map("chr", $this->payload)))->setConfigData($this->configData);
+
+        $res = $bridge->record->GetDetails($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return RecordDetails::fromProto($res->getDetails());
     }
 }

@@ -16,8 +16,6 @@ class EncryptionAlg
                 return EncryptionAlg::AES256GCM;
             case \Bloock\EncryptionAlg::RSA:
                 return EncryptionAlg::RSA;
-            case \Bloock\EncryptionAlg::ECIES:
-                return EncryptionAlg::ECIES;
             default:
                 return EncryptionAlg::UNRECOGNIZED;
         }

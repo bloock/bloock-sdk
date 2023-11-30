@@ -28,15 +28,11 @@ func TestEncryption(t *testing.T) {
 
 		encryptionClient := NewEncryptionClient()
 
-		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewAesEncrypter(encryption.EncrypterArgs{
-			LocalKey: &key,
-		}))
+		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewEncrypterWithLocalKey(key))
 		assert.NoError(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
-				LocalKey: &key,
-			})).
+			WithDecrypter(encryption.NewEncrypterWithLocalKey(key)).
 			Build()
 		assert.NoError(t, err)
 
@@ -57,17 +53,13 @@ func TestEncryption(t *testing.T) {
 
 		encryptedRecord, err := recordClient.
 			FromString(payload).
-			WithEncrypter(encryption.NewAesEncrypter(encryption.EncrypterArgs{
-				LocalKey: &key,
-			})).
+			WithEncrypter(encryption.NewEncrypterWithLocalKey(key)).
 			Build()
 		assert.NoError(t, err)
 		encryptedRecordHash, err := encryptedRecord.GetHash()
 		assert.NoError(t, err)
 
-		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewAesDecrypter(encryption.DecrypterArgs{
-			LocalKey: &key,
-		}))
+		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewEncrypterWithLocalKey(key))
 		assert.NoError(t, err)
 
 		decryptedRecordHash, err := decryptedRecord.GetHash()
@@ -90,15 +82,11 @@ func TestEncryption(t *testing.T) {
 		key, err := keyClient.NewLocalKey(key.Rsa2048)
 		assert.NoError(t, err)
 
-		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewRsaEncrypter(encryption.EncrypterArgs{
-			LocalKey: &key,
-		}))
+		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewEncrypterWithLocalKey(key))
 		assert.NoError(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewRsaDecrypter(encryption.DecrypterArgs{
-				LocalKey: &key,
-			})).
+			WithDecrypter(encryption.NewEncrypterWithLocalKey(key)).
 			Build()
 		assert.NoError(t, err)
 
@@ -125,15 +113,11 @@ func TestEncryption(t *testing.T) {
 		})
 		assert.NoError(t, err)
 
-		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewRsaEncrypter(encryption.EncrypterArgs{
-			ManagedKey: &key,
-		}))
+		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewEncrypterWithManagedKey(key))
 		assert.NoError(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewRsaDecrypter(encryption.DecrypterArgs{
-				ManagedKey: &key,
-			})).
+			WithDecrypter(encryption.NewEncrypterWithManagedKey(key)).
 			Build()
 		assert.NoError(t, err)
 
@@ -154,17 +138,13 @@ func TestEncryption(t *testing.T) {
 
 		encryptedRecord, err := recordClient.
 			FromString(payload).
-			WithEncrypter(encryption.NewRsaEncrypter(encryption.EncrypterArgs{
-				LocalKey: &key,
-			})).
+			WithEncrypter(encryption.NewEncrypterWithLocalKey(key)).
 			Build()
 		assert.NoError(t, err)
 		encryptedRecordHash, err := encryptedRecord.GetHash()
 		assert.NoError(t, err)
 
-		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewRsaDecrypter(encryption.DecrypterArgs{
-			LocalKey: &key,
-		}))
+		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewEncrypterWithLocalKey(key))
 		assert.NoError(t, err)
 
 		decryptedRecordHash, err := decryptedRecord.GetHash()
@@ -188,17 +168,13 @@ func TestEncryption(t *testing.T) {
 
 		encryptedRecord, err := recordClient.
 			FromString(payload).
-			WithEncrypter(encryption.NewRsaEncrypter(encryption.EncrypterArgs{
-				ManagedKey: &key,
-			})).
+			WithEncrypter(encryption.NewEncrypterWithManagedKey(key)).
 			Build()
 		assert.NoError(t, err)
 		encryptedRecordHash, err := encryptedRecord.GetHash()
 		assert.NoError(t, err)
 
-		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewRsaDecrypter(encryption.DecrypterArgs{
-			ManagedKey: &key,
-		}))
+		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewEncrypterWithManagedKey(key))
 		assert.NoError(t, err)
 
 		decryptedRecordHash, err := decryptedRecord.GetHash()
@@ -219,9 +195,7 @@ func TestEncryption(t *testing.T) {
 
 		encryptedRecord, err := recordClient.
 			FromString(payload).
-			WithEncrypter(encryption.NewRsaEncrypter(encryption.EncrypterArgs{
-				LocalKey: &key,
-			})).
+			WithEncrypter(encryption.NewEncrypterWithLocalKey(key)).
 			Build()
 		assert.NoError(t, err)
 

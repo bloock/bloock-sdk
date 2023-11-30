@@ -2,10 +2,7 @@ use crate::entity::signature::Signature;
 use crate::rsa::RsaSigner;
 use async_trait::async_trait;
 use bjj::BJJSigner;
-use bloock_keys::{
-    entity::key::Key,
-    keys::{local::LocalKey, managed::ManagedKey},
-};
+use bloock_keys::entity::key::{Key, Local, Managed};
 use ecdsa::EcdsaSigner;
 use serde::Serialize;
 use thiserror::Error as ThisError;
@@ -27,10 +24,14 @@ pub async fn sign(
     key: &Key,
 ) -> Result<Signature> {
     let alg = match key {
-        Key::LocalKey(k) => k.key_type.clone(),
-        Key::ManagedKey(k) => k.key_type.clone(),
-        Key::LocalCertificate(k) => k.key.key_type.clone(),
-        Key::ManagedCertificate(k) => k.key.key_type.clone(),
+        Key::Local(l) => match l {
+            Local::Key(k) => k.key_type.clone(),
+            Local::Certificate(k) => k.key.key_type.clone(),
+        },
+        Key::Managed(m) => match m {
+            Managed::Key(k) => k.key_type.clone(),
+            Managed::Certificate(k) => k.key.key_type.clone(),
+        },
     };
 
     let signer: Box<dyn Signer> = match alg {
@@ -44,10 +45,8 @@ pub async fn sign(
     };
 
     match key {
-        Key::LocalKey(k) => signer.sign_local(payload, &k).await,
-        Key::ManagedKey(k) => signer.sign_managed(payload, &k).await,
-        Key::LocalCertificate(k) => signer.sign_local(payload, &k.key).await,
-        Key::ManagedCertificate(k) => signer.sign_managed(payload, &k.key).await,
+        Key::Local(l) => signer.sign_local(payload, l).await,
+        Key::Managed(m) => signer.sign_managed(payload, m).await,
     }
 }
 
@@ -94,8 +93,8 @@ pub async fn verify(
 
 #[async_trait(?Send)]
 pub trait Signer {
-    async fn sign_local(&self, payload: &[u8], key: &LocalKey<String>) -> Result<Signature>;
-    async fn sign_managed(&self, payload: &[u8], key: &ManagedKey) -> Result<Signature>;
+    async fn sign_local(&self, payload: &[u8], key: &Local) -> Result<Signature>;
+    async fn sign_managed(&self, payload: &[u8], key: &Managed) -> Result<Signature>;
 
     async fn verify_local(&self, payload: &[u8], signature: &Signature) -> Result<bool>;
     async fn verify_managed(&self, payload: &[u8], signature: &Signature) -> Result<bool>;

@@ -29,7 +29,9 @@ type RecordServiceClient interface {
 	BuildRecordFromBytes(ctx context.Context, in *RecordBuilderFromBytesRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(ctx context.Context, in *RecordBuilderFromRecordRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
 	BuildRecordFromLoader(ctx context.Context, in *RecordBuilderFromLoaderRequest, opts ...grpc.CallOption) (*RecordBuilderResponse, error)
+	GetDetails(ctx context.Context, in *GetDetailsRequest, opts ...grpc.CallOption) (*GetDetailsResponse, error)
 	GetHash(ctx context.Context, in *GetHashRequest, opts ...grpc.CallOption) (*GetHashResponse, error)
+	GetPayload(ctx context.Context, in *GetPayloadRequest, opts ...grpc.CallOption) (*GetPayloadResponse, error)
 	SetProof(ctx context.Context, in *SetProofRequest, opts ...grpc.CallOption) (*SetProofResponse, error)
 }
 
@@ -104,9 +106,27 @@ func (c *recordServiceClient) BuildRecordFromLoader(ctx context.Context, in *Rec
 	return out, nil
 }
 
+func (c *recordServiceClient) GetDetails(ctx context.Context, in *GetDetailsRequest, opts ...grpc.CallOption) (*GetDetailsResponse, error) {
+	out := new(GetDetailsResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetDetails", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *recordServiceClient) GetHash(ctx context.Context, in *GetHashRequest, opts ...grpc.CallOption) (*GetHashResponse, error) {
 	out := new(GetHashResponse)
 	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetHash", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *recordServiceClient) GetPayload(ctx context.Context, in *GetPayloadRequest, opts ...grpc.CallOption) (*GetPayloadResponse, error) {
+	out := new(GetPayloadResponse)
+	err := c.cc.Invoke(ctx, "/bloock.RecordService/GetPayload", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +153,9 @@ type RecordServiceServer interface {
 	BuildRecordFromBytes(context.Context, *RecordBuilderFromBytesRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromRecord(context.Context, *RecordBuilderFromRecordRequest) (*RecordBuilderResponse, error)
 	BuildRecordFromLoader(context.Context, *RecordBuilderFromLoaderRequest) (*RecordBuilderResponse, error)
+	GetDetails(context.Context, *GetDetailsRequest) (*GetDetailsResponse, error)
 	GetHash(context.Context, *GetHashRequest) (*GetHashResponse, error)
+	GetPayload(context.Context, *GetPayloadRequest) (*GetPayloadResponse, error)
 	SetProof(context.Context, *SetProofRequest) (*SetProofResponse, error)
 	mustEmbedUnimplementedRecordServiceServer()
 }
@@ -163,8 +185,14 @@ func (UnimplementedRecordServiceServer) BuildRecordFromRecord(context.Context, *
 func (UnimplementedRecordServiceServer) BuildRecordFromLoader(context.Context, *RecordBuilderFromLoaderRequest) (*RecordBuilderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildRecordFromLoader not implemented")
 }
+func (UnimplementedRecordServiceServer) GetDetails(context.Context, *GetDetailsRequest) (*GetDetailsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDetails not implemented")
+}
 func (UnimplementedRecordServiceServer) GetHash(context.Context, *GetHashRequest) (*GetHashResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHash not implemented")
+}
+func (UnimplementedRecordServiceServer) GetPayload(context.Context, *GetPayloadRequest) (*GetPayloadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPayload not implemented")
 }
 func (UnimplementedRecordServiceServer) SetProof(context.Context, *SetProofRequest) (*SetProofResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetProof not implemented")
@@ -308,6 +336,24 @@ func _RecordService_BuildRecordFromLoader_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecordService_GetDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDetailsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).GetDetails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/GetDetails",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).GetDetails(ctx, req.(*GetDetailsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetHashRequest)
 	if err := dec(in); err != nil {
@@ -322,6 +368,24 @@ func _RecordService_GetHash_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RecordServiceServer).GetHash(ctx, req.(*GetHashRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RecordService_GetPayload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPayloadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordServiceServer).GetPayload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.RecordService/GetPayload",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordServiceServer).GetPayload(ctx, req.(*GetPayloadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -380,8 +444,16 @@ var RecordService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RecordService_BuildRecordFromLoader_Handler,
 		},
 		{
+			MethodName: "GetDetails",
+			Handler:    _RecordService_GetDetails_Handler,
+		},
+		{
 			MethodName: "GetHash",
 			Handler:    _RecordService_GetHash_Handler,
+		},
+		{
+			MethodName: "GetPayload",
+			Handler:    _RecordService_GetPayload_Handler,
 		},
 		{
 			MethodName: "SetProof",

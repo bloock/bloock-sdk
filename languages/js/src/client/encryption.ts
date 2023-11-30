@@ -9,7 +9,6 @@ import {
   DecryptRequest
 } from "../bridge/proto/encryption";
 import { EncryptionAlg, Encrypter } from "../entity/encryption";
-import { Decrypter } from "../entity/encryption";
 import { GenerateLocalKeyRequest } from "../bridge/proto/keys";
 import { KeyType } from "../bridge/proto/keys_entities";
 
@@ -62,7 +61,7 @@ export class EncryptionClient {
       });
   }
 
-  async decrypt(record: Record, decrypter: Decrypter): Promise<Record> {
+  async decrypt(record: Record, decrypter: Encrypter): Promise<Record> {
     return this.bridge
       .getEncryption()
       .Decrypt(

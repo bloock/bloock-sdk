@@ -1,7 +1,7 @@
 use crate::{ecdsa::EcdsaSigner, entity::alg::SignAlg, Result, Signature, Signer, SignerError};
 use async_trait::async_trait;
 use bloock_hasher::{keccak::Keccak256, Hasher};
-use bloock_keys::keys::{local::LocalKey, managed::ManagedKey};
+use bloock_keys::entity::key::{Local, Managed};
 use libsecp256k1::PublicKey;
 
 pub struct EnsSigner {
@@ -26,24 +26,34 @@ impl EnsSigner {
 
 #[async_trait(?Send)]
 impl Signer for EnsSigner {
-    async fn sign_local(&self, payload: &[u8], key: &LocalKey<String>) -> crate::Result<Signature> {
+    async fn sign_local(&self, payload: &[u8], key: &Local) -> crate::Result<Signature> {
+        let local = match key {
+            Local::Key(k) => k.clone(),
+            Local::Certificate(c) => c.key.clone(),
+        };
+
         let ecdsa_signer = EcdsaSigner::new(
             self.api_host.clone(),
             self.api_key.clone(),
             self.environment.clone(),
         );
-        let mut signature = ecdsa_signer.sign_local(payload, key.into()).await?;
+        let mut signature = ecdsa_signer.sign_local(payload, &local.into()).await?;
         signature.alg = SignAlg::Es256k;
         Ok(signature)
     }
 
-    async fn sign_managed(&self, payload: &[u8], key: &ManagedKey) -> crate::Result<Signature> {
+    async fn sign_managed(&self, payload: &[u8], key: &Managed) -> crate::Result<Signature> {
+        let managed = match key {
+            Managed::Key(k) => k.clone(),
+            Managed::Certificate(c) => c.key.clone(),
+        };
+
         let ecdsa_signer = EcdsaSigner::new(
             self.api_host.clone(),
             self.api_key.clone(),
             self.environment.clone(),
         );
-        let mut signature = ecdsa_signer.sign_managed(payload, key).await?;
+        let mut signature = ecdsa_signer.sign_managed(payload, &managed.into()).await?;
         signature.alg = SignAlg::Es256kM;
         Ok(signature)
     }
@@ -69,7 +79,7 @@ impl Signer for EnsSigner {
     }
 }
 
-fn derive_eth_address(mut public_key: Vec<u8>) -> Result<String> {
+fn _derive_eth_address(mut public_key: Vec<u8>) -> Result<String> {
     if public_key.len() != 64 {
         // the key is probably compressed, so we try to decompress it
         public_key = PublicKey::parse_slice(&public_key, None)
@@ -103,12 +113,12 @@ mod tests {
         let signer = EnsSigner::new(api_host, api_key, None);
 
         let signature = signer
-            .sign_local(string_payload.as_bytes(), &local_key)
+            .sign_local(string_payload.as_bytes(), &local_key.clone().into())
             .await
             .unwrap();
 
         assert_eq!(signature.alg, SignAlg::Es256k);
-        assert_eq!(signature.kid, local_key.key);
+        assert_eq!(signature.key, local_key.key);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -134,7 +144,9 @@ mod tests {
         };
 
         let c = EnsSigner::new(api_host, api_key, None);
-        let result = c.sign_local(string_payload.as_bytes(), &local_key).await;
+        let result = c
+            .sign_local(string_payload.as_bytes(), &local_key.into())
+            .await;
         assert!(result.is_err());
     }
 
@@ -147,7 +159,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Es256k,
-            kid: "02c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
+            key: "02c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
+            subject: None,
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
@@ -171,7 +184,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Es256k,
-            kid: "12c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
+            key: "12c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
@@ -194,7 +208,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Es256k,
-            kid: "02c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
+            key: "02c4855e2b4b0ff60b939d943b00043b7fb7b9f3f44ce1c89f8e8402fd3fcb8052".to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
@@ -230,12 +245,12 @@ mod tests {
         let signer = EnsSigner::new(api_host, api_key, None);
 
         let signature = signer
-            .sign_managed(string_payload.as_bytes(), &managed_key)
+            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into())
             .await
             .unwrap();
 
         assert_eq!(signature.alg, SignAlg::Es256kM);
-        assert_eq!(signature.kid, managed_key.public_key);
+        assert_eq!(signature.key, managed_key.public_key);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -265,7 +280,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Es256k,
-            kid: managed_key.id.to_string(),
+            key: managed_key.id.to_string(),
+            subject: None,
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
@@ -289,7 +305,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Es256k,
-            kid: "00000000-0000-0000-0000-000000000000".to_string(),
+            key: "00000000-0000-0000-0000-000000000000".to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
@@ -324,7 +341,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Es256k,
-            kid: managed_key.id.to_string(),
+            key: managed_key.id.to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };

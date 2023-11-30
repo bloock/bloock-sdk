@@ -9,14 +9,14 @@ use std::convert::TryFrom;
 impl TryFrom<Signature> for SignatureCore {
     type Error = BridgeError;
     fn try_from(r: Signature) -> BridgeResult<SignatureCore> {
-        let sig_alg = SignAlg::try_from(r.alg.as_str()).map_err(|e| {
-            BridgeError::RequestDeserialization(e.to_string())
-        })?;
+        let sig_alg = SignAlg::try_from(r.alg.as_str())
+            .map_err(|e| BridgeError::RequestDeserialization(e.to_string()))?;
 
         Ok(Self {
             signature: r.signature,
             alg: sig_alg,
-            kid: r.kid,
+            key: r.kid,
+            subject: r.subject,
             message_hash: r.message_hash,
         })
     }
@@ -27,7 +27,8 @@ impl From<SignatureCore> for Signature {
         Self {
             signature: s.signature,
             alg: s.alg.to_string(),
-            kid: s.kid,
+            kid: s.key,
+            subject: s.subject,
             message_hash: s.message_hash,
         }
     }

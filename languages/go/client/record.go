@@ -66,7 +66,7 @@ type RecordBuilder struct {
 	configData  *proto.ConfigData
 	signer      *proto.Signer
 	encrypter   *proto.Encrypter
-	decrypter   *proto.Decrypter
+	decrypter   *proto.Encrypter
 }
 
 func newRecordBuilder(payload interface{}, payloadType proto.RecordTypes, configData *proto.ConfigData) RecordBuilder {
@@ -94,7 +94,7 @@ func (b RecordBuilder) WithEncrypter(encrypter encryption.Encrypter) RecordBuild
 	return b
 }
 
-func (b RecordBuilder) WithDecrypter(decrypter encryption.Decrypter) RecordBuilder {
+func (b RecordBuilder) WithDecrypter(decrypter encryption.Encrypter) RecordBuilder {
 	b.decrypter = decrypter.ToProto()
 	return b
 }
@@ -174,4 +174,23 @@ func (b RecordBuilder) Build() (record.Record, error) {
 	}
 
 	return record.NewRecordFromProto(res.Record, b.configData), nil
+}
+
+func (b RecordBuilder) GetDetails() (record.RecordDetails, error) {
+	bridgeClient := bridge.NewBloockBridge()
+
+	res, err := bridgeClient.Record().GetDetails(context.Background(), &proto.GetDetailsRequest{
+		ConfigData: b.configData,
+		Payload:    b.payload.([]byte),
+	})
+
+	if err != nil {
+		return record.RecordDetails{}, err
+	}
+
+	if res.Error != nil {
+		return record.RecordDetails{}, errors.New(res.Error.Message)
+	}
+
+	return record.NewRecordDetailsFromProto(res.Details, b.configData), nil
 }

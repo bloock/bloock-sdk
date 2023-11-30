@@ -10,8 +10,8 @@ use bloock_babyjubjub_rs::{decompress_point, decompress_signature, verify, Priva
 use bloock_hasher::poseidon::{check_poseidon_hash, Poseidon};
 use bloock_hasher::Hasher;
 use bloock_http::{BloockHttpClient, Client};
-use bloock_keys::keys::local::LocalKey;
-use bloock_keys::keys::managed::ManagedKey;
+use bloock_keys::certificates::GetX509Certficate;
+use bloock_keys::entity::key::{Local, Managed};
 use num_bigint::BigInt;
 
 pub struct BJJSigner {
@@ -36,8 +36,22 @@ impl BJJSigner {
 
 #[async_trait(?Send)]
 impl Signer for BJJSigner {
-    async fn sign_local(&self, payload: &[u8], key: &LocalKey<String>) -> crate::Result<Signature> {
-        let private_key = key
+    async fn sign_local(&self, payload: &[u8], key: &Local) -> crate::Result<Signature> {
+        let local = match key {
+            Local::Key(k) => k.clone(),
+            Local::Certificate(c) => c.key.clone(),
+        };
+
+        let subject = key
+            .get_certificate(
+                self.api_host.clone(),
+                self.api_key.clone(),
+                self.environment.clone(),
+            )
+            .await
+            .map(|s| s.tbs_certificate.subject.to_string());
+
+        let private_key = local
             .private_key
             .clone()
             .ok_or_else(|| SignerError::InvalidSecretKey("no private key found".to_string()))?;
@@ -47,13 +61,12 @@ impl Signer for BJJSigner {
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let public_key = secret_key.public();
 
-        let hash: Vec<u8>;
         let is_poseidon_hash = check_poseidon_hash(payload);
-        if is_poseidon_hash {
-            hash = payload.to_vec();
+        let hash = if is_poseidon_hash {
+            payload.to_vec()
         } else {
-            hash = Poseidon::generate_hash(&[payload])[..].to_vec();
-        }
+            Poseidon::generate_hash(&[payload])[..].to_vec()
+        };
 
         let signature = secret_key
             .sign(BigInt::from_signed_bytes_be(&hash))
@@ -61,7 +74,8 @@ impl Signer for BJJSigner {
 
         let signature = Signature {
             alg: SignAlg::Bjj,
-            kid: hex::encode(public_key.compress()),
+            key: hex::encode(public_key.compress()),
+            subject,
             signature: hex::encode(signature.compress()),
             message_hash: hex::encode(hash),
         };
@@ -69,20 +83,33 @@ impl Signer for BJJSigner {
         Ok(signature)
     }
 
-    async fn sign_managed(&self, payload: &[u8], key: &ManagedKey) -> crate::Result<Signature> {
-        let hash: Vec<u8>;
+    async fn sign_managed(&self, payload: &[u8], key: &Managed) -> crate::Result<Signature> {
+        let managed = match key {
+            Managed::Key(k) => k.clone(),
+            Managed::Certificate(c) => c.key.clone(),
+        };
+
+        let subject = key
+            .get_certificate(
+                self.api_host.clone(),
+                self.api_key.clone(),
+                self.environment.clone(),
+            )
+            .await
+            .map(|s| s.tbs_certificate.subject.to_string());
+
         let is_poseidon_hash = check_poseidon_hash(payload);
-        if is_poseidon_hash {
-            hash = payload.to_vec();
+        let hash: Vec<u8> = if is_poseidon_hash {
+            payload.to_vec()
         } else {
-            hash = Poseidon::generate_hash(&[payload])[..].to_vec();
-        }
+            Poseidon::generate_hash(&[payload])[..].to_vec()
+        };
         let encoded_hash = hex::encode(hash);
 
         let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
 
         let req = SignRequest {
-            key_id: key.id.clone(),
+            key_id: managed.id.clone(),
             algorithm: "BJJ".to_string(),
             payload: encoded_hash.clone(),
         };
@@ -94,7 +121,8 @@ impl Signer for BJJSigner {
         let signature = Signature {
             signature: res.signature,
             alg: SignAlg::BjjM,
-            kid: key.public_key.clone(),
+            key: managed.public_key.clone(),
+            subject,
             message_hash: encoded_hash,
         };
 
@@ -102,7 +130,7 @@ impl Signer for BJJSigner {
     }
 
     async fn verify_local(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
-        let public_key_bytes = hex::decode(signature.kid.clone())
+        let public_key_bytes = hex::decode(signature.key.clone())
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
         let prepare_public_key: [u8; 32] = public_key_bytes
             .try_into()
@@ -118,13 +146,12 @@ impl Signer for BJJSigner {
         let signature = decompress_signature(&prepare_signature)
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
-        let hash: Vec<u8>;
         let is_poseidon_hash = check_poseidon_hash(payload);
-        if is_poseidon_hash {
-            hash = payload.to_vec();
+        let hash = if is_poseidon_hash {
+            payload.to_vec()
         } else {
-            hash = Poseidon::generate_hash(&[payload])[..].to_vec();
-        }
+            Poseidon::generate_hash(&[payload])[..].to_vec()
+        };
 
         Ok(verify(
             pub_key,
@@ -139,7 +166,7 @@ impl Signer for BJJSigner {
         let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
 
         let req = VerifyRequest {
-            public_key: signature.kid.clone(),
+            public_key: signature.key.clone(),
             algorithm: "BJJ".to_string(),
             payload: hex::encode(hash),
             signature: signature.signature.clone(),
@@ -167,7 +194,7 @@ mod tests {
     use bloock_keys::keys::managed::ManagedKey;
 
     #[tokio::test]
-    async fn test_sign_local_ok() {
+    async fn test_sign_local_key_ok() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
@@ -181,12 +208,12 @@ mod tests {
         let signer = BJJSigner::new(api_host, api_key, None);
 
         let signature = signer
-            .sign_local(string_payload.as_bytes(), &local_key)
+            .sign_local(string_payload.as_bytes(), &local_key.clone().into())
             .await
             .unwrap();
 
         assert_eq!(signature.alg, SignAlg::Bjj);
-        assert_eq!(signature.kid, local_key.key);
+        assert_eq!(signature.key, local_key.key);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -212,7 +239,9 @@ mod tests {
         };
 
         let c = BJJSigner::new(api_host, api_key, None);
-        let result = c.sign_local(string_payload.as_bytes(), &local_key).await;
+        let result = c
+            .sign_local(string_payload.as_bytes(), &local_key.into())
+            .await;
         assert!(result.is_err());
     }
 
@@ -225,7 +254,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Bjj,
-            kid: "815528548b274ae520adfa3bbfd4a594ecd926c654b6b8d696de7f708e9f6b95".to_string(),
+            key: "815528548b274ae520adfa3bbfd4a594ecd926c654b6b8d696de7f708e9f6b95".to_string(),
+            subject: None,
             signature: "24eea823bd8d78e8a506fc70a3934a0c3a9e5fb686a9709cae2e00bcf8abc200adef4d043d93ab5aaf8a5dbc5718a55d072e40af82a0cd264f19de7f3a952305".to_string(),
             message_hash: "2722645f0df167977477ce168442d752fda7e95d29f25fa156c991f8eabd7051".to_string(),
         };
@@ -249,7 +279,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Bjj,
-            kid: "04dfcc5681f773592f44e40cbb69e33996d510a517772dbb20958a64b64e443e87cd7c67f1b1fe44b63f05435ae817139091f6c9c473983800fbf6d2ea74c47b16".to_string(),
+            key: "04dfcc5681f773592f44e40cbb69e33996d510a517772dbb20958a64b64e443e87cd7c67f1b1fe44b63f05435ae817139091f6c9c473983800fbf6d2ea74c47b16".to_string(),
+            subject: None,
             signature: "d32527ea82441e895a281b1022405e90d4f4dfd493586542dd6856b31d976a8dfd7e7dcb9093b063814ec4c6230a891a1e413d9f92c6288350791df5b2edfb02".to_string(),
             message_hash: "2722645f0df167977477ce168442d752fda7e95d29f25fa156c991f8eabd7051".to_string(),
         };
@@ -272,7 +303,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::Bjj,
-            kid: "815528548b274ae520adfa3bbfd4a594ecd926c654b6b8d696de7f708e9f6b95".to_string(),
+            key: "815528548b274ae520adfa3bbfd4a594ecd926c654b6b8d696de7f708e9f6b95".to_string(),
+            subject: None,
             signature: "d32527ea82441e895a281b1022405e90d4f4dfd493586542dd6856b31d976a8dfd7e7dcb9093b063814ec4c6230a891a1e413d9f92c6288350791df5b2edfb02".to_string(),
             message_hash: "2722645f0df167977477ce168442d752fda7e95d29f25fa156c991f8eabd7051".to_string(),
         };
@@ -308,12 +340,12 @@ mod tests {
         let signer = BJJSigner::new(api_host, api_key, None);
 
         let signature = signer
-            .sign_managed(string_payload.as_bytes(), &managed_key)
+            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into())
             .await
             .unwrap();
 
         assert_eq!(signature.alg, SignAlg::BjjM);
-        assert_eq!(signature.kid, managed_key.public_key);
+        assert_eq!(signature.key, managed_key.public_key);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -348,7 +380,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::BjjM,
-            kid: managed_key.id.to_string(),
+            key: managed_key.id.to_string(),
+            subject: None,
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
@@ -372,7 +405,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::BjjM,
-            kid: "00000000-0000-0000-0000-000000000000".to_string(),
+            key: "00000000-0000-0000-0000-000000000000".to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
@@ -407,7 +441,8 @@ mod tests {
 
         let signature = Signature {
             alg: SignAlg::BjjM,
-            kid: managed_key.id.to_string(),
+            key: managed_key.id.to_string(),
+            subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };

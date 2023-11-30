@@ -163,8 +163,8 @@ pub struct Did {
     pub id: Id,
 }
 
-impl Did {
-    pub fn default() -> Self {
+impl Default for Did {
+    fn default() -> Self {
         Self {
             method: DIDMethod::Iden3,
             blockchain: Blockchain::Ethereum,
@@ -172,7 +172,9 @@ impl Did {
             id: [0u8; DID_ID_LEN],
         }
     }
+}
 
+impl Did {
     fn validate(&self) -> Result<(), String> {
         let d = parse_did_from_id(self.id)?;
 
@@ -304,7 +306,7 @@ fn id_from_string(s: String) -> Result<Id, String> {
     if b.len() != 31 {
         return Err("ID byte array incorrect length".to_string());
     }
-    if b == &EMPTY_ID {
+    if b == EMPTY_ID {
         return Err("ID byte array incorrect length".to_string());
     }
 
@@ -342,8 +344,7 @@ fn calculate_checksum(typ: [u8; 2], genesis: [u8; 27]) -> [u8; 2] {
 
     s = s.to_le(); // Convert to little-endian representation
 
-    let checksum_bytes: [u8; 2] = s.to_le_bytes();
-    checksum_bytes.try_into().unwrap()
+    s.to_le_bytes()
 }
 
 fn decompose_id(id: Id) -> ([u8; 2], [u8; 27], [u8; 2]) {

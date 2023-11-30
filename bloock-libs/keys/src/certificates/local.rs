@@ -1,5 +1,6 @@
 use super::p12::PFX;
 use super::{from_now, CertificateSubject};
+use crate::KeysError;
 use crate::{
     keys::local::{LocalKey, LocalKeyParams},
     KeyType, Result,
@@ -55,39 +56,56 @@ impl LocalCertificate<String> {
 
         let serial_number = SerialNumber::from(42u32);
         let now = Duration::new(
-            (params.expiration * SECONDS_PER_YEAR).try_into().unwrap(),
+            (params.expiration * SECONDS_PER_YEAR)
+                .try_into()
+                .map_err(|_| {
+                    KeysError::NewLocalCertificateError(
+                        "cannot parse expiration interval".to_string(),
+                    )
+                })?,
             0,
         );
-        let validity = from_now(now).unwrap();
+        let validity =
+            from_now(now).map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
 
         let profile = Profile::Root;
-        let subject = Name::from_str(&params.subject.serialize()).unwrap();
+        let subject = Name::from_str(&params.subject.serialize())
+            .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
 
         let key = LocalKey::new(&LocalKeyParams {
             key_type: params.key_type.clone(),
         })
-        .unwrap();
+        .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
 
-        let pub_key = rsa::RsaPublicKey::from_public_key_pem(&key.key.clone()).unwrap();
+        let pub_key = rsa::RsaPublicKey::from_public_key_pem(&key.key.clone())
+            .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
         let pub_key =
             SubjectPublicKeyInfoOwned::try_from(pub_key.to_public_key_der().unwrap().as_bytes())
-                .unwrap();
-        let private_key =
-            rsa::RsaPrivateKey::from_pkcs8_pem(&key.private_key.clone().unwrap()).unwrap();
+                .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
+        let private_key = rsa::RsaPrivateKey::from_pkcs8_pem(&key.private_key.clone().unwrap())
+            .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
         let signer = SigningKey::<Sha256>::new(private_key.clone());
         let builder =
             CertificateBuilder::new(profile, serial_number, validity, subject, pub_key, &signer)
                 .expect("Create certificate");
-        let certificate: CertificateInner = builder.build().unwrap();
+        let certificate: CertificateInner = builder
+            .build()
+            .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
 
         let p12 = PFX::new(
-            certificate.to_der().unwrap().as_slice(),
-            private_key.to_pkcs8_der().unwrap().as_bytes(),
+            certificate
+                .to_der()
+                .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?
+                .as_slice(),
+            private_key
+                .to_pkcs8_der()
+                .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?
+                .as_bytes(),
             None,
             &params.password.clone(),
             "",
         )
-        .unwrap();
+        .ok_or(KeysError::NewLocalCertificateError("".to_string()))?;
 
         Ok(LocalCertificate {
             key,
@@ -109,36 +127,59 @@ impl LocalCertificate<String> {
 
         let serial_number = SerialNumber::from(42u32);
         let now = Duration::new(
-            (params.expiration * SECONDS_PER_YEAR).try_into().unwrap(),
+            (params.expiration * SECONDS_PER_YEAR)
+                .try_into()
+                .map_err(|_| {
+                    KeysError::LoadLocalCertificateError(
+                        "cannot parse expiration interval".to_string(),
+                    )
+                })?,
             0,
         );
-        let validity = from_now(now).unwrap();
+        let validity =
+            from_now(now).map_err(|e| KeysError::LoadLocalCertificateError(e.to_string()))?;
 
         let profile = Profile::Root;
-        let subject = Name::from_str(&params.subject.serialize()).unwrap();
+        let subject = Name::from_str(&params.subject.serialize())
+            .map_err(|e| KeysError::LoadLocalCertificateError(e.to_string()))?;
 
         let key = params.key.clone();
 
-        let pub_key = rsa::RsaPublicKey::from_public_key_pem(&key.key.clone()).unwrap();
-        let pub_key =
-            SubjectPublicKeyInfoOwned::try_from(pub_key.to_public_key_der().unwrap().as_bytes())
-                .unwrap();
-        let private_key =
-            rsa::RsaPrivateKey::from_pkcs8_pem(&key.private_key.clone().unwrap()).unwrap();
+        let pub_key = rsa::RsaPublicKey::from_public_key_pem(&key.key.clone())
+            .map_err(|e| KeysError::LoadLocalCertificateError(e.to_string()))?;
+        let pub_key = SubjectPublicKeyInfoOwned::try_from(
+            pub_key
+                .to_public_key_der()
+                .map_err(|e| KeysError::LoadLocalCertificateError(e.to_string()))?
+                .as_bytes(),
+        )
+        .unwrap();
+        let private_key = rsa::RsaPrivateKey::from_pkcs8_pem(&key.private_key.clone().ok_or(
+            KeysError::LoadLocalCertificateError("no private key found".to_string()),
+        )?)
+        .map_err(|e| KeysError::LoadLocalCertificateError(e.to_string()))?;
         let signer = SigningKey::<Sha256>::new(private_key.clone());
         let builder =
             CertificateBuilder::new(profile, serial_number, validity, subject, pub_key, &signer)
                 .expect("Create certificate");
-        let certificate: CertificateInner = builder.build().unwrap();
+        let certificate: CertificateInner = builder
+            .build()
+            .map_err(|e| KeysError::LoadLocalCertificateError(e.to_string()))?;
 
         let p12 = PFX::new(
-            certificate.to_der().unwrap().as_slice(),
-            private_key.to_pkcs8_der().unwrap().as_bytes(),
+            certificate
+                .to_der()
+                .map_err(|e| KeysError::LoadLocalCertificateError(e.to_string()))?
+                .as_slice(),
+            private_key
+                .to_pkcs8_der()
+                .map_err(|e| KeysError::LoadLocalCertificateError(e.to_string()))?
+                .as_bytes(),
             None,
             &params.password.clone(),
             "",
         )
-        .unwrap();
+        .ok_or(KeysError::LoadLocalCertificateError("".to_string()))?;
 
         Ok(LocalCertificate {
             key,

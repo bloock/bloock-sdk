@@ -7,12 +7,14 @@ public class Signature {
   String alg;
   String kid;
   String messageHash;
+  String subject;
 
-  Signature(String signature, String alg, String kid, String messageHash) {
+  Signature(String signature, String alg, String kid, String messageHash, String subject) {
     this.signature = signature;
     this.alg = alg;
     this.kid = kid;
     this.messageHash = messageHash;
+    this.subject = subject;
   }
 
   public static Signature fromProto(AuthenticityEntities.Signature signature) {
@@ -20,7 +22,8 @@ public class Signature {
         signature.getSignature(),
         signature.getAlg(),
         signature.getKid(),
-        signature.getMessageHash());
+        signature.getMessageHash(),
+        signature.getSubject());
   }
 
   public AuthenticityEntities.Signature toProto() {
@@ -29,6 +32,7 @@ public class Signature {
         .setAlg(this.alg)
         .setKid(this.kid)
         .setMessageHash(this.messageHash)
+        .setSubject(this.subject)
         .build();
   }
 
@@ -50,5 +54,13 @@ public class Signature {
 
   public void setMessageHash(String hash) {
     this.messageHash = hash;
+  }
+
+  public String getSubject() {
+    return subject;
+  }
+
+  public void setSubject(String subject) {
+    this.subject = subject;
   }
 }

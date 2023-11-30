@@ -15,6 +15,7 @@ export interface Signature {
   alg: string;
   kid: string;
   messageHash: string;
+  subject?: string | undefined;
 }
 
 function createBaseSigner(): Signer {
@@ -123,7 +124,7 @@ export const Signer = {
 };
 
 function createBaseSignature(): Signature {
-  return { signature: "", alg: "", kid: "", messageHash: "" };
+  return { signature: "", alg: "", kid: "", messageHash: "", subject: undefined };
 }
 
 export const Signature = {
@@ -139,6 +140,9 @@ export const Signature = {
     }
     if (message.messageHash !== "") {
       writer.uint32(34).string(message.messageHash);
+    }
+    if (message.subject !== undefined) {
+      writer.uint32(42).string(message.subject);
     }
     return writer;
   },
@@ -162,6 +166,9 @@ export const Signature = {
         case 4:
           message.messageHash = reader.string();
           break;
+        case 5:
+          message.subject = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -176,6 +183,7 @@ export const Signature = {
       alg: isSet(object.alg) ? String(object.alg) : "",
       kid: isSet(object.kid) ? String(object.kid) : "",
       messageHash: isSet(object.messageHash) ? String(object.messageHash) : "",
+      subject: isSet(object.subject) ? String(object.subject) : undefined,
     };
   },
 
@@ -185,6 +193,7 @@ export const Signature = {
     message.alg !== undefined && (obj.alg = message.alg);
     message.kid !== undefined && (obj.kid = message.kid);
     message.messageHash !== undefined && (obj.messageHash = message.messageHash);
+    message.subject !== undefined && (obj.subject = message.subject);
     return obj;
   },
 
@@ -194,6 +203,7 @@ export const Signature = {
     message.alg = object.alg ?? "";
     message.kid = object.kid ?? "";
     message.messageHash = object.messageHash ?? "";
+    message.subject = object.subject ?? undefined;
     return message;
   },
 };

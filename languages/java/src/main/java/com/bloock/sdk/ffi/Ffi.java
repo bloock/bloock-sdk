@@ -95,7 +95,6 @@ public class Ffi {
 
   private void loadBinary(String path, String prefix, String suffix)
       throws UnsatisfiedLinkError, IOException {
-    System.out.println(path);
     InputStream input = getClass().getClassLoader().getResourceAsStream(path);
     File file = File.createTempFile(prefix, suffix);
     OutputStream out = Files.newOutputStream(file.toPath());

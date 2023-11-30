@@ -1,7 +1,7 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
 import { ConfigData } from "./config";
-import { Decrypter, Encrypter, EncryptionAlg, encryptionAlgFromJSON, encryptionAlgToJSON } from "./encryption_entities";
+import { Encrypter, EncryptionAlg, encryptionAlgFromJSON, encryptionAlgToJSON } from "./encryption_entities";
 import { Record } from "./record_entities";
 import { Error } from "./shared";
 
@@ -19,7 +19,7 @@ export interface EncryptResponse {
 export interface DecryptRequest {
   configData?: ConfigData;
   record?: Record;
-  decrypter?: Decrypter;
+  decrypter?: Encrypter;
 }
 
 export interface DecryptResponse {
@@ -185,7 +185,7 @@ export const DecryptRequest = {
       Record.encode(message.record, writer.uint32(18).fork()).ldelim();
     }
     if (message.decrypter !== undefined) {
-      Decrypter.encode(message.decrypter, writer.uint32(26).fork()).ldelim();
+      Encrypter.encode(message.decrypter, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -204,7 +204,7 @@ export const DecryptRequest = {
           message.record = Record.decode(reader, reader.uint32());
           break;
         case 3:
-          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          message.decrypter = Encrypter.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -218,7 +218,7 @@ export const DecryptRequest = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       record: isSet(object.record) ? Record.fromJSON(object.record) : undefined,
-      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -228,7 +228,7 @@ export const DecryptRequest = {
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
     message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -241,7 +241,7 @@ export const DecryptRequest = {
       ? Record.fromPartial(object.record)
       : undefined;
     message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
-      ? Decrypter.fromPartial(object.decrypter)
+      ? Encrypter.fromPartial(object.decrypter)
       : undefined;
     return message;
   },

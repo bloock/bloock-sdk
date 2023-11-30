@@ -35,53 +35,35 @@ global___EncryptionAlg = EncryptionAlg
 class Encrypter(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    ALG_FIELD_NUMBER: builtins.int
     LOCAL_KEY_FIELD_NUMBER: builtins.int
     MANAGED_KEY_FIELD_NUMBER: builtins.int
-    alg: global___EncryptionAlg.ValueType
+    LOCAL_CERTIFICATE_FIELD_NUMBER: builtins.int
+    MANAGED_CERTIFICATE_FIELD_NUMBER: builtins.int
     @property
     def local_key(self) -> keys_entities_pb2.LocalKey: ...
     @property
     def managed_key(self) -> keys_entities_pb2.ManagedKey: ...
+    @property
+    def local_certificate(self) -> keys_entities_pb2.LocalCertificate: ...
+    @property
+    def managed_certificate(self) -> keys_entities_pb2.ManagedCertificate: ...
     def __init__(
         self,
         *,
-        alg: global___EncryptionAlg.ValueType = ...,
         local_key: keys_entities_pb2.LocalKey | None = ...,
         managed_key: keys_entities_pb2.ManagedKey | None = ...,
+        local_certificate: keys_entities_pb2.LocalCertificate | None = ...,
+        managed_certificate: keys_entities_pb2.ManagedCertificate | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "local_key", b"local_key", "managed_key", b"managed_key"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "alg", b"alg", "local_key", b"local_key", "managed_key", b"managed_key"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_local_certificate", b"_local_certificate", "_local_key", b"_local_key", "_managed_certificate", b"_managed_certificate", "_managed_key", b"_managed_key", "local_certificate", b"local_certificate", "local_key", b"local_key", "managed_certificate", b"managed_certificate", "managed_key", b"managed_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_local_certificate", b"_local_certificate", "_local_key", b"_local_key", "_managed_certificate", b"_managed_certificate", "_managed_key", b"_managed_key", "local_certificate", b"local_certificate", "local_key", b"local_key", "managed_certificate", b"managed_certificate", "managed_key", b"managed_key"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_local_certificate", b"_local_certificate"]) -> typing_extensions.Literal["local_certificate"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_local_key", b"_local_key"]) -> typing_extensions.Literal["local_key"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_certificate", b"_managed_certificate"]) -> typing_extensions.Literal["managed_certificate"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
 
 global___Encrypter = Encrypter
-
-class Decrypter(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ALG_FIELD_NUMBER: builtins.int
-    LOCAL_KEY_FIELD_NUMBER: builtins.int
-    MANAGED_KEY_FIELD_NUMBER: builtins.int
-    alg: global___EncryptionAlg.ValueType
-    @property
-    def local_key(self) -> keys_entities_pb2.LocalKey: ...
-    @property
-    def managed_key(self) -> keys_entities_pb2.ManagedKey: ...
-    def __init__(
-        self,
-        *,
-        alg: global___EncryptionAlg.ValueType = ...,
-        local_key: keys_entities_pb2.LocalKey | None = ...,
-        managed_key: keys_entities_pb2.ManagedKey | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "local_key", b"local_key", "managed_key", b"managed_key"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "alg", b"alg", "local_key", b"local_key", "managed_key", b"managed_key"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_local_key", b"_local_key"]) -> typing_extensions.Literal["local_key"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
-
-global___Decrypter = Decrypter

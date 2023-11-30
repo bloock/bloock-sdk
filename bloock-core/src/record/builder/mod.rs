@@ -1,16 +1,16 @@
-use super::entity::record::Record;
+use super::entity::{record::Record, record_details::RecordDetails};
 use crate::{
     error::{BloockResult, InfrastructureError},
     record::document::Document,
 };
-use bloock_encrypter::{Decrypter, Encrypter, EncrypterError};
+use bloock_encrypter::EncrypterError;
 use bloock_keys::entity::key::Key;
 
 pub struct Builder {
     document: Document,
     signer: Option<Key>,
-    encrypter: Option<Box<dyn Encrypter>>,
-    decrypter: Option<Box<dyn Decrypter>>,
+    encrypter: Option<Key>,
+    decrypter: Option<Key>,
 }
 
 impl Builder {
@@ -43,18 +43,18 @@ impl Builder {
         }
     }
 
-    pub fn with_signer(mut self, key: Key) -> Self {
-        self.signer = Some(key);
+    pub fn with_signer(mut self, key: &Key) -> Self {
+        self.signer = Some(key.clone());
         self
     }
 
-    pub fn with_encrypter(mut self, encrypter: Box<dyn Encrypter>) -> Self {
-        self.encrypter = Some(encrypter);
+    pub fn with_encrypter(mut self, key: &Key) -> Self {
+        self.encrypter = Some(key.clone());
         self
     }
 
-    pub fn with_decrypter(mut self, decrypter: Box<dyn Decrypter>) -> Self {
-        self.decrypter = Some(decrypter);
+    pub fn with_decrypter(mut self, key: &Key) -> Self {
+        self.decrypter = Some(key.clone());
         self
     }
 
@@ -64,7 +64,7 @@ impl Builder {
                 Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
             }
 
-            self.document.decrypt(decrypter).await?;
+            self.document.decrypt(&decrypter).await?;
         }
 
         if let Some(signer) = &self.signer {
@@ -74,9 +74,13 @@ impl Builder {
         let mut record = Record::new(self.document)?;
 
         if let Some(encrypter) = self.encrypter {
-            record.encrypt(encrypter).await?;
+            record.encrypt(&encrypter).await?;
         }
 
         Ok(record)
+    }
+
+    pub async fn get_details(&self) -> BloockResult<RecordDetails> {
+        RecordDetails::new(&self.document)
     }
 }

@@ -23,7 +23,7 @@ impl Relationship {
     fn path(
         &self,
         ds_idx: DatasetIdx,
-        quads: &Vec<Quad>,
+        quads: &[Quad],
         idx: Option<i32>,
     ) -> Result<Path, MerklizeError> {
         let mut k = Path::new();
@@ -32,25 +32,21 @@ impl Relationship {
             k.append(&[RdfEntryValue::IntValue(idx as u64)])?;
         }
 
-        let n = get_quad(&quads.clone(), &ds_idx)?;
+        let n = get_quad(quads.clone(), &ds_idx)?;
         let predicate = String::from(n.predicate().as_str());
 
         k.append(&[RdfEntryValue::StringValue(predicate)])?;
 
         let mut next_key = ds_idx;
-        loop {
-            let parent_idx = match self.parents.get(&next_key) {
-                Some(idx) => idx.clone(),
-                None => break,
-            };
-            let parent = get_quad(&quads, &parent_idx.clone())?;
+        while let Some(parent_idx) = self.parents.get(&next_key) {
+            let parent = get_quad(quads, &parent_idx.clone())?;
 
             let parent_key = mk_q_arr_key(&parent)?;
             let children_map = match self.children.get(&parent_key) {
                 Some(map) => map,
                 None => return Err(MerklizeError::ErrorParentMappingNotFound()),
             };
-            let child_quad = get_quad(&quads, &next_key)?;
+            let child_quad = get_quad(quads, &next_key)?;
             let child_ref = get_ref_subject(child_quad.subject())?;
             let child_idx = match children_map.get(&child_ref) {
                 Some(&idx) => idx,
@@ -67,7 +63,7 @@ impl Relationship {
                 ])?;
             }
 
-            next_key = parent_idx;
+            next_key = parent_idx.clone();
         }
 
         k.reverse();
@@ -164,11 +160,11 @@ impl RdfEntry {
     }
 
     fn key_mt_entry(&self, hash: &Hasher) -> Result<Vec<u8>, MerklizeError> {
-        Ok(self.key.mt_entry(hash)?)
+        self.key.mt_entry(hash)
     }
 
     fn value_mt_entry(&self, hash: &Hasher) -> Result<Vec<u8>, MerklizeError> {
-        Ok(mk_value_mt_entry(self.value.clone(), hash)?)
+        mk_value_mt_entry(self.value.clone(), hash)
     }
 }
 
@@ -293,14 +289,14 @@ pub fn entries_from_rdf(quads: Vec<Quad>) -> Result<Vec<RdfEntry>, MerklizeError
     Ok(entries)
 }
 
-fn new_relationship(quads: &Vec<Quad>) -> Result<Relationship, MerklizeError> {
+fn new_relationship(quads: &[Quad]) -> Result<Relationship, MerklizeError> {
     let mut r = Relationship {
         parents: HashMap::new(),
         children: HashMap::new(),
     };
 
     for (idx, q) in quads.iter().enumerate() {
-        let parent_idx = match find_parent(&quads.clone(), q) {
+        let parent_idx = match find_parent(quads, q) {
             Ok(p_idx) => p_idx,
             Err(err) => {
                 if err == MerklizeError::ErrorMultipleParentsFound() {
@@ -315,7 +311,7 @@ fn new_relationship(quads: &Vec<Quad>) -> Result<Relationship, MerklizeError> {
             idx: idx as u64,
         };
 
-        let parent_quad = get_quad(&quads.clone(), &parent_idx)?;
+        let parent_quad = get_quad(quads, &parent_idx)?;
         r.parents.insert(q_idx, parent_idx);
 
         let q_key = mk_q_arr_key(&parent_quad)?;
@@ -332,12 +328,12 @@ fn new_relationship(quads: &Vec<Quad>) -> Result<Relationship, MerklizeError> {
     Ok(r)
 }
 
-fn find_parent(quads: &Vec<Quad>, quad: &Quad) -> Result<DatasetIdx, MerklizeError> {
+fn find_parent(quads: &[Quad], quad: &Quad) -> Result<DatasetIdx, MerklizeError> {
     find_parent_inside_graph(quads, quad)
 }
 
-fn find_parent_inside_graph(quads: &Vec<Quad>, quad: &Quad) -> Result<DatasetIdx, MerklizeError> {
-    let q_key = match get_ref_subject(&quad.subject()) {
+fn find_parent_inside_graph(quads: &[Quad], quad: &Quad) -> Result<DatasetIdx, MerklizeError> {
+    let q_key = match get_ref_subject(quad.subject()) {
         Ok(key) => key,
         Err(err) => return Err(err),
     };
@@ -385,7 +381,7 @@ fn count_entries(quads: Vec<Quad>) -> Result<HashMap<QArrKey, i32>, MerklizeErro
     Ok(res)
 }
 
-fn get_quad(quads: &Vec<Quad>, idx: &DatasetIdx) -> Result<Quad, MerklizeError> {
+fn get_quad(quads: &[Quad], idx: &DatasetIdx) -> Result<Quad, MerklizeError> {
     match quads.get(idx.idx as usize) {
         Some(quad) => Ok(quad.clone()),
         None => Err(MerklizeError::ErrorTripleNotFound()),
@@ -405,7 +401,7 @@ fn get_ref_subject(subject: &Subject) -> Result<RefTp, MerklizeError> {
     }
 }
 
-fn mk_q_arr_key<'a>(q: &Quad) -> Result<QArrKey, MerklizeError> {
+fn mk_q_arr_key(q: &Quad) -> Result<QArrKey, MerklizeError> {
     let graph = DEFAULT_GRAPH_NODE_NAME.to_string();
 
     let (subject_tp, subject_val) = match q.subject() {
@@ -447,15 +443,15 @@ fn mk_value_mt_entry(v: RdfEntryValue, hash: &Hasher) -> Result<Vec<u8>, Merkliz
         RdfEntryValue::IntValue(num) => {
             let bytes = num.to_be_bytes();
             let first_non_zero_index = bytes.iter().position(|&b| b != 0).unwrap_or(8);
-            (&bytes[first_non_zero_index..]).to_vec()
+            bytes[first_non_zero_index..].to_vec()
         }
         RdfEntryValue::BoolValue(b) => {
             if b {
                 let input = BigInt::from_i32(1).unwrap();
-                hash.generate_hash_bigints(&vec![input]).to_bytes_be()
+                hash.generate_hash_bigints(&[input]).to_bytes_be()
             } else {
                 let input = BigInt::from_i32(0).unwrap();
-                hash.generate_hash_bigints(&vec![input]).to_bytes_be()
+                hash.generate_hash_bigints(&[input]).to_bytes_be()
             }
         }
         RdfEntryValue::DateTime(date) => {

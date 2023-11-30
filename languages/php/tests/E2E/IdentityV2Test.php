@@ -112,7 +112,7 @@ final class IdentityV2Test extends TestCase
             ->withStringAttribute("car_type", "big")
             ->withIntegerAttribute("car_points", 5)
             ->withDecimalAttribute("precision_wheels", 1.10)
-            ->withSigner(new Signer(new SignerArgs($keyBjj)))
+            ->withSigner(new Signer($keyBjj))
             ->withProofType($proofType)
             ->build();
         $this->assertNotNull($receipt->getCredentialId());
@@ -126,7 +126,7 @@ final class IdentityV2Test extends TestCase
         $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[1]);
 
         $stateReceipt = $identityClient->buildIssuerStatePublisher($issuer)
-            ->withSigner(new Signer(new SignerArgs($keyBjj)))
+            ->withSigner(new Signer($keyBjj))
             ->build();
         $this->assertNotNull($stateReceipt->getTxHash());
 

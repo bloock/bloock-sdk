@@ -115,6 +115,20 @@ class RecordServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
+     * @param \Bloock\GetDetailsRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GetDetails(\Bloock\GetDetailsRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.RecordService/GetDetails',
+        $argument,
+        ['\Bloock\GetDetailsResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
      * @param \Bloock\GetHashRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
@@ -125,6 +139,20 @@ class RecordServiceClient extends \Bloock\Bridge\Connection {
         return $this->_simpleRequest('/bloock.RecordService/GetHash',
         $argument,
         ['\Bloock\GetHashResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\GetPayloadRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GetPayload(\Bloock\GetPayloadRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.RecordService/GetPayload',
+        $argument,
+        ['\Bloock\GetPayloadResponse', 'decode'],
         $metadata, $options);
     }
 

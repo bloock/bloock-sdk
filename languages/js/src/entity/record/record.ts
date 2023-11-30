@@ -1,6 +1,10 @@
 import { BloockBridge } from "../../bridge/bridge";
 import * as proto from "../../bridge/proto/record_entities";
-import { GetHashRequest, SetProofRequest } from "../../bridge/proto/record";
+import {
+  GetHashRequest,
+  GetPayloadRequest,
+  SetProofRequest
+} from "../../bridge/proto/record";
 import { ConfigData } from "../../bridge/proto/config";
 import { Proof } from "../integrity";
 
@@ -42,6 +46,24 @@ export class Record {
           throw res.error;
         }
         return res.hash;
+      });
+  }
+
+  async getPayload(): Promise<Uint8Array> {
+    const bridge = new BloockBridge();
+    return bridge
+      .getRecord()
+      .GetPayload(
+        GetPayloadRequest.fromPartial({
+          configData: this.configData,
+          record: this.toProto()
+        })
+      )
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.payload;
       });
   }
 

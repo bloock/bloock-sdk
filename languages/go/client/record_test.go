@@ -5,9 +5,11 @@ package client
 import (
 	"testing"
 
+	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
 	"github.com/bloock/bloock-sdk-go/v2/entity/availability"
 	"github.com/bloock/bloock-sdk-go/v2/entity/encryption"
 	"github.com/bloock/bloock-sdk-go/v2/entity/integrity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/bloock/bloock-sdk-go/v2/entity/record"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -194,28 +196,28 @@ func TestRecord(t *testing.T) {
 
 	t.Run("record with aes encrypter", func(t *testing.T) {
 		payload := "Hello world 2"
-		password := "some_password"
 		recordClient := NewRecordClient()
+		keyClient := NewKeyClient()
+
+		localKey, err := keyClient.NewLocalKey(key.Aes128)
+		require.NoError(t, err)
+
 		encryptedRecord, err := recordClient.FromString(payload).
-			WithEncrypter(encryption.NewAesEncrypter(encryption.EncrypterArgs{
-				Key: password,
-			})).
+			WithEncrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 
 		require.NoError(t, err)
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
+		invalidKey, err := keyClient.NewLocalKey(key.Aes128)
+		require.NoError(t, err)
 		_, err = recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
-				Key: "incorrect_password",
-			})).
+			WithDecrypter(encryption.NewEncrypterWithLocalKey(invalidKey)).
 			Build()
 		require.Error(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
-				Key: password,
-			})).
+			WithDecrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 
 		require.NoError(t, err)
@@ -228,24 +230,21 @@ func TestRecord(t *testing.T) {
 
 	t.Run("record with rsa encrypter", func(t *testing.T) {
 		payload := "Hello world 2"
-		encryptionClient := NewEncryptionClient()
-		keypair, err := encryptionClient.GenerateRsaKeyPair()
-		assert.NoError(t, err)
+		keyClient := NewKeyClient()
+
+		localKey, err := keyClient.NewLocalKey(key.Rsa4096)
+		require.NoError(t, err)
 
 		recordClient := NewRecordClient()
 		encryptedRecord, err := recordClient.FromString(payload).
-			WithEncrypter(encryption.NewRsaEncrypter(encryption.EncrypterArgs{
-				Key: keypair.PublicKey,
-			})).
+			WithEncrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 
 		require.NoError(t, err)
 		assert.NotEqual(t, payload, string(encryptedRecord.Payload))
 
 		record, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewRsaDecrypter(encryption.DecrypterArgs{
-				Key: keypair.PrivateKey,
-			})).
+			WithDecrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 
 		require.NoError(t, err)
@@ -258,13 +257,15 @@ func TestRecord(t *testing.T) {
 
 	t.Run("record with encrypter and hosted loader", func(t *testing.T) {
 		payload := "Hello world 2"
-		password := "some_password"
+
+		keyClient := NewKeyClient()
+
+		localKey, err := keyClient.NewLocalKey(key.Aes128)
+		require.NoError(t, err)
 
 		recordClient := NewRecordClient()
 		encryptedRecord, err := recordClient.FromString(payload).
-			WithEncrypter(encryption.NewAesEncrypter(encryption.EncrypterArgs{
-				Key: password,
-			})).
+			WithEncrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
@@ -274,9 +275,7 @@ func TestRecord(t *testing.T) {
 		require.NoError(t, err)
 
 		loadedRecord, err := recordClient.FromLoader(availability.NewHostedLoader(result)).
-			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
-				Key: password,
-			})).
+			WithDecrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 		require.NoError(t, err)
 
@@ -289,13 +288,14 @@ func TestRecord(t *testing.T) {
 
 	t.Run("record with encrypter and ipfs loader", func(t *testing.T) {
 		payload := "Hello world 2"
-		password := "some_password"
+		keyClient := NewKeyClient()
+
+		localKey, err := keyClient.NewLocalKey(key.Aes128)
+		require.NoError(t, err)
 
 		recordClient := NewRecordClient()
 		encryptedRecord, err := recordClient.FromString(payload).
-			WithEncrypter(encryption.NewAesEncrypter(encryption.EncrypterArgs{
-				Key: password,
-			})).
+			WithEncrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
@@ -305,9 +305,7 @@ func TestRecord(t *testing.T) {
 		require.NoError(t, err)
 
 		loadedRecord, err := recordClient.FromLoader(availability.NewIpfsLoader(result)).
-			WithDecrypter(encryption.NewAesDecrypter(encryption.DecrypterArgs{
-				Key: password,
-			})).
+			WithDecrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 		require.NoError(t, err)
 
@@ -317,6 +315,68 @@ func TestRecord(t *testing.T) {
 		hash, err := loadedRecord.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash)
+	})
+
+	t.Run("record details signed", func(t *testing.T) {
+		payload := "Hello world 2"
+		keyClient := NewKeyClient()
+
+		localCert, err := keyClient.NewLocalCertificate(key.LocalCertificateParams{
+			KeyType: key.Rsa2048,
+		})
+		assert.NoError(t, err)
+
+		recordClient := NewRecordClient()
+		record, err := recordClient.FromString(payload).
+			WithSigner(authenticity.NewSignerWithLocalCertificate(localCert)).
+			Build()
+
+		require.NoError(t, err)
+
+		recordPayload := record.Retrieve()
+
+		details, err := recordClient.FromFile(recordPayload).GetDetails()
+		require.NoError(t, err)
+
+		assert.NotEmpty(t, details.IntegrityDetails.Hash)
+		assert.Empty(t, details.IntegrityDetails.Proof)
+
+		assert.NotEmpty(t, details.AuthenticityDetails.Signatures)
+
+		assert.Nil(t, details.EncryptionDetails)
+
+		assert.Empty(t, details.AvailabilityDetails.ContentType)
+		assert.Equal(t, int64(len(recordPayload)), details.AvailabilityDetails.Size)
+	})
+
+	t.Run("record details encrypted", func(t *testing.T) {
+		payload := "Hello world 2"
+		keyClient := NewKeyClient()
+
+		localKey, err := keyClient.NewLocalKey(key.Rsa2048)
+		assert.NoError(t, err)
+
+		recordClient := NewRecordClient()
+		record, err := recordClient.FromString(payload).
+			WithEncrypter(encryption.NewEncrypterWithLocalKey(localKey)).
+			Build()
+
+		require.NoError(t, err)
+
+		recordPayload := record.Retrieve()
+
+		details, err := recordClient.FromFile(recordPayload).GetDetails()
+		require.NoError(t, err)
+
+		assert.Nil(t, details.IntegrityDetails)
+		assert.Nil(t, details.AuthenticityDetails)
+
+		assert.Equal(t, encryption.RSA, details.EncryptionDetails.Alg)
+		assert.NotEmpty(t, details.EncryptionDetails.Key)
+		assert.NotEmpty(t, details.EncryptionDetails.Subject)
+
+		assert.Nil(t, details.AvailabilityDetails.ContentType)
+		assert.Equal(t, int64(len(recordPayload)), details.AvailabilityDetails.Size)
 	})
 
 	t.Run("record set proof", func(t *testing.T) {

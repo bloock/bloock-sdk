@@ -6,22 +6,19 @@ import {
   RecordBuilderFromBytesRequest,
   RecordBuilderFromFileRequest,
   RecordBuilderFromRecordRequest,
-  RecordBuilderFromLoaderRequest
+  RecordBuilderFromLoaderRequest,
+  GetDetailsRequest
 } from "../bridge/proto/record";
-
 import { Record } from "../entity/record";
 import { Signer } from "../entity/authenticity";
 import { Encrypter } from "../entity/encryption";
-import { Decrypter } from "../entity/encryption";
 import { Loader } from "../entity/availability";
 import { NewConfigData } from "../config/config";
 import { ConfigData } from "../bridge/proto/config";
 import { RecordTypes } from "../bridge/proto/record_entities";
 import { Signer as SignerProto } from "../bridge/proto/authenticity_entities";
-import {
-  Encrypter as EncrypterProto,
-  Decrypter as DecrypterProto
-} from "../bridge/proto/encryption_entities";
+import { Encrypter as EncrypterProto } from "../bridge/proto/encryption_entities";
+import { RecordDetails } from "../entity/record/record-details";
 
 export class RecordClient {
   private configData: ConfigData;
@@ -68,7 +65,7 @@ export class RecordBuilder {
   payloadType!: RecordTypes;
   signer: SignerProto | undefined;
   encrypter: EncrypterProto | undefined;
-  decrypter: DecrypterProto | undefined;
+  decrypter: EncrypterProto | undefined;
 
   configData: ConfigData;
 
@@ -88,7 +85,7 @@ export class RecordBuilder {
     return this;
   }
 
-  public withDecrypter(decrypter: Decrypter): RecordBuilder {
+  public withDecrypter(decrypter: Encrypter): RecordBuilder {
     this.decrypter = decrypter.toProto();
     return this;
   }
@@ -231,5 +228,23 @@ export class RecordBuilder {
       }
     }
     return Promise.reject(new Error("Unexpected record type"));
+  }
+
+  async getDetails(): Promise<RecordDetails> {
+    const bridge = new BloockBridge();
+    const req = GetDetailsRequest.fromPartial({
+      configData: this.configData,
+      payload: this.payload
+    });
+
+    return bridge
+      .getRecord()
+      .GetDetails(req)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return RecordDetails.fromProto(res.details!);
+      });
   }
 }

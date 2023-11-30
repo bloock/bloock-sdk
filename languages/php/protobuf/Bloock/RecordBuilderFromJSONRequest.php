@@ -30,7 +30,7 @@ class RecordBuilderFromJSONRequest extends \Google\Protobuf\Internal\Message
      */
     protected $encrypter = null;
     /**
-     * Generated from protobuf field <code>optional .bloock.Decrypter decrypter = 5;</code>
+     * Generated from protobuf field <code>optional .bloock.Encrypter decrypter = 5;</code>
      */
     protected $decrypter = null;
 
@@ -44,7 +44,7 @@ class RecordBuilderFromJSONRequest extends \Google\Protobuf\Internal\Message
      *     @type string $payload
      *     @type \Bloock\Signer $signer
      *     @type \Bloock\Encrypter $encrypter
-     *     @type \Bloock\Decrypter $decrypter
+     *     @type \Bloock\Encrypter $decrypter
      * }
      */
     public function __construct($data = NULL) {
@@ -171,8 +171,8 @@ class RecordBuilderFromJSONRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.Decrypter decrypter = 5;</code>
-     * @return \Bloock\Decrypter|null
+     * Generated from protobuf field <code>optional .bloock.Encrypter decrypter = 5;</code>
+     * @return \Bloock\Encrypter|null
      */
     public function getDecrypter()
     {
@@ -190,13 +190,13 @@ class RecordBuilderFromJSONRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.Decrypter decrypter = 5;</code>
-     * @param \Bloock\Decrypter $var
+     * Generated from protobuf field <code>optional .bloock.Encrypter decrypter = 5;</code>
+     * @param \Bloock\Encrypter $var
      * @return $this
      */
     public function setDecrypter($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\Decrypter::class);
+        GPBUtil::checkMessage($var, \Bloock\Encrypter::class);
         $this->decrypter = $var;
 
         return $this;

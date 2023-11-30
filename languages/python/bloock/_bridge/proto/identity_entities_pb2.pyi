@@ -481,14 +481,19 @@ class SignatureHeaderJWS(google.protobuf.message.Message):
 
     ALG_FIELD_NUMBER: builtins.int
     KID_FIELD_NUMBER: builtins.int
+    SUBJECT_FIELD_NUMBER: builtins.int
     alg: builtins.str
     kid: builtins.str
+    subject: builtins.str
     def __init__(
         self,
         *,
         alg: builtins.str = ...,
         kid: builtins.str = ...,
+        subject: builtins.str | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["alg", b"alg", "kid", b"kid"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_subject", b"_subject", "subject", b"subject"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_subject", b"_subject", "alg", b"alg", "kid", b"kid", "subject", b"subject"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_subject", b"_subject"]) -> typing_extensions.Literal["subject"] | None: ...
 
 global___SignatureHeaderJWS = SignatureHeaderJWS

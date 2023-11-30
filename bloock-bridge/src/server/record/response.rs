@@ -1,7 +1,8 @@
 use crate::items::{
-    GetHashRequest, RecordBuilderFromBytesRequest, RecordBuilderFromFileRequest,
-    RecordBuilderFromHexRequest, RecordBuilderFromJsonRequest, RecordBuilderFromLoaderRequest,
-    RecordBuilderFromRecordRequest, RecordBuilderFromStringRequest, SetProofRequest,
+    GetDetailsRequest, GetDetailsResponse, GetHashRequest, GetPayloadRequest, GetPayloadResponse,
+    RecordBuilderFromBytesRequest, RecordBuilderFromFileRequest, RecordBuilderFromHexRequest,
+    RecordBuilderFromJsonRequest, RecordBuilderFromLoaderRequest, RecordBuilderFromRecordRequest,
+    RecordBuilderFromStringRequest, SetProofRequest,
 };
 use crate::{
     error::BridgeError,
@@ -93,10 +94,34 @@ impl ResponseTypeError<RecordBuilderFromStringRequest> for RecordBuilderResponse
     }
 }
 
+impl ResponseTypeError<GetDetailsRequest> for GetDetailsResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            details: None,
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
 impl ResponseTypeError<GetHashRequest> for GetHashResponse {
     fn build_error(err: String) -> Self {
         Self {
             hash: "".to_string(),
+            error: Some(Error {
+                kind: BridgeError::RecordError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<GetPayloadRequest> for GetPayloadResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            payload: vec![],
             error: Some(Error {
                 kind: BridgeError::RecordError.to_string(),
                 message: err,

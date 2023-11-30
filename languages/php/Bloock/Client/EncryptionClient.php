@@ -65,7 +65,7 @@ class EncryptionClient
         return Record::fromProto($res->getRecord(), $this->config);
     }
 
-    public function decrypt(Record $record, Decrypter $decrypter): Record
+    public function decrypt(Record $record, Encrypter $decrypter): Record
     {
         $req = new DecryptRequest();
         $req->setConfigData($this->config)->setRecord($record->toProto())->setDecrypter($decrypter->toProto());

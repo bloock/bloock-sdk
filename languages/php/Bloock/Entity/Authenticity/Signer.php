@@ -2,39 +2,55 @@
 
 namespace Bloock\Entity\Authenticity;
 
-use Bloock\SignerAlg;
+use Exception;
+use Bloock\Entity\Key\LocalKey;
+use Bloock\Entity\Key\ManagedKey;
+use Bloock\Entity\Key\LocalCertificate;
+use Bloock\Entity\Key\ManagedCertificate;
 
 class Signer
 {
-    public SignerArgs $args;
+    public ?LocalKey $localKey = null;
+    public ?ManagedKey $managedKey = null;
+    public ?ManagedCertificate $managedCertificate = null;
+    public ?LocalCertificate $localCertificate = null;
 
-    public function __construct(SignerArgs $args)
+    /**
+     * @throws Exception
+     */
+    public function __construct($key)
     {
-        $this->args = $args;
+        if ($key instanceof LocalKey) {
+            $this->localKey = $key;
+        } else if ($key instanceof ManagedKey) {
+            $this->managedKey = $key;
+        } else if ($key instanceof ManagedCertificate) {
+            $this->managedCertificate = $key;
+        } else if ($key instanceof LocalCertificate) {
+            $this->localCertificate = $key;
+        } else {
+            throw new Exception("Invalid key provided");
+        }
     }
 
     public function toProto(): \Bloock\Signer
     {
         $s = new \Bloock\Signer();
 
-        if ($this->args->localKey != null) {
-            $s->setLocalKey($this->args->localKey->toProto());
+        if ($this->localKey != null) {
+            $s->setLocalKey($this->localKey->toProto());
         }
 
-        if ($this->args->managedKey != null) {
-            $s->setManagedKey($this->args->managedKey->toProto());
+        if ($this->managedKey != null) {
+            $s->setManagedKey($this->managedKey->toProto());
         }
 
-        if ($this->args->managedCertificate != null) {
-            $s->setManagedCertificate($this->args->managedCertificate->toProto());
+        if ($this->managedCertificate != null) {
+            $s->setManagedCertificate($this->managedCertificate->toProto());
         }
 
-        if ($this->args->localCertificate != null) {
-            $s->setLocalCertificate($this->args->localCertificate->toProto());
-        }
-
-        if ($this->args->commonName != null) {
-            $s->setCommonName($this->args->commonName);
+        if ($this->localCertificate != null) {
+            $s->setLocalCertificate($this->localCertificate->toProto());
         }
 
         return $s;

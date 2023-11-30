@@ -9,7 +9,7 @@ use tiny_keccak::Keccak;
 pub struct Hasher {}
 
 impl Hasher {
-    pub fn generate_hash_bigints(&self, input: &Vec<BigInt>) -> BigUint {
+    pub fn generate_hash_bigints(&self, input: &[BigInt]) -> BigUint {
         let mut to_hash: Vec<Fr> = Vec::new();
 
         let input_string: Vec<String> = input.iter().map(|big_int| big_int.to_string()).collect();
@@ -24,7 +24,7 @@ impl Hasher {
     }
 
     pub fn generate_hash_bytes(&self, data: &[u8]) -> BigUint {
-        let h = POSEIDON.hash_bytes(&data).unwrap();
+        let h = POSEIDON.hash_bytes(data).unwrap();
 
         h.bigint()
     }

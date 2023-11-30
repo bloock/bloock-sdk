@@ -1,8 +1,6 @@
 import {
   RecordClient,
   IntegrityClient,
-  AesDecrypter,
-  AesEncrypter,
   AnchorNetwork,
   EncryptionAlg,
   EncryptionClient,
@@ -12,9 +10,13 @@ import {
   IpfsPublisher,
   Proof,
   ProofAnchor,
-  RsaDecrypter,
-  RsaEncrypter,
-  AvailabilityClient
+  AvailabilityClient,
+  KeyClient,
+  KeyType,
+  Signer,
+  LocalCertificateParams,
+  SubjectCertificateParams,
+  Encrypter
 } from "../../dist/index";
 import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
@@ -181,7 +183,7 @@ describe("Record Tests", () => {
     let recordClient = new RecordClient();
     let encrypted_record = await recordClient
       .fromString(payload)
-      .withEncrypter(new AesEncrypter(password))
+      .withEncrypter(new Encrypter(password))
       .build();
 
     expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
@@ -196,12 +198,12 @@ describe("Record Tests", () => {
     await expect(
       recordClient
         .fromRecord(encrypted_record)
-        .withDecrypter(new AesDecrypter("incorrect_password")).build
+        .withDecrypter(new Encrypter("incorrect_password")).build
     ).rejects.toThrow();
 
     let decrypted_record = await recordClient
       .fromRecord(encrypted_record)
-      .withDecrypter(new AesDecrypter(password))
+      .withDecrypter(new Encrypter(password))
       .build();
 
     expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
@@ -217,12 +219,13 @@ describe("Record Tests", () => {
 
     let payload = "Hello world 2";
     let encryptionClient = new EncryptionClient();
-    let keypair = await encryptionClient.generateRsaKeyPair();
+    let keyClient = new KeyClient();
+    let key = await keyClient.newLocalKey(KeyType.Rsa2048);
 
     let recordClient = new RecordClient();
     let encrypted_record = await recordClient
       .fromString(payload)
-      .withEncrypter(new RsaEncrypter(keypair.publicKey))
+      .withEncrypter(new Encrypter(key))
       .build();
 
     expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
@@ -235,7 +238,7 @@ describe("Record Tests", () => {
 
     let decrypted_record = await recordClient
       .fromRecord(encrypted_record)
-      .withDecrypter(new RsaDecrypter(keypair.privateKey))
+      .withDecrypter(new Encrypter(key))
       .build();
 
     expect(String.fromCharCode(...decrypted_record.payload)).toEqual(payload);
@@ -254,7 +257,7 @@ describe("Record Tests", () => {
     let recordClient = new RecordClient();
     let encrypted_record = await recordClient
       .fromString(payload)
-      .withEncrypter(new AesEncrypter(password))
+      .withEncrypter(new Encrypter(password))
       .build();
 
     expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
@@ -269,7 +272,7 @@ describe("Record Tests", () => {
 
     let loaded_record = await recordClient
       .fromLoader(new HostedLoader(result))
-      .withDecrypter(new AesDecrypter(password))
+      .withDecrypter(new Encrypter(password))
       .build();
 
     expect(String.fromCharCode(...loaded_record.payload)).toEqual(payload);
@@ -288,7 +291,7 @@ describe("Record Tests", () => {
     let recordClient = new RecordClient();
     let encrypted_record = await recordClient
       .fromString(payload)
-      .withEncrypter(new AesEncrypter(password))
+      .withEncrypter(new Encrypter(password))
       .build();
 
     expect(String.fromCharCode(...encrypted_record.payload)).not.toEqual(
@@ -303,7 +306,7 @@ describe("Record Tests", () => {
 
     let loaded_record = await recordClient
       .fromLoader(new IpfsLoader(result))
-      .withDecrypter(new AesDecrypter(password))
+      .withDecrypter(new Encrypter(password))
       .build();
 
     expect(String.fromCharCode(...loaded_record.payload)).toEqual(payload);
@@ -312,6 +315,66 @@ describe("Record Tests", () => {
     expect(hash).toEqual(
       "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6"
     );
+  });
+
+  test("record details encrypted", async () => {
+    initSdk();
+
+    let payload = "Hello world 2";
+    let recordClient = new RecordClient();
+    let keyClient = new KeyClient();
+
+    let key = await keyClient.newLocalKey(KeyType.Rsa2048);
+    let record = await recordClient
+      .fromString(payload)
+      .withEncrypter(new Encrypter(key))
+      .build();
+
+    let recordPayload = record.retrieve();
+    let details = await recordClient.fromFile(recordPayload).getDetails();
+
+    expect(details.integrity).toBeUndefined();
+    expect(details.authenticity).toBeUndefined();
+
+    expect(details.encryption?.alg).toEqual(EncryptionAlg.RSA);
+    expect(details.encryption?.key).toBeTruthy();
+    expect(details.encryption?.subject).toBeDefined();
+
+    expect(details.availability?.contentType).toBeUndefined();
+    expect(details.availability?.size).toEqual(recordPayload.length);
+  });
+
+  test("record details signed", async () => {
+    initSdk();
+
+    let payload = "Hello world 2";
+    let recordClient = new RecordClient();
+    let keyClient = new KeyClient();
+
+    let cert = await keyClient.newLocalCertificate(
+      new LocalCertificateParams(
+        KeyType.Rsa2048,
+        new SubjectCertificateParams("Bloock"),
+        "password",
+        0
+      )
+    );
+    let record = await recordClient
+      .fromString(payload)
+      .withSigner(new Signer(cert))
+      .build();
+
+    let recordPayload = record.retrieve();
+    let details = await recordClient.fromFile(recordPayload).getDetails();
+
+    expect(details.integrity?.hash).toBeTruthy();
+    expect(details.integrity?.proof).not.toBeTruthy();
+
+    expect(details.authenticity?.signatures).toBeTruthy();
+
+    expect(details.encryption).toBeUndefined();
+
+    expect(details.availability?.size).toEqual(recordPayload.length);
   });
 
   test("record set proof", async () => {

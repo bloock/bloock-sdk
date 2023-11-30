@@ -1,9 +1,19 @@
 use crate::{
     error::{BridgeError, BridgeResult},
-    items::Record,
+    items::{
+        AuthenticityDetails, AvailabilityDetails, EncryptionAlg, EncryptionDetails,
+        IntegrityDetails, Record, RecordDetails,
+    },
     server::config::entity::map_config,
 };
-use bloock_core::record::{document::Document, entity::record::Record as RecordCore};
+use bloock_core::record::{
+    document::Document, entity::record::Record as RecordCore,
+    entity::record_details::AuthenticityDetails as AuthenticityDetailsCore,
+    entity::record_details::AvailabilityDetails as AvailabilityDetailsCore,
+    entity::record_details::EncryptionDetails as EncryptionDetailsCore,
+    entity::record_details::IntegrityDetails as IntegrityDetailsCore,
+    entity::record_details::RecordDetails as RecordDetailsCore,
+};
 use std::convert::TryFrom;
 
 impl TryFrom<Record> for RecordCore {
@@ -38,5 +48,52 @@ impl TryFrom<RecordCore> for Record {
             payload,
             hash,
         })
+    }
+}
+
+impl From<IntegrityDetailsCore> for IntegrityDetails {
+    fn from(r: IntegrityDetailsCore) -> Self {
+        Self {
+            hash: r.hash,
+            proof: r.proof.map(|p| p.into()),
+        }
+    }
+}
+
+impl From<AuthenticityDetailsCore> for AuthenticityDetails {
+    fn from(r: AuthenticityDetailsCore) -> Self {
+        Self {
+            signatures: r.signatures.iter().map(|s| s.clone().into()).collect(),
+        }
+    }
+}
+
+impl From<EncryptionDetailsCore> for EncryptionDetails {
+    fn from(r: EncryptionDetailsCore) -> Self {
+        Self {
+            alg: r.encrypt_alg.map(|a| EncryptionAlg::from(a).into()),
+            key: r.key.clone().map(|k| k.key),
+            subject: r.key.and_then(|k| k.subject),
+        }
+    }
+}
+
+impl From<AvailabilityDetailsCore> for AvailabilityDetails {
+    fn from(r: AvailabilityDetailsCore) -> Self {
+        Self {
+            size: r.size as i64,
+            r#type: r.content_type,
+        }
+    }
+}
+
+impl From<RecordDetailsCore> for RecordDetails {
+    fn from(r: RecordDetailsCore) -> Self {
+        Self {
+            integrity: r.integrity.map(|i| i.into()),
+            authenticity: r.authenticity.map(|i| i.into()),
+            encryption: r.encryption.map(|i| i.into()),
+            availability: r.availability.map(|i| i.into()),
+        }
     }
 }

@@ -44,7 +44,7 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::EcP256k);
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+        $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
     }
@@ -62,7 +62,7 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::Bjj);
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+        $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
     }
@@ -80,7 +80,7 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::Rsa2048);
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+        $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
     }
@@ -98,7 +98,7 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+        $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
     }
@@ -116,7 +116,7 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Bjj));
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+        $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
     }
@@ -134,7 +134,7 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Rsa2048));
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+        $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
     }
@@ -150,7 +150,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -167,7 +167,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::Bjj);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -184,7 +184,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::Rsa2048);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -201,7 +201,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -218,7 +218,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Bjj));
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -235,7 +235,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Rsa2048));
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -254,7 +254,7 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::EcP256k);
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+        $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
     }
@@ -272,7 +272,7 @@ final class AuthenticityTest extends TestCase
 
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($key)));
+        $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
     }
@@ -288,7 +288,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -305,7 +305,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $valid = $authenticityClient->verify($record);
         $this->assertTrue($valid);
@@ -322,7 +322,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
 
@@ -341,7 +341,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
 
@@ -387,7 +387,7 @@ final class AuthenticityTest extends TestCase
         $keyClient = new KeyClient();
         $key = $keyClient->newLocalKey(KeyType::EcP256k);
 
-        $record = $recordClient->fromString("Hello world")->withSigner(new Signer(new SignerArgs($key)))->build();
+        $record = $recordClient->fromString("Hello world")->withSigner(new Signer($key))->build();
 
         $signatures = $authenticityClient->getSignatures($record);
         $signature = $signatures[0];

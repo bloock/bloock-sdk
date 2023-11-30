@@ -7,7 +7,10 @@ use x509_cert::{
     Certificate,
 };
 
-use crate::{entity::key::Key, KeyType};
+use crate::{
+    entity::key::{Key, Local, Managed},
+    KeyType,
+};
 
 use self::{
     local::{LocalCertificate, LocalCertificateParams, LocalCertificateWithKeyParams},
@@ -76,12 +79,27 @@ impl GetX509Certficate for Key {
         environment: Option<String>,
     ) -> Option<Certificate> {
         match self {
-            Key::LocalKey(key) => {
+            Key::Local(l) => l.get_certificate(api_host, api_key, environment).await,
+            Key::Managed(m) => m.get_certificate(api_host, api_key, environment).await,
+        }
+    }
+}
+
+#[async_trait(?Send)]
+impl GetX509Certficate for Local {
+    async fn get_certificate(
+        &self,
+        _api_host: String,
+        _api_key: String,
+        _environment: Option<String>,
+    ) -> Option<Certificate> {
+        match self {
+            Local::Key(key) => {
                 let params = LocalCertificateWithKeyParams {
                     key,
-                    password: "bloock".to_string(),
+                    password: "".to_string(),
                     subject: CertificateSubject {
-                        common_name: "Self Bloock".to_string(),
+                        common_name: "Self-issued".to_string(),
                         organizational_unit: None,
                         organization: None,
                         location: None,
@@ -90,23 +108,32 @@ impl GetX509Certficate for Key {
                     },
                     expiration: 1,
                 };
-                let certificate = LocalCertificate::new_from_key(&params).unwrap();
+                let certificate = LocalCertificate::new_from_key(&params).ok()?;
                 Some(certificate.certificate)
             }
-            Key::ManagedKey(_) => Some(create_self_certificate()),
-            Key::LocalCertificate(local_certificate) => {
-                local_certificate.get_certificate_inner().ok()
-            }
-            Key::ManagedCertificate(managed_certificate) => {
-                ManagedCertificate::load_x509_certificate(
-                    managed_certificate.id.clone(),
-                    api_host,
-                    api_key,
-                    environment,
-                )
-                .await
-                .ok()
-            }
+            Local::Certificate(local_certificate) => local_certificate.get_certificate_inner().ok(),
+        }
+    }
+}
+
+#[async_trait(?Send)]
+impl GetX509Certficate for Managed {
+    async fn get_certificate(
+        &self,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Option<Certificate> {
+        match self {
+            Managed::Key(_) => Some(create_self_certificate()),
+            Managed::Certificate(managed_certificate) => ManagedCertificate::load_x509_certificate(
+                managed_certificate.id.clone(),
+                api_host,
+                api_key,
+                environment,
+            )
+            .await
+            .ok(),
         }
     }
 }

@@ -4,7 +4,6 @@ from bloock.client.authenticity import AuthenticityClient
 from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
 from bloock.entity.authenticity.signer import Signer
-from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed_key_params import ManagedKeyParams
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
@@ -33,7 +32,7 @@ class TestAuthenticity(unittest.TestCase):
         key = key_client.new_local_key(KeyType.EcP256k)
 
         authenticity_client = AuthenticityClient()
-        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
     def test_sign_local_bjj(self):
@@ -45,7 +44,7 @@ class TestAuthenticity(unittest.TestCase):
         key = key_client.new_local_key(KeyType.Bjj)
 
         authenticity_client = AuthenticityClient()
-        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
     def test_sign_local_rsa(self):
@@ -57,7 +56,7 @@ class TestAuthenticity(unittest.TestCase):
         key = key_client.new_local_key(KeyType.Rsa2048)
 
         authenticity_client = AuthenticityClient()
-        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
     def test_sign_managed_bjj(self):
@@ -69,7 +68,7 @@ class TestAuthenticity(unittest.TestCase):
         key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
 
         authenticity_client = AuthenticityClient()
-        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
     def test_sign_managed_rsa(self):
@@ -81,7 +80,7 @@ class TestAuthenticity(unittest.TestCase):
         key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
 
         authenticity_client = AuthenticityClient()
-        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
     def test_verify_local_ecdsa(self):
@@ -93,7 +92,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 
@@ -109,7 +108,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 
@@ -125,7 +124,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 
@@ -141,7 +140,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 
@@ -157,7 +156,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 
@@ -173,7 +172,7 @@ class TestAuthenticity(unittest.TestCase):
         key_client = KeyClient()
         key = key_client.new_local_key(KeyType.EcP256k)
 
-        signature = authenticity_client.sign(record, Signer(SignerArgs(key)))
+        signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
     def test_verify_local_ens(self):
@@ -184,7 +183,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 
@@ -199,7 +198,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 
@@ -215,7 +214,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 
@@ -251,7 +250,7 @@ class TestAuthenticity(unittest.TestCase):
         record_client = RecordClient()
         record = (
             record_client.from_string("Hello world")
-            .with_signer(Signer(SignerArgs(key)))
+            .with_signer(Signer(key))
             .build()
         )
 

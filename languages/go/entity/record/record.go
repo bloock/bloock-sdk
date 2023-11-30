@@ -50,6 +50,21 @@ func (r *Record) GetHash() (string, error) {
 	return res.Hash, nil
 }
 
+func (r *Record) GetPayload() ([]byte, error) {
+	bridgeClient := bridge.NewBloockBridge()
+	res, err := bridgeClient.Record().GetPayload(context.Background(), &proto.GetPayloadRequest{ConfigData: r.configData, Record: r.ToProto()})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if res.Error != nil {
+		return nil, errors.New(res.Error.Message)
+	}
+
+	return res.Payload, nil
+}
+
 func (r *Record) Retrieve() []byte {
 	return r.Payload
 }

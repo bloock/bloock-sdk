@@ -10,9 +10,9 @@ import com.bloock.sdk.bridge.proto.RecordEntities;
 import com.bloock.sdk.bridge.proto.RecordEntities.RecordTypes;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.entity.authenticity.Signer;
-import com.bloock.sdk.entity.encryption.Decrypter;
 import com.bloock.sdk.entity.encryption.Encrypter;
 import com.bloock.sdk.entity.record.Record;
+import com.bloock.sdk.entity.record.RecordDetails;
 import com.google.protobuf.ByteString;
 
 public class RecordBuilder {
@@ -21,7 +21,7 @@ public class RecordBuilder {
   ConfigData configData;
   AuthenticityEntities.Signer signer;
   EncryptionEntities.Encrypter encrypter;
-  EncryptionEntities.Decrypter decrypter;
+  EncryptionEntities.Encrypter decrypter;
 
   RecordBuilder(Object payload, RecordTypes type, ConfigData configData) {
     this.payload = payload;
@@ -39,7 +39,7 @@ public class RecordBuilder {
     return this;
   }
 
-  public RecordBuilder withDecrypter(Decrypter decrypter) {
+  public RecordBuilder withDecrypter(Encrypter decrypter) {
     this.decrypter = decrypter.toProto();
     return this;
   }
@@ -51,145 +51,145 @@ public class RecordBuilder {
 
     switch (this.type) {
       case BYTES:
-        {
-          RecordBuilderFromBytesRequest.Builder builder =
-              RecordBuilderFromBytesRequest.newBuilder()
-                  .setConfigData(this.configData)
-                  .setPayload(ByteString.copyFrom((byte[]) this.payload));
+      {
+        RecordBuilderFromBytesRequest.Builder builder =
+                RecordBuilderFromBytesRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setPayload(ByteString.copyFrom((byte[]) this.payload));
 
-          if (this.signer != null) {
-            builder.setSigner(this.signer);
-          }
-          if (this.encrypter != null) {
-            builder.setEncrypter(this.encrypter);
-          }
-          if (this.decrypter != null) {
-            builder.setDecrypter(this.decrypter);
-          }
-
-          response = bridge.getRecord().buildRecordFromBytes(builder.build());
-          break;
+        if (this.signer != null) {
+          builder.setSigner(this.signer);
         }
+        if (this.encrypter != null) {
+          builder.setEncrypter(this.encrypter);
+        }
+        if (this.decrypter != null) {
+          builder.setDecrypter(this.decrypter);
+        }
+
+        response = bridge.getRecord().buildRecordFromBytes(builder.build());
+        break;
+      }
       case FILE:
-        {
-          RecordBuilderFromFileRequest.Builder builder =
-              RecordBuilderFromFileRequest.newBuilder()
-                  .setConfigData(this.configData)
-                  .setPayload(ByteString.copyFrom((byte[]) this.payload));
+      {
+        RecordBuilderFromFileRequest.Builder builder =
+                RecordBuilderFromFileRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setPayload(ByteString.copyFrom((byte[]) this.payload));
 
-          if (this.signer != null) {
-            builder.setSigner(this.signer);
-          }
-          if (this.encrypter != null) {
-            builder.setEncrypter(this.encrypter);
-          }
-          if (this.decrypter != null) {
-            builder.setDecrypter(this.decrypter);
-          }
-
-          response = bridge.getRecord().buildRecordFromFile(builder.build());
-          break;
+        if (this.signer != null) {
+          builder.setSigner(this.signer);
         }
+        if (this.encrypter != null) {
+          builder.setEncrypter(this.encrypter);
+        }
+        if (this.decrypter != null) {
+          builder.setDecrypter(this.decrypter);
+        }
+
+        response = bridge.getRecord().buildRecordFromFile(builder.build());
+        break;
+      }
       case HEX:
-        {
-          RecordBuilderFromHexRequest.Builder builder =
-              RecordBuilderFromHexRequest.newBuilder()
-                  .setConfigData(this.configData)
-                  .setPayload((String) this.payload);
+      {
+        RecordBuilderFromHexRequest.Builder builder =
+                RecordBuilderFromHexRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setPayload((String) this.payload);
 
-          if (this.signer != null) {
-            builder.setSigner(this.signer);
-          }
-          if (this.encrypter != null) {
-            builder.setEncrypter(this.encrypter);
-          }
-          if (this.decrypter != null) {
-            builder.setDecrypter(this.decrypter);
-          }
-
-          response = bridge.getRecord().buildRecordFromHex(builder.build());
-          break;
+        if (this.signer != null) {
+          builder.setSigner(this.signer);
         }
+        if (this.encrypter != null) {
+          builder.setEncrypter(this.encrypter);
+        }
+        if (this.decrypter != null) {
+          builder.setDecrypter(this.decrypter);
+        }
+
+        response = bridge.getRecord().buildRecordFromHex(builder.build());
+        break;
+      }
       case JSON:
-        {
-          RecordBuilderFromJSONRequest.Builder builder =
-              RecordBuilderFromJSONRequest.newBuilder()
-                  .setConfigData(this.configData)
-                  .setPayload((String) this.payload);
+      {
+        RecordBuilderFromJSONRequest.Builder builder =
+                RecordBuilderFromJSONRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setPayload((String) this.payload);
 
-          if (this.signer != null) {
-            builder.setSigner(this.signer);
-          }
-          if (this.encrypter != null) {
-            builder.setEncrypter(this.encrypter);
-          }
-          if (this.decrypter != null) {
-            builder.setDecrypter(this.decrypter);
-          }
-
-          response = bridge.getRecord().buildRecordFromJson(builder.build());
-          break;
+        if (this.signer != null) {
+          builder.setSigner(this.signer);
         }
+        if (this.encrypter != null) {
+          builder.setEncrypter(this.encrypter);
+        }
+        if (this.decrypter != null) {
+          builder.setDecrypter(this.decrypter);
+        }
+
+        response = bridge.getRecord().buildRecordFromJson(builder.build());
+        break;
+      }
       case RECORD:
-        {
-          RecordBuilderFromRecordRequest.Builder builder =
-              RecordBuilderFromRecordRequest.newBuilder()
-                  .setConfigData(this.configData)
-                  .setPayload((RecordEntities.Record) this.payload);
+      {
+        RecordBuilderFromRecordRequest.Builder builder =
+                RecordBuilderFromRecordRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setPayload((RecordEntities.Record) this.payload);
 
-          if (this.signer != null) {
-            builder.setSigner(this.signer);
-          }
-          if (this.encrypter != null) {
-            builder.setEncrypter(this.encrypter);
-          }
-          if (this.decrypter != null) {
-            builder.setDecrypter(this.decrypter);
-          }
-
-          response = bridge.getRecord().buildRecordFromRecord(builder.build());
-          break;
+        if (this.signer != null) {
+          builder.setSigner(this.signer);
         }
+        if (this.encrypter != null) {
+          builder.setEncrypter(this.encrypter);
+        }
+        if (this.decrypter != null) {
+          builder.setDecrypter(this.decrypter);
+        }
+
+        response = bridge.getRecord().buildRecordFromRecord(builder.build());
+        break;
+      }
       case STRING:
-        {
-          RecordBuilderFromStringRequest.Builder builder =
-              RecordBuilderFromStringRequest.newBuilder()
-                  .setConfigData(this.configData)
-                  .setPayload((String) this.payload);
+      {
+        RecordBuilderFromStringRequest.Builder builder =
+                RecordBuilderFromStringRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setPayload((String) this.payload);
 
-          if (this.signer != null) {
-            builder.setSigner(this.signer);
-          }
-          if (this.encrypter != null) {
-            builder.setEncrypter(this.encrypter);
-          }
-          if (this.decrypter != null) {
-            builder.setDecrypter(this.decrypter);
-          }
-
-          response = bridge.getRecord().buildRecordFromString(builder.build());
-          break;
+        if (this.signer != null) {
+          builder.setSigner(this.signer);
         }
+        if (this.encrypter != null) {
+          builder.setEncrypter(this.encrypter);
+        }
+        if (this.decrypter != null) {
+          builder.setDecrypter(this.decrypter);
+        }
+
+        response = bridge.getRecord().buildRecordFromString(builder.build());
+        break;
+      }
       case LOADER:
-        {
-          RecordBuilderFromLoaderRequest.Builder builder =
-              RecordBuilderFromLoaderRequest.newBuilder()
-                  .setConfigData(this.configData)
-                  .setLoader((AvailabilityEntities.Loader) this.payload);
+      {
+        RecordBuilderFromLoaderRequest.Builder builder =
+                RecordBuilderFromLoaderRequest.newBuilder()
+                        .setConfigData(this.configData)
+                        .setLoader((AvailabilityEntities.Loader) this.payload);
 
-          if (this.signer != null) {
-            builder.setSigner(this.signer);
-          }
-          if (this.encrypter != null) {
-            builder.setEncrypter(this.encrypter);
-          }
-          if (this.decrypter != null) {
-            builder.setDecrypter(this.decrypter);
-          }
-
-          response = bridge.getRecord().buildRecordFromLoader(builder.build());
-          break;
+        if (this.signer != null) {
+          builder.setSigner(this.signer);
         }
+        if (this.encrypter != null) {
+          builder.setEncrypter(this.encrypter);
+        }
+        if (this.decrypter != null) {
+          builder.setDecrypter(this.decrypter);
+        }
+
+        response = bridge.getRecord().buildRecordFromLoader(builder.build());
+        break;
+      }
       default:
         throw new Exception("Invalid type");
     }
@@ -199,5 +199,20 @@ public class RecordBuilder {
     }
 
     return Record.fromProto(response.getRecord(), this.configData);
+  }
+
+  public RecordDetails getDetails() throws Exception {
+    Bridge bridge = new Bridge();
+
+    GetDetailsRequest.Builder builder =
+            GetDetailsRequest.newBuilder().setConfigData(this.configData).setPayload(ByteString.copyFrom((byte[]) this.payload));
+
+    GetDetailsResponse response = bridge.getRecord().getDetails(builder.build());
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return RecordDetails.fromProto(response.getDetails());
   }
 }

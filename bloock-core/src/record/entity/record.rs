@@ -3,7 +3,7 @@ use crate::{
     integrity::{entity::proof::Proof, IntegrityError},
     record::{document::Document, RecordError},
 };
-use bloock_encrypter::{entity::alg::EncryptionAlg, Decrypter, Encrypter};
+use bloock_encrypter::entity::alg::EncryptionAlg;
 use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
 use bloock_keys::entity::key::Key;
 use bloock_signer::entity::signature::Signature;
@@ -68,23 +68,23 @@ impl Record {
         Ok(signature)
     }
 
-    pub async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<()> {
+    pub async fn encrypt(&mut self, key: &Key) -> BloockResult<()> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
 
-        doc.encrypt(encrypter).await?;
+        doc.encrypt(key).await?;
         Ok(())
     }
 
-    pub async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<()> {
+    pub async fn decrypt(&mut self, key: &Key) -> BloockResult<()> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
 
-        doc.decrypt(decrypter).await?;
+        doc.decrypt(key).await?;
         Ok(())
     }
 
@@ -96,12 +96,12 @@ impl Record {
         self.hash
     }
 
-    /*pub fn get_payload(&self) -> Option<&Vec<u8>> {
+    pub fn get_payload(&self) -> Option<Vec<u8>> {
         match &self.document {
-            Some(d) => Some(&d.payload),
+            Some(d) => d.get_payload().ok(),
             None => None,
         }
-    }*/
+    }
 
     pub fn get_signatures(&self) -> Option<Vec<Signature>> {
         match &self.document {
@@ -265,7 +265,9 @@ mod tests {
         };
 
         let signature = document
-            .sign(&bloock_keys::entity::key::Key::LocalKey(local_key))
+            .sign(&bloock_keys::entity::key::Key::Local(
+                bloock_keys::entity::key::Local::Key(local_key),
+            ))
             .await
             .unwrap();
 

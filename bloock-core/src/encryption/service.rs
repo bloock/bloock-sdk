@@ -1,6 +1,6 @@
 use crate::{config::service::ConfigService, error::BloockResult, record::entity::record::Record};
-use bloock_encrypter::{Decrypter, Encrypter};
 use bloock_http::Client;
+use bloock_keys::entity::key::Key;
 use std::sync::Arc;
 
 use super::EncryptionError;
@@ -11,23 +11,15 @@ pub struct EncryptionService<H: Client> {
 }
 
 impl<H: Client> EncryptionService<H> {
-    pub async fn encrypt(
-        &self,
-        mut record: Record,
-        encrypter: Box<dyn Encrypter>,
-    ) -> BloockResult<Record> {
+    pub async fn encrypt(&self, mut record: Record, key: &Key) -> BloockResult<Record> {
         record
-            .encrypt(encrypter)
+            .encrypt(key)
             .await
             .map_err(|e| EncryptionError::EncryptionError(e.to_string()))?;
         Ok(record)
     }
 
-    pub async fn decrypt(
-        &self,
-        mut record: Record,
-        decrypter: Box<dyn Decrypter>,
-    ) -> BloockResult<Record> {
+    pub async fn decrypt(&self, mut record: Record, key: &Key) -> BloockResult<Record> {
         let doc = match record.document.clone() {
             Some(doc) => doc,
             None => return Err(EncryptionError::PayloadNotFoundError().into()),
@@ -38,7 +30,7 @@ impl<H: Client> EncryptionService<H> {
         }
 
         record
-            .decrypt(decrypter)
+            .decrypt(key)
             .await
             .map_err(|e| EncryptionError::DecryptionError(e.to_string()))?;
 
@@ -51,8 +43,6 @@ mod tests {
     use crate::encryption;
     use crate::record::document::Document;
     use crate::record::entity::record::Record;
-    use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
-    use bloock_encrypter::local::rsa::{LocalRsaDecrypter, LocalRsaEncrypter};
     use bloock_http::MockClient;
     use bloock_keys::keys::local::{LocalKey, LocalKeyParams};
     use bloock_keys::KeyType;
@@ -82,7 +72,7 @@ mod tests {
             None,
         );
         let encrypted = service
-            .encrypt(record.clone(), LocalAesEncrypter::new(local_key.clone()))
+            .encrypt(record.clone(), &local_key.clone().into())
             .await
             .unwrap();
 
@@ -92,10 +82,7 @@ mod tests {
             "Should not return same hash"
         );
 
-        let decrypted = service
-            .decrypt(encrypted, LocalAesDecrypter::new(local_key))
-            .await
-            .unwrap();
+        let decrypted = service.decrypt(encrypted, &local_key.into()).await.unwrap();
 
         assert_eq!(
             record.serialize().unwrap().clone(),
@@ -127,7 +114,7 @@ mod tests {
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
         let encrypted = service
-            .encrypt(record.clone(), LocalRsaEncrypter::new(local_key.clone()))
+            .encrypt(record.clone(), &local_key.clone().into())
             .await
             .unwrap();
 
@@ -137,10 +124,7 @@ mod tests {
             "Should not return same hash"
         );
 
-        let decrypted = service
-            .decrypt(encrypted, LocalRsaDecrypter::new(local_key))
-            .await
-            .unwrap();
+        let decrypted = service.decrypt(encrypted, &local_key.into()).await.unwrap();
 
         assert_eq!(
             record.serialize().unwrap().clone(),

@@ -1,31 +1,34 @@
 <?php
 
 use Bloock\Bloock;
+use Bloock\Client\KeyClient;
+use Bloock\Entity\Key\KeyType;
+use Bloock\Client\RecordClient;
+use PHPUnit\Framework\TestCase;
+use Bloock\Client\IntegrityClient;
+use Bloock\Entity\Integrity\Proof;
+use Bloock\Client\EncryptionClient;
 use Bloock\Client\AuthenticityClient;
 use Bloock\Client\AvailabilityClient;
-use Bloock\Client\EncryptionClient;
-use Bloock\Client\IntegrityClient;
-use Bloock\Client\KeyClient;
-use Bloock\Client\RecordClient;
 use Bloock\Entity\Authenticity\Signer;
-use Bloock\Entity\Authenticity\SignatureAlg;
+use Bloock\Entity\Encryption\Encrypter;
+use Bloock\Entity\Integrity\ProofAnchor;
 use Bloock\Entity\Authenticity\SignerArgs;
-use Bloock\Entity\Availability\HostedLoader;
-use Bloock\Entity\Availability\HostedPublisher;
 use Bloock\Entity\Availability\IpfsLoader;
-use Bloock\Entity\Availability\IpfsPublisher;
 use Bloock\Entity\Encryption\AesDecrypter;
 use Bloock\Entity\Encryption\AesEncrypter;
-use Bloock\Entity\Encryption\DecrypterArgs;
-use Bloock\Entity\Encryption\EncrypterArgs;
-use Bloock\Entity\Encryption\EncryptionAlg;
 use Bloock\Entity\Encryption\RsaDecrypter;
 use Bloock\Entity\Encryption\RsaEncrypter;
 use Bloock\Entity\Integrity\AnchorNetwork;
-use Bloock\Entity\Integrity\Proof;
-use Bloock\Entity\Integrity\ProofAnchor;
-use Bloock\Entity\Key\KeyType;
-use PHPUnit\Framework\TestCase;
+use Bloock\Entity\Encryption\DecrypterArgs;
+use Bloock\Entity\Encryption\EncrypterArgs;
+use Bloock\Entity\Encryption\EncryptionAlg;
+use Bloock\Entity\Authenticity\SignatureAlg;
+use Bloock\Entity\Availability\HostedLoader;
+use Bloock\Entity\Availability\IpfsPublisher;
+use Bloock\Entity\Availability\HostedPublisher;
+use Bloock\Entity\Key\LocalCertificateArgs;
+use Bloock\Entity\Key\SubjectCertificateParams;
 
 final class RecordTest extends TestCase
 {
@@ -166,7 +169,7 @@ final class RecordTest extends TestCase
 
         $recordClient = new RecordClient();
         $encryptedRecord = $recordClient->fromString($payload)
-            ->withEncrypter(new AesEncrypter(new EncrypterArgs($key)))
+            ->withEncrypter(new Encrypter($key))
             ->build();
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
 
@@ -177,7 +180,7 @@ final class RecordTest extends TestCase
         $throwsException = false;
         try {
             $recordClient->fromRecord($encryptedRecord)
-                ->withDecrypter(new AesDecrypter(new DecrypterArgs($invalidKey)))
+                ->withDecrypter(new Encrypter($invalidKey))
                 ->build();
         } catch (Exception $e) {
             $throwsException = true;
@@ -186,7 +189,7 @@ final class RecordTest extends TestCase
         $this->assertTrue($throwsException);
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new AesDecrypter(new DecrypterArgs($key)))
+            ->withDecrypter(new Encrypter($key))
             ->build();
 
         $this->assertEquals($decryptedRecord->retrieve(), unpack("C*", $payload));
@@ -208,20 +211,80 @@ final class RecordTest extends TestCase
 
         $recordClient = new RecordClient();
         $encryptedRecord = $recordClient->fromString($payload)
-            ->withEncrypter(new RsaEncrypter(new EncrypterArgs($key)))
+            ->withEncrypter(new Encrypter($key))
             ->build();
 
         $this->assertNotEquals($payload, $encryptedRecord->retrieve());
         $this->assertEquals(EncryptionAlg::RSA, $encryptionClient->getEncryptionAlg($encryptedRecord));
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new RsaDecrypter(new DecrypterArgs($key)))
+            ->withDecrypter(new Encrypter($key))
             ->build();
 
         $this->assertEquals($decryptedRecord->retrieve(), unpack("C*", $payload));
 
         $hash = $decryptedRecord->getHash();
         $this->assertEquals("96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", $hash);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testRecordDetailSigned()
+    {
+        $payload = "Hello world 2";
+        $encryptionClient = new EncryptionClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalCertificate(new LocalCertificateArgs(KeyType::Rsa2048, new SubjectCertificateParams("Bloock"), "password", 0));
+
+        $recordClient = new RecordClient();
+        $record = $recordClient->fromString($payload)
+            ->withSigner(new Signer($key))
+            ->build();
+
+        $recordPayload = $record->retrieve();
+        $details = $recordClient->fromFile($recordPayload)->getDetails();
+
+        $this->assertNotEquals($details->getIntegrity()->getHash(), "");
+        $this->assertNull($details->getIntegrity()->getProof());
+
+        $this->assertTrue(sizeof($details->getAuthenticity()->getSignatures()) > 0);
+
+        $this->assertNull($details->getEncryption());
+
+        $this->assertNull($details->getAvailability()->getType());
+        $this->assertEquals($details->getAvailability()->getSize(), sizeof($recordPayload));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testRecordDetailEncrypted()
+    {
+        $payload = "Hello world 2";
+        $encryptionClient = new EncryptionClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newLocalKey(KeyType::Rsa2048);
+
+        $recordClient = new RecordClient();
+        $record = $recordClient->fromString($payload)
+            ->withEncrypter(new Encrypter($key))
+            ->build();
+
+        $recordPayload = $record->retrieve();
+        $details = $recordClient->fromFile($recordPayload)->getDetails();
+
+        $this->assertNull($details->getIntegrity());
+        $this->assertNull($details->getAuthenticity());
+
+        $this->assertEquals($details->getEncryption()->getAlg(), "RSA");
+        $this->assertNotEquals($details->getEncryption()->getKey(), "");
+        $this->assertNotEquals($details->getEncryption()->getSubject(), "");
+
+        $this->assertNull($details->getAvailability()->getType());
+        $this->assertEquals($details->getAvailability()->getSize(), sizeof($recordPayload));
     }
 
     public function testSetProof()
@@ -255,5 +318,4 @@ final class RecordTest extends TestCase
         $this->assertEquals($originalProof->getAnchor()->getRoot(), $finalProof->getAnchor()->getRoot());
         $this->assertEquals($originalProof->getAnchor()->getStatus(), $finalProof->getAnchor()->getStatus());
     }
-
 }

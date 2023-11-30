@@ -1,5 +1,7 @@
 use async_trait::async_trait;
-use bloock_encrypter::{Decrypter, Encrypter};
+use bloock_encrypter::entity::{
+    alg::EncryptionAlg, encryption::Encryption, encryption_key::EncryptionKey,
+};
 use bloock_keys::entity::key::Key;
 use bloock_signer::entity::signature::Signature;
 use default::DefaultParser;
@@ -20,9 +22,8 @@ pub enum FileParser {
     Pdf(PdfParser),
 }
 
-#[async_trait(?Send)]
-impl MetadataParser for FileParser {
-    fn load(payload: &[u8]) -> Result<Self> {
+impl FileParser {
+    pub fn load(payload: &[u8]) -> Result<Self> {
         let file_type = infer::get(payload);
 
         let parser = match file_type.map(|t| t.mime_type()) {
@@ -33,6 +34,14 @@ impl MetadataParser for FileParser {
         Ok(parser)
     }
 
+    pub fn get_type(&self) -> Option<String> {
+        let file_type = infer::get(&self.get_payload().ok()?)?;
+        Some(file_type.mime_type().to_string())
+    }
+}
+
+#[async_trait(?Send)]
+impl MetadataParser for FileParser {
     async fn sign(
         &mut self,
         key: &Key,
@@ -58,23 +67,35 @@ impl MetadataParser for FileParser {
         }
     }
 
-    async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> Result<()> {
+    async fn encrypt(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<Encryption> {
         match self {
             FileParser::Pdf(p) => {
                 //p.encrypt(encrypter).await,
                 let payload = p.build()?;
                 *self = FileParser::Default(DefaultParser::load(&payload)?);
-                self.encrypt(encrypter).await
+                self.encrypt(key, api_host, api_key, environment).await
             }
-            FileParser::Default(p) => p.encrypt(encrypter).await,
+            FileParser::Default(p) => p.encrypt(key, api_host, api_key, environment).await,
         }
     }
 
-    async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> Result<()> {
+    async fn decrypt(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<()> {
         match self {
-            FileParser::Pdf(p) => p.decrypt(decrypter).await,
+            FileParser::Pdf(p) => p.decrypt(key, api_host, api_key, environment).await,
             FileParser::Default(p) => {
-                p.decrypt(decrypter).await?;
+                p.decrypt(key, api_host, api_key, environment).await?;
                 let payload = &p.build()?;
                 *self = FileParser::load(payload)?;
                 Ok(())
@@ -103,6 +124,13 @@ impl MetadataParser for FileParser {
         }
     }
 
+    fn get_payload(&self) -> Result<Vec<u8>> {
+        match self {
+            FileParser::Default(p) => p.get_payload(),
+            FileParser::Pdf(p) => p.get_payload(),
+        }
+    }
+
     fn get_signatures(&self) -> Result<Vec<Signature>> {
         match self {
             FileParser::Default(p) => p.get_signatures(),
@@ -110,10 +138,17 @@ impl MetadataParser for FileParser {
         }
     }
 
-    fn get_encryption_algorithm(&self) -> Option<String> {
+    fn get_encryption_alg(&self) -> Option<EncryptionAlg> {
         match self {
-            FileParser::Default(p) => p.get_encryption_algorithm(),
-            FileParser::Pdf(p) => p.get_encryption_algorithm(),
+            FileParser::Default(p) => p.get_encryption_alg(),
+            FileParser::Pdf(p) => p.get_encryption_alg(),
+        }
+    }
+
+    fn get_encryption_key(&self) -> Option<EncryptionKey> {
+        match self {
+            FileParser::Default(p) => p.get_encryption_key(),
+            FileParser::Pdf(p) => p.get_encryption_key(),
         }
     }
 
@@ -130,7 +165,6 @@ pub trait MetadataParser
 where
     Self: Sized,
 {
-    fn load(payload: &[u8]) -> Result<Self>;
     async fn sign(
         &mut self,
         key: &Key,
@@ -144,13 +178,27 @@ where
         api_key: String,
         environment: Option<String>,
     ) -> Result<bool>;
-    async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> Result<()>;
-    async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> Result<()>;
+    async fn encrypt(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<Encryption>;
+    async fn decrypt(
+        &mut self,
+        key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> Result<()>;
     fn set_proof<T: Serialize>(&mut self, value: &T) -> Result<()>;
     fn is_encrypted(&self) -> bool;
+    fn get_payload(&self) -> Result<Vec<u8>>;
     fn get_proof<T: DeserializeOwned>(&self) -> Option<T>;
     fn get_signatures(&self) -> Result<Vec<Signature>>;
-    fn get_encryption_algorithm(&self) -> Option<String>;
+    fn get_encryption_alg(&self) -> Option<EncryptionAlg>;
+    fn get_encryption_key(&self) -> Option<EncryptionKey>;
     fn build(&self) -> Result<Vec<u8>>;
 }
 

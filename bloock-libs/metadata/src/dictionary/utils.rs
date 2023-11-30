@@ -109,19 +109,3 @@ pub(crate) fn as_object_id_array(obj: Option<&Object>) -> Result<Vec<ObjectId>, 
     }
     Ok(result)
 }
-
-pub(crate) fn as_option_object_id_array(
-    obj: Option<&Object>,
-) -> Result<Option<Vec<ObjectId>>, Error> {
-    let mut result = Vec::new();
-    let obj = match obj {
-        Some(o) => o,
-        None => return Ok(None),
-    };
-    let list = obj.as_array()?;
-
-    for item in list {
-        result.push(item.as_reference()?);
-    }
-    Ok(Some(result))
-}

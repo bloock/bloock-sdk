@@ -173,6 +173,7 @@ impl From<SignatureHeaderJws> for JwsSignatureHeader {
         Self {
             alg: h.alg,
             kid: h.kid,
+            subject: h.subject,
         }
     }
 }
@@ -193,6 +194,7 @@ impl From<JwsSignatureHeader> for SignatureHeaderJws {
         Self {
             alg: h.alg,
             kid: h.kid,
+            subject: h.subject,
         }
     }
 }

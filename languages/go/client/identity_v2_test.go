@@ -111,7 +111,7 @@ func TestIdentityV2(t *testing.T) {
 			WithStringAttribute("car_type", "big").
 			WithIntegerAttribute("car_points", 5).
 			WithDecimalAttribute("precision_wheels", 1.10).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj)).
 			WithProofType(proofType).
 			Build()
 		assert.NoError(t, err)
@@ -126,13 +126,13 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
 
 		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{ManagedKey: &keyBjj})).
+			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj)).
 			Build()
 		assert.Error(t, err)
 
@@ -173,7 +173,7 @@ func TestIdentityV2(t *testing.T) {
 			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
 			WithIntegerAttribute("document_type", 1).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
+			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, res.CredentialId)
@@ -187,7 +187,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, KYCAgeSchemaType, credential.Type[1])
 
 		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
+			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
@@ -196,7 +196,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.Error(t, err)
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSigner(authenticity.SignerArgs{LocalKey: &keyBjj})).
+			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj)).
 			Build()
 		assert.Error(t, err)
 

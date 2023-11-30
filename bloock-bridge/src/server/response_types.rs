@@ -13,10 +13,12 @@ use crate::items::GenerateManagedCertificateResponse;
 use crate::items::GenerateManagedKeyResponse;
 use crate::items::GetAnchorResponse;
 use crate::items::GetCredentialProofResponse;
+use crate::items::GetDetailsResponse;
 use crate::items::GetHashResponse;
 use crate::items::GetIssuerByKeyResponse;
 use crate::items::GetIssuerListResponse;
 use crate::items::GetOfferResponse;
+use crate::items::GetPayloadResponse;
 use crate::items::GetProofResponse;
 use crate::items::GetSchemaResponseV2;
 use crate::items::GetSignaturesResponse;
@@ -74,7 +76,9 @@ pub enum ResponseType {
     DecryptResponse(DecryptResponse),
     EncryptionAlgResponse(EncryptionAlgResponse),
     RecordBuilderResponse(RecordBuilderResponse),
+    GetDetailsResponse(GetDetailsResponse),
     GetHashResponse(GetHashResponse),
+    GetPayloadResponse(GetPayloadResponse),
     PublishResponse(PublishResponse),
     RetrieveResponse(RetrieveResponse),
     GenerateLocalKeyResponse(GenerateLocalKeyResponse),
@@ -136,7 +140,9 @@ impl ResponseType {
             ResponseType::DecryptResponse(r) => r.encode(&mut result_vec),
             ResponseType::EncryptionAlgResponse(r) => r.encode(&mut result_vec),
             ResponseType::RecordBuilderResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetDetailsResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetHashResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetPayloadResponse(r) => r.encode(&mut result_vec),
             ResponseType::PublishResponse(r) => r.encode(&mut result_vec),
             ResponseType::RetrieveResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateLocalKeyResponse(r) => r.encode(&mut result_vec),
@@ -198,7 +204,9 @@ impl ResponseType {
             ResponseType::DecryptResponse(r) => r.encoded_len(),
             ResponseType::EncryptionAlgResponse(r) => r.encoded_len(),
             ResponseType::RecordBuilderResponse(r) => r.encoded_len(),
+            ResponseType::GetDetailsResponse(r) => r.encoded_len(),
             ResponseType::GetHashResponse(r) => r.encoded_len(),
+            ResponseType::GetPayloadResponse(r) => r.encoded_len(),
             ResponseType::PublishResponse(r) => r.encoded_len(),
             ResponseType::RetrieveResponse(r) => r.encoded_len(),
             ResponseType::GenerateLocalKeyResponse(r) => r.encoded_len(),

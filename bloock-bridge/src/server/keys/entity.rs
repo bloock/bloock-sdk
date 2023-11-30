@@ -11,6 +11,8 @@ use bloock_keys::{
         managed::ManagedCertificate as CoreManagedCertificate,
         CertificateSubject as CoreCertificateSubject,
     },
+    entity::key::Local as CoreLocal,
+    entity::key::Managed as CoreManaged,
     entity::protection_level::ProtectionLevel,
     keys::local::LocalKey as CoreLocalKey,
     keys::managed::ManagedKey as CoreManagedKey,
@@ -63,6 +65,13 @@ impl From<ProtectionLevel> for KeyProtectionLevel {
     }
 }
 
+impl From<ManagedKey> for CoreManaged {
+    fn from(key: ManagedKey) -> Self {
+        let managed = CoreManagedKey::from(key);
+        CoreManaged::Key(managed)
+    }
+}
+
 impl From<ManagedKey> for CoreManagedKey {
     fn from(key: ManagedKey) -> Self {
         let key_protection: ProtectionLevel = key.protection().into();
@@ -98,6 +107,13 @@ impl From<CoreManagedKey> for ManagedKey {
             name: key.name.unwrap_or_default(),
             expiration: key.expiration.unwrap_or(0),
         }
+    }
+}
+
+impl From<LocalKey> for CoreLocal {
+    fn from(key: LocalKey) -> Self {
+        let managed = CoreLocalKey::from(key);
+        CoreLocal::Key(managed)
     }
 }
 
@@ -137,6 +153,15 @@ impl From<CertificateSubject> for CoreCertificateSubject {
     }
 }
 
+impl TryFrom<LocalCertificate> for CoreLocal {
+    type Error = BridgeError;
+
+    fn try_from(l: LocalCertificate) -> BridgeResult<CoreLocal> {
+        let local = CoreLocalCertificate::try_from(l)?;
+        Ok(CoreLocal::Certificate(local))
+    }
+}
+
 impl From<CoreLocalCertificate<String>> for LocalCertificate {
     fn from(key: CoreLocalCertificate<String>) -> Self {
         Self {
@@ -159,6 +184,13 @@ impl TryFrom<LocalCertificate> for CoreLocalCertificate<String> {
             pkcs12: local_certificate.pkcs12,
             password: local_certificate.password,
         })
+    }
+}
+
+impl From<ManagedCertificate> for CoreManaged {
+    fn from(key: ManagedCertificate) -> Self {
+        let managed = CoreManagedCertificate::from(key);
+        CoreManaged::Certificate(managed)
     }
 }
 

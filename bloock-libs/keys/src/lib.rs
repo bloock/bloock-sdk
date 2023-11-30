@@ -76,6 +76,10 @@ pub enum KeysError {
     GenerateRsaKeyError(String),
     #[error("Failed to generate bjj key")]
     GenerateBjjKeyError,
+    #[error("Failed to create new local certificate: {0}")]
+    NewLocalCertificateError(String),
+    #[error("Failed to load local certificate: {0}")]
+    LoadLocalCertificateError(String),
     #[error("Invalid key type provided")]
     InvalidKeyTypeError(),
     #[error("Invalid certificate type provided")]

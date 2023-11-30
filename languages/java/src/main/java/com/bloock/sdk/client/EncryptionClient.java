@@ -8,7 +8,6 @@ import com.bloock.sdk.bridge.proto.Encryption.EncryptionAlgResponse;
 import com.bloock.sdk.bridge.proto.Keys;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.encryption.Decrypter;
 import com.bloock.sdk.entity.encryption.Encrypter;
 import com.bloock.sdk.entity.encryption.EncryptionAlg;
 import com.bloock.sdk.entity.key.KeyType;
@@ -66,7 +65,7 @@ public class EncryptionClient {
     return Record.fromProto(response.getRecord(), this.configData);
   }
 
-  public Record decrypt(Record record, Decrypter decrypter) throws Exception {
+  public Record decrypt(Record record, Encrypter decrypter) throws Exception {
     Encryption.DecryptRequest request =
         Encryption.DecryptRequest.newBuilder()
             .setConfigData(this.configData)

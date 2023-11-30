@@ -74,10 +74,8 @@ mod tests {
         },
         record::{self, document::Document},
     };
-
-    use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_keys::keys::local::LocalKey;
-    use bloock_keys::{entity::key::Key::LocalKey as LocalKeyEntity, keys::local::LocalKeyParams};
+    use bloock_keys::keys::local::LocalKeyParams;
     use bloock_signer::entity::alg::SignAlg;
 
     #[tokio::test]
@@ -248,7 +246,7 @@ mod tests {
         let record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -263,7 +261,7 @@ mod tests {
 
         let result_signature = document.get_signatures().unwrap();
         let result_algorithm = result_signature[0].clone().alg;
-        let result_public_key = result_signature[0].clone().kid;
+        let result_public_key = result_signature[0].clone().key;
         let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
         let result_proof = document.get_proof();
 
@@ -294,7 +292,7 @@ mod tests {
         let record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -309,7 +307,7 @@ mod tests {
 
         let result_signature = document.get_signatures().unwrap();
         let result_algorithm = result_signature[0].clone().alg;
-        let result_public_key = result_signature[0].clone().kid;
+        let result_public_key = result_signature[0].clone().key;
         let result_payload = String::from_utf8(record.serialize().unwrap()).unwrap();
         let result_proof = document.get_proof();
 
@@ -348,8 +346,8 @@ mod tests {
         let record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -359,7 +357,7 @@ mod tests {
         let unencrypted_record = service
             .from_record(record.clone())
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
+            .with_decrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -392,7 +390,7 @@ mod tests {
         let default_record = service
             .from_file(payload.to_vec())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key.clone()))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -401,8 +399,8 @@ mod tests {
         let encrypted_record = service
             .from_file(payload.to_vec())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -412,7 +410,7 @@ mod tests {
         let unencrypted_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
+            .with_decrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -437,7 +435,7 @@ mod tests {
         let encrypted_record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -450,7 +448,7 @@ mod tests {
         let record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
+            .with_decrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -481,8 +479,8 @@ mod tests {
         let record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -490,7 +488,7 @@ mod tests {
         let decrypted_record = service
             .from_record(record.clone())
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
+            .with_decrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -547,7 +545,7 @@ mod tests {
         let encrypted_record = service
             .from_record(record.clone())
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(local_aes_key.clone()))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -561,7 +559,7 @@ mod tests {
         let decrypted_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(local_aes_key))
+            .with_decrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -662,11 +660,8 @@ mod hash_tests {
         },
         record,
     };
-
-    use bloock_encrypter::local::aes::{LocalAesDecrypter, LocalAesEncrypter};
     use bloock_hasher::{keccak::Keccak256, Hasher};
-    use bloock_keys::entity::key::Key::LocalKey as LocalKeyEntity;
-    use bloock_keys::keys::local::LocalKey;
+    use bloock_keys::{keys::local::LocalKey, KeyType};
 
     const PAYLOAD: &str = "hello world";
     const HASH_PAYLOAD: &str = "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad";
@@ -674,13 +669,6 @@ mod hash_tests {
         "68acebf86e3b28759b992ca014400be20c142034947a0bd19d1070ac195277c8";
     const HASH_DOUBLY_SIGNED_PAYLOAD: &str =
         "ee567d744907df44353f3a39c478b80f4f499a3de87cad9356dce9cf0d078426";
-
-    const LOCAL_AES_KEY: LocalKey<&str> = LocalKey {
-        key_type: bloock_keys::KeyType::Aes256,
-        key: "some_password",
-        private_key: None,
-        mnemonic: None,
-    };
 
     fn get_test_proof(hash: &str) -> Proof {
         Proof {
@@ -715,10 +703,12 @@ mod hash_tests {
     async fn build_plain_record_with_encrypter() {
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+
         let record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_key.into())
             .build()
             .await
             .unwrap();
@@ -748,7 +738,7 @@ mod hash_tests {
         let record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -777,11 +767,12 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -794,10 +785,11 @@ mod hash_tests {
     async fn build_from_encrypted_record() {
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -807,7 +799,7 @@ mod hash_tests {
         let record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -825,10 +817,11 @@ mod hash_tests {
     async fn build_from_encrypted_record_decrypt_and_encrypt() {
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -838,8 +831,8 @@ mod hash_tests {
         let final_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -866,10 +859,11 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -879,8 +873,8 @@ mod hash_tests {
         let final_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key))
+            .with_decrypter(&local_aes_key.into())
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -903,10 +897,11 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -916,9 +911,9 @@ mod hash_tests {
         let final_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -944,7 +939,7 @@ mod hash_tests {
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -972,10 +967,12 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -983,7 +980,7 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1018,7 +1015,7 @@ mod hash_tests {
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1026,7 +1023,7 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key_2))
+            .with_signer(&local_key_2.clone().into())
             .build()
             .await
             .unwrap();
@@ -1056,10 +1053,11 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1067,8 +1065,8 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key_2))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_signer(&local_key_2.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1091,11 +1089,12 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key))
+            .with_encrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1105,7 +1104,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1126,11 +1125,12 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key))
+            .with_encrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1140,8 +1140,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record.clone())
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1173,11 +1173,12 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1185,8 +1186,8 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key_2))
+            .with_decrypter(&local_aes_key.into())
+            .with_signer(&local_key_2.clone().into())
             .build()
             .await
             .unwrap();
@@ -1218,11 +1219,12 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1230,9 +1232,9 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key_2))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key_2.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1263,10 +1265,11 @@ mod hash_tests {
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1298,7 +1301,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1327,11 +1330,12 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1352,10 +1356,11 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1365,7 +1370,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1383,10 +1388,11 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1396,8 +1402,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1424,10 +1430,11 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1437,8 +1444,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key))
+            .with_decrypter(&local_aes_key.into())
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1465,10 +1472,11 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1478,9 +1486,9 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1504,7 +1512,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1538,7 +1546,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1549,10 +1557,11 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1587,7 +1596,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1601,7 +1610,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key_2))
+            .with_signer(&local_key_2.clone().into())
             .build()
             .await
             .unwrap();
@@ -1636,7 +1645,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1647,11 +1656,12 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key_2))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_signer(&local_key_2.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1677,7 +1687,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1686,10 +1696,11 @@ mod hash_tests {
             .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
             .unwrap();
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1699,7 +1710,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1723,7 +1734,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1732,10 +1743,11 @@ mod hash_tests {
             .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
             .unwrap();
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1745,8 +1757,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();
@@ -1781,7 +1793,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1790,10 +1802,11 @@ mod hash_tests {
             .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
             .unwrap();
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1803,8 +1816,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key_2))
+            .with_decrypter(&local_aes_key.into())
+            .with_signer(&local_key_2.clone().into())
             .build()
             .await
             .unwrap();
@@ -1837,7 +1850,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(LocalKeyEntity(local_key))
+            .with_signer(&local_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1846,10 +1859,11 @@ mod hash_tests {
             .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
             .unwrap();
 
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await
             .unwrap();
@@ -1859,9 +1873,9 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(LocalAesDecrypter::new(LOCAL_AES_KEY))
-            .with_signer(LocalKeyEntity(local_key_2))
-            .with_encrypter(LocalAesEncrypter::new(LOCAL_AES_KEY))
+            .with_decrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key_2.clone().into())
+            .with_encrypter(&local_aes_key.into())
             .build()
             .await
             .unwrap();

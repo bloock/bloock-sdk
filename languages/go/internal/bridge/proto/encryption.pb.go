@@ -145,7 +145,7 @@ type DecryptRequest struct {
 
 	ConfigData *ConfigData `protobuf:"bytes,1,opt,name=config_data,json=configData,proto3" json:"config_data,omitempty"`
 	Record     *Record     `protobuf:"bytes,2,opt,name=record,proto3" json:"record,omitempty"`
-	Decrypter  *Decrypter  `protobuf:"bytes,3,opt,name=decrypter,proto3" json:"decrypter,omitempty"`
+	Decrypter  *Encrypter  `protobuf:"bytes,3,opt,name=decrypter,proto3" json:"decrypter,omitempty"`
 }
 
 func (x *DecryptRequest) Reset() {
@@ -194,7 +194,7 @@ func (x *DecryptRequest) GetRecord() *Record {
 	return nil
 }
 
-func (x *DecryptRequest) GetDecrypter() *Decrypter {
+func (x *DecryptRequest) GetDecrypter() *Encrypter {
 	if x != nil {
 		return x.Decrypter
 	}
@@ -401,7 +401,7 @@ var file_encryption_proto_rawDesc = []byte{
 	0x32, 0x0e, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64,
 	0x52, 0x06, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x12, 0x2f, 0x0a, 0x09, 0x64, 0x65, 0x63, 0x72,
 	0x79, 0x70, 0x74, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x11, 0x2e, 0x62, 0x6c,
-	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x44, 0x65, 0x63, 0x72, 0x79, 0x70, 0x74, 0x65, 0x72, 0x52, 0x09,
+	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x45, 0x6e, 0x63, 0x72, 0x79, 0x70, 0x74, 0x65, 0x72, 0x52, 0x09,
 	0x64, 0x65, 0x63, 0x72, 0x79, 0x70, 0x74, 0x65, 0x72, 0x22, 0x6d, 0x0a, 0x0f, 0x44, 0x65, 0x63,
 	0x72, 0x79, 0x70, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x26, 0x0a, 0x06,
 	0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x62,
@@ -471,8 +471,7 @@ var file_encryption_proto_goTypes = []interface{}{
 	(*Record)(nil),                // 7: bloock.Record
 	(*Encrypter)(nil),             // 8: bloock.Encrypter
 	(*Error)(nil),                 // 9: bloock.Error
-	(*Decrypter)(nil),             // 10: bloock.Decrypter
-	(EncryptionAlg)(0),            // 11: bloock.EncryptionAlg
+	(EncryptionAlg)(0),            // 10: bloock.EncryptionAlg
 }
 var file_encryption_proto_depIdxs = []int32{
 	6,  // 0: bloock.EncryptRequest.config_data:type_name -> bloock.ConfigData
@@ -482,12 +481,12 @@ var file_encryption_proto_depIdxs = []int32{
 	9,  // 4: bloock.EncryptResponse.error:type_name -> bloock.Error
 	6,  // 5: bloock.DecryptRequest.config_data:type_name -> bloock.ConfigData
 	7,  // 6: bloock.DecryptRequest.record:type_name -> bloock.Record
-	10, // 7: bloock.DecryptRequest.decrypter:type_name -> bloock.Decrypter
+	8,  // 7: bloock.DecryptRequest.decrypter:type_name -> bloock.Encrypter
 	7,  // 8: bloock.DecryptResponse.record:type_name -> bloock.Record
 	9,  // 9: bloock.DecryptResponse.error:type_name -> bloock.Error
 	6,  // 10: bloock.EncryptionAlgRequest.config_data:type_name -> bloock.ConfigData
 	7,  // 11: bloock.EncryptionAlgRequest.record:type_name -> bloock.Record
-	11, // 12: bloock.EncryptionAlgResponse.alg:type_name -> bloock.EncryptionAlg
+	10, // 12: bloock.EncryptionAlgResponse.alg:type_name -> bloock.EncryptionAlg
 	9,  // 13: bloock.EncryptionAlgResponse.error:type_name -> bloock.Error
 	0,  // 14: bloock.EncryptionService.Encrypt:input_type -> bloock.EncryptRequest
 	2,  // 15: bloock.EncryptionService.Decrypt:input_type -> bloock.DecryptRequest

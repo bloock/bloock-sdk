@@ -1,17 +1,14 @@
 import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
 import {
-  AesDecrypter,
-  AesEncrypter,
+  Encrypter,
   EncryptionAlg,
   EncryptionClient,
   KeyClient,
   KeyProtectionLevel,
   KeyType,
   ManagedKeyParams,
-  RecordClient,
-  RsaDecrypter,
-  RsaEncrypter
+  RecordClient
 } from "../../dist";
 
 describe("Encryptions Tests", () => {
@@ -30,12 +27,12 @@ describe("Encryptions Tests", () => {
 
     let encryptedRecord = await encryptionClient.encrypt(
       record,
-      new AesEncrypter(key)
+      new Encrypter(key)
     );
 
     let decryptedRecord = await recordClient
       .fromRecord(encryptedRecord)
-      .withDecrypter(new AesDecrypter(key))
+      .withDecrypter(new Encrypter(key))
       .build();
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -57,14 +54,14 @@ describe("Encryptions Tests", () => {
 
     let encryptedRecord = await recordClient
       .fromString(payload)
-      .withEncrypter(new AesEncrypter(key))
+      .withEncrypter(new Encrypter(key))
       .build();
 
     let encryptedRecordHash = await encryptedRecord.getHash();
 
     let decryptedRecord = await encryptionClient.decrypt(
       encryptedRecord,
-      new AesDecrypter(key)
+      new Encrypter(key)
     );
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -87,12 +84,12 @@ describe("Encryptions Tests", () => {
     let encryptionClient = new EncryptionClient();
     let encryptedRecord = await encryptionClient.encrypt(
       record,
-      new RsaEncrypter(key)
+      new Encrypter(key)
     );
 
     let decryptedRecord = await recordClient
       .fromRecord(encryptedRecord)
-      .withDecrypter(new RsaDecrypter(key))
+      .withDecrypter(new Encrypter(key))
       .build();
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -117,12 +114,12 @@ describe("Encryptions Tests", () => {
     let encryptionClient = new EncryptionClient();
     let encryptedRecord = await encryptionClient.encrypt(
       record,
-      new RsaEncrypter(key)
+      new Encrypter(key)
     );
 
     let decryptedRecord = await recordClient
       .fromRecord(encryptedRecord)
-      .withDecrypter(new RsaDecrypter(key))
+      .withDecrypter(new Encrypter(key))
       .build();
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -143,14 +140,14 @@ describe("Encryptions Tests", () => {
     let encryptionClient = new EncryptionClient();
     let encryptedRecord = await recordClient
       .fromString(payload)
-      .withEncrypter(new RsaEncrypter(key))
+      .withEncrypter(new Encrypter(key))
       .build();
 
     let encryptedRecordHash = await encryptedRecord.getHash();
 
     let decryptedRecord = await encryptionClient.decrypt(
       encryptedRecord,
-      new RsaDecrypter(key)
+      new Encrypter(key)
     );
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -173,14 +170,14 @@ describe("Encryptions Tests", () => {
     let encryptionClient = new EncryptionClient();
     let encryptedRecord = await recordClient
       .fromString(payload)
-      .withEncrypter(new RsaEncrypter(key))
+      .withEncrypter(new Encrypter(key))
       .build();
 
     let encryptedRecordHash = await encryptedRecord.getHash();
 
     let decryptedRecord = await encryptionClient.decrypt(
       encryptedRecord,
-      new RsaDecrypter(key)
+      new Encrypter(key)
     );
 
     let decryptedRecordHash = await decryptedRecord.getHash();
@@ -201,7 +198,7 @@ describe("Encryptions Tests", () => {
     let encryptionClient = new EncryptionClient();
     let encryptedRecord = await recordClient
       .fromString(payload)
-      .withEncrypter(new RsaEncrypter(key))
+      .withEncrypter(new Encrypter(key))
       .build();
 
     let alg = await encryptionClient.getEncryptionAlg(encryptedRecord);

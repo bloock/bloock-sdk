@@ -21,6 +21,10 @@ class SignatureHeaderJWS extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string kid = 2;</code>
      */
     protected $kid = '';
+    /**
+     * Generated from protobuf field <code>optional string subject = 3;</code>
+     */
+    protected $subject = null;
 
     /**
      * Constructor.
@@ -30,6 +34,7 @@ class SignatureHeaderJWS extends \Google\Protobuf\Internal\Message
      *
      *     @type string $alg
      *     @type string $kid
+     *     @type string $subject
      * }
      */
     public function __construct($data = NULL) {
@@ -77,6 +82,38 @@ class SignatureHeaderJWS extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->kid = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string subject = 3;</code>
+     * @return string
+     */
+    public function getSubject()
+    {
+        return isset($this->subject) ? $this->subject : '';
+    }
+
+    public function hasSubject()
+    {
+        return isset($this->subject);
+    }
+
+    public function clearSubject()
+    {
+        unset($this->subject);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string subject = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setSubject($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->subject = $var;
 
         return $this;
     }

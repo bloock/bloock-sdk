@@ -7,7 +7,6 @@ import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.client.RecordClient;
 import com.bloock.sdk.entity.authenticity.Signature;
 import com.bloock.sdk.entity.authenticity.Signer;
-import com.bloock.sdk.entity.authenticity.SignerArgs;
 import com.bloock.sdk.entity.key.*;
 import com.bloock.sdk.entity.record.Record;
 import java.io.File;
@@ -198,7 +197,7 @@ class KeyTest {
 
     AuthenticityClient authenticityClient = new AuthenticityClient();
     Signature signature =
-        authenticityClient.sign(record, new Signer(new SignerArgs(loadedCertificate)));
+        authenticityClient.sign(record, new Signer(loadedCertificate));
 
     assertNotNull(signature);
   }
@@ -308,7 +307,7 @@ class KeyTest {
 
     AuthenticityClient authenticityClient = new AuthenticityClient();
     Signature signature =
-        authenticityClient.sign(record, new Signer(new SignerArgs(loadedCertificate)));
+        authenticityClient.sign(record, new Signer(loadedCertificate));
 
     assertNotNull(signature);
   }

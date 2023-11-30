@@ -1,6 +1,5 @@
 import unittest
 
-from bloock.client.authenticity import AuthenticityClient
 from bloock.client.availability import AvailabilityClient
 from bloock.client.encryption import EncryptionClient
 from bloock.client.integrity import IntegrityClient
@@ -8,21 +7,17 @@ from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.authenticity.signature_jws import SignatureAlg
-from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.availability.hosted_loader import HostedLoader
 from bloock.entity.availability.hosted_publisher import HostedPublisher
 from bloock.entity.availability.ipfs_loader import IpfsLoader
 from bloock.entity.availability.ipfs_publisher import IpfsPublisher
-from bloock.entity.encryption.aes_decrypter import AesDecrypter
-from bloock.entity.encryption.aes_encrypter import AesEncrypter
-from bloock.entity.encryption.decrypter_args import DecrypterArgs
-from bloock.entity.encryption.encrypter_args import EncrypterArgs
 from bloock.entity.encryption.encryption_alg import EncryptionAlg
-from bloock.entity.encryption.rsa_decrypter import RsaDecrypter
-from bloock.entity.encryption.rsa_encrypter import RsaEncrypter
 from bloock.entity.integrity.anchor import AnchorNetwork
 from bloock.entity.integrity.proof import Proof, ProofAnchor
 from bloock.entity.key.key_type import KeyType
+from bloock.entity.encryption.encrypter import Encrypter
+from bloock.entity.key.local_certificate_params import LocalCertificateParams
+from bloock.entity.key.subject_certificate_params import SubjectCertificateParams
 from test.e2e.util import init_sdk
 
 
@@ -158,7 +153,7 @@ class TestRecord(unittest.TestCase):
         record_client = RecordClient()
         encrypted_record = (
             record_client.from_string(payload)
-            .with_encrypter(AesEncrypter(EncrypterArgs(key)))
+            .with_encrypter(Encrypter(key))
             .build()
         )
 
@@ -174,12 +169,12 @@ class TestRecord(unittest.TestCase):
 
         with self.assertRaises(Exception) as _:
             record_client.from_record(encrypted_record).with_decrypter(
-                AesDecrypter(DecrypterArgs(invalid_key))
+                Encrypter(invalid_key)
             ).build()
 
         decrypted_record = (
             record_client.from_record(encrypted_record)
-            .with_decrypter(AesDecrypter(DecrypterArgs(key)))
+            .with_decrypter(Encrypter(key))
             .build()
         )
 
@@ -199,7 +194,7 @@ class TestRecord(unittest.TestCase):
         record_client = RecordClient()
         encrypted_record = (
             record_client.from_string(payload)
-            .with_encrypter(RsaEncrypter(EncrypterArgs(key)))
+            .with_encrypter(Encrypter(key))
             .build()
         )
 
@@ -211,7 +206,7 @@ class TestRecord(unittest.TestCase):
 
         record = (
             record_client.from_record(encrypted_record)
-            .with_decrypter(RsaDecrypter(DecrypterArgs(key)))
+            .with_decrypter(Encrypter(key))
             .build()
         )
 
@@ -221,6 +216,59 @@ class TestRecord(unittest.TestCase):
         self.assertEqual(
             "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6", hash
         )
+
+    def test_record_details_signed(self):
+        payload = "Hello world 2"
+        key_client = KeyClient()
+        local_cert = key_client.new_local_certificate(LocalCertificateParams(KeyType.Rsa2048, SubjectCertificateParams("Bloock"), "password"))
+
+        record_client = RecordClient()
+        record = (
+            record_client.from_string(payload)
+            .with_signer(Signer(local_cert))
+            .build()
+        )
+
+        record_payload = record.retrieve()
+
+        details = record_client.from_file(record_payload).get_details()
+
+        self.assertIsNotNone(details.integrity.hash)
+        self.assertIsNone(details.integrity.proof)
+
+        self.assertIsNotNone(details.authenticity.signatures)
+
+        self.assertIsNone(details.encryption)
+
+        self.assertIsNone(details.availability.type)
+        self.assertEqual(details.availability.size, len(record_payload))
+
+    def test_record_details_encrypted(self):
+        payload = "Hello world 2"
+        key_client = KeyClient()
+        key = key_client.new_local_key(KeyType.Rsa2048)
+
+        record_client = RecordClient()
+        record = (
+            record_client.from_string(payload)
+            .with_encrypter(Encrypter(key))
+            .build()
+        )
+
+        record_payload = record.retrieve()
+
+        details = record_client.from_file(record_payload).get_details()
+
+        self.assertIsNone(details.integrity)
+
+        self.assertIsNone(details.authenticity)
+
+        self.assertEqual(details.encryption.alg, EncryptionAlg.RSA)
+        self.assertIsNotNone(details.encryption.key)
+        self.assertIsNotNone(details.encryption.subject)
+
+        self.assertIsNone(details.availability.type)
+        self.assertEqual(details.availability.size, len(record_payload))
 
     def test_set_proof(self):
         record_client = RecordClient()

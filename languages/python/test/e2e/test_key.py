@@ -5,7 +5,6 @@ from bloock.client.authenticity import AuthenticityClient
 from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
 from bloock.entity.authenticity.signer import Signer
-from bloock.entity.authenticity.signer_args import SignerArgs
 from bloock.entity.key.certificate_type import CertificateType
 from bloock.entity.key.import_certificate_params import ImportCertificateParams
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
@@ -170,7 +169,7 @@ class TestKey(unittest.TestCase):
 
         authenticity_client = AuthenticityClient()
         signature = authenticity_client.sign(
-            record, Signer(SignerArgs(loaded_certificate)))
+            record, Signer(loaded_certificate))
         self.assertNotEqual(signature, "")
 
     def test_import_local_certificate_p12(self):
@@ -264,5 +263,5 @@ class TestKey(unittest.TestCase):
 
         authenticity_client = AuthenticityClient()
         signature = authenticity_client.sign(
-            record, Signer(SignerArgs(loaded_certificate)))
+            record, Signer(loaded_certificate))
         self.assertNotEqual(signature, "")

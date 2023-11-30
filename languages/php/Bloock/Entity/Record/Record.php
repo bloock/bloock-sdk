@@ -6,6 +6,7 @@ use Bloock\Bridge\Bridge;
 use Bloock\ConfigData;
 use Bloock\Entity\Integrity\Proof;
 use Bloock\GetHashRequest;
+use Bloock\GetPayloadRequest;
 use Bloock\SetProofRequest;
 use Exception;
 
@@ -27,11 +28,6 @@ class Record
         return new Record($record->getPayload(), $record->getHash(), $configData);
     }
 
-    public function getPayload(): array
-    {
-        return unpack("C*", $this->payload);
-    }
-
     public function getHash(): string
     {
         $bridge = new Bridge();
@@ -44,6 +40,20 @@ class Record
         }
 
         return $res->getHash();
+    }
+
+    public function getPayload(): array
+    {
+        $bridge = new Bridge();
+        $req = new GetPayloadRequest();
+        $req->setConfigData($this->configData)->setRecord($this->toProto());
+        $res = $bridge->record->GetPayload($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return $res->getPayload();
     }
 
     public function toProto(): \Bloock\Record

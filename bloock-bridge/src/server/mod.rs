@@ -242,11 +242,29 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::RecordServiceGetDetails => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .get_details(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::RecordServiceGetHash => {
                 let req = self.serialize_request(payload)?;
                 Ok(self
                     .record
                     .get_hash(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::RecordServiceGetPayload => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .record
+                    .get_payload(&req)
                     .await
                     .to_response_type(&req)
                     .await)

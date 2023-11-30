@@ -3,9 +3,9 @@ import _m0 from "protobufjs/minimal";
 import { Signer } from "./authenticity_entities";
 import { Loader } from "./availability_entities";
 import { ConfigData } from "./config";
-import { Decrypter, Encrypter } from "./encryption_entities";
+import { Encrypter } from "./encryption_entities";
 import { Proof } from "./integrity_entities";
-import { Record } from "./record_entities";
+import { Record, RecordDetails } from "./record_entities";
 import { Error } from "./shared";
 
 export interface RecordBuilderFromStringRequest {
@@ -13,7 +13,7 @@ export interface RecordBuilderFromStringRequest {
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
-  decrypter?: Decrypter | undefined;
+  decrypter?: Encrypter | undefined;
 }
 
 export interface RecordBuilderFromHexRequest {
@@ -21,7 +21,7 @@ export interface RecordBuilderFromHexRequest {
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
-  decrypter?: Decrypter | undefined;
+  decrypter?: Encrypter | undefined;
 }
 
 export interface RecordBuilderFromJSONRequest {
@@ -29,7 +29,7 @@ export interface RecordBuilderFromJSONRequest {
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
-  decrypter?: Decrypter | undefined;
+  decrypter?: Encrypter | undefined;
 }
 
 export interface RecordBuilderFromBytesRequest {
@@ -37,7 +37,7 @@ export interface RecordBuilderFromBytesRequest {
   payload: Uint8Array;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
-  decrypter?: Decrypter | undefined;
+  decrypter?: Encrypter | undefined;
 }
 
 export interface RecordBuilderFromFileRequest {
@@ -45,7 +45,7 @@ export interface RecordBuilderFromFileRequest {
   payload: Uint8Array;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
-  decrypter?: Decrypter | undefined;
+  decrypter?: Encrypter | undefined;
 }
 
 export interface RecordBuilderFromRecordRequest {
@@ -53,7 +53,7 @@ export interface RecordBuilderFromRecordRequest {
   payload?: Record;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
-  decrypter?: Decrypter | undefined;
+  decrypter?: Encrypter | undefined;
 }
 
 export interface RecordBuilderResponse {
@@ -66,7 +66,17 @@ export interface RecordBuilderFromLoaderRequest {
   loader?: Loader;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
-  decrypter?: Decrypter | undefined;
+  decrypter?: Encrypter | undefined;
+}
+
+export interface GetDetailsRequest {
+  configData?: ConfigData;
+  payload: Uint8Array;
+}
+
+export interface GetDetailsResponse {
+  details?: RecordDetails;
+  error?: Error | undefined;
 }
 
 export interface GetHashRequest {
@@ -76,6 +86,16 @@ export interface GetHashRequest {
 
 export interface GetHashResponse {
   hash: string;
+  error?: Error | undefined;
+}
+
+export interface GetPayloadRequest {
+  configData?: ConfigData;
+  record?: Record;
+}
+
+export interface GetPayloadResponse {
+  payload: Uint8Array;
   error?: Error | undefined;
 }
 
@@ -109,7 +129,7 @@ export const RecordBuilderFromStringRequest = {
       Encrypter.encode(message.encrypter, writer.uint32(34).fork()).ldelim();
     }
     if (message.decrypter !== undefined) {
-      Decrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
+      Encrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -134,7 +154,7 @@ export const RecordBuilderFromStringRequest = {
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
         case 5:
-          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          message.decrypter = Encrypter.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -150,7 +170,7 @@ export const RecordBuilderFromStringRequest = {
       payload: isSet(object.payload) ? String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
-      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -163,7 +183,7 @@ export const RecordBuilderFromStringRequest = {
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
     message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -182,7 +202,7 @@ export const RecordBuilderFromStringRequest = {
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
     message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
-      ? Decrypter.fromPartial(object.decrypter)
+      ? Encrypter.fromPartial(object.decrypter)
       : undefined;
     return message;
   },
@@ -207,7 +227,7 @@ export const RecordBuilderFromHexRequest = {
       Encrypter.encode(message.encrypter, writer.uint32(34).fork()).ldelim();
     }
     if (message.decrypter !== undefined) {
-      Decrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
+      Encrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -232,7 +252,7 @@ export const RecordBuilderFromHexRequest = {
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
         case 5:
-          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          message.decrypter = Encrypter.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -248,7 +268,7 @@ export const RecordBuilderFromHexRequest = {
       payload: isSet(object.payload) ? String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
-      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -261,7 +281,7 @@ export const RecordBuilderFromHexRequest = {
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
     message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -278,7 +298,7 @@ export const RecordBuilderFromHexRequest = {
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
     message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
-      ? Decrypter.fromPartial(object.decrypter)
+      ? Encrypter.fromPartial(object.decrypter)
       : undefined;
     return message;
   },
@@ -303,7 +323,7 @@ export const RecordBuilderFromJSONRequest = {
       Encrypter.encode(message.encrypter, writer.uint32(34).fork()).ldelim();
     }
     if (message.decrypter !== undefined) {
-      Decrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
+      Encrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -328,7 +348,7 @@ export const RecordBuilderFromJSONRequest = {
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
         case 5:
-          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          message.decrypter = Encrypter.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -344,7 +364,7 @@ export const RecordBuilderFromJSONRequest = {
       payload: isSet(object.payload) ? String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
-      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -357,7 +377,7 @@ export const RecordBuilderFromJSONRequest = {
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
     message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -374,7 +394,7 @@ export const RecordBuilderFromJSONRequest = {
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
     message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
-      ? Decrypter.fromPartial(object.decrypter)
+      ? Encrypter.fromPartial(object.decrypter)
       : undefined;
     return message;
   },
@@ -405,7 +425,7 @@ export const RecordBuilderFromBytesRequest = {
       Encrypter.encode(message.encrypter, writer.uint32(34).fork()).ldelim();
     }
     if (message.decrypter !== undefined) {
-      Decrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
+      Encrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -430,7 +450,7 @@ export const RecordBuilderFromBytesRequest = {
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
         case 5:
-          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          message.decrypter = Encrypter.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -446,7 +466,7 @@ export const RecordBuilderFromBytesRequest = {
       payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
-      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -460,7 +480,7 @@ export const RecordBuilderFromBytesRequest = {
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
     message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -479,7 +499,7 @@ export const RecordBuilderFromBytesRequest = {
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
     message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
-      ? Decrypter.fromPartial(object.decrypter)
+      ? Encrypter.fromPartial(object.decrypter)
       : undefined;
     return message;
   },
@@ -510,7 +530,7 @@ export const RecordBuilderFromFileRequest = {
       Encrypter.encode(message.encrypter, writer.uint32(34).fork()).ldelim();
     }
     if (message.decrypter !== undefined) {
-      Decrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
+      Encrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -535,7 +555,7 @@ export const RecordBuilderFromFileRequest = {
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
         case 5:
-          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          message.decrypter = Encrypter.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -551,7 +571,7 @@ export const RecordBuilderFromFileRequest = {
       payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
-      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -565,7 +585,7 @@ export const RecordBuilderFromFileRequest = {
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
     message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -582,7 +602,7 @@ export const RecordBuilderFromFileRequest = {
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
     message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
-      ? Decrypter.fromPartial(object.decrypter)
+      ? Encrypter.fromPartial(object.decrypter)
       : undefined;
     return message;
   },
@@ -607,7 +627,7 @@ export const RecordBuilderFromRecordRequest = {
       Encrypter.encode(message.encrypter, writer.uint32(34).fork()).ldelim();
     }
     if (message.decrypter !== undefined) {
-      Decrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
+      Encrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -632,7 +652,7 @@ export const RecordBuilderFromRecordRequest = {
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
         case 5:
-          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          message.decrypter = Encrypter.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -648,7 +668,7 @@ export const RecordBuilderFromRecordRequest = {
       payload: isSet(object.payload) ? Record.fromJSON(object.payload) : undefined,
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
-      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -661,7 +681,7 @@ export const RecordBuilderFromRecordRequest = {
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
     message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -682,7 +702,7 @@ export const RecordBuilderFromRecordRequest = {
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
     message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
-      ? Decrypter.fromPartial(object.decrypter)
+      ? Encrypter.fromPartial(object.decrypter)
       : undefined;
     return message;
   },
@@ -767,7 +787,7 @@ export const RecordBuilderFromLoaderRequest = {
       Encrypter.encode(message.encrypter, writer.uint32(34).fork()).ldelim();
     }
     if (message.decrypter !== undefined) {
-      Decrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
+      Encrypter.encode(message.decrypter, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -792,7 +812,7 @@ export const RecordBuilderFromLoaderRequest = {
           message.encrypter = Encrypter.decode(reader, reader.uint32());
           break;
         case 5:
-          message.decrypter = Decrypter.decode(reader, reader.uint32());
+          message.decrypter = Encrypter.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -808,7 +828,7 @@ export const RecordBuilderFromLoaderRequest = {
       loader: isSet(object.loader) ? Loader.fromJSON(object.loader) : undefined,
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
-      decrypter: isSet(object.decrypter) ? Decrypter.fromJSON(object.decrypter) : undefined,
+      decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
     };
   },
 
@@ -821,7 +841,7 @@ export const RecordBuilderFromLoaderRequest = {
     message.encrypter !== undefined &&
       (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
     message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Decrypter.toJSON(message.decrypter) : undefined);
+      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
     return obj;
   },
 
@@ -842,8 +862,131 @@ export const RecordBuilderFromLoaderRequest = {
       ? Encrypter.fromPartial(object.encrypter)
       : undefined;
     message.decrypter = (object.decrypter !== undefined && object.decrypter !== null)
-      ? Decrypter.fromPartial(object.decrypter)
+      ? Encrypter.fromPartial(object.decrypter)
       : undefined;
+    return message;
+  },
+};
+
+function createBaseGetDetailsRequest(): GetDetailsRequest {
+  return { configData: undefined, payload: new Uint8Array() };
+}
+
+export const GetDetailsRequest = {
+  encode(message: GetDetailsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.payload.length !== 0) {
+      writer.uint32(18).bytes(message.payload);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetDetailsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetDetailsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.payload = reader.bytes();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetDetailsRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+    };
+  },
+
+  toJSON(message: GetDetailsRequest): unknown {
+    const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.payload !== undefined &&
+      (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetDetailsRequest>, I>>(object: I): GetDetailsRequest {
+    const message = createBaseGetDetailsRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.payload = object.payload ?? new Uint8Array();
+    return message;
+  },
+};
+
+function createBaseGetDetailsResponse(): GetDetailsResponse {
+  return { details: undefined, error: undefined };
+}
+
+export const GetDetailsResponse = {
+  encode(message: GetDetailsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.details !== undefined) {
+      RecordDetails.encode(message.details, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetDetailsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetDetailsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.details = RecordDetails.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetDetailsResponse {
+    return {
+      details: isSet(object.details) ? RecordDetails.fromJSON(object.details) : undefined,
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: GetDetailsResponse): unknown {
+    const obj: any = {};
+    message.details !== undefined &&
+      (obj.details = message.details ? RecordDetails.toJSON(message.details) : undefined);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetDetailsResponse>, I>>(object: I): GetDetailsResponse {
+    const message = createBaseGetDetailsResponse();
+    message.details = (object.details !== undefined && object.details !== null)
+      ? RecordDetails.fromPartial(object.details)
+      : undefined;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
 };
@@ -964,6 +1107,128 @@ export const GetHashResponse = {
   fromPartial<I extends Exact<DeepPartial<GetHashResponse>, I>>(object: I): GetHashResponse {
     const message = createBaseGetHashResponse();
     message.hash = object.hash ?? "";
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
+function createBaseGetPayloadRequest(): GetPayloadRequest {
+  return { configData: undefined, record: undefined };
+}
+
+export const GetPayloadRequest = {
+  encode(message: GetPayloadRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.record !== undefined) {
+      Record.encode(message.record, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetPayloadRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetPayloadRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.record = Record.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetPayloadRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      record: isSet(object.record) ? Record.fromJSON(object.record) : undefined,
+    };
+  },
+
+  toJSON(message: GetPayloadRequest): unknown {
+    const obj: any = {};
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetPayloadRequest>, I>>(object: I): GetPayloadRequest {
+    const message = createBaseGetPayloadRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.record = (object.record !== undefined && object.record !== null)
+      ? Record.fromPartial(object.record)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseGetPayloadResponse(): GetPayloadResponse {
+  return { payload: new Uint8Array(), error: undefined };
+}
+
+export const GetPayloadResponse = {
+  encode(message: GetPayloadResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.payload.length !== 0) {
+      writer.uint32(10).bytes(message.payload);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetPayloadResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetPayloadResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.payload = reader.bytes();
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetPayloadResponse {
+    return {
+      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: GetPayloadResponse): unknown {
+    const obj: any = {};
+    message.payload !== undefined &&
+      (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<GetPayloadResponse>, I>>(object: I): GetPayloadResponse {
+    const message = createBaseGetPayloadResponse();
+    message.payload = object.payload ?? new Uint8Array();
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
@@ -1109,7 +1374,9 @@ export interface RecordService {
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse>;
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse>;
   BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse>;
+  GetDetails(request: GetDetailsRequest): Promise<GetDetailsResponse>;
   GetHash(request: GetHashRequest): Promise<GetHashResponse>;
+  GetPayload(request: GetPayloadRequest): Promise<GetPayloadResponse>;
   SetProof(request: SetProofRequest): Promise<SetProofResponse>;
 }
 
@@ -1124,7 +1391,9 @@ export class RecordServiceClientImpl implements RecordService {
     this.BuildRecordFromBytes = this.BuildRecordFromBytes.bind(this);
     this.BuildRecordFromRecord = this.BuildRecordFromRecord.bind(this);
     this.BuildRecordFromLoader = this.BuildRecordFromLoader.bind(this);
+    this.GetDetails = this.GetDetails.bind(this);
     this.GetHash = this.GetHash.bind(this);
+    this.GetPayload = this.GetPayload.bind(this);
     this.SetProof = this.SetProof.bind(this);
   }
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse> {
@@ -1169,10 +1438,22 @@ export class RecordServiceClientImpl implements RecordService {
     return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
   }
 
+  GetDetails(request: GetDetailsRequest): Promise<GetDetailsResponse> {
+    const data = GetDetailsRequest.encode(request).finish();
+    const promise = this.rpc.request("bloock.RecordService", "GetDetails", data);
+    return promise.then((data) => GetDetailsResponse.decode(new _m0.Reader(data)));
+  }
+
   GetHash(request: GetHashRequest): Promise<GetHashResponse> {
     const data = GetHashRequest.encode(request).finish();
     const promise = this.rpc.request("bloock.RecordService", "GetHash", data);
     return promise.then((data) => GetHashResponse.decode(new _m0.Reader(data)));
+  }
+
+  GetPayload(request: GetPayloadRequest): Promise<GetPayloadResponse> {
+    const data = GetPayloadRequest.encode(request).finish();
+    const promise = this.rpc.request("bloock.RecordService", "GetPayload", data);
+    return promise.then((data) => GetPayloadResponse.decode(new _m0.Reader(data)));
   }
 
   SetProof(request: SetProofRequest): Promise<SetProofResponse> {
@@ -1243,11 +1524,27 @@ export const RecordServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getDetails: {
+      name: "GetDetails",
+      requestType: GetDetailsRequest,
+      requestStream: false,
+      responseType: GetDetailsResponse,
+      responseStream: false,
+      options: {},
+    },
     getHash: {
       name: "GetHash",
       requestType: GetHashRequest,
       requestStream: false,
       responseType: GetHashResponse,
+      responseStream: false,
+      options: {},
+    },
+    getPayload: {
+      name: "GetPayload",
+      requestType: GetPayloadRequest,
+      requestStream: false,
+      responseType: GetPayloadResponse,
       responseStream: false,
       options: {},
     },

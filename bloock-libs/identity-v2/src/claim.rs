@@ -145,9 +145,9 @@ impl Claim {
         self.index[0][FLAGS_BYTE_IDX] |= s as u8;
     }
 
-    pub fn set_index_data_ints(&mut self, slotA: &BigInt, slotB: &BigInt) -> Result<(), String> {
-        set_slot_int(&mut self.index[2], slotA, SLOT_NAME_INDEX_A)?;
-        set_slot_int(&mut self.index[3], slotB, SLOT_NAME_INDEX_B)
+    pub fn set_index_data_ints(&mut self, slot_a: &BigInt, slot_b: &BigInt) -> Result<(), String> {
+        set_slot_int(&mut self.index[2], slot_a, SLOT_NAME_INDEX_A)?;
+        set_slot_int(&mut self.index[3], slot_b, SLOT_NAME_INDEX_B)
     }
 
     pub fn set_index_merklized_root(&mut self, r: &BigInt) -> Result<(), String> {
@@ -174,7 +174,7 @@ impl Claim {
 }
 
 fn set_slot_int(slot: &mut ElemBytes, value: &BigInt, slot_name: SlotName) -> Result<(), String> {
-    let val = set_int(&value)?;
+    let val = set_int(value)?;
     slot[..val.len()].copy_from_slice(&val);
     //memset(&mut slot[val.len()..], 0);
     Ok(())

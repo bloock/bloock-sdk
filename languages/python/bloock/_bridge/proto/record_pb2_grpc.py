@@ -49,10 +49,20 @@ class RecordServiceStub(object):
                 request_serializer=record__pb2.RecordBuilderFromLoaderRequest.SerializeToString,
                 response_deserializer=record__pb2.RecordBuilderResponse.FromString,
                 )
+        self.GetDetails = channel.unary_unary(
+                '/bloock.RecordService/GetDetails',
+                request_serializer=record__pb2.GetDetailsRequest.SerializeToString,
+                response_deserializer=record__pb2.GetDetailsResponse.FromString,
+                )
         self.GetHash = channel.unary_unary(
                 '/bloock.RecordService/GetHash',
                 request_serializer=record__pb2.GetHashRequest.SerializeToString,
                 response_deserializer=record__pb2.GetHashResponse.FromString,
+                )
+        self.GetPayload = channel.unary_unary(
+                '/bloock.RecordService/GetPayload',
+                request_serializer=record__pb2.GetPayloadRequest.SerializeToString,
+                response_deserializer=record__pb2.GetPayloadResponse.FromString,
                 )
         self.SetProof = channel.unary_unary(
                 '/bloock.RecordService/SetProof',
@@ -106,7 +116,19 @@ class RecordServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetDetails(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetHash(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPayload(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -156,10 +178,20 @@ def add_RecordServiceServicer_to_server(servicer, server):
                     request_deserializer=record__pb2.RecordBuilderFromLoaderRequest.FromString,
                     response_serializer=record__pb2.RecordBuilderResponse.SerializeToString,
             ),
+            'GetDetails': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetDetails,
+                    request_deserializer=record__pb2.GetDetailsRequest.FromString,
+                    response_serializer=record__pb2.GetDetailsResponse.SerializeToString,
+            ),
             'GetHash': grpc.unary_unary_rpc_method_handler(
                     servicer.GetHash,
                     request_deserializer=record__pb2.GetHashRequest.FromString,
                     response_serializer=record__pb2.GetHashResponse.SerializeToString,
+            ),
+            'GetPayload': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPayload,
+                    request_deserializer=record__pb2.GetPayloadRequest.FromString,
+                    response_serializer=record__pb2.GetPayloadResponse.SerializeToString,
             ),
             'SetProof': grpc.unary_unary_rpc_method_handler(
                     servicer.SetProof,
@@ -296,6 +328,23 @@ class RecordService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def GetDetails(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.RecordService/GetDetails',
+            record__pb2.GetDetailsRequest.SerializeToString,
+            record__pb2.GetDetailsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def GetHash(request,
             target,
             options=(),
@@ -309,6 +358,23 @@ class RecordService(object):
         return grpc.experimental.unary_unary(request, target, '/bloock.RecordService/GetHash',
             record__pb2.GetHashRequest.SerializeToString,
             record__pb2.GetHashResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetPayload(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.RecordService/GetPayload',
+            record__pb2.GetPayloadRequest.SerializeToString,
+            record__pb2.GetPayloadResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

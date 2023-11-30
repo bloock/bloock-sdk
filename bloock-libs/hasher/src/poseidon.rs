@@ -6,8 +6,6 @@ use bloock_poseidon_rs::POSEIDON;
 use num_bigint::BigInt;
 
 const POSEIDON_HASH_OUTPUT_LENGTH: usize = 32;
-const Q_STRING: &str =
-    "21888242871839275222246405745257275088548364400416034343698204186575808495617";
 
 #[derive(Default)]
 pub struct Poseidon {}

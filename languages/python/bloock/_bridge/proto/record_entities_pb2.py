@@ -12,9 +12,12 @@ _sym_db = _symbol_database.Default()
 
 
 from . import config_pb2 as config__pb2
+from . import integrity_entities_pb2 as integrity__entities__pb2
+from . import authenticity_entities_pb2 as authenticity__entities__pb2
+from . import encryption_entities_pb2 as encryption__entities__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15record_entities.proto\x12\x06\x62loock\x1a\x0c\x63onfig.proto\"\x1a\n\x0cRecordHeader\x12\n\n\x02ty\x18\x01 \x01(\t\"e\n\x06Record\x12,\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigDataH\x00\x88\x01\x01\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12\x0c\n\x04hash\x18\x03 \x01(\tB\x0e\n\x0c_config_data*Y\n\x0bRecordTypes\x12\n\n\x06STRING\x10\x00\x12\x07\n\x03HEX\x10\x01\x12\x08\n\x04JSON\x10\x02\x12\t\n\x05\x42YTES\x10\x03\x12\x08\n\x04\x46ILE\x10\x04\x12\n\n\x06RECORD\x10\x05\x12\n\n\x06LOADER\x10\x06\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15record_entities.proto\x12\x06\x62loock\x1a\x0c\x63onfig.proto\x1a\x18integrity_entities.proto\x1a\x1b\x61uthenticity_entities.proto\x1a\x19\x65ncryption_entities.proto\"\x1a\n\x0cRecordHeader\x12\n\n\x02ty\x18\x01 \x01(\t\"e\n\x06Record\x12,\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigDataH\x00\x88\x01\x01\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12\x0c\n\x04hash\x18\x03 \x01(\tB\x0e\n\x0c_config_data\"M\n\x10IntegrityDetails\x12\x0c\n\x04hash\x18\x01 \x01(\t\x12!\n\x05proof\x18\x02 \x01(\x0b\x32\r.bloock.ProofH\x00\x88\x01\x01\x42\x08\n\x06_proof\"<\n\x13\x41uthenticityDetails\x12%\n\nsignatures\x18\x01 \x03(\x0b\x32\x11.bloock.Signature\"\x80\x01\n\x11\x45ncryptionDetails\x12\'\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlgH\x00\x88\x01\x01\x12\x10\n\x03key\x18\x02 \x01(\tH\x01\x88\x01\x01\x12\x14\n\x07subject\x18\x03 \x01(\tH\x02\x88\x01\x01\x42\x06\n\x04_algB\x06\n\x04_keyB\n\n\x08_subject\"?\n\x13\x41vailabilityDetails\x12\x0c\n\x04size\x18\x01 \x01(\x03\x12\x11\n\x04type\x18\x02 \x01(\tH\x00\x88\x01\x01\x42\x07\n\x05_type\"\xa4\x02\n\rRecordDetails\x12\x30\n\tintegrity\x18\x01 \x01(\x0b\x32\x18.bloock.IntegrityDetailsH\x00\x88\x01\x01\x12\x36\n\x0c\x61uthenticity\x18\x02 \x01(\x0b\x32\x1b.bloock.AuthenticityDetailsH\x01\x88\x01\x01\x12\x32\n\nencryption\x18\x03 \x01(\x0b\x32\x19.bloock.EncryptionDetailsH\x02\x88\x01\x01\x12\x36\n\x0c\x61vailability\x18\x04 \x01(\x0b\x32\x1b.bloock.AvailabilityDetailsH\x03\x88\x01\x01\x42\x0c\n\n_integrityB\x0f\n\r_authenticityB\r\n\x0b_encryptionB\x0f\n\r_availability*Y\n\x0bRecordTypes\x12\n\n\x06STRING\x10\x00\x12\x07\n\x03HEX\x10\x01\x12\x08\n\x04JSON\x10\x02\x12\t\n\x05\x42YTES\x10\x03\x12\x08\n\x04\x46ILE\x10\x04\x12\n\n\x06RECORD\x10\x05\x12\n\n\x06LOADER\x10\x06\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'record_entities_pb2', globals())
@@ -22,10 +25,20 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
-  _RECORDTYPES._serialized_start=178
-  _RECORDTYPES._serialized_end=267
-  _RECORDHEADER._serialized_start=47
-  _RECORDHEADER._serialized_end=73
-  _RECORD._serialized_start=75
-  _RECORD._serialized_end=176
+  _RECORDTYPES._serialized_start=892
+  _RECORDTYPES._serialized_end=981
+  _RECORDHEADER._serialized_start=129
+  _RECORDHEADER._serialized_end=155
+  _RECORD._serialized_start=157
+  _RECORD._serialized_end=258
+  _INTEGRITYDETAILS._serialized_start=260
+  _INTEGRITYDETAILS._serialized_end=337
+  _AUTHENTICITYDETAILS._serialized_start=339
+  _AUTHENTICITYDETAILS._serialized_end=399
+  _ENCRYPTIONDETAILS._serialized_start=402
+  _ENCRYPTIONDETAILS._serialized_end=530
+  _AVAILABILITYDETAILS._serialized_start=532
+  _AVAILABILITYDETAILS._serialized_end=595
+  _RECORDDETAILS._serialized_start=598
+  _RECORDDETAILS._serialized_end=890
 # @@protoc_insertion_point(module_scope)

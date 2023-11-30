@@ -9,7 +9,6 @@ from bloock._bridge.proto.encryption_pb2 import (
 from bloock._bridge.proto.keys_pb2 import GenerateLocalKeyRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock._config.config import Config
-from bloock.entity.encryption.decrypter import Decrypter
 from bloock.entity.encryption.encrypter import Encrypter
 from bloock.entity.encryption.encryption_alg import EncryptionAlg
 from bloock.entity.key.key_pair import KeyPair
@@ -51,7 +50,7 @@ class EncryptionClient:
 
         return Record.from_proto(res.record, self.config_data)
 
-    def decrypt(self, record: Record, decrypter: Decrypter) -> Record:
+    def decrypt(self, record: Record, decrypter: Encrypter) -> Record:
         req = DecryptRequest(
             config_data=self.config_data,
             record=record.to_proto(),

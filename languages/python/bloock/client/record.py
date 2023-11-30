@@ -9,9 +9,9 @@ from bloock._bridge.proto.shared_pb2 import Error
 from bloock._config.config import Config, ConfigData
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.availability.loader import Loader
-from bloock.entity.encryption.decrypter import Decrypter
 from bloock.entity.encryption.encrypter import Encrypter
 from bloock.entity.record.record import Record
+from bloock.entity.record.record_details import RecordDetails
 
 
 class RecordClient:
@@ -96,7 +96,7 @@ class RecordBuilder:
         self.encrypter = encrypter.to_proto()
         return self
 
-    def with_decrypter(self, decrypter: Decrypter) -> RecordBuilder:
+    def with_decrypter(self, decrypter: Encrypter) -> RecordBuilder:
         self.decrypter = decrypter.to_proto()
         return self
 
@@ -180,3 +180,18 @@ class RecordBuilder:
             raise Exception(res.error.message)
 
         return Record.from_proto(res.record, self.config_data)
+    
+    def get_details(self) -> RecordDetails:
+        client = bridge.BloockBridge()
+        
+        res: proto.GetDetailsResponse = client.record().GetDetails(
+            proto.GetDetailsRequest(
+                payload=self.payload,
+                config_data=self.config_data
+            )
+        )
+        
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return RecordDetails.from_proto(res.details)

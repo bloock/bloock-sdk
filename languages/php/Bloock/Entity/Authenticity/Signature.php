@@ -8,18 +8,20 @@ class Signature
     private string $alg;
     private string $kid;
     private string $messageHash;
+    private string $subject;
 
-    public function __construct(string $signature, string $alg, string $kid, string $messageHash)
+    public function __construct(string $signature, string $alg, string $kid, string $messageHash, string $subject)
     {
         $this->signature = $signature;
         $this->alg = $alg;
         $this->kid = $kid;
         $this->messageHash = $messageHash;
+        $this->subject = $subject;
     }
 
     public static function fromProto(\Bloock\Signature $signature): Signature
     {
-        return new Signature($signature->getSignature(), $signature->getAlg(), $signature->getKid(), $signature->getMessageHash());
+        return new Signature($signature->getSignature(), $signature->getAlg(), $signature->getKid(), $signature->getMessageHash(), $signature->getSubject());
     }
 
     /**
@@ -56,6 +58,19 @@ class Signature
         $this->messageHash = $messageHash;
     }
 
+    /**
+     * @return string
+     */
+    public function getSubject(): string
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(string $subject): void
+    {
+        $this->subject = $subject;
+    }
+
     public function toProto(): \Bloock\Signature
     {
         $p = new \Bloock\Signature();
@@ -63,6 +78,7 @@ class Signature
         $p->setAlg($this->alg);
         $p->setKid($this->kid);
         $p->setMessageHash($this->messageHash);
+        $p->setSubject($this->subject);
         return $p;
     }
 

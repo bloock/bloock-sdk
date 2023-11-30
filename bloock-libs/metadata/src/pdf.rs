@@ -10,7 +10,9 @@ use crate::{
 };
 use async_trait::async_trait;
 use bcder::{Captured, Mode, OctetString};
-use bloock_encrypter::{Decrypter, Encrypter};
+use bloock_encrypter::entity::{
+    alg::EncryptionAlg, encryption::Encryption, encryption_key::EncryptionKey,
+};
 use bloock_hasher::sha256::Sha256;
 use bloock_hasher::Hasher;
 use bloock_keys::{certificates::GetX509Certficate, entity::key::Key};
@@ -35,6 +37,7 @@ use rsa::{
 use serde::{de::DeserializeOwned, Serialize};
 use x509_cert::{
     attr::Attribute,
+    certificate::TbsCertificateInner,
     der::{
         asn1::{OctetStringRef, SetOfVec},
         Any,
@@ -54,9 +57,8 @@ pub struct PdfParser {
     original_payload: Vec<u8>,
 }
 
-#[async_trait(?Send)]
-impl MetadataParser for PdfParser {
-    fn load(payload: &[u8]) -> BloockResult<Self> {
+impl PdfParser {
+    pub fn load(payload: &[u8]) -> BloockResult<Self> {
         let document =
             Document::load_from(payload).map_err(|e| MetadataError::LoadError(e.to_string()))?;
         let parser = PdfParser {
@@ -67,7 +69,10 @@ impl MetadataParser for PdfParser {
 
         Ok(parser)
     }
+}
 
+#[async_trait(?Send)]
+impl MetadataParser for PdfParser {
     async fn sign(
         &mut self,
         key: &Key,
@@ -141,7 +146,7 @@ impl MetadataParser for PdfParser {
         let dictionary: Dictionary = signature_dict
             .clone()
             .try_into()
-            .map_err(|e| MetadataError::LoadMetadataError("".to_string()))?;
+            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
         self.document.set_object(signature_id, dictionary);
 
         //Get payload to sign
@@ -165,7 +170,7 @@ impl MetadataParser for PdfParser {
             api_key.clone(),
             environment.clone(),
             &signed_attributes_encoded,
-            &key,
+            key,
         )
         .await
         .map_err(|e| MetadataError::LoadError(e.to_string()))?;
@@ -178,11 +183,11 @@ impl MetadataParser for PdfParser {
         //Add signature
         signature_dict
             .compute_content(signature_payload)
-            .map_err(|e| MetadataError::LoadMetadataError("".to_string()))?;
+            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
         let dictionary: Dictionary = signature_dict
             .clone()
             .try_into()
-            .map_err(|e| MetadataError::LoadMetadataError("".to_string()))?;
+            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
         self.document.set_object(signature_id, dictionary);
 
         Ok(signature)
@@ -211,16 +216,32 @@ impl MetadataParser for PdfParser {
         Ok(true)
     }
 
-    async fn encrypt(&mut self, encrypter: Box<dyn Encrypter>) -> BloockResult<()> {
+    async fn encrypt(
+        &mut self,
+        _key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> BloockResult<Encryption> {
         todo!()
     }
 
-    async fn decrypt(&mut self, decrypter: Box<dyn Decrypter>) -> BloockResult<()> {
+    async fn decrypt(
+        &mut self,
+        _key: &Key,
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+    ) -> BloockResult<()> {
         todo!()
     }
 
     fn set_proof<T: Serialize>(&mut self, value: &T) -> BloockResult<()> {
         self.set("proof", value)
+    }
+
+    fn get_payload(&self) -> BloockResult<Vec<u8>> {
+        self.build()
     }
 
     fn get_proof<T: DeserializeOwned>(&self) -> Option<T> {
@@ -238,16 +259,17 @@ impl MetadataParser for PdfParser {
         Ok(signatures)
     }
 
-    fn get_encryption_algorithm(&self) -> Option<String> {
+    fn get_encryption_alg(&self) -> Option<EncryptionAlg> {
         self.get("encryption_alg")
+    }
+
+    fn get_encryption_key(&self) -> Option<EncryptionKey> {
+        self.get("encryption_key")
     }
 
     fn is_encrypted(&self) -> bool {
         let is_encrypted: Option<bool> = self.get("is_encrypted");
-        match is_encrypted {
-            Some(s) => s,
-            None => false,
-        }
+        is_encrypted.unwrap_or(false)
     }
 
     fn build(&self) -> BloockResult<Vec<u8>> {
@@ -373,8 +395,8 @@ impl PdfParser {
             .len();
 
         let diff = actual_length as i64 - original_length as i64;
-        byte_range[1] = byte_range[1] + diff;
-        byte_range[2] = byte_range[2] + diff;
+        byte_range[1] += diff;
+        byte_range[2] += diff;
 
         let byte_range = byte_range.to_vec();
 
@@ -554,17 +576,15 @@ impl PdfParser {
     }
 
     fn get_signatures_and_payload(&self) -> BloockResult<Vec<(Signature, Vec<u8>)>> {
-        println!("Enter get signatures and payload");
-
         let document = self.document.clone();
-        let root = utils::get_root(&document).map_err(|e| MetadataError::DeserializeError)?;
+        let root = utils::get_root(&document).map_err(|_| MetadataError::DeserializeError)?;
 
         let acro_form = match root.get(b"AcroForm") {
             Ok(a) => AcroFormDictionary::try_from(
                 a.as_dict()
                     .map_err(|e| MetadataError::LoadError(e.to_string()))?,
             )
-            .map_err(|e| MetadataError::DeserializeError)?,
+            .map_err(|_| MetadataError::DeserializeError)?,
             Err(_) => AcroFormDictionary::default(),
         };
 
@@ -626,35 +646,38 @@ impl PdfParser {
                     None => return Err(MetadataError::DeserializeError),
                 };
 
-                let unparsed_public_key = match signed_data.certificates.clone() {
-                    Some(c) => {
-                        let mut vv = vec![];
-                        for certificate in c.0.iter() {
-                            let cert: CertificateInner =
-                                CertificateInner::from_der(&certificate.to_der().unwrap()).unwrap();
-                            vv = cert
-                                .tbs_certificate
-                                .subject_public_key_info
-                                .to_der()
-                                .unwrap();
-                            break;
+                let certificate_inner: Option<TbsCertificateInner> =
+                    match signed_data.certificates.clone() {
+                        Some(c) => {
+                            let mut vv: Option<TbsCertificateInner> = None;
+                            if let Some(certificate) = c.0.iter().next() {
+                                let cert: CertificateInner =
+                                    CertificateInner::from_der(&certificate.to_der().unwrap())
+                                        .unwrap();
+                                vv = Some(cert.tbs_certificate);
+                            }
+                            vv
                         }
-                        vv
-                    }
-                    None => return Err(MetadataError::DeserializeError),
-                };
-                let rsa_public_key: RsaPublicKey =
-                    DecodePublicKey::from_public_key_der(&unparsed_public_key).unwrap();
+                        None => return Err(MetadataError::DeserializeError),
+                    };
 
-                let signature = Signature {
-                    alg: algorithm,
-                    kid: rsa_public_key
-                        .to_public_key_pem(LineEnding::default())
-                        .unwrap(),
-                    signature: hex::encode(raw_signature),
-                    message_hash: hex::encode(message_hash),
-                };
-                response.push((signature, signed_payload.clone()));
+                if let Some(cert) = certificate_inner {
+                    let rsa_public_key: RsaPublicKey = DecodePublicKey::from_public_key_der(
+                        &cert.subject_public_key_info.to_der().unwrap(),
+                    )
+                    .unwrap();
+
+                    let signature = Signature {
+                        alg: algorithm,
+                        key: rsa_public_key
+                            .to_public_key_pem(LineEnding::default())
+                            .unwrap(),
+                        subject: Some(cert.subject.to_string()),
+                        signature: hex::encode(raw_signature),
+                        message_hash: hex::encode(message_hash),
+                    };
+                    response.push((signature, signed_payload.clone()));
+                }
             }
         }
         Ok(response)

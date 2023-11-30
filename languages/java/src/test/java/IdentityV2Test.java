@@ -3,7 +3,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.bloock.sdk.client.IdentityClient;
 import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.entity.authenticity.Signer;
-import com.bloock.sdk.entity.authenticity.SignerArgs;
 import com.bloock.sdk.entity.identity_v2.*;
 import com.bloock.sdk.entity.key.*;
 import java.time.LocalDate;
@@ -128,7 +127,7 @@ public class IdentityV2Test {
         .withStringAttribute("car_type", "big")
         .withIntegerAttribute("car_points", 5L)
         .withDecimalAttribute("precision_wheels", 1.10)
-        .withSigner(new Signer(new SignerArgs(keyBjj)))
+        .withSigner(new Signer(keyBjj))
         .WithProofType(proofList)
         .build();
     assertNotNull(receipt.getCredentialId());
@@ -143,7 +142,7 @@ public class IdentityV2Test {
 
     IssuerStateReceipt stateReceipt = identityClient
         .buildIssuerStatePublisher(issuer)
-        .withSigner(new Signer(new SignerArgs(keyBjj)))
+        .withSigner(new Signer(keyBjj))
         .build();
     assertNotNull(stateReceipt.getTxHash());
 
@@ -152,7 +151,7 @@ public class IdentityV2Test {
         () -> {
           identityClient
               .buildIssuerStatePublisher(issuer)
-              .withSigner(new Signer(new SignerArgs(keyBjj)))
+              .withSigner(new Signer(keyBjj))
               .build();
           throw new RuntimeException("This is an intentional exception.");
         });

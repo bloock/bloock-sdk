@@ -219,10 +219,9 @@ impl Loader<IriBuf, Span> for BloockLoader {
         IriBuf: 'a,
     {
         Box::pin(async move {
-            let url: IriBuf = url.into();
             let client = SimpleHttpClient {};
             let url_string = url.as_str().to_string();
-            
+
             let schema = if url_string != W3C_CREDENTIAL_2018_CONTEXT_URL {
                 let req = client.get(
                     url.as_str().to_string(),
@@ -231,9 +230,9 @@ impl Loader<IriBuf, Span> for BloockLoader {
                         "application/ld+json".to_string(),
                     )]),
                 );
-    
+
                 let res = req.await.unwrap();
-    
+
                 std::str::from_utf8(&res).unwrap().to_string()
             } else {
                 W3C_CREDENTIAL_2018_CONTEXT_DOCUMENT.to_string()
@@ -245,11 +244,10 @@ impl Loader<IriBuf, Span> for BloockLoader {
                     Some("application/ld+json".parse().unwrap()),
                     doc,
                 );
-                return Ok(remote_doc);
+                Ok(remote_doc)
             } else {
-                return Err(ErrorCode::LoadingDocumentFailed.into());
+                Err(ErrorCode::LoadingDocumentFailed)
             }
         })
     }
 }
-

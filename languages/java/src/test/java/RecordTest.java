@@ -10,10 +10,11 @@ import com.bloock.sdk.entity.encryption.*;
 import com.bloock.sdk.entity.integrity.AnchorNetwork;
 import com.bloock.sdk.entity.integrity.Proof;
 import com.bloock.sdk.entity.integrity.ProofAnchor;
-import com.bloock.sdk.entity.key.KeyType;
-import com.bloock.sdk.entity.key.LocalKey;
+import com.bloock.sdk.entity.key.*;
 import com.bloock.sdk.entity.record.Record;
 import java.util.Collections;
+
+import com.bloock.sdk.entity.record.RecordDetails;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -147,10 +148,12 @@ class RecordTest {
   @Test
   void testAesEncryption() throws Exception {
     String payload = "Hello world 2";
-    String password = "some_password";
+    KeyClient keyClient = new KeyClient();
+    LocalKey localKey = keyClient.newLocalKey(KeyType.Aes256);
+
     RecordClient recordClient = new RecordClient();
     Record encryptedRecord =
-        recordClient.fromString(payload).withEncrypter(new AesEncrypter(password)).build();
+        recordClient.fromString(payload).withEncrypter(new Encrypter(localKey)).build();
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
 
     EncryptionClient encryptionClient = new EncryptionClient();
@@ -158,9 +161,10 @@ class RecordTest {
 
     boolean throwsException = false;
     try {
+      LocalKey invalidKey = keyClient.newLocalKey(KeyType.Aes256);
       recordClient
           .fromRecord(encryptedRecord)
-          .withDecrypter(new AesDecrypter("incorrect_password"))
+          .withDecrypter(new Encrypter(invalidKey))
           .build();
     } catch (Exception e) {
       throwsException = true;
@@ -168,7 +172,7 @@ class RecordTest {
     assertTrue(throwsException);
 
     Record decryptedRecord =
-        recordClient.fromRecord(encryptedRecord).withDecrypter(new AesDecrypter(password)).build();
+        recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(localKey)).build();
 
     assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -186,18 +190,76 @@ class RecordTest {
 
     RecordClient recordClient = new RecordClient();
     Record encryptedRecord =
-        recordClient.fromString(payload).withEncrypter(new RsaEncrypter(localKey)).build();
+            recordClient.fromString(payload).withEncrypter(new Encrypter(localKey)).build();
 
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
     assertEquals(encryptionClient.getEncryptionAlg(encryptedRecord), EncryptionAlg.RSA);
 
     Record decryptedRecord =
-        recordClient.fromRecord(encryptedRecord).withDecrypter(new RsaDecrypter(localKey)).build();
+            recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(localKey)).build();
 
     assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
 
     String hash = decryptedRecord.getHash();
     assertEquals(hash, "96d59e2ea7cec4915c415431e6adb115e3c0c728928773bcc8e7d143b88bfda6");
+  }
+
+  @Test
+  void testRecordDetailsSigned() throws Exception {
+    String payload = "Hello world 2";
+    EncryptionClient encryptionClient = new EncryptionClient();
+
+    KeyClient keyClient = new KeyClient();
+    LocalCertificate localCert = keyClient.newLocalCertificate(new LocalCertificateParams(
+            KeyType.Rsa2048,
+            new SubjectCertificateParams("Bloock", "","","","",""),
+            "", 0)
+    );
+
+    RecordClient recordClient = new RecordClient();
+    Record record =
+            recordClient.fromString(payload).withSigner(new Signer(localCert)).build();
+
+    byte[] recordPayload = record.retrieve();
+
+    RecordDetails details = recordClient.fromFile(recordPayload).getDetails();
+
+    assertNotEquals(details.getIntegrity().getHash(), "");
+    assertNull(details.getIntegrity().getProof());
+
+    assertTrue(details.getAuthenticity().getSignatures().size() > 0);
+
+    assertNull(details.getEncryption());
+
+    assertNull(details.getAvailability().getContentType());
+    assertEquals(details.getAvailability().getSize(), recordPayload.length);
+  }
+
+  @Test
+  void testRecordDetailsEncrypted() throws Exception {
+    String payload = "Hello world 2";
+    EncryptionClient encryptionClient = new EncryptionClient();
+
+    KeyClient keyClient = new KeyClient();
+    LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
+
+    RecordClient recordClient = new RecordClient();
+    Record record =
+            recordClient.fromString(payload).withEncrypter(new Encrypter(localKey)).build();
+
+    byte[] recordPayload = record.retrieve();
+
+    RecordDetails details = recordClient.fromFile(recordPayload).getDetails();
+
+    assertNull(details.getIntegrity());
+    assertNull(details.getAuthenticity());
+
+    assertEquals(details.getEncryption().getAlg(), EncryptionAlg.RSA);
+    assertNotEquals(details.getEncryption().getKey(), "");
+    assertNotEquals(details.getEncryption().getSubject(), "");
+
+    assertNull(details.getAvailability().getContentType());
+    assertEquals(details.getAvailability().getSize(), recordPayload.length);
   }
 
   @Test

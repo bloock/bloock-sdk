@@ -5,7 +5,8 @@ import (
 )
 
 type EncrypterArgs struct {
-	Key        string
-	LocalKey   *key.LocalKey
-	ManagedKey *key.ManagedKey
+	LocalKey           *key.LocalKey
+	ManagedKey         *key.ManagedKey
+	ManagedCertificate *key.ManagedCertificate
+	LocalCertificate   *key.LocalCertificate
 }

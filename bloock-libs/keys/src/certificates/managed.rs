@@ -129,9 +129,11 @@ impl ManagedCertificate {
             .await
             .map_err(|e| KeysError::ManagedCertificateRequestError(e.to_string()))?;
 
-        let der_certificate = hex::decode(res.hex_der).unwrap();
+        let der_certificate = hex::decode(res.hex_der)
+            .map_err(|e| KeysError::ManagedCertificateRequestError(e.to_string()))?;
 
-        Ok(CertificateInner::from_der(&der_certificate).unwrap())
+        Ok(CertificateInner::from_der(&der_certificate)
+            .map_err(|e| KeysError::ManagedCertificateRequestError(e.to_string()))?)
     }
 
     pub async fn import(
@@ -173,9 +175,9 @@ impl ManagedCertificate {
     }
 }
 
-impl Into<ManagedKey> for ManagedCertificate {
-    fn into(self) -> ManagedKey {
-        self.key
+impl From<ManagedCertificate> for ManagedKey {
+    fn from(val: ManagedCertificate) -> Self {
+        val.key
     }
 }
 
@@ -247,7 +249,7 @@ mod tests {
         assert_eq!(certificate.protection, ProtectionLevel::SOFTWARE);
         assert_ne!(certificate.key.public_key, "".to_string());
 
-        sleep(Duration::from_secs(3));
+        sleep(Duration::from_secs(5));
 
         ManagedCertificate::load_x509_certificate(certificate.id, api_host, api_key, None)
             .await

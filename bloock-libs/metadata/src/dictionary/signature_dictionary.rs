@@ -73,8 +73,8 @@ impl SignatureDictionary {
             .len();
 
         let diff = actual_length as i64 - original_length as i64;
-        byte_range[1] = byte_range[1] + diff;
-        byte_range[2] = byte_range[2] + diff;
+        byte_range[1] += diff;
+        byte_range[2] += diff;
 
         self.byte_range = byte_range.to_vec();
         Ok(())

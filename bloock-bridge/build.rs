@@ -9,7 +9,6 @@ use std::{env, fs};
 fn main() -> Result<()> {
     let paths: Vec<String> = fs::read_dir("./proto")
         .unwrap()
-        .into_iter()
         .map(|e| e.unwrap().path().display().to_string())
         .collect();
 

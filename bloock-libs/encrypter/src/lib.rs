@@ -1,22 +1,92 @@
+use crate::rsa::RsaEncrypter;
+use aes::AesEncrypter;
 use async_trait::async_trait;
+use bloock_keys::entity::key::{Key, Local, Managed};
+use entity::encryption::Encryption;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
+pub mod aes;
 pub mod entity;
-pub mod local;
-pub mod managed;
+pub mod rsa;
 
 pub type Result<T> = std::result::Result<T, EncrypterError>;
 
-#[async_trait(?Send)]
-pub trait Encrypter {
-    async fn encrypt(&self, payload: &[u8]) -> Result<Vec<u8>>;
-    fn get_alg(&self) -> &str;
+pub async fn encrypt(
+    api_host: String,
+    api_key: String,
+    environment: Option<String>,
+    payload: &[u8],
+    key: &Key,
+) -> Result<Encryption> {
+    let alg = match key {
+        Key::Local(l) => match l {
+            Local::Key(k) => k.key_type.clone(),
+            Local::Certificate(k) => k.key.key_type.clone(),
+        },
+        Key::Managed(m) => match m {
+            Managed::Key(k) => k.key_type.clone(),
+            Managed::Certificate(k) => k.key.key_type.clone(),
+        },
+    };
+
+    let encrypter: Box<dyn Encrypter> = match alg {
+        bloock_keys::KeyType::EcP256k => Err(EncrypterError::InvalidAlgorithm())?,
+        bloock_keys::KeyType::BJJ => Err(EncrypterError::InvalidAlgorithm())?,
+        bloock_keys::KeyType::Rsa2048 => RsaEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Rsa3072 => RsaEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Rsa4096 => RsaEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Aes128 => AesEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Aes256 => AesEncrypter::new_boxed(api_host, api_key, environment),
+    };
+
+    match key {
+        Key::Local(l) => encrypter.encrypt_local(payload, l).await,
+        Key::Managed(m) => encrypter.encrypt_managed(payload, m).await,
+    }
+}
+
+pub async fn decrypt(
+    api_host: String,
+    api_key: String,
+    environment: Option<String>,
+    payload: &[u8],
+    key: &Key,
+) -> Result<Vec<u8>> {
+    let alg = match key {
+        Key::Local(l) => match l {
+            Local::Key(k) => k.key_type.clone(),
+            Local::Certificate(k) => k.key.key_type.clone(),
+        },
+        Key::Managed(m) => match m {
+            Managed::Key(k) => k.key_type.clone(),
+            Managed::Certificate(k) => k.key.key_type.clone(),
+        },
+    };
+
+    let encrypter: Box<dyn Encrypter> = match alg {
+        bloock_keys::KeyType::EcP256k => Err(EncrypterError::InvalidAlgorithm())?,
+        bloock_keys::KeyType::BJJ => Err(EncrypterError::InvalidAlgorithm())?,
+        bloock_keys::KeyType::Rsa2048 => RsaEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Rsa3072 => RsaEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Rsa4096 => RsaEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Aes128 => AesEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Aes256 => AesEncrypter::new_boxed(api_host, api_key, environment),
+    };
+
+    match key {
+        Key::Local(l) => encrypter.decrypt_local(payload, l).await,
+        Key::Managed(m) => encrypter.decrypt_managed(payload, m).await,
+    }
 }
 
 #[async_trait(?Send)]
-pub trait Decrypter {
-    async fn decrypt(&self, cipher_text: &[u8]) -> Result<Vec<u8>>;
+pub trait Encrypter {
+    async fn encrypt_local(&self, payload: &[u8], key: &Local) -> Result<Encryption>;
+    async fn encrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Encryption>;
+
+    async fn decrypt_local(&self, payload: &[u8], key: &Local) -> Result<Vec<u8>>;
+    async fn decrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Vec<u8>>;
 }
 
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
@@ -49,4 +119,6 @@ pub enum EncrypterError {
     InvalidAlgorithm(),
     #[error("Could not retrieve encryption algorithm")]
     CouldNotRetrieveAlgorithm(),
+    #[error("Could not retrieve encryption key")]
+    CouldNotRetrieveKey(),
 }

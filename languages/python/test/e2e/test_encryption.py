@@ -3,14 +3,9 @@ import unittest
 from bloock.client.encryption import EncryptionClient
 from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
-from bloock.entity.encryption.aes_decrypter import AesDecrypter
-from bloock.entity.encryption.aes_encrypter import AesEncrypter
-from bloock.entity.encryption.decrypter_args import DecrypterArgs
-from bloock.entity.encryption.encrypter_args import EncrypterArgs
 from bloock.entity.encryption.encryption_alg import EncryptionAlg
-from bloock.entity.encryption.rsa_decrypter import RsaDecrypter
-from bloock.entity.encryption.rsa_encrypter import RsaEncrypter
 from bloock.entity.key.key_type import KeyType
+from bloock.entity.encryption.encrypter import Encrypter
 from test.e2e.util import init_sdk
 
 
@@ -29,11 +24,11 @@ class TestEncryption(unittest.TestCase):
         key = key_client.new_local_key(KeyType.Aes256)
 
         encryption_client = EncryptionClient()
-        encrypted_record = encryption_client.encrypt(record, AesEncrypter(EncrypterArgs(key)))
+        encrypted_record = encryption_client.encrypt(record, Encrypter(key))
 
         decrypted_record = (
             record_client.from_record(encrypted_record)
-            .with_decrypter(AesDecrypter(DecrypterArgs(key)))
+            .with_decrypter(Encrypter(key))
             .build()
         )
         decrypted_record_hash = decrypted_record.get_hash()
@@ -51,13 +46,13 @@ class TestEncryption(unittest.TestCase):
 
         encrypted_record = (
             record_client.from_string(payload)
-            .with_encrypter(AesEncrypter(EncrypterArgs(key)))
+            .with_encrypter(Encrypter(key))
             .build()
         )
         encrypted_record_hash = encrypted_record.get_hash()
 
         decrypted_record = encryption_client.decrypt(
-            encrypted_record, AesDecrypter(DecrypterArgs(key))
+            encrypted_record, Encrypter(key)
         )
         decrypted_record_hash = decrypted_record.get_hash()
 
@@ -74,12 +69,12 @@ class TestEncryption(unittest.TestCase):
         key_client = KeyClient()
         key = key_client.new_local_key(KeyType.Rsa2048)
         encrypted_record = encryption_client.encrypt(
-            record, RsaEncrypter(EncrypterArgs(key))
+            record, Encrypter(key)
         )
 
         decrypted_record = (
             record_client.from_record(encrypted_record)
-            .with_decrypter(RsaDecrypter(DecrypterArgs(key)))
+            .with_decrypter(Encrypter(key))
             .build()
         )
         decrypted_record_hash = decrypted_record.get_hash()
@@ -97,13 +92,13 @@ class TestEncryption(unittest.TestCase):
 
         encrypted_record = (
             record_client.from_string(payload)
-            .with_encrypter(RsaEncrypter(EncrypterArgs(key)))
+            .with_encrypter(Encrypter(key))
             .build()
         )
         encrypted_record_hash = encrypted_record.get_hash()
 
         decrypted_record = encryption_client.decrypt(
-            encrypted_record, RsaDecrypter(DecrypterArgs(key))
+            encrypted_record, Encrypter(key)
         )
         decrypted_record_hash = decrypted_record.get_hash()
 
@@ -120,7 +115,7 @@ class TestEncryption(unittest.TestCase):
 
         encrypted_record = (
             record_client.from_string(payload)
-            .with_encrypter(RsaEncrypter(EncrypterArgs(key)))
+            .with_encrypter(Encrypter(key))
             .build()
         )
 

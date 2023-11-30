@@ -67,7 +67,7 @@ func (c *EncryptionClient) Encrypt(r record.Record, encrypter encryption.Encrypt
 	return record.NewRecordFromProto(res.Record, c.configData), nil
 }
 
-func (c *EncryptionClient) Decrypt(r record.Record, decrypter encryption.Decrypter) (record.Record, error) {
+func (c *EncryptionClient) Decrypt(r record.Record, decrypter encryption.Encrypter) (record.Record, error) {
 	res, err := c.bridgeClient.Encryption().Decrypt(context.Background(), &proto.DecryptRequest{
 		ConfigData: c.configData,
 		Record:     r.ToProto(),

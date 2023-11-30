@@ -191,7 +191,7 @@ final class KeyTest extends TestCase
         $authenticityClient = new AuthenticityClient();
 
         $record = $recordClient->fromString("Hello world")->build();
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($loadedCertificate)));
+        $signature = $authenticityClient->sign($record, new Signer($loadedCertificate));
 
         $this->assertNotNull($signature);
     }
@@ -276,7 +276,7 @@ final class KeyTest extends TestCase
         $authenticityClient = new AuthenticityClient();
 
         $record = $recordClient->fromString("Hello world")->build();
-        $signature = $authenticityClient->sign($record, new Signer(new SignerArgs($loadedCertificate)));
+        $signature = $authenticityClient->sign($record, new Signer($loadedCertificate));
 
         $this->assertNotNull($signature);
     }

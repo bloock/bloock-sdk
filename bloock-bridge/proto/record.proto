@@ -23,7 +23,9 @@ service RecordService {
     rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest) returns (RecordBuilderResponse);
     rpc BuildRecordFromLoader(RecordBuilderFromLoaderRequest) returns (RecordBuilderResponse);
 
+    rpc GetDetails(GetDetailsRequest) returns (GetDetailsResponse);
     rpc GetHash(GetHashRequest) returns (GetHashResponse);
+    rpc GetPayload(GetPayloadRequest) returns (GetPayloadResponse);
     rpc SetProof(SetProofRequest) returns (SetProofResponse);
 }
 
@@ -32,7 +34,7 @@ message RecordBuilderFromStringRequest {
     string payload = 2;
     optional Signer signer = 3;
     optional Encrypter encrypter = 4;
-    optional Decrypter decrypter = 5;
+    optional Encrypter decrypter = 5;
 }
 
 message RecordBuilderFromHexRequest {
@@ -40,7 +42,7 @@ message RecordBuilderFromHexRequest {
     string payload = 2;
     optional Signer signer = 3;
     optional Encrypter encrypter = 4;
-    optional Decrypter decrypter = 5;
+    optional Encrypter decrypter = 5;
 }
 
 message RecordBuilderFromJSONRequest {
@@ -48,7 +50,7 @@ message RecordBuilderFromJSONRequest {
     string payload = 2;
     optional Signer signer = 3;
     optional Encrypter encrypter = 4;
-    optional Decrypter decrypter = 5;
+    optional Encrypter decrypter = 5;
 }
 
 message RecordBuilderFromBytesRequest {
@@ -56,7 +58,7 @@ message RecordBuilderFromBytesRequest {
     bytes payload = 2;
     optional Signer signer = 3;
     optional Encrypter encrypter = 4;
-    optional Decrypter decrypter = 5;
+    optional Encrypter decrypter = 5;
 }
 
 message RecordBuilderFromFileRequest {
@@ -64,7 +66,7 @@ message RecordBuilderFromFileRequest {
     bytes payload = 2;
     optional Signer signer = 3;
     optional Encrypter encrypter = 4;
-    optional Decrypter decrypter = 5;
+    optional Encrypter decrypter = 5;
 }
 
 message RecordBuilderFromRecordRequest {
@@ -72,7 +74,7 @@ message RecordBuilderFromRecordRequest {
     Record payload = 2;
     optional Signer signer = 3;
     optional Encrypter encrypter = 4;
-    optional Decrypter decrypter = 5;
+    optional Encrypter decrypter = 5;
 }
 
 message RecordBuilderResponse {
@@ -85,7 +87,17 @@ message RecordBuilderFromLoaderRequest {
     Loader loader = 2;
     optional Signer signer = 3;
     optional Encrypter encrypter = 4;
-    optional Decrypter decrypter = 5;
+    optional Encrypter decrypter = 5;
+}
+
+message GetDetailsRequest {
+    ConfigData config_data = 1;
+    bytes payload = 2;
+}
+
+message GetDetailsResponse {
+    RecordDetails details = 1;
+    optional Error error = 2;
 }
 
 message GetHashRequest {
@@ -95,6 +107,16 @@ message GetHashRequest {
 
 message GetHashResponse {
     string hash = 1;
+    optional Error error = 2;
+}
+
+message GetPayloadRequest {
+    ConfigData config_data = 1;
+    Record record = 2;
+}
+
+message GetPayloadResponse {
+    bytes payload = 1;
     optional Error error = 2;
 }
 

@@ -177,8 +177,8 @@ impl VC {
             .map_err(|e| IdentityError::ErrorParsingSchema(e.to_string()))?;
 
         let result = schema_compiled.validate(&vc);
-        if let Err(errors) = result {
-            for error in errors {
+        if let Err(mut errors) = result {
+            if let Some(error) = errors.next() {
                 return Err(IdentityError::ErrorSchemaValidation(error.to_string()));
             }
         }

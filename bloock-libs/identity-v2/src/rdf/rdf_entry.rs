@@ -26,7 +26,7 @@ where
     let mut copy = credential.clone();
     copy.proof = None;
     let json = ssi_json_ld::syntax::to_value_with(copy, Default::default).unwrap();
-    Ok(json_to_dataset(
+    json_to_dataset(
         json,
         context_loader,
         parent
@@ -39,7 +39,7 @@ where
             .transpose()
             .unwrap(),
     )
-    .await?)
+    .await
 }
 
 pub fn normalize<'a, Q: IntoIterator<Item = QuadRef<'a>>>(quads: Q) -> Vec<Quad>

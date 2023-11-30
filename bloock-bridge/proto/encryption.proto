@@ -32,7 +32,7 @@ message EncryptResponse {
 message DecryptRequest {
     ConfigData config_data = 1;
     Record record = 2;
-    Decrypter decrypter = 3;
+    Encrypter decrypter = 3;
 }
 
 message DecryptResponse {
