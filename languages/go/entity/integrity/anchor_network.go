@@ -6,6 +6,7 @@ type AnchorNetwork struct {
 	Name   string
 	State  string
 	TxHash string
+	Root   *string
 }
 
 func NewAnchorNetworkFromProto(a *proto.AnchorNetwork) AnchorNetwork {
@@ -16,6 +17,7 @@ func NewAnchorNetworkFromProto(a *proto.AnchorNetwork) AnchorNetwork {
 		Name:   a.Name,
 		State:  a.State,
 		TxHash: a.TxHash,
+		Root:   a.Root,
 	}
 }
 
@@ -32,5 +34,6 @@ func (a AnchorNetwork) ToProto() *proto.AnchorNetwork {
 		Name:   a.Name,
 		State:  a.State,
 		TxHash: a.TxHash,
+		Root:   a.Root,
 	}
 }

@@ -3,7 +3,6 @@ import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Signature } from "./authenticity_entities";
 import { ConfigData } from "./config";
-import { EncryptionAlg, encryptionAlgFromJSON, encryptionAlgToJSON } from "./encryption_entities";
 import { Proof } from "./integrity_entities";
 
 export enum RecordTypes {
@@ -89,7 +88,7 @@ export interface AuthenticityDetails {
 }
 
 export interface EncryptionDetails {
-  alg?: EncryptionAlg | undefined;
+  alg?: string | undefined;
   key?: string | undefined;
   subject?: string | undefined;
 }
@@ -342,7 +341,7 @@ function createBaseEncryptionDetails(): EncryptionDetails {
 export const EncryptionDetails = {
   encode(message: EncryptionDetails, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.alg !== undefined) {
-      writer.uint32(8).int32(message.alg);
+      writer.uint32(10).string(message.alg);
     }
     if (message.key !== undefined) {
       writer.uint32(18).string(message.key);
@@ -361,7 +360,7 @@ export const EncryptionDetails = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.alg = reader.int32() as any;
+          message.alg = reader.string();
           break;
         case 2:
           message.key = reader.string();
@@ -379,7 +378,7 @@ export const EncryptionDetails = {
 
   fromJSON(object: any): EncryptionDetails {
     return {
-      alg: isSet(object.alg) ? encryptionAlgFromJSON(object.alg) : undefined,
+      alg: isSet(object.alg) ? String(object.alg) : undefined,
       key: isSet(object.key) ? String(object.key) : undefined,
       subject: isSet(object.subject) ? String(object.subject) : undefined,
     };
@@ -387,7 +386,7 @@ export const EncryptionDetails = {
 
   toJSON(message: EncryptionDetails): unknown {
     const obj: any = {};
-    message.alg !== undefined && (obj.alg = message.alg !== undefined ? encryptionAlgToJSON(message.alg) : undefined);
+    message.alg !== undefined && (obj.alg = message.alg);
     message.key !== undefined && (obj.key = message.key);
     message.subject !== undefined && (obj.subject = message.subject);
     return obj;

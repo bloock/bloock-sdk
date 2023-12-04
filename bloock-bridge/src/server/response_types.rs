@@ -1,4 +1,3 @@
-use crate::items::BloockServer;
 use crate::items::BuildSchemaResponseV2;
 use crate::items::CreateCredentialResponseV2;
 use crate::items::CreateIssuerResponse;
@@ -52,11 +51,7 @@ use crate::items::{
 use crate::server::BridgeError;
 use async_trait::async_trait;
 use bloock_core::config::config_data::ConfigData;
-use bloock_core::event::entity::event::Event;
-use bloock_core::event::entity::event::LibraryInfo;
 use prost::Message;
-use serde_json::json;
-use serde_json::Value;
 
 #[allow(clippy::enum_variant_names)]
 pub enum ResponseType {
@@ -268,41 +263,11 @@ where
     Self: Clone + ResponseTypeError<R>,
     R: RequestConfigData,
 {
-    async fn new_success(request: &R, response: Self) -> Self {
-        let config = match request.get_config_data() {
-            Ok(config) => config,
-            Err(_) => return Self::build_error("Invalid config data".to_string()),
-        };
-        Self::send_event(&config, request, true).await;
+    async fn new_success(_request: &R, response: Self) -> Self {
         response
     }
 
-    async fn new_error(request: &R, err: String) -> Self {
-        let config = match request.get_config_data() {
-            Ok(config) => config,
-            Err(_) => return Self::build_error("Invalid config data".to_string()),
-        };
-        Self::send_event(&config, request, false).await;
+    async fn new_error(_request: &R, err: String) -> Self {
         Self::build_error(err)
-    }
-
-    fn get_event(_request: &R) -> Value {
-        json!({})
-    }
-
-    async fn send_event(config: &ConfigData, request: &R, success: bool) {
-        let event_attr = Self::get_event(request);
-        if !config.config.disable_analytics {
-            let event = Event::new(
-                LibraryInfo::new(config.clone().config.library_name),
-                &config.config.api_key,
-                BloockServer::AvailabilityServicePublish.as_str(),
-                success,
-                Some(event_attr),
-            );
-
-            let service = bloock_core::event::configure(config.clone());
-            //let _ = service.send_event(event).await;
-        }
     }
 }

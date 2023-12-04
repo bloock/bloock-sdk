@@ -48,11 +48,11 @@ export class AuthenticityDetails {
 }
 
 export class EncryptionDetails {
-  alg?: EncryptionAlg;
+  alg?: string;
   key?: string;
   subject?: string;
 
-  constructor(alg?: EncryptionAlg, key?: string, subject?: string) {
+  constructor(alg?: string, key?: string, subject?: string) {
     this.alg = alg;
     this.key = key;
     this.subject = subject;

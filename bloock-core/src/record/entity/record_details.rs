@@ -1,5 +1,5 @@
 use crate::{error::BloockResult, integrity::entity::proof::Proof, record::document::Document};
-use bloock_encrypter::entity::{alg::EncryptionAlg, encryption_key::EncryptionKey};
+use bloock_encrypter::entity::encryption_key::EncryptionKey;
 use bloock_hasher::{keccak::Keccak256, Hasher};
 use bloock_signer::entity::{alg::SignAlg, signature::Signature};
 
@@ -24,7 +24,7 @@ pub struct AuthenticityDetails {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct EncryptionDetails {
-    pub encrypt_alg: Option<EncryptionAlg>,
+    pub encrypt_alg: Option<String>,
     pub key: Option<EncryptionKey>,
 }
 
@@ -54,7 +54,7 @@ impl RecordDetails {
         // Encryption details
         if document.is_encrypted() {
             details.encryption = Some(EncryptionDetails {
-                encrypt_alg: document.get_encryption_alg().ok(),
+                encrypt_alg: document.get_encryption_alg().ok().map(|a| a.to_string()),
                 key: document.get_encryption_key().ok(),
             })
         } else {
@@ -89,6 +89,7 @@ impl RecordDetails {
 
 #[cfg(test)]
 mod tests {
+    use bloock_encrypter::entity::alg::EncryptionAlg;
     use bloock_keys::{
         certificates::{
             local::{LocalCertificate, LocalCertificateParams},
@@ -164,7 +165,7 @@ mod tests {
         assert_eq!(
             details.encryption,
             Some(EncryptionDetails {
-                encrypt_alg: Some(EncryptionAlg::A256gcm),
+                encrypt_alg: Some(EncryptionAlg::A256gcm.to_string()),
                 key: None
             })
         );
@@ -384,7 +385,7 @@ mod tests {
         assert_eq!(
             details.encryption,
             Some(EncryptionDetails {
-                encrypt_alg: Some(EncryptionAlg::A256gcm),
+                encrypt_alg: Some(EncryptionAlg::A256gcm.to_string()),
                 key: None
             })
         );

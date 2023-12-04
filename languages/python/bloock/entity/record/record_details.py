@@ -39,7 +39,7 @@ class AuthenticityDetails:
         return proto.AuthenticityDetails(signatures=list(map(lambda x: x.to_proto(), self.signatures)))
     
 class EncryptionDetails:
-    def __init__(self, alg: EncryptionAlg | None, key: str | None, subject: str | None) -> None:
+    def __init__(self, alg: str | None, key: str | None, subject: str | None) -> None:
         self.alg = alg
         self.key = key
         self.subject = subject
@@ -48,7 +48,7 @@ class EncryptionDetails:
     def from_proto(details: proto.EncryptionDetails) -> EncryptionDetails:
         alg = None
         if details.HasField("alg"):
-            alg = EncryptionAlg.from_proto(details.alg)
+            alg = details.alg
             
         key = None
         if details.HasField("key"):
@@ -62,7 +62,7 @@ class EncryptionDetails:
 
     def to_proto(self) -> proto.EncryptionDetails:
         return proto.EncryptionDetails(
-            alg=self.alg.to_proto(), key=self.key, subject=self.subject
+            alg=self.alg, key=self.key, subject=self.subject
         )
     
 class AvailabilityDetails:

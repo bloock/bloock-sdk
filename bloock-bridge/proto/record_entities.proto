@@ -8,7 +8,6 @@ option java_package = "com.bloock.sdk.bridge.proto";
 import "config.proto";
 import "integrity_entities.proto";
 import "authenticity_entities.proto";
-import "encryption_entities.proto";
 
 enum RecordTypes {
 	STRING = 0;
@@ -40,7 +39,7 @@ message AuthenticityDetails {
 }
 
 message EncryptionDetails {
-    optional EncryptionAlg alg = 1;
+    optional string alg = 1;
     optional string key = 2;
     optional string subject = 3;
 }

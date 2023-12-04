@@ -1,8 +1,8 @@
 use crate::{
     error::{BridgeError, BridgeResult},
     items::{
-        AuthenticityDetails, AvailabilityDetails, EncryptionAlg, EncryptionDetails,
-        IntegrityDetails, Record, RecordDetails,
+        AuthenticityDetails, AvailabilityDetails, EncryptionDetails, IntegrityDetails, Record,
+        RecordDetails,
     },
     server::config::entity::map_config,
 };
@@ -71,7 +71,7 @@ impl From<AuthenticityDetailsCore> for AuthenticityDetails {
 impl From<EncryptionDetailsCore> for EncryptionDetails {
     fn from(r: EncryptionDetailsCore) -> Self {
         Self {
-            alg: r.encrypt_alg.map(|a| EncryptionAlg::from(a).into()),
+            alg: r.encrypt_alg,
             key: r.key.clone().map(|k| k.key),
             subject: r.key.and_then(|k| k.subject),
         }

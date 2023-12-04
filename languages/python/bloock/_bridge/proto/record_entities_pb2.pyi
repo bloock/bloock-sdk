@@ -6,7 +6,6 @@ import authenticity_entities_pb2
 import builtins
 import collections.abc
 import config_pb2
-import encryption_entities_pb2
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
@@ -125,13 +124,13 @@ class EncryptionDetails(google.protobuf.message.Message):
     ALG_FIELD_NUMBER: builtins.int
     KEY_FIELD_NUMBER: builtins.int
     SUBJECT_FIELD_NUMBER: builtins.int
-    alg: encryption_entities_pb2.EncryptionAlg.ValueType
+    alg: builtins.str
     key: builtins.str
     subject: builtins.str
     def __init__(
         self,
         *,
-        alg: encryption_entities_pb2.EncryptionAlg.ValueType | None = ...,
+        alg: builtins.str | None = ...,
         key: builtins.str | None = ...,
         subject: builtins.str | None = ...,
     ) -> None: ...

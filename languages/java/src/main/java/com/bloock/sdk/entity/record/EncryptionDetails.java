@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EncryptionDetails {
-  EncryptionAlg alg;
+  String alg;
   String key;
   String subject;
 
-  EncryptionDetails(EncryptionAlg alg, String key, String subject) {
+  EncryptionDetails(String alg, String key, String subject) {
     this.alg = alg;
     this.key = key;
     this.subject = subject;
   }
 
-  public EncryptionAlg getAlg() {
+  public String getAlg() {
     return alg;
   }
 
@@ -31,9 +31,9 @@ public class EncryptionDetails {
   }
 
   public static EncryptionDetails fromProto(RecordEntities.EncryptionDetails details) {
-    EncryptionAlg alg = null;
+    String alg = null;
     if (details.hasAlg()) {
-      alg = EncryptionAlg.fromProto(details.getAlg());
+      alg = details.getAlg();
     }
 
     String key = null;
@@ -51,7 +51,7 @@ public class EncryptionDetails {
 
   public RecordEntities.EncryptionDetails toProto() {
     return RecordEntities.EncryptionDetails.newBuilder()
-        .setAlg(alg.toProto()).setKey(key).setSubject(subject)
+        .setAlg(alg).setKey(key).setSubject(subject)
         .build();
   }
 }

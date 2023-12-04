@@ -45,7 +45,7 @@ class EncryptionDetails
     {
         $alg = null;
         if ($details->hasAlg()) {
-            $alg = EncryptionAlg::fromProto($details->getAlg());
+            $alg = $details->getAlg();
         }
 
         $key = null;

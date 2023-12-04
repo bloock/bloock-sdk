@@ -14,7 +14,7 @@ use Google\Protobuf\Internal\GPBUtil;
 class EncryptionDetails extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>optional .bloock.EncryptionAlg alg = 1;</code>
+     * Generated from protobuf field <code>optional string alg = 1;</code>
      */
     protected $alg = null;
     /**
@@ -32,7 +32,7 @@ class EncryptionDetails extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type int $alg
+     *     @type string $alg
      *     @type string $key
      *     @type string $subject
      * }
@@ -43,12 +43,12 @@ class EncryptionDetails extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.EncryptionAlg alg = 1;</code>
-     * @return int
+     * Generated from protobuf field <code>optional string alg = 1;</code>
+     * @return string
      */
     public function getAlg()
     {
-        return isset($this->alg) ? $this->alg : 0;
+        return isset($this->alg) ? $this->alg : '';
     }
 
     public function hasAlg()
@@ -62,13 +62,13 @@ class EncryptionDetails extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.EncryptionAlg alg = 1;</code>
-     * @param int $var
+     * Generated from protobuf field <code>optional string alg = 1;</code>
+     * @param string $var
      * @return $this
      */
     public function setAlg($var)
     {
-        GPBUtil::checkEnum($var, \Bloock\EncryptionAlg::class);
+        GPBUtil::checkString($var, True);
         $this->alg = $var;
 
         return $this;

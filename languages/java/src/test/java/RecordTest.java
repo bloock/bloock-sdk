@@ -281,7 +281,8 @@ class RecordTest {
                     new AnchorNetwork(
                         "Ethereum",
                         "state",
-                        "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
+                        "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+                            "root")),
                 "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
                 "succes"));
 

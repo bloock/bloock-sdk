@@ -6,15 +6,17 @@ public class AnchorNetwork {
   String name;
   String state;
   String txHash;
+  String root;
 
-  public AnchorNetwork(String name, String state, String txHash) {
+  public AnchorNetwork(String name, String state, String txHash, String root) {
     this.name = name;
     this.state = state;
     this.txHash = txHash;
+    this.root = root;
   }
 
   static AnchorNetwork fromProto(IntegrityEntities.AnchorNetwork network) {
-    return new AnchorNetwork(network.getName(), network.getState(), network.getTxHash());
+    return new AnchorNetwork(network.getName(), network.getState(), network.getTxHash(), network.getRoot());
   }
 
   IntegrityEntities.AnchorNetwork toProto() {
@@ -22,6 +24,7 @@ public class AnchorNetwork {
         .setName(this.name)
         .setState(this.state)
         .setTxHash(this.txHash)
+        .setRoot(this.root)
         .build();
   }
 
@@ -40,5 +43,9 @@ public class AnchorNetwork {
 
   public String getTxHash() {
     return txHash;
+  }
+
+  public String getRoot() {
+    return root;
   }
 }

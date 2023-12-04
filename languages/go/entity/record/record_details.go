@@ -2,7 +2,6 @@ package record
 
 import (
 	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
-	"github.com/bloock/bloock-sdk-go/v2/entity/encryption"
 	"github.com/bloock/bloock-sdk-go/v2/entity/integrity"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
@@ -68,7 +67,7 @@ func (r *AuthenticityDetails) ToProto() *proto.AuthenticityDetails {
 }
 
 type EncryptionDetails struct {
-	Alg     encryption.EncryptionAlg
+	Alg     *string
 	Key     *string
 	Subject *string
 }
@@ -79,16 +78,15 @@ func NewEncryptionDetailsFromProto(r *proto.EncryptionDetails) *EncryptionDetail
 	}
 
 	return &EncryptionDetails{
-		Alg:     encryption.EncryptionAlgFromProto[*r.Alg],
+		Alg:     r.Alg,
 		Key:     r.Key,
 		Subject: r.Subject,
 	}
 }
 
 func (r *EncryptionDetails) ToProto() *proto.EncryptionDetails {
-	alg := encryption.EncryptionAlgToProto[r.Alg]
 	return &proto.EncryptionDetails{
-		Alg:     &alg,
+		Alg:     r.Alg,
 		Key:     r.Key,
 		Subject: r.Subject,
 	}
