@@ -263,7 +263,7 @@ class TestRecord(unittest.TestCase):
 
         self.assertIsNone(details.authenticity)
 
-        self.assertEqual(details.encryption.alg, EncryptionAlg.RSA.name)
+        self.assertEqual(details.encryption.alg, "RSA")
         self.assertIsNotNone(details.encryption.key)
         self.assertIsNotNone(details.encryption.subject)
 
@@ -286,6 +286,7 @@ class TestRecord(unittest.TestCase):
                         name="Ethereum",
                         state="state",
                         tx_hash="ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+                        root=None
                     )
                 ],
                 root="ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",

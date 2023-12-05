@@ -351,7 +351,7 @@ describe("Record Tests", () => {
     expect(details.integrity).toBeUndefined();
     expect(details.authenticity).toBeUndefined();
 
-    expect(details.encryption?.alg).toEqual(EncryptionAlg.RSA);
+    expect(details.encryption?.alg).toEqual("RSA");
     expect(details.encryption?.key).toBeTruthy();
     expect(details.encryption?.subject).toBeDefined();
 

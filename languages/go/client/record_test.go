@@ -371,7 +371,8 @@ func TestRecord(t *testing.T) {
 		assert.Nil(t, details.IntegrityDetails)
 		assert.Nil(t, details.AuthenticityDetails)
 
-		assert.Equal(t, encryption.RSA, details.EncryptionDetails.Alg)
+		alg := "RSA"
+		assert.Equal(t, &alg, details.EncryptionDetails.Alg)
 		assert.NotEmpty(t, details.EncryptionDetails.Key)
 		assert.NotEmpty(t, details.EncryptionDetails.Subject)
 
