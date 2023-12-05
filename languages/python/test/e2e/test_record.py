@@ -286,7 +286,7 @@ class TestRecord(unittest.TestCase):
                         name="Ethereum",
                         state="state",
                         tx_hash="ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
-                        root=None
+                        root=""
                     )
                 ],
                 root="ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
