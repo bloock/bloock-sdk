@@ -299,7 +299,7 @@ final class RecordTest extends TestCase
             "0101010",
             new ProofAnchor(
                 42,
-                array(new AnchorNetwork("Ethereum", "state", "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd")),
+                array(new AnchorNetwork("Ethereum", "state", "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd", "root")),
                 "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
                 "success"
             )

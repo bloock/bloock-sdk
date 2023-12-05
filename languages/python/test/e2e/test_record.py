@@ -263,7 +263,7 @@ class TestRecord(unittest.TestCase):
 
         self.assertIsNone(details.authenticity)
 
-        self.assertEqual(details.encryption.alg, EncryptionAlg.RSA)
+        self.assertEqual(details.encryption.alg, EncryptionAlg.RSA.name)
         self.assertIsNotNone(details.encryption.key)
         self.assertIsNotNone(details.encryption.subject)
 

@@ -207,7 +207,6 @@ class RecordTest {
   @Test
   void testRecordDetailsSigned() throws Exception {
     String payload = "Hello world 2";
-    EncryptionClient encryptionClient = new EncryptionClient();
 
     KeyClient keyClient = new KeyClient();
     LocalCertificate localCert = keyClient.newLocalCertificate(new LocalCertificateParams(
@@ -238,7 +237,6 @@ class RecordTest {
   @Test
   void testRecordDetailsEncrypted() throws Exception {
     String payload = "Hello world 2";
-    EncryptionClient encryptionClient = new EncryptionClient();
 
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
@@ -254,7 +252,7 @@ class RecordTest {
     assertNull(details.getIntegrity());
     assertNull(details.getAuthenticity());
 
-    assertEquals(details.getEncryption().getAlg(), EncryptionAlg.RSA);
+    assertEquals(details.getEncryption().getAlg(), EncryptionAlg.RSA.name());
     assertNotEquals(details.getEncryption().getKey(), "");
     assertNotEquals(details.getEncryption().getSubject(), "");
 

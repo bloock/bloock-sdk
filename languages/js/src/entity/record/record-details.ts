@@ -1,7 +1,6 @@
 import * as proto from "../../bridge/proto/record_entities";
 import { Proof } from "../integrity";
 import { Signature } from "../authenticity";
-import { EncryptionAlg } from "../../bridge/proto/encryption_entities";
 
 export class IntegrityDetails {
   hash: string;
