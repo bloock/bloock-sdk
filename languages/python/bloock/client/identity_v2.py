@@ -27,12 +27,15 @@ class IdentityClient:
         self.config_data = config_data
         self.api_managed_host = api_managed_host
 
-    def create_issuer(self, issuer_key: IssuerKey, issuer_params: Optional[IssuerParams] = None) -> str:
+    def create_issuer(self, issuer_key: IssuerKey, issuer_params: Optional[IssuerParams] = None, name: str = None, description: str = None, image: str = None) -> str:
         res = self.bridge_client.identity_v2().CreateIssuer(
             CreateIssuerRequest(
                 config_data=self.config_data,
                 issuer_key=issuer_key.to_proto(),
                 issuer_params=issuer_params.to_proto() if issuer_params is not None else None,
+                name=name if name is not None else None,
+                description=description if description is not None else None,
+                image=image if image is not None else None,
             )
         )
 

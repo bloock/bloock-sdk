@@ -70,7 +70,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
 
         let client = identity_v2::configure(config_data.clone());
         let receipt = client
-            .create_issuer(public_key, params)
+            .create_issuer(public_key, params, req.name.clone(), req.description.clone(), req.image.clone())
             .await
             .map_err(|e| e.to_string())?;
 

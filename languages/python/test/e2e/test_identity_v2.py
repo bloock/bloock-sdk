@@ -1,4 +1,6 @@
+import base64
 import datetime
+import os
 import unittest
 
 import bloock
@@ -54,7 +56,13 @@ class TestIdentityV2(unittest.TestCase):
         issuer_key = BjjIssuerKey(IssuerKeyArgs(key_bjj))
         not_found_issuer_key = BjjIssuerKey(IssuerKeyArgs(not_found_key))
 
-        issuer = identity_client.create_issuer(issuer_key)
+        current_directory = os.getcwd()
+        file_path = current_directory + "/test/e2e/test_utils/profile_image.png"
+        with open(file_path, 'rb') as file:
+            file_bytes = file.read()
+        base64_file = base64.urlsafe_b64encode(file_bytes).decode('utf-8')
+
+        issuer = identity_client.create_issuer(issuer_key, None, "Bloock Test", "bloock description test", base64_file)
 
         with self.assertRaises(Exception):
             identity_client.create_issuer(issuer_key)

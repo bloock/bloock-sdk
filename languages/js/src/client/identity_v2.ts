@@ -31,11 +31,17 @@ export class IdentityClient {
 
   public createIssuer(
     issuerKey: IssuerKey,
-    issuerParams?: IssuerParams
+    issuerParams?: IssuerParams,
+    name?: string,
+    description?: string,
+    image?: string,
   ): Promise<string> {
     const request = CreateIssuerRequest.fromPartial({
       issuerKey: issuerKey.toProto(),
       issuerParams: issuerParams?.toProto(),
+      name: name,
+      description: description,
+      image: image,
       configData: this.configData
     });
 

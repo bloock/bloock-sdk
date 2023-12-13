@@ -128,6 +128,9 @@ export interface CreateIssuerRequest {
   issuerKey?: IssuerKey;
   configData?: ConfigData;
   issuerParams?: IssuerParams | undefined;
+  name?: string | undefined;
+  description?: string | undefined;
+  image?: string | undefined;
 }
 
 export interface GetIssuerByKeyRequest {
@@ -1351,7 +1354,14 @@ export const BuildSchemaRequestV2 = {
 };
 
 function createBaseCreateIssuerRequest(): CreateIssuerRequest {
-  return { issuerKey: undefined, configData: undefined, issuerParams: undefined };
+  return {
+    issuerKey: undefined,
+    configData: undefined,
+    issuerParams: undefined,
+    name: undefined,
+    description: undefined,
+    image: undefined,
+  };
 }
 
 export const CreateIssuerRequest = {
@@ -1364,6 +1374,15 @@ export const CreateIssuerRequest = {
     }
     if (message.issuerParams !== undefined) {
       IssuerParams.encode(message.issuerParams, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.name !== undefined) {
+      writer.uint32(34).string(message.name);
+    }
+    if (message.description !== undefined) {
+      writer.uint32(42).string(message.description);
+    }
+    if (message.image !== undefined) {
+      writer.uint32(50).string(message.image);
     }
     return writer;
   },
@@ -1384,6 +1403,15 @@ export const CreateIssuerRequest = {
         case 3:
           message.issuerParams = IssuerParams.decode(reader, reader.uint32());
           break;
+        case 4:
+          message.name = reader.string();
+          break;
+        case 5:
+          message.description = reader.string();
+          break;
+        case 6:
+          message.image = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1397,6 +1425,9 @@ export const CreateIssuerRequest = {
       issuerKey: isSet(object.issuerKey) ? IssuerKey.fromJSON(object.issuerKey) : undefined,
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       issuerParams: isSet(object.issuerParams) ? IssuerParams.fromJSON(object.issuerParams) : undefined,
+      name: isSet(object.name) ? String(object.name) : undefined,
+      description: isSet(object.description) ? String(object.description) : undefined,
+      image: isSet(object.image) ? String(object.image) : undefined,
     };
   },
 
@@ -1408,6 +1439,9 @@ export const CreateIssuerRequest = {
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.issuerParams !== undefined &&
       (obj.issuerParams = message.issuerParams ? IssuerParams.toJSON(message.issuerParams) : undefined);
+    message.name !== undefined && (obj.name = message.name);
+    message.description !== undefined && (obj.description = message.description);
+    message.image !== undefined && (obj.image = message.image);
     return obj;
   },
 
@@ -1422,6 +1456,9 @@ export const CreateIssuerRequest = {
     message.issuerParams = (object.issuerParams !== undefined && object.issuerParams !== null)
       ? IssuerParams.fromPartial(object.issuerParams)
       : undefined;
+    message.name = object.name ?? undefined;
+    message.description = object.description ?? undefined;
+    message.image = object.image ?? undefined;
     return message;
   },
 };

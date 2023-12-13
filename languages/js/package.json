@@ -1,6 +1,6 @@
 {
   "name": "@bloock/sdk",
-  "version": "2.7.0-beta.4",
+  "version": "2.7.0-beta.5",
   "description": "",
   "keywords": [],
   "author": "Bloock",
@@ -27,7 +27,6 @@
     "fix": "tsdx lint --fix",
     "size": "npm run build && size-limit"
   },
-  "peerDependencies": {},
   "size-limit": [
     {
       "path": "dist/index.cjs.production.min.js",
@@ -35,9 +34,11 @@
     }
   ],
   "dependencies": {
+    "base64-url": "^2.3.3",
     "node-fetch": "^2.6.1",
     "protobufjs": "^7.2.2",
     "url": "^0.11.0",
+    "urlsafe-base64": "^1.0.0",
     "util": "^0.12.4"
   },
   "devDependencies": {
@@ -45,8 +46,9 @@
     "@types/jest": "^29.1.2",
     "@types/node": "^18.8.2",
     "@types/node-fetch": "^2.6.2",
-    "grpc-tools": "^1.12.4",
+    "@types/urlsafe-base64": "^1.0.31",
     "grpc_tools_node_protoc_ts": "^5.3.3",
+    "grpc-tools": "^1.12.4",
     "jest": "^29.1.2",
     "rollup-plugin-copy": "^3.4.0",
     "size-limit": "^8.2.4",

@@ -23,7 +23,7 @@ class _ProofType:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _ProofTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ProofType.ValueType], builtins.type):  # noqa: F821
+class _ProofTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ProofType.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     IntegrityProofType: _ProofType.ValueType  # 0
     SparseMtProofType: _ProofType.ValueType  # 1
@@ -38,7 +38,7 @@ class _Method:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _MethodEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Method.ValueType], builtins.type):  # noqa: F821
+class _MethodEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Method.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     IDEN3: _Method.ValueType  # 0
     POLYGON_ID: _Method.ValueType  # 1
@@ -53,7 +53,7 @@ class _Blockchain:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _BlockchainEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Blockchain.ValueType], builtins.type):  # noqa: F821
+class _BlockchainEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Blockchain.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ETHEREUM: _Blockchain.ValueType  # 0
     POLYGON: _Blockchain.ValueType  # 1
@@ -72,7 +72,7 @@ class _NetworkId:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _NetworkIdEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_NetworkId.ValueType], builtins.type):  # noqa: F821
+class _NetworkIdEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_NetworkId.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     MAIN: _NetworkId.ValueType  # 0
     MUMBAI: _NetworkId.ValueType  # 1
@@ -89,6 +89,7 @@ UNKNOWN_NETWORK: NetworkId.ValueType  # 3
 NO_NETWORK: NetworkId.ValueType  # 4
 global___NetworkId = NetworkId
 
+@typing_extensions.final
 class IssuerKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -113,6 +114,7 @@ class IssuerKey(google.protobuf.message.Message):
 
 global___IssuerKey = IssuerKey
 
+@typing_extensions.final
 class CredentialV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -160,6 +162,7 @@ class CredentialV2(google.protobuf.message.Message):
 
 global___CredentialV2 = CredentialV2
 
+@typing_extensions.final
 class CredentialProofV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -185,6 +188,7 @@ class CredentialProofV2(google.protobuf.message.Message):
 
 global___CredentialProofV2 = CredentialProofV2
 
+@typing_extensions.final
 class CredentialStatusV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -205,6 +209,7 @@ class CredentialStatusV2(google.protobuf.message.Message):
 
 global___CredentialStatusV2 = CredentialStatusV2
 
+@typing_extensions.final
 class CredentialSchemaV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -222,6 +227,7 @@ class CredentialSchemaV2(google.protobuf.message.Message):
 
 global___CredentialSchemaV2 = CredentialSchemaV2
 
+@typing_extensions.final
 class StringAttributeV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -239,6 +245,7 @@ class StringAttributeV2(google.protobuf.message.Message):
 
 global___StringAttributeV2 = StringAttributeV2
 
+@typing_extensions.final
 class IntegerAttributeV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -256,6 +263,7 @@ class IntegerAttributeV2(google.protobuf.message.Message):
 
 global___IntegerAttributeV2 = IntegerAttributeV2
 
+@typing_extensions.final
 class DecimalAttributeV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -273,6 +281,7 @@ class DecimalAttributeV2(google.protobuf.message.Message):
 
 global___DecimalAttributeV2 = DecimalAttributeV2
 
+@typing_extensions.final
 class BooleanAttributeV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -290,6 +299,7 @@ class BooleanAttributeV2(google.protobuf.message.Message):
 
 global___BooleanAttributeV2 = BooleanAttributeV2
 
+@typing_extensions.final
 class DateAttributeV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -307,6 +317,7 @@ class DateAttributeV2(google.protobuf.message.Message):
 
 global___DateAttributeV2 = DateAttributeV2
 
+@typing_extensions.final
 class DateTimeAttributeV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -324,6 +335,7 @@ class DateTimeAttributeV2(google.protobuf.message.Message):
 
 global___DateTimeAttributeV2 = DateTimeAttributeV2
 
+@typing_extensions.final
 class StringAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -347,6 +359,7 @@ class StringAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___StringAttributeDefinitionV2 = StringAttributeDefinitionV2
 
+@typing_extensions.final
 class IntegerAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -370,6 +383,7 @@ class IntegerAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___IntegerAttributeDefinitionV2 = IntegerAttributeDefinitionV2
 
+@typing_extensions.final
 class DecimalAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -393,6 +407,7 @@ class DecimalAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___DecimalAttributeDefinitionV2 = DecimalAttributeDefinitionV2
 
+@typing_extensions.final
 class BooleanAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -416,6 +431,7 @@ class BooleanAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___BooleanAttributeDefinitionV2 = BooleanAttributeDefinitionV2
 
+@typing_extensions.final
 class DateAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -439,6 +455,7 @@ class DateAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___DateAttributeDefinitionV2 = DateAttributeDefinitionV2
 
+@typing_extensions.final
 class DateTimeAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -462,6 +479,7 @@ class DateTimeAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___DateTimeAttributeDefinitionV2 = DateTimeAttributeDefinitionV2
 
+@typing_extensions.final
 class StringEnumAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -489,6 +507,7 @@ class StringEnumAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___StringEnumAttributeDefinitionV2 = StringEnumAttributeDefinitionV2
 
+@typing_extensions.final
 class IntegerEnumAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -516,6 +535,7 @@ class IntegerEnumAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___IntegerEnumAttributeDefinitionV2 = IntegerEnumAttributeDefinitionV2
 
+@typing_extensions.final
 class DecimalEnumAttributeDefinitionV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -543,6 +563,7 @@ class DecimalEnumAttributeDefinitionV2(google.protobuf.message.Message):
 
 global___DecimalEnumAttributeDefinitionV2 = DecimalEnumAttributeDefinitionV2
 
+@typing_extensions.final
 class CredentialReceiptV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -569,6 +590,7 @@ class CredentialReceiptV2(google.protobuf.message.Message):
 
 global___CredentialReceiptV2 = CredentialReceiptV2
 
+@typing_extensions.final
 class IssuerStateReceipt(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -583,6 +605,7 @@ class IssuerStateReceipt(google.protobuf.message.Message):
 
 global___IssuerStateReceipt = IssuerStateReceipt
 
+@typing_extensions.final
 class SchemaV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -606,6 +629,7 @@ class SchemaV2(google.protobuf.message.Message):
 
 global___SchemaV2 = SchemaV2
 
+@typing_extensions.final
 class CredentialRevocationV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -620,6 +644,7 @@ class CredentialRevocationV2(google.protobuf.message.Message):
 
 global___CredentialRevocationV2 = CredentialRevocationV2
 
+@typing_extensions.final
 class IssuerParams(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

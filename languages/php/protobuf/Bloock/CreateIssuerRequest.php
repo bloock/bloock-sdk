@@ -25,6 +25,18 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>optional .bloock.IssuerParams issuer_params = 3;</code>
      */
     protected $issuer_params = null;
+    /**
+     * Generated from protobuf field <code>optional string name = 4;</code>
+     */
+    protected $name = null;
+    /**
+     * Generated from protobuf field <code>optional string description = 5;</code>
+     */
+    protected $description = null;
+    /**
+     * Generated from protobuf field <code>optional string image = 6;</code>
+     */
+    protected $image = null;
 
     /**
      * Constructor.
@@ -35,6 +47,9 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
      *     @type \Bloock\IssuerKey $issuer_key
      *     @type \Bloock\ConfigData $config_data
      *     @type \Bloock\IssuerParams $issuer_params
+     *     @type string $name
+     *     @type string $description
+     *     @type string $image
      * }
      */
     public function __construct($data = NULL) {
@@ -134,6 +149,102 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkMessage($var, \Bloock\IssuerParams::class);
         $this->issuer_params = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string name = 4;</code>
+     * @return string
+     */
+    public function getName()
+    {
+        return isset($this->name) ? $this->name : '';
+    }
+
+    public function hasName()
+    {
+        return isset($this->name);
+    }
+
+    public function clearName()
+    {
+        unset($this->name);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string name = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setName($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->name = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string description = 5;</code>
+     * @return string
+     */
+    public function getDescription()
+    {
+        return isset($this->description) ? $this->description : '';
+    }
+
+    public function hasDescription()
+    {
+        return isset($this->description);
+    }
+
+    public function clearDescription()
+    {
+        unset($this->description);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string description = 5;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setDescription($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->description = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string image = 6;</code>
+     * @return string
+     */
+    public function getImage()
+    {
+        return isset($this->image) ? $this->image : '';
+    }
+
+    public function hasImage()
+    {
+        return isset($this->image);
+    }
+
+    public function clearImage()
+    {
+        unset($this->image);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string image = 6;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setImage($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->image = $var;
 
         return $this;
     }

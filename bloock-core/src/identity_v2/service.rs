@@ -60,6 +60,9 @@ impl<H: Client> IdentityServiceV2<H> {
         &self,
         public_key: String,
         did_metadata: DidMetadata,
+        name: Option<String>,
+        description: Option<String>,
+        image: Option<String>,
     ) -> BloockResult<CreateIssuerResponse> {
         let req = CreateIssuerRequest {
             did_metadata: DidMetadataRequest {
@@ -68,6 +71,9 @@ impl<H: Client> IdentityServiceV2<H> {
                 network: did_metadata.network.get_network_id_type(),
             },
             bn_128_public_key: public_key,
+            name,
+            description,
+            image,
         };
 
         let res: CreateIssuerResponse = self

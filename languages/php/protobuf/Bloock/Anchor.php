@@ -41,8 +41,8 @@ class Anchor extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type int|string $id
-     *     @type array<string>|\Google\Protobuf\Internal\RepeatedField $block_roots
-     *     @type array<\Bloock\AnchorNetwork>|\Google\Protobuf\Internal\RepeatedField $networks
+     *     @type string[]|\Google\Protobuf\Internal\RepeatedField $block_roots
+     *     @type \Bloock\AnchorNetwork[]|\Google\Protobuf\Internal\RepeatedField $networks
      *     @type string $root
      *     @type string $status
      * }
@@ -85,7 +85,7 @@ class Anchor extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated string block_roots = 2;</code>
-     * @param array<string>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setBlockRoots($var)
@@ -107,7 +107,7 @@ class Anchor extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.AnchorNetwork networks = 3;</code>
-     * @param array<\Bloock\AnchorNetwork>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \Bloock\AnchorNetwork[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setNetworks($var)

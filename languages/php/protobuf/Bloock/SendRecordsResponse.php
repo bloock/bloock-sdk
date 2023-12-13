@@ -28,7 +28,7 @@ class SendRecordsResponse extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type array<\Bloock\RecordReceipt>|\Google\Protobuf\Internal\RepeatedField $records
+     *     @type \Bloock\RecordReceipt[]|\Google\Protobuf\Internal\RepeatedField $records
      *     @type \Bloock\Error $error
      * }
      */
@@ -48,7 +48,7 @@ class SendRecordsResponse extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.RecordReceipt records = 1;</code>
-     * @param array<\Bloock\RecordReceipt>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \Bloock\RecordReceipt[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setRecords($var)

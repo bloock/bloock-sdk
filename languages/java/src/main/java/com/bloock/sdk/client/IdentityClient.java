@@ -32,14 +32,18 @@ public class IdentityClient {
     this.apiManagedHost = apiManagedHost;
   }
 
-  public String createIssuer(IssuerKey issuerKey) throws Exception {
-    return createIssuer(issuerKey, new IssuerParams());
+  public String createIssuer(IssuerKey issuerKey, String name, String description, String image) throws Exception {
+    return createIssuer(issuerKey, new IssuerParams(), name, description, image);
   }
 
-  public String createIssuer(IssuerKey issuerKey, IssuerParams issuerParams) throws Exception {
+  public String createIssuer(IssuerKey issuerKey, IssuerParams issuerParams, String name, String description,
+      String image) throws Exception {
     IdentityV2.CreateIssuerRequest request = IdentityV2.CreateIssuerRequest.newBuilder()
         .setIssuerKey(issuerKey.toProto())
         .setIssuerParams(issuerParams.toProto())
+        .setName(name)
+        .setDescription(description)
+        .setImage(image)
         .setConfigData(this.configData)
         .build();
     IdentityV2.CreateIssuerResponse response = bridge.getIdentityV2().createIssuer(request);
