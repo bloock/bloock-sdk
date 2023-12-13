@@ -57,7 +57,7 @@ class IdentityClient
         }
 
         if ($image != null) {
-            $req->setDescription($image);
+            $req->setImage($image);
         }
 
         $res = $this->bridge->identityV2->CreateIssuer($req);
