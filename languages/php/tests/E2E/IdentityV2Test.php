@@ -64,12 +64,9 @@ final class IdentityV2Test extends TestCase
 
         $currentDirectory = getcwd();
         $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/profile_image.png");
-        $byteFile = unpack('C*', $fileContents);
-        $binaryStringFile = implode(array_map("chr", $byteFile));
-        $base64File = base64_encode($binaryStringFile);
-        $base64UrlFile = strtr($base64File, '+/', '-_');
+        $base64File = rtrim(strtr(base64_encode($fileContents), '+/', '-_'), '=');
 
-        $issuer = $identityClient->createIssuer($issuerKey, null, "Bloock Test", "bloock description test", $base64UrlFile);
+        $issuer = $identityClient->createIssuer($issuerKey, null, "Bloock Test", "bloock description test", $base64File);
         $this->assertStringContainsString("polygonid", $issuer);
 
         $getIssuerDid = $identityClient->getIssuerByKey($issuerKey);

@@ -2,6 +2,7 @@ package com.bloock.sdk.client;
 
 import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
+import com.bloock.sdk.bridge.proto.IdentityV2.CreateIssuerRequest.Builder;
 import com.bloock.sdk.bridge.proto.IdentityV2;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
@@ -38,14 +39,25 @@ public class IdentityClient {
 
   public String createIssuer(IssuerKey issuerKey, IssuerParams issuerParams, String name, String description,
       String image) throws Exception {
-    IdentityV2.CreateIssuerRequest request = IdentityV2.CreateIssuerRequest.newBuilder()
+    IdentityV2.CreateIssuerRequest.Builder builder = IdentityV2.CreateIssuerRequest.newBuilder()
         .setIssuerKey(issuerKey.toProto())
         .setIssuerParams(issuerParams.toProto())
-        .setName(name)
-        .setDescription(description)
-        .setImage(image)
-        .setConfigData(this.configData)
-        .build();
+        .setConfigData(this.configData);
+
+    if (name != null) {
+      builder.setName(name);
+    }
+
+    if (description != null) {
+      builder.setDescription(description);
+    }
+
+    if (image != null) {
+      builder.setImage(image);
+    }
+
+    IdentityV2.CreateIssuerRequest request = builder.build();
+
     IdentityV2.CreateIssuerResponse response = bridge.getIdentityV2().createIssuer(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
