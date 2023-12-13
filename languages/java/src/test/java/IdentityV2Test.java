@@ -5,7 +5,11 @@ import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.entity.authenticity.Signer;
 import com.bloock.sdk.entity.identity_v2.*;
 import com.bloock.sdk.entity.key.*;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,13 +56,22 @@ public class IdentityV2Test {
     BjjIssuerKey issuerKey = new BjjIssuerKey(new IssuerKeyArgs(keyBjj));
     BjjIssuerKey notFoundIssuerKey = new BjjIssuerKey(new IssuerKeyArgs(notFoundManagedKey));
 
-    String issuer = identityClient.createIssuer(issuerKey);
+    String currentDirectory = System.getProperty("user.dir");
+    File imageFile = new File(currentDirectory + "/src/test/test_utils/profile_image.png");
+    int fileSize = (int) imageFile.length();
+    byte[] fileBytes = new byte[fileSize];
+    try (FileInputStream inputStream = new FileInputStream(imageFile)) {
+      inputStream.read(fileBytes);
+    }
+    String encodedFile = Base64.getUrlEncoder().encodeToString(fileBytes);
+
+    String issuer = identityClient.createIssuer(issuerKey, "Bloock Test", "bloock description test", encodedFile);
     assertTrue(issuer.contains("polygonid"));
 
     assertThrows(
         Exception.class,
         () -> {
-          identityClient.createIssuer(issuerKey);
+          identityClient.createIssuer(issuerKey, null, null, null);
           throw new RuntimeException("This is an intentional exception.");
         });
 
@@ -69,7 +82,7 @@ public class IdentityV2Test {
     assertTrue(getNotFoundIssuerDid.isEmpty());
 
     IssuerParams issuerParams = new IssuerParams(Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI);
-    String newIssuer = identityClient.createIssuer(notFoundIssuerKey, issuerParams);
+    String newIssuer = identityClient.createIssuer(notFoundIssuerKey, issuerParams, null, null, null);
     assertTrue(newIssuer.contains("iden3"));
 
     List<String> issuers = identityClient.getIssuerList();

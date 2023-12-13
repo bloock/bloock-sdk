@@ -32,10 +32,24 @@ func NewIdentityClientWithConfig(configData *proto.ConfigData, apiManagedHost st
 	}
 }
 
-func (c *IdentityV2Client) CreateIssuer(issuerKey identityV2.IssuerKey, params identityV2.IssuerParams) (string, error) {
+func (c *IdentityV2Client) CreateIssuer(issuerKey identityV2.IssuerKey, params identityV2.IssuerParams, name, description, image string) (string, error) {
+	var iName, iDescription, iImage *string
+	if name != "" {
+		iName = &name
+	}
+	if description != "" {
+		iDescription = &description
+	}
+	if image != "" {
+		iImage = &image
+	}
+
 	res, err := c.bridgeClient.IdentityV2().CreateIssuer(context.Background(), &proto.CreateIssuerRequest{
 		IssuerKey:    issuerKey.ToProto(),
 		IssuerParams: identityV2.IssuerParamsToProto(params),
+		Name:         iName,
+		Description:  iDescription,
+		Image:        iImage,
 		ConfigData:   c.configData,
 	})
 

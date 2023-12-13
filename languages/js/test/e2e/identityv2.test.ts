@@ -14,6 +14,9 @@ import {
   NetworkId
 } from "../../dist";
 import { initDevSdk } from "./util";
+import path from "path";
+import { readFileSync } from "fs";
+import base64url from 'urlsafe-base64';
 
 describe("Identity V2 Tests", () => {
   const credentialJson =
@@ -56,7 +59,11 @@ describe("Identity V2 Tests", () => {
     let issuerKey = new BjjIssuerKey(keyBjj);
     let notFoundIssuerKey = new BjjIssuerKey(notFoundKey);
 
-    let issuer = await identityClient.createIssuer(issuerKey);
+    const dirPath = path.join(__dirname, '/test_utils/profile_image.png');
+    let fileBytes = readFileSync(dirPath);
+    let encodedFile = base64url.encode(fileBytes);
+
+    let issuer = await identityClient.createIssuer(issuerKey, undefined, "Bloock Test", "bloock description test", encodedFile);
     expect(issuer.includes("polygonid")).toBeTruthy();
 
     try {

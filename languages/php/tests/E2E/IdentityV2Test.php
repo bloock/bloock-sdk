@@ -62,7 +62,11 @@ final class IdentityV2Test extends TestCase
         $issuerKey = new BjjIssuerKey(new IssuerKeyArgs($keyBjj));
         $notFoundIssuerKey = new BjjIssuerKey(new IssuerKeyArgs($notFoundKey));
 
-        $issuer = $identityClient->createIssuer($issuerKey);
+        $currentDirectory = getcwd();
+        $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/profile_image.png");
+        $base64File = rtrim(strtr(base64_encode($fileContents), '+/', '-_'), '=');
+
+        $issuer = $identityClient->createIssuer($issuerKey, null, "Bloock Test", "bloock description test", $base64File);
         $this->assertStringContainsString("polygonid", $issuer);
 
         $getIssuerDid = $identityClient->getIssuerByKey($issuerKey);

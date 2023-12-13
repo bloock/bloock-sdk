@@ -123,6 +123,9 @@ message CreateIssuerRequest {
     IssuerKey issuer_key = 1;
     ConfigData config_data = 2;
     optional IssuerParams issuer_params = 3;
+    optional string name = 4;
+    optional string description = 5;
+    optional string image = 6;
 }
 
 message GetIssuerByKeyRequest {

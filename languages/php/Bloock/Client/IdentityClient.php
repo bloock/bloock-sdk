@@ -38,7 +38,7 @@ class IdentityClient
         $this->apiManagedHost = $apiManagedHost;
     }
 
-    public function createIssuer(IssuerKey $issuerKey, IssuerParams $issuerParams = null): string
+    public function createIssuer(IssuerKey $issuerKey, IssuerParams $issuerParams = null, string $name = null, string $description = null, string $image = null): string
     {
         $req = new CreateIssuerRequest();
         $req->setIssuerKey($issuerKey->toProto());
@@ -46,6 +46,18 @@ class IdentityClient
 
         if ($issuerParams != null) {
             $req->setIssuerParams($issuerParams->toProto());
+        }
+
+        if ($name != null) {
+            $req->setName($name);
+        }
+
+        if ($description != null) {
+            $req->setDescription($description);
+        }
+
+        if ($image != null) {
+            $req->setImage($image);
         }
 
         $res = $this->bridge->identityV2->CreateIssuer($req);
