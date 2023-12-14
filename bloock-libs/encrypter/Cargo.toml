@@ -14,12 +14,13 @@ serde = { version = "1.0.123", features = ["std", "derive"] }
 thiserror = "1.0.31"
 aes-gcm = "0.10"
 rsa = "0.7.2"
-getrandom = {version = "0.2.7", features = ["js"]}
+getrandom = { version = "0.2.7", features = ["js"] }
 rand = "0.8.5"
 base64-url = "1.4.13"
 pbkdf2 = "0.11.0"
 hmac = "0.12.1"
 sha2 = "0.10.6"
+hex = "0.4.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 tokio = { version = "1.24.1", features = ["rt", "macros"] }

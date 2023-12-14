@@ -1,4 +1,7 @@
-use crate::{entity::encryption::Encryption, Encrypter, EncrypterError, Result};
+use crate::{
+    entity::{encryption::Encryption, encryption_key::EncryptionKey},
+    Encrypter, EncrypterError, Result,
+};
 use aes_gcm::{
     aead::{generic_array::GenericArray, Aead, Payload},
     AeadInPlace, Aes256Gcm, KeyInit,
@@ -106,7 +109,12 @@ impl Encrypter for AesEncrypter {
         Err(EncrypterError::InvalidAlgorithm())
     }
 
-    async fn decrypt_local(&self, payload: &[u8], key: &Local) -> Result<Vec<u8>> {
+    async fn decrypt_local(
+        &self,
+        payload: &[u8],
+        _encryption_key: Option<EncryptionKey>,
+        key: &Local,
+    ) -> Result<Vec<u8>> {
         if payload.len() <= HEADER_LEN {
             return Err(EncrypterError::InvalidPayloadLength());
         }
@@ -143,7 +151,12 @@ impl Encrypter for AesEncrypter {
             .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))
     }
 
-    async fn decrypt_managed(&self, _payload: &[u8], _key: &Managed) -> Result<Vec<u8>> {
+    async fn decrypt_managed(
+        &self,
+        _payload: &[u8],
+        _encryption_key: Option<EncryptionKey>,
+        _key: &Managed,
+    ) -> Result<Vec<u8>> {
         Err(EncrypterError::InvalidAlgorithm())
     }
 }
@@ -177,7 +190,11 @@ mod tests {
         assert!(encryption.key.is_none());
 
         let result = encrypter
-            .decrypt_local(&encryption.ciphertext, &local_key.clone().into())
+            .decrypt_local(
+                &encryption.ciphertext,
+                encryption.key,
+                &local_key.clone().into(),
+            )
             .await
             .unwrap();
 
@@ -198,7 +215,7 @@ mod tests {
         let encrypter = AesEncrypter::new(api_host, api_key, None);
 
         let result = encrypter
-            .decrypt_local(invalid_payload.as_bytes(), &local_key.into())
+            .decrypt_local(invalid_payload.as_bytes(), None, &local_key.into())
             .await;
 
         assert!(result.is_err());

@@ -2,7 +2,7 @@ use crate::rsa::RsaEncrypter;
 use aes::AesEncrypter;
 use async_trait::async_trait;
 use bloock_keys::entity::key::{Key, Local, Managed};
-use entity::encryption::Encryption;
+use entity::{encryption::Encryption, encryption_key::EncryptionKey};
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
@@ -51,6 +51,7 @@ pub async fn decrypt(
     api_key: String,
     environment: Option<String>,
     payload: &[u8],
+    encryption_key: Option<EncryptionKey>,
     key: &Key,
 ) -> Result<Vec<u8>> {
     let alg = match key {
@@ -75,8 +76,8 @@ pub async fn decrypt(
     };
 
     match key {
-        Key::Local(l) => encrypter.decrypt_local(payload, l).await,
-        Key::Managed(m) => encrypter.decrypt_managed(payload, m).await,
+        Key::Local(l) => encrypter.decrypt_local(payload, encryption_key, l).await,
+        Key::Managed(m) => encrypter.decrypt_managed(payload, encryption_key, m).await,
     }
 }
 
@@ -85,8 +86,18 @@ pub trait Encrypter {
     async fn encrypt_local(&self, payload: &[u8], key: &Local) -> Result<Encryption>;
     async fn encrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Encryption>;
 
-    async fn decrypt_local(&self, payload: &[u8], key: &Local) -> Result<Vec<u8>>;
-    async fn decrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Vec<u8>>;
+    async fn decrypt_local(
+        &self,
+        payload: &[u8],
+        encryption_key: Option<EncryptionKey>,
+        key: &Local,
+    ) -> Result<Vec<u8>>;
+    async fn decrypt_managed(
+        &self,
+        payload: &[u8],
+        encryption_key: Option<EncryptionKey>,
+        key: &Managed,
+    ) -> Result<Vec<u8>>;
 }
 
 #[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]

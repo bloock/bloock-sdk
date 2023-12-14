@@ -1,4 +1,5 @@
 use crate::{
+    aes::AesEncrypter,
     entity::{
         dto::{
             decrypt_request::DecryptRequest, decrypt_response::DecryptResponse,
@@ -14,6 +15,7 @@ use bloock_http::{BloockHttpClient, Client};
 use bloock_keys::{
     certificates::GetX509Certficate,
     entity::key::{Local, Managed},
+    keys::local::{LocalKey, LocalKeyParams},
 };
 use rsa::{
     pkcs8::{DecodePrivateKey, DecodePublicKey},
@@ -57,6 +59,160 @@ impl Encrypter for RsaEncrypter {
             .await
             .map(|c| c.tbs_certificate.subject.to_string());
 
+        let aes_key = LocalKey::new(&LocalKeyParams {
+            key_type: bloock_keys::KeyType::Aes256,
+        })
+        .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
+
+        let aes_encrypter = AesEncrypter::new(
+            self.api_host.clone(),
+            self.api_key.clone(),
+            self.environment.clone(),
+        );
+
+        let ciphertext = aes_encrypter
+            .encrypt_local(payload, &aes_key.clone().into())
+            .await?;
+
+        let aes_key_encrypted = self
+            .internal_encrypt_local(aes_key.key.as_bytes(), key)
+            .await?;
+
+        Ok(Encryption {
+            ciphertext: ciphertext.ciphertext,
+            alg: crate::entity::alg::EncryptionAlg::Rsa,
+            key: Some(EncryptionKey {
+                key: local.key.to_string(),
+                subject,
+                aes_key_enc: Some(hex::encode(aes_key_encrypted.ciphertext)),
+            }),
+        })
+    }
+
+    async fn encrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Encryption> {
+        let managed = match key.clone() {
+            Managed::Key(k) => k.clone(),
+            Managed::Certificate(c) => c.key.clone(),
+        };
+
+        let subject = key
+            .get_certificate(
+                self.api_host.clone(),
+                self.api_key.clone(),
+                self.environment.clone(),
+            )
+            .await
+            .map(|c| c.tbs_certificate.subject.to_string());
+
+        let aes_key = LocalKey::new(&LocalKeyParams {
+            key_type: bloock_keys::KeyType::Aes256,
+        })
+        .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
+
+        let aes_encrypter = AesEncrypter::new(
+            self.api_host.clone(),
+            self.api_key.clone(),
+            self.environment.clone(),
+        );
+
+        let ciphertext = aes_encrypter
+            .encrypt_local(payload, &aes_key.clone().into())
+            .await?;
+
+        let aes_key_encrypted = self
+            .internal_encrypt_managed(aes_key.key.as_bytes(), key)
+            .await?;
+
+        Ok(Encryption {
+            ciphertext: ciphertext.ciphertext,
+            alg: crate::entity::alg::EncryptionAlg::Rsa,
+            key: Some(EncryptionKey {
+                key: managed.public_key.to_string(),
+                subject,
+                aes_key_enc: Some(hex::encode(aes_key_encrypted.ciphertext)),
+            }),
+        })
+    }
+
+    async fn decrypt_local(
+        &self,
+        payload: &[u8],
+        encryption_key: Option<EncryptionKey>,
+        key: &Local,
+    ) -> Result<Vec<u8>> {
+        let encrypted_aes_key = encryption_key
+            .and_then(|e| e.aes_key_enc)
+            .and_then(|e| hex::decode(e).ok())
+            .ok_or_else(|| {
+                EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
+            })?;
+
+        let aes_key = self.internal_decrypt_local(&encrypted_aes_key, key).await?;
+        let aes_key = String::from_utf8(aes_key).map_err(|_| {
+            EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
+        })?;
+        let aes_key = LocalKey::load(bloock_keys::KeyType::Aes256, aes_key, None);
+
+        let aes_encrypter = AesEncrypter::new(
+            self.api_host.clone(),
+            self.api_key.clone(),
+            self.environment.clone(),
+        );
+
+        aes_encrypter
+            .decrypt_local(payload, None, &aes_key.into())
+            .await
+    }
+
+    async fn decrypt_managed(
+        &self,
+        payload: &[u8],
+        encryption_key: Option<EncryptionKey>,
+        key: &Managed,
+    ) -> Result<Vec<u8>> {
+        let encrypted_aes_key = encryption_key
+            .and_then(|e| e.aes_key_enc)
+            .and_then(|e| hex::decode(e).ok())
+            .ok_or_else(|| {
+                EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
+            })?;
+
+        let aes_key = self
+            .internal_decrypt_managed(&encrypted_aes_key, key)
+            .await?;
+        let aes_key = String::from_utf8(aes_key).map_err(|_| {
+            EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
+        })?;
+        let aes_key = LocalKey::load(bloock_keys::KeyType::Aes256, aes_key, None);
+
+        let aes_encrypter = AesEncrypter::new(
+            self.api_host.clone(),
+            self.api_key.clone(),
+            self.environment.clone(),
+        );
+
+        aes_encrypter
+            .decrypt_local(payload, None, &aes_key.into())
+            .await
+    }
+}
+
+impl RsaEncrypter {
+    async fn internal_encrypt_local(&self, payload: &[u8], key: &Local) -> Result<Encryption> {
+        let local = match key.clone() {
+            Local::Key(k) => k.clone(),
+            Local::Certificate(c) => c.key.clone(),
+        };
+
+        let subject = key
+            .get_certificate(
+                self.api_host.clone(),
+                self.api_key.clone(),
+                self.environment.clone(),
+            )
+            .await
+            .map(|c| c.tbs_certificate.subject.to_string());
+
         let mut rng = rand::thread_rng();
 
         let public_key = RsaPublicKey::from_public_key_pem(&local.key.to_string())
@@ -74,11 +230,12 @@ impl Encrypter for RsaEncrypter {
             key: Some(EncryptionKey {
                 key: local.key.to_string(),
                 subject,
+                aes_key_enc: None,
             }),
         })
     }
 
-    async fn encrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Encryption> {
+    async fn internal_encrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Encryption> {
         let managed = match key.clone() {
             Managed::Key(k) => k.clone(),
             Managed::Certificate(c) => c.key.clone(),
@@ -112,11 +269,12 @@ impl Encrypter for RsaEncrypter {
             key: Some(EncryptionKey {
                 key: managed.public_key.to_string(),
                 subject,
+                aes_key_enc: None,
             }),
         })
     }
 
-    async fn decrypt_local(&self, payload: &[u8], key: &Local) -> Result<Vec<u8>> {
+    async fn internal_decrypt_local(&self, payload: &[u8], key: &Local) -> Result<Vec<u8>> {
         let local = match key.clone() {
             Local::Key(k) => k.clone(),
             Local::Certificate(c) => c.key.clone(),
@@ -134,7 +292,7 @@ impl Encrypter for RsaEncrypter {
             .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))
     }
 
-    async fn decrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Vec<u8>> {
+    async fn internal_decrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Vec<u8>> {
         let managed = match key.clone() {
             Managed::Key(k) => k.clone(),
             Managed::Certificate(c) => c.key.clone(),
@@ -187,10 +345,14 @@ mod tests {
             .unwrap();
 
         assert_eq!(encryption.alg, EncryptionAlg::Rsa);
-        assert_eq!(encryption.key.unwrap().key, local_key.key);
+        assert_eq!(encryption.key.clone().unwrap().key, local_key.key);
 
         let result = encrypter
-            .decrypt_local(&encryption.ciphertext, &local_key.clone().into())
+            .decrypt_local(
+                &encryption.ciphertext,
+                encryption.key,
+                &local_key.clone().into(),
+            )
             .await
             .unwrap();
 
@@ -220,6 +382,43 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_encrypt_local_invalid_aes_key() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let local_key_params = bloock_keys::keys::local::LocalKeyParams {
+            key_type: bloock_keys::KeyType::Rsa2048,
+        };
+        let local_key = LocalKey::new(&local_key_params).unwrap();
+
+        let string_payload = "hello world";
+
+        let encrypter = RsaEncrypter::new(api_host, api_key, None);
+
+        let encryption = encrypter
+            .encrypt_local(string_payload.as_bytes(), &local_key.clone().into())
+            .await
+            .unwrap();
+
+        assert_eq!(encryption.alg, EncryptionAlg::Rsa);
+        assert_eq!(encryption.key.clone().unwrap().key, local_key.key);
+
+        let result = encrypter
+            .decrypt_local(
+                &encryption.ciphertext,
+                Some(EncryptionKey {
+                    key: String::default(),
+                    subject: None,
+                    aes_key_enc: Some("invalid_aes_key".to_string()),
+                }),
+                &local_key.clone().into(),
+            )
+            .await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
     async fn test_decrypt_local_invalid_payload() {
         let api_host = "https://api.bloock.com".to_string();
         let api_key = option_env!("API_KEY").unwrap().to_string();
@@ -233,7 +432,7 @@ mod tests {
         let encrypter = RsaEncrypter::new(api_host, api_key, None);
 
         let result = encrypter
-            .decrypt_local(invalid_payload.as_bytes(), &local_key.into())
+            .decrypt_local(invalid_payload.as_bytes(), None, &local_key.into())
             .await;
 
         assert!(result.is_err());
@@ -267,10 +466,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(encryption.alg, EncryptionAlg::Rsa);
-        assert_eq!(encryption.key.unwrap().key, managed_key.public_key);
+        assert_eq!(encryption.clone().key.unwrap().key, managed_key.public_key);
 
         let result = encrypter
-            .decrypt_managed(&encryption.ciphertext, &managed_key.into())
+            .decrypt_managed(&encryption.ciphertext, encryption.key, &managed_key.into())
             .await
             .unwrap();
 
@@ -296,7 +495,52 @@ mod tests {
         let encrypter = RsaEncrypter::new(api_host, api_key, None);
 
         let result = encrypter
-            .decrypt_managed(string_payload.as_bytes(), &managed_key.into())
+            .decrypt_managed(string_payload.as_bytes(), None, &managed_key.into())
+            .await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_encrypt_managed_invalid_aes_key() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let managed_key_params = bloock_keys::keys::managed::ManagedKeyParams {
+            name: None,
+            key_type: bloock_keys::KeyType::Rsa2048,
+            protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
+            expiration: None,
+        };
+        let managed_key =
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+                .await
+                .unwrap();
+
+        sleep(Duration::from_secs(5));
+
+        let string_payload = "hello world";
+
+        let encrypter = RsaEncrypter::new(api_host, api_key, None);
+
+        let encryption = encrypter
+            .encrypt_managed(string_payload.as_bytes(), &managed_key.clone().into())
+            .await
+            .unwrap();
+
+        assert_eq!(encryption.alg, EncryptionAlg::Rsa);
+        assert_eq!(encryption.clone().key.unwrap().key, managed_key.public_key);
+
+        let result = encrypter
+            .decrypt_managed(
+                &encryption.ciphertext,
+                Some(EncryptionKey {
+                    key: String::default(),
+                    subject: None,
+                    aes_key_enc: Some("invalid_aes_key".to_string()),
+                }),
+                &managed_key.into(),
+            )
             .await;
 
         assert!(result.is_err());
@@ -323,7 +567,7 @@ mod tests {
         let signer = RsaEncrypter::new(api_host, api_key, None);
 
         let result = signer
-            .decrypt_managed(invalid_payload.as_bytes(), &managed_key.into())
+            .decrypt_managed(invalid_payload.as_bytes(), None, &managed_key.into())
             .await;
 
         assert!(result.is_err());

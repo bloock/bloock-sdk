@@ -133,10 +133,16 @@ impl MetadataParser for DefaultParser {
     ) -> Result<()> {
         let ciphertext = self.get_data()?;
 
-        let decrypted_payload =
-            bloock_encrypter::decrypt(api_host, api_key, environment, &ciphertext, key)
-                .await
-                .map_err(|e| MetadataError::EncryptError(e.to_string()))?;
+        let decrypted_payload = bloock_encrypter::decrypt(
+            api_host,
+            api_key,
+            environment,
+            &ciphertext,
+            self.get_encryption_key(),
+            key,
+        )
+        .await
+        .map_err(|e| MetadataError::EncryptError(e.to_string()))?;
 
         let decrypted_payload = Payload::load(&decrypted_payload);
 
