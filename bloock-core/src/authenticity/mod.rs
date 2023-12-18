@@ -27,6 +27,7 @@ pub fn configure(config_data: ConfigData) -> service::AuthenticityService<Bloock
     let bloock_http_client = Arc::new(BloockHttpClient::new(
         config_data.get_config().api_key,
         config_data.get_config().environment,
+        None,
     ));
 
     service::AuthenticityService {

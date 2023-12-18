@@ -35,7 +35,7 @@ pub async fn sign(
     };
 
     let signer: Box<dyn Signer> = match alg {
-        bloock_keys::KeyType::EcP256k => EcdsaSigner::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::EcP256k => EcdsaSigner::new_boxed(api_host, api_key, environment, None),
         bloock_keys::KeyType::BJJ => BJJSigner::new_boxed(api_host, api_key, environment),
         bloock_keys::KeyType::Rsa2048 => RsaSigner::new_boxed(api_host, api_key, environment),
         bloock_keys::KeyType::Rsa3072 => RsaSigner::new_boxed(api_host, api_key, environment),
@@ -54,17 +54,18 @@ pub async fn verify(
     api_host: String,
     api_key: String,
     environment: Option<String>,
+    api_version: Option<String>,
     payload: &[u8],
     signature: &Signature,
 ) -> Result<bool> {
     match signature.alg {
         entity::alg::SignAlg::Es256k => {
-            EcdsaSigner::new_boxed(api_host, api_key, environment)
+            EcdsaSigner::new_boxed(api_host, api_key, environment, api_version)
                 .verify_local(payload, signature)
                 .await
         }
         entity::alg::SignAlg::Es256kM => {
-            EcdsaSigner::new_boxed(api_host, api_key, environment)
+            EcdsaSigner::new_boxed(api_host, api_key, environment, api_version)
                 .verify_managed(payload, signature)
                 .await
         }

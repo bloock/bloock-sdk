@@ -365,6 +365,7 @@ impl<H: Client> IdentityService<H> {
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
             self.config_service.get_environment(),
+            None,
             payload,
             &signature,
         )

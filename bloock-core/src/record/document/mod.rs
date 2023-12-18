@@ -685,4 +685,19 @@ mod tests {
         assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
         assert_eq!(decrypted_record.get_proof().unwrap(), proof);
     }
+
+    #[tokio::test]
+    async fn test_verify_managed_signed_pdf_with_legacy_metadata() {
+        let api_host = "https://api.bloock.com".to_string();
+        let api_key = option_env!("API_KEY").unwrap().to_string();
+
+        let payload = include_bytes!("./assets/dummy_pdf_signed_legacy_ES256KM.pdf");
+        let config_service = config::configure_test();
+
+        let document =
+            Document::new(payload, api_host, api_key, config_service.get_environment()).unwrap();
+
+        let result = document.verify().await.unwrap();
+        assert!(result)
+    }
 }

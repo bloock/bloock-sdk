@@ -16,7 +16,7 @@ const API_VERSION: &str = "2023-11-16";
 
 pub struct BloockHttpClient {
     api_key: String,
-    api_version: String,
+    api_version: Option<String>,
     environment: Option<String>,
 }
 
@@ -90,10 +90,10 @@ impl Client for BloockHttpClient {
 }
 
 impl BloockHttpClient {
-    pub fn new(api_key: String, environment: Option<String>) -> Self {
+    pub fn new(api_key: String, environment: Option<String>, api_version: Option<String>) -> Self {
         Self {
             api_key,
-            api_version: API_VERSION.to_string(),
+            api_version,
             environment,
         }
     }
@@ -102,7 +102,7 @@ impl BloockHttpClient {
         self.api_key.clone()
     }
 
-    pub fn get_api_version(&self) -> String {
+    pub fn get_api_version(&self) -> Option<String> {
         self.api_version.clone()
     }
 
@@ -114,7 +114,13 @@ impl BloockHttpClient {
         match headers {
             Some(mut h) => {
                 h.push(("X-Api-Key".to_string(), self.get_api_key()));
-                h.push(("api_version".to_string(), self.get_api_version()));
+                if let Some(api_version) = self.get_api_version() {
+                    if !api_version.is_empty() {
+                        h.push(("api_version".to_string(), api_version));
+                    } else {
+                        h.push(("api_version".to_string(), API_VERSION.to_string()));
+                    }
+                }
                 if let Some(env) = self.get_enviornment() {
                     if !env.is_empty() {
                         h.push(("Environment".to_string(), env));
@@ -123,10 +129,14 @@ impl BloockHttpClient {
                 h
             }
             None => {
-                let mut h = vec![
-                    ("X-Api-Key".to_string(), self.get_api_key()),
-                    ("api_version".to_string(), self.get_api_version()),
-                ];
+                let mut h = vec![("X-Api-Key".to_string(), self.get_api_key())];
+                if let Some(api_version) = self.get_api_version() {
+                    if !api_version.is_empty() {
+                        h.push(("api_version".to_string(), api_version));
+                    } else {
+                        h.push(("api_version".to_string(), API_VERSION.to_string()));
+                    }
+                }
                 if let Some(env) = self.get_enviornment() {
                     if !env.is_empty() {
                         h.push(("Environment".to_string(), env));

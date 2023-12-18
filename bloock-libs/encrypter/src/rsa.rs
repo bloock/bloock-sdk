@@ -250,7 +250,7 @@ impl RsaEncrypter {
             .await
             .map(|c| c.tbs_certificate.subject.to_string());
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
         let req = EncryptRequest {
             key_id: managed.id.clone(),
@@ -298,7 +298,7 @@ impl RsaEncrypter {
             Managed::Certificate(c) => c.key.clone(),
         };
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
         let req = DecryptRequest {
             key_id: managed.id.clone(),

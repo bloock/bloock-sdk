@@ -72,6 +72,7 @@ pub fn configure(config_data: ConfigData) -> service::IdentityServiceV2<BloockHt
     let bloock_http_client = Arc::new(BloockHttpClient::new(
         config_data.get_config().api_key,
         config_data.get_config().environment,
+        None,
     ));
     let availability_service = availability::configure(config_data.clone());
     let integrity_service = integrity::configure(config_data.clone());

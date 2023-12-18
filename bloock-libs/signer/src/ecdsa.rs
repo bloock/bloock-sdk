@@ -16,19 +16,21 @@ pub struct EcdsaSigner {
     api_host: String,
     api_key: String,
     environment: Option<String>,
+    api_version: Option<String>,
 }
 
 impl EcdsaSigner {
-    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+    pub fn new(api_host: String, api_key: String, environment: Option<String>, api_version: Option<String>) -> Self {
         Self {
             api_host,
             api_key,
             environment,
+            api_version,
         }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key, environment))
+    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>, api_version: Option<String>) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key, environment, api_version))
     }
 }
 
@@ -98,7 +100,7 @@ impl Signer for EcdsaSigner {
 
         let hash = Sha256::generate_hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
         let req = SignRequest {
             key_id: managed.id.clone(),
@@ -141,7 +143,7 @@ impl Signer for EcdsaSigner {
     async fn verify_managed(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
         let hash = Sha256::generate_hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), self.api_version.clone());
 
         let req = VerifyRequest {
             public_key: signature.key.clone(),
@@ -155,7 +157,7 @@ impl Signer for EcdsaSigner {
             .await
         {
             Ok(res) => res,
-            Err(_) => return Ok(false),
+            Err(e) => return Err(SignerError::VerifierError(e.to_string())),
         };
 
         Ok(res.verify)
@@ -183,7 +185,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = EcdsaSigner::new(api_host, api_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_key.clone().into())
@@ -216,7 +218,7 @@ mod tests {
             mnemonic: None,
         };
 
-        let c = EcdsaSigner::new(api_host, api_key, None);
+        let c = EcdsaSigner::new(api_host, api_key, None, None);
         let result = c
             .sign_local(string_payload.as_bytes(), &local_key.into())
             .await;
@@ -238,7 +240,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -263,7 +265,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -287,7 +289,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -315,7 +317,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = EcdsaSigner::new(api_host, api_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let signature = signer
             .sign_managed(string_payload.as_bytes(), &managed_key.clone().into())
@@ -366,7 +368,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let result: bool = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -391,7 +393,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -427,7 +429,7 @@ mod tests {
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)

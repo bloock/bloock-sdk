@@ -88,6 +88,7 @@ impl MetadataParser for DefaultParser {
                         api_host.clone(),
                         api_key.clone(),
                         environment.clone(),
+                        None,
                         &payload,
                         signature,
                     )

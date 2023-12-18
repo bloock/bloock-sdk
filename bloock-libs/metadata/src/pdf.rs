@@ -16,7 +16,10 @@ use bloock_encrypter::entity::{
 use bloock_hasher::sha256::Sha256;
 use bloock_hasher::Hasher;
 use bloock_keys::{certificates::GetX509Certficate, entity::key::Key};
-use bloock_signer::entity::{alg::SignAlg, signature::Signature};
+use bloock_signer::{
+    entity::{alg::SignAlg, signature::Signature},
+    format::jws::JwsSignature,
+};
 use cms::content_info::ContentInfo;
 use cms::{
     cert::{CertificateChoices, IssuerAndSerialNumber},
@@ -199,21 +202,46 @@ impl MetadataParser for PdfParser {
         api_key: String,
         environment: Option<String>,
     ) -> BloockResult<bool> {
-        let verifications = self.get_signatures_and_payload()?;
+        let mut verifications = Vec::new();
 
+        if let Ok(new_signatures) = self.get_signatures_and_payload() {
+            let converted_signatures: Vec<(Signature, Vec<u8>, Option<String>)> = new_signatures
+                .into_iter()
+                .map(|(signature, payload)| (signature, payload.clone(), None))
+                .collect();
+            verifications.extend(converted_signatures);
+        }
+
+        if let Some(legacy_signatures) = self.get_legacy_signatures_and_payload() {
+            let converted_legacy_signatures: Vec<(Signature, Vec<u8>, Option<String>)> =
+                legacy_signatures
+                    .into_iter()
+                    .map(|(signature, payload)| {
+                        (signature, payload.clone(), Some("2023-07-11".to_string()))
+                    })
+                    .collect();
+            verifications.extend(converted_legacy_signatures);
+        }
+
+        let mut is_verified = true;
         for verification in verifications.iter() {
-            bloock_signer::verify(
+            let verified = bloock_signer::verify(
                 api_host.clone(),
                 api_key.clone(),
                 environment.clone(),
+                verification.2.clone(),
                 &verification.1,
                 &verification.0,
             )
             .await
             .map_err(|e| MetadataError::LoadError(e.to_string()))?;
+
+            if !verified {
+                is_verified = false;
+            }
         }
 
-        Ok(true)
+        Ok(is_verified)
     }
 
     async fn encrypt(
@@ -681,6 +709,68 @@ impl PdfParser {
             }
         }
         Ok(response)
+    }
+
+    fn get_legacy_signatures_and_payload(&self) -> Option<Vec<(Signature, Vec<u8>)>> {
+        let mut signatures: Vec<(Signature, Vec<u8>)> = Vec::new();
+
+        let mut doc = self.clone();
+        doc.del("proof").err();
+        doc.del("signatures").err();
+        let payload = match doc.build_legacy() {
+            Ok(p) => p,
+            Err(_) => return None,
+        };
+
+        let legacy_signatures = match self.get_signatures_from_jws_metadata() {
+            Ok(signatures) => signatures,
+            Err(_) => return None,
+        };
+
+        for signature in legacy_signatures.iter() {
+            signatures.push((signature.clone(), payload.clone()));
+        }
+
+        Some(signatures)
+    }
+
+    fn get_signatures_from_jws_metadata(&self) -> BloockResult<Vec<Signature>> {
+        let mut response = Vec::new();
+
+        let signatures: Vec<JwsSignature> = match self.get("signatures") {
+            Some(signatures) => signatures,
+            None => return Err(MetadataError::DeserializeError),
+        };
+
+        for sig in signatures.iter() {
+            let signature = Signature {
+                alg: SignAlg::try_from(sig.header.alg.as_str())
+                    .map_err(|_| MetadataError::DeserializeError)?,
+                key: sig.header.kid.clone(),
+                subject: None,
+                signature: sig.signature.clone(),
+                message_hash: sig.message_hash.clone(),
+            };
+
+            response.push(signature);
+        }
+        Ok(response)
+    }
+
+    fn build_legacy(&self) -> BloockResult<Vec<u8>> {
+        // document.save_to alters the original document (even if it hasn't been modified) and thus
+        // BloockResults in a different hash. To avoid this, we return the original payload if it has not
+        // been modified
+        if self.modified {
+            let mut out: Vec<u8> = Vec::new();
+            let mut raw_document = self.document.clone();
+            raw_document
+                .save_to(&mut out)
+                .map_err(|e| MetadataError::WriteError(e.to_string()))?;
+            Ok(out)
+        } else {
+            Ok(self.original_payload.clone())
+        }
     }
 }
 
