@@ -106,7 +106,7 @@ impl Signer for BJJSigner {
         };
         let encoded_hash = hex::encode(hash);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
         let req = SignRequest {
             key_id: managed.id.clone(),
@@ -163,7 +163,7 @@ impl Signer for BJJSigner {
     async fn verify_managed(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
         let hash: [u8; 32] = Poseidon::generate_hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
         let req = VerifyRequest {
             public_key: signature.key.clone(),

@@ -36,6 +36,7 @@ impl Signer for EnsSigner {
             self.api_host.clone(),
             self.api_key.clone(),
             self.environment.clone(),
+            None,
         );
         let mut signature = ecdsa_signer.sign_local(payload, &local.into()).await?;
         signature.alg = SignAlg::Es256k;
@@ -52,6 +53,7 @@ impl Signer for EnsSigner {
             self.api_host.clone(),
             self.api_key.clone(),
             self.environment.clone(),
+            None,
         );
         let mut signature = ecdsa_signer.sign_managed(payload, &managed.into()).await?;
         signature.alg = SignAlg::Es256kM;
@@ -63,6 +65,7 @@ impl Signer for EnsSigner {
             self.api_host.clone(),
             self.api_key.clone(),
             self.environment.clone(),
+            None,
         )
         .verify_local(payload, signature)
         .await
@@ -73,6 +76,7 @@ impl Signer for EnsSigner {
             self.api_host.clone(),
             self.api_key.clone(),
             self.environment.clone(),
+            None,
         )
         .verify_managed(payload, signature)
         .await
@@ -315,10 +319,8 @@ mod tests {
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
-            .await
-            .unwrap();
-
-        assert_eq!(result, false);
+            .await;
+        assert!(result.is_err());
     }
 
     #[tokio::test]

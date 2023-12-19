@@ -61,7 +61,7 @@ impl ManagedCertificate {
         api_key: String,
         environment: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
 
         let req = CreateManagedCertificateRequest {
             key_type: params.key_type.get_key_type(),
@@ -94,7 +94,7 @@ impl ManagedCertificate {
         api_key: String,
         environment: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
 
         let res: ManagedCertificateResponse = client
             .get_json(format!("{}/keys/v1/certificates/{}", api_host, id), None)
@@ -122,7 +122,7 @@ impl ManagedCertificate {
         api_key: String,
         environment: Option<String>,
     ) -> Result<Certificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
 
         let res: ManagedCertificateResponse = client
             .get_json(format!("{}/keys/v1/certificates/{}", api_host, id), None)
@@ -144,7 +144,7 @@ impl ManagedCertificate {
         api_key: String,
         environment: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
 
         let res: CreateManagedCertificateResponse = client
             .post_file(

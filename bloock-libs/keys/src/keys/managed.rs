@@ -44,7 +44,7 @@ impl ManagedKey {
         api_key: String,
         environment: Option<String>,
     ) -> Result<ManagedKey> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
 
         let req = CreateManagedKeyRequest {
             name: params.name.clone(),
@@ -73,7 +73,7 @@ impl ManagedKey {
         api_key: String,
         environment: Option<String>,
     ) -> Result<ManagedKey> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment);
+        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
 
         let res: ManagedKeyResponse = client
             .get_json(format!("{}/keys/v1/keys/{}", api_host, id), None)

@@ -97,7 +97,7 @@ impl BloockSigner for RsaSigner {
 
         let hash = BloockSha256::generate_hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
         let req = SignRequest {
             key_id: managed.id.clone(),
@@ -148,7 +148,7 @@ impl BloockSigner for RsaSigner {
     ) -> crate::Result<bool> {
         let hash = BloockSha256::generate_hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone());
+        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
         let req = VerifyRequest {
             public_key: signature.key.clone(),
