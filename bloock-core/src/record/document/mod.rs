@@ -361,7 +361,7 @@ mod tests {
     #[tokio::test]
     async fn test_signed_and_verify_pdf_with_managed_certificate() {
         let api_host = "https://api.bloock.com".to_string();
-        let api_key = option_env!("API_KEY").unwrap().to_string();
+        let api_key = "test_u4NFCv4ht7ho3fWPWem-UYC3qLHU2HXT5MEQkAV66BSOrKMprZRdIS1bshVZ8QvP".to_string();
 
         let payload = include_bytes!("./assets/dummy.pdf");
         let certificate_params = ManagedCertificateParams {

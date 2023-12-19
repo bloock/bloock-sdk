@@ -397,10 +397,8 @@ mod tests {
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
-            .await
-            .unwrap();
-
-        assert_eq!(result, false);
+            .await;
+        assert!(result.is_err());
     }
 
     #[tokio::test]

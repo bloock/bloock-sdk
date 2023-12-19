@@ -660,19 +660,18 @@ impl PdfParser {
                 Some(s) => (s.0, s.1),
                 None => return Err(MetadataError::DeserializeError),
             };
-            let signed_payload = res_signed_content.0.clone();
             let signed_data = res_signed_content.1.clone();
 
             for signer in signed_data.signer_infos.0.iter() {
                 let raw_signature = signer.signature.as_bytes();
                 let algorithm = SignAlg::Rsa;
-                let message_hash = match signer.signed_attrs.clone() {
+                let signed_attributes_encoded = match signer.signed_attrs.clone() {
                     Some(s) => {
-                        let signed_attributes_encoded = self.get_signed_attributes_encoded(s)?;
-                        Sha256::generate_hash(&[&signed_attributes_encoded]).to_vec()
+                        self.get_signed_attributes_encoded(s)?
                     }
                     None => return Err(MetadataError::DeserializeError),
                 };
+                let message_hash = Sha256::generate_hash(&[&signed_attributes_encoded]).to_vec();
 
                 let certificate_inner: Option<TbsCertificateInner> =
                     match signed_data.certificates.clone() {
@@ -704,7 +703,7 @@ impl PdfParser {
                         signature: hex::encode(raw_signature),
                         message_hash: hex::encode(message_hash),
                     };
-                    response.push((signature, signed_payload.clone()));
+                    response.push((signature, signed_attributes_encoded.clone()));
                 }
             }
         }

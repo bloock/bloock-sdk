@@ -117,9 +117,9 @@ impl BloockHttpClient {
                 if let Some(api_version) = self.get_api_version() {
                     if !api_version.is_empty() {
                         h.push(("api_version".to_string(), api_version));
-                    } else {
-                        h.push(("api_version".to_string(), API_VERSION.to_string()));
                     }
+                } else {
+                    h.push(("api_version".to_string(), API_VERSION.to_string()));
                 }
                 if let Some(env) = self.get_enviornment() {
                     if !env.is_empty() {
@@ -133,9 +133,9 @@ impl BloockHttpClient {
                 if let Some(api_version) = self.get_api_version() {
                     if !api_version.is_empty() {
                         h.push(("api_version".to_string(), api_version));
-                    } else {
-                        h.push(("api_version".to_string(), API_VERSION.to_string()));
                     }
+                } else {
+                    h.push(("api_version".to_string(), API_VERSION.to_string()));
                 }
                 if let Some(env) = self.get_enviornment() {
                     if !env.is_empty() {
