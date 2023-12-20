@@ -9,7 +9,9 @@ import "keys_entities.proto";
 
 enum EncryptionAlg {
     A256GCM = 0;
-    RSA = 1;
+    A256GCM_M = 1;
+    RSA = 2;
+    RSA_M = 3;
 }
 
 message Encrypter {

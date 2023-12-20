@@ -16,13 +16,23 @@ class EncryptionAlg
      */
     const A256GCM = 0;
     /**
-     * Generated from protobuf enum <code>RSA = 1;</code>
+     * Generated from protobuf enum <code>A256GCM_M = 1;</code>
      */
-    const RSA = 1;
+    const A256GCM_M = 1;
+    /**
+     * Generated from protobuf enum <code>RSA = 2;</code>
+     */
+    const RSA = 2;
+    /**
+     * Generated from protobuf enum <code>RSA_M = 3;</code>
+     */
+    const RSA_M = 3;
 
     private static $valueToName = [
         self::A256GCM => 'A256GCM',
+        self::A256GCM_M => 'A256GCM_M',
         self::RSA => 'RSA',
+        self::RSA_M => 'RSA_M',
     ];
 
     public static function name($value)

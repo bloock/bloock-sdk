@@ -16,7 +16,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class Signer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -58,7 +57,6 @@ class Signer(google.protobuf.message.Message):
 
 global___Signer = Signer
 
-@typing_extensions.final
 class Signature(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

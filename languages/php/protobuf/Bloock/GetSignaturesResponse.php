@@ -28,7 +28,7 @@ class GetSignaturesResponse extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type \Bloock\Signature[]|\Google\Protobuf\Internal\RepeatedField $signatures
+     *     @type array<\Bloock\Signature>|\Google\Protobuf\Internal\RepeatedField $signatures
      *     @type \Bloock\Error $error
      * }
      */
@@ -48,7 +48,7 @@ class GetSignaturesResponse extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.Signature signatures = 1;</code>
-     * @param \Bloock\Signature[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<\Bloock\Signature>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setSignatures($var)

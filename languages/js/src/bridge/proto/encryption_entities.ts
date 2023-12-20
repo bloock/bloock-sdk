@@ -4,7 +4,9 @@ import { LocalCertificate, LocalKey, ManagedCertificate, ManagedKey } from "./ke
 
 export enum EncryptionAlg {
   A256GCM = 0,
-  RSA = 1,
+  A256GCM_M = 1,
+  RSA = 2,
+  RSA_M = 3,
   UNRECOGNIZED = -1,
 }
 
@@ -14,8 +16,14 @@ export function encryptionAlgFromJSON(object: any): EncryptionAlg {
     case "A256GCM":
       return EncryptionAlg.A256GCM;
     case 1:
+    case "A256GCM_M":
+      return EncryptionAlg.A256GCM_M;
+    case 2:
     case "RSA":
       return EncryptionAlg.RSA;
+    case 3:
+    case "RSA_M":
+      return EncryptionAlg.RSA_M;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -27,8 +35,12 @@ export function encryptionAlgToJSON(object: EncryptionAlg): string {
   switch (object) {
     case EncryptionAlg.A256GCM:
       return "A256GCM";
+    case EncryptionAlg.A256GCM_M:
+      return "A256GCM_M";
     case EncryptionAlg.RSA:
       return "RSA";
+    case EncryptionAlg.RSA_M:
+      return "RSA_M";
     case EncryptionAlg.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

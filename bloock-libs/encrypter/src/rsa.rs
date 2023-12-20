@@ -125,7 +125,7 @@ impl Encrypter for RsaEncrypter {
 
         Ok(Encryption {
             ciphertext: ciphertext.ciphertext,
-            alg: crate::entity::alg::EncryptionAlg::Rsa,
+            alg: crate::entity::alg::EncryptionAlg::RsaM,
             key: Some(EncryptionKey {
                 key: managed.public_key.to_string(),
                 subject,
@@ -265,7 +265,7 @@ impl RsaEncrypter {
 
         Ok(Encryption {
             ciphertext: res.cipher.into_bytes(),
-            alg: crate::entity::alg::EncryptionAlg::Rsa,
+            alg: crate::entity::alg::EncryptionAlg::RsaM,
             key: Some(EncryptionKey {
                 key: managed.public_key.to_string(),
                 subject,
@@ -465,7 +465,7 @@ mod tests {
             .await
             .unwrap();
 
-        assert_eq!(encryption.alg, EncryptionAlg::Rsa);
+        assert_eq!(encryption.alg, EncryptionAlg::RsaM);
         assert_eq!(encryption.clone().key.unwrap().key, managed_key.public_key);
 
         let result = encrypter
@@ -528,7 +528,7 @@ mod tests {
             .await
             .unwrap();
 
-        assert_eq!(encryption.alg, EncryptionAlg::Rsa);
+        assert_eq!(encryption.alg, EncryptionAlg::RsaM);
         assert_eq!(encryption.clone().key.unwrap().key, managed_key.public_key);
 
         let result = encrypter
