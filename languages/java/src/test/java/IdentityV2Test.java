@@ -40,6 +40,24 @@ public class IdentityV2Test {
   }
 
   @Test
+  void createIdentity() throws Exception {
+    IdentityClient identityClient = new IdentityClient(apiManagedHost);
+    KeyClient keyClient = new KeyClient();
+
+    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+    KeyType keyType = KeyType.Bjj;
+
+    ManagedKey managedKey = keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+
+    ManagedKey keyBjj = keyClient.loadManagedKey(managedKey.getId());
+
+    BjjIdentityKey issuerKey = new BjjIdentityKey(new IdentityKeyArgs(keyBjj));
+
+    String issuer = identityClient.createIdentity(issuerKey, new DidParams());
+    assertTrue(issuer.contains("polygonid"));
+  }
+
+  @Test
   void endToEnd() throws Exception {
     IdentityClient identityClient = new IdentityClient(apiManagedHost);
     KeyClient keyClient = new KeyClient();
@@ -53,8 +71,8 @@ public class IdentityV2Test {
 
     ManagedKey keyBjj = keyClient.loadManagedKey(managedKey.getId());
 
-    BjjIssuerKey issuerKey = new BjjIssuerKey(new IssuerKeyArgs(keyBjj));
-    BjjIssuerKey notFoundIssuerKey = new BjjIssuerKey(new IssuerKeyArgs(notFoundManagedKey));
+    BjjIdentityKey issuerKey = new BjjIdentityKey(new IdentityKeyArgs(keyBjj));
+    BjjIdentityKey notFoundIssuerKey = new BjjIdentityKey(new IdentityKeyArgs(notFoundManagedKey));
 
     String currentDirectory = System.getProperty("user.dir");
     File imageFile = new File(currentDirectory + "/src/test/test_utils/profile_image.png");
@@ -81,7 +99,7 @@ public class IdentityV2Test {
     String getNotFoundIssuerDid = identityClient.getIssuerByKey(notFoundIssuerKey);
     assertTrue(getNotFoundIssuerDid.isEmpty());
 
-    IssuerParams issuerParams = new IssuerParams(Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI);
+    DidParams issuerParams = new DidParams(Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI);
     String newIssuer = identityClient.createIssuer(notFoundIssuerKey, issuerParams, null, null, null);
     assertTrue(newIssuer.contains("iden3"));
 

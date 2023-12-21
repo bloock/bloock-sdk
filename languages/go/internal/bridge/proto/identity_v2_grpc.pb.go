@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IdentityServiceV2Client interface {
+	CreateIdentity(ctx context.Context, in *CreateIdentityV2Request, opts ...grpc.CallOption) (*CreateIdentityV2Response, error)
 	CreateIssuer(ctx context.Context, in *CreateIssuerRequest, opts ...grpc.CallOption) (*CreateIssuerResponse, error)
 	GetIssuerList(ctx context.Context, in *GetIssuerListRequest, opts ...grpc.CallOption) (*GetIssuerListResponse, error)
 	GetIssuerByKey(ctx context.Context, in *GetIssuerByKeyRequest, opts ...grpc.CallOption) (*GetIssuerByKeyResponse, error)
@@ -41,6 +42,15 @@ type identityServiceV2Client struct {
 
 func NewIdentityServiceV2Client(cc grpc.ClientConnInterface) IdentityServiceV2Client {
 	return &identityServiceV2Client{cc}
+}
+
+func (c *identityServiceV2Client) CreateIdentity(ctx context.Context, in *CreateIdentityV2Request, opts ...grpc.CallOption) (*CreateIdentityV2Response, error) {
+	out := new(CreateIdentityV2Response)
+	err := c.cc.Invoke(ctx, "/bloock.IdentityServiceV2/CreateIdentity", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *identityServiceV2Client) CreateIssuer(ctx context.Context, in *CreateIssuerRequest, opts ...grpc.CallOption) (*CreateIssuerResponse, error) {
@@ -146,6 +156,7 @@ func (c *identityServiceV2Client) PublishIssuerState(ctx context.Context, in *Pu
 // All implementations must embed UnimplementedIdentityServiceV2Server
 // for forward compatibility
 type IdentityServiceV2Server interface {
+	CreateIdentity(context.Context, *CreateIdentityV2Request) (*CreateIdentityV2Response, error)
 	CreateIssuer(context.Context, *CreateIssuerRequest) (*CreateIssuerResponse, error)
 	GetIssuerList(context.Context, *GetIssuerListRequest) (*GetIssuerListResponse, error)
 	GetIssuerByKey(context.Context, *GetIssuerByKeyRequest) (*GetIssuerByKeyResponse, error)
@@ -164,6 +175,9 @@ type IdentityServiceV2Server interface {
 type UnimplementedIdentityServiceV2Server struct {
 }
 
+func (UnimplementedIdentityServiceV2Server) CreateIdentity(context.Context, *CreateIdentityV2Request) (*CreateIdentityV2Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateIdentity not implemented")
+}
 func (UnimplementedIdentityServiceV2Server) CreateIssuer(context.Context, *CreateIssuerRequest) (*CreateIssuerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateIssuer not implemented")
 }
@@ -208,6 +222,24 @@ type UnsafeIdentityServiceV2Server interface {
 
 func RegisterIdentityServiceV2Server(s grpc.ServiceRegistrar, srv IdentityServiceV2Server) {
 	s.RegisterService(&IdentityServiceV2_ServiceDesc, srv)
+}
+
+func _IdentityServiceV2_CreateIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateIdentityV2Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceV2Server).CreateIdentity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.IdentityServiceV2/CreateIdentity",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceV2Server).CreateIdentity(ctx, req.(*CreateIdentityV2Request))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _IdentityServiceV2_CreateIssuer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -415,6 +447,10 @@ var IdentityServiceV2_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "bloock.IdentityServiceV2",
 	HandlerType: (*IdentityServiceV2Server)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateIdentity",
+			Handler:    _IdentityServiceV2_CreateIdentity_Handler,
+		},
 		{
 			MethodName: "CreateIssuer",
 			Handler:    _IdentityServiceV2_CreateIssuer_Handler,

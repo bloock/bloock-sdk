@@ -1,5 +1,6 @@
 use crate::items::BuildSchemaResponseV2;
 use crate::items::CreateCredentialResponseV2;
+use crate::items::CreateIdentityV2Response;
 use crate::items::CreateIssuerResponse;
 use crate::items::CredentialFromJsonResponseV2;
 use crate::items::CredentialToJsonResponseV2;
@@ -96,6 +97,7 @@ pub enum ResponseType {
     RevokeCredentialResponse(RevokeCredentialResponse),
     VerifyWebhookSignatureResponse(VerifyWebhookSignatureResponse),
     CreateCredentialResponseV2(CreateCredentialResponseV2),
+    CreateIdentityV2Response(CreateIdentityV2Response),
     CreateIssuerResponse(CreateIssuerResponse),
     BuildSchemaResponseV2(BuildSchemaResponseV2),
     PublishIssuerStateResponse(PublishIssuerStateResponse),
@@ -160,6 +162,7 @@ impl ResponseType {
             ResponseType::VerifyCredentialResponse(r) => r.encode(&mut result_vec),
             ResponseType::RevokeCredentialResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateCredentialResponseV2(r) => r.encode(&mut result_vec),
+            ResponseType::CreateIdentityV2Response(r) => r.encode(&mut result_vec),
             ResponseType::CreateIssuerResponse(r) => r.encode(&mut result_vec),
             ResponseType::BuildSchemaResponseV2(r) => r.encode(&mut result_vec),
             ResponseType::PublishIssuerStateResponse(r) => r.encode(&mut result_vec),
@@ -224,6 +227,7 @@ impl ResponseType {
             ResponseType::VerifyCredentialResponse(r) => r.encoded_len(),
             ResponseType::RevokeCredentialResponse(r) => r.encoded_len(),
             ResponseType::CreateCredentialResponseV2(r) => r.encoded_len(),
+            ResponseType::CreateIdentityV2Response(r) => r.encoded_len(),
             ResponseType::CreateIssuerResponse(r) => r.encoded_len(),
             ResponseType::BuildSchemaResponseV2(r) => r.encoded_len(),
             ResponseType::PublishIssuerStateResponse(r) => r.encoded_len(),

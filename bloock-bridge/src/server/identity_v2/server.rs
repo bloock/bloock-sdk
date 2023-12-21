@@ -12,15 +12,15 @@ use crate::{
     error::BridgeError,
     items::{
         BuildSchemaRequestV2, BuildSchemaResponseV2, CreateCredentialRequestV2,
-        CreateCredentialResponseV2, CreateIssuerRequest, CreateIssuerResponse,
-        CredentialFromJsonRequestV2, CredentialFromJsonResponseV2, CredentialProofV2,
-        CredentialReceiptV2, CredentialRevocationV2, CredentialToJsonRequestV2,
-        CredentialToJsonResponseV2, CredentialV2, GetCredentialProofRequest,
-        GetCredentialProofResponse, GetIssuerByKeyRequest, GetIssuerByKeyResponse,
-        GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2, GetSchemaResponseV2,
-        IdentityServiceV2Handler, IssuerStateReceipt, PublishIssuerStateRequest,
-        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
-        SchemaV2,
+        CreateCredentialResponseV2, CreateIdentityV2Request, CreateIdentityV2Response,
+        CreateIssuerRequest, CreateIssuerResponse, CredentialFromJsonRequestV2,
+        CredentialFromJsonResponseV2, CredentialProofV2, CredentialReceiptV2,
+        CredentialRevocationV2, CredentialToJsonRequestV2, CredentialToJsonResponseV2,
+        CredentialV2, GetCredentialProofRequest, GetCredentialProofResponse, GetIssuerByKeyRequest,
+        GetIssuerByKeyResponse, GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2,
+        GetSchemaResponseV2, IdentityServiceV2Handler, IssuerStateReceipt,
+        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
+        RevokeCredentialResponseV2, SchemaV2,
     },
     server::response_types::RequestConfigData,
 };
@@ -31,6 +31,55 @@ pub struct IdentityServerV2 {}
 
 #[async_trait(?Send)]
 impl IdentityServiceV2Handler for IdentityServerV2 {
+    async fn create_identity(
+        &self,
+        req: &CreateIdentityV2Request,
+    ) -> Result<CreateIdentityV2Response, String> {
+        let config_data = req.get_config_data()?;
+
+        let issuer_key = req
+            .clone()
+            .issuer_key
+            .ok_or_else(|| "no key provided".to_string())?;
+
+        let local_key = issuer_key.local_key;
+        let managed_key = issuer_key.managed_key;
+
+        let public_key = if let Some(key) = managed_key {
+            let key_type: KeyType = key.key_type().into();
+            if key_type == KeyType::BJJ {
+                key.key
+            } else {
+                return Err("invalid key type provided".to_string());
+            }
+        } else if let Some(key) = local_key {
+            let key_type: KeyType = key.key_type().into();
+            if key_type == KeyType::BJJ {
+                key.key
+            } else {
+                return Err("invalid key type provided".to_string());
+            }
+        } else {
+            return Err("invalid key provided".to_string());
+        };
+
+        let params: DidMetadata = match req.did_params.clone() {
+            Some(i) => i.into(),
+            None => DidMetadata::default(),
+        };
+
+        let client = identity_v2::configure(config_data.clone());
+        let receipt = client
+            .create_identity(public_key, params)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(CreateIdentityV2Response {
+            did: receipt.did,
+            error: None,
+        })
+    }
+
     async fn create_issuer(
         &self,
         req: &CreateIssuerRequest,
@@ -70,7 +119,13 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
 
         let client = identity_v2::configure(config_data.clone());
         let receipt = client
-            .create_issuer(public_key, params, req.name.clone(), req.description.clone(), req.image.clone())
+            .create_issuer(
+                public_key,
+                params,
+                req.name.clone(),
+                req.description.clone(),
+                req.image.clone(),
+            )
             .await
             .map_err(|e| e.to_string())?;
 

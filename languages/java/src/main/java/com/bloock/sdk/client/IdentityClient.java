@@ -2,15 +2,14 @@ package com.bloock.sdk.client;
 
 import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
-import com.bloock.sdk.bridge.proto.IdentityV2.CreateIssuerRequest.Builder;
 import com.bloock.sdk.bridge.proto.IdentityV2;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
 import com.bloock.sdk.entity.identity_v2.Credential;
 import com.bloock.sdk.entity.identity_v2.CredentialBuilder;
 import com.bloock.sdk.entity.identity_v2.CredentialProof;
-import com.bloock.sdk.entity.identity_v2.IssuerKey;
-import com.bloock.sdk.entity.identity_v2.IssuerParams;
+import com.bloock.sdk.entity.identity_v2.IdentityKey;
+import com.bloock.sdk.entity.identity_v2.DidParams;
 import com.bloock.sdk.entity.identity_v2.IssuerStatePublisher;
 import com.bloock.sdk.entity.identity_v2.Schema;
 import com.bloock.sdk.entity.identity_v2.SchemaBuilder;
@@ -33,12 +32,29 @@ public class IdentityClient {
     this.apiManagedHost = apiManagedHost;
   }
 
-  public String createIssuer(IssuerKey issuerKey, String name, String description, String image) throws Exception {
-    return createIssuer(issuerKey, new IssuerParams(), name, description, image);
+  public String createIdentity(IdentityKey issuerKey, DidParams didParams) throws Exception {
+    IdentityV2.CreateIdentityV2Request.Builder builder = IdentityV2.CreateIdentityV2Request.newBuilder()
+            .setIssuerKey(issuerKey.toProto())
+            .setDidParams(didParams.toProto())
+            .setConfigData(this.configData);
+
+    IdentityV2.CreateIdentityV2Request request = builder.build();
+
+    IdentityV2.CreateIdentityV2Response response = bridge.getIdentityV2().createIdentity(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return response.getDid();
   }
 
-  public String createIssuer(IssuerKey issuerKey, IssuerParams issuerParams, String name, String description,
-      String image) throws Exception {
+  public String createIssuer(IdentityKey issuerKey, String name, String description, String image) throws Exception {
+    return createIssuer(issuerKey, new DidParams(), name, description, image);
+  }
+
+  public String createIssuer(IdentityKey issuerKey, DidParams issuerParams, String name, String description,
+                             String image) throws Exception {
     IdentityV2.CreateIssuerRequest.Builder builder = IdentityV2.CreateIssuerRequest.newBuilder()
         .setIssuerKey(issuerKey.toProto())
         .setIssuerParams(issuerParams.toProto())
@@ -80,11 +96,11 @@ public class IdentityClient {
     return response.getDidList();
   }
 
-  public String getIssuerByKey(IssuerKey issuerKey) throws Exception {
-    return getIssuerByKey(issuerKey, new IssuerParams());
+  public String getIssuerByKey(IdentityKey issuerKey) throws Exception {
+    return getIssuerByKey(issuerKey, new DidParams());
   }
 
-  public String getIssuerByKey(IssuerKey issuerKey, IssuerParams issuerParams) throws Exception {
+  public String getIssuerByKey(IdentityKey issuerKey, DidParams issuerParams) throws Exception {
     IdentityV2.GetIssuerByKeyRequest request = IdentityV2.GetIssuerByKeyRequest.newBuilder()
         .setIssuerKey(issuerKey.toProto())
         .setIssuerParams(issuerParams.toProto())

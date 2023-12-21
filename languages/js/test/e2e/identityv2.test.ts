@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { BjjIssuerKey, Signer } from "../../dist/index";
+import { BjjIdentityKey, Signer } from "../../dist/index";
 import {
   CredentialV2,
   IdentityClient,
@@ -8,7 +8,7 @@ import {
   KeyType,
   ManagedKeyParams,
   ProofType,
-  IssuerParams,
+  DidParams,
   Method,
   Blockchain,
   NetworkId
@@ -16,7 +16,7 @@ import {
 import { initDevSdk } from "./util";
 import path from "path";
 import { readFileSync } from "fs";
-import base64url from 'urlsafe-base64';
+import base64url from "urlsafe-base64";
 
 describe("Identity V2 Tests", () => {
   const credentialJson =
@@ -38,6 +38,26 @@ describe("Identity V2 Tests", () => {
     expect(json).toStrictEqual(newCredentialJson);
   });
 
+  test("test create identity", async () => {
+    initDevSdk();
+
+    const identityClient = new IdentityClient(apiManagedHost);
+    const keyClient = new KeyClient();
+
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.Bjj;
+    let keys = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType)
+    );
+
+    let keyBjj = await keyClient.loadManagedKey(keys.id);
+
+    let issuerKey = new BjjIdentityKey(keyBjj);
+
+    let issuer = await identityClient.createIdentity(issuerKey, undefined);
+    expect(issuer.includes("polygonid")).toBeTruthy();
+  });
+
   test("test identity end to end", async () => {
     initDevSdk();
 
@@ -56,14 +76,20 @@ describe("Identity V2 Tests", () => {
 
     let keyBjj = await keyClient.loadManagedKey(keys.id);
 
-    let issuerKey = new BjjIssuerKey(keyBjj);
-    let notFoundIssuerKey = new BjjIssuerKey(notFoundKey);
+    let issuerKey = new BjjIdentityKey(keyBjj);
+    let notFoundIssuerKey = new BjjIdentityKey(notFoundKey);
 
-    const dirPath = path.join(__dirname, '/test_utils/profile_image.png');
+    const dirPath = path.join(__dirname, "/test_utils/profile_image.png");
     let fileBytes = readFileSync(dirPath);
     let encodedFile = base64url.encode(fileBytes);
 
-    let issuer = await identityClient.createIssuer(issuerKey, undefined, "Bloock Test", "bloock description test", encodedFile);
+    let issuer = await identityClient.createIssuer(
+      issuerKey,
+      undefined,
+      "Bloock Test",
+      "bloock description test",
+      encodedFile
+    );
     expect(issuer.includes("polygonid")).toBeTruthy();
 
     try {
@@ -80,7 +106,7 @@ describe("Identity V2 Tests", () => {
     );
     expect(getNotFoundIssuerDid).toStrictEqual("");
 
-    let issuerParams = new IssuerParams(
+    let issuerParams = new DidParams(
       Method.IDEN3,
       Blockchain.POLYGON,
       NetworkId.MUMBAI
@@ -138,7 +164,7 @@ describe("Identity V2 Tests", () => {
       .build();
     expect(schema.cid).toBeTruthy();
 
-    schema = await identityClient.getSchema(schema.cid)
+    schema = await identityClient.getSchema(schema.cid);
     expect(schema.cidJsonLd).toBeTruthy();
     expect(schema.json).toBeTruthy();
     expect(schema.schemaType).toBeTruthy();

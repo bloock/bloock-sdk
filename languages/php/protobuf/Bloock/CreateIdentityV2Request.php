@@ -9,9 +9,9 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Generated from protobuf message <code>bloock.GetIssuerByKeyRequest</code>
+ * Generated from protobuf message <code>bloock.CreateIdentityV2Request</code>
  */
-class GetIssuerByKeyRequest extends \Google\Protobuf\Internal\Message
+class CreateIdentityV2Request extends \Google\Protobuf\Internal\Message
 {
     /**
      * Generated from protobuf field <code>.bloock.IdentityKey issuer_key = 1;</code>
@@ -22,9 +22,9 @@ class GetIssuerByKeyRequest extends \Google\Protobuf\Internal\Message
      */
     protected $config_data = null;
     /**
-     * Generated from protobuf field <code>optional .bloock.DidParams issuer_params = 3;</code>
+     * Generated from protobuf field <code>optional .bloock.DidParams did_params = 3;</code>
      */
-    protected $issuer_params = null;
+    protected $did_params = null;
 
     /**
      * Constructor.
@@ -34,7 +34,7 @@ class GetIssuerByKeyRequest extends \Google\Protobuf\Internal\Message
      *
      *     @type \Bloock\IdentityKey $issuer_key
      *     @type \Bloock\ConfigData $config_data
-     *     @type \Bloock\DidParams $issuer_params
+     *     @type \Bloock\DidParams $did_params
      * }
      */
     public function __construct($data = NULL) {
@@ -107,33 +107,33 @@ class GetIssuerByKeyRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.DidParams issuer_params = 3;</code>
+     * Generated from protobuf field <code>optional .bloock.DidParams did_params = 3;</code>
      * @return \Bloock\DidParams|null
      */
-    public function getIssuerParams()
+    public function getDidParams()
     {
-        return $this->issuer_params;
+        return $this->did_params;
     }
 
-    public function hasIssuerParams()
+    public function hasDidParams()
     {
-        return isset($this->issuer_params);
+        return isset($this->did_params);
     }
 
-    public function clearIssuerParams()
+    public function clearDidParams()
     {
-        unset($this->issuer_params);
+        unset($this->did_params);
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.DidParams issuer_params = 3;</code>
+     * Generated from protobuf field <code>optional .bloock.DidParams did_params = 3;</code>
      * @param \Bloock\DidParams $var
      * @return $this
      */
-    public function setIssuerParams($var)
+    public function setDidParams($var)
     {
         GPBUtil::checkMessage($var, \Bloock\DidParams::class);
-        $this->issuer_params = $var;
+        $this->did_params = $var;
 
         return $this;
     }

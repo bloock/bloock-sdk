@@ -1,12 +1,10 @@
 from bloock._bridge import bridge
 from bloock._config.config import Config
-from bloock.entity.identity_v2.issuer_key import IssuerKey
+from bloock.entity.identity_v2.identity_key import IdentityKey
 from typing import List, Optional
 from bloock._bridge.proto.shared_pb2 import Error
-
-
-from bloock.entity.identity_v2.issuer_params import IssuerParams
-from bloock._bridge.proto.identity_v2_pb2 import CreateIssuerRequest, GetSchemaRequestV2
+from bloock.entity.identity_v2.did_params import DidParams
+from bloock._bridge.proto.identity_v2_pb2 import CreateIdentityV2Request, CreateIssuerRequest, GetSchemaRequestV2
 from bloock._bridge.proto.identity_v2_pb2 import GetIssuerListRequest
 from bloock._bridge.proto.identity_v2_pb2 import GetIssuerByKeyRequest
 from bloock._bridge.proto.identity_v2_pb2 import GetCredentialProofRequest
@@ -27,7 +25,20 @@ class IdentityClient:
         self.config_data = config_data
         self.api_managed_host = api_managed_host
 
-    def create_issuer(self, issuer_key: IssuerKey, issuer_params: Optional[IssuerParams] = None, name: str = None, description: str = None, image: str = None) -> str:
+    def create_identity(self, identity_key: IdentityKey, did_params: Optional[DidParams] = None) -> str:
+        res = self.bridge_client.identity_v2().CreateIdentity(
+            CreateIdentityV2Request(
+                config_data=self.config_data,
+                issuer_key=identity_key.to_proto(),
+                did_params=did_params.to_proto() if did_params is not None else None,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.did
+    
+    def create_issuer(self, issuer_key: IdentityKey, issuer_params: Optional[DidParams] = None, name: str = None, description: str = None, image: str = None) -> str:
         res = self.bridge_client.identity_v2().CreateIssuer(
             CreateIssuerRequest(
                 config_data=self.config_data,
@@ -54,7 +65,7 @@ class IdentityClient:
             raise Exception(res.error.message)
         return list(res.did)
 
-    def get_issuer_by_key(self, issuer_key: IssuerKey, issuer_params: Optional[IssuerParams] = None) -> str:
+    def get_issuer_by_key(self, issuer_key: IdentityKey, issuer_params: Optional[DidParams] = None) -> str:
         res = self.bridge_client.identity_v2().GetIssuerByKey(
             GetIssuerByKeyRequest(
                 config_data=self.config_data,

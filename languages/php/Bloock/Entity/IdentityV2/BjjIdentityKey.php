@@ -2,18 +2,18 @@
 
 namespace Bloock\Entity\IdentityV2;
 
-class BjjIssuerKey implements IssuerKey
+class BjjIdentityKey implements IdentityKey
 {
-    public IssuerKeyArgs $args;
+    public IdentityKeyArgs $args;
 
-    public function __construct(IssuerKeyArgs $args)
+    public function __construct(IdentityKeyArgs $args)
     {
         $this->args = $args;
     }
 
-    public function toProto(): \Bloock\IssuerKey
+    public function toProto(): \Bloock\IdentityKey
     {
-        $s = new \Bloock\IssuerKey();
+        $s = new \Bloock\IdentityKey();
 
         if ($this->args->localKey != null) {
             $s->setLocalKey($this->args->localKey->toProto());

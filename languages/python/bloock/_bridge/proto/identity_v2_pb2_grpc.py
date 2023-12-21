@@ -14,6 +14,11 @@ class IdentityServiceV2Stub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.CreateIdentity = channel.unary_unary(
+                '/bloock.IdentityServiceV2/CreateIdentity',
+                request_serializer=identity__v2__pb2.CreateIdentityV2Request.SerializeToString,
+                response_deserializer=identity__v2__pb2.CreateIdentityV2Response.FromString,
+                )
         self.CreateIssuer = channel.unary_unary(
                 '/bloock.IdentityServiceV2/CreateIssuer',
                 request_serializer=identity__v2__pb2.CreateIssuerRequest.SerializeToString,
@@ -73,6 +78,12 @@ class IdentityServiceV2Stub(object):
 
 class IdentityServiceV2Servicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def CreateIdentity(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def CreateIssuer(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -143,6 +154,11 @@ class IdentityServiceV2Servicer(object):
 
 def add_IdentityServiceV2Servicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'CreateIdentity': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateIdentity,
+                    request_deserializer=identity__v2__pb2.CreateIdentityV2Request.FromString,
+                    response_serializer=identity__v2__pb2.CreateIdentityV2Response.SerializeToString,
+            ),
             'CreateIssuer': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateIssuer,
                     request_deserializer=identity__v2__pb2.CreateIssuerRequest.FromString,
@@ -207,6 +223,23 @@ def add_IdentityServiceV2Servicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class IdentityServiceV2(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def CreateIdentity(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.IdentityServiceV2/CreateIdentity',
+            identity__v2__pb2.CreateIdentityV2Request.SerializeToString,
+            identity__v2__pb2.CreateIdentityV2Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def CreateIssuer(request,

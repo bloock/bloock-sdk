@@ -4,12 +4,13 @@ use crate::{
     error::BridgeError,
     items::{
         BuildSchemaRequestV2, BuildSchemaResponseV2, CreateCredentialRequestV2,
-        CreateCredentialResponseV2, CreateIssuerRequest, CreateIssuerResponse,
-        CredentialFromJsonRequestV2, CredentialFromJsonResponseV2, CredentialToJsonRequestV2,
-        CredentialToJsonResponseV2, Error, GetCredentialProofRequest, GetCredentialProofResponse,
-        GetIssuerByKeyRequest, GetIssuerByKeyResponse, GetIssuerListRequest, GetIssuerListResponse,
-        GetSchemaRequestV2, GetSchemaResponseV2, PublishIssuerStateRequest,
-        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
+        CreateCredentialResponseV2, CreateIdentityV2Request, CreateIdentityV2Response,
+        CreateIssuerRequest, CreateIssuerResponse, CredentialFromJsonRequestV2,
+        CredentialFromJsonResponseV2, CredentialToJsonRequestV2, CredentialToJsonResponseV2, Error,
+        GetCredentialProofRequest, GetCredentialProofResponse, GetIssuerByKeyRequest,
+        GetIssuerByKeyResponse, GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2,
+        GetSchemaResponseV2, PublishIssuerStateRequest, PublishIssuerStateResponse,
+        RevokeCredentialRequestV2, RevokeCredentialResponseV2,
     },
     server::response_types::ResponseTypeError,
 };
@@ -18,6 +19,18 @@ impl ResponseTypeError<CreateCredentialRequestV2> for CreateCredentialResponseV2
     fn build_error(err: String) -> Self {
         Self {
             credential_receipt: None,
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<CreateIdentityV2Request> for CreateIdentityV2Response {
+    fn build_error(err: String) -> Self {
+        Self {
+            did: "".to_string(),
             error: Some(Error {
                 kind: BridgeError::KeysError.to_string(),
                 message: err,

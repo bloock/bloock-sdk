@@ -6,7 +6,7 @@ use Bloock\Entity\Key\LocalKey;
 use Bloock\Entity\Key\ManagedKey;
 use Exception;
 
-class IssuerKeyArgs
+class IdentityKeyArgs
 {
     public ?LocalKey $localKey = null;
     public ?ManagedKey $managedKey = null;

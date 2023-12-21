@@ -1,6 +1,6 @@
 import { LocalKey, ManagedKey } from "../key";
 
-export class IssuerKeyArgs {
+export class IdentityKeyArgs {
   localKey?: LocalKey;
   managedKey?: ManagedKey;
 

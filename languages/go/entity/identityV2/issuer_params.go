@@ -75,32 +75,32 @@ func ListOfNetworkIds() networkIds {
 	}
 }
 
-type IssuerParams struct {
+type DidParams struct {
 	Method     Method
 	Blockchain Blockchain
 	NetworkId  NetworkId
 }
 
-func NewIssuerParams() IssuerParams {
-	return IssuerParams{
+func NewDidParams() DidParams {
+	return DidParams{
 		Method:     -1,
 		Blockchain: -1,
 		NetworkId:  -1,
 	}
 }
 
-func IssuerParamsToProto(issuerParams IssuerParams) *proto.IssuerParams {
-	if issuerParams.Method == -1 {
+func DidParamsToProto(didParams DidParams) *proto.DidParams {
+	if didParams.Method == -1 {
 		return nil
-	} else if issuerParams.Blockchain == -1 {
+	} else if didParams.Blockchain == -1 {
 		return nil
-	} else if issuerParams.NetworkId == -1 {
+	} else if didParams.NetworkId == -1 {
 		return nil
 	} else {
-		return &proto.IssuerParams{
-			Method:     *MethodToProto(issuerParams.Method),
-			Blockchain: *BlockchainToProto(issuerParams.Blockchain),
-			NetworkId:  *NetworkIdToProto(issuerParams.NetworkId),
+		return &proto.DidParams{
+			Method:     *MethodToProto(didParams.Method),
+			Blockchain: *BlockchainToProto(didParams.Blockchain),
+			NetworkId:  *NetworkIdToProto(didParams.NetworkId),
 		}
 	}
 }

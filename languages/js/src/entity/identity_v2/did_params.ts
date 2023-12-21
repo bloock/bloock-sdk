@@ -3,7 +3,7 @@ import { NetworkId } from "./network";
 import { Blockchain } from "./blockchain";
 import { Method } from "./method";
 
-export class IssuerParams {
+export class DidParams {
   method: Method;
   blockchain: Blockchain;
   network: NetworkId;
@@ -14,8 +14,8 @@ export class IssuerParams {
     this.network = network;
   }
 
-  public toProto(): identityEntitiesProto.IssuerParams {
-    return identityEntitiesProto.IssuerParams.fromPartial({
+  public toProto(): identityEntitiesProto.DidParams {
+    return identityEntitiesProto.DidParams.fromPartial({
       method: Method.toProto(this.method),
       blockchain: Blockchain.toProto(this.blockchain),
       networkId: NetworkId.toProto(this.network)

@@ -5,16 +5,17 @@ namespace Bloock\Client;
 use Bloock\Bridge\Bridge;
 use Bloock\Config\Config;
 use Bloock\ConfigData;
+use Bloock\CreateIdentityV2Request;
 use Bloock\CreateIssuerRequest;
 use Bloock\GetIssuerListRequest;
 use Bloock\Entity\IdentityV2\Credential;
 use Bloock\Entity\IdentityV2\Schema;
 use Bloock\Entity\IdentityV2\CredentialBuilder;
 use Bloock\Entity\IdentityV2\CredentialProof;
+use Bloock\Entity\IdentityV2\DidParams;
+use Bloock\Entity\IdentityV2\IdentityKey;
 use Bloock\Entity\IdentityV2\IssuerStatePublisher;
 use Bloock\Entity\IdentityV2\SchemaBuilder;
-use Bloock\Entity\IdentityV2\IssuerKey;
-use Bloock\Entity\IdentityV2\IssuerParams;
 use Bloock\GetIssuerByKeyRequest;
 use Bloock\GetCredentialProofRequest;
 use Bloock\GetSchemaRequestV2;
@@ -38,14 +39,33 @@ class IdentityClient
         $this->apiManagedHost = $apiManagedHost;
     }
 
-    public function createIssuer(IssuerKey $issuerKey, IssuerParams $issuerParams = null, string $name = null, string $description = null, string $image = null): string
+    public function createIdentity(IdentityKey $identityKey, DidParams $didParams = null): string
+    {
+        $req = new CreateIdentityV2Request();
+        $req->setIssuerKey($identityKey->toProto());
+        $req->setConfigData($this->config);
+
+        if ($didParams != null) {
+            $req->setDidParams($didParams->toProto());
+        }
+
+        $res = $this->bridge->identityV2->CreateIdentity($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return $res->getDid();
+    }
+
+    public function createIssuer(IdentityKey $issuerKey, DidParams $didParams = null, string $name = null, string $description = null, string $image = null): string
     {
         $req = new CreateIssuerRequest();
         $req->setIssuerKey($issuerKey->toProto());
         $req->setConfigData($this->config);
 
-        if ($issuerParams != null) {
-            $req->setIssuerParams($issuerParams->toProto());
+        if ($didParams != null) {
+            $req->setIssuerParams($didParams->toProto());
         }
 
         if ($name != null) {
@@ -87,13 +107,13 @@ class IdentityClient
         return $didList;
     }
 
-    public function getIssuerByKey(IssuerKey $issuerKey, IssuerParams $issuerParams = null): string
+    public function getIssuerByKey(IdentityKey $issuerKey, DidParams $didParams = null): string
     {
         $req = new GetIssuerByKeyRequest();
         $req->setIssuerKey($issuerKey->toProto());
         $req->setConfigData($this->config);
-        if ($issuerParams != null) {
-            $req->setIssuerParams($issuerParams->toProto());
+        if ($didParams != null) {
+            $req->setIssuerParams($didParams->toProto());
         }
 
         $res = $this->bridge->identityV2->GetIssuerByKey($req);

@@ -2,7 +2,7 @@
 
 namespace Bloock\Entity\IdentityV2;
 
-class IssuerParams
+class DidParams
 {
     private string $method;
     private string $blockchain;
@@ -15,9 +15,9 @@ class IssuerParams
         $this->network = $network;
     }
 
-    public function toProto(): \Bloock\IssuerParams
+    public function toProto(): \Bloock\DidParams
     {
-        $s = new \Bloock\IssuerParams();
+        $s = new \Bloock\DidParams();
         $s->setMethod(Method::toProto($this->method));
         $s->setBlockchain(Blockchain::toProto($this->blockchain));
         $s->setNetworkId(Network::toProto($this->network));

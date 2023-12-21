@@ -1,5 +1,7 @@
 pub mod create_credential_request;
 pub mod create_credential_response;
+pub mod create_identity_request;
+pub mod create_identity_response;
 pub mod create_issuer_request;
 pub mod create_issuer_response;
 pub mod create_schema_request;

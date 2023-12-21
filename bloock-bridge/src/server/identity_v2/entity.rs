@@ -13,7 +13,7 @@ use crate::{
     error::BridgeError,
     items::{
         Blockchain, CredentialProofV2, CredentialSchemaV2, CredentialStatusV2, CredentialV2,
-        IssuerParams, Method, NetworkId, ProofType,
+        DidParams, Method, NetworkId, ProofType,
     },
 };
 
@@ -26,8 +26,8 @@ impl From<ProofType> for CoreProofType {
     }
 }
 
-impl From<IssuerParams> for DidMetadata {
-    fn from(n: IssuerParams) -> Self {
+impl From<DidParams> for DidMetadata {
+    fn from(n: DidParams) -> Self {
         let method = match n.method() {
             Method::Iden3 => DIDMethod::Iden3,
             Method::PolygonId => DIDMethod::PolygonID,

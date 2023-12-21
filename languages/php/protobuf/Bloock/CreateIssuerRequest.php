@@ -14,7 +14,7 @@ use Google\Protobuf\Internal\GPBUtil;
 class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>.bloock.IssuerKey issuer_key = 1;</code>
+     * Generated from protobuf field <code>.bloock.IdentityKey issuer_key = 1;</code>
      */
     protected $issuer_key = null;
     /**
@@ -22,7 +22,7 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
      */
     protected $config_data = null;
     /**
-     * Generated from protobuf field <code>optional .bloock.IssuerParams issuer_params = 3;</code>
+     * Generated from protobuf field <code>optional .bloock.DidParams issuer_params = 3;</code>
      */
     protected $issuer_params = null;
     /**
@@ -44,9 +44,9 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type \Bloock\IssuerKey $issuer_key
+     *     @type \Bloock\IdentityKey $issuer_key
      *     @type \Bloock\ConfigData $config_data
-     *     @type \Bloock\IssuerParams $issuer_params
+     *     @type \Bloock\DidParams $issuer_params
      *     @type string $name
      *     @type string $description
      *     @type string $image
@@ -58,8 +58,8 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.IssuerKey issuer_key = 1;</code>
-     * @return \Bloock\IssuerKey|null
+     * Generated from protobuf field <code>.bloock.IdentityKey issuer_key = 1;</code>
+     * @return \Bloock\IdentityKey|null
      */
     public function getIssuerKey()
     {
@@ -77,13 +77,13 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.IssuerKey issuer_key = 1;</code>
-     * @param \Bloock\IssuerKey $var
+     * Generated from protobuf field <code>.bloock.IdentityKey issuer_key = 1;</code>
+     * @param \Bloock\IdentityKey $var
      * @return $this
      */
     public function setIssuerKey($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\IssuerKey::class);
+        GPBUtil::checkMessage($var, \Bloock\IdentityKey::class);
         $this->issuer_key = $var;
 
         return $this;
@@ -122,8 +122,8 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.IssuerParams issuer_params = 3;</code>
-     * @return \Bloock\IssuerParams|null
+     * Generated from protobuf field <code>optional .bloock.DidParams issuer_params = 3;</code>
+     * @return \Bloock\DidParams|null
      */
     public function getIssuerParams()
     {
@@ -141,13 +141,13 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.IssuerParams issuer_params = 3;</code>
-     * @param \Bloock\IssuerParams $var
+     * Generated from protobuf field <code>optional .bloock.DidParams issuer_params = 3;</code>
+     * @param \Bloock\DidParams $var
      * @return $this
      */
     public function setIssuerParams($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\IssuerParams::class);
+        GPBUtil::checkMessage($var, \Bloock\DidParams::class);
         $this->issuer_params = $var;
 
         return $this;

@@ -32,7 +32,25 @@ func NewIdentityClientWithConfig(configData *proto.ConfigData, apiManagedHost st
 	}
 }
 
-func (c *IdentityV2Client) CreateIssuer(issuerKey identityV2.IssuerKey, params identityV2.IssuerParams, name, description, image string) (string, error) {
+func (c *IdentityV2Client) CreateIdentity(issuerKey identityV2.IdentityKey, params identityV2.DidParams) (string, error) {
+	res, err := c.bridgeClient.IdentityV2().CreateIdentity(context.Background(), &proto.CreateIdentityV2Request{
+		IssuerKey:  issuerKey.ToProto(),
+		DidParams:  identityV2.DidParamsToProto(params),
+		ConfigData: c.configData,
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if res.Error != nil {
+		return "", errors.New(res.Error.Message)
+	}
+
+	return res.Did, nil
+}
+
+func (c *IdentityV2Client) CreateIssuer(issuerKey identityV2.IdentityKey, params identityV2.DidParams, name, description, image string) (string, error) {
 	var iName, iDescription, iImage *string
 	if name != "" {
 		iName = &name
@@ -46,7 +64,7 @@ func (c *IdentityV2Client) CreateIssuer(issuerKey identityV2.IssuerKey, params i
 
 	res, err := c.bridgeClient.IdentityV2().CreateIssuer(context.Background(), &proto.CreateIssuerRequest{
 		IssuerKey:    issuerKey.ToProto(),
-		IssuerParams: identityV2.IssuerParamsToProto(params),
+		IssuerParams: identityV2.DidParamsToProto(params),
 		Name:         iName,
 		Description:  iDescription,
 		Image:        iImage,
@@ -80,11 +98,11 @@ func (c *IdentityV2Client) GetIssuerList() ([]string, error) {
 	return res.Did, nil
 }
 
-func (c *IdentityV2Client) GetIssuerByKey(issuerKey identityV2.IssuerKey, params identityV2.IssuerParams) (string, error) {
+func (c *IdentityV2Client) GetIssuerByKey(issuerKey identityV2.IdentityKey, params identityV2.DidParams) (string, error) {
 	res, err := c.bridgeClient.IdentityV2().GetIssuerByKey(context.Background(), &proto.GetIssuerByKeyRequest{
 		ConfigData:   c.configData,
 		IssuerKey:    issuerKey.ToProto(),
-		IssuerParams: identityV2.IssuerParamsToProto(params),
+		IssuerParams: identityV2.DidParamsToProto(params),
 	})
 	if err != nil {
 		return "", err

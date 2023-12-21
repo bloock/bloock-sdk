@@ -2,17 +2,17 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
-type BjjIssuerKey struct {
+type BjjIdentityKey struct {
 	Args IssuerKeyArgs
 }
 
-func NewBjjIssuerKey(args IssuerKeyArgs) BjjIssuerKey {
-	return BjjIssuerKey{
+func NewBjjIdentityKey(args IssuerKeyArgs) BjjIdentityKey {
+	return BjjIdentityKey{
 		Args: args,
 	}
 }
 
-func (s BjjIssuerKey) ToProto() *proto.IssuerKey {
+func (s BjjIdentityKey) ToProto() *proto.IdentityKey {
 	var localKey *proto.LocalKey
 	if s.Args.LocalKey != nil {
 		localKey = s.Args.LocalKey.ToProto()
@@ -23,7 +23,7 @@ func (s BjjIssuerKey) ToProto() *proto.IssuerKey {
 		managedKey = s.Args.ManagedKey.ToProto()
 	}
 
-	return &proto.IssuerKey{
+	return &proto.IdentityKey{
 		LocalKey:   localKey,
 		ManagedKey: managedKey,
 	}

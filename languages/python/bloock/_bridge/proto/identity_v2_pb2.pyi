@@ -375,6 +375,31 @@ class BuildSchemaRequestV2(google.protobuf.message.Message):
 
 global___BuildSchemaRequestV2 = BuildSchemaRequestV2
 
+class CreateIdentityV2Request(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ISSUER_KEY_FIELD_NUMBER: builtins.int
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    DID_PARAMS_FIELD_NUMBER: builtins.int
+    @property
+    def issuer_key(self) -> identity_entities_v2_pb2.IdentityKey: ...
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    @property
+    def did_params(self) -> identity_entities_v2_pb2.DidParams: ...
+    def __init__(
+        self,
+        *,
+        issuer_key: identity_entities_v2_pb2.IdentityKey | None = ...,
+        config_data: config_pb2.ConfigData | None = ...,
+        did_params: identity_entities_v2_pb2.DidParams | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_did_params", b"_did_params", "config_data", b"config_data", "did_params", b"did_params", "issuer_key", b"issuer_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_did_params", b"_did_params", "config_data", b"config_data", "did_params", b"did_params", "issuer_key", b"issuer_key"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_did_params", b"_did_params"]) -> typing_extensions.Literal["did_params"] | None: ...
+
+global___CreateIdentityV2Request = CreateIdentityV2Request
+
 class CreateIssuerRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -385,20 +410,20 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     DESCRIPTION_FIELD_NUMBER: builtins.int
     IMAGE_FIELD_NUMBER: builtins.int
     @property
-    def issuer_key(self) -> identity_entities_v2_pb2.IssuerKey: ...
+    def issuer_key(self) -> identity_entities_v2_pb2.IdentityKey: ...
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
-    def issuer_params(self) -> identity_entities_v2_pb2.IssuerParams: ...
+    def issuer_params(self) -> identity_entities_v2_pb2.DidParams: ...
     name: builtins.str
     description: builtins.str
     image: builtins.str
     def __init__(
         self,
         *,
-        issuer_key: identity_entities_v2_pb2.IssuerKey | None = ...,
+        issuer_key: identity_entities_v2_pb2.IdentityKey | None = ...,
         config_data: config_pb2.ConfigData | None = ...,
-        issuer_params: identity_entities_v2_pb2.IssuerParams | None = ...,
+        issuer_params: identity_entities_v2_pb2.DidParams | None = ...,
         name: builtins.str | None = ...,
         description: builtins.str | None = ...,
         image: builtins.str | None = ...,
@@ -423,17 +448,17 @@ class GetIssuerByKeyRequest(google.protobuf.message.Message):
     CONFIG_DATA_FIELD_NUMBER: builtins.int
     ISSUER_PARAMS_FIELD_NUMBER: builtins.int
     @property
-    def issuer_key(self) -> identity_entities_v2_pb2.IssuerKey: ...
+    def issuer_key(self) -> identity_entities_v2_pb2.IdentityKey: ...
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
-    def issuer_params(self) -> identity_entities_v2_pb2.IssuerParams: ...
+    def issuer_params(self) -> identity_entities_v2_pb2.DidParams: ...
     def __init__(
         self,
         *,
-        issuer_key: identity_entities_v2_pb2.IssuerKey | None = ...,
+        issuer_key: identity_entities_v2_pb2.IdentityKey | None = ...,
         config_data: config_pb2.ConfigData | None = ...,
-        issuer_params: identity_entities_v2_pb2.IssuerParams | None = ...,
+        issuer_params: identity_entities_v2_pb2.DidParams | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_issuer_params", b"_issuer_params", "config_data", b"config_data", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["_issuer_params", b"_issuer_params", "config_data", b"config_data", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params"]) -> None: ...
@@ -484,6 +509,26 @@ class CreateCredentialResponseV2(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___CreateCredentialResponseV2 = CreateCredentialResponseV2
+
+class CreateIdentityV2Response(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DID_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    did: builtins.str
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        did: builtins.str = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "did", b"did", "error", b"error"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___CreateIdentityV2Response = CreateIdentityV2Response
 
 class CreateIssuerResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor

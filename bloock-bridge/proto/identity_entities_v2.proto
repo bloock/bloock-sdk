@@ -12,7 +12,7 @@ enum ProofType {
     SparseMtProofType = 1;
 }
 
-message IssuerKey {
+message IdentityKey {
     optional LocalKey local_key = 1;
     optional ManagedKey managed_key = 2;
 }
@@ -165,7 +165,7 @@ message CredentialRevocationV2 {
     bool success = 1;
 }
 
-message IssuerParams {
+message DidParams {
     Method method = 1;
     Blockchain blockchain = 2;
     NetworkId network_id = 3;

@@ -27,6 +27,8 @@ use super::{
         dto::{
             create_credential_request::CreateCredentialRequest,
             create_credential_response::CreateCredentialResponse,
+            create_identity_request::CreateIdentityRequest,
+            create_identity_response::CreateIdentityResponse,
             create_issuer_request::{CreateIssuerRequest, DidMetadata as DidMetadataRequest},
             create_issuer_response::CreateIssuerResponse,
             create_schema_request::CreateSchemaRequest,
@@ -56,6 +58,36 @@ pub struct IdentityServiceV2<H: Client> {
 }
 
 impl<H: Client> IdentityServiceV2<H> {
+    pub async fn create_identity(
+        &self,
+        public_key: String,
+        did_metadata: DidMetadata,
+    ) -> BloockResult<CreateIdentityResponse> {
+        let req = CreateIdentityRequest {
+            did_metadata: DidMetadataRequest {
+                method: did_metadata.method.get_method_type(),
+                blockchain: did_metadata.blockchain.get_bloockchain_type(),
+                network: did_metadata.network.get_network_id_type(),
+            },
+            bn_128_public_key: public_key,
+        };
+
+        let res: CreateIdentityResponse = self
+            .http
+            .post_json(
+                format!(
+                    "{}/identityV2/v1/identities",
+                    self.config_service.get_api_base_url(),
+                ),
+                req,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
+
+        Ok(res)
+    }
+
     pub async fn create_issuer(
         &self,
         public_key: String,

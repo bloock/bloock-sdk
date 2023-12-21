@@ -2,18 +2,17 @@ import base64
 import datetime
 import os
 import unittest
-
 import bloock
 from bloock.entity.identity_v2.credential import Credential
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.identity_v2.blockchain import Blockchain
-from bloock.entity.identity_v2.issuer_params import IssuerParams
+from bloock.entity.identity_v2.did_params import DidParams
 from bloock.entity.identity_v2.method import Method
 from bloock.entity.identity_v2.network import Network
 from bloock.client.identity_v2 import IdentityClient
 from bloock.client.key import KeyClient
-from bloock.entity.identity_v2.bjj_issuer_key import BjjIssuerKey
-from bloock.entity.identity_v2.issuer_key_args import IssuerKeyArgs
+from bloock.entity.identity_v2.bjj_identity_key import BjjIdentityKey
+from bloock.entity.identity_v2.identity_key_args import IdentityKeyArgs
 from bloock.entity.identity_v2.proof_type import ProofType
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
@@ -40,6 +39,20 @@ class TestIdentityV2(unittest.TestCase):
         new_credential = new_credential.to_json()
         self.assertEqual(credential_json, new_credential)
 
+    def test_create_identity(self):
+        identity_client = IdentityClient(self.apiManagedHost)
+        key_client = KeyClient()
+
+        protection = KeyProtectionLevel.SOFTWARE
+        key_type = KeyType.Bjj
+        params = ManagedKeyParams(protection, key_type)
+        key = key_client.new_managed_key(params)
+
+        issuer_key = BjjIdentityKey(IdentityKeyArgs(key))
+
+        identity = identity_client.create_identity(issuer_key, None)
+        self.assertTrue(identity.__contains__("polygonid"))
+
     def test_end_to_end(self):
         identity_client = IdentityClient(self.apiManagedHost)
         key_client = KeyClient()
@@ -53,8 +66,8 @@ class TestIdentityV2(unittest.TestCase):
 
         key_bjj = key_client.load_managed_key(keys.id)
 
-        issuer_key = BjjIssuerKey(IssuerKeyArgs(key_bjj))
-        not_found_issuer_key = BjjIssuerKey(IssuerKeyArgs(not_found_key))
+        issuer_key = BjjIdentityKey(IdentityKeyArgs(key_bjj))
+        not_found_issuer_key = BjjIdentityKey(IdentityKeyArgs(not_found_key))
 
         current_directory = os.getcwd()
         file_path = current_directory + "/test/e2e/test_utils/profile_image.png"
@@ -74,7 +87,7 @@ class TestIdentityV2(unittest.TestCase):
             not_found_issuer_key)
         self.assertEqual("", get_not_found_issuer_did)
 
-        issuer_params = IssuerParams(
+        issuer_params = DidParams(
             Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI)
         new_issuer = identity_client.create_issuer(
             not_found_issuer_key, issuer_params)

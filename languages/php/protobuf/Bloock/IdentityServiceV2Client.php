@@ -17,6 +17,20 @@ class IdentityServiceV2Client extends \Bloock\Bridge\Connection {
     }
 
     /**
+     * @param \Bloock\CreateIdentityV2Request $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function CreateIdentity(\Bloock\CreateIdentityV2Request $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityServiceV2/CreateIdentity',
+        $argument,
+        ['\Bloock\CreateIdentityV2Response', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
      * @param \Bloock\CreateIssuerRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options

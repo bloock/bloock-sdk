@@ -2,7 +2,7 @@ from bloock.entity.key.local_key import LocalKey
 from bloock.entity.key.managed_key import ManagedKey
 
 
-class IssuerKeyArgs:
+class IdentityKeyArgs:
     local_key = None
     managed_key = None
 

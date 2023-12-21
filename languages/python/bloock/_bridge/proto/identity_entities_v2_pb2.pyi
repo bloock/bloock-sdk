@@ -89,7 +89,7 @@ UNKNOWN_NETWORK: NetworkId.ValueType  # 3
 NO_NETWORK: NetworkId.ValueType  # 4
 global___NetworkId = NetworkId
 
-class IssuerKey(google.protobuf.message.Message):
+class IdentityKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     LOCAL_KEY_FIELD_NUMBER: builtins.int
@@ -111,7 +111,7 @@ class IssuerKey(google.protobuf.message.Message):
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
 
-global___IssuerKey = IssuerKey
+global___IdentityKey = IdentityKey
 
 class CredentialV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -620,7 +620,7 @@ class CredentialRevocationV2(google.protobuf.message.Message):
 
 global___CredentialRevocationV2 = CredentialRevocationV2
 
-class IssuerParams(google.protobuf.message.Message):
+class DidParams(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     METHOD_FIELD_NUMBER: builtins.int
@@ -638,4 +638,4 @@ class IssuerParams(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["blockchain", b"blockchain", "method", b"method", "network_id", b"network_id"]) -> None: ...
 
-global___IssuerParams = IssuerParams
+global___DidParams = DidParams

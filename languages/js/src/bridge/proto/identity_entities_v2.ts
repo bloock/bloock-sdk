@@ -165,7 +165,7 @@ export function networkIdToJSON(object: NetworkId): string {
   }
 }
 
-export interface IssuerKey {
+export interface IdentityKey {
   localKey?: LocalKey | undefined;
   managedKey?: ManagedKey | undefined;
 }
@@ -318,18 +318,18 @@ export interface CredentialRevocationV2 {
   success: boolean;
 }
 
-export interface IssuerParams {
+export interface DidParams {
   method: Method;
   blockchain: Blockchain;
   networkId: NetworkId;
 }
 
-function createBaseIssuerKey(): IssuerKey {
+function createBaseIdentityKey(): IdentityKey {
   return { localKey: undefined, managedKey: undefined };
 }
 
-export const IssuerKey = {
-  encode(message: IssuerKey, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const IdentityKey = {
+  encode(message: IdentityKey, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.localKey !== undefined) {
       LocalKey.encode(message.localKey, writer.uint32(10).fork()).ldelim();
     }
@@ -339,10 +339,10 @@ export const IssuerKey = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): IssuerKey {
+  decode(input: _m0.Reader | Uint8Array, length?: number): IdentityKey {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseIssuerKey();
+    const message = createBaseIdentityKey();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -360,14 +360,14 @@ export const IssuerKey = {
     return message;
   },
 
-  fromJSON(object: any): IssuerKey {
+  fromJSON(object: any): IdentityKey {
     return {
       localKey: isSet(object.localKey) ? LocalKey.fromJSON(object.localKey) : undefined,
       managedKey: isSet(object.managedKey) ? ManagedKey.fromJSON(object.managedKey) : undefined,
     };
   },
 
-  toJSON(message: IssuerKey): unknown {
+  toJSON(message: IdentityKey): unknown {
     const obj: any = {};
     message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
     message.managedKey !== undefined &&
@@ -375,8 +375,8 @@ export const IssuerKey = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<IssuerKey>, I>>(object: I): IssuerKey {
-    const message = createBaseIssuerKey();
+  fromPartial<I extends Exact<DeepPartial<IdentityKey>, I>>(object: I): IdentityKey {
+    const message = createBaseIdentityKey();
     message.localKey = (object.localKey !== undefined && object.localKey !== null)
       ? LocalKey.fromPartial(object.localKey)
       : undefined;
@@ -2072,12 +2072,12 @@ export const CredentialRevocationV2 = {
   },
 };
 
-function createBaseIssuerParams(): IssuerParams {
+function createBaseDidParams(): DidParams {
   return { method: 0, blockchain: 0, networkId: 0 };
 }
 
-export const IssuerParams = {
-  encode(message: IssuerParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const DidParams = {
+  encode(message: DidParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.method !== 0) {
       writer.uint32(8).int32(message.method);
     }
@@ -2090,10 +2090,10 @@ export const IssuerParams = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): IssuerParams {
+  decode(input: _m0.Reader | Uint8Array, length?: number): DidParams {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseIssuerParams();
+    const message = createBaseDidParams();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2114,7 +2114,7 @@ export const IssuerParams = {
     return message;
   },
 
-  fromJSON(object: any): IssuerParams {
+  fromJSON(object: any): DidParams {
     return {
       method: isSet(object.method) ? methodFromJSON(object.method) : 0,
       blockchain: isSet(object.blockchain) ? blockchainFromJSON(object.blockchain) : 0,
@@ -2122,7 +2122,7 @@ export const IssuerParams = {
     };
   },
 
-  toJSON(message: IssuerParams): unknown {
+  toJSON(message: DidParams): unknown {
     const obj: any = {};
     message.method !== undefined && (obj.method = methodToJSON(message.method));
     message.blockchain !== undefined && (obj.blockchain = blockchainToJSON(message.blockchain));
@@ -2130,8 +2130,8 @@ export const IssuerParams = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<IssuerParams>, I>>(object: I): IssuerParams {
-    const message = createBaseIssuerParams();
+  fromPartial<I extends Exact<DeepPartial<DidParams>, I>>(object: I): DidParams {
+    const message = createBaseDidParams();
     message.method = object.method ?? 0;
     message.blockchain = object.blockchain ?? 0;
     message.networkId = object.networkId ?? 0;

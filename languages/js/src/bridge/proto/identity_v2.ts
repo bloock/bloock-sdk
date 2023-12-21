@@ -17,11 +17,11 @@ import {
   DecimalAttributeDefinitionV2,
   DecimalAttributeV2,
   DecimalEnumAttributeDefinitionV2,
+  DidParams,
+  IdentityKey,
   IntegerAttributeDefinitionV2,
   IntegerAttributeV2,
   IntegerEnumAttributeDefinitionV2,
-  IssuerKey,
-  IssuerParams,
   IssuerStateReceipt,
   ProofType,
   proofTypeFromJSON,
@@ -124,19 +124,25 @@ export interface BuildSchemaRequestV2 {
   decimalEnumAttributes: DecimalEnumAttributeDefinitionV2[];
 }
 
-export interface CreateIssuerRequest {
-  issuerKey?: IssuerKey;
+export interface CreateIdentityV2Request {
+  issuerKey?: IdentityKey;
   configData?: ConfigData;
-  issuerParams?: IssuerParams | undefined;
+  didParams?: DidParams | undefined;
+}
+
+export interface CreateIssuerRequest {
+  issuerKey?: IdentityKey;
+  configData?: ConfigData;
+  issuerParams?: DidParams | undefined;
   name?: string | undefined;
   description?: string | undefined;
   image?: string | undefined;
 }
 
 export interface GetIssuerByKeyRequest {
-  issuerKey?: IssuerKey;
+  issuerKey?: IdentityKey;
   configData?: ConfigData;
-  issuerParams?: IssuerParams | undefined;
+  issuerParams?: DidParams | undefined;
 }
 
 export interface PublishIssuerStateRequest {
@@ -147,6 +153,11 @@ export interface PublishIssuerStateRequest {
 
 export interface CreateCredentialResponseV2 {
   credentialReceipt?: CredentialReceiptV2;
+  error?: Error | undefined;
+}
+
+export interface CreateIdentityV2Response {
+  did: string;
   error?: Error | undefined;
 }
 
@@ -1353,6 +1364,82 @@ export const BuildSchemaRequestV2 = {
   },
 };
 
+function createBaseCreateIdentityV2Request(): CreateIdentityV2Request {
+  return { issuerKey: undefined, configData: undefined, didParams: undefined };
+}
+
+export const CreateIdentityV2Request = {
+  encode(message: CreateIdentityV2Request, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.issuerKey !== undefined) {
+      IdentityKey.encode(message.issuerKey, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.didParams !== undefined) {
+      DidParams.encode(message.didParams, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): CreateIdentityV2Request {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateIdentityV2Request();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.issuerKey = IdentityKey.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.didParams = DidParams.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CreateIdentityV2Request {
+    return {
+      issuerKey: isSet(object.issuerKey) ? IdentityKey.fromJSON(object.issuerKey) : undefined,
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      didParams: isSet(object.didParams) ? DidParams.fromJSON(object.didParams) : undefined,
+    };
+  },
+
+  toJSON(message: CreateIdentityV2Request): unknown {
+    const obj: any = {};
+    message.issuerKey !== undefined &&
+      (obj.issuerKey = message.issuerKey ? IdentityKey.toJSON(message.issuerKey) : undefined);
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.didParams !== undefined &&
+      (obj.didParams = message.didParams ? DidParams.toJSON(message.didParams) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<CreateIdentityV2Request>, I>>(object: I): CreateIdentityV2Request {
+    const message = createBaseCreateIdentityV2Request();
+    message.issuerKey = (object.issuerKey !== undefined && object.issuerKey !== null)
+      ? IdentityKey.fromPartial(object.issuerKey)
+      : undefined;
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.didParams = (object.didParams !== undefined && object.didParams !== null)
+      ? DidParams.fromPartial(object.didParams)
+      : undefined;
+    return message;
+  },
+};
+
 function createBaseCreateIssuerRequest(): CreateIssuerRequest {
   return {
     issuerKey: undefined,
@@ -1367,13 +1454,13 @@ function createBaseCreateIssuerRequest(): CreateIssuerRequest {
 export const CreateIssuerRequest = {
   encode(message: CreateIssuerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.issuerKey !== undefined) {
-      IssuerKey.encode(message.issuerKey, writer.uint32(10).fork()).ldelim();
+      IdentityKey.encode(message.issuerKey, writer.uint32(10).fork()).ldelim();
     }
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(18).fork()).ldelim();
     }
     if (message.issuerParams !== undefined) {
-      IssuerParams.encode(message.issuerParams, writer.uint32(26).fork()).ldelim();
+      DidParams.encode(message.issuerParams, writer.uint32(26).fork()).ldelim();
     }
     if (message.name !== undefined) {
       writer.uint32(34).string(message.name);
@@ -1395,13 +1482,13 @@ export const CreateIssuerRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.issuerKey = IssuerKey.decode(reader, reader.uint32());
+          message.issuerKey = IdentityKey.decode(reader, reader.uint32());
           break;
         case 2:
           message.configData = ConfigData.decode(reader, reader.uint32());
           break;
         case 3:
-          message.issuerParams = IssuerParams.decode(reader, reader.uint32());
+          message.issuerParams = DidParams.decode(reader, reader.uint32());
           break;
         case 4:
           message.name = reader.string();
@@ -1422,9 +1509,9 @@ export const CreateIssuerRequest = {
 
   fromJSON(object: any): CreateIssuerRequest {
     return {
-      issuerKey: isSet(object.issuerKey) ? IssuerKey.fromJSON(object.issuerKey) : undefined,
+      issuerKey: isSet(object.issuerKey) ? IdentityKey.fromJSON(object.issuerKey) : undefined,
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      issuerParams: isSet(object.issuerParams) ? IssuerParams.fromJSON(object.issuerParams) : undefined,
+      issuerParams: isSet(object.issuerParams) ? DidParams.fromJSON(object.issuerParams) : undefined,
       name: isSet(object.name) ? String(object.name) : undefined,
       description: isSet(object.description) ? String(object.description) : undefined,
       image: isSet(object.image) ? String(object.image) : undefined,
@@ -1434,11 +1521,11 @@ export const CreateIssuerRequest = {
   toJSON(message: CreateIssuerRequest): unknown {
     const obj: any = {};
     message.issuerKey !== undefined &&
-      (obj.issuerKey = message.issuerKey ? IssuerKey.toJSON(message.issuerKey) : undefined);
+      (obj.issuerKey = message.issuerKey ? IdentityKey.toJSON(message.issuerKey) : undefined);
     message.configData !== undefined &&
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.issuerParams !== undefined &&
-      (obj.issuerParams = message.issuerParams ? IssuerParams.toJSON(message.issuerParams) : undefined);
+      (obj.issuerParams = message.issuerParams ? DidParams.toJSON(message.issuerParams) : undefined);
     message.name !== undefined && (obj.name = message.name);
     message.description !== undefined && (obj.description = message.description);
     message.image !== undefined && (obj.image = message.image);
@@ -1448,13 +1535,13 @@ export const CreateIssuerRequest = {
   fromPartial<I extends Exact<DeepPartial<CreateIssuerRequest>, I>>(object: I): CreateIssuerRequest {
     const message = createBaseCreateIssuerRequest();
     message.issuerKey = (object.issuerKey !== undefined && object.issuerKey !== null)
-      ? IssuerKey.fromPartial(object.issuerKey)
+      ? IdentityKey.fromPartial(object.issuerKey)
       : undefined;
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
     message.issuerParams = (object.issuerParams !== undefined && object.issuerParams !== null)
-      ? IssuerParams.fromPartial(object.issuerParams)
+      ? DidParams.fromPartial(object.issuerParams)
       : undefined;
     message.name = object.name ?? undefined;
     message.description = object.description ?? undefined;
@@ -1470,13 +1557,13 @@ function createBaseGetIssuerByKeyRequest(): GetIssuerByKeyRequest {
 export const GetIssuerByKeyRequest = {
   encode(message: GetIssuerByKeyRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.issuerKey !== undefined) {
-      IssuerKey.encode(message.issuerKey, writer.uint32(10).fork()).ldelim();
+      IdentityKey.encode(message.issuerKey, writer.uint32(10).fork()).ldelim();
     }
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(18).fork()).ldelim();
     }
     if (message.issuerParams !== undefined) {
-      IssuerParams.encode(message.issuerParams, writer.uint32(26).fork()).ldelim();
+      DidParams.encode(message.issuerParams, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -1489,13 +1576,13 @@ export const GetIssuerByKeyRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.issuerKey = IssuerKey.decode(reader, reader.uint32());
+          message.issuerKey = IdentityKey.decode(reader, reader.uint32());
           break;
         case 2:
           message.configData = ConfigData.decode(reader, reader.uint32());
           break;
         case 3:
-          message.issuerParams = IssuerParams.decode(reader, reader.uint32());
+          message.issuerParams = DidParams.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -1507,33 +1594,33 @@ export const GetIssuerByKeyRequest = {
 
   fromJSON(object: any): GetIssuerByKeyRequest {
     return {
-      issuerKey: isSet(object.issuerKey) ? IssuerKey.fromJSON(object.issuerKey) : undefined,
+      issuerKey: isSet(object.issuerKey) ? IdentityKey.fromJSON(object.issuerKey) : undefined,
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      issuerParams: isSet(object.issuerParams) ? IssuerParams.fromJSON(object.issuerParams) : undefined,
+      issuerParams: isSet(object.issuerParams) ? DidParams.fromJSON(object.issuerParams) : undefined,
     };
   },
 
   toJSON(message: GetIssuerByKeyRequest): unknown {
     const obj: any = {};
     message.issuerKey !== undefined &&
-      (obj.issuerKey = message.issuerKey ? IssuerKey.toJSON(message.issuerKey) : undefined);
+      (obj.issuerKey = message.issuerKey ? IdentityKey.toJSON(message.issuerKey) : undefined);
     message.configData !== undefined &&
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.issuerParams !== undefined &&
-      (obj.issuerParams = message.issuerParams ? IssuerParams.toJSON(message.issuerParams) : undefined);
+      (obj.issuerParams = message.issuerParams ? DidParams.toJSON(message.issuerParams) : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<GetIssuerByKeyRequest>, I>>(object: I): GetIssuerByKeyRequest {
     const message = createBaseGetIssuerByKeyRequest();
     message.issuerKey = (object.issuerKey !== undefined && object.issuerKey !== null)
-      ? IssuerKey.fromPartial(object.issuerKey)
+      ? IdentityKey.fromPartial(object.issuerKey)
       : undefined;
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
     message.issuerParams = (object.issuerParams !== undefined && object.issuerParams !== null)
-      ? IssuerParams.fromPartial(object.issuerParams)
+      ? DidParams.fromPartial(object.issuerParams)
       : undefined;
     return message;
   },
@@ -1670,6 +1757,64 @@ export const CreateCredentialResponseV2 = {
     message.credentialReceipt = (object.credentialReceipt !== undefined && object.credentialReceipt !== null)
       ? CredentialReceiptV2.fromPartial(object.credentialReceipt)
       : undefined;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
+function createBaseCreateIdentityV2Response(): CreateIdentityV2Response {
+  return { did: "", error: undefined };
+}
+
+export const CreateIdentityV2Response = {
+  encode(message: CreateIdentityV2Response, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.did !== "") {
+      writer.uint32(10).string(message.did);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): CreateIdentityV2Response {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateIdentityV2Response();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.did = reader.string();
+          break;
+        case 2:
+          message.error = Error.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CreateIdentityV2Response {
+    return {
+      did: isSet(object.did) ? String(object.did) : "",
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: CreateIdentityV2Response): unknown {
+    const obj: any = {};
+    message.did !== undefined && (obj.did = message.did);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<CreateIdentityV2Response>, I>>(object: I): CreateIdentityV2Response {
+    const message = createBaseCreateIdentityV2Response();
+    message.did = object.did ?? "";
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
@@ -1980,6 +2125,7 @@ export const RevokeCredentialResponseV2 = {
 };
 
 export interface IdentityServiceV2 {
+  CreateIdentity(request: CreateIdentityV2Request): Promise<CreateIdentityV2Response>;
   CreateIssuer(request: CreateIssuerRequest): Promise<CreateIssuerResponse>;
   GetIssuerList(request: GetIssuerListRequest): Promise<GetIssuerListResponse>;
   GetIssuerByKey(request: GetIssuerByKeyRequest): Promise<GetIssuerByKeyResponse>;
@@ -1997,6 +2143,7 @@ export class IdentityServiceV2ClientImpl implements IdentityServiceV2 {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.CreateIdentity = this.CreateIdentity.bind(this);
     this.CreateIssuer = this.CreateIssuer.bind(this);
     this.GetIssuerList = this.GetIssuerList.bind(this);
     this.GetIssuerByKey = this.GetIssuerByKey.bind(this);
@@ -2009,6 +2156,12 @@ export class IdentityServiceV2ClientImpl implements IdentityServiceV2 {
     this.CredentialFromJson = this.CredentialFromJson.bind(this);
     this.PublishIssuerState = this.PublishIssuerState.bind(this);
   }
+  CreateIdentity(request: CreateIdentityV2Request): Promise<CreateIdentityV2Response> {
+    const data = CreateIdentityV2Request.encode(request).finish();
+    const promise = this.rpc.request("bloock.IdentityServiceV2", "CreateIdentity", data);
+    return promise.then((data) => CreateIdentityV2Response.decode(new _m0.Reader(data)));
+  }
+
   CreateIssuer(request: CreateIssuerRequest): Promise<CreateIssuerResponse> {
     const data = CreateIssuerRequest.encode(request).finish();
     const promise = this.rpc.request("bloock.IdentityServiceV2", "CreateIssuer", data);
@@ -2081,6 +2234,14 @@ export const IdentityServiceV2Definition = {
   name: "IdentityServiceV2",
   fullName: "bloock.IdentityServiceV2",
   methods: {
+    createIdentity: {
+      name: "CreateIdentity",
+      requestType: CreateIdentityV2Request,
+      requestStream: false,
+      responseType: CreateIdentityV2Response,
+      responseStream: false,
+      options: {},
+    },
     createIssuer: {
       name: "CreateIssuer",
       requestType: CreateIssuerRequest,

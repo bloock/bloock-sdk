@@ -6,15 +6,16 @@ import {
   GetIssuerByKeyRequest,
   GetCredentialProofRequest,
   RevokeCredentialRequestV2,
-  GetSchemaRequestV2
+  GetSchemaRequestV2,
+  CreateIdentityV2Request
 } from "../bridge/proto/identity_v2";
 import { NewConfigData } from "../config/config";
 import { Schema } from "../entity/identity_v2";
 import { Credential } from "../entity/identity_v2/credential";
 import { CredentialBuilder } from "../entity/identity_v2/credential_builder";
 import { CredentialProof } from "../entity/identity_v2/credential_proof";
-import { IssuerKey } from "../entity/identity_v2/issuer_key";
-import { IssuerParams } from "../entity/identity_v2/issuer_params";
+import { IdentityKey } from "../entity/identity_v2/identity_key";
+import { DidParams } from "../entity/identity_v2/did_params";
 import { IssuerStatePublisher } from "../entity/identity_v2/issuer_state_publisher";
 import { SchemaBuilder } from "../entity/identity_v2/schema_builder";
 
@@ -29,12 +30,33 @@ export class IdentityClient {
     this.apiManagedHost = apiManagedHost;
   }
 
+  public createIdentity(
+    issuerKey: IdentityKey,
+    didParams?: DidParams
+  ): Promise<string> {
+    const request = CreateIdentityV2Request.fromPartial({
+      issuerKey: issuerKey.toProto(),
+      didParams: didParams?.toProto(),
+      configData: this.configData
+    });
+
+    return this.bridge
+      .getIdentityV2()
+      .CreateIdentity(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.did;
+      });
+  }
+
   public createIssuer(
-    issuerKey: IssuerKey,
-    issuerParams?: IssuerParams,
+    issuerKey: IdentityKey,
+    issuerParams?: DidParams,
     name?: string,
     description?: string,
-    image?: string,
+    image?: string
   ): Promise<string> {
     const request = CreateIssuerRequest.fromPartial({
       issuerKey: issuerKey.toProto(),
@@ -73,8 +95,8 @@ export class IdentityClient {
   }
 
   public getIssuerByKey(
-    issuerKey: IssuerKey,
-    issuerParams?: IssuerParams
+    issuerKey: IdentityKey,
+    issuerParams?: DidParams
   ): Promise<string> {
     const request = GetIssuerByKeyRequest.fromPartial({
       issuerKey: issuerKey.toProto(),

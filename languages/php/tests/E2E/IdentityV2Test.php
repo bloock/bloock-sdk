@@ -5,9 +5,12 @@ use Bloock\Client\IdentityClient;
 use Bloock\Client\KeyClient;
 use Bloock\Entity\Authenticity\Signer;
 use Bloock\Entity\Authenticity\SignerArgs;
+use Bloock\Entity\IdentityV2\BjjIdentityKey;
 use Bloock\Entity\IdentityV2\BjjIssuerKey;
 use Bloock\Entity\IdentityV2\Blockchain;
 use Bloock\Entity\IdentityV2\Credential;
+use Bloock\Entity\IdentityV2\DidParams;
+use Bloock\Entity\IdentityV2\IdentityKeyArgs;
 use Bloock\Entity\IdentityV2\IssuerKeyArgs;
 use Bloock\Entity\IdentityV2\IssuerParams;
 use Bloock\Entity\IdentityV2\Method;
@@ -44,6 +47,23 @@ final class IdentityV2Test extends TestCase
         $this->assertEquals($credentialJson, $newCredentialJson);
     }
 
+    public function testCreateIdentity()
+    {
+        $identityClient = new IdentityClient(self::apiManahedHost);
+        $keyClient = new KeyClient();
+
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::Bjj;
+
+        $params = new ManagedKeyParams($keyProtection, $keyType);
+        $key = $keyClient->newManagedKey($params);
+
+        $issuerKey = new BjjIdentityKey(new IdentityKeyArgs($key));
+
+        $issuer = $identityClient->createIdentity($issuerKey, null);
+        $this->assertStringContainsString("polygonid", $issuer);
+    }
+
     public function testIdentityEndToEnd()
     {
         $identityClient = new IdentityClient(self::apiManahedHost);
@@ -59,8 +79,8 @@ final class IdentityV2Test extends TestCase
 
         $keyBjj = $keyClient->loadManagedKey($keys->id);
 
-        $issuerKey = new BjjIssuerKey(new IssuerKeyArgs($keyBjj));
-        $notFoundIssuerKey = new BjjIssuerKey(new IssuerKeyArgs($notFoundKey));
+        $issuerKey = new BjjIdentityKey(new IdentityKeyArgs($keyBjj));
+        $notFoundIssuerKey = new BjjIdentityKey(new IdentityKeyArgs($notFoundKey));
 
         $currentDirectory = getcwd();
         $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/profile_image.png");
@@ -75,7 +95,7 @@ final class IdentityV2Test extends TestCase
         $getNotFoundIssuerDid = $identityClient->getIssuerByKey($notFoundIssuerKey);
         $this->assertEquals(null, $getNotFoundIssuerDid);
 
-        $issuerParams = new IssuerParams(Method::IDEN3, Blockchain::POLYGON, Network::MUMBAI);
+        $issuerParams = new DidParams(Method::IDEN3, Blockchain::POLYGON, Network::MUMBAI);
         $newIssuer = $identityClient->createIssuer($notFoundIssuerKey, $issuerParams);
         $this->assertStringContainsString("iden3", $newIssuer);
 

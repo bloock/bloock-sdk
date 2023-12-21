@@ -548,6 +548,15 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::IdentityServiceV2CreateIdentity => {
+                let req: crate::items::CreateIdentityV2Request = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .create_identity(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::IdentityServiceV2CreateIssuer => {
                 let req: crate::items::CreateIssuerRequest = self.serialize_request(payload)?;
                 Ok(self

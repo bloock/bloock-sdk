@@ -11,6 +11,7 @@ import "shared.proto";
 import "identity_entities_v2.proto";
 
 service IdentityServiceV2 {
+    rpc CreateIdentity(CreateIdentityV2Request) returns (CreateIdentityV2Response);
     rpc CreateIssuer(CreateIssuerRequest) returns (CreateIssuerResponse);
     rpc GetIssuerList(GetIssuerListRequest) returns (GetIssuerListResponse);
     rpc GetIssuerByKey(GetIssuerByKeyRequest) returns (GetIssuerByKeyResponse);
@@ -119,19 +120,25 @@ message BuildSchemaRequestV2 {
     repeated DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 15;
 }
 
-message CreateIssuerRequest {
-    IssuerKey issuer_key = 1;
+message CreateIdentityV2Request {
+    IdentityKey issuer_key = 1;
     ConfigData config_data = 2;
-    optional IssuerParams issuer_params = 3;
+    optional DidParams did_params = 3;
+}
+
+message CreateIssuerRequest {
+    IdentityKey issuer_key = 1;
+    ConfigData config_data = 2;
+    optional DidParams issuer_params = 3;
     optional string name = 4;
     optional string description = 5;
     optional string image = 6;
 }
 
 message GetIssuerByKeyRequest {
-    IssuerKey issuer_key = 1;
+    IdentityKey issuer_key = 1;
     ConfigData config_data = 2;
-    optional IssuerParams issuer_params = 3;
+    optional DidParams issuer_params = 3;
 }
 
 message PublishIssuerStateRequest {
@@ -142,6 +149,11 @@ message PublishIssuerStateRequest {
 
 message CreateCredentialResponseV2 {
     CredentialReceiptV2 credential_receipt = 1;
+    optional Error error = 2;
+}
+
+message CreateIdentityV2Response {
+    string did = 1;
     optional Error error = 2;
 }
 
