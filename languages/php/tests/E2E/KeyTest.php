@@ -72,7 +72,7 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->key);
         $this->assertEquals($key->privateKey, "");
 
-        $loadedKey = $keyClient->loadLocalKey(KeyType::Aes256, $key->privateKey);
+        $loadedKey = $keyClient->loadLocalKey(KeyType::Aes256, $key->key);
         $this->assertEquals($key->key, $loadedKey->key);
         $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }
