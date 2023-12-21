@@ -201,18 +201,15 @@ impl LocalCertificate<String> {
         let certificate = Certificate::from_der(cert).unwrap();
 
         let private_key = rsa::RsaPrivateKey::from_pkcs8_der(key).unwrap();
-        let public_key = private_key.to_public_key();
 
         let key = LocalKey::load(
             KeyType::Rsa2048,
-            public_key.to_public_key_pem(LineEnding::default()).unwrap(),
-            Some(
-                private_key
-                    .to_pkcs8_pem(LineEnding::default())
-                    .unwrap()
-                    .to_string(),
-            ),
-        );
+            private_key
+                .to_pkcs8_pem(LineEnding::default())
+                .unwrap()
+                .to_string(),
+        )
+        .unwrap();
 
         Ok(LocalCertificate {
             key,

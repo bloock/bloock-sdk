@@ -28,12 +28,15 @@ impl LocalKey<String> {
         }
     }
 
-    pub fn load(key_type: KeyType, key: String, private_key: Option<String>) -> LocalKey<String> {
-        LocalKey {
-            key_type,
-            key,
-            private_key,
-            mnemonic: None,
+    pub fn load(key_type: KeyType, key: String) -> Result<LocalKey<String>> {
+        match key_type {
+            KeyType::EcP256k => Ok(EcKey::load_ec_p256k(key)?.into()),
+            KeyType::BJJ => Ok(BjjKey::load(key)?.into()),
+            KeyType::Rsa2048 => Ok(RsaKey::load_rsa_2048(key)?.into()),
+            KeyType::Rsa3072 => Ok(RsaKey::load_rsa_3072(key)?.into()),
+            KeyType::Rsa4096 => Ok(RsaKey::load_rsa_4096(key)?.into()),
+            KeyType::Aes128 => Ok(AesKey::load_aes_128_key(key)?.into()),
+            KeyType::Aes256 => Ok(AesKey::load_aes_256_key(key)?.into()),
         }
     }
 

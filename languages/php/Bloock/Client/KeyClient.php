@@ -55,13 +55,12 @@ class KeyClient
         return LocalKey::fromProto($res->getLocalKey());
     }
 
-    public function loadLocalKey(string $keyType, string $key, string $privateKey = ""): LocalKey
+    public function loadLocalKey(string $keyType, string $key): LocalKey
     {
         $req = new LoadLocalKeyRequest();
         $req->setConfigData($this->config)
             ->setKeyType(KeyType::toProto($keyType))
-            ->setKey($key)
-            ->setPrivateKey($privateKey);
+            ->setKey($key);
 
         $res = $this->bridge->key->LoadLocalKey($req);
 

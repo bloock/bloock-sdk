@@ -48,13 +48,8 @@ impl<H: Client> KeyService<H> {
         .map_err(|e| KeyError::GenerateManagedKeyError(e.to_string()).into())
     }
 
-    pub fn load_local_key(
-        &self,
-        key_type: KeyType,
-        key: String,
-        private_key: Option<String>,
-    ) -> BloockResult<LocalKey<String>> {
-        Ok(LocalKey::load(key_type, key, private_key))
+    pub fn load_local_key(&self, key_type: KeyType, key: String) -> BloockResult<LocalKey<String>> {
+        LocalKey::load(key_type, key).map_err(|e| KeyError::LoadLocalKeyError(e.to_string()).into())
     }
 
     pub async fn load_managed_key(&self, id: String) -> BloockResult<ManagedKey> {

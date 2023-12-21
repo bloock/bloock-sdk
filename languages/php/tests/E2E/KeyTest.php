@@ -33,7 +33,7 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->key);
         $this->assertNotNull($key->privateKey);
 
-        $loadedKey = $keyClient->loadLocalKey(KeyType::EcP256k, $key->key, $key->privateKey);
+        $loadedKey = $keyClient->loadLocalKey(KeyType::EcP256k, $key->privateKey);
         $this->assertEquals($key->key, $loadedKey->key);
         $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }
@@ -46,7 +46,7 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->key);
         $this->assertNotNull($key->privateKey);
 
-        $loadedKey = $keyClient->loadLocalKey(KeyType::Bjj, $key->key, $key->privateKey);
+        $loadedKey = $keyClient->loadLocalKey(KeyType::Bjj, $key->privateKey);
         $this->assertEquals($key->key, $loadedKey->key);
         $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }
@@ -59,7 +59,7 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->key);
         $this->assertNotNull($key->privateKey);
 
-        $loadedKey = $keyClient->loadLocalKey(KeyType::Rsa2048, $key->key, $key->privateKey);
+        $loadedKey = $keyClient->loadLocalKey(KeyType::Rsa2048, $key->privateKey);
         $this->assertEquals($key->key, $loadedKey->key);
         $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }
@@ -72,7 +72,7 @@ final class KeyTest extends TestCase
         $this->assertNotNull($key->key);
         $this->assertEquals($key->privateKey, "");
 
-        $loadedKey = $keyClient->loadLocalKey(KeyType::Aes256, $key->key, $key->privateKey);
+        $loadedKey = $keyClient->loadLocalKey(KeyType::Aes256, $key->privateKey);
         $this->assertEquals($key->key, $loadedKey->key);
         $this->assertEquals($key->privateKey, $loadedKey->privateKey);
     }

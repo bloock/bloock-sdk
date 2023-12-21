@@ -151,7 +151,9 @@ impl Encrypter for RsaEncrypter {
         let aes_key = String::from_utf8(aes_key).map_err(|_| {
             EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
         })?;
-        let aes_key = LocalKey::load(bloock_keys::KeyType::Aes256, aes_key, None);
+        let aes_key = LocalKey::load(bloock_keys::KeyType::Aes256, aes_key).map_err(|_| {
+            EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
+        })?;
 
         let aes_encrypter = AesEncrypter::new(
             self.api_host.clone(),
@@ -183,7 +185,9 @@ impl Encrypter for RsaEncrypter {
         let aes_key = String::from_utf8(aes_key).map_err(|_| {
             EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
         })?;
-        let aes_key = LocalKey::load(bloock_keys::KeyType::Aes256, aes_key, None);
+        let aes_key = LocalKey::load(bloock_keys::KeyType::Aes256, aes_key).map_err(|_| {
+            EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
+        })?;
 
         let aes_encrypter = AesEncrypter::new(
             self.api_host.clone(),

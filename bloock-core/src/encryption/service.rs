@@ -66,11 +66,8 @@ mod tests {
         )
         .unwrap();
 
-        let local_key = LocalKey::load(
-            bloock_keys::KeyType::Aes128,
-            "new_password".to_string(),
-            None,
-        );
+        let local_key =
+            LocalKey::load(bloock_keys::KeyType::Aes128, "new_password".to_string()).unwrap();
         let encrypted = service
             .encrypt(record.clone(), &local_key.clone().into())
             .await

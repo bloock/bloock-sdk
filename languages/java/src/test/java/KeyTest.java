@@ -30,7 +30,7 @@ class KeyTest {
     assertNotNull(localKey.getPrivateKey());
 
     LocalKey loadedKey =
-        keyClient.loadLocalKey(KeyType.EcP256k, localKey.getKey(), localKey.getPrivateKey());
+        keyClient.loadLocalKey(KeyType.EcP256k, localKey.getPrivateKey());
     assertEquals(localKey.getKey(), loadedKey.getKey());
     assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
   }
@@ -44,7 +44,7 @@ class KeyTest {
     assertNotNull(localKey.getPrivateKey());
 
     LocalKey loadedKey =
-        keyClient.loadLocalKey(KeyType.Bjj, localKey.getKey(), localKey.getPrivateKey());
+        keyClient.loadLocalKey(KeyType.Bjj, localKey.getPrivateKey());
     assertEquals(localKey.getKey(), loadedKey.getKey());
     assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
   }
@@ -58,7 +58,7 @@ class KeyTest {
     assertNotNull(localKey.getPrivateKey());
 
     LocalKey loadedKey =
-        keyClient.loadLocalKey(KeyType.Rsa2048, localKey.getKey(), localKey.getPrivateKey());
+        keyClient.loadLocalKey(KeyType.Rsa2048, localKey.getPrivateKey());
     assertEquals(localKey.getKey(), loadedKey.getKey());
     assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
   }
@@ -72,7 +72,7 @@ class KeyTest {
     assertEquals(localKey.getPrivateKey(), "");
 
     LocalKey loadedKey =
-        keyClient.loadLocalKey(KeyType.Aes256, localKey.getKey(), localKey.getPrivateKey());
+        keyClient.loadLocalKey(KeyType.Aes256, localKey.getKey());
     assertEquals(localKey.getKey(), loadedKey.getKey());
     assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
   }

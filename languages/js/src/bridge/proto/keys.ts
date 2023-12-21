@@ -42,7 +42,6 @@ export interface LoadLocalKeyRequest {
   configData?: ConfigData;
   keyType: KeyType;
   key: string;
-  privateKey?: string | undefined;
 }
 
 export interface LoadLocalKeyResponse {
@@ -359,7 +358,7 @@ export const GenerateManagedKeyResponse = {
 };
 
 function createBaseLoadLocalKeyRequest(): LoadLocalKeyRequest {
-  return { configData: undefined, keyType: 0, key: "", privateKey: undefined };
+  return { configData: undefined, keyType: 0, key: "" };
 }
 
 export const LoadLocalKeyRequest = {
@@ -372,9 +371,6 @@ export const LoadLocalKeyRequest = {
     }
     if (message.key !== "") {
       writer.uint32(26).string(message.key);
-    }
-    if (message.privateKey !== undefined) {
-      writer.uint32(34).string(message.privateKey);
     }
     return writer;
   },
@@ -395,9 +391,6 @@ export const LoadLocalKeyRequest = {
         case 3:
           message.key = reader.string();
           break;
-        case 4:
-          message.privateKey = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -411,7 +404,6 @@ export const LoadLocalKeyRequest = {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
       key: isSet(object.key) ? String(object.key) : "",
-      privateKey: isSet(object.privateKey) ? String(object.privateKey) : undefined,
     };
   },
 
@@ -421,7 +413,6 @@ export const LoadLocalKeyRequest = {
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
     message.key !== undefined && (obj.key = message.key);
-    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
     return obj;
   },
 
@@ -432,7 +423,6 @@ export const LoadLocalKeyRequest = {
       : undefined;
     message.keyType = object.keyType ?? 0;
     message.key = object.key ?? "";
-    message.privateKey = object.privateKey ?? undefined;
     return message;
   },
 };

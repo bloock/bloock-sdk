@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/bloock/bloock-sdk-go/v2/entity/key"
+	keyEntity "github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
@@ -29,94 +29,93 @@ func NewKeyClientWithConfig(configData *proto.ConfigData) KeyClient {
 	}
 }
 
-func (c *KeyClient) NewLocalKey(keyType key.KeyType) (key.LocalKey, error) {
+func (c *KeyClient) NewLocalKey(keyType keyEntity.KeyType) (keyEntity.LocalKey, error) {
 	res, err := c.bridgeClient.Key().GenerateLocalKey(context.Background(), &proto.GenerateLocalKeyRequest{
 		ConfigData: c.configData,
-		KeyType:    key.KeyTypeToProto[keyType],
+		KeyType:    keyEntity.KeyTypeToProto[keyType],
 	})
 
 	if err != nil {
-		return key.LocalKey{}, err
+		return keyEntity.LocalKey{}, err
 	}
 
 	if res.Error != nil {
-		return key.LocalKey{}, errors.New(res.Error.Message)
+		return keyEntity.LocalKey{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewLocalKeyFromProto(res.GetLocalKey()), nil
+	return keyEntity.NewLocalKeyFromProto(res.GetLocalKey()), nil
 }
 
-func (c *KeyClient) LoadLocalKey(keyType key.KeyType, publicKey string, privateKey *string) (key.LocalKey, error) {
+func (c *KeyClient) LoadLocalKey(keyType keyEntity.KeyType, key string) (keyEntity.LocalKey, error) {
 	res, err := c.bridgeClient.Key().LoadLocalKey(context.Background(), &proto.LoadLocalKeyRequest{
 		ConfigData: c.configData,
-		KeyType:    key.KeyTypeToProto[keyType],
-		Key:        publicKey,
-		PrivateKey: privateKey,
+		KeyType:    keyEntity.KeyTypeToProto[keyType],
+		Key:        key,
 	})
 
 	if err != nil {
-		return key.LocalKey{}, err
+		return keyEntity.LocalKey{}, err
 	}
 
 	if res.Error != nil {
-		return key.LocalKey{}, errors.New(res.Error.Message)
+		return keyEntity.LocalKey{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewLocalKeyFromProto(res.GetLocalKey()), nil
+	return keyEntity.NewLocalKeyFromProto(res.GetLocalKey()), nil
 }
 
-func (c *KeyClient) NewManagedKey(params key.ManagedKeyParams) (key.ManagedKey, error) {
+func (c *KeyClient) NewManagedKey(params keyEntity.ManagedKeyParams) (keyEntity.ManagedKey, error) {
 	res, err := c.bridgeClient.Key().GenerateManagedKey(context.Background(), &proto.GenerateManagedKeyRequest{
 		ConfigData: c.configData,
 		Params:     params.ToProto(),
 	})
 
 	if err != nil {
-		return key.ManagedKey{}, err
+		return keyEntity.ManagedKey{}, err
 	}
 
 	if res.Error != nil {
-		return key.ManagedKey{}, errors.New(res.Error.Message)
+		return keyEntity.ManagedKey{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewManagedKeyFromProto(res.GetManagedKey()), nil
+	return keyEntity.NewManagedKeyFromProto(res.GetManagedKey()), nil
 }
 
-func (c *KeyClient) LoadManagedKey(id string) (key.ManagedKey, error) {
+func (c *KeyClient) LoadManagedKey(id string) (keyEntity.ManagedKey, error) {
 	res, err := c.bridgeClient.Key().LoadManagedKey(context.Background(), &proto.LoadManagedKeyRequest{
 		ConfigData: c.configData,
 		Id:         id,
 	})
 
 	if err != nil {
-		return key.ManagedKey{}, err
+		return keyEntity.ManagedKey{}, err
 	}
 
 	if res.Error != nil {
-		return key.ManagedKey{}, errors.New(res.Error.Message)
+		return keyEntity.ManagedKey{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewManagedKeyFromProto(res.GetManagedKey()), nil
+	return keyEntity.NewManagedKeyFromProto(res.GetManagedKey()), nil
 }
 
-func (c *KeyClient) NewLocalCertificate(params key.LocalCertificateParams) (key.LocalCertificate, error) {
+func (c *KeyClient) NewLocalCertificate(params keyEntity.LocalCertificateParams) (keyEntity.LocalCertificate, error) {
 	res, err := c.bridgeClient.Key().GenerateLocalCertificate(context.Background(), &proto.GenerateLocalCertificateRequest{
 		ConfigData: c.configData,
 		Params:     params.ToProto(),
 	})
 
 	if err != nil {
-		return key.LocalCertificate{}, err
+		return keyEntity.LocalCertificate{}, err
 	}
 
 	if res.Error != nil {
-		return key.LocalCertificate{}, errors.New(res.Error.Message)
+		return keyEntity.LocalCertificate{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
+	return keyEntity.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
 }
 
-func (c *KeyClient) LoadLocalCertificate(pkcs12 []byte, password string) (key.LocalCertificate, error) {
+func (c *KeyClient) LoadLocalCertificate(pkcs12 []byte, password string) (keyEntity.LocalCertificate, error) {
 	res, err := c.bridgeClient.Key().LoadLocalCertificate(context.Background(), &proto.LoadLocalCertificateRequest{
 		ConfigData: c.configData,
 		Pkcs12:     pkcs12,
@@ -124,51 +123,51 @@ func (c *KeyClient) LoadLocalCertificate(pkcs12 []byte, password string) (key.Lo
 	})
 
 	if err != nil {
-		return key.LocalCertificate{}, err
+		return keyEntity.LocalCertificate{}, err
 	}
 
 	if res.Error != nil {
-		return key.LocalCertificate{}, errors.New(res.Error.Message)
+		return keyEntity.LocalCertificate{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
+	return keyEntity.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
 }
 
-func (c *KeyClient) NewManagedCertificate(params key.ManagedCertificateParams) (key.ManagedCertificate, error) {
+func (c *KeyClient) NewManagedCertificate(params keyEntity.ManagedCertificateParams) (keyEntity.ManagedCertificate, error) {
 	res, err := c.bridgeClient.Key().GenerateManagedCertificate(context.Background(), &proto.GenerateManagedCertificateRequest{
 		ConfigData: c.configData,
 		Params:     params.ToProto(),
 	})
 
 	if err != nil {
-		return key.ManagedCertificate{}, err
+		return keyEntity.ManagedCertificate{}, err
 	}
 
 	if res.Error != nil {
-		return key.ManagedCertificate{}, errors.New(res.Error.Message)
+		return keyEntity.ManagedCertificate{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
+	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }
 
-func (c *KeyClient) LoadManagedCertificate(id string) (key.ManagedCertificate, error) {
+func (c *KeyClient) LoadManagedCertificate(id string) (keyEntity.ManagedCertificate, error) {
 	res, err := c.bridgeClient.Key().LoadManagedCertificate(context.Background(), &proto.LoadManagedCertificateRequest{
 		ConfigData: c.configData,
 		Id:         id,
 	})
 
 	if err != nil {
-		return key.ManagedCertificate{}, err
+		return keyEntity.ManagedCertificate{}, err
 	}
 
 	if res.Error != nil {
-		return key.ManagedCertificate{}, errors.New(res.Error.Message)
+		return keyEntity.ManagedCertificate{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
+	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }
 
-func (c *KeyClient) ImportManagedCertificate(_type key.CertificateType, certificate []byte, params key.ImportCertificateParams) (key.ManagedCertificate, error) {
+func (c *KeyClient) ImportManagedCertificate(_type keyEntity.CertificateType, certificate []byte, params keyEntity.ImportCertificateParams) (keyEntity.ManagedCertificate, error) {
 	var password *string
 	if params.Password != "" {
 		password = &params.Password
@@ -177,17 +176,17 @@ func (c *KeyClient) ImportManagedCertificate(_type key.CertificateType, certific
 	res, err := c.bridgeClient.Key().ImportManagedCertificate(context.Background(), &proto.ImportManagedCertificateRequest{
 		ConfigData:      c.configData,
 		Certificate:     certificate,
-		CertificateType: key.CertificateTypeToProto[_type],
+		CertificateType: keyEntity.CertificateTypeToProto[_type],
 		Password:        password,
 	})
 
 	if err != nil {
-		return key.ManagedCertificate{}, err
+		return keyEntity.ManagedCertificate{}, err
 	}
 
 	if res.Error != nil {
-		return key.ManagedCertificate{}, errors.New(res.Error.Message)
+		return keyEntity.ManagedCertificate{}, errors.New(res.Error.Message)
 	}
 
-	return key.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
+	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }

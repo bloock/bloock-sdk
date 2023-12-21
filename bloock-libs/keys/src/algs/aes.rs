@@ -32,6 +32,20 @@ impl AesKey {
         Self::generate_aes_key(256)
     }
 
+    pub fn load_aes_128_key(key: String) -> Result<AesKey> {
+        Ok(AesKey {
+            bit_size: 128,
+            key: key,
+        })
+    }
+
+    pub fn load_aes_256_key(key: String) -> Result<AesKey> {
+        Ok(AesKey {
+            bit_size: 256,
+            key: key,
+        })
+    }
+
     fn generate_aes_key(key_size: usize) -> Result<AesKey> {
         let rand_string: String = thread_rng()
             .sample_iter(&Alphanumeric)

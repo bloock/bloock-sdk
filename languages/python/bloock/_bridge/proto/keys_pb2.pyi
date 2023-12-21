@@ -104,23 +104,19 @@ class LoadLocalKeyRequest(google.protobuf.message.Message):
     CONFIG_DATA_FIELD_NUMBER: builtins.int
     KEY_TYPE_FIELD_NUMBER: builtins.int
     KEY_FIELD_NUMBER: builtins.int
-    PRIVATE_KEY_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     key_type: keys_entities_pb2.KeyType.ValueType
     key: builtins.str
-    private_key: builtins.str
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
         key_type: keys_entities_pb2.KeyType.ValueType = ...,
         key: builtins.str = ...,
-        private_key: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_private_key", b"_private_key", "config_data", b"config_data", "private_key", b"private_key"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_private_key", b"_private_key", "config_data", b"config_data", "key", b"key", "key_type", b"key_type", "private_key", b"private_key"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_private_key", b"_private_key"]) -> typing_extensions.Literal["private_key"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key", b"key", "key_type", b"key_type"]) -> None: ...
 
 global___LoadLocalKeyRequest = LoadLocalKeyRequest
 

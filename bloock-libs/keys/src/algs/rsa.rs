@@ -1,6 +1,6 @@
 use crate::{keys::local::LocalKey, KeyType, KeysError, Result};
 use rsa::{
-    pkcs8::{EncodePrivateKey, EncodePublicKey, LineEnding},
+    pkcs8::{DecodePrivateKey, EncodePrivateKey, EncodePublicKey, LineEnding},
     RsaPrivateKey, RsaPublicKey,
 };
 
@@ -38,6 +38,36 @@ impl RsaKey {
 
     pub fn new_rsa_4096() -> Result<RsaKey> {
         Self::generate_rsa_key(4096)
+    }
+
+    pub fn load_rsa_2048(key: String) -> Result<RsaKey> {
+        Self::load_rsa_key(key, 2048)
+    }
+
+    pub fn load_rsa_3072(key: String) -> Result<RsaKey> {
+        Self::load_rsa_key(key, 3072)
+    }
+
+    pub fn load_rsa_4096(key: String) -> Result<RsaKey> {
+        Self::load_rsa_key(key, 4096)
+    }
+
+    pub fn load_rsa_key(key: String, bit_size: usize) -> Result<RsaKey> {
+        let private_key =
+            RsaPrivateKey::from_pkcs8_pem(&key).map_err(|_| KeysError::InvalidKeyProvided)?;
+
+        let public_key = RsaPublicKey::from(&private_key);
+
+        Ok(RsaKey {
+            bit_size,
+            public_key: public_key
+                .to_public_key_pem(LineEnding::default())
+                .map_err(|err| KeysError::GenerateRsaKeyError(err.to_string()))?,
+            private_key: private_key
+                .to_pkcs8_pem(LineEnding::default())
+                .map_err(|err| KeysError::GenerateRsaKeyError(err.to_string()))?
+                .to_string(),
+        })
     }
 
     fn generate_rsa_key(bit_size: usize) -> Result<RsaKey> {

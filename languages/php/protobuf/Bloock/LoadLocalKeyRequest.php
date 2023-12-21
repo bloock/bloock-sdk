@@ -25,10 +25,6 @@ class LoadLocalKeyRequest extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string key = 3;</code>
      */
     protected $key = '';
-    /**
-     * Generated from protobuf field <code>optional string private_key = 4;</code>
-     */
-    protected $private_key = null;
 
     /**
      * Constructor.
@@ -39,7 +35,6 @@ class LoadLocalKeyRequest extends \Google\Protobuf\Internal\Message
      *     @type \Bloock\ConfigData $config_data
      *     @type int $key_type
      *     @type string $key
-     *     @type string $private_key
      * }
      */
     public function __construct($data = NULL) {
@@ -119,38 +114,6 @@ class LoadLocalKeyRequest extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->key = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>optional string private_key = 4;</code>
-     * @return string
-     */
-    public function getPrivateKey()
-    {
-        return isset($this->private_key) ? $this->private_key : '';
-    }
-
-    public function hasPrivateKey()
-    {
-        return isset($this->private_key);
-    }
-
-    public function clearPrivateKey()
-    {
-        unset($this->private_key);
-    }
-
-    /**
-     * Generated from protobuf field <code>optional string private_key = 4;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setPrivateKey($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->private_key = $var;
 
         return $this;
     }

@@ -9,7 +9,7 @@ use tiny_hderive::{bip32::ExtendedPrivKey, bip44::ChildNumber};
 pub struct EcKey {
     pub public_key: String,
     pub private_key: String,
-    pub mnemonic: String,
+    pub mnemonic: Option<String>,
 }
 
 impl From<EcKey> for LocalKey<String> {
@@ -18,7 +18,7 @@ impl From<EcKey> for LocalKey<String> {
             key_type: crate::KeyType::EcP256k,
             key: value.public_key,
             private_key: Some(value.private_key),
-            mnemonic: Some(value.mnemonic),
+            mnemonic: value.mnemonic,
         }
     }
 }
@@ -29,6 +29,23 @@ impl EcKey {
             .map_err(|e| KeysError::GenerateECKeyError(e.to_string()))?;
         let mnemonic = Mnemonic::new(mnemonic_type, Language::English);
         Self::load_ec_p256_from_mnemonic(mnemonic.into_phrase())
+    }
+
+    pub fn load_ec_p256k(key: String) -> Result<EcKey> {
+        let key: [u8; 32] = hex::decode(key)
+            .map_err(|_| KeysError::InvalidKeyProvided)?
+            .try_into()
+            .map_err(|_| KeysError::InvalidKeyProvided)?;
+
+        let secret_key =
+            SecretKey::parse(&key).map_err(|e| KeysError::GenerateECKeyError(e.to_string()))?;
+        let public_key = PublicKey::from_secret_key(&secret_key);
+
+        Ok(EcKey {
+            private_key: hex::encode(secret_key.serialize()),
+            public_key: hex::encode(public_key.serialize()),
+            mnemonic: None,
+        })
     }
 
     pub fn load_ec_p256_from_mnemonic(mnemonic_phrase: String) -> Result<EcKey> {
@@ -53,7 +70,7 @@ impl EcKey {
         Ok(EcKey {
             private_key: hex::encode(secret_key.serialize()),
             public_key: hex::encode(public_key.serialize()),
-            mnemonic: mnemonic.into_phrase(),
+            mnemonic: Some(mnemonic.into_phrase()),
         })
     }
 }

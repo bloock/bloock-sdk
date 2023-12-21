@@ -29,7 +29,7 @@ class TestKey(unittest.TestCase):
         self.assertNotEqual(local_key.private_key, "")
 
         loaded_key = key_client.load_local_key(
-            KeyType.EcP256k, local_key.key, local_key.private_key)
+            KeyType.EcP256k, local_key.private_key)
         self.assertEqual(local_key.key, loaded_key.key)
         self.assertEqual(local_key.private_key, loaded_key.private_key)
 
@@ -41,7 +41,7 @@ class TestKey(unittest.TestCase):
         self.assertNotEqual(local_key.private_key, "")
 
         loaded_key = key_client.load_local_key(
-            KeyType.EcP256k, local_key.key, local_key.private_key)
+            KeyType.Bjj, local_key.private_key)
         self.assertEqual(local_key.key, loaded_key.key)
         self.assertEqual(local_key.private_key, loaded_key.private_key)
 
@@ -53,7 +53,7 @@ class TestKey(unittest.TestCase):
         self.assertNotEqual(local_key.private_key, "")
 
         loaded_key = key_client.load_local_key(
-            KeyType.Rsa2048, local_key.key, local_key.private_key)
+            KeyType.Rsa2048, local_key.private_key)
         self.assertEqual(local_key.key, loaded_key.key)
         self.assertEqual(local_key.private_key, loaded_key.private_key)
 
@@ -65,7 +65,7 @@ class TestKey(unittest.TestCase):
         self.assertEqual(local_key.private_key, "")
 
         loaded_key = key_client.load_local_key(
-            KeyType.Aes256, local_key.key, local_key.private_key)
+            KeyType.Aes256, local_key.key)
         self.assertEqual(local_key.key, loaded_key.key)
         self.assertEqual(local_key.private_key, loaded_key.private_key)
 

@@ -1,8 +1,5 @@
 name: Development
 on:
-  push:
-    branches:
-      - master
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -10,8 +7,8 @@ jobs:
   version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/check_version
+    - uses: actions/checkout@v3
+    - uses: ./.github/actions/check_version
 
   build_binaries:
     needs: [version]
@@ -19,13 +16,13 @@ jobs:
     strategy:
       matrix:
         platform:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            cargo_command: cross
-          
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-musl
-            cargo_command: cross
+        - os: ubuntu-latest
+          target: x86_64-unknown-linux-gnu
+          cargo_command: cross
+
+        - os: ubuntu-latest
+          target: x86_64-unknown-linux-musl
+          cargo_command: cross
     with:
       os: ${{ matrix.platform.os }}
       target: ${{ matrix.platform.target }}

@@ -34,10 +34,9 @@ class KeyClient:
 
         return LocalKey.from_proto(res.local_key)
 
-    def load_local_key(self, key_type: KeyType, key: str, private_key: str = "") -> LocalKey:
+    def load_local_key(self, key_type: KeyType, key: str) -> LocalKey:
         res = self.bridge_client.key().LoadLocalKey(
-            LoadLocalKeyRequest(config_data=self.config_data, key_type=key_type.to_proto(
-            ), key=key, private_key=private_key)
+            LoadLocalKeyRequest(config_data=self.config_data, key_type=key_type.to_proto(), key=key)
         )
 
         if res.error != Error():

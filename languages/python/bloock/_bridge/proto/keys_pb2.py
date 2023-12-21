@@ -16,7 +16,7 @@ from . import shared_pb2 as shared__pb2
 from . import config_pb2 as config__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nkeys.proto\x12\x06\x62loock\x1a\x13keys_entities.proto\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\"e\n\x17GenerateLocalKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12!\n\x08key_type\x18\x02 \x01(\x0e\x32\x0f.bloock.KeyType\"l\n\x18GenerateLocalKeyResponse\x12#\n\tlocal_key\x18\x01 \x01(\x0b\x32\x10.bloock.LocalKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"n\n\x19GenerateManagedKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12(\n\x06params\x18\x02 \x01(\x0b\x32\x18.bloock.ManagedKeyParams\"r\n\x1aGenerateManagedKeyResponse\x12\'\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x98\x01\n\x13LoadLocalKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12!\n\x08key_type\x18\x02 \x01(\x0e\x32\x0f.bloock.KeyType\x12\x0b\n\x03key\x18\x03 \x01(\t\x12\x18\n\x0bprivate_key\x18\x04 \x01(\tH\x00\x88\x01\x01\x42\x0e\n\x0c_private_key\"h\n\x14LoadLocalKeyResponse\x12#\n\tlocal_key\x18\x01 \x01(\x0b\x32\x10.bloock.LocalKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"L\n\x15LoadManagedKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\n\n\x02id\x18\x02 \x01(\t\"n\n\x16LoadManagedKeyResponse\x12\'\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"z\n\x1fGenerateLocalCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12.\n\x06params\x18\x02 \x01(\x0b\x32\x1e.bloock.LocalCertificateParams\"\x84\x01\n GenerateLocalCertificateResponse\x12\x33\n\x11local_certificate\x18\x01 \x01(\x0b\x32\x18.bloock.LocalCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"~\n!GenerateManagedCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x30\n\x06params\x18\x02 \x01(\x0b\x32 .bloock.ManagedCertificateParams\"\x8a\x01\n\"GenerateManagedCertificateResponse\x12\x37\n\x13managed_certificate\x18\x01 \x01(\x0b\x32\x1a.bloock.ManagedCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"h\n\x1bLoadLocalCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0e\n\x06pkcs12\x18\x02 \x01(\x0c\x12\x10\n\x08password\x18\x03 \x01(\t\"\x80\x01\n\x1cLoadLocalCertificateResponse\x12\x33\n\x11local_certificate\x18\x01 \x01(\x0b\x32\x18.bloock.LocalCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"T\n\x1dLoadManagedCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\n\n\x02id\x18\x02 \x01(\t\"\x86\x01\n\x1eLoadManagedCertificateResponse\x12\x37\n\x13managed_certificate\x18\x01 \x01(\x0b\x32\x1a.bloock.ManagedCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\xb6\x01\n\x1fImportManagedCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x13\n\x0b\x63\x65rtificate\x18\x02 \x01(\x0c\x12\x15\n\x08password\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x31\n\x10\x63\x65rtificate_type\x18\x04 \x01(\x0e\x32\x17.bloock.CertificateTypeB\x0b\n\t_password\"\x88\x01\n ImportManagedCertificateResponse\x12\x37\n\x13managed_certificate\x18\x01 \x01(\x0b\x32\x1a.bloock.ManagedCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xfb\x06\n\nKeyService\x12U\n\x10GenerateLocalKey\x12\x1f.bloock.GenerateLocalKeyRequest\x1a .bloock.GenerateLocalKeyResponse\x12[\n\x12GenerateManagedKey\x12!.bloock.GenerateManagedKeyRequest\x1a\".bloock.GenerateManagedKeyResponse\x12I\n\x0cLoadLocalKey\x12\x1b.bloock.LoadLocalKeyRequest\x1a\x1c.bloock.LoadLocalKeyResponse\x12O\n\x0eLoadManagedKey\x12\x1d.bloock.LoadManagedKeyRequest\x1a\x1e.bloock.LoadManagedKeyResponse\x12m\n\x18GenerateLocalCertificate\x12\'.bloock.GenerateLocalCertificateRequest\x1a(.bloock.GenerateLocalCertificateResponse\x12s\n\x1aGenerateManagedCertificate\x12).bloock.GenerateManagedCertificateRequest\x1a*.bloock.GenerateManagedCertificateResponse\x12\x61\n\x14LoadLocalCertificate\x12#.bloock.LoadLocalCertificateRequest\x1a$.bloock.LoadLocalCertificateResponse\x12g\n\x16LoadManagedCertificate\x12%.bloock.LoadManagedCertificateRequest\x1a&.bloock.LoadManagedCertificateResponse\x12m\n\x18ImportManagedCertificate\x12\'.bloock.ImportManagedCertificateRequest\x1a(.bloock.ImportManagedCertificateResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nkeys.proto\x12\x06\x62loock\x1a\x13keys_entities.proto\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\"e\n\x17GenerateLocalKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12!\n\x08key_type\x18\x02 \x01(\x0e\x32\x0f.bloock.KeyType\"l\n\x18GenerateLocalKeyResponse\x12#\n\tlocal_key\x18\x01 \x01(\x0b\x32\x10.bloock.LocalKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"n\n\x19GenerateManagedKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12(\n\x06params\x18\x02 \x01(\x0b\x32\x18.bloock.ManagedKeyParams\"r\n\x1aGenerateManagedKeyResponse\x12\'\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"n\n\x13LoadLocalKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12!\n\x08key_type\x18\x02 \x01(\x0e\x32\x0f.bloock.KeyType\x12\x0b\n\x03key\x18\x03 \x01(\t\"h\n\x14LoadLocalKeyResponse\x12#\n\tlocal_key\x18\x01 \x01(\x0b\x32\x10.bloock.LocalKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"L\n\x15LoadManagedKeyRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\n\n\x02id\x18\x02 \x01(\t\"n\n\x16LoadManagedKeyResponse\x12\'\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKey\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"z\n\x1fGenerateLocalCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12.\n\x06params\x18\x02 \x01(\x0b\x32\x1e.bloock.LocalCertificateParams\"\x84\x01\n GenerateLocalCertificateResponse\x12\x33\n\x11local_certificate\x18\x01 \x01(\x0b\x32\x18.bloock.LocalCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"~\n!GenerateManagedCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x30\n\x06params\x18\x02 \x01(\x0b\x32 .bloock.ManagedCertificateParams\"\x8a\x01\n\"GenerateManagedCertificateResponse\x12\x37\n\x13managed_certificate\x18\x01 \x01(\x0b\x32\x1a.bloock.ManagedCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"h\n\x1bLoadLocalCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0e\n\x06pkcs12\x18\x02 \x01(\x0c\x12\x10\n\x08password\x18\x03 \x01(\t\"\x80\x01\n\x1cLoadLocalCertificateResponse\x12\x33\n\x11local_certificate\x18\x01 \x01(\x0b\x32\x18.bloock.LocalCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"T\n\x1dLoadManagedCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\n\n\x02id\x18\x02 \x01(\t\"\x86\x01\n\x1eLoadManagedCertificateResponse\x12\x37\n\x13managed_certificate\x18\x01 \x01(\x0b\x32\x1a.bloock.ManagedCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\xb6\x01\n\x1fImportManagedCertificateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x13\n\x0b\x63\x65rtificate\x18\x02 \x01(\x0c\x12\x15\n\x08password\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x31\n\x10\x63\x65rtificate_type\x18\x04 \x01(\x0e\x32\x17.bloock.CertificateTypeB\x0b\n\t_password\"\x88\x01\n ImportManagedCertificateResponse\x12\x37\n\x13managed_certificate\x18\x01 \x01(\x0b\x32\x1a.bloock.ManagedCertificate\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xfb\x06\n\nKeyService\x12U\n\x10GenerateLocalKey\x12\x1f.bloock.GenerateLocalKeyRequest\x1a .bloock.GenerateLocalKeyResponse\x12[\n\x12GenerateManagedKey\x12!.bloock.GenerateManagedKeyRequest\x1a\".bloock.GenerateManagedKeyResponse\x12I\n\x0cLoadLocalKey\x12\x1b.bloock.LoadLocalKeyRequest\x1a\x1c.bloock.LoadLocalKeyResponse\x12O\n\x0eLoadManagedKey\x12\x1d.bloock.LoadManagedKeyRequest\x1a\x1e.bloock.LoadManagedKeyResponse\x12m\n\x18GenerateLocalCertificate\x12\'.bloock.GenerateLocalCertificateRequest\x1a(.bloock.GenerateLocalCertificateResponse\x12s\n\x1aGenerateManagedCertificate\x12).bloock.GenerateManagedCertificateRequest\x1a*.bloock.GenerateManagedCertificateResponse\x12\x61\n\x14LoadLocalCertificate\x12#.bloock.LoadLocalCertificateRequest\x1a$.bloock.LoadLocalCertificateResponse\x12g\n\x16LoadManagedCertificate\x12%.bloock.LoadManagedCertificateRequest\x1a&.bloock.LoadManagedCertificateResponse\x12m\n\x18ImportManagedCertificate\x12\'.bloock.ImportManagedCertificateRequest\x1a(.bloock.ImportManagedCertificateResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'keys_pb2', globals())
@@ -32,34 +32,34 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _GENERATEMANAGEDKEYREQUEST._serialized_end=394
   _GENERATEMANAGEDKEYRESPONSE._serialized_start=396
   _GENERATEMANAGEDKEYRESPONSE._serialized_end=510
-  _LOADLOCALKEYREQUEST._serialized_start=513
-  _LOADLOCALKEYREQUEST._serialized_end=665
-  _LOADLOCALKEYRESPONSE._serialized_start=667
-  _LOADLOCALKEYRESPONSE._serialized_end=771
-  _LOADMANAGEDKEYREQUEST._serialized_start=773
-  _LOADMANAGEDKEYREQUEST._serialized_end=849
-  _LOADMANAGEDKEYRESPONSE._serialized_start=851
-  _LOADMANAGEDKEYRESPONSE._serialized_end=961
-  _GENERATELOCALCERTIFICATEREQUEST._serialized_start=963
-  _GENERATELOCALCERTIFICATEREQUEST._serialized_end=1085
-  _GENERATELOCALCERTIFICATERESPONSE._serialized_start=1088
-  _GENERATELOCALCERTIFICATERESPONSE._serialized_end=1220
-  _GENERATEMANAGEDCERTIFICATEREQUEST._serialized_start=1222
-  _GENERATEMANAGEDCERTIFICATEREQUEST._serialized_end=1348
-  _GENERATEMANAGEDCERTIFICATERESPONSE._serialized_start=1351
-  _GENERATEMANAGEDCERTIFICATERESPONSE._serialized_end=1489
-  _LOADLOCALCERTIFICATEREQUEST._serialized_start=1491
-  _LOADLOCALCERTIFICATEREQUEST._serialized_end=1595
-  _LOADLOCALCERTIFICATERESPONSE._serialized_start=1598
-  _LOADLOCALCERTIFICATERESPONSE._serialized_end=1726
-  _LOADMANAGEDCERTIFICATEREQUEST._serialized_start=1728
-  _LOADMANAGEDCERTIFICATEREQUEST._serialized_end=1812
-  _LOADMANAGEDCERTIFICATERESPONSE._serialized_start=1815
-  _LOADMANAGEDCERTIFICATERESPONSE._serialized_end=1949
-  _IMPORTMANAGEDCERTIFICATEREQUEST._serialized_start=1952
-  _IMPORTMANAGEDCERTIFICATEREQUEST._serialized_end=2134
-  _IMPORTMANAGEDCERTIFICATERESPONSE._serialized_start=2137
-  _IMPORTMANAGEDCERTIFICATERESPONSE._serialized_end=2273
-  _KEYSERVICE._serialized_start=2276
-  _KEYSERVICE._serialized_end=3167
+  _LOADLOCALKEYREQUEST._serialized_start=512
+  _LOADLOCALKEYREQUEST._serialized_end=622
+  _LOADLOCALKEYRESPONSE._serialized_start=624
+  _LOADLOCALKEYRESPONSE._serialized_end=728
+  _LOADMANAGEDKEYREQUEST._serialized_start=730
+  _LOADMANAGEDKEYREQUEST._serialized_end=806
+  _LOADMANAGEDKEYRESPONSE._serialized_start=808
+  _LOADMANAGEDKEYRESPONSE._serialized_end=918
+  _GENERATELOCALCERTIFICATEREQUEST._serialized_start=920
+  _GENERATELOCALCERTIFICATEREQUEST._serialized_end=1042
+  _GENERATELOCALCERTIFICATERESPONSE._serialized_start=1045
+  _GENERATELOCALCERTIFICATERESPONSE._serialized_end=1177
+  _GENERATEMANAGEDCERTIFICATEREQUEST._serialized_start=1179
+  _GENERATEMANAGEDCERTIFICATEREQUEST._serialized_end=1305
+  _GENERATEMANAGEDCERTIFICATERESPONSE._serialized_start=1308
+  _GENERATEMANAGEDCERTIFICATERESPONSE._serialized_end=1446
+  _LOADLOCALCERTIFICATEREQUEST._serialized_start=1448
+  _LOADLOCALCERTIFICATEREQUEST._serialized_end=1552
+  _LOADLOCALCERTIFICATERESPONSE._serialized_start=1555
+  _LOADLOCALCERTIFICATERESPONSE._serialized_end=1683
+  _LOADMANAGEDCERTIFICATEREQUEST._serialized_start=1685
+  _LOADMANAGEDCERTIFICATEREQUEST._serialized_end=1769
+  _LOADMANAGEDCERTIFICATERESPONSE._serialized_start=1772
+  _LOADMANAGEDCERTIFICATERESPONSE._serialized_end=1906
+  _IMPORTMANAGEDCERTIFICATEREQUEST._serialized_start=1909
+  _IMPORTMANAGEDCERTIFICATEREQUEST._serialized_end=2091
+  _IMPORTMANAGEDCERTIFICATERESPONSE._serialized_start=2094
+  _IMPORTMANAGEDCERTIFICATERESPONSE._serialized_end=2230
+  _KEYSERVICE._serialized_start=2233
+  _KEYSERVICE._serialized_end=3124
 # @@protoc_insertion_point(module_scope)

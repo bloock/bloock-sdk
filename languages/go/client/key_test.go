@@ -22,7 +22,7 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, localKey.Key)
 		assert.NotEmpty(t, localKey.PrivateKey)
 
-		loadedKey, err := keyClient.LoadLocalKey(key.EcP256k, localKey.Key, &localKey.PrivateKey)
+		loadedKey, err := keyClient.LoadLocalKey(key.EcP256k, localKey.PrivateKey)
 		assert.NoError(t, err)
 
 		assert.Equal(t, loadedKey.Key, localKey.Key)
@@ -37,7 +37,7 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, localKey.Key)
 		assert.NotEmpty(t, localKey.PrivateKey)
 
-		loadedKey, err := keyClient.LoadLocalKey(key.Bjj, localKey.Key, &localKey.PrivateKey)
+		loadedKey, err := keyClient.LoadLocalKey(key.Bjj, localKey.PrivateKey)
 		assert.NoError(t, err)
 
 		assert.Equal(t, loadedKey.Key, localKey.Key)
@@ -52,7 +52,7 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, localKey.Key)
 		assert.NotEmpty(t, localKey.PrivateKey)
 
-		loadedKey, err := keyClient.LoadLocalKey(key.Rsa2048, localKey.Key, &localKey.PrivateKey)
+		loadedKey, err := keyClient.LoadLocalKey(key.Rsa2048, localKey.PrivateKey)
 		assert.NoError(t, err)
 
 		assert.Equal(t, loadedKey.Key, localKey.Key)
@@ -67,7 +67,7 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, localKey.Key)
 		assert.Empty(t, localKey.PrivateKey)
 
-		loadedKey, err := keyClient.LoadLocalKey(key.Aes128, localKey.Key, &localKey.PrivateKey)
+		loadedKey, err := keyClient.LoadLocalKey(key.Aes128, localKey.Key)
 		assert.NoError(t, err)
 
 		assert.Equal(t, loadedKey.Key, localKey.Key)

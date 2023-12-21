@@ -29,8 +29,7 @@ describe("Key Tests", () => {
 
     let loadedKey = await keyClient.loadLocalKey(
       KeyType.EcP256k,
-      key.key,
-      key.privateKey
+      key.privateKey!
     );
 
     expect(key.key).toEqual(loadedKey.key);
@@ -46,11 +45,7 @@ describe("Key Tests", () => {
     expect(key.key).toBeDefined();
     expect(key.privateKey).toBeDefined();
 
-    let loadedKey = await keyClient.loadLocalKey(
-      KeyType.Bjj,
-      key.key,
-      key.privateKey
-    );
+    let loadedKey = await keyClient.loadLocalKey(KeyType.Bjj, key.privateKey!);
 
     expect(key.key).toEqual(loadedKey.key);
     expect(key.privateKey).toEqual(loadedKey.privateKey);
@@ -67,8 +62,7 @@ describe("Key Tests", () => {
 
     let loadedKey = await keyClient.loadLocalKey(
       KeyType.Rsa2048,
-      key.key,
-      key.privateKey
+      key.privateKey!
     );
 
     expect(key.key).toEqual(loadedKey.key);
@@ -84,11 +78,7 @@ describe("Key Tests", () => {
     expect(key.key).toBeDefined();
     expect(key.privateKey).toBeUndefined();
 
-    let loadedKey = await keyClient.loadLocalKey(
-      KeyType.Aes128,
-      key.key,
-      key.privateKey
-    );
+    let loadedKey = await keyClient.loadLocalKey(KeyType.Aes128, key.key!);
 
     expect(key.key).toEqual(loadedKey.key);
     expect(key.privateKey).toEqual(loadedKey.privateKey);
@@ -197,7 +187,14 @@ describe("Key Tests", () => {
     initDevSdk();
 
     let keyType = KeyType.Rsa2048;
-    let subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", undefined, undefined, "US");
+    let subjectParams = new SubjectCertificateParams(
+      "Google internet Authority G2",
+      "Google Inc",
+      "IT Department",
+      undefined,
+      undefined,
+      "US"
+    );
     let keyClient = new KeyClient();
     let certificate = await keyClient.newLocalCertificate(
       new LocalCertificateParams(keyType, subjectParams, "password", 2)
@@ -205,7 +202,10 @@ describe("Key Tests", () => {
 
     expect(certificate.pkcs12).toBeDefined();
 
-    let loadedCertificate = await keyClient.loadLocalCertificate(certificate.pkcs12, certificate.password);
+    let loadedCertificate = await keyClient.loadLocalCertificate(
+      certificate.pkcs12,
+      certificate.password
+    );
 
     expect([...loadedCertificate.pkcs12]).toEqual([...certificate.pkcs12]);
 
@@ -213,7 +213,10 @@ describe("Key Tests", () => {
     let record = await recordClient.fromString("Hello world").build();
 
     let authenticityClient = new AuthenticityClient();
-    let signature = await authenticityClient.sign(record, new Signer(loadedCertificate));
+    let signature = await authenticityClient.sign(
+      record,
+      new Signer(loadedCertificate)
+    );
 
     expect(signature.signature).toBeTruthy();
   });
@@ -221,13 +224,11 @@ describe("Key Tests", () => {
   test("import local p12 certificate", async () => {
     initDevSdk();
 
-    const dirPath = path.join(__dirname, '/test_utils/test.p12');
+    const dirPath = path.join(__dirname, "/test_utils/test.p12");
     let buffer = readFileSync(dirPath);
 
     let keyClient = new KeyClient();
-    let certificate = await keyClient.loadLocalCertificate(
-      buffer, "bloock"
-    );
+    let certificate = await keyClient.loadLocalCertificate(buffer, "bloock");
 
     expect([...certificate.pkcs12]).toEqual([...buffer]);
   });
@@ -236,7 +237,14 @@ describe("Key Tests", () => {
     initDevSdk();
 
     let keyType = KeyType.EcP256k;
-    let subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", undefined, undefined, "US");
+    let subjectParams = new SubjectCertificateParams(
+      "Google internet Authority G2",
+      "Google Inc",
+      "IT Department",
+      undefined,
+      undefined,
+      "US"
+    );
     let keyClient = new KeyClient();
     let certificate = await keyClient.newManagedCertificate(
       new ManagedCertificateParams(keyType, subjectParams, 5)
@@ -246,7 +254,9 @@ describe("Key Tests", () => {
     expect(certificate.keyType).toBe(keyType);
     expect(certificate.protection).toBe(KeyProtectionLevel.SOFTWARE);
 
-    let loadedCertificate = await keyClient.loadManagedCertificate(certificate.id);
+    let loadedCertificate = await keyClient.loadManagedCertificate(
+      certificate.id
+    );
 
     expect(certificate.id).toEqual(loadedCertificate.id);
     expect(certificate.key).toEqual(loadedCertificate.key);
@@ -257,17 +267,23 @@ describe("Key Tests", () => {
   test("import pem managed certificate", async () => {
     initDevSdk();
 
-    const dirPath = path.join(__dirname, '/test_utils/test.pem');
+    const dirPath = path.join(__dirname, "/test_utils/test.pem");
     let buffer = readFileSync(dirPath);
 
     let keyClient = new KeyClient();
-    let certificate = await keyClient.importManagedCertificate(CertificateType.PEM, buffer, new ImportCertificateParams());
+    let certificate = await keyClient.importManagedCertificate(
+      CertificateType.PEM,
+      buffer,
+      new ImportCertificateParams()
+    );
 
     expect(certificate.key).toBeDefined();
     expect(certificate.keyType).toBe(KeyType.Rsa2048);
     expect(certificate.protection).toBe(KeyProtectionLevel.SOFTWARE);
 
-    let loadedCertificate = await keyClient.loadManagedCertificate(certificate.id);
+    let loadedCertificate = await keyClient.loadManagedCertificate(
+      certificate.id
+    );
 
     expect(certificate.id).toEqual(loadedCertificate.id);
     expect(certificate.key).toEqual(loadedCertificate.key);
@@ -278,18 +294,24 @@ describe("Key Tests", () => {
   test("import pfx managed certificate", async () => {
     initDevSdk();
 
-    const dirPath = path.join(__dirname, '/test_utils/test2.pfx');
+    const dirPath = path.join(__dirname, "/test_utils/test2.pfx");
     let buffer = readFileSync(dirPath);
-    let password = "bloock"
+    let password = "bloock";
 
     let keyClient = new KeyClient();
-    let certificate = await keyClient.importManagedCertificate(CertificateType.PFX, buffer, new ImportCertificateParams(password));
+    let certificate = await keyClient.importManagedCertificate(
+      CertificateType.PFX,
+      buffer,
+      new ImportCertificateParams(password)
+    );
 
     expect(certificate.key).toBeDefined();
     expect(certificate.keyType).toBe(KeyType.EcP256k);
     expect(certificate.protection).toBe(KeyProtectionLevel.SOFTWARE);
 
-    let loadedCertificate = await keyClient.loadManagedCertificate(certificate.id);
+    let loadedCertificate = await keyClient.loadManagedCertificate(
+      certificate.id
+    );
 
     expect(certificate.id).toEqual(loadedCertificate.id);
     expect(certificate.key).toEqual(loadedCertificate.key);
@@ -300,7 +322,10 @@ describe("Key Tests", () => {
     let record = await recordClient.fromString("Hello world").build();
 
     let authenticityClient = new AuthenticityClient();
-    let signature = await authenticityClient.sign(record, new Signer(loadedCertificate));
+    let signature = await authenticityClient.sign(
+      record,
+      new Signer(loadedCertificate)
+    );
 
     expect(signature.signature).toBeTruthy();
   });

@@ -703,7 +703,7 @@ mod hash_tests {
     async fn build_plain_record_with_encrypter() {
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
 
         let record = service
             .from_string(PAYLOAD.to_string())
@@ -767,7 +767,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
@@ -785,7 +785,7 @@ mod hash_tests {
     async fn build_from_encrypted_record() {
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
@@ -817,7 +817,7 @@ mod hash_tests {
     async fn build_from_encrypted_record_decrypt_and_encrypt() {
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
@@ -859,7 +859,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
@@ -897,7 +897,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
@@ -967,7 +967,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
 
         let signed_record = service
             .from_string(PAYLOAD.to_string())
@@ -1053,7 +1053,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
@@ -1089,7 +1089,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let record = service
             .from_string(PAYLOAD)
             .unwrap()
@@ -1125,7 +1125,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let record = service
             .from_string(PAYLOAD)
             .unwrap()
@@ -1173,7 +1173,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
@@ -1219,7 +1219,7 @@ mod hash_tests {
 
         let service = record::configure_test(config::configure_test().config_data);
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
@@ -1265,7 +1265,7 @@ mod hash_tests {
 
         record.set_proof(get_test_proof(HASH_PAYLOAD)).unwrap();
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let final_record = service
             .from_record(record)
             .unwrap()
@@ -1330,7 +1330,7 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let final_record = service
             .from_record(record)
             .unwrap()
@@ -1356,7 +1356,7 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         record = service
             .from_record(record)
             .unwrap()
@@ -1388,7 +1388,7 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         record = service
             .from_record(record)
             .unwrap()
@@ -1430,7 +1430,7 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         record = service
             .from_record(record)
             .unwrap()
@@ -1472,7 +1472,7 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         record = service
             .from_record(record)
             .unwrap()
@@ -1557,7 +1557,7 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let final_record = service
             .from_record(record)
             .unwrap()
@@ -1656,7 +1656,7 @@ mod hash_tests {
 
         assert!(record.get_proof().is_some());
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         let final_record = service
             .from_record(record)
             .unwrap()
@@ -1696,7 +1696,7 @@ mod hash_tests {
             .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
             .unwrap();
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         record = service
             .from_record(record)
             .unwrap()
@@ -1743,7 +1743,7 @@ mod hash_tests {
             .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
             .unwrap();
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         record = service
             .from_record(record)
             .unwrap()
@@ -1802,7 +1802,7 @@ mod hash_tests {
             .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
             .unwrap();
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         record = service
             .from_record(record)
             .unwrap()
@@ -1859,7 +1859,7 @@ mod hash_tests {
             .set_proof(get_test_proof(HASH_SIGNED_PAYLOAD))
             .unwrap();
 
-        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string(), None);
+        let local_aes_key = LocalKey::load(KeyType::Aes256, "some_password".to_string()).unwrap();
         record = service
             .from_record(record)
             .unwrap()

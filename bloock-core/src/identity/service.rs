@@ -236,11 +236,8 @@ impl<H: Client> IdentityService<H> {
         thread_id: String,
         holder_private_key: String,
     ) -> BloockResult<Credential> {
-        let key = LocalKey::load(
-            bloock_keys::KeyType::EcP256k,
-            "".to_string(),
-            Some(holder_private_key),
-        );
+        let key = LocalKey::load(bloock_keys::KeyType::EcP256k, holder_private_key)
+            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
         let signature = bloock_signer::sign(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),

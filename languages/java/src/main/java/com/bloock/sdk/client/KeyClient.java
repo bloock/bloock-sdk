@@ -38,13 +38,12 @@ public class KeyClient {
     return LocalKey.fromProto(response.getLocalKey());
   }
 
-  public LocalKey loadLocalKey(KeyType keyType, String key, String privateKey) throws Exception {
+  public LocalKey loadLocalKey(KeyType keyType, String key) throws Exception {
     Keys.LoadLocalKeyRequest request =
         Keys.LoadLocalKeyRequest.newBuilder()
             .setConfigData(this.configData)
             .setKeyType(keyType.toProto())
             .setKey(key)
-            .setPrivateKey(privateKey)
             .build();
 
     Keys.LoadLocalKeyResponse response = bridge.getKey().loadLocalKey(request);

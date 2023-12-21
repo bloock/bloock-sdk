@@ -17,7 +17,10 @@ import { LocalKey } from "../entity/key";
 import { ManagedKey, ManagedKeyParams } from "../entity/key";
 import { LocalCertificateParams } from "../entity/key/local_certificate_args";
 import { ManagedCertificate } from "../entity/key/managed_certificate";
-import { ImportCertificateParams, ManagedCertificateParams } from "../entity/key/managed_certificate_params";
+import {
+  ImportCertificateParams,
+  ManagedCertificateParams
+} from "../entity/key/managed_certificate_params";
 
 export class KeyClient {
   private bridge: BloockBridge;
@@ -44,16 +47,11 @@ export class KeyClient {
       });
   }
 
-  async loadLocalKey(
-    keyType: KeyType,
-    key: string,
-    privateKey?: string
-  ): Promise<LocalKey> {
+  async loadLocalKey(keyType: KeyType, key: string): Promise<LocalKey> {
     const request = LoadLocalKeyRequest.fromPartial({
       configData: this.configData,
       keyType: KeyType.toProto(keyType),
-      key,
-      privateKey
+      key
     });
     return this.bridge
       .getKey()
@@ -100,7 +98,9 @@ export class KeyClient {
       });
   }
 
-  async newLocalCertificate(params: LocalCertificateParams): Promise<LocalCertificate> {
+  async newLocalCertificate(
+    params: LocalCertificateParams
+  ): Promise<LocalCertificate> {
     const request = GenerateLocalCertificateRequest.fromPartial({
       configData: this.configData,
       params: params.toProto()
@@ -117,11 +117,14 @@ export class KeyClient {
       });
   }
 
-  async loadLocalCertificate(pkcs12: Uint8Array, password: string): Promise<LocalCertificate> {
+  async loadLocalCertificate(
+    pkcs12: Uint8Array,
+    password: string
+  ): Promise<LocalCertificate> {
     const request = LoadLocalCertificateRequest.fromPartial({
       configData: this.configData,
       pkcs12: pkcs12,
-      password: password,
+      password: password
     });
 
     return this.bridge
@@ -135,7 +138,9 @@ export class KeyClient {
       });
   }
 
-  async newManagedCertificate(params: ManagedCertificateParams): Promise<ManagedCertificate> {
+  async newManagedCertificate(
+    params: ManagedCertificateParams
+  ): Promise<ManagedCertificate> {
     const request = GenerateManagedCertificateRequest.fromPartial({
       configData: this.configData,
       params: params.toProto()
@@ -169,12 +174,16 @@ export class KeyClient {
       });
   }
 
-  async importManagedCertificate(type: CertificateType, certificate: Uint8Array, params: ImportCertificateParams): Promise<ManagedCertificate> {
+  async importManagedCertificate(
+    type: CertificateType,
+    certificate: Uint8Array,
+    params: ImportCertificateParams
+  ): Promise<ManagedCertificate> {
     const request = ImportManagedCertificateRequest.fromPartial({
       configData: this.configData,
       certificate: certificate,
       certificateType: CertificateType.toProto(type),
-      password: params.password,
+      password: params.password
     });
 
     return this.bridge

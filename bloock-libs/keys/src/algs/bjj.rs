@@ -37,4 +37,16 @@ impl BjjKey {
             private_key: hex::encode(sk),
         })
     }
+
+    pub fn load(key: String) -> Result<BjjKey> {
+        let sk = hex::decode(key).map_err(|_| KeysError::InvalidKeyProvided)?;
+        let private = PrivateKey::import(sk.clone()).map_err(|_| KeysError::InvalidKeyProvided)?;
+
+        let public = private.public();
+
+        Ok(BjjKey {
+            public_key: hex::encode(public.compress()),
+            private_key: hex::encode(sk),
+        })
+    }
 }

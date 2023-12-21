@@ -47,7 +47,6 @@ message LoadLocalKeyRequest {
     ConfigData config_data = 1;
     KeyType key_type = 2;
     string key = 3;
-    optional string private_key = 4;
 }
 
 message LoadLocalKeyResponse {

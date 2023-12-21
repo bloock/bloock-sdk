@@ -71,11 +71,7 @@ impl KeyServiceHandler for KeyServer {
 
         let client = key::configure(config_data);
         let key = client
-            .load_local_key(
-                req.key_type().into(),
-                req.key.clone(),
-                req.private_key.clone(),
-            )
+            .load_local_key(req.key_type().into(), req.key.clone())
             .map_err(|e| e.to_string())?;
 
         Ok(LoadLocalKeyResponse {
