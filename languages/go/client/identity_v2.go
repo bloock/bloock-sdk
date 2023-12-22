@@ -10,29 +10,29 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
-type IdentityV2Client struct {
+type IdentityClient struct {
 	bridgeClient   bridge.BloockBridge
 	configData     *proto.ConfigData
 	apiManagedHost string
 }
 
-func NewIdentityClient(apiManagedHost string) IdentityV2Client {
-	return IdentityV2Client{
+func NewIdentityClient(apiManagedHost string) IdentityClient {
+	return IdentityClient{
 		bridgeClient:   bridge.NewBloockBridge(),
 		configData:     config.NewConfigDataDefault(),
 		apiManagedHost: apiManagedHost,
 	}
 }
 
-func NewIdentityClientWithConfig(configData *proto.ConfigData, apiManagedHost string) IdentityV2Client {
-	return IdentityV2Client{
+func NewIdentityClientWithConfig(configData *proto.ConfigData, apiManagedHost string) IdentityClient {
+	return IdentityClient{
 		bridgeClient:   bridge.NewBloockBridge(),
 		configData:     configData,
 		apiManagedHost: apiManagedHost,
 	}
 }
 
-func (c *IdentityV2Client) CreateIdentity(issuerKey identityV2.IdentityKey, params identityV2.DidParams) (string, error) {
+func (c *IdentityClient) CreateIdentity(issuerKey identityV2.IdentityKey, params identityV2.DidParams) (string, error) {
 	res, err := c.bridgeClient.IdentityV2().CreateIdentity(context.Background(), &proto.CreateIdentityV2Request{
 		IssuerKey:  issuerKey.ToProto(),
 		DidParams:  identityV2.DidParamsToProto(params),
@@ -50,7 +50,7 @@ func (c *IdentityV2Client) CreateIdentity(issuerKey identityV2.IdentityKey, para
 	return res.Did, nil
 }
 
-func (c *IdentityV2Client) CreateIssuer(issuerKey identityV2.IdentityKey, params identityV2.DidParams, name, description, image string) (string, error) {
+func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, params identityV2.DidParams, name, description, image string) (string, error) {
 	var iName, iDescription, iImage *string
 	if name != "" {
 		iName = &name
@@ -82,7 +82,7 @@ func (c *IdentityV2Client) CreateIssuer(issuerKey identityV2.IdentityKey, params
 	return res.Did, nil
 }
 
-func (c *IdentityV2Client) GetIssuerList() ([]string, error) {
+func (c *IdentityClient) GetIssuerList() ([]string, error) {
 	res, err := c.bridgeClient.IdentityV2().GetIssuerList(context.Background(), &proto.GetIssuerListRequest{
 		ConfigData: c.configData,
 	})
@@ -98,7 +98,7 @@ func (c *IdentityV2Client) GetIssuerList() ([]string, error) {
 	return res.Did, nil
 }
 
-func (c *IdentityV2Client) GetIssuerByKey(issuerKey identityV2.IdentityKey, params identityV2.DidParams) (string, error) {
+func (c *IdentityClient) GetIssuerByKey(issuerKey identityV2.IdentityKey, params identityV2.DidParams) (string, error) {
 	res, err := c.bridgeClient.IdentityV2().GetIssuerByKey(context.Background(), &proto.GetIssuerByKeyRequest{
 		ConfigData:   c.configData,
 		IssuerKey:    issuerKey.ToProto(),
@@ -115,11 +115,11 @@ func (c *IdentityV2Client) GetIssuerByKey(issuerKey identityV2.IdentityKey, para
 	return res.GetDid(), nil
 }
 
-func (c *IdentityV2Client) BuildSchema(displayName string, schemaType, version, description, issuerDid string) identityV2.SchemaBuilder {
+func (c *IdentityClient) BuildSchema(displayName string, schemaType, version, description, issuerDid string) identityV2.SchemaBuilder {
 	return identityV2.NewSchemaBuilder(displayName, schemaType, version, description, issuerDid, c.configData)
 }
 
-func (c *IdentityV2Client) GetSchema(id string) (identityV2.Schema, error) {
+func (c *IdentityClient) GetSchema(id string) (identityV2.Schema, error) {
 	res, err := c.bridgeClient.IdentityV2().GetSchema(context.Background(), &proto.GetSchemaRequestV2{
 		ConfigData: c.configData,
 		Id:         id,
@@ -136,15 +136,15 @@ func (c *IdentityV2Client) GetSchema(id string) (identityV2.Schema, error) {
 	return identityV2.NewSchemaFromProto(res.GetSchema()), nil
 }
 
-func (c *IdentityV2Client) BuildCredential(schemaId, issuerDid, holderDid string, expiration int64, version int32) identityV2.CredentialBuilder {
+func (c *IdentityClient) BuildCredential(schemaId, issuerDid, holderDid string, expiration int64, version int32) identityV2.CredentialBuilder {
 	return identityV2.NewCredentialBuilder(schemaId, issuerDid, holderDid, expiration, version, c.apiManagedHost, c.configData)
 }
 
-func (c *IdentityV2Client) BuildIssuerSatePublisher(issuerDid string) identityV2.IssuerStatePublisher {
+func (c *IdentityClient) BuildIssuerSatePublisher(issuerDid string) identityV2.IssuerStatePublisher {
 	return identityV2.NewIssuerStatePublisher(issuerDid, c.configData)
 }
 
-func (c *IdentityV2Client) GetCredentialProof(issuerDid string, credentialId string) (identityV2.CredentialProof, error) {
+func (c *IdentityClient) GetCredentialProof(issuerDid string, credentialId string) (identityV2.CredentialProof, error) {
 	res, err := c.bridgeClient.IdentityV2().GetCredentialProof(context.Background(), &proto.GetCredentialProofRequest{
 		ConfigData:   c.configData,
 		IssuerDid:    issuerDid,
@@ -162,7 +162,7 @@ func (c *IdentityV2Client) GetCredentialProof(issuerDid string, credentialId str
 	return identityV2.NewCredentialProofFromProto(res.GetProof()), nil
 }
 
-func (c *IdentityV2Client) RevokeCredential(credential identityV2.Credential) (bool, error) {
+func (c *IdentityClient) RevokeCredential(credential identityV2.Credential) (bool, error) {
 	res, err := c.bridgeClient.IdentityV2().RevokeCredential(context.Background(), &proto.RevokeCredentialRequestV2{
 		ConfigData: c.configData,
 		Credential: credential.ToProto(),

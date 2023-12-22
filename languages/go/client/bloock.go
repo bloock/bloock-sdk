@@ -8,15 +8,15 @@ import (
 type BloockClient struct {
 	configData *proto.ConfigData
 
-	AuthenticityClient AuthenticityClient
-	AvailabilityClient AvailabilityClient
-	EncryptionClient   EncryptionClient
-	IdentityClient     IdentityClient
-	IdentityV2Client   IdentityV2Client
-	IntegrityClient    IntegrityClient
-	KeyClient          KeyClient
-	RecordClient       RecordClient
-	WebhookClient      WebhookClient
+	AuthenticityClient   AuthenticityClient
+	AvailabilityClient   AvailabilityClient
+	EncryptionClient     EncryptionClient
+	IdentityLegacyClient IdentityLegacyClient
+	IdentityClient       IdentityClient
+	IntegrityClient      IntegrityClient
+	KeyClient            KeyClient
+	RecordClient         RecordClient
+	WebhookClient        WebhookClient
 }
 
 func NewBloockClient(apiKey, apiManagedHost string, forceEnv *string) BloockClient {
@@ -30,14 +30,14 @@ func NewBloockClient(apiKey, apiManagedHost string, forceEnv *string) BloockClie
 	return BloockClient{
 		configData: configData,
 
-		AuthenticityClient: NewAuthenticityClientWithConfig(configData),
-		AvailabilityClient: NewAvailabilityClientWithConfig(configData),
-		EncryptionClient:   NewEncryptionClientWithConfig(configData),
-		IdentityClient:     NewIdentityLegacyClientWithConfig(configData),
-		IdentityV2Client:   NewIdentityClientWithConfig(configData, apiManagedHost),
-		IntegrityClient:    NewIntegrityClientWithConfig(configData),
-		KeyClient:          NewKeyClientWithConfig(configData),
-		RecordClient:       NewRecordClientWithConfig(configData),
-		WebhookClient:      NewWebhookClientWithConfig(configData),
+		AuthenticityClient:   NewAuthenticityClientWithConfig(configData),
+		AvailabilityClient:   NewAvailabilityClientWithConfig(configData),
+		EncryptionClient:     NewEncryptionClientWithConfig(configData),
+		IdentityLegacyClient: NewIdentityLegacyClientWithConfig(configData),
+		IdentityClient:       NewIdentityClientWithConfig(configData, apiManagedHost),
+		IntegrityClient:      NewIntegrityClientWithConfig(configData),
+		KeyClient:            NewKeyClientWithConfig(configData),
+		RecordClient:         NewRecordClientWithConfig(configData),
+		WebhookClient:        NewWebhookClientWithConfig(configData),
 	}
 }

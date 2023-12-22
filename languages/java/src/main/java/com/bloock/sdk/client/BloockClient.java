@@ -10,12 +10,15 @@ public class BloockClient {
   private final IntegrityClient integrityClient;
   private final AuthenticityClient authenticityClient;
   private final EncryptionClient encryptionClient;
+  private final IdentityLegacyClient identityLegacyClient;
+  private final IdentityClient identityClient;
   private final RecordClient recordClient;
   private final WebhookClient webhookClient;
 
-  public BloockClient(String apiKey, String forceEnv) {
+  public BloockClient(String apiKey, String apiManagedHost, String forceEnv) {
     ConfigData configData = Config.newConfigDataDefault();
-    Configuration configuration = Configuration.newBuilder(this.configData.getConfig()).setApiKey(apiKey).setEnvironment(forceEnv).build();
+    Configuration configuration = Configuration.newBuilder(this.configData.getConfig()).setApiKey(apiKey)
+        .setEnvironment(forceEnv).build();
 
     this.configData = ConfigData.newBuilder()
         .setConfig(configuration)
@@ -24,6 +27,8 @@ public class BloockClient {
 
     this.integrityClient = new IntegrityClient(this.configData);
     this.authenticityClient = new AuthenticityClient(this.configData);
+    this.identityLegacyClient = new IdentityLegacyClient(this.configData);
+    this.identityClient = new IdentityClient(this.configData, apiManagedHost);
     this.encryptionClient = new EncryptionClient(this.configData);
     this.recordClient = new RecordClient(this.configData);
     this.webhookClient = new WebhookClient(this.configData);
@@ -47,5 +52,13 @@ public class BloockClient {
 
   public WebhookClient getWebhookClient() {
     return this.webhookClient;
+  }
+
+  public IdentityLegacyClient getIdentityLegacyClient() {
+    return this.identityLegacyClient;
+  }
+
+  public IdentityClient getIdentityClient() {
+    return this.identityClient;
   }
 }
