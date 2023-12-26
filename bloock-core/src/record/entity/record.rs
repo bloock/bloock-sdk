@@ -1,5 +1,5 @@
 use crate::{
-    error::{BloockError, BloockResult, InfrastructureError, OperationalError},
+    error::{BloockError, BloockResult, InfrastructureError},
     integrity::{entity::proof::Proof, IntegrityError},
     record::{document::Document, RecordError},
 };
@@ -17,10 +17,6 @@ pub struct Record {
 
 impl Record {
     pub fn new(document: Document) -> BloockResult<Self> {
-        if document.is_encrypted() {
-            return Err(OperationalError::CannotCreateRecordFromEncryptedDocument().into());
-        }
-
         let hash = match document.get_proof() {
             Some(proof) => proof.get_hash()?,
             None => Keccak256::generate_hash(&[document.build()?.as_slice()]),
