@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.bloock.sdk.Bloock;
 import com.bloock.sdk.client.IdentityClient;
 import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.entity.authenticity.Signer;
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +28,9 @@ public class IdentityV2Test {
 
   @BeforeAll
   static void beforeAll() {
-    Utils.initDevSdk();
+    Bloock.apiKey = "no9rLf9dOMjXGvXQX3I96a39qYFoZknGd6YHtY3x1VPelr6M-TmTLpAF-fm1k9Zp";
+    Bloock.apiHost = "https://api.bloock.dev";
+
   }
 
   @Test

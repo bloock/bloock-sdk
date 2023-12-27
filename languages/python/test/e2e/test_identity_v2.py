@@ -2,7 +2,7 @@ import base64
 import datetime
 import os
 import unittest
-from datetime import datetime, timedelta
+from datetime import timedelta
 from bloock.entity.identity_v2.credential import Credential
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.identity_v2.blockchain import Blockchain

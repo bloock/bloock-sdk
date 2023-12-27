@@ -164,7 +164,7 @@ public class IdentityClient {
       throws Exception {
     IdentityV2.GetCredentialProofRequest request = IdentityV2.GetCredentialProofRequest.newBuilder()
         .setCredentialId(credentialId)
-        .setIssuerDid(credentialId)
+        .setIssuerDid(issuerDid)
         .setConfigData(this.configData)
         .build();
 
