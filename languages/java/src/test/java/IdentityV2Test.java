@@ -28,8 +28,7 @@ public class IdentityV2Test {
 
   @BeforeAll
   static void beforeAll() {
-    Bloock.apiKey = "no9rLf9dOMjXGvXQX3I96a39qYFoZknGd6YHtY3x1VPelr6M-TmTLpAF-fm1k9Zp";
-    Bloock.apiHost = "https://api.bloock.dev";
+    Utils.initDevSdk();
 
   }
 
