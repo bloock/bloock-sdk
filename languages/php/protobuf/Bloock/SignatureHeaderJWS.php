@@ -25,6 +25,10 @@ class SignatureHeaderJWS extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>optional string subject = 3;</code>
      */
     protected $subject = null;
+    /**
+     * Generated from protobuf field <code>optional string hash_alg = 4;</code>
+     */
+    protected $hash_alg = null;
 
     /**
      * Constructor.
@@ -35,6 +39,7 @@ class SignatureHeaderJWS extends \Google\Protobuf\Internal\Message
      *     @type string $alg
      *     @type string $kid
      *     @type string $subject
+     *     @type string $hash_alg
      * }
      */
     public function __construct($data = NULL) {
@@ -114,6 +119,38 @@ class SignatureHeaderJWS extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->subject = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string hash_alg = 4;</code>
+     * @return string
+     */
+    public function getHashAlg()
+    {
+        return isset($this->hash_alg) ? $this->hash_alg : '';
+    }
+
+    public function hasHashAlg()
+    {
+        return isset($this->hash_alg);
+    }
+
+    public function clearHashAlg()
+    {
+        unset($this->hash_alg);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string hash_alg = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setHashAlg($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->hash_alg = $var;
 
         return $this;
     }

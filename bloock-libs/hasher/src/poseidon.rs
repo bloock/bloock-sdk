@@ -11,7 +11,7 @@ const POSEIDON_HASH_OUTPUT_LENGTH: usize = 32;
 pub struct Poseidon {}
 
 impl Hasher for Poseidon {
-    fn generate_hash(data: &[&[u8]]) -> H256 {
+    fn hash(data: &[&[u8]]) -> H256 {
         let mut to_hash: Vec<Fr> = Vec::new();
         let bigint_slices: Vec<BigInt> = data
             .iter()
@@ -84,7 +84,7 @@ mod tests {
         let data1: &[u8] = "end world".as_bytes();
 
         assert_eq!(
-            Poseidon::generate_hash(&[data, data1]),
+            Poseidon::hash(&[data, data1]),
             hex::decode("007d88c5465933fcb9d4cdd70cb3fc8be3df4af9e4736694caa655c5e119910a")
                 .unwrap()
                 .as_slice(),
@@ -102,7 +102,7 @@ mod tests {
         ];
 
         assert_eq!(
-            Poseidon::generate_hash(&[data, data1]),
+            Poseidon::hash(&[data, data1]),
             hex::decode("1aa6c8df7a5e618fa61b751b499e9cac491149d882b9c7532dfd2df8c4e03682")
                 .unwrap()
                 .as_slice(),
@@ -117,7 +117,7 @@ mod tests {
         let data2: &[u8] = "middle world".as_bytes();
 
         assert_eq!(
-            Poseidon::generate_hash(&[data, data1, data2]),
+            Poseidon::hash(&[data, data1, data2]),
             hex::decode("0c0078b40cc0788e2bd211834239a70096cc9d0bef6fd6fd5f189f51cc486473")
                 .unwrap()
                 .as_slice(),

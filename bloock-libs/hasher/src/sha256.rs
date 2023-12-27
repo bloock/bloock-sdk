@@ -6,7 +6,7 @@ use sha2::Digest;
 pub struct Sha256 {}
 
 impl Hasher for Sha256 {
-    fn generate_hash(data: &[&[u8]]) -> H256 {
+    fn hash(data: &[&[u8]]) -> H256 {
         let mut hasher = sha2::Sha256::new();
         hasher.update(&data.concat());
         let result = hasher.finalize();
@@ -24,7 +24,7 @@ mod tests {
         let data: &[&[u8]] = &["hello world".as_bytes()];
 
         assert_eq!(
-            Sha256::generate_hash(data),
+            Sha256::hash(data),
             hex::decode("b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9")
                 .unwrap()
                 .as_slice(),

@@ -13,8 +13,8 @@ use bcder::{Captured, Mode, OctetString};
 use bloock_encrypter::entity::{
     alg::EncryptionAlg, encryption::Encryption, encryption_key::EncryptionKey,
 };
-use bloock_hasher::sha256::Sha256;
 use bloock_hasher::Hasher;
+use bloock_hasher::{sha256::Sha256, HashAlg};
 use bloock_keys::{certificates::GetX509Certficate, entity::key::Key};
 use bloock_signer::{
     entity::{alg::SignAlg, signature::Signature},
@@ -79,6 +79,7 @@ impl MetadataParser for PdfParser {
     async fn sign(
         &mut self,
         key: &Key,
+        hash_alg: Option<HashAlg>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
@@ -174,6 +175,7 @@ impl MetadataParser for PdfParser {
             environment.clone(),
             &signed_attributes_encoded,
             key,
+            hash_alg,
         )
         .await
         .map_err(|e| MetadataError::LoadError(e.to_string()))?;
@@ -467,7 +469,7 @@ impl PdfParser {
             })
             .unwrap();
 
-        let digest = Sha256::generate_hash(&[&effective_payload]);
+        let digest = Sha256::hash(&[&effective_payload]);
 
         signed_attributes
             .insert(Attribute {
@@ -478,7 +480,7 @@ impl PdfParser {
             .unwrap();
 
         let cert_der = cert.to_der().unwrap();
-        let cert_hash = Sha256::generate_hash(&[&cert_der]).to_vec();
+        let cert_hash = Sha256::hash(&[&cert_der]).to_vec();
 
         let signing_certificate = SigningCertificateV2 {
             certs: ESSCertIDv2Sequence(vec![ESSCertIDv2 {
@@ -666,12 +668,10 @@ impl PdfParser {
                 let raw_signature = signer.signature.as_bytes();
                 let algorithm = SignAlg::Rsa;
                 let signed_attributes_encoded = match signer.signed_attrs.clone() {
-                    Some(s) => {
-                        self.get_signed_attributes_encoded(s)?
-                    }
+                    Some(s) => self.get_signed_attributes_encoded(s)?,
                     None => return Err(MetadataError::DeserializeError),
                 };
-                let message_hash = Sha256::generate_hash(&[&signed_attributes_encoded]).to_vec();
+                let message_hash = Sha256::hash(&[&signed_attributes_encoded]).to_vec();
 
                 let certificate_inner: Option<TbsCertificateInner> =
                     match signed_data.certificates.clone() {
@@ -702,6 +702,7 @@ impl PdfParser {
                         subject: Some(cert.subject.to_string()),
                         signature: hex::encode(raw_signature),
                         message_hash: hex::encode(message_hash),
+                        hash_alg: Some(HashAlg::Sha256),
                     };
                     response.push((signature, signed_attributes_encoded.clone()));
                 }
@@ -749,6 +750,7 @@ impl PdfParser {
                 subject: None,
                 signature: sig.signature.clone(),
                 message_hash: sig.message_hash.clone(),
+                hash_alg: sig.header.hash_alg.clone(),
             };
 
             response.push(signature);

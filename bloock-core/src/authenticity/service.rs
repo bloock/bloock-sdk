@@ -2,6 +2,7 @@ use crate::{
     config::service::ConfigService, error::BloockResult, integrity::IntegrityError,
     record::entity::record::Record,
 };
+use bloock_hasher::HashAlg;
 use bloock_http::Client;
 use bloock_keys::entity::key::Key;
 use bloock_signer::entity::signature::Signature;
@@ -13,8 +14,13 @@ pub struct AuthenticityService<H: Client> {
 }
 
 impl<H: Client> AuthenticityService<H> {
-    pub async fn sign(&self, mut record: Record, key: &Key) -> BloockResult<Signature> {
-        let signature = record.sign(key).await?;
+    pub async fn sign(
+        &self,
+        mut record: Record,
+        key: &Key,
+        hash_alg: Option<HashAlg>,
+    ) -> BloockResult<Signature> {
+        let signature = record.sign(key, hash_alg).await?;
 
         Ok(signature)
     }
@@ -70,6 +76,7 @@ mod tests {
             .sign(
                 record,
                 &Key::Local(bloock_keys::entity::key::Local::Key(local_key)),
+                None,
             )
             .await
             .unwrap();
@@ -105,6 +112,7 @@ mod tests {
             .sign(
                 record,
                 &Key::Local(bloock_keys::entity::key::Local::Key(local_key)),
+                None,
             )
             .await
             .unwrap();

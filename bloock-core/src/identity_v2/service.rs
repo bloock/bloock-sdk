@@ -280,8 +280,7 @@ impl<H: Client> IdentityServiceV2<H> {
         let credential_json = vc
             .to_json()
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
-        let credential_keccak_hash =
-            hex::encode(Keccak256::generate_hash(&[credential_json.as_bytes()]));
+        let credential_keccak_hash = hex::encode(Keccak256::hash(&[credential_json.as_bytes()]));
 
         let mut credential: Credential = serde_json::from_str(&credential_json)
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
@@ -292,6 +291,7 @@ impl<H: Client> IdentityServiceV2<H> {
             self.config_service.get_environment(),
             &core_claim_hash_decoded,
             &key,
+            None,
         )
         .await
         .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
@@ -423,6 +423,7 @@ impl<H: Client> IdentityServiceV2<H> {
             self.config_service.get_environment(),
             &new_state_hash_decoded,
             &key,
+            None,
         )
         .await
         .map_err(|e| IdentityErrorV2::PublishIssuerStateError(e.to_string()))?;

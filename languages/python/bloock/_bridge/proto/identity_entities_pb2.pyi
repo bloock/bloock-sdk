@@ -9,6 +9,7 @@ import google.protobuf.internal.containers
 import google.protobuf.message
 import integrity_entities_pb2
 import sys
+import typing
 
 if sys.version_info >= (3, 8):
     import typing as typing_extensions
@@ -482,18 +483,24 @@ class SignatureHeaderJWS(google.protobuf.message.Message):
     ALG_FIELD_NUMBER: builtins.int
     KID_FIELD_NUMBER: builtins.int
     SUBJECT_FIELD_NUMBER: builtins.int
+    HASH_ALG_FIELD_NUMBER: builtins.int
     alg: builtins.str
     kid: builtins.str
     subject: builtins.str
+    hash_alg: builtins.str
     def __init__(
         self,
         *,
         alg: builtins.str = ...,
         kid: builtins.str = ...,
         subject: builtins.str | None = ...,
+        hash_alg: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_subject", b"_subject", "subject", b"subject"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_subject", b"_subject", "alg", b"alg", "kid", b"kid", "subject", b"subject"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_hash_alg", b"_hash_alg", "_subject", b"_subject", "hash_alg", b"hash_alg", "subject", b"subject"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_hash_alg", b"_hash_alg", "_subject", b"_subject", "alg", b"alg", "hash_alg", b"hash_alg", "kid", b"kid", "subject", b"subject"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_hash_alg", b"_hash_alg"]) -> typing_extensions.Literal["hash_alg"] | None: ...
+    @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_subject", b"_subject"]) -> typing_extensions.Literal["subject"] | None: ...
 
 global___SignatureHeaderJWS = SignatureHeaderJWS

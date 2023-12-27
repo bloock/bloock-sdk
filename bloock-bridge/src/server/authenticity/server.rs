@@ -1,16 +1,14 @@
 use crate::{
     error::BridgeError,
     items::{
-        AuthenticityServiceHandler, GetSignaturesRequest, GetSignaturesResponse, SignRequest,
-        SignResponse, Signature, SignatureCommonNameRequest, SignatureCommonNameResponse,
-        VerifyRequest, VerifyResponse,
+        AuthenticityServiceHandler, GetSignaturesRequest, GetSignaturesResponse, HashAlg,
+        SignRequest, SignResponse, Signature, VerifyRequest, VerifyResponse,
     },
     server::response_types::RequestConfigData,
 };
 use async_trait::async_trait;
-use bloock_core::{
-    authenticity, record::entity::record::Record as RecordCore,
-};
+use bloock_core::{authenticity, record::entity::record::Record as RecordCore};
+use bloock_hasher::HashAlg as HashAlgCore;
 use bloock_keys::certificates::local::LocalCertificate as LocalCertificateCore;
 use bloock_keys::certificates::managed::ManagedCertificate as ManagedCertificateCore;
 use bloock_keys::entity::key::Key;
@@ -40,6 +38,11 @@ impl AuthenticityServiceHandler for AuthenticityServer {
             .signer
             .ok_or_else(|| "no signer provided".to_string())?;
 
+        let hash_alg: Option<HashAlgCore> = signer
+            .hash_alg
+            .and_then(|h| HashAlg::from_i32(h))
+            .and_then(|h| Some(HashAlgCore::from(h)));
+
         let key: Key = if let Some(managed_key) = signer.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
             managed_key_core.into()
@@ -58,7 +61,10 @@ impl AuthenticityServiceHandler for AuthenticityServer {
             return Err("invalid key provided".to_string());
         };
 
-        let signature: SignatureCore = client.sign(record, &key).await.map_err(|e| e.to_string())?;
+        let signature: SignatureCore = client
+            .sign(record, &key, hash_alg)
+            .await
+            .map_err(|e| e.to_string())?;
 
         Ok(SignResponse {
             signature: Some(signature.into()),
@@ -82,42 +88,6 @@ impl AuthenticityServiceHandler for AuthenticityServer {
         let valid = client.verify(record).await.map_err(|e| e.to_string())?;
 
         Ok(VerifyResponse { valid, error: None })
-    }
-
-    async fn get_signature_common_name(
-        &self,
-        req: &SignatureCommonNameRequest,
-    ) -> Result<SignatureCommonNameResponse, String> {
-        let config_data = req.get_config_data()?;
-
-        let req_signature = req
-            .clone()
-            .signature
-            .ok_or_else(|| "invalid signature provided".to_string())?;
-
-        let signature: SignatureCore = req_signature
-            .try_into()
-            .map_err(|e: BridgeError| e.to_string())?;
-
-        /*let provider = match config_data
-            .clone()
-            .networks_config
-            .get(&Network::EthereumMainnet)
-        {
-            Some(n) => n.http_provider.clone(),
-            None => "".to_string(),
-        };
-
-        let common_name = signature
-            .get_common_name(provider, config_data.clone().config.api_key)
-            .await
-            .map_err(|e| e.to_string())?;*/
-        let common_name = "".to_string();
-
-        Ok(SignatureCommonNameResponse {
-            common_name,
-            error: None,
-        })
     }
 
     async fn get_signatures(

@@ -140,6 +140,7 @@ export interface SignatureHeaderJWS {
   alg: string;
   kid: string;
   subject?: string | undefined;
+  hashAlg?: string | undefined;
 }
 
 function createBaseIdentity(): Identity {
@@ -1664,7 +1665,7 @@ export const SignatureJWS = {
 };
 
 function createBaseSignatureHeaderJWS(): SignatureHeaderJWS {
-  return { alg: "", kid: "", subject: undefined };
+  return { alg: "", kid: "", subject: undefined, hashAlg: undefined };
 }
 
 export const SignatureHeaderJWS = {
@@ -1677,6 +1678,9 @@ export const SignatureHeaderJWS = {
     }
     if (message.subject !== undefined) {
       writer.uint32(26).string(message.subject);
+    }
+    if (message.hashAlg !== undefined) {
+      writer.uint32(34).string(message.hashAlg);
     }
     return writer;
   },
@@ -1697,6 +1701,9 @@ export const SignatureHeaderJWS = {
         case 3:
           message.subject = reader.string();
           break;
+        case 4:
+          message.hashAlg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1710,6 +1717,7 @@ export const SignatureHeaderJWS = {
       alg: isSet(object.alg) ? String(object.alg) : "",
       kid: isSet(object.kid) ? String(object.kid) : "",
       subject: isSet(object.subject) ? String(object.subject) : undefined,
+      hashAlg: isSet(object.hashAlg) ? String(object.hashAlg) : undefined,
     };
   },
 
@@ -1718,6 +1726,7 @@ export const SignatureHeaderJWS = {
     message.alg !== undefined && (obj.alg = message.alg);
     message.kid !== undefined && (obj.kid = message.kid);
     message.subject !== undefined && (obj.subject = message.subject);
+    message.hashAlg !== undefined && (obj.hashAlg = message.hashAlg);
     return obj;
   },
 
@@ -1726,6 +1735,7 @@ export const SignatureHeaderJWS = {
     message.alg = object.alg ?? "";
     message.kid = object.kid ?? "";
     message.subject = object.subject ?? undefined;
+    message.hashAlg = object.hashAlg ?? undefined;
     return message;
   },
 };

@@ -6,6 +6,7 @@ use bloock_core::identity::entity::{
     credential_offer::CredentialOfferBody as CoreCredentialOfferBody,
     credential_offer::CredentialOfferBodyCredential as CoreCredentialOfferBodyCredential,
 };
+use bloock_hasher::HashAlg;
 use bloock_signer::format::jws::{JwsSignature, JwsSignatureHeader};
 
 use crate::{
@@ -153,7 +154,7 @@ impl TryFrom<SignatureJws> for JwsSignature {
     type Error = BridgeError;
 
     fn try_from(s: SignatureJws) -> Result<Self, Self::Error> {
-        let bloock_proof = s.header.ok_or_else(|| {
+        let jws_header = s.header.ok_or_else(|| {
             BridgeError::RequestDeserialization(
                 "couldn't deserialize signature jws header".to_string(),
             )
@@ -162,7 +163,7 @@ impl TryFrom<SignatureJws> for JwsSignature {
         Ok(Self {
             protected: s.protected,
             signature: s.signature,
-            header: bloock_proof.into(),
+            header: jws_header.into(),
             message_hash: s.message_hash,
         })
     }
@@ -174,6 +175,7 @@ impl From<SignatureHeaderJws> for JwsSignatureHeader {
             alg: h.alg,
             kid: h.kid,
             subject: h.subject,
+            hash_alg: h.hash_alg.and_then(|h| HashAlg::try_from(h.as_str()).ok()),
         }
     }
 }
@@ -195,6 +197,7 @@ impl From<JwsSignatureHeader> for SignatureHeaderJws {
             alg: h.alg,
             kid: h.kid,
             subject: h.subject,
+            hash_alg: h.hash_alg.and_then(|h| Some(h.to_string())),
         }
     }
 }

@@ -30,9 +30,9 @@ class Signer extends \Google\Protobuf\Internal\Message
      */
     protected $managed_certificate = null;
     /**
-     * Generated from protobuf field <code>optional string common_name = 5;</code>
+     * Generated from protobuf field <code>optional .bloock.HashAlg hash_alg = 5;</code>
      */
-    protected $common_name = null;
+    protected $hash_alg = null;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ class Signer extends \Google\Protobuf\Internal\Message
      *     @type \Bloock\ManagedKey $managed_key
      *     @type \Bloock\LocalCertificate $local_certificate
      *     @type \Bloock\ManagedCertificate $managed_certificate
-     *     @type string $common_name
+     *     @type int $hash_alg
      * }
      */
     public function __construct($data = NULL) {
@@ -181,33 +181,33 @@ class Signer extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional string common_name = 5;</code>
-     * @return string
+     * Generated from protobuf field <code>optional .bloock.HashAlg hash_alg = 5;</code>
+     * @return int
      */
-    public function getCommonName()
+    public function getHashAlg()
     {
-        return isset($this->common_name) ? $this->common_name : '';
+        return isset($this->hash_alg) ? $this->hash_alg : 0;
     }
 
-    public function hasCommonName()
+    public function hasHashAlg()
     {
-        return isset($this->common_name);
+        return isset($this->hash_alg);
     }
 
-    public function clearCommonName()
+    public function clearHashAlg()
     {
-        unset($this->common_name);
+        unset($this->hash_alg);
     }
 
     /**
-     * Generated from protobuf field <code>optional string common_name = 5;</code>
-     * @param string $var
+     * Generated from protobuf field <code>optional .bloock.HashAlg hash_alg = 5;</code>
+     * @param int $var
      * @return $this
      */
-    public function setCommonName($var)
+    public function setHashAlg($var)
     {
-        GPBUtil::checkString($var, True);
-        $this->common_name = $var;
+        GPBUtil::checkEnum($var, \Bloock\HashAlg::class);
+        $this->hash_alg = $var;
 
         return $this;
     }

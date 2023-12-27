@@ -29,11 +29,6 @@ class AuthenticityServiceStub(object):
                 request_serializer=authenticity__pb2.GetSignaturesRequest.SerializeToString,
                 response_deserializer=authenticity__pb2.GetSignaturesResponse.FromString,
                 )
-        self.GetSignatureCommonName = channel.unary_unary(
-                '/bloock.AuthenticityService/GetSignatureCommonName',
-                request_serializer=authenticity__pb2.SignatureCommonNameRequest.SerializeToString,
-                response_deserializer=authenticity__pb2.SignatureCommonNameResponse.FromString,
-                )
 
 
 class AuthenticityServiceServicer(object):
@@ -57,12 +52,6 @@ class AuthenticityServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetSignatureCommonName(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
 
 def add_AuthenticityServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -80,11 +69,6 @@ def add_AuthenticityServiceServicer_to_server(servicer, server):
                     servicer.GetSignatures,
                     request_deserializer=authenticity__pb2.GetSignaturesRequest.FromString,
                     response_serializer=authenticity__pb2.GetSignaturesResponse.SerializeToString,
-            ),
-            'GetSignatureCommonName': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetSignatureCommonName,
-                    request_deserializer=authenticity__pb2.SignatureCommonNameRequest.FromString,
-                    response_serializer=authenticity__pb2.SignatureCommonNameResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -144,22 +128,5 @@ class AuthenticityService(object):
         return grpc.experimental.unary_unary(request, target, '/bloock.AuthenticityService/GetSignatures',
             authenticity__pb2.GetSignaturesRequest.SerializeToString,
             authenticity__pb2.GetSignaturesResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetSignatureCommonName(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/bloock.AuthenticityService/GetSignatureCommonName',
-            authenticity__pb2.SignatureCommonNameRequest.SerializeToString,
-            authenticity__pb2.SignatureCommonNameResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

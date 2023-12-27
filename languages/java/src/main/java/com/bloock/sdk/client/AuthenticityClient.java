@@ -95,21 +95,4 @@ public class AuthenticityClient {
         .map(x -> Signature.fromProto(x))
         .collect(Collectors.toList());
   }
-
-  public String getSignatureCommonName(Signature signature) throws Exception {
-    SignatureCommonNameResponse res =
-        this.bridge
-            .getAuthenticity()
-            .getSignatureCommonName(
-                SignatureCommonNameRequest.newBuilder()
-                    .setConfigData(this.configData)
-                    .setSignature(signature.toProto())
-                    .build());
-
-    if (res.getError() != Error.getDefaultInstance()) {
-      throw new Exception(res.getError().getMessage());
-    }
-
-    return res.getCommonName();
-  }
 }

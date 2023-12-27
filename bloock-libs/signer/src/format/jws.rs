@@ -3,6 +3,7 @@ use crate::entity::signature::Signature;
 use crate::Result;
 use crate::SignFormat;
 use crate::SignerError;
+use bloock_hasher::HashAlg;
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone)]
@@ -26,6 +27,7 @@ impl SignFormat for JwsFormatter {
                     alg: s.alg.to_string(),
                     kid: s.key.clone(),
                     subject: s.subject.clone(),
+                    hash_alg: s.hash_alg.clone(),
                 },
                 message_hash: s.message_hash.clone(),
             })
@@ -47,6 +49,7 @@ impl SignFormat for JwsFormatter {
                     subject: s.header.subject.clone(),
                     signature: s.signature.clone(),
                     message_hash: s.message_hash.clone(),
+                    hash_alg: s.header.hash_alg.clone(),
                 })
             })
             .collect::<Result<Vec<Signature>>>()?;
@@ -68,4 +71,6 @@ pub struct JwsSignatureHeader {
     pub kid: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub subject: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hash_alg: Option<HashAlg>,
 }

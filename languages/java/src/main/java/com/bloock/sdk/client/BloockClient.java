@@ -17,7 +17,7 @@ public class BloockClient {
 
   public BloockClient(String apiKey, String apiManagedHost, String forceEnv) {
     ConfigData configData = Config.newConfigDataDefault();
-    Configuration configuration = Configuration.newBuilder(this.configData.getConfig()).setApiKey(apiKey)
+    Configuration configuration = Configuration.newBuilder().setApiKey(apiKey)
         .setEnvironment(forceEnv).build();
 
     this.configData = ConfigData.newBuilder()

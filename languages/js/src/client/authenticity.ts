@@ -7,7 +7,6 @@ import { Record } from "../entity/record";
 import {
   GetSignaturesRequest,
   SignRequest,
-  SignatureCommonNameRequest,
   VerifyRequest
 } from "../bridge/proto/authenticity";
 import { Signer } from "../entity/authenticity/signer";
@@ -42,23 +41,6 @@ export class AuthenticityClient {
           throw res.error;
         }
         return EcdsaKeyPair.fromProto(res);
-      });
-  }
-
-  public async getSignatureCommonName(signature: Signature) {
-    return this.bridge
-      .getAuthenticity()
-      .GetSignatureCommonName(
-        SignatureCommonNameRequest.fromPartial({
-          configData: this.configData,
-          signature: signature.toProto()
-        })
-      )
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return res.commonName;
       });
   }
 

@@ -1,6 +1,6 @@
 [package]
 name = "bloock_bridge"
-version = "2.7.0-beta.11"
+version = "2.7.0-beta.12"
 edition = "2021"
 
 [lib]
@@ -18,6 +18,7 @@ async-trait = "0.1.57"
 base64 = "0.13.0"
 serde_json = "1.0.82"
 bloock-encrypter = { path = "../bloock-libs/encrypter" }
+bloock-hasher = { path = "../bloock-libs/hasher" }
 bloock-keys = { path = "../bloock-libs/keys" }
 bloock-identity-rs = { path = "../bloock-libs/identity-v2" }
 bloock-signer = { path = "../bloock-libs/signer" }

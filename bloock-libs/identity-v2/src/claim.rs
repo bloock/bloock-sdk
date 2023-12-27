@@ -72,15 +72,15 @@ impl Claim {
         let mut common_hash: Vec<BigInt> = vec![];
 
         let index = elem_bytes_to_ints(self.index.to_vec());
-        let h_index = self.hash.generate_hash_bigints(&index);
+        let h_index = self.hash.hash_bigints(&index);
 
         let value = elem_bytes_to_ints(self.value.to_vec());
-        let h_value = self.hash.generate_hash_bigints(&value);
+        let h_value = self.hash.hash_bigints(&value);
 
         common_hash.push(h_index.into());
         common_hash.push(h_value.into());
 
-        let result = self.hash.generate_hash_bigints(&common_hash);
+        let result = self.hash.hash_bigints(&common_hash);
 
         hex::encode(result.to_bytes_be())
     }

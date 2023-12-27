@@ -137,7 +137,7 @@ func TestIdentityV2(t *testing.T) {
 			WithStringAttribute("car_type", "big").
 			WithIntegerAttribute("car_points", 5).
 			WithDecimalAttribute("precision_wheels", 1.10).
-			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj)).
+			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj, nil)).
 			WithProofType(proofType).
 			Build()
 		assert.NoError(t, err)
@@ -152,13 +152,13 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
 
 		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj)).
+			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj, nil)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj)).
+			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj, nil)).
 			Build()
 		assert.Error(t, err)
 
@@ -199,7 +199,7 @@ func TestIdentityV2(t *testing.T) {
 			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
 			WithIntegerAttribute("document_type", 1).
-			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj)).
+			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj, nil)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, res.CredentialId)
@@ -213,7 +213,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, KYCAgeSchemaType, credential.Type[1])
 
 		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj)).
+			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj, nil)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
@@ -222,7 +222,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.Error(t, err)
 
 		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj)).
+			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj, nil)).
 			Build()
 		assert.Error(t, err)
 

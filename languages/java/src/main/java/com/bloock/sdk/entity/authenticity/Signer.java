@@ -13,20 +13,42 @@ public class Signer {
   ManagedCertificate managedCertificate;
   LocalCertificate localCertificate;
 
+  HashAlg hashAlg;
+
   public Signer(LocalKey localKey) {
     this.localKey = localKey;
+  }
+
+  public Signer(LocalKey localKey, HashAlg hashAlg) {
+    this.localKey = localKey;
+    this.hashAlg = hashAlg;
   }
 
   public Signer(ManagedKey managedKey) {
     this.managedKey = managedKey;
   }
 
+  public Signer(ManagedKey managedKey, HashAlg hashAlg) {
+    this.managedKey = managedKey;
+    this.hashAlg = hashAlg;
+  }
+
   public Signer(ManagedCertificate managedCertificate) {
     this.managedCertificate = managedCertificate;
   }
 
+  public Signer(ManagedCertificate managedCertificate, HashAlg hashAlg) {
+    this.managedCertificate = managedCertificate;
+    this.hashAlg = hashAlg;
+  }
+
   public Signer(LocalCertificate localCertificate) {
     this.localCertificate = localCertificate;
+  }
+
+  public Signer(LocalCertificate localCertificate, HashAlg hashAlg) {
+    this.localCertificate = localCertificate;
+    this.hashAlg = hashAlg;
   }
 
   public AuthenticityEntities.Signer toProto() {
@@ -46,6 +68,10 @@ public class Signer {
 
     if (this.localCertificate != null) {
       builder.setLocalCertificate(this.localCertificate.toProto());
+    }
+
+    if (this.hashAlg != null) {
+      builder.setHashAlg(this.hashAlg.toProto());
     }
 
     return builder.build();

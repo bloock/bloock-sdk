@@ -62,7 +62,7 @@ impl RecordDetails {
             let proof = document.get_proof();
             let hash = match proof.clone() {
                 Some(proof) => proof.get_hash()?,
-                None => Keccak256::generate_hash(&[document.build()?.as_slice()]),
+                None => Keccak256::hash(&[document.build()?.as_slice()]),
             };
             details.integrity = Some(IntegrityDetails {
                 hash: hex::encode(&hash),
@@ -104,7 +104,7 @@ mod tests {
     const PAYLOAD: &[u8] = include_bytes!("../../../assets/dummy-image.jpeg");
     const HASH_PAYLOAD: &str = "70c0be9edaf6cc8ac299cb87ef34380fde6a452fff0158a46633e77511616fff";
     const HASH_SIGNED_PAYLOAD: &str =
-        "f3d34c91b3e618cc02efbb5c3af977bd064c847484c1d9bd621be8a6652be7f8";
+        "71f261e9548274d9074abd5ae4c3be15cf30f0a6202a27750d8fa39b6b146e00";
 
     #[tokio::test]
     async fn test_record_details_plain_record() {
@@ -250,7 +250,7 @@ mod tests {
         let payload = service
             .from_file(PAYLOAD.to_vec())
             .unwrap()
-            .with_signer(&local_key.clone().into())
+            .with_signer(&local_key.clone().into(), None)
             .build()
             .await
             .unwrap()
@@ -311,7 +311,7 @@ mod tests {
         let payload = service
             .from_file(PAYLOAD.to_vec())
             .unwrap()
-            .with_signer(&local_cert.clone().into())
+            .with_signer(&local_cert.clone().into(), None)
             .build()
             .await
             .unwrap()
@@ -365,7 +365,7 @@ mod tests {
         let payload = service
             .from_file(PAYLOAD.to_vec())
             .unwrap()
-            .with_signer(&local_key.clone().into())
+            .with_signer(&local_key.clone().into(), None)
             .with_encrypter(&local_aes_key.clone().into())
             .build()
             .await

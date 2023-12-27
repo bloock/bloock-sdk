@@ -6,6 +6,7 @@ use bloock_encrypter::{
     entity::{alg::EncryptionAlg, encryption_key::EncryptionKey},
     EncrypterError,
 };
+use bloock_hasher::HashAlg;
 use bloock_keys::entity::key::Key;
 use bloock_metadata::{FileParser, MetadataParser};
 use bloock_signer::entity::signature::Signature;
@@ -35,7 +36,7 @@ impl Document {
         })
     }
 
-    pub async fn sign(&mut self, key: &Key) -> BloockResult<Signature> {
+    pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>) -> BloockResult<Signature> {
         if self.is_encrypted() {
             return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
         }
@@ -44,6 +45,7 @@ impl Document {
             .parser
             .sign(
                 key,
+                hash_alg,
                 self.api_host.clone(),
                 self.api_key.clone(),
                 self.environment.clone(),
@@ -216,9 +218,12 @@ mod tests {
         )
         .unwrap();
         document
-            .sign(&Key::Local(bloock_keys::entity::key::Local::Certificate(
-                local_certificate,
-            )))
+            .sign(
+                &Key::Local(bloock_keys::entity::key::Local::Certificate(
+                    local_certificate,
+                )),
+                None,
+            )
             .await
             .unwrap();
 
@@ -255,9 +260,12 @@ mod tests {
         )
         .unwrap();
         let signature = document
-            .sign(&Key::Local(bloock_keys::entity::key::Local::Certificate(
-                local_certificate,
-            )))
+            .sign(
+                &Key::Local(bloock_keys::entity::key::Local::Certificate(
+                    local_certificate,
+                )),
+                None,
+            )
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
@@ -302,9 +310,12 @@ mod tests {
         )
         .unwrap();
         let signature = document
-            .sign(&Key::Local(bloock_keys::entity::key::Local::Certificate(
-                local_certificate,
-            )))
+            .sign(
+                &Key::Local(bloock_keys::entity::key::Local::Certificate(
+                    local_certificate,
+                )),
+                None,
+            )
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
@@ -340,7 +351,7 @@ mod tests {
         )
         .unwrap();
         let signature: Signature = document
-            .sign(&Key::Local(bloock_keys::entity::key::Local::Key(key)))
+            .sign(&Key::Local(bloock_keys::entity::key::Local::Key(key)), None)
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
@@ -361,7 +372,8 @@ mod tests {
     #[tokio::test]
     async fn test_signed_and_verify_pdf_with_managed_certificate() {
         let api_host = "https://api.bloock.com".to_string();
-        let api_key = "test_u4NFCv4ht7ho3fWPWem-UYC3qLHU2HXT5MEQkAV66BSOrKMprZRdIS1bshVZ8QvP".to_string();
+        let api_key =
+            "test_u4NFCv4ht7ho3fWPWem-UYC3qLHU2HXT5MEQkAV66BSOrKMprZRdIS1bshVZ8QvP".to_string();
 
         let payload = include_bytes!("./assets/dummy.pdf");
         let certificate_params = ManagedCertificateParams {
@@ -384,9 +396,12 @@ mod tests {
 
         let mut document = Document::new(payload, api_host.clone(), api_key.clone(), None).unwrap();
         let _signature = document
-            .sign(&Key::Managed(
-                bloock_keys::entity::key::Managed::Certificate(managed_certificate),
-            ))
+            .sign(
+                &Key::Managed(bloock_keys::entity::key::Managed::Certificate(
+                    managed_certificate,
+                )),
+                None,
+            )
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
@@ -645,9 +660,12 @@ mod tests {
         document.set_proof(proof.clone()).unwrap();
 
         let signature = document
-            .sign(&Key::Local(bloock_keys::entity::key::Local::Certificate(
-                local_certificate,
-            )))
+            .sign(
+                &Key::Local(bloock_keys::entity::key::Local::Certificate(
+                    local_certificate,
+                )),
+                None,
+            )
             .await
             .unwrap();
 

@@ -25,7 +25,6 @@ type AuthenticityServiceClient interface {
 	Sign(ctx context.Context, in *SignRequest, opts ...grpc.CallOption) (*SignResponse, error)
 	Verify(ctx context.Context, in *VerifyRequest, opts ...grpc.CallOption) (*VerifyResponse, error)
 	GetSignatures(ctx context.Context, in *GetSignaturesRequest, opts ...grpc.CallOption) (*GetSignaturesResponse, error)
-	GetSignatureCommonName(ctx context.Context, in *SignatureCommonNameRequest, opts ...grpc.CallOption) (*SignatureCommonNameResponse, error)
 }
 
 type authenticityServiceClient struct {
@@ -63,15 +62,6 @@ func (c *authenticityServiceClient) GetSignatures(ctx context.Context, in *GetSi
 	return out, nil
 }
 
-func (c *authenticityServiceClient) GetSignatureCommonName(ctx context.Context, in *SignatureCommonNameRequest, opts ...grpc.CallOption) (*SignatureCommonNameResponse, error) {
-	out := new(SignatureCommonNameResponse)
-	err := c.cc.Invoke(ctx, "/bloock.AuthenticityService/GetSignatureCommonName", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AuthenticityServiceServer is the server API for AuthenticityService service.
 // All implementations must embed UnimplementedAuthenticityServiceServer
 // for forward compatibility
@@ -79,7 +69,6 @@ type AuthenticityServiceServer interface {
 	Sign(context.Context, *SignRequest) (*SignResponse, error)
 	Verify(context.Context, *VerifyRequest) (*VerifyResponse, error)
 	GetSignatures(context.Context, *GetSignaturesRequest) (*GetSignaturesResponse, error)
-	GetSignatureCommonName(context.Context, *SignatureCommonNameRequest) (*SignatureCommonNameResponse, error)
 	mustEmbedUnimplementedAuthenticityServiceServer()
 }
 
@@ -95,9 +84,6 @@ func (UnimplementedAuthenticityServiceServer) Verify(context.Context, *VerifyReq
 }
 func (UnimplementedAuthenticityServiceServer) GetSignatures(context.Context, *GetSignaturesRequest) (*GetSignaturesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSignatures not implemented")
-}
-func (UnimplementedAuthenticityServiceServer) GetSignatureCommonName(context.Context, *SignatureCommonNameRequest) (*SignatureCommonNameResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSignatureCommonName not implemented")
 }
 func (UnimplementedAuthenticityServiceServer) mustEmbedUnimplementedAuthenticityServiceServer() {}
 
@@ -166,24 +152,6 @@ func _AuthenticityService_GetSignatures_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthenticityService_GetSignatureCommonName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SignatureCommonNameRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthenticityServiceServer).GetSignatureCommonName(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.AuthenticityService/GetSignatureCommonName",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthenticityServiceServer).GetSignatureCommonName(ctx, req.(*SignatureCommonNameRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // AuthenticityService_ServiceDesc is the grpc.ServiceDesc for AuthenticityService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -202,10 +170,6 @@ var AuthenticityService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSignatures",
 			Handler:    _AuthenticityService_GetSignatures_Handler,
-		},
-		{
-			MethodName: "GetSignatureCommonName",
-			Handler:    _AuthenticityService_GetSignatureCommonName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

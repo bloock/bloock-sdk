@@ -2,12 +2,51 @@
 import _m0 from "protobufjs/minimal";
 import { LocalCertificate, LocalKey, ManagedCertificate, ManagedKey } from "./keys_entities";
 
+export enum HashAlg {
+  SHA_256 = 0,
+  KECCAK_256 = 1,
+  POSEIDON = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function hashAlgFromJSON(object: any): HashAlg {
+  switch (object) {
+    case 0:
+    case "SHA_256":
+      return HashAlg.SHA_256;
+    case 1:
+    case "KECCAK_256":
+      return HashAlg.KECCAK_256;
+    case 2:
+    case "POSEIDON":
+      return HashAlg.POSEIDON;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return HashAlg.UNRECOGNIZED;
+  }
+}
+
+export function hashAlgToJSON(object: HashAlg): string {
+  switch (object) {
+    case HashAlg.SHA_256:
+      return "SHA_256";
+    case HashAlg.KECCAK_256:
+      return "KECCAK_256";
+    case HashAlg.POSEIDON:
+      return "POSEIDON";
+    case HashAlg.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface Signer {
   localKey?: LocalKey | undefined;
   managedKey?: ManagedKey | undefined;
   localCertificate?: LocalCertificate | undefined;
   managedCertificate?: ManagedCertificate | undefined;
-  commonName?: string | undefined;
+  hashAlg?: HashAlg | undefined;
 }
 
 export interface Signature {
@@ -16,6 +55,7 @@ export interface Signature {
   kid: string;
   messageHash: string;
   subject?: string | undefined;
+  hashAlg?: string | undefined;
 }
 
 function createBaseSigner(): Signer {
@@ -24,7 +64,7 @@ function createBaseSigner(): Signer {
     managedKey: undefined,
     localCertificate: undefined,
     managedCertificate: undefined,
-    commonName: undefined,
+    hashAlg: undefined,
   };
 }
 
@@ -42,8 +82,8 @@ export const Signer = {
     if (message.managedCertificate !== undefined) {
       ManagedCertificate.encode(message.managedCertificate, writer.uint32(34).fork()).ldelim();
     }
-    if (message.commonName !== undefined) {
-      writer.uint32(42).string(message.commonName);
+    if (message.hashAlg !== undefined) {
+      writer.uint32(40).int32(message.hashAlg);
     }
     return writer;
   },
@@ -68,7 +108,7 @@ export const Signer = {
           message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
           break;
         case 5:
-          message.commonName = reader.string();
+          message.hashAlg = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -86,7 +126,7 @@ export const Signer = {
       managedCertificate: isSet(object.managedCertificate)
         ? ManagedCertificate.fromJSON(object.managedCertificate)
         : undefined,
-      commonName: isSet(object.commonName) ? String(object.commonName) : undefined,
+      hashAlg: isSet(object.hashAlg) ? hashAlgFromJSON(object.hashAlg) : undefined,
     };
   },
 
@@ -100,7 +140,8 @@ export const Signer = {
     message.managedCertificate !== undefined && (obj.managedCertificate = message.managedCertificate
       ? ManagedCertificate.toJSON(message.managedCertificate)
       : undefined);
-    message.commonName !== undefined && (obj.commonName = message.commonName);
+    message.hashAlg !== undefined &&
+      (obj.hashAlg = message.hashAlg !== undefined ? hashAlgToJSON(message.hashAlg) : undefined);
     return obj;
   },
 
@@ -118,13 +159,13 @@ export const Signer = {
     message.managedCertificate = (object.managedCertificate !== undefined && object.managedCertificate !== null)
       ? ManagedCertificate.fromPartial(object.managedCertificate)
       : undefined;
-    message.commonName = object.commonName ?? undefined;
+    message.hashAlg = object.hashAlg ?? undefined;
     return message;
   },
 };
 
 function createBaseSignature(): Signature {
-  return { signature: "", alg: "", kid: "", messageHash: "", subject: undefined };
+  return { signature: "", alg: "", kid: "", messageHash: "", subject: undefined, hashAlg: undefined };
 }
 
 export const Signature = {
@@ -143,6 +184,9 @@ export const Signature = {
     }
     if (message.subject !== undefined) {
       writer.uint32(42).string(message.subject);
+    }
+    if (message.hashAlg !== undefined) {
+      writer.uint32(50).string(message.hashAlg);
     }
     return writer;
   },
@@ -169,6 +213,9 @@ export const Signature = {
         case 5:
           message.subject = reader.string();
           break;
+        case 6:
+          message.hashAlg = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -184,6 +231,7 @@ export const Signature = {
       kid: isSet(object.kid) ? String(object.kid) : "",
       messageHash: isSet(object.messageHash) ? String(object.messageHash) : "",
       subject: isSet(object.subject) ? String(object.subject) : undefined,
+      hashAlg: isSet(object.hashAlg) ? String(object.hashAlg) : undefined,
     };
   },
 
@@ -194,6 +242,7 @@ export const Signature = {
     message.kid !== undefined && (obj.kid = message.kid);
     message.messageHash !== undefined && (obj.messageHash = message.messageHash);
     message.subject !== undefined && (obj.subject = message.subject);
+    message.hashAlg !== undefined && (obj.hashAlg = message.hashAlg);
     return obj;
   },
 
@@ -204,6 +253,7 @@ export const Signature = {
     message.kid = object.kid ?? "";
     message.messageHash = object.messageHash ?? "";
     message.subject = object.subject ?? undefined;
+    message.hashAlg = object.hashAlg ?? undefined;
     return message;
   },
 };

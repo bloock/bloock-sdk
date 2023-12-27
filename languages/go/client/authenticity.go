@@ -102,21 +102,3 @@ func (c *AuthenticityClient) GetSignatures(r record.Record) ([]authenticity.Sign
 	}
 	return signatures, nil
 }
-
-func (c *AuthenticityClient) GetSignatureCommonName(signature authenticity.Signature) (string, error) {
-	bridgeClient := bridge.NewBloockBridge()
-	res, err := bridgeClient.Authenticity().GetSignatureCommonName(context.Background(), &proto.SignatureCommonNameRequest{
-		ConfigData: c.configData,
-		Signature:  signature.ToProto(),
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	if res.Error != nil {
-		return "", errors.New(res.Error.Message)
-	}
-
-	return res.CommonName, nil
-}

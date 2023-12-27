@@ -328,7 +328,7 @@ func TestRecord(t *testing.T) {
 
 		recordClient := NewRecordClient()
 		record, err := recordClient.FromString(payload).
-			WithSigner(authenticity.NewSignerWithLocalCertificate(localCert)).
+			WithSigner(authenticity.NewSignerWithLocalCertificate(localCert, nil)).
 			Build()
 
 		require.NoError(t, err)
