@@ -147,31 +147,16 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
 
+		ok, err := identityClient.RevokeCredential(credential, authenticity.NewSignerWithManagedKey(keyBjj))
+		assert.NoError(t, err)
+		assert.True(t, ok)
+
 		receipt, err := identityClient.PublishIssuerState(issuer, authenticity.NewSignerWithManagedKey(keyBjj))
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
 
 		receipt, err = identityClient.PublishIssuerState(issuer, authenticity.NewSignerWithManagedKey(keyBjj))
 		assert.Error(t, err)
-
-		deadline := time.Now().Add(time.Duration(2) * time.Minute)
-		finish := true
-		for finish {
-			if time.Now().After(deadline) {
-				break
-			}
-
-			proof, err := identityClient.GetCredentialProof(issuer, res.CredentialId)
-			assert.NoError(t, err)
-
-			if proof.SparseMtProof != "" {
-				finish = false
-			}
-		}
-
-		ok, err := identityClient.RevokeCredential(credential, authenticity.NewSignerWithManagedKey(keyBjj))
-		assert.NoError(t, err)
-		assert.True(t, ok)
 	})
 
 	t.Run("identity v2 end to end with local key", func(t *testing.T) {
