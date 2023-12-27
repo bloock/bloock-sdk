@@ -19,96 +19,96 @@ import {
 import { Error } from "./shared";
 
 export interface GenerateLocalKeyRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   keyType: KeyType;
 }
 
 export interface GenerateLocalKeyResponse {
-  localKey?: LocalKey;
+  localKey?: LocalKey | undefined;
   error?: Error | undefined;
 }
 
 export interface GenerateManagedKeyRequest {
-  configData?: ConfigData;
-  params?: ManagedKeyParams;
+  configData?: ConfigData | undefined;
+  params?: ManagedKeyParams | undefined;
 }
 
 export interface GenerateManagedKeyResponse {
-  managedKey?: ManagedKey;
+  managedKey?: ManagedKey | undefined;
   error?: Error | undefined;
 }
 
 export interface LoadLocalKeyRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   keyType: KeyType;
   key: string;
 }
 
 export interface LoadLocalKeyResponse {
-  localKey?: LocalKey;
+  localKey?: LocalKey | undefined;
   error?: Error | undefined;
 }
 
 export interface LoadManagedKeyRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   id: string;
 }
 
 export interface LoadManagedKeyResponse {
-  managedKey?: ManagedKey;
+  managedKey?: ManagedKey | undefined;
   error?: Error | undefined;
 }
 
 export interface GenerateLocalCertificateRequest {
-  configData?: ConfigData;
-  params?: LocalCertificateParams;
+  configData?: ConfigData | undefined;
+  params?: LocalCertificateParams | undefined;
 }
 
 export interface GenerateLocalCertificateResponse {
-  localCertificate?: LocalCertificate;
+  localCertificate?: LocalCertificate | undefined;
   error?: Error | undefined;
 }
 
 export interface GenerateManagedCertificateRequest {
-  configData?: ConfigData;
-  params?: ManagedCertificateParams;
+  configData?: ConfigData | undefined;
+  params?: ManagedCertificateParams | undefined;
 }
 
 export interface GenerateManagedCertificateResponse {
-  managedCertificate?: ManagedCertificate;
+  managedCertificate?: ManagedCertificate | undefined;
   error?: Error | undefined;
 }
 
 export interface LoadLocalCertificateRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   pkcs12: Uint8Array;
   password: string;
 }
 
 export interface LoadLocalCertificateResponse {
-  localCertificate?: LocalCertificate;
+  localCertificate?: LocalCertificate | undefined;
   error?: Error | undefined;
 }
 
 export interface LoadManagedCertificateRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   id: string;
 }
 
 export interface LoadManagedCertificateResponse {
-  managedCertificate?: ManagedCertificate;
+  managedCertificate?: ManagedCertificate | undefined;
   error?: Error | undefined;
 }
 
 export interface ImportManagedCertificateRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   certificate: Uint8Array;
   password?: string | undefined;
   certificateType: CertificateType;
 }
 
 export interface ImportManagedCertificateResponse {
-  managedCertificate?: ManagedCertificate;
+  managedCertificate?: ManagedCertificate | undefined;
   error?: Error | undefined;
 }
 
@@ -128,22 +128,31 @@ export const GenerateLocalKeyRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GenerateLocalKeyRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGenerateLocalKeyRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.keyType = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -157,12 +166,18 @@ export const GenerateLocalKeyRequest = {
 
   toJSON(message: GenerateLocalKeyRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.keyType !== 0) {
+      obj.keyType = keyTypeToJSON(message.keyType);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GenerateLocalKeyRequest>, I>>(base?: I): GenerateLocalKeyRequest {
+    return GenerateLocalKeyRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GenerateLocalKeyRequest>, I>>(object: I): GenerateLocalKeyRequest {
     const message = createBaseGenerateLocalKeyRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -189,22 +204,31 @@ export const GenerateLocalKeyResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GenerateLocalKeyResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGenerateLocalKeyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.localKey = LocalKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -218,11 +242,18 @@ export const GenerateLocalKeyResponse = {
 
   toJSON(message: GenerateLocalKeyResponse): unknown {
     const obj: any = {};
-    message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.localKey !== undefined) {
+      obj.localKey = LocalKey.toJSON(message.localKey);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GenerateLocalKeyResponse>, I>>(base?: I): GenerateLocalKeyResponse {
+    return GenerateLocalKeyResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GenerateLocalKeyResponse>, I>>(object: I): GenerateLocalKeyResponse {
     const message = createBaseGenerateLocalKeyResponse();
     message.localKey = (object.localKey !== undefined && object.localKey !== null)
@@ -249,22 +280,31 @@ export const GenerateManagedKeyRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GenerateManagedKeyRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGenerateManagedKeyRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.params = ManagedKeyParams.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -278,12 +318,18 @@ export const GenerateManagedKeyRequest = {
 
   toJSON(message: GenerateManagedKeyRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.params !== undefined && (obj.params = message.params ? ManagedKeyParams.toJSON(message.params) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.params !== undefined) {
+      obj.params = ManagedKeyParams.toJSON(message.params);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GenerateManagedKeyRequest>, I>>(base?: I): GenerateManagedKeyRequest {
+    return GenerateManagedKeyRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GenerateManagedKeyRequest>, I>>(object: I): GenerateManagedKeyRequest {
     const message = createBaseGenerateManagedKeyRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -312,22 +358,31 @@ export const GenerateManagedKeyResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GenerateManagedKeyResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGenerateManagedKeyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.managedKey = ManagedKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -341,12 +396,18 @@ export const GenerateManagedKeyResponse = {
 
   toJSON(message: GenerateManagedKeyResponse): unknown {
     const obj: any = {};
-    message.managedKey !== undefined &&
-      (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.managedKey !== undefined) {
+      obj.managedKey = ManagedKey.toJSON(message.managedKey);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GenerateManagedKeyResponse>, I>>(base?: I): GenerateManagedKeyResponse {
+    return GenerateManagedKeyResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GenerateManagedKeyResponse>, I>>(object: I): GenerateManagedKeyResponse {
     const message = createBaseGenerateManagedKeyResponse();
     message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
@@ -376,25 +437,38 @@ export const LoadLocalKeyRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadLocalKeyRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadLocalKeyRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.keyType = reader.int32() as any;
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.key = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -403,19 +477,27 @@ export const LoadLocalKeyRequest = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
-      key: isSet(object.key) ? String(object.key) : "",
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
     };
   },
 
   toJSON(message: LoadLocalKeyRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
-    message.key !== undefined && (obj.key = message.key);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.keyType !== 0) {
+      obj.keyType = keyTypeToJSON(message.keyType);
+    }
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadLocalKeyRequest>, I>>(base?: I): LoadLocalKeyRequest {
+    return LoadLocalKeyRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadLocalKeyRequest>, I>>(object: I): LoadLocalKeyRequest {
     const message = createBaseLoadLocalKeyRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -443,22 +525,31 @@ export const LoadLocalKeyResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadLocalKeyResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadLocalKeyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.localKey = LocalKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -472,11 +563,18 @@ export const LoadLocalKeyResponse = {
 
   toJSON(message: LoadLocalKeyResponse): unknown {
     const obj: any = {};
-    message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.localKey !== undefined) {
+      obj.localKey = LocalKey.toJSON(message.localKey);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadLocalKeyResponse>, I>>(base?: I): LoadLocalKeyResponse {
+    return LoadLocalKeyResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadLocalKeyResponse>, I>>(object: I): LoadLocalKeyResponse {
     const message = createBaseLoadLocalKeyResponse();
     message.localKey = (object.localKey !== undefined && object.localKey !== null)
@@ -503,22 +601,31 @@ export const LoadManagedKeyRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadManagedKeyRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadManagedKeyRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -526,18 +633,24 @@ export const LoadManagedKeyRequest = {
   fromJSON(object: any): LoadManagedKeyRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      id: isSet(object.id) ? String(object.id) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
     };
   },
 
   toJSON(message: LoadManagedKeyRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.id !== undefined && (obj.id = message.id);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadManagedKeyRequest>, I>>(base?: I): LoadManagedKeyRequest {
+    return LoadManagedKeyRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadManagedKeyRequest>, I>>(object: I): LoadManagedKeyRequest {
     const message = createBaseLoadManagedKeyRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -564,22 +677,31 @@ export const LoadManagedKeyResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadManagedKeyResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadManagedKeyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.managedKey = ManagedKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -593,12 +715,18 @@ export const LoadManagedKeyResponse = {
 
   toJSON(message: LoadManagedKeyResponse): unknown {
     const obj: any = {};
-    message.managedKey !== undefined &&
-      (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.managedKey !== undefined) {
+      obj.managedKey = ManagedKey.toJSON(message.managedKey);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadManagedKeyResponse>, I>>(base?: I): LoadManagedKeyResponse {
+    return LoadManagedKeyResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadManagedKeyResponse>, I>>(object: I): LoadManagedKeyResponse {
     const message = createBaseLoadManagedKeyResponse();
     message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
@@ -625,22 +753,31 @@ export const GenerateLocalCertificateRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GenerateLocalCertificateRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGenerateLocalCertificateRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.params = LocalCertificateParams.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -654,13 +791,18 @@ export const GenerateLocalCertificateRequest = {
 
   toJSON(message: GenerateLocalCertificateRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.params !== undefined &&
-      (obj.params = message.params ? LocalCertificateParams.toJSON(message.params) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.params !== undefined) {
+      obj.params = LocalCertificateParams.toJSON(message.params);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GenerateLocalCertificateRequest>, I>>(base?: I): GenerateLocalCertificateRequest {
+    return GenerateLocalCertificateRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GenerateLocalCertificateRequest>, I>>(
     object: I,
   ): GenerateLocalCertificateRequest {
@@ -691,22 +833,31 @@ export const GenerateLocalCertificateResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GenerateLocalCertificateResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGenerateLocalCertificateResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.localCertificate = LocalCertificate.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -720,12 +871,20 @@ export const GenerateLocalCertificateResponse = {
 
   toJSON(message: GenerateLocalCertificateResponse): unknown {
     const obj: any = {};
-    message.localCertificate !== undefined &&
-      (obj.localCertificate = message.localCertificate ? LocalCertificate.toJSON(message.localCertificate) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.localCertificate !== undefined) {
+      obj.localCertificate = LocalCertificate.toJSON(message.localCertificate);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GenerateLocalCertificateResponse>, I>>(
+    base?: I,
+  ): GenerateLocalCertificateResponse {
+    return GenerateLocalCertificateResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GenerateLocalCertificateResponse>, I>>(
     object: I,
   ): GenerateLocalCertificateResponse {
@@ -754,22 +913,31 @@ export const GenerateManagedCertificateRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GenerateManagedCertificateRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGenerateManagedCertificateRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.params = ManagedCertificateParams.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -783,13 +951,20 @@ export const GenerateManagedCertificateRequest = {
 
   toJSON(message: GenerateManagedCertificateRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.params !== undefined &&
-      (obj.params = message.params ? ManagedCertificateParams.toJSON(message.params) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.params !== undefined) {
+      obj.params = ManagedCertificateParams.toJSON(message.params);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GenerateManagedCertificateRequest>, I>>(
+    base?: I,
+  ): GenerateManagedCertificateRequest {
+    return GenerateManagedCertificateRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GenerateManagedCertificateRequest>, I>>(
     object: I,
   ): GenerateManagedCertificateRequest {
@@ -820,22 +995,31 @@ export const GenerateManagedCertificateResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GenerateManagedCertificateResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGenerateManagedCertificateResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -851,13 +1035,20 @@ export const GenerateManagedCertificateResponse = {
 
   toJSON(message: GenerateManagedCertificateResponse): unknown {
     const obj: any = {};
-    message.managedCertificate !== undefined && (obj.managedCertificate = message.managedCertificate
-      ? ManagedCertificate.toJSON(message.managedCertificate)
-      : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.managedCertificate !== undefined) {
+      obj.managedCertificate = ManagedCertificate.toJSON(message.managedCertificate);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GenerateManagedCertificateResponse>, I>>(
+    base?: I,
+  ): GenerateManagedCertificateResponse {
+    return GenerateManagedCertificateResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GenerateManagedCertificateResponse>, I>>(
     object: I,
   ): GenerateManagedCertificateResponse {
@@ -871,7 +1062,7 @@ export const GenerateManagedCertificateResponse = {
 };
 
 function createBaseLoadLocalCertificateRequest(): LoadLocalCertificateRequest {
-  return { configData: undefined, pkcs12: new Uint8Array(), password: "" };
+  return { configData: undefined, pkcs12: new Uint8Array(0), password: "" };
 }
 
 export const LoadLocalCertificateRequest = {
@@ -889,25 +1080,38 @@ export const LoadLocalCertificateRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadLocalCertificateRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadLocalCertificateRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.pkcs12 = reader.bytes();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.password = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -915,27 +1119,34 @@ export const LoadLocalCertificateRequest = {
   fromJSON(object: any): LoadLocalCertificateRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      pkcs12: isSet(object.pkcs12) ? bytesFromBase64(object.pkcs12) : new Uint8Array(),
-      password: isSet(object.password) ? String(object.password) : "",
+      pkcs12: isSet(object.pkcs12) ? bytesFromBase64(object.pkcs12) : new Uint8Array(0),
+      password: isSet(object.password) ? globalThis.String(object.password) : "",
     };
   },
 
   toJSON(message: LoadLocalCertificateRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.pkcs12 !== undefined &&
-      (obj.pkcs12 = base64FromBytes(message.pkcs12 !== undefined ? message.pkcs12 : new Uint8Array()));
-    message.password !== undefined && (obj.password = message.password);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.pkcs12.length !== 0) {
+      obj.pkcs12 = base64FromBytes(message.pkcs12);
+    }
+    if (message.password !== "") {
+      obj.password = message.password;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadLocalCertificateRequest>, I>>(base?: I): LoadLocalCertificateRequest {
+    return LoadLocalCertificateRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadLocalCertificateRequest>, I>>(object: I): LoadLocalCertificateRequest {
     const message = createBaseLoadLocalCertificateRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.pkcs12 = object.pkcs12 ?? new Uint8Array();
+    message.pkcs12 = object.pkcs12 ?? new Uint8Array(0);
     message.password = object.password ?? "";
     return message;
   },
@@ -957,22 +1168,31 @@ export const LoadLocalCertificateResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadLocalCertificateResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadLocalCertificateResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.localCertificate = LocalCertificate.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -986,12 +1206,18 @@ export const LoadLocalCertificateResponse = {
 
   toJSON(message: LoadLocalCertificateResponse): unknown {
     const obj: any = {};
-    message.localCertificate !== undefined &&
-      (obj.localCertificate = message.localCertificate ? LocalCertificate.toJSON(message.localCertificate) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.localCertificate !== undefined) {
+      obj.localCertificate = LocalCertificate.toJSON(message.localCertificate);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadLocalCertificateResponse>, I>>(base?: I): LoadLocalCertificateResponse {
+    return LoadLocalCertificateResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadLocalCertificateResponse>, I>>(object: I): LoadLocalCertificateResponse {
     const message = createBaseLoadLocalCertificateResponse();
     message.localCertificate = (object.localCertificate !== undefined && object.localCertificate !== null)
@@ -1018,22 +1244,31 @@ export const LoadManagedCertificateRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadManagedCertificateRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadManagedCertificateRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1041,18 +1276,24 @@ export const LoadManagedCertificateRequest = {
   fromJSON(object: any): LoadManagedCertificateRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      id: isSet(object.id) ? String(object.id) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
     };
   },
 
   toJSON(message: LoadManagedCertificateRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.id !== undefined && (obj.id = message.id);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadManagedCertificateRequest>, I>>(base?: I): LoadManagedCertificateRequest {
+    return LoadManagedCertificateRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadManagedCertificateRequest>, I>>(
     object: I,
   ): LoadManagedCertificateRequest {
@@ -1081,22 +1322,31 @@ export const LoadManagedCertificateResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadManagedCertificateResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadManagedCertificateResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1112,13 +1362,18 @@ export const LoadManagedCertificateResponse = {
 
   toJSON(message: LoadManagedCertificateResponse): unknown {
     const obj: any = {};
-    message.managedCertificate !== undefined && (obj.managedCertificate = message.managedCertificate
-      ? ManagedCertificate.toJSON(message.managedCertificate)
-      : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.managedCertificate !== undefined) {
+      obj.managedCertificate = ManagedCertificate.toJSON(message.managedCertificate);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadManagedCertificateResponse>, I>>(base?: I): LoadManagedCertificateResponse {
+    return LoadManagedCertificateResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadManagedCertificateResponse>, I>>(
     object: I,
   ): LoadManagedCertificateResponse {
@@ -1132,7 +1387,7 @@ export const LoadManagedCertificateResponse = {
 };
 
 function createBaseImportManagedCertificateRequest(): ImportManagedCertificateRequest {
-  return { configData: undefined, certificate: new Uint8Array(), password: undefined, certificateType: 0 };
+  return { configData: undefined, certificate: new Uint8Array(0), password: undefined, certificateType: 0 };
 }
 
 export const ImportManagedCertificateRequest = {
@@ -1153,28 +1408,45 @@ export const ImportManagedCertificateRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ImportManagedCertificateRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseImportManagedCertificateRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.certificate = reader.bytes();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.password = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.certificateType = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1182,23 +1454,32 @@ export const ImportManagedCertificateRequest = {
   fromJSON(object: any): ImportManagedCertificateRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      certificate: isSet(object.certificate) ? bytesFromBase64(object.certificate) : new Uint8Array(),
-      password: isSet(object.password) ? String(object.password) : undefined,
+      certificate: isSet(object.certificate) ? bytesFromBase64(object.certificate) : new Uint8Array(0),
+      password: isSet(object.password) ? globalThis.String(object.password) : undefined,
       certificateType: isSet(object.certificateType) ? certificateTypeFromJSON(object.certificateType) : 0,
     };
   },
 
   toJSON(message: ImportManagedCertificateRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.certificate !== undefined &&
-      (obj.certificate = base64FromBytes(message.certificate !== undefined ? message.certificate : new Uint8Array()));
-    message.password !== undefined && (obj.password = message.password);
-    message.certificateType !== undefined && (obj.certificateType = certificateTypeToJSON(message.certificateType));
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.certificate.length !== 0) {
+      obj.certificate = base64FromBytes(message.certificate);
+    }
+    if (message.password !== undefined) {
+      obj.password = message.password;
+    }
+    if (message.certificateType !== 0) {
+      obj.certificateType = certificateTypeToJSON(message.certificateType);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ImportManagedCertificateRequest>, I>>(base?: I): ImportManagedCertificateRequest {
+    return ImportManagedCertificateRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<ImportManagedCertificateRequest>, I>>(
     object: I,
   ): ImportManagedCertificateRequest {
@@ -1206,7 +1487,7 @@ export const ImportManagedCertificateRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.certificate = object.certificate ?? new Uint8Array();
+    message.certificate = object.certificate ?? new Uint8Array(0);
     message.password = object.password ?? undefined;
     message.certificateType = object.certificateType ?? 0;
     return message;
@@ -1229,22 +1510,31 @@ export const ImportManagedCertificateResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ImportManagedCertificateResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseImportManagedCertificateResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1260,13 +1550,20 @@ export const ImportManagedCertificateResponse = {
 
   toJSON(message: ImportManagedCertificateResponse): unknown {
     const obj: any = {};
-    message.managedCertificate !== undefined && (obj.managedCertificate = message.managedCertificate
-      ? ManagedCertificate.toJSON(message.managedCertificate)
-      : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.managedCertificate !== undefined) {
+      obj.managedCertificate = ManagedCertificate.toJSON(message.managedCertificate);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ImportManagedCertificateResponse>, I>>(
+    base?: I,
+  ): ImportManagedCertificateResponse {
+    return ImportManagedCertificateResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<ImportManagedCertificateResponse>, I>>(
     object: I,
   ): ImportManagedCertificateResponse {
@@ -1291,9 +1588,12 @@ export interface KeyService {
   ImportManagedCertificate(request: ImportManagedCertificateRequest): Promise<ImportManagedCertificateResponse>;
 }
 
+export const KeyServiceServiceName = "bloock.KeyService";
 export class KeyServiceClientImpl implements KeyService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || KeyServiceServiceName;
     this.rpc = rpc;
     this.GenerateLocalKey = this.GenerateLocalKey.bind(this);
     this.GenerateManagedKey = this.GenerateManagedKey.bind(this);
@@ -1307,56 +1607,56 @@ export class KeyServiceClientImpl implements KeyService {
   }
   GenerateLocalKey(request: GenerateLocalKeyRequest): Promise<GenerateLocalKeyResponse> {
     const data = GenerateLocalKeyRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "GenerateLocalKey", data);
-    return promise.then((data) => GenerateLocalKeyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GenerateLocalKey", data);
+    return promise.then((data) => GenerateLocalKeyResponse.decode(_m0.Reader.create(data)));
   }
 
   GenerateManagedKey(request: GenerateManagedKeyRequest): Promise<GenerateManagedKeyResponse> {
     const data = GenerateManagedKeyRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "GenerateManagedKey", data);
-    return promise.then((data) => GenerateManagedKeyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GenerateManagedKey", data);
+    return promise.then((data) => GenerateManagedKeyResponse.decode(_m0.Reader.create(data)));
   }
 
   LoadLocalKey(request: LoadLocalKeyRequest): Promise<LoadLocalKeyResponse> {
     const data = LoadLocalKeyRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "LoadLocalKey", data);
-    return promise.then((data) => LoadLocalKeyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "LoadLocalKey", data);
+    return promise.then((data) => LoadLocalKeyResponse.decode(_m0.Reader.create(data)));
   }
 
   LoadManagedKey(request: LoadManagedKeyRequest): Promise<LoadManagedKeyResponse> {
     const data = LoadManagedKeyRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "LoadManagedKey", data);
-    return promise.then((data) => LoadManagedKeyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "LoadManagedKey", data);
+    return promise.then((data) => LoadManagedKeyResponse.decode(_m0.Reader.create(data)));
   }
 
   GenerateLocalCertificate(request: GenerateLocalCertificateRequest): Promise<GenerateLocalCertificateResponse> {
     const data = GenerateLocalCertificateRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "GenerateLocalCertificate", data);
-    return promise.then((data) => GenerateLocalCertificateResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GenerateLocalCertificate", data);
+    return promise.then((data) => GenerateLocalCertificateResponse.decode(_m0.Reader.create(data)));
   }
 
   GenerateManagedCertificate(request: GenerateManagedCertificateRequest): Promise<GenerateManagedCertificateResponse> {
     const data = GenerateManagedCertificateRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "GenerateManagedCertificate", data);
-    return promise.then((data) => GenerateManagedCertificateResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GenerateManagedCertificate", data);
+    return promise.then((data) => GenerateManagedCertificateResponse.decode(_m0.Reader.create(data)));
   }
 
   LoadLocalCertificate(request: LoadLocalCertificateRequest): Promise<LoadLocalCertificateResponse> {
     const data = LoadLocalCertificateRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "LoadLocalCertificate", data);
-    return promise.then((data) => LoadLocalCertificateResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "LoadLocalCertificate", data);
+    return promise.then((data) => LoadLocalCertificateResponse.decode(_m0.Reader.create(data)));
   }
 
   LoadManagedCertificate(request: LoadManagedCertificateRequest): Promise<LoadManagedCertificateResponse> {
     const data = LoadManagedCertificateRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "LoadManagedCertificate", data);
-    return promise.then((data) => LoadManagedCertificateResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "LoadManagedCertificate", data);
+    return promise.then((data) => LoadManagedCertificateResponse.decode(_m0.Reader.create(data)));
   }
 
   ImportManagedCertificate(request: ImportManagedCertificateRequest): Promise<ImportManagedCertificateResponse> {
     const data = ImportManagedCertificateRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.KeyService", "ImportManagedCertificate", data);
-    return promise.then((data) => ImportManagedCertificateResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "ImportManagedCertificate", data);
+    return promise.then((data) => ImportManagedCertificateResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -1444,25 +1744,6 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
-
 function bytesFromBase64(b64: string): Uint8Array {
   if (globalThis.Buffer) {
     return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
@@ -1482,7 +1763,7 @@ function base64FromBytes(arr: Uint8Array): string {
   } else {
     const bin: string[] = [];
     arr.forEach((byte) => {
-      bin.push(String.fromCharCode(byte));
+      bin.push(globalThis.String.fromCharCode(byte));
     });
     return globalThis.btoa(bin.join(""));
   }
@@ -1491,7 +1772,8 @@ function base64FromBytes(arr: Uint8Array): string {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

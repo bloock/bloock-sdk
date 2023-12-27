@@ -4,11 +4,12 @@ use crate::{
     record::document::Document,
 };
 use bloock_encrypter::EncrypterError;
+use bloock_hasher::HashAlg;
 use bloock_keys::entity::key::Key;
 
 pub struct Builder {
     document: Document,
-    signer: Option<Key>,
+    signer: Option<(Key, Option<HashAlg>)>,
     encrypter: Option<Key>,
     decrypter: Option<Key>,
 }
@@ -43,8 +44,8 @@ impl Builder {
         }
     }
 
-    pub fn with_signer(mut self, key: &Key) -> Self {
-        self.signer = Some(key.clone());
+    pub fn with_signer(mut self, key: &Key, hash_alg: Option<HashAlg>) -> Self {
+        self.signer = Some((key.clone(), hash_alg));
         self
     }
 
@@ -68,7 +69,7 @@ impl Builder {
         }
 
         if let Some(signer) = &self.signer {
-            self.document.sign(signer).await?;
+            self.document.sign(&signer.0, signer.1.clone()).await?;
         }
 
         let mut record = Record::new(self.document)?;

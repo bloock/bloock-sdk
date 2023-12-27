@@ -35,7 +35,6 @@ use crate::items::RevokeCredentialResponseV2;
 use crate::items::SendRecordsResponse;
 use crate::items::SetProofResponse;
 use crate::items::SignResponse;
-use crate::items::SignatureCommonNameResponse;
 use crate::items::ValidateRootResponse;
 use crate::items::VerifyProofResponse;
 use crate::items::VerifyRecordsResponse;
@@ -67,7 +66,6 @@ pub enum ResponseType {
     SignResponse(SignResponse),
     VerifyResponse(VerifyResponse),
     GetSignaturesResponse(GetSignaturesResponse),
-    SignatureCommonNameResponse(SignatureCommonNameResponse),
     EncryptResponse(EncryptResponse),
     DecryptResponse(DecryptResponse),
     EncryptionAlgResponse(EncryptionAlgResponse),
@@ -132,7 +130,6 @@ impl ResponseType {
             ResponseType::SignResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetSignaturesResponse(r) => r.encode(&mut result_vec),
-            ResponseType::SignatureCommonNameResponse(r) => r.encode(&mut result_vec),
             ResponseType::EncryptResponse(r) => r.encode(&mut result_vec),
             ResponseType::DecryptResponse(r) => r.encode(&mut result_vec),
             ResponseType::EncryptionAlgResponse(r) => r.encode(&mut result_vec),
@@ -197,7 +194,6 @@ impl ResponseType {
             ResponseType::SignResponse(r) => r.encoded_len(),
             ResponseType::VerifyResponse(r) => r.encoded_len(),
             ResponseType::GetSignaturesResponse(r) => r.encoded_len(),
-            ResponseType::SignatureCommonNameResponse(r) => r.encoded_len(),
             ResponseType::EncryptResponse(r) => r.encoded_len(),
             ResponseType::DecryptResponse(r) => r.encoded_len(),
             ResponseType::EncryptionAlgResponse(r) => r.encoded_len(),

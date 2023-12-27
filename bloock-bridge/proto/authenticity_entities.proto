@@ -7,12 +7,18 @@ option java_package = "com.bloock.sdk.bridge.proto";
 
 import "keys_entities.proto";
 
+enum HashAlg {
+    SHA_256 = 0;
+    KECCAK_256 = 1;
+    POSEIDON = 2;
+}
+
 message Signer {
     optional LocalKey local_key = 1;
     optional ManagedKey managed_key = 2;
     optional LocalCertificate local_certificate = 3;
     optional ManagedCertificate managed_certificate = 4;
-    optional string common_name = 5;
+    optional HashAlg hash_alg = 5;
 }
 
 message Signature {
@@ -21,4 +27,5 @@ message Signature {
     string kid = 3;
     string message_hash = 4;
     optional string subject = 5;
+    optional string hash_alg = 6;
 }

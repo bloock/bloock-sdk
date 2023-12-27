@@ -1,6 +1,7 @@
 use crate::{
     certificates::{local::LocalCertificate, managed::ManagedCertificate},
     keys::{local::LocalKey, managed::ManagedKey},
+    KeyType,
 };
 
 #[derive(Clone)]
@@ -66,5 +67,16 @@ impl From<ManagedCertificate> for Managed {
 impl From<ManagedCertificate> for Key {
     fn from(value: ManagedCertificate) -> Self {
         Key::Managed(Managed::Certificate(value))
+    }
+}
+
+impl From<Key> for KeyType {
+    fn from(value: Key) -> Self {
+        match value {
+            Key::Managed(Managed::Key(k)) => k.key_type,
+            Key::Managed(Managed::Certificate(k)) => k.key.key_type,
+            Key::Local(Local::Key(k)) => k.key_type,
+            Key::Local(Local::Certificate(k)) => k.key.key_type,
+        }
     }
 }

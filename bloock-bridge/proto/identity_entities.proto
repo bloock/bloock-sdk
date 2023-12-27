@@ -144,4 +144,5 @@ message SignatureHeaderJWS {
     string alg = 1;
     string kid = 2;
     optional string subject = 3;
+    optional string hash_alg = 4;
 }

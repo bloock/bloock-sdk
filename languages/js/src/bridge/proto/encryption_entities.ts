@@ -76,28 +76,45 @@ export const Encrypter = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Encrypter {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseEncrypter();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.localKey = LocalKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.managedKey = ManagedKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.localCertificate = LocalCertificate.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -115,17 +132,24 @@ export const Encrypter = {
 
   toJSON(message: Encrypter): unknown {
     const obj: any = {};
-    message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
-    message.managedKey !== undefined &&
-      (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
-    message.localCertificate !== undefined &&
-      (obj.localCertificate = message.localCertificate ? LocalCertificate.toJSON(message.localCertificate) : undefined);
-    message.managedCertificate !== undefined && (obj.managedCertificate = message.managedCertificate
-      ? ManagedCertificate.toJSON(message.managedCertificate)
-      : undefined);
+    if (message.localKey !== undefined) {
+      obj.localKey = LocalKey.toJSON(message.localKey);
+    }
+    if (message.managedKey !== undefined) {
+      obj.managedKey = ManagedKey.toJSON(message.managedKey);
+    }
+    if (message.localCertificate !== undefined) {
+      obj.localCertificate = LocalCertificate.toJSON(message.localCertificate);
+    }
+    if (message.managedCertificate !== undefined) {
+      obj.managedCertificate = ManagedCertificate.toJSON(message.managedCertificate);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<Encrypter>, I>>(base?: I): Encrypter {
+    return Encrypter.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<Encrypter>, I>>(object: I): Encrypter {
     const message = createBaseEncrypter();
     message.localKey = (object.localKey !== undefined && object.localKey !== null)
@@ -147,7 +171,8 @@ export const Encrypter = {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

@@ -3,6 +3,7 @@ from bloock.entity.key.local_certificate import LocalCertificate
 from bloock.entity.key.local_key import LocalKey
 from bloock.entity.key.managed_certificate import ManagedCertificate
 from bloock.entity.key.managed_key import ManagedKey
+from bloock.entity.authenticity.hash_alg import HashAlg
 
 
 class Signer:
@@ -11,7 +12,9 @@ class Signer:
     managed_certificate = None
     local_certificate = None
 
-    def __init__(self, key, common_name=None) -> None:
+    hash_alg = None
+
+    def __init__(self, key, hash_alg: HashAlg | None = None) -> None:
         if isinstance(key, LocalKey):
             self.local_key = key
         elif isinstance(key, ManagedKey):
@@ -23,6 +26,8 @@ class Signer:
         else:
             raise Exception(
                 "Invalid key provided. Must be of type LocalKey or ManagedKey")
+        
+        self.hash_alg = hash_alg
 
     def to_proto(self) -> proto.Signer:
         local_key = None
@@ -41,9 +46,14 @@ class Signer:
         if self.local_certificate is not None:
             local_certificate = self.local_certificate.to_proto()
 
+        hash_alg = None
+        if self.hash_alg is not None:
+            hash_alg = self.hash_alg.to_proto()
+
         return proto.Signer(
             local_key=local_key,
             managed_key=managed_key,
             managed_certificate=managed_certificate,
             local_certificate=local_certificate,
+            hash_alg=hash_alg,
         )

@@ -5,6 +5,7 @@ use async_trait::async_trait;
 use bloock_encrypter::entity::{
     alg::EncryptionAlg, encryption::Encryption, encryption_key::EncryptionKey,
 };
+use bloock_hasher::HashAlg;
 use bloock_keys::entity::key::Key;
 use bloock_signer::{entity::signature::Signature, format::jws::JwsFormatter, SignFormat};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -46,15 +47,17 @@ impl MetadataParser for DefaultParser {
     async fn sign(
         &mut self,
         key: &Key,
+        hash_alg: Option<HashAlg>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
     ) -> Result<Signature> {
         let payload = self.get_data()?;
 
-        let signature = bloock_signer::sign(api_host, api_key, environment, &payload, key)
-            .await
-            .map_err(|e| MetadataError::SignError(e.to_string()))?;
+        let signature =
+            bloock_signer::sign(api_host, api_key, environment, &payload, key, hash_alg)
+                .await
+                .map_err(|e| MetadataError::SignError(e.to_string()))?;
 
         let mut signatures = match self.get_signatures() {
             Some(s) => s,
@@ -245,6 +248,7 @@ mod tests {
     use super::DefaultParser;
     use crate::{default::Payload, MetadataParser};
     use bloock_encrypter::entity::alg::EncryptionAlg;
+    use bloock_hasher::HashAlg;
     use bloock_keys::keys::local::LocalKey;
     use bloock_signer::{
         entity::{alg::SignAlg, signature::Signature},
@@ -333,8 +337,9 @@ mod tests {
             subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         }];
-        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None }, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
+        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None, hash_alg: None }, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
 
         parser.set_signatures(signatures.clone()).unwrap();
         assert_eq!(
@@ -380,8 +385,9 @@ mod tests {
             subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         }];
-        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None}, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
+        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None, hash_alg: None}, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
 
         parser.set_signatures(signatures.clone()).unwrap();
         assert_eq!(
@@ -449,8 +455,9 @@ mod tests {
             subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         }];
-        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None}, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
+        let expected_signatures = vec![JwsSignature { protected: "e30".to_string(), signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(), header: JwsSignatureHeader { alg: SignAlg::BjjM.to_string(), kid: "00000000-0000-0000-0000-000000000000".to_string(), subject: None, hash_alg: None}, message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string() }];
 
         parser.set_signatures(signatures.clone()).unwrap();
         assert_eq!(
@@ -478,6 +485,7 @@ mod tests {
                 &bloock_keys::entity::key::Key::Local(bloock_keys::entity::key::Local::Key(
                     local_key,
                 )),
+                None,
                 "".to_string(),
                 "".to_string(),
                 None,

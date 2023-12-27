@@ -111,7 +111,7 @@ impl Path {
             match part {
                 RdfEntryValue::StringValue(s) => {
                     let bytes = s.as_bytes();
-                    int_key_parts.push(hash.generate_hash_bytes(bytes).into());
+                    int_key_parts.push(hash.hash_bytes(bytes).into());
                 }
                 RdfEntryValue::IntValue(num) => {
                     let bytes = num.to_be_bytes();
@@ -121,7 +121,7 @@ impl Path {
             }
         }
 
-        let hash = hash.generate_hash_bigints(&int_key_parts);
+        let hash = hash.hash_bigints(&int_key_parts);
         Ok(hash.to_bytes_be())
     }
 }
@@ -438,7 +438,7 @@ fn mk_value_mt_entry(v: RdfEntryValue, hash: &Hasher) -> Result<Vec<u8>, Merkliz
     let res = match v {
         RdfEntryValue::StringValue(s) => {
             let bytes = s.as_bytes();
-            hash.generate_hash_bytes(bytes).to_bytes_be()
+            hash.hash_bytes(bytes).to_bytes_be()
         }
         RdfEntryValue::IntValue(num) => {
             let bytes = num.to_be_bytes();
@@ -448,10 +448,10 @@ fn mk_value_mt_entry(v: RdfEntryValue, hash: &Hasher) -> Result<Vec<u8>, Merkliz
         RdfEntryValue::BoolValue(b) => {
             if b {
                 let input = BigInt::from_i32(1).unwrap();
-                hash.generate_hash_bigints(&[input]).to_bytes_be()
+                hash.hash_bigints(&[input]).to_bytes_be()
             } else {
                 let input = BigInt::from_i32(0).unwrap();
-                hash.generate_hash_bigints(&[input]).to_bytes_be()
+                hash.hash_bigints(&[input]).to_bytes_be()
             }
         }
         RdfEntryValue::DateTime(date) => {

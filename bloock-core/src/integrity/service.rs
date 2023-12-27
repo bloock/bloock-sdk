@@ -282,7 +282,7 @@ impl<H: Client> IntegrityService<H> {
 fn merge(left: &H256, right: &H256) -> H256 {
     let mut vec = left.to_vec();
     vec.extend_from_slice(right);
-    Keccak256::generate_hash(&[vec.as_slice()])
+    Keccak256::hash(&[vec.as_slice()])
 }
 
 #[cfg(test)]

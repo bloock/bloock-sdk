@@ -557,7 +557,7 @@ dependencies = [
 
 [[package]]
 name = "bloock-core"
-version = "2.7.0-beta.11"
+version = "2.7.0-beta.12"
 dependencies = [
  "async-std",
  "base64 0.13.0",
@@ -709,6 +709,7 @@ dependencies = [
  "async-trait",
  "bip32",
  "bloock-babyjubjub-rs",
+ "bloock-hasher",
  "bloock-http",
  "cbc",
  "cipher",
@@ -837,13 +838,14 @@ dependencies = [
 
 [[package]]
 name = "bloock_bridge"
-version = "2.7.0-beta.11"
+version = "2.7.0-beta.12"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
  "bloock-core",
  "bloock-encrypter",
  "bloock-executor",
+ "bloock-hasher",
  "bloock-identity-rs",
  "bloock-keys",
  "bloock-signer",

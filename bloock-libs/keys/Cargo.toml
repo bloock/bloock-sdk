@@ -10,6 +10,7 @@ bench = false
 thiserror = "1.0.31"
 serde = { version = "1.0.123", features = ["std", "derive"] }
 bloock-http = { path = "../http" }
+bloock-hasher = { path = "../hasher" }
 getrandom = { version = "0.2.7", features = ["js"] }
 rand = "0.8.5"
 hex = "0.4.3"

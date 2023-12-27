@@ -292,6 +292,7 @@ impl<H: Client> IdentityServiceV2<H> {
             self.config_service.get_environment(),
             &core_claim_hash_decoded,
             &key,
+            None,
         )
         .await
         .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
@@ -419,6 +420,7 @@ impl<H: Client> IdentityServiceV2<H> {
             self.config_service.get_environment(),
             &new_state_hash_decoded,
             &key,
+            None,
         )
         .await
         .map_err(|e| IdentityErrorV2::PublishIssuerStateError(e.to_string()))?;
@@ -525,6 +527,7 @@ impl<H: Client> IdentityServiceV2<H> {
             self.config_service.get_environment(),
             &new_state_decoded,
             &key,
+            None,
         )
         .await
         .map_err(|e| IdentityErrorV2::UpdateDraftStateSignatureError(e.to_string()))?;

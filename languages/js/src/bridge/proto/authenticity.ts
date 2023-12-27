@@ -6,19 +6,19 @@ import { Record } from "./record_entities";
 import { Error } from "./shared";
 
 export interface SignRequest {
-  configData?: ConfigData;
-  record?: Record;
-  signer?: Signer;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
+  signer?: Signer | undefined;
 }
 
 export interface SignResponse {
-  signature?: Signature;
+  signature?: Signature | undefined;
   error?: Error | undefined;
 }
 
 export interface VerifyRequest {
-  configData?: ConfigData;
-  record?: Record;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
 }
 
 export interface VerifyResponse {
@@ -26,20 +26,9 @@ export interface VerifyResponse {
   error?: Error | undefined;
 }
 
-export interface SignatureCommonNameRequest {
-  configData?: ConfigData;
-  signature?: Signature;
-  hash: string;
-}
-
-export interface SignatureCommonNameResponse {
-  commonName: string;
-  error?: Error | undefined;
-}
-
 export interface GetSignaturesRequest {
-  configData?: ConfigData;
-  record?: Record;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
 }
 
 export interface GetSignaturesResponse {
@@ -66,25 +55,38 @@ export const SignRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SignRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSignRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -99,13 +101,21 @@ export const SignRequest = {
 
   toJSON(message: SignRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<SignRequest>, I>>(base?: I): SignRequest {
+    return SignRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<SignRequest>, I>>(object: I): SignRequest {
     const message = createBaseSignRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -137,22 +147,31 @@ export const SignResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SignResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSignResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.signature = Signature.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -166,12 +185,18 @@ export const SignResponse = {
 
   toJSON(message: SignResponse): unknown {
     const obj: any = {};
-    message.signature !== undefined &&
-      (obj.signature = message.signature ? Signature.toJSON(message.signature) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.signature !== undefined) {
+      obj.signature = Signature.toJSON(message.signature);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<SignResponse>, I>>(base?: I): SignResponse {
+    return SignResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<SignResponse>, I>>(object: I): SignResponse {
     const message = createBaseSignResponse();
     message.signature = (object.signature !== undefined && object.signature !== null)
@@ -198,22 +223,31 @@ export const VerifyRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -227,12 +261,18 @@ export const VerifyRequest = {
 
   toJSON(message: VerifyRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<VerifyRequest>, I>>(base?: I): VerifyRequest {
+    return VerifyRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<VerifyRequest>, I>>(object: I): VerifyRequest {
     const message = createBaseVerifyRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -261,174 +301,59 @@ export const VerifyResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.valid = reader.bool();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): VerifyResponse {
     return {
-      valid: isSet(object.valid) ? Boolean(object.valid) : false,
+      valid: isSet(object.valid) ? globalThis.Boolean(object.valid) : false,
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: VerifyResponse): unknown {
     const obj: any = {};
-    message.valid !== undefined && (obj.valid = message.valid);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.valid === true) {
+      obj.valid = message.valid;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<VerifyResponse>, I>>(base?: I): VerifyResponse {
+    return VerifyResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<VerifyResponse>, I>>(object: I): VerifyResponse {
     const message = createBaseVerifyResponse();
     message.valid = object.valid ?? false;
-    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
-    return message;
-  },
-};
-
-function createBaseSignatureCommonNameRequest(): SignatureCommonNameRequest {
-  return { configData: undefined, signature: undefined, hash: "" };
-}
-
-export const SignatureCommonNameRequest = {
-  encode(message: SignatureCommonNameRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.configData !== undefined) {
-      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.signature !== undefined) {
-      Signature.encode(message.signature, writer.uint32(18).fork()).ldelim();
-    }
-    if (message.hash !== "") {
-      writer.uint32(26).string(message.hash);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): SignatureCommonNameRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSignatureCommonNameRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
-        case 2:
-          message.signature = Signature.decode(reader, reader.uint32());
-          break;
-        case 3:
-          message.hash = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): SignatureCommonNameRequest {
-    return {
-      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      signature: isSet(object.signature) ? Signature.fromJSON(object.signature) : undefined,
-      hash: isSet(object.hash) ? String(object.hash) : "",
-    };
-  },
-
-  toJSON(message: SignatureCommonNameRequest): unknown {
-    const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.signature !== undefined &&
-      (obj.signature = message.signature ? Signature.toJSON(message.signature) : undefined);
-    message.hash !== undefined && (obj.hash = message.hash);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<SignatureCommonNameRequest>, I>>(object: I): SignatureCommonNameRequest {
-    const message = createBaseSignatureCommonNameRequest();
-    message.configData = (object.configData !== undefined && object.configData !== null)
-      ? ConfigData.fromPartial(object.configData)
-      : undefined;
-    message.signature = (object.signature !== undefined && object.signature !== null)
-      ? Signature.fromPartial(object.signature)
-      : undefined;
-    message.hash = object.hash ?? "";
-    return message;
-  },
-};
-
-function createBaseSignatureCommonNameResponse(): SignatureCommonNameResponse {
-  return { commonName: "", error: undefined };
-}
-
-export const SignatureCommonNameResponse = {
-  encode(message: SignatureCommonNameResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.commonName !== "") {
-      writer.uint32(10).string(message.commonName);
-    }
-    if (message.error !== undefined) {
-      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): SignatureCommonNameResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSignatureCommonNameResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.commonName = reader.string();
-          break;
-        case 2:
-          message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): SignatureCommonNameResponse {
-    return {
-      commonName: isSet(object.commonName) ? String(object.commonName) : "",
-      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
-    };
-  },
-
-  toJSON(message: SignatureCommonNameResponse): unknown {
-    const obj: any = {};
-    message.commonName !== undefined && (obj.commonName = message.commonName);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<SignatureCommonNameResponse>, I>>(object: I): SignatureCommonNameResponse {
-    const message = createBaseSignatureCommonNameResponse();
-    message.commonName = object.commonName ?? "";
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
@@ -450,22 +375,31 @@ export const GetSignaturesRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetSignaturesRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetSignaturesRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -479,12 +413,18 @@ export const GetSignaturesRequest = {
 
   toJSON(message: GetSignaturesRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetSignaturesRequest>, I>>(base?: I): GetSignaturesRequest {
+    return GetSignaturesRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetSignaturesRequest>, I>>(object: I): GetSignaturesRequest {
     const message = createBaseGetSignaturesRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -513,44 +453,58 @@ export const GetSignaturesResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetSignaturesResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetSignaturesResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.signatures.push(Signature.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): GetSignaturesResponse {
     return {
-      signatures: Array.isArray(object?.signatures) ? object.signatures.map((e: any) => Signature.fromJSON(e)) : [],
+      signatures: globalThis.Array.isArray(object?.signatures)
+        ? object.signatures.map((e: any) => Signature.fromJSON(e))
+        : [],
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: GetSignaturesResponse): unknown {
     const obj: any = {};
-    if (message.signatures) {
-      obj.signatures = message.signatures.map((e) => e ? Signature.toJSON(e) : undefined);
-    } else {
-      obj.signatures = [];
+    if (message.signatures?.length) {
+      obj.signatures = message.signatures.map((e) => Signature.toJSON(e));
     }
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetSignaturesResponse>, I>>(base?: I): GetSignaturesResponse {
+    return GetSignaturesResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetSignaturesResponse>, I>>(object: I): GetSignaturesResponse {
     const message = createBaseGetSignaturesResponse();
     message.signatures = object.signatures?.map((e) => Signature.fromPartial(e)) || [];
@@ -563,40 +517,35 @@ export interface AuthenticityService {
   Sign(request: SignRequest): Promise<SignResponse>;
   Verify(request: VerifyRequest): Promise<VerifyResponse>;
   GetSignatures(request: GetSignaturesRequest): Promise<GetSignaturesResponse>;
-  GetSignatureCommonName(request: SignatureCommonNameRequest): Promise<SignatureCommonNameResponse>;
 }
 
+export const AuthenticityServiceServiceName = "bloock.AuthenticityService";
 export class AuthenticityServiceClientImpl implements AuthenticityService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || AuthenticityServiceServiceName;
     this.rpc = rpc;
     this.Sign = this.Sign.bind(this);
     this.Verify = this.Verify.bind(this);
     this.GetSignatures = this.GetSignatures.bind(this);
-    this.GetSignatureCommonName = this.GetSignatureCommonName.bind(this);
   }
   Sign(request: SignRequest): Promise<SignResponse> {
     const data = SignRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.AuthenticityService", "Sign", data);
-    return promise.then((data) => SignResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Sign", data);
+    return promise.then((data) => SignResponse.decode(_m0.Reader.create(data)));
   }
 
   Verify(request: VerifyRequest): Promise<VerifyResponse> {
     const data = VerifyRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.AuthenticityService", "Verify", data);
-    return promise.then((data) => VerifyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Verify", data);
+    return promise.then((data) => VerifyResponse.decode(_m0.Reader.create(data)));
   }
 
   GetSignatures(request: GetSignaturesRequest): Promise<GetSignaturesResponse> {
     const data = GetSignaturesRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.AuthenticityService", "GetSignatures", data);
-    return promise.then((data) => GetSignaturesResponse.decode(new _m0.Reader(data)));
-  }
-
-  GetSignatureCommonName(request: SignatureCommonNameRequest): Promise<SignatureCommonNameResponse> {
-    const data = SignatureCommonNameRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.AuthenticityService", "GetSignatureCommonName", data);
-    return promise.then((data) => SignatureCommonNameResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetSignatures", data);
+    return promise.then((data) => GetSignaturesResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -629,14 +578,6 @@ export const AuthenticityServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    getSignatureCommonName: {
-      name: "GetSignatureCommonName",
-      requestType: SignatureCommonNameRequest,
-      requestStream: false,
-      responseType: SignatureCommonNameResponse,
-      responseStream: false,
-      options: {},
-    },
   },
 } as const;
 
@@ -647,7 +588,8 @@ interface Rpc {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

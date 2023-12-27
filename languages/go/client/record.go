@@ -82,13 +82,6 @@ func (b RecordBuilder) WithSigner(signer authenticity.Signer) RecordBuilder {
 	return b
 }
 
-func (b RecordBuilder) WithCommonName(name string) RecordBuilder {
-	if b.signer != nil {
-		b.signer.CommonName = &name
-	}
-	return b
-}
-
 func (b RecordBuilder) WithEncrypter(encrypter encryption.Encrypter) RecordBuilder {
 	b.encrypter = encrypter.ToProto()
 	return b

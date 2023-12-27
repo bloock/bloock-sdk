@@ -6,30 +6,30 @@ import { Record } from "./record_entities";
 import { Error } from "./shared";
 
 export interface EncryptRequest {
-  configData?: ConfigData;
-  record?: Record;
-  encrypter?: Encrypter;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
+  encrypter?: Encrypter | undefined;
 }
 
 export interface EncryptResponse {
-  record?: Record;
+  record?: Record | undefined;
   error?: Error | undefined;
 }
 
 export interface DecryptRequest {
-  configData?: ConfigData;
-  record?: Record;
-  decrypter?: Encrypter;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
+  decrypter?: Encrypter | undefined;
 }
 
 export interface DecryptResponse {
-  record?: Record;
+  record?: Record | undefined;
   error?: Error | undefined;
 }
 
 export interface EncryptionAlgRequest {
-  configData?: ConfigData;
-  record?: Record;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
 }
 
 export interface EncryptionAlgResponse {
@@ -56,25 +56,38 @@ export const EncryptRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): EncryptRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseEncryptRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.encrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -89,14 +102,21 @@ export const EncryptRequest = {
 
   toJSON(message: EncryptRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
-    message.encrypter !== undefined &&
-      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
+    if (message.encrypter !== undefined) {
+      obj.encrypter = Encrypter.toJSON(message.encrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<EncryptRequest>, I>>(base?: I): EncryptRequest {
+    return EncryptRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<EncryptRequest>, I>>(object: I): EncryptRequest {
     const message = createBaseEncryptRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -128,22 +148,31 @@ export const EncryptResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): EncryptResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseEncryptResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -157,11 +186,18 @@ export const EncryptResponse = {
 
   toJSON(message: EncryptResponse): unknown {
     const obj: any = {};
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<EncryptResponse>, I>>(base?: I): EncryptResponse {
+    return EncryptResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<EncryptResponse>, I>>(object: I): EncryptResponse {
     const message = createBaseEncryptResponse();
     message.record = (object.record !== undefined && object.record !== null)
@@ -191,25 +227,38 @@ export const DecryptRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DecryptRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDecryptRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.decrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -224,14 +273,21 @@ export const DecryptRequest = {
 
   toJSON(message: DecryptRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
-    message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
+    if (message.decrypter !== undefined) {
+      obj.decrypter = Encrypter.toJSON(message.decrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DecryptRequest>, I>>(base?: I): DecryptRequest {
+    return DecryptRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DecryptRequest>, I>>(object: I): DecryptRequest {
     const message = createBaseDecryptRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -263,22 +319,31 @@ export const DecryptResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DecryptResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDecryptResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -292,11 +357,18 @@ export const DecryptResponse = {
 
   toJSON(message: DecryptResponse): unknown {
     const obj: any = {};
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DecryptResponse>, I>>(base?: I): DecryptResponse {
+    return DecryptResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DecryptResponse>, I>>(object: I): DecryptResponse {
     const message = createBaseDecryptResponse();
     message.record = (object.record !== undefined && object.record !== null)
@@ -323,22 +395,31 @@ export const EncryptionAlgRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): EncryptionAlgRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseEncryptionAlgRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -352,12 +433,18 @@ export const EncryptionAlgRequest = {
 
   toJSON(message: EncryptionAlgRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<EncryptionAlgRequest>, I>>(base?: I): EncryptionAlgRequest {
+    return EncryptionAlgRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<EncryptionAlgRequest>, I>>(object: I): EncryptionAlgRequest {
     const message = createBaseEncryptionAlgRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -386,22 +473,31 @@ export const EncryptionAlgResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): EncryptionAlgResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseEncryptionAlgResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.alg = reader.int32() as any;
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -415,11 +511,18 @@ export const EncryptionAlgResponse = {
 
   toJSON(message: EncryptionAlgResponse): unknown {
     const obj: any = {};
-    message.alg !== undefined && (obj.alg = encryptionAlgToJSON(message.alg));
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.alg !== 0) {
+      obj.alg = encryptionAlgToJSON(message.alg);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<EncryptionAlgResponse>, I>>(base?: I): EncryptionAlgResponse {
+    return EncryptionAlgResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<EncryptionAlgResponse>, I>>(object: I): EncryptionAlgResponse {
     const message = createBaseEncryptionAlgResponse();
     message.alg = object.alg ?? 0;
@@ -434,9 +537,12 @@ export interface EncryptionService {
   GetEncryptionAlg(request: EncryptionAlgRequest): Promise<EncryptionAlgResponse>;
 }
 
+export const EncryptionServiceServiceName = "bloock.EncryptionService";
 export class EncryptionServiceClientImpl implements EncryptionService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || EncryptionServiceServiceName;
     this.rpc = rpc;
     this.Encrypt = this.Encrypt.bind(this);
     this.Decrypt = this.Decrypt.bind(this);
@@ -444,20 +550,20 @@ export class EncryptionServiceClientImpl implements EncryptionService {
   }
   Encrypt(request: EncryptRequest): Promise<EncryptResponse> {
     const data = EncryptRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.EncryptionService", "Encrypt", data);
-    return promise.then((data) => EncryptResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Encrypt", data);
+    return promise.then((data) => EncryptResponse.decode(_m0.Reader.create(data)));
   }
 
   Decrypt(request: DecryptRequest): Promise<DecryptResponse> {
     const data = DecryptRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.EncryptionService", "Decrypt", data);
-    return promise.then((data) => DecryptResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Decrypt", data);
+    return promise.then((data) => DecryptResponse.decode(_m0.Reader.create(data)));
   }
 
   GetEncryptionAlg(request: EncryptionAlgRequest): Promise<EncryptionAlgResponse> {
     const data = EncryptionAlgRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.EncryptionService", "GetEncryptionAlg", data);
-    return promise.then((data) => EncryptionAlgResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetEncryptionAlg", data);
+    return promise.then((data) => EncryptionAlgResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -500,7 +606,8 @@ interface Rpc {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

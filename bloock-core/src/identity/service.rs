@@ -244,6 +244,7 @@ impl<H: Client> IdentityService<H> {
             self.config_service.get_environment(),
             id.as_bytes(),
             &key.into(),
+            None,
         )
         .await
         .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;

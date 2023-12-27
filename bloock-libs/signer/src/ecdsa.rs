@@ -6,10 +6,11 @@ use crate::entity::dto::verify_response::VerifyResponse;
 use crate::entity::signature::Signature;
 use crate::{Signer, SignerError};
 use async_trait::async_trait;
-use bloock_hasher::{sha256::Sha256, Hasher};
+use bloock_hasher::HashAlg;
 use bloock_http::{BloockHttpClient, Client};
 use bloock_keys::certificates::GetX509Certficate;
-use bloock_keys::entity::key::{Local, Managed};
+use bloock_keys::entity::key::{Key, Local, Managed};
+use bloock_keys::KeyType;
 use libsecp256k1::{Message, PublicKey, SecretKey};
 
 pub struct EcdsaSigner {
@@ -20,7 +21,12 @@ pub struct EcdsaSigner {
 }
 
 impl EcdsaSigner {
-    pub fn new(api_host: String, api_key: String, environment: Option<String>, api_version: Option<String>) -> Self {
+    pub fn new(
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+        api_version: Option<String>,
+    ) -> Self {
         Self {
             api_host,
             api_key,
@@ -29,14 +35,24 @@ impl EcdsaSigner {
         }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>, api_version: Option<String>) -> Box<Self> {
+    pub fn new_boxed(
+        api_host: String,
+        api_key: String,
+        environment: Option<String>,
+        api_version: Option<String>,
+    ) -> Box<Self> {
         Box::new(Self::new(api_host, api_key, environment, api_version))
     }
 }
 
 #[async_trait(?Send)]
 impl Signer for EcdsaSigner {
-    async fn sign_local(&self, payload: &[u8], key: &Local) -> crate::Result<Signature> {
+    async fn sign_local(
+        &self,
+        payload: &[u8],
+        key: &Local,
+        hash_alg: Option<HashAlg>,
+    ) -> crate::Result<Signature> {
         let local = match key {
             Local::Key(k) => k.clone(),
             Local::Certificate(c) => c.key.clone(),
@@ -61,7 +77,8 @@ impl Signer for EcdsaSigner {
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
         let public_key = PublicKey::from_secret_key(&secret_key);
 
-        let hash = Sha256::generate_hash(&[payload]);
+        let hash_alg = hash_alg.unwrap_or(KeyType::from(Key::from(local)).default_hash_alg());
+        let hash = hash_alg.hash(&[payload]);
 
         let message = Message::parse(&hash);
 
@@ -78,12 +95,18 @@ impl Signer for EcdsaSigner {
             subject,
             signature: hex::encode(buffer),
             message_hash: hex::encode(hash),
+            hash_alg: Some(hash_alg),
         };
 
         Ok(signature)
     }
 
-    async fn sign_managed(&self, payload: &[u8], key: &Managed) -> crate::Result<Signature> {
+    async fn sign_managed(
+        &self,
+        payload: &[u8],
+        key: &Managed,
+        hash_alg: Option<HashAlg>,
+    ) -> crate::Result<Signature> {
         let managed = match key {
             Managed::Key(k) => k.clone(),
             Managed::Certificate(c) => c.key.clone(),
@@ -98,7 +121,9 @@ impl Signer for EcdsaSigner {
             .await
             .map(|s| s.tbs_certificate.subject.to_string());
 
-        let hash = Sha256::generate_hash(&[payload]);
+        let hash_alg =
+            hash_alg.unwrap_or(KeyType::from(Key::from(managed.clone())).default_hash_alg());
+        let hash = hash_alg.hash(&[payload]);
 
         let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
@@ -118,18 +143,24 @@ impl Signer for EcdsaSigner {
             subject,
             signature: res.signature,
             message_hash: hex::encode(hash),
+            hash_alg: Some(hash_alg),
         };
 
         Ok(signature)
     }
 
     async fn verify_local(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
+        let hash = signature
+            .hash_alg
+            .clone()
+            .unwrap_or_default()
+            .hash(&[payload]);
+
         let public_key_hex = hex::decode(signature.key.as_bytes())
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
         let public_key = PublicKey::parse_slice(&public_key_hex, None)
             .map_err(|e| SignerError::InvalidPublicKey(e.to_string()))?;
 
-        let hash: [u8; 32] = Sha256::generate_hash(&[payload]);
         let message = Message::parse(&hash);
 
         let signature_bytes = hex::decode(signature.signature.clone())
@@ -141,9 +172,17 @@ impl Signer for EcdsaSigner {
     }
 
     async fn verify_managed(&self, payload: &[u8], signature: &Signature) -> crate::Result<bool> {
-        let hash = Sha256::generate_hash(&[payload]);
+        let hash = signature
+            .hash_alg
+            .clone()
+            .unwrap_or_default()
+            .hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), self.api_version.clone());
+        let http = BloockHttpClient::new(
+            self.api_key.clone(),
+            self.environment.clone(),
+            self.api_version.clone(),
+        );
 
         let req = VerifyRequest {
             public_key: signature.key.clone(),
@@ -188,7 +227,7 @@ mod tests {
         let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let signature = signer
-            .sign_local(string_payload.as_bytes(), &local_key.clone().into())
+            .sign_local(string_payload.as_bytes(), &local_key.clone().into(), None)
             .await
             .unwrap();
 
@@ -220,7 +259,7 @@ mod tests {
 
         let c = EcdsaSigner::new(api_host, api_key, None, None);
         let result = c
-            .sign_local(string_payload.as_bytes(), &local_key.into())
+            .sign_local(string_payload.as_bytes(), &local_key.into(), None)
             .await;
         assert!(result.is_err());
     }
@@ -238,6 +277,7 @@ mod tests {
             subject: None,
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         };
 
         let signer = EcdsaSigner::new(api_host, api_key, None, None);
@@ -263,6 +303,7 @@ mod tests {
             subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         };
 
         let signer = EcdsaSigner::new(api_host, api_key, None, None);
@@ -287,6 +328,7 @@ mod tests {
             subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         };
 
         let signer = EcdsaSigner::new(api_host, api_key, None, None);
@@ -320,7 +362,7 @@ mod tests {
         let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let signature = signer
-            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into())
+            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None)
             .await
             .unwrap();
 
@@ -366,6 +408,7 @@ mod tests {
             subject: None,
             signature: "3145022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         };
 
         let signer = EcdsaSigner::new(api_host, api_key, None, None);
@@ -391,6 +434,7 @@ mod tests {
             subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         };
 
         let signer = EcdsaSigner::new(api_host, api_key, None, None);
@@ -425,6 +469,7 @@ mod tests {
             subject: None,
             signature: "3045022100c42e705c0c73f28341eec61d8dfa5c5be006a44e6c48b59103861a7c0914a1df022010b09d5de1d376ac3940b223ffd158e46f6e60d8a2e86f7224f951a850146920".to_string(),
             message_hash: "ecb8e554bba690eff53f1bc914941d34ae7ec446e0508d14bab3388d3e5c945".to_string(),
+            hash_alg: None
         };
 
         let signer = EcdsaSigner::new(api_host, api_key, None, None);

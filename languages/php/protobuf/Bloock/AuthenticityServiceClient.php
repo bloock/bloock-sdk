@@ -58,18 +58,4 @@ class AuthenticityServiceClient extends \Bloock\Bridge\Connection {
         $metadata, $options);
     }
 
-    /**
-     * @param \Bloock\SignatureCommonNameRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function GetSignatureCommonName(\Bloock\SignatureCommonNameRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.AuthenticityService/GetSignatureCommonName',
-        $argument,
-        ['\Bloock\SignatureCommonNameResponse', 'decode'],
-        $metadata, $options);
-    }
-
 }

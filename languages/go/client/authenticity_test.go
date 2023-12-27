@@ -49,7 +49,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithLocalKey(key))
+			Sign(record, authenticity.NewSignerWithLocalKey(key, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -70,7 +70,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithLocalKey(key))
+			Sign(record, authenticity.NewSignerWithLocalKey(key, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -90,7 +90,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithLocalKey(key))
+			Sign(record, authenticity.NewSignerWithLocalKey(key, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -113,7 +113,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(key))
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -136,7 +136,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(key))
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -159,7 +159,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(key))
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -175,7 +175,7 @@ func TestAuthenticity(t *testing.T) {
 		authenticityClient := NewAuthenticityClient()
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithLocalKey(key)).
+			WithSigner(authenticity.NewSignerWithLocalKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -195,7 +195,7 @@ func TestAuthenticity(t *testing.T) {
 		authenticityClient := NewAuthenticityClient()
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithLocalKey(key)).
+			WithSigner(authenticity.NewSignerWithLocalKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -215,7 +215,7 @@ func TestAuthenticity(t *testing.T) {
 		authenticityClient := NewAuthenticityClient()
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithLocalKey(key)).
+			WithSigner(authenticity.NewSignerWithLocalKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -239,7 +239,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithManagedKey(key)).
+			WithSigner(authenticity.NewSignerWithManagedKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -263,7 +263,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithManagedKey(key)).
+			WithSigner(authenticity.NewSignerWithManagedKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -287,7 +287,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithManagedKey(key)).
+			WithSigner(authenticity.NewSignerWithManagedKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -311,7 +311,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithLocalKey(key))
+			Sign(record, authenticity.NewSignerWithLocalKey(key, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -334,7 +334,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(key))
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -350,7 +350,7 @@ func TestAuthenticity(t *testing.T) {
 		authenticityClient := NewAuthenticityClient()
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithLocalKey(key)).
+			WithSigner(authenticity.NewSignerWithLocalKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -374,7 +374,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithManagedKey(key)).
+			WithSigner(authenticity.NewSignerWithManagedKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -395,7 +395,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithLocalKey(key)).
+			WithSigner(authenticity.NewSignerWithLocalKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -417,7 +417,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithLocalKey(key)).
+			WithSigner(authenticity.NewSignerWithLocalKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 

@@ -2,8 +2,9 @@ use crate::{
     error::BridgeError,
     items::{
         DataAvailabilityType, Encrypter, GetDetailsRequest, GetDetailsResponse, GetHashRequest,
-        GetHashResponse, GetPayloadRequest, GetPayloadResponse, Loader, LoaderArgs, Record,
-        RecordBuilderResponse, RecordServiceHandler, SetProofRequest, SetProofResponse, Signer,
+        GetHashResponse, GetPayloadRequest, GetPayloadResponse, HashAlg, Loader, LoaderArgs,
+        Record, RecordBuilderResponse, RecordServiceHandler, SetProofRequest, SetProofResponse,
+        Signer,
     },
     server::response_types::RequestConfigData,
 };
@@ -12,6 +13,7 @@ use bloock_core::{
     config::config_data::ConfigData, integrity::entity::proof::Proof, record::builder::Builder,
     record::entity::record::Record as RecordCore,
 };
+use bloock_hasher::HashAlg as HashAlgCore;
 use bloock_keys::keys::local::LocalKey as LocalKeyCore;
 use bloock_keys::keys::managed::ManagedKey as ManagedKeyCore;
 use bloock_keys::{
@@ -319,6 +321,11 @@ async fn build_record(
     config_data: ConfigData,
 ) -> Result<Record, String> {
     if let Some(signer) = signer {
+        let hash_alg: Option<HashAlgCore> = signer
+            .hash_alg
+            .and_then(|h| HashAlg::from_i32(h))
+            .and_then(|h| Some(HashAlgCore::from(h)));
+
         let key: Key = if let Some(managed_key) = signer.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
             managed_key_core.into()
@@ -337,7 +344,7 @@ async fn build_record(
             return Err("invalid key provided".to_string());
         };
 
-        builder = builder.with_signer(&key);
+        builder = builder.with_signer(&key, hash_alg);
     }
 
     if let Some(encrypt) = encrypter {

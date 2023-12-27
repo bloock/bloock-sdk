@@ -1,3 +1,4 @@
+use bloock_hasher::HashAlg;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
@@ -42,6 +43,18 @@ impl KeyType {
             KeyType::Rsa4096 => "Rsa4096".to_string(),
             KeyType::Aes128 => "Aes128".to_string(),
             KeyType::Aes256 => "Aes256".to_string(),
+        }
+    }
+
+    pub fn default_hash_alg(&self) -> HashAlg {
+        match self {
+            KeyType::EcP256k => HashAlg::Sha256,
+            KeyType::BJJ => HashAlg::Poseidon,
+            KeyType::Rsa2048 => HashAlg::Sha256,
+            KeyType::Rsa3072 => HashAlg::Sha256,
+            KeyType::Rsa4096 => HashAlg::Sha256,
+            KeyType::Aes128 => HashAlg::Sha256,
+            KeyType::Aes256 => HashAlg::Sha256,
         }
     }
 }

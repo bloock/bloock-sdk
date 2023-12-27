@@ -1,10 +1,10 @@
 use crate::{
-    error::{BloockError, BloockResult, InfrastructureError, OperationalError},
+    error::{BloockError, BloockResult, InfrastructureError},
     integrity::{entity::proof::Proof, IntegrityError},
     record::{document::Document, RecordError},
 };
 use bloock_encrypter::entity::alg::EncryptionAlg;
-use bloock_hasher::{from_hex, keccak::Keccak256, Hasher, H256};
+use bloock_hasher::{from_hex, keccak::Keccak256, HashAlg, Hasher, H256};
 use bloock_keys::entity::key::Key;
 use bloock_signer::entity::signature::Signature;
 use std::cmp::Ordering;
@@ -17,13 +17,9 @@ pub struct Record {
 
 impl Record {
     pub fn new(document: Document) -> BloockResult<Self> {
-        if document.is_encrypted() {
-            return Err(OperationalError::CannotCreateRecordFromEncryptedDocument().into());
-        }
-
         let hash = match document.get_proof() {
             Some(proof) => proof.get_hash()?,
-            None => Keccak256::generate_hash(&[document.build()?.as_slice()]),
+            None => Keccak256::hash(&[document.build()?.as_slice()]),
         };
 
         Ok(Self {
@@ -48,13 +44,13 @@ impl Record {
         }
     }
 
-    pub async fn sign(&mut self, key: &Key) -> BloockResult<Signature> {
+    pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>) -> BloockResult<Signature> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
 
-        let signature = doc.sign(key).await?;
+        let signature = doc.sign(key, hash_alg).await?;
         Ok(signature)
     }
 
@@ -265,9 +261,12 @@ mod tests {
         };
 
         let signature = document
-            .sign(&bloock_keys::entity::key::Key::Local(
-                bloock_keys::entity::key::Local::Key(local_key),
-            ))
+            .sign(
+                &bloock_keys::entity::key::Key::Local(bloock_keys::entity::key::Local::Key(
+                    local_key,
+                )),
+                None,
+            )
             .await
             .unwrap();
 
@@ -285,7 +284,7 @@ mod tests {
         );
 
         assert_eq!(
-            "b33acf7862a66ac2b0b52eb8c5e590b3e2dc792577b88b7f77920a2d9c038871",
+            "d4831ea114a0b229f67f15f3cbcad973a9807d713d23da3d1d4a66a5c62458b7",
             record_with_signature.get_hash(),
             "Wrong record hash received"
         );

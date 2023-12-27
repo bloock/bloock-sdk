@@ -5,6 +5,7 @@ import {
   ManagedCertificate,
   ManagedKey
 } from "../key";
+import { HashAlg } from "./hash_alg";
 
 export class Signer {
   localKey?: LocalKey;
@@ -12,8 +13,11 @@ export class Signer {
   managedCertificate?: ManagedCertificate;
   localCertificate?: LocalCertificate;
 
+  hashAlg?: HashAlg;
+
   constructor(
-    key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate | string
+    key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate | string,
+    hashAlg?: HashAlg
   ) {
     if (key instanceof LocalKey) {
       this.localKey = key;
@@ -26,14 +30,24 @@ export class Signer {
     } else {
       throw new Error("invalid key provided");
     }
+
+    if (hashAlg) {
+      this.hashAlg = hashAlg;
+    }
   }
 
   public toProto(): proto.Signer {
+    let hashAlg: proto.HashAlg | undefined;
+    if (this.hashAlg) {
+      hashAlg = this.hashAlg && HashAlg.toProto(this.hashAlg);
+    }
+
     return proto.Signer.fromPartial({
       localKey: this.localKey?.toProto(),
       managedKey: this.managedKey?.toProto(),
       managedCertificate: this.managedCertificate?.toProto(),
-      localCertificate: this.localCertificate?.toProto()
+      localCertificate: this.localCertificate?.toProto(),
+      hashAlg: hashAlg
     });
   }
 }

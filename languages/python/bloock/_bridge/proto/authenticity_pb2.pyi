@@ -20,7 +20,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class SignRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -45,7 +44,6 @@ class SignRequest(google.protobuf.message.Message):
 
 global___SignRequest = SignRequest
 
-@typing_extensions.final
 class SignResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -67,7 +65,6 @@ class SignResponse(google.protobuf.message.Message):
 
 global___SignResponse = SignResponse
 
-@typing_extensions.final
 class VerifyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -88,7 +85,6 @@ class VerifyRequest(google.protobuf.message.Message):
 
 global___VerifyRequest = VerifyRequest
 
-@typing_extensions.final
 class VerifyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -109,52 +105,6 @@ class VerifyResponse(google.protobuf.message.Message):
 
 global___VerifyResponse = VerifyResponse
 
-@typing_extensions.final
-class SignatureCommonNameRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    SIGNATURE_FIELD_NUMBER: builtins.int
-    HASH_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def signature(self) -> authenticity_entities_pb2.Signature: ...
-    hash: builtins.str
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        signature: authenticity_entities_pb2.Signature | None = ...,
-        hash: builtins.str = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "signature", b"signature"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "hash", b"hash", "signature", b"signature"]) -> None: ...
-
-global___SignatureCommonNameRequest = SignatureCommonNameRequest
-
-@typing_extensions.final
-class SignatureCommonNameResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    COMMON_NAME_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    common_name: builtins.str
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        common_name: builtins.str = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "common_name", b"common_name", "error", b"error"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___SignatureCommonNameResponse = SignatureCommonNameResponse
-
-@typing_extensions.final
 class GetSignaturesRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -175,7 +125,6 @@ class GetSignaturesRequest(google.protobuf.message.Message):
 
 global___GetSignaturesRequest = GetSignaturesRequest
 
-@typing_extensions.final
 class GetSignaturesResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

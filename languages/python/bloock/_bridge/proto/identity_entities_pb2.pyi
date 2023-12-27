@@ -9,6 +9,7 @@ import google.protobuf.internal.containers
 import google.protobuf.message
 import integrity_entities_pb2
 import sys
+import typing
 
 if sys.version_info >= (3, 8):
     import typing as typing_extensions
@@ -17,7 +18,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class Identity(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -38,7 +38,6 @@ class Identity(google.protobuf.message.Message):
 
 global___Identity = Identity
 
-@typing_extensions.final
 class BooleanAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -59,7 +58,6 @@ class BooleanAttributeDefinition(google.protobuf.message.Message):
 
 global___BooleanAttributeDefinition = BooleanAttributeDefinition
 
-@typing_extensions.final
 class DateAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -80,7 +78,6 @@ class DateAttributeDefinition(google.protobuf.message.Message):
 
 global___DateAttributeDefinition = DateAttributeDefinition
 
-@typing_extensions.final
 class DateTimeAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -101,7 +98,6 @@ class DateTimeAttributeDefinition(google.protobuf.message.Message):
 
 global___DateTimeAttributeDefinition = DateTimeAttributeDefinition
 
-@typing_extensions.final
 class StringAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -122,7 +118,6 @@ class StringAttributeDefinition(google.protobuf.message.Message):
 
 global___StringAttributeDefinition = StringAttributeDefinition
 
-@typing_extensions.final
 class NumberAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -143,7 +138,6 @@ class NumberAttributeDefinition(google.protobuf.message.Message):
 
 global___NumberAttributeDefinition = NumberAttributeDefinition
 
-@typing_extensions.final
 class BooleanAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -161,7 +155,6 @@ class BooleanAttribute(google.protobuf.message.Message):
 
 global___BooleanAttribute = BooleanAttribute
 
-@typing_extensions.final
 class DateAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -179,7 +172,6 @@ class DateAttribute(google.protobuf.message.Message):
 
 global___DateAttribute = DateAttribute
 
-@typing_extensions.final
 class DateTimeAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -197,7 +189,6 @@ class DateTimeAttribute(google.protobuf.message.Message):
 
 global___DateTimeAttribute = DateTimeAttribute
 
-@typing_extensions.final
 class StringAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -215,7 +206,6 @@ class StringAttribute(google.protobuf.message.Message):
 
 global___StringAttribute = StringAttribute
 
-@typing_extensions.final
 class NumberAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -233,7 +223,6 @@ class NumberAttribute(google.protobuf.message.Message):
 
 global___NumberAttribute = NumberAttribute
 
-@typing_extensions.final
 class Schema(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -251,7 +240,6 @@ class Schema(google.protobuf.message.Message):
 
 global___Schema = Schema
 
-@typing_extensions.final
 class CredentialOffer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -277,7 +265,6 @@ class CredentialOffer(google.protobuf.message.Message):
 
 global___CredentialOffer = CredentialOffer
 
-@typing_extensions.final
 class CredentialOfferBody(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -296,7 +283,6 @@ class CredentialOfferBody(google.protobuf.message.Message):
 
 global___CredentialOfferBody = CredentialOfferBody
 
-@typing_extensions.final
 class CredentialOfferBodyCredentials(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -314,7 +300,6 @@ class CredentialOfferBodyCredentials(google.protobuf.message.Message):
 
 global___CredentialOfferBodyCredentials = CredentialOfferBodyCredentials
 
-@typing_extensions.final
 class CredentialReceipt(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -332,7 +317,6 @@ class CredentialReceipt(google.protobuf.message.Message):
 
 global___CredentialReceipt = CredentialReceipt
 
-@typing_extensions.final
 class Credential(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -377,7 +361,6 @@ class Credential(google.protobuf.message.Message):
 
 global___Credential = Credential
 
-@typing_extensions.final
 class CredentialStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -398,7 +381,6 @@ class CredentialStatus(google.protobuf.message.Message):
 
 global___CredentialStatus = CredentialStatus
 
-@typing_extensions.final
 class CredentialSchema(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -416,7 +398,6 @@ class CredentialSchema(google.protobuf.message.Message):
 
 global___CredentialSchema = CredentialSchema
 
-@typing_extensions.final
 class CredentialProof(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -437,7 +418,6 @@ class CredentialProof(google.protobuf.message.Message):
 
 global___CredentialProof = CredentialProof
 
-@typing_extensions.final
 class CredentialVerification(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -458,7 +438,6 @@ class CredentialVerification(google.protobuf.message.Message):
 
 global___CredentialVerification = CredentialVerification
 
-@typing_extensions.final
 class CredentialRevocation(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -473,7 +452,6 @@ class CredentialRevocation(google.protobuf.message.Message):
 
 global___CredentialRevocation = CredentialRevocation
 
-@typing_extensions.final
 class SignatureJWS(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -499,25 +477,30 @@ class SignatureJWS(google.protobuf.message.Message):
 
 global___SignatureJWS = SignatureJWS
 
-@typing_extensions.final
 class SignatureHeaderJWS(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ALG_FIELD_NUMBER: builtins.int
     KID_FIELD_NUMBER: builtins.int
     SUBJECT_FIELD_NUMBER: builtins.int
+    HASH_ALG_FIELD_NUMBER: builtins.int
     alg: builtins.str
     kid: builtins.str
     subject: builtins.str
+    hash_alg: builtins.str
     def __init__(
         self,
         *,
         alg: builtins.str = ...,
         kid: builtins.str = ...,
         subject: builtins.str | None = ...,
+        hash_alg: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_subject", b"_subject", "subject", b"subject"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_subject", b"_subject", "alg", b"alg", "kid", b"kid", "subject", b"subject"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_hash_alg", b"_hash_alg", "_subject", b"_subject", "hash_alg", b"hash_alg", "subject", b"subject"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_hash_alg", b"_hash_alg", "_subject", b"_subject", "alg", b"alg", "hash_alg", b"hash_alg", "kid", b"kid", "subject", b"subject"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_hash_alg", b"_hash_alg"]) -> typing_extensions.Literal["hash_alg"] | None: ...
+    @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_subject", b"_subject"]) -> typing_extensions.Literal["subject"] | None: ...
 
 global___SignatureHeaderJWS = SignatureHeaderJWS

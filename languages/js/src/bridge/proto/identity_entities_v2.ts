@@ -144,10 +144,10 @@ export interface CredentialV2 {
   issuanceDate: string;
   expiration: string;
   credentialSubject: string;
-  credentialStatus?: CredentialStatusV2;
+  credentialStatus?: CredentialStatusV2 | undefined;
   issuer: string;
-  credentialSchema?: CredentialSchemaV2;
-  proof?: CredentialProofV2;
+  credentialSchema?: CredentialSchemaV2 | undefined;
+  proof?: CredentialProofV2 | undefined;
 }
 
 export interface CredentialProofV2 {
@@ -263,7 +263,7 @@ export interface DecimalEnumAttributeDefinitionV2 {
 }
 
 export interface CredentialReceiptV2 {
-  credential?: CredentialV2;
+  credential?: CredentialV2 | undefined;
   credentialId: string;
   credentialType: string;
 }
@@ -305,22 +305,31 @@ export const IdentityKey = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IdentityKey {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIdentityKey();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.localKey = LocalKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.managedKey = ManagedKey.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -334,12 +343,18 @@ export const IdentityKey = {
 
   toJSON(message: IdentityKey): unknown {
     const obj: any = {};
-    message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
-    message.managedKey !== undefined &&
-      (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
+    if (message.localKey !== undefined) {
+      obj.localKey = LocalKey.toJSON(message.localKey);
+    }
+    if (message.managedKey !== undefined) {
+      obj.managedKey = ManagedKey.toJSON(message.managedKey);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<IdentityKey>, I>>(base?: I): IdentityKey {
+    return IdentityKey.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<IdentityKey>, I>>(object: I): IdentityKey {
     const message = createBaseIdentityKey();
     message.localKey = (object.localKey !== undefined && object.localKey !== null)
@@ -403,62 +418,103 @@ export const CredentialV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.context.push(reader.string());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.type.push(reader.string());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.issuanceDate = reader.string();
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.expiration = reader.string();
-          break;
+          continue;
         case 6:
+          if (tag !== 50) {
+            break;
+          }
+
           message.credentialSubject = reader.string();
-          break;
+          continue;
         case 7:
+          if (tag !== 58) {
+            break;
+          }
+
           message.credentialStatus = CredentialStatusV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 8:
+          if (tag !== 66) {
+            break;
+          }
+
           message.issuer = reader.string();
-          break;
+          continue;
         case 9:
+          if (tag !== 74) {
+            break;
+          }
+
           message.credentialSchema = CredentialSchemaV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 10:
+          if (tag !== 82) {
+            break;
+          }
+
           message.proof = CredentialProofV2.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CredentialV2 {
     return {
-      context: Array.isArray(object?.context) ? object.context.map((e: any) => String(e)) : [],
-      id: isSet(object.id) ? String(object.id) : "",
-      type: Array.isArray(object?.type) ? object.type.map((e: any) => String(e)) : [],
-      issuanceDate: isSet(object.issuanceDate) ? String(object.issuanceDate) : "",
-      expiration: isSet(object.expiration) ? String(object.expiration) : "",
-      credentialSubject: isSet(object.credentialSubject) ? String(object.credentialSubject) : "",
+      context: globalThis.Array.isArray(object?.context) ? object.context.map((e: any) => globalThis.String(e)) : [],
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      type: globalThis.Array.isArray(object?.type) ? object.type.map((e: any) => globalThis.String(e)) : [],
+      issuanceDate: isSet(object.issuanceDate) ? globalThis.String(object.issuanceDate) : "",
+      expiration: isSet(object.expiration) ? globalThis.String(object.expiration) : "",
+      credentialSubject: isSet(object.credentialSubject) ? globalThis.String(object.credentialSubject) : "",
       credentialStatus: isSet(object.credentialStatus)
         ? CredentialStatusV2.fromJSON(object.credentialStatus)
         : undefined,
-      issuer: isSet(object.issuer) ? String(object.issuer) : "",
+      issuer: isSet(object.issuer) ? globalThis.String(object.issuer) : "",
       credentialSchema: isSet(object.credentialSchema)
         ? CredentialSchemaV2.fromJSON(object.credentialSchema)
         : undefined,
@@ -468,33 +524,42 @@ export const CredentialV2 = {
 
   toJSON(message: CredentialV2): unknown {
     const obj: any = {};
-    if (message.context) {
-      obj.context = message.context.map((e) => e);
-    } else {
-      obj.context = [];
+    if (message.context?.length) {
+      obj.context = message.context;
     }
-    message.id !== undefined && (obj.id = message.id);
-    if (message.type) {
-      obj.type = message.type.map((e) => e);
-    } else {
-      obj.type = [];
+    if (message.id !== "") {
+      obj.id = message.id;
     }
-    message.issuanceDate !== undefined && (obj.issuanceDate = message.issuanceDate);
-    message.expiration !== undefined && (obj.expiration = message.expiration);
-    message.credentialSubject !== undefined && (obj.credentialSubject = message.credentialSubject);
-    message.credentialStatus !== undefined &&
-      (obj.credentialStatus = message.credentialStatus
-        ? CredentialStatusV2.toJSON(message.credentialStatus)
-        : undefined);
-    message.issuer !== undefined && (obj.issuer = message.issuer);
-    message.credentialSchema !== undefined &&
-      (obj.credentialSchema = message.credentialSchema
-        ? CredentialSchemaV2.toJSON(message.credentialSchema)
-        : undefined);
-    message.proof !== undefined && (obj.proof = message.proof ? CredentialProofV2.toJSON(message.proof) : undefined);
+    if (message.type?.length) {
+      obj.type = message.type;
+    }
+    if (message.issuanceDate !== "") {
+      obj.issuanceDate = message.issuanceDate;
+    }
+    if (message.expiration !== "") {
+      obj.expiration = message.expiration;
+    }
+    if (message.credentialSubject !== "") {
+      obj.credentialSubject = message.credentialSubject;
+    }
+    if (message.credentialStatus !== undefined) {
+      obj.credentialStatus = CredentialStatusV2.toJSON(message.credentialStatus);
+    }
+    if (message.issuer !== "") {
+      obj.issuer = message.issuer;
+    }
+    if (message.credentialSchema !== undefined) {
+      obj.credentialSchema = CredentialSchemaV2.toJSON(message.credentialSchema);
+    }
+    if (message.proof !== undefined) {
+      obj.proof = CredentialProofV2.toJSON(message.proof);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialV2>, I>>(base?: I): CredentialV2 {
+    return CredentialV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialV2>, I>>(object: I): CredentialV2 {
     const message = createBaseCredentialV2();
     message.context = object.context?.map((e) => e) || [];
@@ -533,40 +598,56 @@ export const CredentialProofV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialProofV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialProofV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.signatureProof = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.sparseMtProof = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CredentialProofV2 {
     return {
-      signatureProof: isSet(object.signatureProof) ? String(object.signatureProof) : "",
-      sparseMtProof: isSet(object.sparseMtProof) ? String(object.sparseMtProof) : undefined,
+      signatureProof: isSet(object.signatureProof) ? globalThis.String(object.signatureProof) : "",
+      sparseMtProof: isSet(object.sparseMtProof) ? globalThis.String(object.sparseMtProof) : undefined,
     };
   },
 
   toJSON(message: CredentialProofV2): unknown {
     const obj: any = {};
-    message.signatureProof !== undefined && (obj.signatureProof = message.signatureProof);
-    message.sparseMtProof !== undefined && (obj.sparseMtProof = message.sparseMtProof);
+    if (message.signatureProof !== "") {
+      obj.signatureProof = message.signatureProof;
+    }
+    if (message.sparseMtProof !== undefined) {
+      obj.sparseMtProof = message.sparseMtProof;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialProofV2>, I>>(base?: I): CredentialProofV2 {
+    return CredentialProofV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialProofV2>, I>>(object: I): CredentialProofV2 {
     const message = createBaseCredentialProofV2();
     message.signatureProof = object.signatureProof ?? "";
@@ -594,45 +675,67 @@ export const CredentialStatusV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialStatusV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialStatusV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.revocationNonce = longToNumber(reader.int64() as Long);
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.type = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CredentialStatusV2 {
     return {
-      id: isSet(object.id) ? String(object.id) : "",
-      revocationNonce: isSet(object.revocationNonce) ? Number(object.revocationNonce) : 0,
-      type: isSet(object.type) ? String(object.type) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      revocationNonce: isSet(object.revocationNonce) ? globalThis.Number(object.revocationNonce) : 0,
+      type: isSet(object.type) ? globalThis.String(object.type) : "",
     };
   },
 
   toJSON(message: CredentialStatusV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.revocationNonce !== undefined && (obj.revocationNonce = Math.round(message.revocationNonce));
-    message.type !== undefined && (obj.type = message.type);
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.revocationNonce !== 0) {
+      obj.revocationNonce = Math.round(message.revocationNonce);
+    }
+    if (message.type !== "") {
+      obj.type = message.type;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialStatusV2>, I>>(base?: I): CredentialStatusV2 {
+    return CredentialStatusV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialStatusV2>, I>>(object: I): CredentialStatusV2 {
     const message = createBaseCredentialStatusV2();
     message.id = object.id ?? "";
@@ -658,37 +761,56 @@ export const CredentialSchemaV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialSchemaV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialSchemaV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.type = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CredentialSchemaV2 {
-    return { id: isSet(object.id) ? String(object.id) : "", type: isSet(object.type) ? String(object.type) : "" };
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      type: isSet(object.type) ? globalThis.String(object.type) : "",
+    };
   },
 
   toJSON(message: CredentialSchemaV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.type !== undefined && (obj.type = message.type);
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.type !== "") {
+      obj.type = message.type;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialSchemaV2>, I>>(base?: I): CredentialSchemaV2 {
+    return CredentialSchemaV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialSchemaV2>, I>>(object: I): CredentialSchemaV2 {
     const message = createBaseCredentialSchemaV2();
     message.id = object.id ?? "";
@@ -713,37 +835,56 @@ export const StringAttributeV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): StringAttributeV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseStringAttributeV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.value = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): StringAttributeV2 {
-    return { id: isSet(object.id) ? String(object.id) : "", value: isSet(object.value) ? String(object.value) : "" };
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
   },
 
   toJSON(message: StringAttributeV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.value !== undefined && (obj.value = message.value);
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<StringAttributeV2>, I>>(base?: I): StringAttributeV2 {
+    return StringAttributeV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<StringAttributeV2>, I>>(object: I): StringAttributeV2 {
     const message = createBaseStringAttributeV2();
     message.id = object.id ?? "";
@@ -768,37 +909,56 @@ export const IntegerAttributeV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IntegerAttributeV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIntegerAttributeV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.value = longToNumber(reader.int64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): IntegerAttributeV2 {
-    return { id: isSet(object.id) ? String(object.id) : "", value: isSet(object.value) ? Number(object.value) : 0 };
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.Number(object.value) : 0,
+    };
   },
 
   toJSON(message: IntegerAttributeV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.value !== undefined && (obj.value = Math.round(message.value));
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== 0) {
+      obj.value = Math.round(message.value);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<IntegerAttributeV2>, I>>(base?: I): IntegerAttributeV2 {
+    return IntegerAttributeV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<IntegerAttributeV2>, I>>(object: I): IntegerAttributeV2 {
     const message = createBaseIntegerAttributeV2();
     message.id = object.id ?? "";
@@ -823,37 +983,56 @@ export const DecimalAttributeV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DecimalAttributeV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDecimalAttributeV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 17) {
+            break;
+          }
+
           message.value = reader.double();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): DecimalAttributeV2 {
-    return { id: isSet(object.id) ? String(object.id) : "", value: isSet(object.value) ? Number(object.value) : 0 };
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.Number(object.value) : 0,
+    };
   },
 
   toJSON(message: DecimalAttributeV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.value !== undefined && (obj.value = message.value);
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== 0) {
+      obj.value = message.value;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DecimalAttributeV2>, I>>(base?: I): DecimalAttributeV2 {
+    return DecimalAttributeV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DecimalAttributeV2>, I>>(object: I): DecimalAttributeV2 {
     const message = createBaseDecimalAttributeV2();
     message.id = object.id ?? "";
@@ -878,40 +1057,56 @@ export const BooleanAttributeV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BooleanAttributeV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBooleanAttributeV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.value = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): BooleanAttributeV2 {
     return {
-      id: isSet(object.id) ? String(object.id) : "",
-      value: isSet(object.value) ? Boolean(object.value) : false,
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.Boolean(object.value) : false,
     };
   },
 
   toJSON(message: BooleanAttributeV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.value !== undefined && (obj.value = message.value);
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value === true) {
+      obj.value = message.value;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BooleanAttributeV2>, I>>(base?: I): BooleanAttributeV2 {
+    return BooleanAttributeV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<BooleanAttributeV2>, I>>(object: I): BooleanAttributeV2 {
     const message = createBaseBooleanAttributeV2();
     message.id = object.id ?? "";
@@ -936,37 +1131,56 @@ export const DateAttributeV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DateAttributeV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDateAttributeV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.value = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): DateAttributeV2 {
-    return { id: isSet(object.id) ? String(object.id) : "", value: isSet(object.value) ? String(object.value) : "" };
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
   },
 
   toJSON(message: DateAttributeV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.value !== undefined && (obj.value = message.value);
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DateAttributeV2>, I>>(base?: I): DateAttributeV2 {
+    return DateAttributeV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DateAttributeV2>, I>>(object: I): DateAttributeV2 {
     const message = createBaseDateAttributeV2();
     message.id = object.id ?? "";
@@ -991,37 +1205,56 @@ export const DateTimeAttributeV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DateTimeAttributeV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDateTimeAttributeV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.value = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): DateTimeAttributeV2 {
-    return { id: isSet(object.id) ? String(object.id) : "", value: isSet(object.value) ? String(object.value) : "" };
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
   },
 
   toJSON(message: DateTimeAttributeV2): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.value !== undefined && (obj.value = message.value);
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DateTimeAttributeV2>, I>>(base?: I): DateTimeAttributeV2 {
+    return DateTimeAttributeV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DateTimeAttributeV2>, I>>(object: I): DateTimeAttributeV2 {
     const message = createBaseDateTimeAttributeV2();
     message.id = object.id ?? "";
@@ -1052,50 +1285,78 @@ export const StringAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): StringAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseStringAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): StringAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
     };
   },
 
   toJSON(message: StringAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<StringAttributeDefinitionV2>, I>>(base?: I): StringAttributeDefinitionV2 {
+    return StringAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<StringAttributeDefinitionV2>, I>>(object: I): StringAttributeDefinitionV2 {
     const message = createBaseStringAttributeDefinitionV2();
     message.displayName = object.displayName ?? "";
@@ -1128,50 +1389,78 @@ export const IntegerAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IntegerAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIntegerAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): IntegerAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
     };
   },
 
   toJSON(message: IntegerAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<IntegerAttributeDefinitionV2>, I>>(base?: I): IntegerAttributeDefinitionV2 {
+    return IntegerAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<IntegerAttributeDefinitionV2>, I>>(object: I): IntegerAttributeDefinitionV2 {
     const message = createBaseIntegerAttributeDefinitionV2();
     message.displayName = object.displayName ?? "";
@@ -1204,50 +1493,78 @@ export const DecimalAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DecimalAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDecimalAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): DecimalAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
     };
   },
 
   toJSON(message: DecimalAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DecimalAttributeDefinitionV2>, I>>(base?: I): DecimalAttributeDefinitionV2 {
+    return DecimalAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DecimalAttributeDefinitionV2>, I>>(object: I): DecimalAttributeDefinitionV2 {
     const message = createBaseDecimalAttributeDefinitionV2();
     message.displayName = object.displayName ?? "";
@@ -1280,50 +1597,78 @@ export const BooleanAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BooleanAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBooleanAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): BooleanAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
     };
   },
 
   toJSON(message: BooleanAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BooleanAttributeDefinitionV2>, I>>(base?: I): BooleanAttributeDefinitionV2 {
+    return BooleanAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<BooleanAttributeDefinitionV2>, I>>(object: I): BooleanAttributeDefinitionV2 {
     const message = createBaseBooleanAttributeDefinitionV2();
     message.displayName = object.displayName ?? "";
@@ -1356,50 +1701,78 @@ export const DateAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DateAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDateAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): DateAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
     };
   },
 
   toJSON(message: DateAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DateAttributeDefinitionV2>, I>>(base?: I): DateAttributeDefinitionV2 {
+    return DateAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DateAttributeDefinitionV2>, I>>(object: I): DateAttributeDefinitionV2 {
     const message = createBaseDateAttributeDefinitionV2();
     message.displayName = object.displayName ?? "";
@@ -1432,50 +1805,78 @@ export const DateTimeAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DateTimeAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDateTimeAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): DateTimeAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
     };
   },
 
   toJSON(message: DateTimeAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DateTimeAttributeDefinitionV2>, I>>(base?: I): DateTimeAttributeDefinitionV2 {
+    return DateTimeAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DateTimeAttributeDefinitionV2>, I>>(
     object: I,
   ): DateTimeAttributeDefinitionV2 {
@@ -1513,59 +1914,89 @@ export const StringEnumAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): StringEnumAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseStringEnumAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.enum.push(reader.string());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): StringEnumAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
-      enum: Array.isArray(object?.enum) ? object.enum.map((e: any) => String(e)) : [],
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+      enum: globalThis.Array.isArray(object?.enum) ? object.enum.map((e: any) => globalThis.String(e)) : [],
     };
   },
 
   toJSON(message: StringEnumAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
-    if (message.enum) {
-      obj.enum = message.enum.map((e) => e);
-    } else {
-      obj.enum = [];
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    if (message.enum?.length) {
+      obj.enum = message.enum;
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<StringEnumAttributeDefinitionV2>, I>>(base?: I): StringEnumAttributeDefinitionV2 {
+    return StringEnumAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<StringEnumAttributeDefinitionV2>, I>>(
     object: I,
   ): StringEnumAttributeDefinitionV2 {
@@ -1606,66 +2037,101 @@ export const IntegerEnumAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IntegerEnumAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIntegerEnumAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
+          continue;
         case 5:
-          if ((tag & 7) === 2) {
+          if (tag === 40) {
+            message.enum.push(longToNumber(reader.int64() as Long));
+
+            continue;
+          }
+
+          if (tag === 42) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
               message.enum.push(longToNumber(reader.int64() as Long));
             }
-          } else {
-            message.enum.push(longToNumber(reader.int64() as Long));
+
+            continue;
           }
-          break;
-        default:
-          reader.skipType(tag & 7);
+
           break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): IntegerEnumAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
-      enum: Array.isArray(object?.enum) ? object.enum.map((e: any) => Number(e)) : [],
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+      enum: globalThis.Array.isArray(object?.enum) ? object.enum.map((e: any) => globalThis.Number(e)) : [],
     };
   },
 
   toJSON(message: IntegerEnumAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
-    if (message.enum) {
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    if (message.enum?.length) {
       obj.enum = message.enum.map((e) => Math.round(e));
-    } else {
-      obj.enum = [];
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<IntegerEnumAttributeDefinitionV2>, I>>(
+    base?: I,
+  ): IntegerEnumAttributeDefinitionV2 {
+    return IntegerEnumAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<IntegerEnumAttributeDefinitionV2>, I>>(
     object: I,
   ): IntegerEnumAttributeDefinitionV2 {
@@ -1706,66 +2172,101 @@ export const DecimalEnumAttributeDefinitionV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DecimalEnumAttributeDefinitionV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDecimalEnumAttributeDefinitionV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.required = reader.bool();
-          break;
+          continue;
         case 5:
-          if ((tag & 7) === 2) {
+          if (tag === 41) {
+            message.enum.push(reader.double());
+
+            continue;
+          }
+
+          if (tag === 42) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
               message.enum.push(reader.double());
             }
-          } else {
-            message.enum.push(reader.double());
+
+            continue;
           }
-          break;
-        default:
-          reader.skipType(tag & 7);
+
           break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): DecimalEnumAttributeDefinitionV2 {
     return {
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      id: isSet(object.id) ? String(object.id) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      required: isSet(object.required) ? Boolean(object.required) : false,
-      enum: Array.isArray(object?.enum) ? object.enum.map((e: any) => Number(e)) : [],
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+      enum: globalThis.Array.isArray(object?.enum) ? object.enum.map((e: any) => globalThis.Number(e)) : [],
     };
   },
 
   toJSON(message: DecimalEnumAttributeDefinitionV2): unknown {
     const obj: any = {};
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.id !== undefined && (obj.id = message.id);
-    message.description !== undefined && (obj.description = message.description);
-    message.required !== undefined && (obj.required = message.required);
-    if (message.enum) {
-      obj.enum = message.enum.map((e) => e);
-    } else {
-      obj.enum = [];
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    if (message.enum?.length) {
+      obj.enum = message.enum;
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DecimalEnumAttributeDefinitionV2>, I>>(
+    base?: I,
+  ): DecimalEnumAttributeDefinitionV2 {
+    return DecimalEnumAttributeDefinitionV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DecimalEnumAttributeDefinitionV2>, I>>(
     object: I,
   ): DecimalEnumAttributeDefinitionV2 {
@@ -1798,25 +2299,38 @@ export const CredentialReceiptV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialReceiptV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialReceiptV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.credential = CredentialV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.credentialId = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.credentialType = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1824,20 +2338,28 @@ export const CredentialReceiptV2 = {
   fromJSON(object: any): CredentialReceiptV2 {
     return {
       credential: isSet(object.credential) ? CredentialV2.fromJSON(object.credential) : undefined,
-      credentialId: isSet(object.credentialId) ? String(object.credentialId) : "",
-      credentialType: isSet(object.credentialType) ? String(object.credentialType) : "",
+      credentialId: isSet(object.credentialId) ? globalThis.String(object.credentialId) : "",
+      credentialType: isSet(object.credentialType) ? globalThis.String(object.credentialType) : "",
     };
   },
 
   toJSON(message: CredentialReceiptV2): unknown {
     const obj: any = {};
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? CredentialV2.toJSON(message.credential) : undefined);
-    message.credentialId !== undefined && (obj.credentialId = message.credentialId);
-    message.credentialType !== undefined && (obj.credentialType = message.credentialType);
+    if (message.credential !== undefined) {
+      obj.credential = CredentialV2.toJSON(message.credential);
+    }
+    if (message.credentialId !== "") {
+      obj.credentialId = message.credentialId;
+    }
+    if (message.credentialType !== "") {
+      obj.credentialType = message.credentialType;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialReceiptV2>, I>>(base?: I): CredentialReceiptV2 {
+    return CredentialReceiptV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialReceiptV2>, I>>(object: I): CredentialReceiptV2 {
     const message = createBaseCredentialReceiptV2();
     message.credential = (object.credential !== undefined && object.credential !== null)
@@ -1862,33 +2384,43 @@ export const IssuerStateReceipt = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IssuerStateReceipt {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIssuerStateReceipt();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.txHash = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): IssuerStateReceipt {
-    return { txHash: isSet(object.txHash) ? String(object.txHash) : "" };
+    return { txHash: isSet(object.txHash) ? globalThis.String(object.txHash) : "" };
   },
 
   toJSON(message: IssuerStateReceipt): unknown {
     const obj: any = {};
-    message.txHash !== undefined && (obj.txHash = message.txHash);
+    if (message.txHash !== "") {
+      obj.txHash = message.txHash;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<IssuerStateReceipt>, I>>(base?: I): IssuerStateReceipt {
+    return IssuerStateReceipt.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<IssuerStateReceipt>, I>>(object: I): IssuerStateReceipt {
     const message = createBaseIssuerStateReceipt();
     message.txHash = object.txHash ?? "";
@@ -1918,50 +2450,78 @@ export const SchemaV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SchemaV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSchemaV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.cid = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.cidJsonLd = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.schemaType = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.json = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): SchemaV2 {
     return {
-      cid: isSet(object.cid) ? String(object.cid) : "",
-      cidJsonLd: isSet(object.cidJsonLd) ? String(object.cidJsonLd) : "",
-      schemaType: isSet(object.schemaType) ? String(object.schemaType) : "",
-      json: isSet(object.json) ? String(object.json) : "",
+      cid: isSet(object.cid) ? globalThis.String(object.cid) : "",
+      cidJsonLd: isSet(object.cidJsonLd) ? globalThis.String(object.cidJsonLd) : "",
+      schemaType: isSet(object.schemaType) ? globalThis.String(object.schemaType) : "",
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
     };
   },
 
   toJSON(message: SchemaV2): unknown {
     const obj: any = {};
-    message.cid !== undefined && (obj.cid = message.cid);
-    message.cidJsonLd !== undefined && (obj.cidJsonLd = message.cidJsonLd);
-    message.schemaType !== undefined && (obj.schemaType = message.schemaType);
-    message.json !== undefined && (obj.json = message.json);
+    if (message.cid !== "") {
+      obj.cid = message.cid;
+    }
+    if (message.cidJsonLd !== "") {
+      obj.cidJsonLd = message.cidJsonLd;
+    }
+    if (message.schemaType !== "") {
+      obj.schemaType = message.schemaType;
+    }
+    if (message.json !== "") {
+      obj.json = message.json;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<SchemaV2>, I>>(base?: I): SchemaV2 {
+    return SchemaV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<SchemaV2>, I>>(object: I): SchemaV2 {
     const message = createBaseSchemaV2();
     message.cid = object.cid ?? "";
@@ -1985,33 +2545,43 @@ export const CredentialRevocationV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialRevocationV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialRevocationV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.success = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CredentialRevocationV2 {
-    return { success: isSet(object.success) ? Boolean(object.success) : false };
+    return { success: isSet(object.success) ? globalThis.Boolean(object.success) : false };
   },
 
   toJSON(message: CredentialRevocationV2): unknown {
     const obj: any = {};
-    message.success !== undefined && (obj.success = message.success);
+    if (message.success === true) {
+      obj.success = message.success;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialRevocationV2>, I>>(base?: I): CredentialRevocationV2 {
+    return CredentialRevocationV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialRevocationV2>, I>>(object: I): CredentialRevocationV2 {
     const message = createBaseCredentialRevocationV2();
     message.success = object.success ?? false;
@@ -2038,25 +2608,38 @@ export const DidParams = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DidParams {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDidParams();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.method = reader.int32() as any;
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.blockchain = reader.int32() as any;
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.networkId = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -2071,12 +2654,21 @@ export const DidParams = {
 
   toJSON(message: DidParams): unknown {
     const obj: any = {};
-    message.method !== undefined && (obj.method = methodToJSON(message.method));
-    message.blockchain !== undefined && (obj.blockchain = blockchainToJSON(message.blockchain));
-    message.networkId !== undefined && (obj.networkId = networkIdToJSON(message.networkId));
+    if (message.method !== 0) {
+      obj.method = methodToJSON(message.method);
+    }
+    if (message.blockchain !== 0) {
+      obj.blockchain = blockchainToJSON(message.blockchain);
+    }
+    if (message.networkId !== 0) {
+      obj.networkId = networkIdToJSON(message.networkId);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<DidParams>, I>>(base?: I): DidParams {
+    return DidParams.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<DidParams>, I>>(object: I): DidParams {
     const message = createBaseDidParams();
     message.method = object.method ?? 0;
@@ -2086,29 +2678,11 @@ export const DidParams = {
   },
 };
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
-
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
@@ -2117,7 +2691,7 @@ type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+  if (long.gt(globalThis.Number.MAX_SAFE_INTEGER)) {
     throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
   }
   return long.toNumber();

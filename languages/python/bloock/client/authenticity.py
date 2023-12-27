@@ -3,7 +3,6 @@ from warnings import warn
 
 from bloock._bridge import bridge
 from bloock._bridge.proto.authenticity_pb2 import (
-    SignatureCommonNameRequest,
     GetSignaturesRequest,
     SignRequest,
     VerifyRequest,
@@ -72,13 +71,3 @@ class AuthenticityClient:
         if res.error != Error():
             raise Exception(res.error.message)
         return list(map(lambda x: Signature.from_proto(x), res.signatures))
-
-    def get_signature_common_name(self, signature: Signature) -> str:
-        res = self.bridge_client.authenticity().GetSignatureCommonName(
-            SignatureCommonNameRequest(
-                config_data=self.config_data, signature=signature.to_proto()
-            )
-        )
-        if res.error != Error():
-            raise Exception(res.error.message)
-        return res.common_name

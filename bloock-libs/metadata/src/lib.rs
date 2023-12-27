@@ -2,6 +2,7 @@ use async_trait::async_trait;
 use bloock_encrypter::entity::{
     alg::EncryptionAlg, encryption::Encryption, encryption_key::EncryptionKey,
 };
+use bloock_hasher::HashAlg;
 use bloock_keys::entity::key::Key;
 use bloock_signer::entity::signature::Signature;
 use default::DefaultParser;
@@ -45,13 +46,14 @@ impl MetadataParser for FileParser {
     async fn sign(
         &mut self,
         key: &Key,
+        hash_alg: Option<HashAlg>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
     ) -> Result<Signature> {
         match self {
-            FileParser::Pdf(p) => p.sign(key, api_host, api_key, environment).await,
-            FileParser::Default(p) => p.sign(key, api_host, api_key, environment).await,
+            FileParser::Pdf(p) => p.sign(key, hash_alg, api_host, api_key, environment).await,
+            FileParser::Default(p) => p.sign(key, hash_alg, api_host, api_key, environment).await,
         }
     }
 
@@ -168,6 +170,7 @@ where
     async fn sign(
         &mut self,
         key: &Key,
+        hash_alg: Option<HashAlg>,
         api_host: String,
         api_key: String,
         environment: Option<String>,

@@ -84,12 +84,12 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
      *     @type int $version
      *     @type \Bloock\Signer $signer
      *     @type string $api_managed_host
-     *     @type \Bloock\StringAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $string_attributes
-     *     @type \Bloock\IntegerAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $integer_attributes
-     *     @type \Bloock\DecimalAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $decimal_attributes
-     *     @type \Bloock\BooleanAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $boolean_attributes
-     *     @type \Bloock\DateAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $date_attributes
-     *     @type \Bloock\DateTimeAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $datetime_attributes
+     *     @type array<\Bloock\StringAttributeV2>|\Google\Protobuf\Internal\RepeatedField $string_attributes
+     *     @type array<\Bloock\IntegerAttributeV2>|\Google\Protobuf\Internal\RepeatedField $integer_attributes
+     *     @type array<\Bloock\DecimalAttributeV2>|\Google\Protobuf\Internal\RepeatedField $decimal_attributes
+     *     @type array<\Bloock\BooleanAttributeV2>|\Google\Protobuf\Internal\RepeatedField $boolean_attributes
+     *     @type array<\Bloock\DateAttributeV2>|\Google\Protobuf\Internal\RepeatedField $date_attributes
+     *     @type array<\Bloock\DateTimeAttributeV2>|\Google\Protobuf\Internal\RepeatedField $datetime_attributes
      * }
      */
     public function __construct($data = NULL) {
@@ -314,7 +314,7 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.StringAttributeV2 string_attributes = 9;</code>
-     * @param \Bloock\StringAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<\Bloock\StringAttributeV2>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setStringAttributes($var)
@@ -336,7 +336,7 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.IntegerAttributeV2 integer_attributes = 10;</code>
-     * @param \Bloock\IntegerAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<\Bloock\IntegerAttributeV2>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setIntegerAttributes($var)
@@ -358,7 +358,7 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.DecimalAttributeV2 decimal_attributes = 11;</code>
-     * @param \Bloock\DecimalAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<\Bloock\DecimalAttributeV2>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setDecimalAttributes($var)
@@ -380,7 +380,7 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.BooleanAttributeV2 boolean_attributes = 12;</code>
-     * @param \Bloock\BooleanAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<\Bloock\BooleanAttributeV2>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setBooleanAttributes($var)
@@ -402,7 +402,7 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.DateAttributeV2 date_attributes = 13;</code>
-     * @param \Bloock\DateAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<\Bloock\DateAttributeV2>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setDateAttributes($var)
@@ -424,7 +424,7 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeV2 datetime_attributes = 14;</code>
-     * @param \Bloock\DateTimeAttributeV2[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<\Bloock\DateTimeAttributeV2>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setDatetimeAttributes($var)

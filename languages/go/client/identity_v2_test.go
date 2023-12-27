@@ -135,7 +135,7 @@ func TestIdentityV2(t *testing.T) {
 			WithStringAttribute("car_type", "big").
 			WithIntegerAttribute("car_points", 5).
 			WithDecimalAttribute("precision_wheels", 1.10).
-			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj)).
+			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj, nil)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, res.CredentialId)
@@ -147,15 +147,15 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
 
-		ok, err := identityClient.RevokeCredential(credential, authenticity.NewSignerWithManagedKey(keyBjj))
+		ok, err := identityClient.RevokeCredential(credential, authenticity.NewSignerWithManagedKey(keyBjj, nil))
 		assert.NoError(t, err)
 		assert.True(t, ok)
 
-		receipt, err := identityClient.PublishIssuerState(issuer, authenticity.NewSignerWithManagedKey(keyBjj))
+		receipt, err := identityClient.PublishIssuerState(issuer, authenticity.NewSignerWithManagedKey(keyBjj, nil))
 		assert.NoError(t, err)
 		assert.NotNil(t, receipt.TxHash)
 
-		receipt, err = identityClient.PublishIssuerState(issuer, authenticity.NewSignerWithManagedKey(keyBjj))
+		receipt, err = identityClient.PublishIssuerState(issuer, authenticity.NewSignerWithManagedKey(keyBjj, nil))
 		assert.Error(t, err)
 	})
 
@@ -188,7 +188,7 @@ func TestIdentityV2(t *testing.T) {
 			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
 			WithIntegerAttribute("document_type", 1).
-			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj)).
+			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj, nil)).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, res.CredentialId)

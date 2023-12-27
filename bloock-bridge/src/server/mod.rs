@@ -107,15 +107,6 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
-            BloockServer::AuthenticityServiceGetSignatureCommonName => {
-                let req = self.serialize_request(payload)?;
-                Ok(self
-                    .authenticity
-                    .get_signature_common_name(&req)
-                    .await
-                    .to_response_type(&req)
-                    .await)
-            }
             BloockServer::IntegrityServiceGetAnchor => {
                 let req = self.serialize_request(payload)?;
                 Ok(self
