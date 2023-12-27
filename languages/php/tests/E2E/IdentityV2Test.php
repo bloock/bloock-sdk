@@ -4,18 +4,13 @@ use Bloock\Bloock;
 use Bloock\Client\IdentityClient;
 use Bloock\Client\KeyClient;
 use Bloock\Entity\Authenticity\Signer;
-use Bloock\Entity\Authenticity\SignerArgs;
 use Bloock\Entity\IdentityV2\BjjIdentityKey;
-use Bloock\Entity\IdentityV2\BjjIssuerKey;
 use Bloock\Entity\IdentityV2\Blockchain;
 use Bloock\Entity\IdentityV2\Credential;
 use Bloock\Entity\IdentityV2\DidParams;
 use Bloock\Entity\IdentityV2\IdentityKeyArgs;
-use Bloock\Entity\IdentityV2\IssuerKeyArgs;
-use Bloock\Entity\IdentityV2\IssuerParams;
 use Bloock\Entity\IdentityV2\Method;
 use Bloock\Entity\IdentityV2\Network;
-use Bloock\Entity\IdentityV2\ProofType;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
 use Bloock\Entity\Key\ManagedKeyParams;
@@ -86,7 +81,7 @@ final class IdentityV2Test extends TestCase
         $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/profile_image.png");
         $base64File = rtrim(strtr(base64_encode($fileContents), '+/', '-_'), '=');
 
-        $issuer = $identityClient->createIssuer($issuerKey, null, "Bloock Test", "bloock description test", $base64File);
+        $issuer = $identityClient->createIssuer($issuerKey, null, "Bloock Test", "bloock description test", $base64File, 1);
         $this->assertStringContainsString("polygonid", $issuer);
 
         $getIssuerDid = $identityClient->getIssuerByKey($issuerKey);
@@ -101,8 +96,6 @@ final class IdentityV2Test extends TestCase
 
         $issuers = $identityClient->getIssuerList();
         $this->assertNotNull($issuers);
-
-        $proofType = [ProofType::INTEGRITY_PROOF_TYPE, ProofType::SPARSE_MT_PROOF_TYPE];
 
         $schema = $identityClient->buildSchema("Driving License", self::drivingLicenseSchemaType, "1.0", "driving license schema", $issuer)
             ->addIntegerAttribute("License Type", "license_type", "license type", false)
@@ -137,10 +130,8 @@ final class IdentityV2Test extends TestCase
             ->withIntegerAttribute("car_points", 5)
             ->withDecimalAttribute("precision_wheels", 1.10)
             ->withSigner(new Signer($keyBjj))
-            ->withProofType($proofType)
             ->build();
         $this->assertNotNull($receipt->getCredentialId());
-        $this->assertNotNull($receipt->getAnchorId());
         $this->assertNotNull($receipt->getCredential());
         $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredentialType());
 
@@ -149,12 +140,26 @@ final class IdentityV2Test extends TestCase
         $this->assertEquals("JsonSchema2023", $credential->getCredentialSchema()->getType());
         $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[1]);
 
-        $stateReceipt = $identityClient->buildIssuerStatePublisher($issuer)
-            ->withSigner(new Signer($keyBjj))
-            ->build();
+        $stateReceipt = $identityClient->publishIssuerState($issuer, new Signer($keyBjj));
         $this->assertNotNull($stateReceipt->getTxHash());
 
-        $ok = $identityClient->revokeCredential($credential);
+        $deadline = new DateTime();
+        $deadline->add(new DateInterval('PT' . 120 . 'S'));
+
+        $finish = true;
+        while ($finish) {
+            if (new DateTime() > $deadline) {
+                break;
+            }
+
+            $proof = $identityClient->getCredentialProof($issuer, $credential->getId());
+
+            if ($proof->getSparseMtProof() !== '') {
+                $finish = false;
+            }
+        }
+
+        $ok = $identityClient->revokeCredential($credential, new Signer($keyBjj));
         $this->assertTrue($ok);
     }
 }

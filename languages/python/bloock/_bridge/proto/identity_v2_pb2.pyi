@@ -21,6 +21,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class GetSchemaRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -40,6 +41,7 @@ class GetSchemaRequestV2(google.protobuf.message.Message):
 
 global___GetSchemaRequestV2 = GetSchemaRequestV2
 
+@typing_extensions.final
 class GetSchemaResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -61,6 +63,7 @@ class GetSchemaResponseV2(google.protobuf.message.Message):
 
 global___GetSchemaResponseV2 = GetSchemaResponseV2
 
+@typing_extensions.final
 class GetIssuerListRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -77,6 +80,7 @@ class GetIssuerListRequest(google.protobuf.message.Message):
 
 global___GetIssuerListRequest = GetIssuerListRequest
 
+@typing_extensions.final
 class GetIssuerListResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -98,6 +102,7 @@ class GetIssuerListResponse(google.protobuf.message.Message):
 
 global___GetIssuerListResponse = GetIssuerListResponse
 
+@typing_extensions.final
 class GetIssuerByKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -118,6 +123,7 @@ class GetIssuerByKeyResponse(google.protobuf.message.Message):
 
 global___GetIssuerByKeyResponse = GetIssuerByKeyResponse
 
+@typing_extensions.final
 class GetCredentialProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -140,6 +146,7 @@ class GetCredentialProofRequest(google.protobuf.message.Message):
 
 global___GetCredentialProofRequest = GetCredentialProofRequest
 
+@typing_extensions.final
 class GetCredentialProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -161,6 +168,7 @@ class GetCredentialProofResponse(google.protobuf.message.Message):
 
 global___GetCredentialProofResponse = GetCredentialProofResponse
 
+@typing_extensions.final
 class CredentialToJsonRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -181,6 +189,7 @@ class CredentialToJsonRequestV2(google.protobuf.message.Message):
 
 global___CredentialToJsonRequestV2 = CredentialToJsonRequestV2
 
+@typing_extensions.final
 class CredentialToJsonResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -201,6 +210,7 @@ class CredentialToJsonResponseV2(google.protobuf.message.Message):
 
 global___CredentialToJsonResponseV2 = CredentialToJsonResponseV2
 
+@typing_extensions.final
 class CredentialFromJsonRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -220,6 +230,7 @@ class CredentialFromJsonRequestV2(google.protobuf.message.Message):
 
 global___CredentialFromJsonRequestV2 = CredentialFromJsonRequestV2
 
+@typing_extensions.final
 class CredentialFromJsonResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -241,6 +252,7 @@ class CredentialFromJsonResponseV2(google.protobuf.message.Message):
 
 global___CredentialFromJsonResponseV2 = CredentialFromJsonResponseV2
 
+@typing_extensions.final
 class CreateCredentialRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -258,7 +270,6 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
     BOOLEAN_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DATE_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DATETIME_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    PROOF_TYPE_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     schema_id: builtins.str
@@ -281,8 +292,6 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
     def date_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_v2_pb2.DateAttributeV2]: ...
     @property
     def datetime_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_v2_pb2.DateTimeAttributeV2]: ...
-    @property
-    def proof_type(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[identity_entities_v2_pb2.ProofType.ValueType]: ...
     def __init__(
         self,
         *,
@@ -300,14 +309,14 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
         boolean_attributes: collections.abc.Iterable[identity_entities_v2_pb2.BooleanAttributeV2] | None = ...,
         date_attributes: collections.abc.Iterable[identity_entities_v2_pb2.DateAttributeV2] | None = ...,
         datetime_attributes: collections.abc.Iterable[identity_entities_v2_pb2.DateTimeAttributeV2] | None = ...,
-        proof_type: collections.abc.Iterable[identity_entities_v2_pb2.ProofType.ValueType] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_version", b"_version", "config_data", b"config_data", "signer", b"signer", "version", b"version"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "api_managed_host", b"api_managed_host", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "issuer_did", b"issuer_did", "proof_type", b"proof_type", "schema_id", b"schema_id", "signer", b"signer", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "api_managed_host", b"api_managed_host", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "issuer_did", b"issuer_did", "schema_id", b"schema_id", "signer", b"signer", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_version", b"_version"]) -> typing_extensions.Literal["version"] | None: ...
 
 global___CreateCredentialRequestV2 = CreateCredentialRequestV2
 
+@typing_extensions.final
 class BuildSchemaRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -375,6 +384,7 @@ class BuildSchemaRequestV2(google.protobuf.message.Message):
 
 global___BuildSchemaRequestV2 = BuildSchemaRequestV2
 
+@typing_extensions.final
 class CreateIdentityV2Request(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -400,6 +410,7 @@ class CreateIdentityV2Request(google.protobuf.message.Message):
 
 global___CreateIdentityV2Request = CreateIdentityV2Request
 
+@typing_extensions.final
 class CreateIssuerRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -409,6 +420,7 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     NAME_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
     IMAGE_FIELD_NUMBER: builtins.int
+    PUBLISH_INTERVAL_FIELD_NUMBER: builtins.int
     @property
     def issuer_key(self) -> identity_entities_v2_pb2.IdentityKey: ...
     @property
@@ -418,6 +430,7 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     name: builtins.str
     description: builtins.str
     image: builtins.str
+    publish_interval: builtins.int
     def __init__(
         self,
         *,
@@ -427,9 +440,10 @@ class CreateIssuerRequest(google.protobuf.message.Message):
         name: builtins.str | None = ...,
         description: builtins.str | None = ...,
         image: builtins.str | None = ...,
+        publish_interval: builtins.int | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "_publish_interval", b"_publish_interval", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name", "publish_interval", b"publish_interval"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "_publish_interval", b"_publish_interval", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name", "publish_interval", b"publish_interval"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_description", b"_description"]) -> typing_extensions.Literal["description"] | None: ...
     @typing.overload
@@ -438,9 +452,12 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_issuer_params", b"_issuer_params"]) -> typing_extensions.Literal["issuer_params"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_name", b"_name"]) -> typing_extensions.Literal["name"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_publish_interval", b"_publish_interval"]) -> typing_extensions.Literal["publish_interval"] | None: ...
 
 global___CreateIssuerRequest = CreateIssuerRequest
 
+@typing_extensions.final
 class GetIssuerByKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -466,6 +483,7 @@ class GetIssuerByKeyRequest(google.protobuf.message.Message):
 
 global___GetIssuerByKeyRequest = GetIssuerByKeyRequest
 
+@typing_extensions.final
 class PublishIssuerStateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -489,6 +507,7 @@ class PublishIssuerStateRequest(google.protobuf.message.Message):
 
 global___PublishIssuerStateRequest = PublishIssuerStateRequest
 
+@typing_extensions.final
 class CreateCredentialResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -510,6 +529,7 @@ class CreateCredentialResponseV2(google.protobuf.message.Message):
 
 global___CreateCredentialResponseV2 = CreateCredentialResponseV2
 
+@typing_extensions.final
 class CreateIdentityV2Response(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -530,6 +550,7 @@ class CreateIdentityV2Response(google.protobuf.message.Message):
 
 global___CreateIdentityV2Response = CreateIdentityV2Response
 
+@typing_extensions.final
 class CreateIssuerResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -550,6 +571,7 @@ class CreateIssuerResponse(google.protobuf.message.Message):
 
 global___CreateIssuerResponse = CreateIssuerResponse
 
+@typing_extensions.final
 class BuildSchemaResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -571,6 +593,7 @@ class BuildSchemaResponseV2(google.protobuf.message.Message):
 
 global___BuildSchemaResponseV2 = BuildSchemaResponseV2
 
+@typing_extensions.final
 class PublishIssuerStateResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -592,26 +615,32 @@ class PublishIssuerStateResponse(google.protobuf.message.Message):
 
 global___PublishIssuerStateResponse = PublishIssuerStateResponse
 
+@typing_extensions.final
 class RevokeCredentialRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
     CREDENTIAL_FIELD_NUMBER: builtins.int
+    SIGNER_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
     def credential(self) -> identity_entities_v2_pb2.CredentialV2: ...
+    @property
+    def signer(self) -> authenticity_entities_pb2.Signer: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
         credential: identity_entities_v2_pb2.CredentialV2 | None = ...,
+        signer: authenticity_entities_pb2.Signer | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential", "signer", b"signer"]) -> None: ...
 
 global___RevokeCredentialRequestV2 = RevokeCredentialRequestV2
 
+@typing_extensions.final
 class RevokeCredentialResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

@@ -21,6 +21,10 @@ class RevokeCredentialRequestV2 extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>.bloock.CredentialV2 credential = 2;</code>
      */
     protected $credential = null;
+    /**
+     * Generated from protobuf field <code>.bloock.Signer signer = 3;</code>
+     */
+    protected $signer = null;
 
     /**
      * Constructor.
@@ -30,6 +34,7 @@ class RevokeCredentialRequestV2 extends \Google\Protobuf\Internal\Message
      *
      *     @type \Bloock\ConfigData $config_data
      *     @type \Bloock\CredentialV2 $credential
+     *     @type \Bloock\Signer $signer
      * }
      */
     public function __construct($data = NULL) {
@@ -97,6 +102,38 @@ class RevokeCredentialRequestV2 extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkMessage($var, \Bloock\CredentialV2::class);
         $this->credential = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.Signer signer = 3;</code>
+     * @return \Bloock\Signer|null
+     */
+    public function getSigner()
+    {
+        return $this->signer;
+    }
+
+    public function hasSigner()
+    {
+        return isset($this->signer);
+    }
+
+    public function clearSigner()
+    {
+        unset($this->signer);
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.Signer signer = 3;</code>
+     * @param \Bloock\Signer $var
+     * @return $this
+     */
+    public function setSigner($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\Signer::class);
+        $this->signer = $var;
 
         return $this;
     }

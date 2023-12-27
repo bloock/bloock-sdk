@@ -3,39 +3,6 @@ import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { LocalKey, ManagedKey } from "./keys_entities";
 
-export enum ProofType {
-  IntegrityProofType = 0,
-  SparseMtProofType = 1,
-  UNRECOGNIZED = -1,
-}
-
-export function proofTypeFromJSON(object: any): ProofType {
-  switch (object) {
-    case 0:
-    case "IntegrityProofType":
-      return ProofType.IntegrityProofType;
-    case 1:
-    case "SparseMtProofType":
-      return ProofType.SparseMtProofType;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return ProofType.UNRECOGNIZED;
-  }
-}
-
-export function proofTypeToJSON(object: ProofType): string {
-  switch (object) {
-    case ProofType.IntegrityProofType:
-      return "IntegrityProofType";
-    case ProofType.SparseMtProofType:
-      return "SparseMtProofType";
-    case ProofType.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
 export enum Method {
   IDEN3 = 0,
   POLYGON_ID = 1,
@@ -185,7 +152,6 @@ export interface CredentialV2 {
 
 export interface CredentialProofV2 {
   signatureProof: string;
-  integrityProof?: string | undefined;
   sparseMtProof?: string | undefined;
 }
 
@@ -300,7 +266,6 @@ export interface CredentialReceiptV2 {
   credential?: CredentialV2;
   credentialId: string;
   credentialType: string;
-  anchorId?: number | undefined;
 }
 
 export interface IssuerStateReceipt {
@@ -553,7 +518,7 @@ export const CredentialV2 = {
 };
 
 function createBaseCredentialProofV2(): CredentialProofV2 {
-  return { signatureProof: "", integrityProof: undefined, sparseMtProof: undefined };
+  return { signatureProof: "", sparseMtProof: undefined };
 }
 
 export const CredentialProofV2 = {
@@ -561,11 +526,8 @@ export const CredentialProofV2 = {
     if (message.signatureProof !== "") {
       writer.uint32(10).string(message.signatureProof);
     }
-    if (message.integrityProof !== undefined) {
-      writer.uint32(18).string(message.integrityProof);
-    }
     if (message.sparseMtProof !== undefined) {
-      writer.uint32(26).string(message.sparseMtProof);
+      writer.uint32(18).string(message.sparseMtProof);
     }
     return writer;
   },
@@ -581,9 +543,6 @@ export const CredentialProofV2 = {
           message.signatureProof = reader.string();
           break;
         case 2:
-          message.integrityProof = reader.string();
-          break;
-        case 3:
           message.sparseMtProof = reader.string();
           break;
         default:
@@ -597,7 +556,6 @@ export const CredentialProofV2 = {
   fromJSON(object: any): CredentialProofV2 {
     return {
       signatureProof: isSet(object.signatureProof) ? String(object.signatureProof) : "",
-      integrityProof: isSet(object.integrityProof) ? String(object.integrityProof) : undefined,
       sparseMtProof: isSet(object.sparseMtProof) ? String(object.sparseMtProof) : undefined,
     };
   },
@@ -605,7 +563,6 @@ export const CredentialProofV2 = {
   toJSON(message: CredentialProofV2): unknown {
     const obj: any = {};
     message.signatureProof !== undefined && (obj.signatureProof = message.signatureProof);
-    message.integrityProof !== undefined && (obj.integrityProof = message.integrityProof);
     message.sparseMtProof !== undefined && (obj.sparseMtProof = message.sparseMtProof);
     return obj;
   },
@@ -613,7 +570,6 @@ export const CredentialProofV2 = {
   fromPartial<I extends Exact<DeepPartial<CredentialProofV2>, I>>(object: I): CredentialProofV2 {
     const message = createBaseCredentialProofV2();
     message.signatureProof = object.signatureProof ?? "";
-    message.integrityProof = object.integrityProof ?? undefined;
     message.sparseMtProof = object.sparseMtProof ?? undefined;
     return message;
   },
@@ -1824,7 +1780,7 @@ export const DecimalEnumAttributeDefinitionV2 = {
 };
 
 function createBaseCredentialReceiptV2(): CredentialReceiptV2 {
-  return { credential: undefined, credentialId: "", credentialType: "", anchorId: undefined };
+  return { credential: undefined, credentialId: "", credentialType: "" };
 }
 
 export const CredentialReceiptV2 = {
@@ -1837,9 +1793,6 @@ export const CredentialReceiptV2 = {
     }
     if (message.credentialType !== "") {
       writer.uint32(26).string(message.credentialType);
-    }
-    if (message.anchorId !== undefined) {
-      writer.uint32(32).int64(message.anchorId);
     }
     return writer;
   },
@@ -1860,9 +1813,6 @@ export const CredentialReceiptV2 = {
         case 3:
           message.credentialType = reader.string();
           break;
-        case 4:
-          message.anchorId = longToNumber(reader.int64() as Long);
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1876,7 +1826,6 @@ export const CredentialReceiptV2 = {
       credential: isSet(object.credential) ? CredentialV2.fromJSON(object.credential) : undefined,
       credentialId: isSet(object.credentialId) ? String(object.credentialId) : "",
       credentialType: isSet(object.credentialType) ? String(object.credentialType) : "",
-      anchorId: isSet(object.anchorId) ? Number(object.anchorId) : undefined,
     };
   },
 
@@ -1886,7 +1835,6 @@ export const CredentialReceiptV2 = {
       (obj.credential = message.credential ? CredentialV2.toJSON(message.credential) : undefined);
     message.credentialId !== undefined && (obj.credentialId = message.credentialId);
     message.credentialType !== undefined && (obj.credentialType = message.credentialType);
-    message.anchorId !== undefined && (obj.anchorId = Math.round(message.anchorId));
     return obj;
   },
 
@@ -1897,7 +1845,6 @@ export const CredentialReceiptV2 = {
       : undefined;
     message.credentialId = object.credentialId ?? "";
     message.credentialType = object.credentialType ?? "";
-    message.anchorId = object.anchorId ?? undefined;
     return message;
   },
 };

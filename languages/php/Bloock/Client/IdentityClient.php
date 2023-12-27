@@ -7,6 +7,7 @@ use Bloock\Config\Config;
 use Bloock\ConfigData;
 use Bloock\CreateIdentityV2Request;
 use Bloock\CreateIssuerRequest;
+use Bloock\Entity\Authenticity\Signer;
 use Bloock\GetIssuerListRequest;
 use Bloock\Entity\IdentityV2\Credential;
 use Bloock\Entity\IdentityV2\Schema;
@@ -15,10 +16,12 @@ use Bloock\Entity\IdentityV2\CredentialProof;
 use Bloock\Entity\IdentityV2\DidParams;
 use Bloock\Entity\IdentityV2\IdentityKey;
 use Bloock\Entity\IdentityV2\IssuerStatePublisher;
+use Bloock\Entity\IdentityV2\IssuerStateReceipt;
 use Bloock\Entity\IdentityV2\SchemaBuilder;
 use Bloock\GetIssuerByKeyRequest;
 use Bloock\GetCredentialProofRequest;
 use Bloock\GetSchemaRequestV2;
+use Bloock\PublishIssuerStateRequest;
 use Bloock\RevokeCredentialRequestV2;
 use Exception;
 
@@ -58,7 +61,7 @@ class IdentityClient
         return $res->getDid();
     }
 
-    public function createIssuer(IdentityKey $issuerKey, DidParams $didParams = null, string $name = null, string $description = null, string $image = null): string
+    public function createIssuer(IdentityKey $issuerKey, DidParams $didParams = null, string $name = null, string $description = null, string $image = null, int $publishInterval = null): string
     {
         $req = new CreateIssuerRequest();
         $req->setIssuerKey($issuerKey->toProto());
@@ -78,6 +81,10 @@ class IdentityClient
 
         if ($image != null) {
             $req->setImage($image);
+        }
+
+        if ($publishInterval != null) {
+            $req->setPublishInterval($publishInterval);
         }
 
         $res = $this->bridge->identityV2->CreateIssuer($req);
@@ -149,9 +156,20 @@ class IdentityClient
         return new CredentialBuilder($schemaId, $issuerDid, $holderDid, $expiration, $version, $this->apiManagedHost, $this->config);
     }
 
-    public function buildIssuerStatePublisher(string $issuerDid): IssuerStatePublisher
+    public function publishIssuerState(string $issuerDid, Signer $signer): IssuerStateReceipt
     {
-        return new IssuerStatePublisher($issuerDid, $this->config);
+        $req = new PublishIssuerStateRequest();
+        $req->setConfigData($this->config);
+        $req->setIssuerDid($issuerDid);
+        $req->setSigner($signer->toProto());
+
+        $res = $this->bridge->identityV2->PublishIssuerState($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return IssuerStateReceipt::fromProto($res->getStateReceipt());
     }
 
     public function getCredentialProof(string $issuerDid, string $credentialId): CredentialProof
@@ -170,10 +188,12 @@ class IdentityClient
         return CredentialProof::fromProto($res->getProof());
     }
 
-    public function revokeCredential(Credential $credential): bool
+    public function revokeCredential(Credential $credential, Signer $signer): bool
     {
         $req = new RevokeCredentialRequestV2();
-        $req->setConfigData($this->config)->setCredential($credential->toProto());
+        $req->setConfigData($this->config);
+        $req->setCredential($credential->toProto());
+        $req->setSigner($signer->toProto());
 
         $res = $this->bridge->identityV2->RevokeCredential($req);
 

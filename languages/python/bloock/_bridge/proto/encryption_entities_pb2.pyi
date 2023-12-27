@@ -21,7 +21,7 @@ class _EncryptionAlg:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _EncryptionAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_EncryptionAlg.ValueType], builtins.type):  # noqa: F821
+class _EncryptionAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_EncryptionAlg.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     A256GCM: _EncryptionAlg.ValueType  # 0
     A256GCM_M: _EncryptionAlg.ValueType  # 1
@@ -36,6 +36,7 @@ RSA: EncryptionAlg.ValueType  # 2
 RSA_M: EncryptionAlg.ValueType  # 3
 global___EncryptionAlg = EncryptionAlg
 
+@typing_extensions.final
 class Encrypter(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

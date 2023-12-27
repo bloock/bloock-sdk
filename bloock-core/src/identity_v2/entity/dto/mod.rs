@@ -14,3 +14,5 @@ pub mod publish_issuer_state_request;
 pub mod publish_issuer_state_response;
 pub mod revoke_credential_request;
 pub mod revoke_credential_response;
+pub mod update_draft_state_signature_request;
+pub mod update_draft_state_signature_response;

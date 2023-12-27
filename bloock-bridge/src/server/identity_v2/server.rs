@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use bloock_core::identity_v2::{
     self,
     entity::{
-        credential::Credential, did_metadata::DidMetadata, proof_type::ProofType, schema::Attribute,
+        credential::Credential, did_metadata::DidMetadata, schema::Attribute,
     },
 };
 use bloock_keys::{entity::key::Key, KeyType};
@@ -125,6 +125,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 req.name.clone(),
                 req.description.clone(),
                 req.image.clone(),
+                req.publish_interval.clone(),
             )
             .await
             .map_err(|e| e.to_string())?;
@@ -415,14 +416,6 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             .chain(datetime_attr.into_iter())
             .collect();
 
-        let core_proof_types: Vec<ProofType> = req
-            .proof_type()
-            .map(|proof_type| {
-                let core_proof_type: ProofType = proof_type.into();
-                core_proof_type
-            })
-            .collect();
-
         let receipt = client
             .create_credential(
                 req.schema_id.clone(),
@@ -432,7 +425,6 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 req.version.clone(),
                 attributes,
                 key,
-                core_proof_types,
                 req.api_managed_host.clone(),
             )
             .await
@@ -451,7 +443,6 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 credential: deserialized_credential,
                 credential_id: receipt.credential_id,
                 credential_type: receipt.schema_type,
-                anchor_id: receipt.anchor_id,
             }),
             error: None,
         })
@@ -507,7 +498,6 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
         Ok(GetCredentialProofResponse {
             proof: Some(CredentialProofV2 {
                 signature_proof: proof.signature_proof,
-                integrity_proof: proof.integrity_proof,
                 sparse_mt_proof: proof.sparse_mt_proof,
             }),
             error: None,
@@ -565,8 +555,23 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             .try_into()
             .map_err(|e: BridgeError| e.to_string())?;
 
+        let signer = req
+            .clone()
+            .signer
+            .ok_or_else(|| "no signer provided".to_string())?;
+
+        let key: Key = if let Some(managed_key) = signer.managed_key {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.into()
+        } else if let Some(local_key) = signer.local_key {
+            let local_key_core: LocalKeyCore<String> = local_key.into();
+            local_key_core.into()
+        } else {
+            return Err("invalid key provided".to_string());
+        };
+
         let revocation = client
-            .revoke_credential(credential)
+            .revoke_credential(credential, key)
             .await
             .map_err(|e| e.to_string())?;
 

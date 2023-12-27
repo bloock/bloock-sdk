@@ -7,7 +7,6 @@ import {
   KeyProtectionLevel,
   KeyType,
   ManagedKeyParams,
-  ProofType,
   DidParams,
   Method,
   Blockchain,
@@ -88,7 +87,8 @@ describe("Identity V2 Tests", () => {
       undefined,
       "Bloock Test",
       "bloock description test",
-      encodedFile
+      encodedFile,
+      1
     );
     expect(issuer.includes("polygonid")).toBeTruthy();
 
@@ -119,11 +119,6 @@ describe("Identity V2 Tests", () => {
 
     let issuers = await identityClient.getIssuerList();
     expect(issuers).toBeTruthy();
-
-    let proofType = [
-      ProofType.INTEGRITY_PROOF_TYPE,
-      ProofType.SPARSE_MT_PROOF_TYPE
-    ];
 
     let schema = await identityClient
       .buildSchema(
@@ -181,10 +176,8 @@ describe("Identity V2 Tests", () => {
       .withIntegerAttribute("car_points", 5)
       .withDecimalAttribute("precision_wheels", 1.1)
       .withSigner(new Signer(keyBjj))
-      .withProofType(proofType)
       .build();
     expect(receipt.credentialId).toBeTruthy();
-    expect(receipt.anchorId).toBeTruthy();
     expect(receipt.credential).toBeTruthy();
     expect(receipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
 
@@ -193,31 +186,30 @@ describe("Identity V2 Tests", () => {
     expect(credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
     expect(credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
-    const stateReceipt = await identityClient
-      .buildIssuerStatePublisher(issuer)
-      .withSigner(new Signer(keyBjj))
-      .build();
+    const stateReceipt = await identityClient.publishIssuerState(issuer, new Signer(keyBjj))
     expect(stateReceipt.txHash).toBeTruthy();
 
     try {
-      await identityClient
-        .buildIssuerStatePublisher(issuer)
-        .withSigner(new Signer(keyBjj))
-        .build();
+      await identityClient.publishIssuerState(issuer, new Signer(keyBjj))
     } catch (error) {
       expect(error).toBeTruthy();
     }
 
-    const ok = await identityClient.revokeCredential(credential);
+    const deadline = Date.now() + (2 * 60 * 1000);
+    let finish = true;
+    while (finish) {
+      if (Date.now() > deadline) {
+        break;
+      }
+
+      const proof = await identityClient.getCredentialProof(issuer, credential.id);
+
+      if (proof.sparseMtProof !== '') {
+        finish = false;
+      }
+    }
+
+    const ok = await identityClient.revokeCredential(credential, new Signer(keyBjj));
     expect(ok).toBeTruthy();
-
-    try {
-      await identityClient
-        .buildIssuerStatePublisher(issuer)
-        .withSigner(new Signer(keyBjj))
-        .build();
-    } catch (error) {
-      expect(error).toBeTruthy();
-    }
   });
 });

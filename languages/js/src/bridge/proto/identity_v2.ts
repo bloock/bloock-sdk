@@ -23,9 +23,6 @@ import {
   IntegerAttributeV2,
   IntegerEnumAttributeDefinitionV2,
   IssuerStateReceipt,
-  ProofType,
-  proofTypeFromJSON,
-  proofTypeToJSON,
   SchemaV2,
   StringAttributeDefinitionV2,
   StringAttributeV2,
@@ -103,7 +100,6 @@ export interface CreateCredentialRequestV2 {
   booleanAttributes: BooleanAttributeV2[];
   dateAttributes: DateAttributeV2[];
   datetimeAttributes: DateTimeAttributeV2[];
-  proofType: ProofType[];
 }
 
 export interface BuildSchemaRequestV2 {
@@ -137,6 +133,7 @@ export interface CreateIssuerRequest {
   name?: string | undefined;
   description?: string | undefined;
   image?: string | undefined;
+  publishInterval?: number | undefined;
 }
 
 export interface GetIssuerByKeyRequest {
@@ -179,6 +176,7 @@ export interface PublishIssuerStateResponse {
 export interface RevokeCredentialRequestV2 {
   configData?: ConfigData;
   credential?: CredentialV2;
+  signer?: Signer;
 }
 
 export interface RevokeCredentialResponseV2 {
@@ -867,7 +865,6 @@ function createBaseCreateCredentialRequestV2(): CreateCredentialRequestV2 {
     booleanAttributes: [],
     dateAttributes: [],
     datetimeAttributes: [],
-    proofType: [],
   };
 }
 
@@ -915,11 +912,6 @@ export const CreateCredentialRequestV2 = {
     for (const v of message.datetimeAttributes) {
       DateTimeAttributeV2.encode(v!, writer.uint32(114).fork()).ldelim();
     }
-    writer.uint32(122).fork();
-    for (const v of message.proofType) {
-      writer.int32(v);
-    }
-    writer.ldelim();
     return writer;
   },
 
@@ -972,16 +964,6 @@ export const CreateCredentialRequestV2 = {
         case 14:
           message.datetimeAttributes.push(DateTimeAttributeV2.decode(reader, reader.uint32()));
           break;
-        case 15:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.proofType.push(reader.int32() as any);
-            }
-          } else {
-            message.proofType.push(reader.int32() as any);
-          }
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1017,9 +999,6 @@ export const CreateCredentialRequestV2 = {
         : [],
       datetimeAttributes: Array.isArray(object?.datetimeAttributes)
         ? object.datetimeAttributes.map((e: any) => DateTimeAttributeV2.fromJSON(e))
-        : [],
-      proofType: Array.isArray(object?.proofType)
-        ? object.proofType.map((e: any) => proofTypeFromJSON(e))
         : [],
     };
   },
@@ -1065,11 +1044,6 @@ export const CreateCredentialRequestV2 = {
     } else {
       obj.datetimeAttributes = [];
     }
-    if (message.proofType) {
-      obj.proofType = message.proofType.map((e) => proofTypeToJSON(e));
-    } else {
-      obj.proofType = [];
-    }
     return obj;
   },
 
@@ -1093,7 +1067,6 @@ export const CreateCredentialRequestV2 = {
     message.booleanAttributes = object.booleanAttributes?.map((e) => BooleanAttributeV2.fromPartial(e)) || [];
     message.dateAttributes = object.dateAttributes?.map((e) => DateAttributeV2.fromPartial(e)) || [];
     message.datetimeAttributes = object.datetimeAttributes?.map((e) => DateTimeAttributeV2.fromPartial(e)) || [];
-    message.proofType = object.proofType?.map((e) => e) || [];
     return message;
   },
 };
@@ -1448,6 +1421,7 @@ function createBaseCreateIssuerRequest(): CreateIssuerRequest {
     name: undefined,
     description: undefined,
     image: undefined,
+    publishInterval: undefined,
   };
 }
 
@@ -1470,6 +1444,9 @@ export const CreateIssuerRequest = {
     }
     if (message.image !== undefined) {
       writer.uint32(50).string(message.image);
+    }
+    if (message.publishInterval !== undefined) {
+      writer.uint32(56).int64(message.publishInterval);
     }
     return writer;
   },
@@ -1499,6 +1476,9 @@ export const CreateIssuerRequest = {
         case 6:
           message.image = reader.string();
           break;
+        case 7:
+          message.publishInterval = longToNumber(reader.int64() as Long);
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1515,6 +1495,7 @@ export const CreateIssuerRequest = {
       name: isSet(object.name) ? String(object.name) : undefined,
       description: isSet(object.description) ? String(object.description) : undefined,
       image: isSet(object.image) ? String(object.image) : undefined,
+      publishInterval: isSet(object.publishInterval) ? Number(object.publishInterval) : undefined,
     };
   },
 
@@ -1529,6 +1510,7 @@ export const CreateIssuerRequest = {
     message.name !== undefined && (obj.name = message.name);
     message.description !== undefined && (obj.description = message.description);
     message.image !== undefined && (obj.image = message.image);
+    message.publishInterval !== undefined && (obj.publishInterval = Math.round(message.publishInterval));
     return obj;
   },
 
@@ -1546,6 +1528,7 @@ export const CreateIssuerRequest = {
     message.name = object.name ?? undefined;
     message.description = object.description ?? undefined;
     message.image = object.image ?? undefined;
+    message.publishInterval = object.publishInterval ?? undefined;
     return message;
   },
 };
@@ -2000,7 +1983,7 @@ export const PublishIssuerStateResponse = {
 };
 
 function createBaseRevokeCredentialRequestV2(): RevokeCredentialRequestV2 {
-  return { configData: undefined, credential: undefined };
+  return { configData: undefined, credential: undefined, signer: undefined };
 }
 
 export const RevokeCredentialRequestV2 = {
@@ -2010,6 +1993,9 @@ export const RevokeCredentialRequestV2 = {
     }
     if (message.credential !== undefined) {
       CredentialV2.encode(message.credential, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.signer !== undefined) {
+      Signer.encode(message.signer, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -2027,6 +2013,9 @@ export const RevokeCredentialRequestV2 = {
         case 2:
           message.credential = CredentialV2.decode(reader, reader.uint32());
           break;
+        case 3:
+          message.signer = Signer.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -2039,6 +2028,7 @@ export const RevokeCredentialRequestV2 = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       credential: isSet(object.credential) ? CredentialV2.fromJSON(object.credential) : undefined,
+      signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
     };
   },
 
@@ -2048,6 +2038,7 @@ export const RevokeCredentialRequestV2 = {
       (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
     message.credential !== undefined &&
       (obj.credential = message.credential ? CredentialV2.toJSON(message.credential) : undefined);
+    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
     return obj;
   },
 
@@ -2058,6 +2049,9 @@ export const RevokeCredentialRequestV2 = {
       : undefined;
     message.credential = (object.credential !== undefined && object.credential !== null)
       ? CredentialV2.fromPartial(object.credential)
+      : undefined;
+    message.signer = (object.signer !== undefined && object.signer !== null)
+      ? Signer.fromPartial(object.signer)
       : undefined;
     return message;
   },

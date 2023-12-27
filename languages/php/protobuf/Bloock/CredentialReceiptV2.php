@@ -25,10 +25,6 @@ class CredentialReceiptV2 extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string credential_type = 3;</code>
      */
     protected $credential_type = '';
-    /**
-     * Generated from protobuf field <code>optional int64 anchor_id = 4;</code>
-     */
-    protected $anchor_id = null;
 
     /**
      * Constructor.
@@ -39,7 +35,6 @@ class CredentialReceiptV2 extends \Google\Protobuf\Internal\Message
      *     @type \Bloock\CredentialV2 $credential
      *     @type string $credential_id
      *     @type string $credential_type
-     *     @type int|string $anchor_id
      * }
      */
     public function __construct($data = NULL) {
@@ -119,38 +114,6 @@ class CredentialReceiptV2 extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->credential_type = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>optional int64 anchor_id = 4;</code>
-     * @return int|string
-     */
-    public function getAnchorId()
-    {
-        return isset($this->anchor_id) ? $this->anchor_id : 0;
-    }
-
-    public function hasAnchorId()
-    {
-        return isset($this->anchor_id);
-    }
-
-    public function clearAnchorId()
-    {
-        unset($this->anchor_id);
-    }
-
-    /**
-     * Generated from protobuf field <code>optional int64 anchor_id = 4;</code>
-     * @param int|string $var
-     * @return $this
-     */
-    public function setAnchorId($var)
-    {
-        GPBUtil::checkInt64($var);
-        $this->anchor_id = $var;
 
         return $this;
     }

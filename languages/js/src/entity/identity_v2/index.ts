@@ -28,8 +28,6 @@ export * from "./credential";
 export * from "./identity_key_args";
 export * from "./identity_key";
 export * from "./did_params";
-export * from "./issuer_state_publisher";
 export * from "./issuer_state_receipt";
-export * from "./proof_type";
 export * from "./schema_builder";
 export * from "./schema";

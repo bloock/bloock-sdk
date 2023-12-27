@@ -3,16 +3,12 @@ package com.bloock.sdk.client;
 import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
 import com.bloock.sdk.bridge.proto.IdentityV2;
+import com.bloock.sdk.bridge.proto.Shared;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.identity_v2.Credential;
-import com.bloock.sdk.entity.identity_v2.CredentialBuilder;
-import com.bloock.sdk.entity.identity_v2.CredentialProof;
-import com.bloock.sdk.entity.identity_v2.IdentityKey;
-import com.bloock.sdk.entity.identity_v2.DidParams;
-import com.bloock.sdk.entity.identity_v2.IssuerStatePublisher;
-import com.bloock.sdk.entity.identity_v2.Schema;
-import com.bloock.sdk.entity.identity_v2.SchemaBuilder;
+import com.bloock.sdk.entity.authenticity.Signer;
+import com.bloock.sdk.entity.identity_v2.*;
+
 import java.util.List;
 
 public class IdentityClient {
@@ -49,12 +45,12 @@ public class IdentityClient {
     return response.getDid();
   }
 
-  public String createIssuer(IdentityKey issuerKey, String name, String description, String image) throws Exception {
-    return createIssuer(issuerKey, new DidParams(), name, description, image);
+  public String createIssuer(IdentityKey issuerKey, String name, String description, String image, long publishInterval) throws Exception {
+    return createIssuer(issuerKey, new DidParams(), name, description, image, publishInterval);
   }
 
   public String createIssuer(IdentityKey issuerKey, DidParams issuerParams, String name, String description,
-                             String image) throws Exception {
+                             String image, long publishInterval) throws Exception {
     IdentityV2.CreateIssuerRequest.Builder builder = IdentityV2.CreateIssuerRequest.newBuilder()
         .setIssuerKey(issuerKey.toProto())
         .setIssuerParams(issuerParams.toProto())
@@ -70,6 +66,10 @@ public class IdentityClient {
 
     if (image != null) {
       builder.setImage(image);
+    }
+
+    if (publishInterval != 0) {
+      builder.setPublishInterval(publishInterval);
     }
 
     IdentityV2.CreateIssuerRequest request = builder.build();
@@ -143,8 +143,21 @@ public class IdentityClient {
         schemaId, issuerDid, holderDid, expiration, version, this.apiManagedHost, this.configData);
   }
 
-  public IssuerStatePublisher buildIssuerStatePublisher(String issuerDid) throws Exception {
-    return new IssuerStatePublisher(issuerDid, this.configData);
+  public IssuerStateReceipt publishIssuerState(String issuerDid, Signer signer) throws Exception {
+    IdentityV2.PublishIssuerStateRequest req =
+            IdentityV2.PublishIssuerStateRequest.newBuilder()
+                    .setConfigData(this.configData)
+                    .setIssuerDid(issuerDid)
+                    .setSigner(signer.toProto())
+                    .build();
+
+    IdentityV2.PublishIssuerStateResponse response = bridge.getIdentityV2().publishIssuerState(req);
+
+    if (response.getError() != Shared.Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return IssuerStateReceipt.fromProto(response.getStateReceipt());
   }
 
   public CredentialProof getCredentialProof(String issuerDid, String credentialId)
@@ -164,10 +177,11 @@ public class IdentityClient {
     return CredentialProof.fromProto(response.getProof());
   }
 
-  public boolean revokeCredential(Credential credential) throws Exception {
+  public boolean revokeCredential(Credential credential, Signer signer) throws Exception {
     IdentityV2.RevokeCredentialRequestV2 request = IdentityV2.RevokeCredentialRequestV2.newBuilder()
         .setConfigData(this.configData)
         .setCredential(credential.toProto())
+        .setSigner(signer.toProto())
         .build();
 
     IdentityV2.RevokeCredentialResponseV2 response = bridge.getIdentityV2().revokeCredential(request);

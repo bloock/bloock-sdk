@@ -18,7 +18,6 @@ public class CredentialBuilder {
   private final Long expiration;
   private final int version;
   private final String apiManagedHost;
-  private final ArrayList<com.bloock.sdk.bridge.proto.IdentityEntitiesV2.ProofType> proofTypes;
   private Signer signer;
   private final Config.ConfigData configData;
 
@@ -46,7 +45,6 @@ public class CredentialBuilder {
     this.signer = null;
     this.configData = configData;
 
-    this.proofTypes = new ArrayList<>();
     this.booleanAttributes = new ArrayList<>();
     this.dateAttributes = new ArrayList<>();
     this.datetimeAttributes = new ArrayList<>();
@@ -90,13 +88,6 @@ public class CredentialBuilder {
     return this;
   }
 
-  public CredentialBuilder WithProofType(ArrayList<ProofType> proof) {
-    for (ProofType proofType : proof) {
-      this.proofTypes.add(proofType.toProto());
-    }
-    return this;
-  }
-
   public CredentialReceipt build() throws Exception {
     Bridge bridge = new Bridge();
 
@@ -110,7 +101,6 @@ public class CredentialBuilder {
             .setVersion(this.version)
             .setApiManagedHost(this.apiManagedHost)
             .setSigner(this.signer)
-            .addAllProofType(this.proofTypes)
             .addAllStringAttributes(this.stringAttributes)
             .addAllIntegerAttributes(this.integerAttributes)
             .addAllDecimalAttributes(this.decimalAttributes)

@@ -5,18 +5,15 @@ export class CredentialReceipt {
   credential: Credential;
   credentialId: string;
   credentialType: string;
-  anchorId: number;
 
   constructor(
     credential: Credential,
     credentialId: string,
     credentialType: string,
-    anchorId: number
   ) {
     this.credential = credential;
     this.credentialId = credentialId;
     this.credentialType = credentialType;
-    this.anchorId = anchorId;
   }
 
   public toProto(): identityEntitiesProto.CredentialReceiptV2 {
@@ -24,7 +21,6 @@ export class CredentialReceipt {
       credential: this.credential.toProto(),
       credentialId: this.credentialId,
       credentialType: this.credentialType,
-      anchorId: this.anchorId
     });
   }
 
@@ -35,7 +31,6 @@ export class CredentialReceipt {
       Credential.fromProto(r.credential!),
       r.credentialId,
       r.credentialType,
-      r.anchorId!
     );
   }
 }

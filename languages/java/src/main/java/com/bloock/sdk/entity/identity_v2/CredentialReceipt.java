@@ -6,22 +6,19 @@ public class CredentialReceipt {
   private final Credential credential;
   private final String credentialId;
   private final String credentialType;
-  private final long anchorId;
 
   public CredentialReceipt(
-      Credential credential, String credentialId, String credentialType, long anchorId) {
+      Credential credential, String credentialId, String credentialType) {
     this.credential = credential;
     this.credentialId = credentialId;
     this.credentialType = credentialType;
-    this.anchorId = anchorId;
   }
 
   public static CredentialReceipt fromProto(IdentityEntitiesV2.CredentialReceiptV2 res) {
     return new CredentialReceipt(
         Credential.fromProto(res.getCredential()),
         res.getCredentialId(),
-        res.getCredentialType(),
-        res.getAnchorId());
+        res.getCredentialType());
   }
 
   public IdentityEntitiesV2.CredentialReceiptV2 toProto() {
@@ -29,7 +26,6 @@ public class CredentialReceipt {
         .setCredential(this.credential.toProto())
         .setCredentialId(this.credentialId)
         .setCredentialType(this.credentialType)
-        .setAnchorId(this.anchorId)
         .build();
   }
 
@@ -43,9 +39,5 @@ public class CredentialReceipt {
 
   public String getCredentialType() {
     return credentialType;
-  }
-
-  public long getAnchorId() {
-    return anchorId;
   }
 }
