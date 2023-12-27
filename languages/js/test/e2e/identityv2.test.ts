@@ -204,7 +204,7 @@ describe("Identity V2 Tests", () => {
 
       const proof = await identityClient.getCredentialProof(issuer, receipt.credentialId);
 
-      if (proof.sparseMtProof !== '') {
+      if (proof.sparseMtProof) {
         finish = false;
       }
     }

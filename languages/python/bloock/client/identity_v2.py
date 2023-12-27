@@ -14,7 +14,6 @@ from bloock._bridge.proto.identity_v2_pb2 import RevokeCredentialRequestV2
 from bloock.entity.identity_v2.issuer_state_receipt import IssuerStateReceipt
 from bloock.entity.identity_v2.schema_builder import SchemaBuilder
 from bloock.entity.identity_v2.credential_builder import CredentialBuilder
-from bloock.entity.identity_v2.issuer_state_publisher import IssuerStatePublisher
 from bloock.entity.identity_v2.credential_proof import CredentialProof
 from bloock.entity.identity_v2.credential import Credential
 from bloock.entity.identity_v2.schema import Schema
