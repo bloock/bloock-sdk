@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
 	"github.com/bloock/bloock-sdk-go/v2/entity/identityV2"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
@@ -50,8 +51,9 @@ func (c *IdentityClient) CreateIdentity(issuerKey identityV2.IdentityKey, params
 	return res.Did, nil
 }
 
-func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, params identityV2.DidParams, name, description, image string) (string, error) {
+func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, params identityV2.DidParams, name, description, image string, publishInterval int64) (string, error) {
 	var iName, iDescription, iImage *string
+	var pInterval *int64
 	if name != "" {
 		iName = &name
 	}
@@ -61,14 +63,18 @@ func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, params i
 	if image != "" {
 		iImage = &image
 	}
+	if publishInterval != 0 {
+		pInterval = &publishInterval
+	}
 
 	res, err := c.bridgeClient.IdentityV2().CreateIssuer(context.Background(), &proto.CreateIssuerRequest{
-		IssuerKey:    issuerKey.ToProto(),
-		IssuerParams: identityV2.DidParamsToProto(params),
-		Name:         iName,
-		Description:  iDescription,
-		Image:        iImage,
-		ConfigData:   c.configData,
+		IssuerKey:       issuerKey.ToProto(),
+		IssuerParams:    identityV2.DidParamsToProto(params),
+		Name:            iName,
+		Description:     iDescription,
+		Image:           iImage,
+		PublishInterval: pInterval,
+		ConfigData:      c.configData,
 	})
 
 	if err != nil {
@@ -140,8 +146,22 @@ func (c *IdentityClient) BuildCredential(schemaId, issuerDid, holderDid string, 
 	return identityV2.NewCredentialBuilder(schemaId, issuerDid, holderDid, expiration, version, c.apiManagedHost, c.configData)
 }
 
-func (c *IdentityClient) BuildIssuerSatePublisher(issuerDid string) identityV2.IssuerStatePublisher {
-	return identityV2.NewIssuerStatePublisher(issuerDid, c.configData)
+func (c *IdentityClient) PublishIssuerState(issuerDid string, signer authenticity.Signer) (identityV2.IssuerStateReceipt, error) {
+	res, err := c.bridgeClient.IdentityV2().PublishIssuerState(context.Background(), &proto.PublishIssuerStateRequest{
+		ConfigData: c.configData,
+		IssuerDid: 	issuerDid,
+		Signer:     signer.ToProto(),
+	})
+
+	if err != nil {
+		return identityV2.IssuerStateReceipt{}, err
+	}
+
+	if res.Error != nil {
+		return identityV2.IssuerStateReceipt{}, errors.New(res.Error.Message)
+	}
+
+	return identityV2.NewIssuerStateReceiptFromProto(res.GetStateReceipt()), nil
 }
 
 func (c *IdentityClient) GetCredentialProof(issuerDid string, credentialId string) (identityV2.CredentialProof, error) {
@@ -162,10 +182,11 @@ func (c *IdentityClient) GetCredentialProof(issuerDid string, credentialId strin
 	return identityV2.NewCredentialProofFromProto(res.GetProof()), nil
 }
 
-func (c *IdentityClient) RevokeCredential(credential identityV2.Credential) (bool, error) {
+func (c *IdentityClient) RevokeCredential(credential identityV2.Credential, signer authenticity.Signer) (bool, error) {
 	res, err := c.bridgeClient.IdentityV2().RevokeCredential(context.Background(), &proto.RevokeCredentialRequestV2{
 		ConfigData: c.configData,
 		Credential: credential.ToProto(),
+		Signer:     signer.ToProto(),
 	})
 
 	if err != nil {

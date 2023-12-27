@@ -19,21 +19,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-class _ProofType:
-    ValueType = typing.NewType("ValueType", builtins.int)
-    V: typing_extensions.TypeAlias = ValueType
-
-class _ProofTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ProofType.ValueType], builtins.type):  # noqa: F821
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    IntegrityProofType: _ProofType.ValueType  # 0
-    SparseMtProofType: _ProofType.ValueType  # 1
-
-class ProofType(_ProofType, metaclass=_ProofTypeEnumTypeWrapper): ...
-
-IntegrityProofType: ProofType.ValueType  # 0
-SparseMtProofType: ProofType.ValueType  # 1
-global___ProofType = ProofType
-
 class _Method:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
@@ -164,23 +149,17 @@ class CredentialProofV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     SIGNATURE_PROOF_FIELD_NUMBER: builtins.int
-    INTEGRITY_PROOF_FIELD_NUMBER: builtins.int
     SPARSE_MT_PROOF_FIELD_NUMBER: builtins.int
     signature_proof: builtins.str
-    integrity_proof: builtins.str
     sparse_mt_proof: builtins.str
     def __init__(
         self,
         *,
         signature_proof: builtins.str = ...,
-        integrity_proof: builtins.str | None = ...,
         sparse_mt_proof: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_integrity_proof", b"_integrity_proof", "_sparse_mt_proof", b"_sparse_mt_proof", "integrity_proof", b"integrity_proof", "sparse_mt_proof", b"sparse_mt_proof"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_integrity_proof", b"_integrity_proof", "_sparse_mt_proof", b"_sparse_mt_proof", "integrity_proof", b"integrity_proof", "signature_proof", b"signature_proof", "sparse_mt_proof", b"sparse_mt_proof"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_integrity_proof", b"_integrity_proof"]) -> typing_extensions.Literal["integrity_proof"] | None: ...
-    @typing.overload
+    def HasField(self, field_name: typing_extensions.Literal["_sparse_mt_proof", b"_sparse_mt_proof", "sparse_mt_proof", b"sparse_mt_proof"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_sparse_mt_proof", b"_sparse_mt_proof", "signature_proof", b"signature_proof", "sparse_mt_proof", b"sparse_mt_proof"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_sparse_mt_proof", b"_sparse_mt_proof"]) -> typing_extensions.Literal["sparse_mt_proof"] | None: ...
 
 global___CredentialProofV2 = CredentialProofV2
@@ -549,23 +528,19 @@ class CredentialReceiptV2(google.protobuf.message.Message):
     CREDENTIAL_FIELD_NUMBER: builtins.int
     CREDENTIAL_ID_FIELD_NUMBER: builtins.int
     CREDENTIAL_TYPE_FIELD_NUMBER: builtins.int
-    ANCHOR_ID_FIELD_NUMBER: builtins.int
     @property
     def credential(self) -> global___CredentialV2: ...
     credential_id: builtins.str
     credential_type: builtins.str
-    anchor_id: builtins.int
     def __init__(
         self,
         *,
         credential: global___CredentialV2 | None = ...,
         credential_id: builtins.str = ...,
         credential_type: builtins.str = ...,
-        anchor_id: builtins.int | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_anchor_id", b"_anchor_id", "anchor_id", b"anchor_id", "credential", b"credential"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_anchor_id", b"_anchor_id", "anchor_id", b"anchor_id", "credential", b"credential", "credential_id", b"credential_id", "credential_type", b"credential_type"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_anchor_id", b"_anchor_id"]) -> typing_extensions.Literal["anchor_id"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["credential", b"credential"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["credential", b"credential", "credential_id", b"credential_id", "credential_type", b"credential_type"]) -> None: ...
 
 global___CredentialReceiptV2 = CredentialReceiptV2
 

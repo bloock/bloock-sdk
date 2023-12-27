@@ -2,7 +2,6 @@ import base64
 import datetime
 import os
 import unittest
-import bloock
 from bloock.entity.identity_v2.credential import Credential
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.identity_v2.blockchain import Blockchain
@@ -13,7 +12,6 @@ from bloock.client.identity_v2 import IdentityClient
 from bloock.client.key import KeyClient
 from bloock.entity.identity_v2.bjj_identity_key import BjjIdentityKey
 from bloock.entity.identity_v2.identity_key_args import IdentityKeyArgs
-from bloock.entity.identity_v2.proof_type import ProofType
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed_key_params import ManagedKeyParams
@@ -75,7 +73,8 @@ class TestIdentityV2(unittest.TestCase):
             file_bytes = file.read()
         base64_file = base64.urlsafe_b64encode(file_bytes).decode('utf-8')
 
-        issuer = identity_client.create_issuer(issuer_key, None, "Bloock Test", "bloock description test", base64_file)
+        issuer = identity_client.create_issuer(
+            issuer_key, None, "Bloock Test", "bloock description test", base64_file, 1)
 
         with self.assertRaises(Exception):
             identity_client.create_issuer(issuer_key)
@@ -95,9 +94,6 @@ class TestIdentityV2(unittest.TestCase):
 
         issuers = identity_client.get_issuer_list()
         self.assertIsNotNone(issuers)
-
-        proof_type = [ProofType.INTEGRITY_PROOF_TYPE,
-                      ProofType.SPARSE_MT_PROOF_TYPE]
 
         schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema", issuer) \
             .add_integer_attribute("License Type", "license_type", "license type", False) \
@@ -128,10 +124,8 @@ class TestIdentityV2(unittest.TestCase):
             .with_integer_attribute("car_points", 5) \
             .with_decimal_attribute("precision_wheels", 1.10) \
             .with_signer(Signer(key_bjj)) \
-            .with_proof_type(proof_type) \
             .build()
         self.assertIsNotNone(receipt.credential_id)
-        self.assertIsNotNone(receipt.anchor_id)
         self.assertIsNotNone(receipt.credential)
         self.assertEqual(self.drivingLicenseSchemaType,
                          receipt.credential_type)
@@ -141,20 +135,12 @@ class TestIdentityV2(unittest.TestCase):
         self.assertEqual("JsonSchema2023", credential.credential_schema.type)
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
 
-        state_receipt = identity_client.build_issuer_state_publisher(issuer) \
-            .with_signer(Signer(key_bjj)) \
-            .build()
+        ok = identity_client.revoke_credential(credential, Signer(key_bjj))
+        self.assertTrue(ok)
+
+        state_receipt = identity_client.publish_issuer_state(
+            issuer, Signer(key_bjj))
         self.assertIsNotNone(state_receipt)
 
         with self.assertRaises(Exception):
-            identity_client.build_issuer_state_publisher(issuer) \
-                .with_signer(Signer(key_bjj)) \
-                .build()
-
-        ok = identity_client.revoke_credential(credential)
-        self.assertTrue(ok)
-
-        with self.assertRaises(Exception):
-            identity_client.build_issuer_state_publisher(issuer) \
-                .with_signer(Signer(key_bjj)) \
-                .build()
+            identity_client.publish_issuer_state(issuer, Signer(key_bjj))

@@ -258,7 +258,6 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
     BOOLEAN_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DATE_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DATETIME_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    PROOF_TYPE_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     schema_id: builtins.str
@@ -281,8 +280,6 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
     def date_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_v2_pb2.DateAttributeV2]: ...
     @property
     def datetime_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_v2_pb2.DateTimeAttributeV2]: ...
-    @property
-    def proof_type(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[identity_entities_v2_pb2.ProofType.ValueType]: ...
     def __init__(
         self,
         *,
@@ -300,10 +297,9 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
         boolean_attributes: collections.abc.Iterable[identity_entities_v2_pb2.BooleanAttributeV2] | None = ...,
         date_attributes: collections.abc.Iterable[identity_entities_v2_pb2.DateAttributeV2] | None = ...,
         datetime_attributes: collections.abc.Iterable[identity_entities_v2_pb2.DateTimeAttributeV2] | None = ...,
-        proof_type: collections.abc.Iterable[identity_entities_v2_pb2.ProofType.ValueType] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_version", b"_version", "config_data", b"config_data", "signer", b"signer", "version", b"version"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "api_managed_host", b"api_managed_host", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "issuer_did", b"issuer_did", "proof_type", b"proof_type", "schema_id", b"schema_id", "signer", b"signer", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "api_managed_host", b"api_managed_host", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "issuer_did", b"issuer_did", "schema_id", b"schema_id", "signer", b"signer", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_version", b"_version"]) -> typing_extensions.Literal["version"] | None: ...
 
 global___CreateCredentialRequestV2 = CreateCredentialRequestV2
@@ -409,6 +405,7 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     NAME_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
     IMAGE_FIELD_NUMBER: builtins.int
+    PUBLISH_INTERVAL_FIELD_NUMBER: builtins.int
     @property
     def issuer_key(self) -> identity_entities_v2_pb2.IdentityKey: ...
     @property
@@ -418,6 +415,7 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     name: builtins.str
     description: builtins.str
     image: builtins.str
+    publish_interval: builtins.int
     def __init__(
         self,
         *,
@@ -427,9 +425,10 @@ class CreateIssuerRequest(google.protobuf.message.Message):
         name: builtins.str | None = ...,
         description: builtins.str | None = ...,
         image: builtins.str | None = ...,
+        publish_interval: builtins.int | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "_publish_interval", b"_publish_interval", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name", "publish_interval", b"publish_interval"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "_publish_interval", b"_publish_interval", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name", "publish_interval", b"publish_interval"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_description", b"_description"]) -> typing_extensions.Literal["description"] | None: ...
     @typing.overload
@@ -438,6 +437,8 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_issuer_params", b"_issuer_params"]) -> typing_extensions.Literal["issuer_params"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_name", b"_name"]) -> typing_extensions.Literal["name"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_publish_interval", b"_publish_interval"]) -> typing_extensions.Literal["publish_interval"] | None: ...
 
 global___CreateIssuerRequest = CreateIssuerRequest
 
@@ -597,18 +598,22 @@ class RevokeCredentialRequestV2(google.protobuf.message.Message):
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
     CREDENTIAL_FIELD_NUMBER: builtins.int
+    SIGNER_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
     def credential(self) -> identity_entities_v2_pb2.CredentialV2: ...
+    @property
+    def signer(self) -> authenticity_entities_pb2.Signer: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
         credential: identity_entities_v2_pb2.CredentialV2 | None = ...,
+        signer: authenticity_entities_pb2.Signer | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential", "signer", b"signer"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential", "signer", b"signer"]) -> None: ...
 
 global___RevokeCredentialRequestV2 = RevokeCredentialRequestV2
 

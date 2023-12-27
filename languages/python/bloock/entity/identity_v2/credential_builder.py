@@ -14,7 +14,6 @@ from bloock.entity.identity_v2.integer_attribute import IntegerAttribute
 from bloock.entity.identity_v2.decimal_attribute import DecimalAttribute
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.identity_v2.credential_receipt import CredentialReceipt
-from bloock.entity.identity_v2.proof_type import ProofType
 
 
 class CredentialBuilder:
@@ -27,7 +26,6 @@ class CredentialBuilder:
         self.api_managed_host = api_managed_host
         self.signer = None
         self.config_data = config_data
-        self.proof = []
 
         self.string_attributes = []
         self.integer_attributes = []
@@ -64,10 +62,6 @@ class CredentialBuilder:
 
     def with_signer(self, signer: Signer) -> CredentialBuilder:
         self.signer = signer.to_proto()
-        return self
-
-    def with_proof_type(self, proof: List[ProofType]) -> CredentialBuilder:
-        self.proof = map(lambda x: x.to_proto(x), proof)
         return self
 
     def build(self) -> CredentialReceipt:
@@ -112,7 +106,6 @@ class CredentialBuilder:
             date_attributes=date_attributes,
             datetime_attributes=datetime_attributes,
             signer=self.signer,
-            proof_type=self.proof
         )
 
         res = bridge.identity_v2().CreateCredential(req)

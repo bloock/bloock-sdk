@@ -5,7 +5,6 @@ use bloock_core::identity_v2::entity::{
     },
     did_metadata::DidMetadata,
     proof::CredentialProof as CoreCredentialProof,
-    proof_type::ProofType as CoreProofType,
 };
 use bloock_identity_rs::did::{Blockchain as CoreBlockchain, DIDMethod, Network as CoreNetworkId};
 
@@ -13,18 +12,9 @@ use crate::{
     error::BridgeError,
     items::{
         Blockchain, CredentialProofV2, CredentialSchemaV2, CredentialStatusV2, CredentialV2,
-        DidParams, Method, NetworkId, ProofType,
+        DidParams, Method, NetworkId,
     },
 };
-
-impl From<ProofType> for CoreProofType {
-    fn from(a: ProofType) -> Self {
-        match a {
-            ProofType::IntegrityProofType => CoreProofType::IntegrityProofType,
-            ProofType::SparseMtProofType => CoreProofType::SparseMtProofType,
-        }
-    }
-}
 
 impl From<DidParams> for DidMetadata {
     fn from(n: DidParams) -> Self {
@@ -106,7 +96,6 @@ impl TryFrom<CoreCredential> for CredentialV2 {
             }),
             proof: Some(CredentialProofV2 {
                 signature_proof: credential_proof.signature_proof,
-                integrity_proof: credential_proof.integrity_proof,
                 sparse_mt_proof: credential_proof.sparse_mt_proof,
             }),
         })
@@ -157,7 +146,6 @@ impl TryFrom<CredentialV2> for CoreCredential {
 
             proof: Some(CoreCredentialProof {
                 signature_proof: credential_proof.signature_proof,
-                integrity_proof: credential_proof.integrity_proof,
                 sparse_mt_proof: credential_proof.sparse_mt_proof,
             }),
         })

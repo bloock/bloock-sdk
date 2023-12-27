@@ -12,8 +12,9 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,7 @@ public class IdentityV2Test {
   @BeforeAll
   static void beforeAll() {
     Utils.initDevSdk();
+
   }
 
   @Test
@@ -83,13 +85,13 @@ public class IdentityV2Test {
     }
     String encodedFile = Base64.getUrlEncoder().encodeToString(fileBytes);
 
-    String issuer = identityClient.createIssuer(issuerKey, "Bloock Test", "bloock description test", encodedFile);
+    String issuer = identityClient.createIssuer(issuerKey, "Bloock Test", "bloock description test", encodedFile, 1);
     assertTrue(issuer.contains("polygonid"));
 
     assertThrows(
         Exception.class,
         () -> {
-          identityClient.createIssuer(issuerKey, null, null, null);
+          identityClient.createIssuer(issuerKey, null, null, null, 0);
           throw new RuntimeException("This is an intentional exception.");
         });
 
@@ -100,14 +102,11 @@ public class IdentityV2Test {
     assertTrue(getNotFoundIssuerDid.isEmpty());
 
     DidParams issuerParams = new DidParams(Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI);
-    String newIssuer = identityClient.createIssuer(notFoundIssuerKey, issuerParams, null, null, null);
+    String newIssuer = identityClient.createIssuer(notFoundIssuerKey, issuerParams, null, null, null, 0);
     assertTrue(newIssuer.contains("iden3"));
 
     List<String> issuers = identityClient.getIssuerList();
     assertNotNull(issuers);
-
-    ArrayList<ProofType> proofList = new ArrayList<>(
-        Arrays.asList(ProofType.INTEGRITY_PROOF_TYPE, ProofType.SPARSE_MT_PROOF_TYPE));
 
     List<String> stringList = new ArrayList<>();
     stringList.add("big");
@@ -159,10 +158,8 @@ public class IdentityV2Test {
         .withIntegerAttribute("car_points", 5L)
         .withDecimalAttribute("precision_wheels", 1.10)
         .withSigner(new Signer(keyBjj))
-        .WithProofType(proofList)
         .build();
     assertNotNull(receipt.getCredentialId());
-    assertNotNull(receipt.getAnchorId());
     assertNotNull(receipt.getCredential());
     assertEquals(drivingLicenseSchemaType, receipt.getCredentialType());
 
@@ -171,29 +168,16 @@ public class IdentityV2Test {
     assertEquals("JsonSchema2023", credential.getCredentialSchema().getCredentialType());
     assertEquals(drivingLicenseSchemaType, credential.getType().get(1));
 
-    IssuerStateReceipt stateReceipt = identityClient
-        .buildIssuerStatePublisher(issuer)
-        .withSigner(new Signer(keyBjj))
-        .build();
+    boolean ok = identityClient.revokeCredential(credential, new Signer(keyBjj));
+    assertTrue(ok);
+
+    IssuerStateReceipt stateReceipt = identityClient.publishIssuerState(issuer, new Signer(keyBjj));
     assertNotNull(stateReceipt.getTxHash());
 
     assertThrows(
         Exception.class,
         () -> {
-          identityClient
-              .buildIssuerStatePublisher(issuer)
-              .withSigner(new Signer(keyBjj))
-              .build();
-          throw new RuntimeException("This is an intentional exception.");
-        });
-
-    Boolean ok = identityClient.revokeCredential(credential);
-    assertTrue(ok);
-
-    assertThrows(
-        Exception.class,
-        () -> {
-          identityClient.buildIssuerStatePublisher(issuer).build();
+          identityClient.publishIssuerState(issuer, new Signer(keyBjj));
           throw new RuntimeException("This is an intentional exception.");
         });
   }

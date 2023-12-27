@@ -19,7 +19,6 @@ class CredentialBuilder
     private int $version;
     private SingerProto $signer;
     private string $apiManagedHost;
-    private array $proofType;
     private ConfigData $configData;
 
     private array $stringAttributes;
@@ -38,7 +37,6 @@ class CredentialBuilder
         $this->version = $version;
         $this->apiManagedHost = $apiManagedHost;
         $this->signer = new SingerProto();
-        $this->proofType = [];
         $this->configData = $configData;
 
         $this->stringAttributes = [];
@@ -99,14 +97,6 @@ class CredentialBuilder
         return $this;
     }
 
-    public function withProofType(array $proofs): CredentialBuilder
-    {
-        foreach ($proofs as $value) {
-            $this->proofType[] = ProofType::toProto($value);
-        }
-        return $this;
-    }
-
     public function build(): CredentialReceipt
     {
         $bridge = new Bridge();
@@ -120,7 +110,6 @@ class CredentialBuilder
         $req->setVersion($this->version);
         $req->setApiManagedHost($this->apiManagedHost);
         $req->setSigner($this->signer);
-        $req->setProofType($this->proofType);
         $req->setstringAttributes($this->stringAttributes);
         $req->setIntegerAttributes($this->integerAttributes);
         $req->setDecimalAttributes($this->decimalAttributes);

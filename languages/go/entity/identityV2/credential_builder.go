@@ -18,7 +18,6 @@ type CredentialBuilder struct {
 	version        int32
 	signer         *proto.Signer
 	apiManagedHost string
-	proof          []proto.ProofType
 	configData     *proto.ConfigData
 
 	stringAttribute   []StringAttribute
@@ -82,15 +81,6 @@ func (c CredentialBuilder) WithSigner(signer authenticity.Signer) CredentialBuil
 	return c
 }
 
-func (c CredentialBuilder) WithProofType(proofs []ProofType) CredentialBuilder {
-	proofTypes := make([]proto.ProofType, 0)
-	for _, p := range proofs {
-		proofTypes = append(proofTypes, KeyTypeToProto[p])
-	}
-	c.proof = proofTypes
-	return c
-}
-
 func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 	bridge := bridge.NewBloockBridge()
 
@@ -139,7 +129,6 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 		BooleanAttributes:  booleanAttributes,
 		DateAttributes:     dateAttributes,
 		DatetimeAttributes: datetimeAttributes,
-		ProofType:          c.proof,
 	}
 
 	res, err := bridge.IdentityV2().CreateCredential(context.Background(), &req)

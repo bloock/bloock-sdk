@@ -60,7 +60,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.NotEmpty(t, identity)
 	})
 
-	t.Run("identity v2 end to end first flow", func(t *testing.T) {
+	t.Run("identity v2 end to end with managed key", func(t *testing.T) {
 		identityClient := NewIdentityClient(apiManagedHost)
 		keyClient := NewKeyClient()
 
@@ -86,11 +86,11 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		encodedImage := base64.URLEncoding.EncodeToString(profileImage)
 
-		issuer, err := identityClient.CreateIssuer(issuerKey, identityV2.NewDidParams(), "Bloock Test", "bloock description test", encodedImage)
+		issuer, err := identityClient.CreateIssuer(issuerKey, identityV2.NewDidParams(), "Bloock Test", "bloock description test", encodedImage, 1)
 		assert.NoError(t, err)
 		assert.True(t, strings.Contains(issuer, "polygonid"))
 
-		_, err = identityClient.CreateIssuer(issuerKey, identityV2.NewDidParams(), "", "", "")
+		_, err = identityClient.CreateIssuer(issuerKey, identityV2.NewDidParams(), "", "", "", 0)
 		assert.Error(t, err)
 
 		getIssuerDid, err := identityClient.GetIssuerByKey(issuerKey, identityV2.NewDidParams())
@@ -104,8 +104,6 @@ func TestIdentityV2(t *testing.T) {
 		issuers, err := identityClient.GetIssuerList()
 		assert.NoError(t, err)
 		assert.NotNil(t, issuers)
-
-		proofType := []identityV2.ProofType{identityV2.IntegrityProofType, identityV2.SparseMtProofType}
 
 		schema, err := identityClient.BuildSchema("Driving License", DrivingLicenseSchemaType, "1.0", "driving license schema", issuer).
 			AddIntegerAttribute("License Type", "license_type", "license type", false).
@@ -138,11 +136,9 @@ func TestIdentityV2(t *testing.T) {
 			WithIntegerAttribute("car_points", 5).
 			WithDecimalAttribute("precision_wheels", 1.10).
 			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj, nil)).
-			WithProofType(proofType).
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, res.CredentialId)
-		assert.NotNil(t, res.AnchorID)
 		assert.NotNil(t, res.Credential)
 		assert.Equal(t, DrivingLicenseSchemaType, res.CredentialType)
 
@@ -151,26 +147,19 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
 
-		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj, nil)).
-			Build()
-		assert.NoError(t, err)
-		assert.NotNil(t, receipt.TxHash)
-
-		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSignerWithManagedKey(keyBjj, nil)).
-			Build()
-		assert.Error(t, err)
-
-		ok, err := identityClient.RevokeCredential(credential)
+		ok, err := identityClient.RevokeCredential(credential, authenticity.NewSignerWithManagedKey(keyBjj, nil))
 		assert.NoError(t, err)
 		assert.True(t, ok)
 
-		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).Build()
+		receipt, err := identityClient.PublishIssuerState(issuer, authenticity.NewSignerWithManagedKey(keyBjj, nil))
+		assert.NoError(t, err)
+		assert.NotNil(t, receipt.TxHash)
+
+		receipt, err = identityClient.PublishIssuerState(issuer, authenticity.NewSignerWithManagedKey(keyBjj, nil))
 		assert.Error(t, err)
 	})
 
-	t.Run("identity v2 end to end second flow", func(t *testing.T) {
+	t.Run("identity v2 end to end with local key", func(t *testing.T) {
 		identityClient := NewIdentityClient(apiManagedHost)
 		keyClient := NewKeyClient()
 
@@ -183,7 +172,7 @@ func TestIdentityV2(t *testing.T) {
 		issuerParams.Blockchain = identityV2.ListOfBlockchains().Polygon
 		issuerParams.NetworkId = identityV2.ListOfNetworkIds().Mumbai
 
-		issuer, err := identityClient.CreateIssuer(issuerKey, issuerParams, "", "", "")
+		issuer, err := identityClient.CreateIssuer(issuerKey, issuerParams, "", "", "", 0)
 		assert.NoError(t, err)
 		assert.True(t, strings.Contains(issuer, "iden3"))
 
@@ -203,7 +192,6 @@ func TestIdentityV2(t *testing.T) {
 			Build()
 		assert.NoError(t, err)
 		assert.NotNil(t, res.CredentialId)
-		assert.Equal(t, int64(0), res.AnchorID)
 		assert.NotNil(t, res.Credential)
 
 		credential := res.Credential
@@ -212,23 +200,8 @@ func TestIdentityV2(t *testing.T) {
 		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
 		assert.Equal(t, KYCAgeSchemaType, credential.Type[1])
 
-		receipt, err := identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj, nil)).
-			Build()
-		assert.NoError(t, err)
-		assert.NotNil(t, receipt.TxHash)
-
-		_, err = identityClient.BuildIssuerSatePublisher(issuer).Build()
-		assert.Error(t, err)
-
-		receipt, err = identityClient.BuildIssuerSatePublisher(issuer).
-			WithSigner(authenticity.NewSignerWithLocalKey(keyBjj, nil)).
-			Build()
-		assert.Error(t, err)
-
 		proof, err := identityClient.GetCredentialProof(issuer, res.CredentialId)
 		assert.NoError(t, err)
-		assert.NotNil(t, proof.SignatureProof)
-		assert.Equal(t, "", proof.IntegrityProof)
+		assert.NotEmpty(t, proof.SignatureProof)
 	})
 }

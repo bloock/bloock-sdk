@@ -6,18 +6,14 @@ type CredentialReceipt struct {
 	Credential     Credential
 	CredentialId   string
 	CredentialType string
-	AnchorID       int64
 }
 
 func NewCredentialReceiptFromProto(s *proto.CredentialReceiptV2) CredentialReceipt {
 	if s == nil {
 		return CredentialReceipt{}
 	}
-	receipt := CredentialReceipt{CredentialId: s.CredentialId, CredentialType: s.CredentialType, Credential: NewCredentialFromProto(s.Credential)}
-	if s.AnchorId != nil {
-		receipt.AnchorID = *s.AnchorId
-	}
-	return receipt
+
+	return CredentialReceipt{CredentialId: s.CredentialId, CredentialType: s.CredentialType, Credential: NewCredentialFromProto(s.Credential)}
 }
 
 func (c CredentialReceipt) ToProto() *proto.CredentialReceiptV2 {
@@ -25,6 +21,5 @@ func (c CredentialReceipt) ToProto() *proto.CredentialReceiptV2 {
 		Credential:     c.Credential.ToProto(),
 		CredentialId:   c.CredentialId,
 		CredentialType: c.CredentialType,
-		AnchorId:       &c.AnchorID,
 	}
 }

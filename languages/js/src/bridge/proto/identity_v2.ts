@@ -23,9 +23,6 @@ import {
   IntegerAttributeV2,
   IntegerEnumAttributeDefinitionV2,
   IssuerStateReceipt,
-  ProofType,
-  proofTypeFromJSON,
-  proofTypeToJSON,
   SchemaV2,
   StringAttributeDefinitionV2,
   StringAttributeV2,
@@ -34,17 +31,17 @@ import {
 import { Error } from "./shared";
 
 export interface GetSchemaRequestV2 {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   id: string;
 }
 
 export interface GetSchemaResponseV2 {
-  schema?: SchemaV2;
+  schema?: SchemaV2 | undefined;
   error?: Error | undefined;
 }
 
 export interface GetIssuerListRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
 }
 
 export interface GetIssuerListResponse {
@@ -58,19 +55,19 @@ export interface GetIssuerByKeyResponse {
 }
 
 export interface GetCredentialProofRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   issuerDid: string;
   credentialId: string;
 }
 
 export interface GetCredentialProofResponse {
-  proof?: CredentialProofV2;
+  proof?: CredentialProofV2 | undefined;
   error?: Error | undefined;
 }
 
 export interface CredentialToJsonRequestV2 {
-  configData?: ConfigData;
-  credential?: CredentialV2;
+  configData?: ConfigData | undefined;
+  credential?: CredentialV2 | undefined;
 }
 
 export interface CredentialToJsonResponseV2 {
@@ -79,23 +76,23 @@ export interface CredentialToJsonResponseV2 {
 }
 
 export interface CredentialFromJsonRequestV2 {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   json: string;
 }
 
 export interface CredentialFromJsonResponseV2 {
-  credential?: CredentialV2;
+  credential?: CredentialV2 | undefined;
   error?: Error | undefined;
 }
 
 export interface CreateCredentialRequestV2 {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   schemaId: string;
   issuerDid: string;
   holderDid: string;
   expiration: number;
   version?: number | undefined;
-  signer?: Signer;
+  signer?: Signer | undefined;
   apiManagedHost: string;
   stringAttributes: StringAttributeV2[];
   integerAttributes: IntegerAttributeV2[];
@@ -103,11 +100,10 @@ export interface CreateCredentialRequestV2 {
   booleanAttributes: BooleanAttributeV2[];
   dateAttributes: DateAttributeV2[];
   datetimeAttributes: DateTimeAttributeV2[];
-  proofType: ProofType[];
 }
 
 export interface BuildSchemaRequestV2 {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   displayName: string;
   schemaType: string;
   version: string;
@@ -125,34 +121,35 @@ export interface BuildSchemaRequestV2 {
 }
 
 export interface CreateIdentityV2Request {
-  issuerKey?: IdentityKey;
-  configData?: ConfigData;
+  issuerKey?: IdentityKey | undefined;
+  configData?: ConfigData | undefined;
   didParams?: DidParams | undefined;
 }
 
 export interface CreateIssuerRequest {
-  issuerKey?: IdentityKey;
-  configData?: ConfigData;
+  issuerKey?: IdentityKey | undefined;
+  configData?: ConfigData | undefined;
   issuerParams?: DidParams | undefined;
   name?: string | undefined;
   description?: string | undefined;
   image?: string | undefined;
+  publishInterval?: number | undefined;
 }
 
 export interface GetIssuerByKeyRequest {
-  issuerKey?: IdentityKey;
-  configData?: ConfigData;
+  issuerKey?: IdentityKey | undefined;
+  configData?: ConfigData | undefined;
   issuerParams?: DidParams | undefined;
 }
 
 export interface PublishIssuerStateRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   issuerDid: string;
-  signer?: Signer;
+  signer?: Signer | undefined;
 }
 
 export interface CreateCredentialResponseV2 {
-  credentialReceipt?: CredentialReceiptV2;
+  credentialReceipt?: CredentialReceiptV2 | undefined;
   error?: Error | undefined;
 }
 
@@ -167,22 +164,23 @@ export interface CreateIssuerResponse {
 }
 
 export interface BuildSchemaResponseV2 {
-  schema?: SchemaV2;
+  schema?: SchemaV2 | undefined;
   error?: Error | undefined;
 }
 
 export interface PublishIssuerStateResponse {
-  stateReceipt?: IssuerStateReceipt;
+  stateReceipt?: IssuerStateReceipt | undefined;
   error?: Error | undefined;
 }
 
 export interface RevokeCredentialRequestV2 {
-  configData?: ConfigData;
-  credential?: CredentialV2;
+  configData?: ConfigData | undefined;
+  credential?: CredentialV2 | undefined;
+  signer?: Signer | undefined;
 }
 
 export interface RevokeCredentialResponseV2 {
-  result?: CredentialRevocationV2;
+  result?: CredentialRevocationV2 | undefined;
   error?: Error | undefined;
 }
 
@@ -202,22 +200,31 @@ export const GetSchemaRequestV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetSchemaRequestV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetSchemaRequestV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -225,18 +232,24 @@ export const GetSchemaRequestV2 = {
   fromJSON(object: any): GetSchemaRequestV2 {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      id: isSet(object.id) ? String(object.id) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
     };
   },
 
   toJSON(message: GetSchemaRequestV2): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.id !== undefined && (obj.id = message.id);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetSchemaRequestV2>, I>>(base?: I): GetSchemaRequestV2 {
+    return GetSchemaRequestV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetSchemaRequestV2>, I>>(object: I): GetSchemaRequestV2 {
     const message = createBaseGetSchemaRequestV2();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -263,22 +276,31 @@ export const GetSchemaResponseV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetSchemaResponseV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetSchemaResponseV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.schema = SchemaV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -292,11 +314,18 @@ export const GetSchemaResponseV2 = {
 
   toJSON(message: GetSchemaResponseV2): unknown {
     const obj: any = {};
-    message.schema !== undefined && (obj.schema = message.schema ? SchemaV2.toJSON(message.schema) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.schema !== undefined) {
+      obj.schema = SchemaV2.toJSON(message.schema);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetSchemaResponseV2>, I>>(base?: I): GetSchemaResponseV2 {
+    return GetSchemaResponseV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetSchemaResponseV2>, I>>(object: I): GetSchemaResponseV2 {
     const message = createBaseGetSchemaResponseV2();
     message.schema = (object.schema !== undefined && object.schema !== null)
@@ -320,19 +349,24 @@ export const GetIssuerListRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetIssuerListRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetIssuerListRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -343,11 +377,15 @@ export const GetIssuerListRequest = {
 
   toJSON(message: GetIssuerListRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetIssuerListRequest>, I>>(base?: I): GetIssuerListRequest {
+    return GetIssuerListRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetIssuerListRequest>, I>>(object: I): GetIssuerListRequest {
     const message = createBaseGetIssuerListRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -373,44 +411,56 @@ export const GetIssuerListResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetIssuerListResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetIssuerListResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.did.push(reader.string());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): GetIssuerListResponse {
     return {
-      did: Array.isArray(object?.did) ? object.did.map((e: any) => String(e)) : [],
+      did: globalThis.Array.isArray(object?.did) ? object.did.map((e: any) => globalThis.String(e)) : [],
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: GetIssuerListResponse): unknown {
     const obj: any = {};
-    if (message.did) {
-      obj.did = message.did.map((e) => e);
-    } else {
-      obj.did = [];
+    if (message.did?.length) {
+      obj.did = message.did;
     }
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetIssuerListResponse>, I>>(base?: I): GetIssuerListResponse {
+    return GetIssuerListResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetIssuerListResponse>, I>>(object: I): GetIssuerListResponse {
     const message = createBaseGetIssuerListResponse();
     message.did = object.did?.map((e) => e) || [];
@@ -435,40 +485,56 @@ export const GetIssuerByKeyResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetIssuerByKeyResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetIssuerByKeyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.did = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): GetIssuerByKeyResponse {
     return {
-      did: isSet(object.did) ? String(object.did) : "",
+      did: isSet(object.did) ? globalThis.String(object.did) : "",
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: GetIssuerByKeyResponse): unknown {
     const obj: any = {};
-    message.did !== undefined && (obj.did = message.did);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.did !== "") {
+      obj.did = message.did;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetIssuerByKeyResponse>, I>>(base?: I): GetIssuerByKeyResponse {
+    return GetIssuerByKeyResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetIssuerByKeyResponse>, I>>(object: I): GetIssuerByKeyResponse {
     const message = createBaseGetIssuerByKeyResponse();
     message.did = object.did ?? "";
@@ -496,25 +562,38 @@ export const GetCredentialProofRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetCredentialProofRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetCredentialProofRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.issuerDid = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.credentialId = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -522,20 +601,28 @@ export const GetCredentialProofRequest = {
   fromJSON(object: any): GetCredentialProofRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      issuerDid: isSet(object.issuerDid) ? String(object.issuerDid) : "",
-      credentialId: isSet(object.credentialId) ? String(object.credentialId) : "",
+      issuerDid: isSet(object.issuerDid) ? globalThis.String(object.issuerDid) : "",
+      credentialId: isSet(object.credentialId) ? globalThis.String(object.credentialId) : "",
     };
   },
 
   toJSON(message: GetCredentialProofRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.issuerDid !== undefined && (obj.issuerDid = message.issuerDid);
-    message.credentialId !== undefined && (obj.credentialId = message.credentialId);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.issuerDid !== "") {
+      obj.issuerDid = message.issuerDid;
+    }
+    if (message.credentialId !== "") {
+      obj.credentialId = message.credentialId;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetCredentialProofRequest>, I>>(base?: I): GetCredentialProofRequest {
+    return GetCredentialProofRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetCredentialProofRequest>, I>>(object: I): GetCredentialProofRequest {
     const message = createBaseGetCredentialProofRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -563,22 +650,31 @@ export const GetCredentialProofResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetCredentialProofResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetCredentialProofResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.proof = CredentialProofV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -592,11 +688,18 @@ export const GetCredentialProofResponse = {
 
   toJSON(message: GetCredentialProofResponse): unknown {
     const obj: any = {};
-    message.proof !== undefined && (obj.proof = message.proof ? CredentialProofV2.toJSON(message.proof) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.proof !== undefined) {
+      obj.proof = CredentialProofV2.toJSON(message.proof);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetCredentialProofResponse>, I>>(base?: I): GetCredentialProofResponse {
+    return GetCredentialProofResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetCredentialProofResponse>, I>>(object: I): GetCredentialProofResponse {
     const message = createBaseGetCredentialProofResponse();
     message.proof = (object.proof !== undefined && object.proof !== null)
@@ -623,22 +726,31 @@ export const CredentialToJsonRequestV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialToJsonRequestV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialToJsonRequestV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.credential = CredentialV2.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -652,13 +764,18 @@ export const CredentialToJsonRequestV2 = {
 
   toJSON(message: CredentialToJsonRequestV2): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? CredentialV2.toJSON(message.credential) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credential !== undefined) {
+      obj.credential = CredentialV2.toJSON(message.credential);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialToJsonRequestV2>, I>>(base?: I): CredentialToJsonRequestV2 {
+    return CredentialToJsonRequestV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialToJsonRequestV2>, I>>(object: I): CredentialToJsonRequestV2 {
     const message = createBaseCredentialToJsonRequestV2();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -687,40 +804,56 @@ export const CredentialToJsonResponseV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialToJsonResponseV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialToJsonResponseV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.json = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CredentialToJsonResponseV2 {
     return {
-      json: isSet(object.json) ? String(object.json) : "",
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: CredentialToJsonResponseV2): unknown {
     const obj: any = {};
-    message.json !== undefined && (obj.json = message.json);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.json !== "") {
+      obj.json = message.json;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialToJsonResponseV2>, I>>(base?: I): CredentialToJsonResponseV2 {
+    return CredentialToJsonResponseV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialToJsonResponseV2>, I>>(object: I): CredentialToJsonResponseV2 {
     const message = createBaseCredentialToJsonResponseV2();
     message.json = object.json ?? "";
@@ -745,22 +878,31 @@ export const CredentialFromJsonRequestV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialFromJsonRequestV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialFromJsonRequestV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.json = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -768,18 +910,24 @@ export const CredentialFromJsonRequestV2 = {
   fromJSON(object: any): CredentialFromJsonRequestV2 {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      json: isSet(object.json) ? String(object.json) : "",
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
     };
   },
 
   toJSON(message: CredentialFromJsonRequestV2): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.json !== undefined && (obj.json = message.json);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.json !== "") {
+      obj.json = message.json;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialFromJsonRequestV2>, I>>(base?: I): CredentialFromJsonRequestV2 {
+    return CredentialFromJsonRequestV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialFromJsonRequestV2>, I>>(object: I): CredentialFromJsonRequestV2 {
     const message = createBaseCredentialFromJsonRequestV2();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -806,22 +954,31 @@ export const CredentialFromJsonResponseV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialFromJsonResponseV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialFromJsonResponseV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.credential = CredentialV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -835,12 +992,18 @@ export const CredentialFromJsonResponseV2 = {
 
   toJSON(message: CredentialFromJsonResponseV2): unknown {
     const obj: any = {};
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? CredentialV2.toJSON(message.credential) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.credential !== undefined) {
+      obj.credential = CredentialV2.toJSON(message.credential);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialFromJsonResponseV2>, I>>(base?: I): CredentialFromJsonResponseV2 {
+    return CredentialFromJsonResponseV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialFromJsonResponseV2>, I>>(object: I): CredentialFromJsonResponseV2 {
     const message = createBaseCredentialFromJsonResponseV2();
     message.credential = (object.credential !== undefined && object.credential !== null)
@@ -867,7 +1030,6 @@ function createBaseCreateCredentialRequestV2(): CreateCredentialRequestV2 {
     booleanAttributes: [],
     dateAttributes: [],
     datetimeAttributes: [],
-    proofType: [],
   };
 }
 
@@ -915,77 +1077,119 @@ export const CreateCredentialRequestV2 = {
     for (const v of message.datetimeAttributes) {
       DateTimeAttributeV2.encode(v!, writer.uint32(114).fork()).ldelim();
     }
-    writer.uint32(122).fork();
-    for (const v of message.proofType) {
-      writer.int32(v);
-    }
-    writer.ldelim();
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateCredentialRequestV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateCredentialRequestV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
-        case 2:
-          message.schemaId = reader.string();
-          break;
-        case 3:
-          message.issuerDid = reader.string();
-          break;
-        case 4:
-          message.holderDid = reader.string();
-          break;
-        case 5:
-          message.expiration = longToNumber(reader.int64() as Long);
-          break;
-        case 6:
-          message.version = reader.int32();
-          break;
-        case 7:
-          message.signer = Signer.decode(reader, reader.uint32());
-          break;
-        case 8:
-          message.apiManagedHost = reader.string();
-          break;
-        case 9:
-          message.stringAttributes.push(StringAttributeV2.decode(reader, reader.uint32()));
-          break;
-        case 10:
-          message.integerAttributes.push(IntegerAttributeV2.decode(reader, reader.uint32()));
-          break;
-        case 11:
-          message.decimalAttributes.push(DecimalAttributeV2.decode(reader, reader.uint32()));
-          break;
-        case 12:
-          message.booleanAttributes.push(BooleanAttributeV2.decode(reader, reader.uint32()));
-          break;
-        case 13:
-          message.dateAttributes.push(DateAttributeV2.decode(reader, reader.uint32()));
-          break;
-        case 14:
-          message.datetimeAttributes.push(DateTimeAttributeV2.decode(reader, reader.uint32()));
-          break;
-        case 15:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.proofType.push(reader.int32() as any);
-            }
-          } else {
-            message.proofType.push(reader.int32() as any);
+          if (tag !== 10) {
+            break;
           }
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.schemaId = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.issuerDid = reader.string();
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.holderDid = reader.string();
+          continue;
+        case 5:
+          if (tag !== 40) {
+            break;
+          }
+
+          message.expiration = longToNumber(reader.int64() as Long);
+          continue;
+        case 6:
+          if (tag !== 48) {
+            break;
+          }
+
+          message.version = reader.int32();
+          continue;
+        case 7:
+          if (tag !== 58) {
+            break;
+          }
+
+          message.signer = Signer.decode(reader, reader.uint32());
+          continue;
+        case 8:
+          if (tag !== 66) {
+            break;
+          }
+
+          message.apiManagedHost = reader.string();
+          continue;
+        case 9:
+          if (tag !== 74) {
+            break;
+          }
+
+          message.stringAttributes.push(StringAttributeV2.decode(reader, reader.uint32()));
+          continue;
+        case 10:
+          if (tag !== 82) {
+            break;
+          }
+
+          message.integerAttributes.push(IntegerAttributeV2.decode(reader, reader.uint32()));
+          continue;
+        case 11:
+          if (tag !== 90) {
+            break;
+          }
+
+          message.decimalAttributes.push(DecimalAttributeV2.decode(reader, reader.uint32()));
+          continue;
+        case 12:
+          if (tag !== 98) {
+            break;
+          }
+
+          message.booleanAttributes.push(BooleanAttributeV2.decode(reader, reader.uint32()));
+          continue;
+        case 13:
+          if (tag !== 106) {
+            break;
+          }
+
+          message.dateAttributes.push(DateAttributeV2.decode(reader, reader.uint32()));
+          continue;
+        case 14:
+          if (tag !== 114) {
+            break;
+          }
+
+          message.datetimeAttributes.push(DateTimeAttributeV2.decode(reader, reader.uint32()));
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -993,86 +1197,84 @@ export const CreateCredentialRequestV2 = {
   fromJSON(object: any): CreateCredentialRequestV2 {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      schemaId: isSet(object.schemaId) ? String(object.schemaId) : "",
-      issuerDid: isSet(object.issuerDid) ? String(object.issuerDid) : "",
-      holderDid: isSet(object.holderDid) ? String(object.holderDid) : "",
-      expiration: isSet(object.expiration) ? Number(object.expiration) : 0,
-      version: isSet(object.version) ? Number(object.version) : undefined,
+      schemaId: isSet(object.schemaId) ? globalThis.String(object.schemaId) : "",
+      issuerDid: isSet(object.issuerDid) ? globalThis.String(object.issuerDid) : "",
+      holderDid: isSet(object.holderDid) ? globalThis.String(object.holderDid) : "",
+      expiration: isSet(object.expiration) ? globalThis.Number(object.expiration) : 0,
+      version: isSet(object.version) ? globalThis.Number(object.version) : undefined,
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
-      apiManagedHost: isSet(object.apiManagedHost) ? String(object.apiManagedHost) : "",
-      stringAttributes: Array.isArray(object?.stringAttributes)
+      apiManagedHost: isSet(object.apiManagedHost) ? globalThis.String(object.apiManagedHost) : "",
+      stringAttributes: globalThis.Array.isArray(object?.stringAttributes)
         ? object.stringAttributes.map((e: any) => StringAttributeV2.fromJSON(e))
         : [],
-      integerAttributes: Array.isArray(object?.integerAttributes)
+      integerAttributes: globalThis.Array.isArray(object?.integerAttributes)
         ? object.integerAttributes.map((e: any) => IntegerAttributeV2.fromJSON(e))
         : [],
-      decimalAttributes: Array.isArray(object?.decimalAttributes)
+      decimalAttributes: globalThis.Array.isArray(object?.decimalAttributes)
         ? object.decimalAttributes.map((e: any) => DecimalAttributeV2.fromJSON(e))
         : [],
-      booleanAttributes: Array.isArray(object?.booleanAttributes)
+      booleanAttributes: globalThis.Array.isArray(object?.booleanAttributes)
         ? object.booleanAttributes.map((e: any) => BooleanAttributeV2.fromJSON(e))
         : [],
-      dateAttributes: Array.isArray(object?.dateAttributes)
+      dateAttributes: globalThis.Array.isArray(object?.dateAttributes)
         ? object.dateAttributes.map((e: any) => DateAttributeV2.fromJSON(e))
         : [],
-      datetimeAttributes: Array.isArray(object?.datetimeAttributes)
+      datetimeAttributes: globalThis.Array.isArray(object?.datetimeAttributes)
         ? object.datetimeAttributes.map((e: any) => DateTimeAttributeV2.fromJSON(e))
-        : [],
-      proofType: Array.isArray(object?.proofType)
-        ? object.proofType.map((e: any) => proofTypeFromJSON(e))
         : [],
     };
   },
 
   toJSON(message: CreateCredentialRequestV2): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.schemaId !== undefined && (obj.schemaId = message.schemaId);
-    message.issuerDid !== undefined && (obj.issuerDid = message.issuerDid);
-    message.holderDid !== undefined && (obj.holderDid = message.holderDid);
-    message.expiration !== undefined && (obj.expiration = Math.round(message.expiration));
-    message.version !== undefined && (obj.version = Math.round(message.version));
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
-    message.apiManagedHost !== undefined && (obj.apiManagedHost = message.apiManagedHost);
-    if (message.stringAttributes) {
-      obj.stringAttributes = message.stringAttributes.map((e) => e ? StringAttributeV2.toJSON(e) : undefined);
-    } else {
-      obj.stringAttributes = [];
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
     }
-    if (message.integerAttributes) {
-      obj.integerAttributes = message.integerAttributes.map((e) => e ? IntegerAttributeV2.toJSON(e) : undefined);
-    } else {
-      obj.integerAttributes = [];
+    if (message.schemaId !== "") {
+      obj.schemaId = message.schemaId;
     }
-    if (message.decimalAttributes) {
-      obj.decimalAttributes = message.decimalAttributes.map((e) => e ? DecimalAttributeV2.toJSON(e) : undefined);
-    } else {
-      obj.decimalAttributes = [];
+    if (message.issuerDid !== "") {
+      obj.issuerDid = message.issuerDid;
     }
-    if (message.booleanAttributes) {
-      obj.booleanAttributes = message.booleanAttributes.map((e) => e ? BooleanAttributeV2.toJSON(e) : undefined);
-    } else {
-      obj.booleanAttributes = [];
+    if (message.holderDid !== "") {
+      obj.holderDid = message.holderDid;
     }
-    if (message.dateAttributes) {
-      obj.dateAttributes = message.dateAttributes.map((e) => e ? DateAttributeV2.toJSON(e) : undefined);
-    } else {
-      obj.dateAttributes = [];
+    if (message.expiration !== 0) {
+      obj.expiration = Math.round(message.expiration);
     }
-    if (message.datetimeAttributes) {
-      obj.datetimeAttributes = message.datetimeAttributes.map((e) => e ? DateTimeAttributeV2.toJSON(e) : undefined);
-    } else {
-      obj.datetimeAttributes = [];
+    if (message.version !== undefined) {
+      obj.version = Math.round(message.version);
     }
-    if (message.proofType) {
-      obj.proofType = message.proofType.map((e) => proofTypeToJSON(e));
-    } else {
-      obj.proofType = [];
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
+    if (message.apiManagedHost !== "") {
+      obj.apiManagedHost = message.apiManagedHost;
+    }
+    if (message.stringAttributes?.length) {
+      obj.stringAttributes = message.stringAttributes.map((e) => StringAttributeV2.toJSON(e));
+    }
+    if (message.integerAttributes?.length) {
+      obj.integerAttributes = message.integerAttributes.map((e) => IntegerAttributeV2.toJSON(e));
+    }
+    if (message.decimalAttributes?.length) {
+      obj.decimalAttributes = message.decimalAttributes.map((e) => DecimalAttributeV2.toJSON(e));
+    }
+    if (message.booleanAttributes?.length) {
+      obj.booleanAttributes = message.booleanAttributes.map((e) => BooleanAttributeV2.toJSON(e));
+    }
+    if (message.dateAttributes?.length) {
+      obj.dateAttributes = message.dateAttributes.map((e) => DateAttributeV2.toJSON(e));
+    }
+    if (message.datetimeAttributes?.length) {
+      obj.datetimeAttributes = message.datetimeAttributes.map((e) => DateTimeAttributeV2.toJSON(e));
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateCredentialRequestV2>, I>>(base?: I): CreateCredentialRequestV2 {
+    return CreateCredentialRequestV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateCredentialRequestV2>, I>>(object: I): CreateCredentialRequestV2 {
     const message = createBaseCreateCredentialRequestV2();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1093,7 +1295,6 @@ export const CreateCredentialRequestV2 = {
     message.booleanAttributes = object.booleanAttributes?.map((e) => BooleanAttributeV2.fromPartial(e)) || [];
     message.dateAttributes = object.dateAttributes?.map((e) => DateAttributeV2.fromPartial(e)) || [];
     message.datetimeAttributes = object.datetimeAttributes?.map((e) => DateTimeAttributeV2.fromPartial(e)) || [];
-    message.proofType = object.proofType?.map((e) => e) || [];
     return message;
   },
 };
@@ -1169,61 +1370,122 @@ export const BuildSchemaRequestV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BuildSchemaRequestV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBuildSchemaRequestV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.schemaType = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.version = reader.string();
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 6:
+          if (tag !== 50) {
+            break;
+          }
+
           message.issuerDid = reader.string();
-          break;
+          continue;
         case 7:
+          if (tag !== 58) {
+            break;
+          }
+
           message.stringAttributes.push(StringAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 8:
+          if (tag !== 66) {
+            break;
+          }
+
           message.integerAttributes.push(IntegerAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 9:
+          if (tag !== 74) {
+            break;
+          }
+
           message.decimalAttributes.push(DecimalAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 10:
+          if (tag !== 82) {
+            break;
+          }
+
           message.booleanAttributes.push(BooleanAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 11:
+          if (tag !== 90) {
+            break;
+          }
+
           message.dateAttributes.push(DateAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 12:
+          if (tag !== 98) {
+            break;
+          }
+
           message.datetimeAttributes.push(DateTimeAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 13:
+          if (tag !== 106) {
+            break;
+          }
+
           message.stringEnumAttributes.push(StringEnumAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 14:
+          if (tag !== 114) {
+            break;
+          }
+
           message.integerEnumAttributes.push(IntegerEnumAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 15:
+          if (tag !== 122) {
+            break;
+          }
+
           message.decimalEnumAttributes.push(DecimalEnumAttributeDefinitionV2.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1231,36 +1493,36 @@ export const BuildSchemaRequestV2 = {
   fromJSON(object: any): BuildSchemaRequestV2 {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      schemaType: isSet(object.schemaType) ? String(object.schemaType) : "",
-      version: isSet(object.version) ? String(object.version) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      issuerDid: isSet(object.issuerDid) ? String(object.issuerDid) : "",
-      stringAttributes: Array.isArray(object?.stringAttributes)
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      schemaType: isSet(object.schemaType) ? globalThis.String(object.schemaType) : "",
+      version: isSet(object.version) ? globalThis.String(object.version) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      issuerDid: isSet(object.issuerDid) ? globalThis.String(object.issuerDid) : "",
+      stringAttributes: globalThis.Array.isArray(object?.stringAttributes)
         ? object.stringAttributes.map((e: any) => StringAttributeDefinitionV2.fromJSON(e))
         : [],
-      integerAttributes: Array.isArray(object?.integerAttributes)
+      integerAttributes: globalThis.Array.isArray(object?.integerAttributes)
         ? object.integerAttributes.map((e: any) => IntegerAttributeDefinitionV2.fromJSON(e))
         : [],
-      decimalAttributes: Array.isArray(object?.decimalAttributes)
+      decimalAttributes: globalThis.Array.isArray(object?.decimalAttributes)
         ? object.decimalAttributes.map((e: any) => DecimalAttributeDefinitionV2.fromJSON(e))
         : [],
-      booleanAttributes: Array.isArray(object?.booleanAttributes)
+      booleanAttributes: globalThis.Array.isArray(object?.booleanAttributes)
         ? object.booleanAttributes.map((e: any) => BooleanAttributeDefinitionV2.fromJSON(e))
         : [],
-      dateAttributes: Array.isArray(object?.dateAttributes)
+      dateAttributes: globalThis.Array.isArray(object?.dateAttributes)
         ? object.dateAttributes.map((e: any) => DateAttributeDefinitionV2.fromJSON(e))
         : [],
-      datetimeAttributes: Array.isArray(object?.datetimeAttributes)
+      datetimeAttributes: globalThis.Array.isArray(object?.datetimeAttributes)
         ? object.datetimeAttributes.map((e: any) => DateTimeAttributeDefinitionV2.fromJSON(e))
         : [],
-      stringEnumAttributes: Array.isArray(object?.stringEnumAttributes)
+      stringEnumAttributes: globalThis.Array.isArray(object?.stringEnumAttributes)
         ? object.stringEnumAttributes.map((e: any) => StringEnumAttributeDefinitionV2.fromJSON(e))
         : [],
-      integerEnumAttributes: Array.isArray(object?.integerEnumAttributes)
+      integerEnumAttributes: globalThis.Array.isArray(object?.integerEnumAttributes)
         ? object.integerEnumAttributes.map((e: any) => IntegerEnumAttributeDefinitionV2.fromJSON(e))
         : [],
-      decimalEnumAttributes: Array.isArray(object?.decimalEnumAttributes)
+      decimalEnumAttributes: globalThis.Array.isArray(object?.decimalEnumAttributes)
         ? object.decimalEnumAttributes.map((e: any) => DecimalEnumAttributeDefinitionV2.fromJSON(e))
         : [],
     };
@@ -1268,75 +1530,57 @@ export const BuildSchemaRequestV2 = {
 
   toJSON(message: BuildSchemaRequestV2): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.schemaType !== undefined && (obj.schemaType = message.schemaType);
-    message.version !== undefined && (obj.version = message.version);
-    message.description !== undefined && (obj.description = message.description);
-    message.issuerDid !== undefined && (obj.issuerDid = message.issuerDid);
-    if (message.stringAttributes) {
-      obj.stringAttributes = message.stringAttributes.map((e) => e ? StringAttributeDefinitionV2.toJSON(e) : undefined);
-    } else {
-      obj.stringAttributes = [];
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
     }
-    if (message.integerAttributes) {
-      obj.integerAttributes = message.integerAttributes.map((e) =>
-        e ? IntegerAttributeDefinitionV2.toJSON(e) : undefined
-      );
-    } else {
-      obj.integerAttributes = [];
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
     }
-    if (message.decimalAttributes) {
-      obj.decimalAttributes = message.decimalAttributes.map((e) =>
-        e ? DecimalAttributeDefinitionV2.toJSON(e) : undefined
-      );
-    } else {
-      obj.decimalAttributes = [];
+    if (message.schemaType !== "") {
+      obj.schemaType = message.schemaType;
     }
-    if (message.booleanAttributes) {
-      obj.booleanAttributes = message.booleanAttributes.map((e) =>
-        e ? BooleanAttributeDefinitionV2.toJSON(e) : undefined
-      );
-    } else {
-      obj.booleanAttributes = [];
+    if (message.version !== "") {
+      obj.version = message.version;
     }
-    if (message.dateAttributes) {
-      obj.dateAttributes = message.dateAttributes.map((e) => e ? DateAttributeDefinitionV2.toJSON(e) : undefined);
-    } else {
-      obj.dateAttributes = [];
+    if (message.description !== "") {
+      obj.description = message.description;
     }
-    if (message.datetimeAttributes) {
-      obj.datetimeAttributes = message.datetimeAttributes.map((e) =>
-        e ? DateTimeAttributeDefinitionV2.toJSON(e) : undefined
-      );
-    } else {
-      obj.datetimeAttributes = [];
+    if (message.issuerDid !== "") {
+      obj.issuerDid = message.issuerDid;
     }
-    if (message.stringEnumAttributes) {
-      obj.stringEnumAttributes = message.stringEnumAttributes.map((e) =>
-        e ? StringEnumAttributeDefinitionV2.toJSON(e) : undefined
-      );
-    } else {
-      obj.stringEnumAttributes = [];
+    if (message.stringAttributes?.length) {
+      obj.stringAttributes = message.stringAttributes.map((e) => StringAttributeDefinitionV2.toJSON(e));
     }
-    if (message.integerEnumAttributes) {
-      obj.integerEnumAttributes = message.integerEnumAttributes.map((e) =>
-        e ? IntegerEnumAttributeDefinitionV2.toJSON(e) : undefined
-      );
-    } else {
-      obj.integerEnumAttributes = [];
+    if (message.integerAttributes?.length) {
+      obj.integerAttributes = message.integerAttributes.map((e) => IntegerAttributeDefinitionV2.toJSON(e));
     }
-    if (message.decimalEnumAttributes) {
-      obj.decimalEnumAttributes = message.decimalEnumAttributes.map((e) =>
-        e ? DecimalEnumAttributeDefinitionV2.toJSON(e) : undefined
-      );
-    } else {
-      obj.decimalEnumAttributes = [];
+    if (message.decimalAttributes?.length) {
+      obj.decimalAttributes = message.decimalAttributes.map((e) => DecimalAttributeDefinitionV2.toJSON(e));
+    }
+    if (message.booleanAttributes?.length) {
+      obj.booleanAttributes = message.booleanAttributes.map((e) => BooleanAttributeDefinitionV2.toJSON(e));
+    }
+    if (message.dateAttributes?.length) {
+      obj.dateAttributes = message.dateAttributes.map((e) => DateAttributeDefinitionV2.toJSON(e));
+    }
+    if (message.datetimeAttributes?.length) {
+      obj.datetimeAttributes = message.datetimeAttributes.map((e) => DateTimeAttributeDefinitionV2.toJSON(e));
+    }
+    if (message.stringEnumAttributes?.length) {
+      obj.stringEnumAttributes = message.stringEnumAttributes.map((e) => StringEnumAttributeDefinitionV2.toJSON(e));
+    }
+    if (message.integerEnumAttributes?.length) {
+      obj.integerEnumAttributes = message.integerEnumAttributes.map((e) => IntegerEnumAttributeDefinitionV2.toJSON(e));
+    }
+    if (message.decimalEnumAttributes?.length) {
+      obj.decimalEnumAttributes = message.decimalEnumAttributes.map((e) => DecimalEnumAttributeDefinitionV2.toJSON(e));
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BuildSchemaRequestV2>, I>>(base?: I): BuildSchemaRequestV2 {
+    return BuildSchemaRequestV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<BuildSchemaRequestV2>, I>>(object: I): BuildSchemaRequestV2 {
     const message = createBaseBuildSchemaRequestV2();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1383,25 +1627,38 @@ export const CreateIdentityV2Request = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateIdentityV2Request {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateIdentityV2Request();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.issuerKey = IdentityKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.didParams = DidParams.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1416,15 +1673,21 @@ export const CreateIdentityV2Request = {
 
   toJSON(message: CreateIdentityV2Request): unknown {
     const obj: any = {};
-    message.issuerKey !== undefined &&
-      (obj.issuerKey = message.issuerKey ? IdentityKey.toJSON(message.issuerKey) : undefined);
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.didParams !== undefined &&
-      (obj.didParams = message.didParams ? DidParams.toJSON(message.didParams) : undefined);
+    if (message.issuerKey !== undefined) {
+      obj.issuerKey = IdentityKey.toJSON(message.issuerKey);
+    }
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.didParams !== undefined) {
+      obj.didParams = DidParams.toJSON(message.didParams);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateIdentityV2Request>, I>>(base?: I): CreateIdentityV2Request {
+    return CreateIdentityV2Request.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateIdentityV2Request>, I>>(object: I): CreateIdentityV2Request {
     const message = createBaseCreateIdentityV2Request();
     message.issuerKey = (object.issuerKey !== undefined && object.issuerKey !== null)
@@ -1448,6 +1711,7 @@ function createBaseCreateIssuerRequest(): CreateIssuerRequest {
     name: undefined,
     description: undefined,
     image: undefined,
+    publishInterval: undefined,
   };
 }
 
@@ -1471,38 +1735,73 @@ export const CreateIssuerRequest = {
     if (message.image !== undefined) {
       writer.uint32(50).string(message.image);
     }
+    if (message.publishInterval !== undefined) {
+      writer.uint32(56).int64(message.publishInterval);
+    }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateIssuerRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateIssuerRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.issuerKey = IdentityKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.issuerParams = DidParams.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.name = reader.string();
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.description = reader.string();
-          break;
+          continue;
         case 6:
+          if (tag !== 50) {
+            break;
+          }
+
           message.image = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
+        case 7:
+          if (tag !== 56) {
+            break;
+          }
+
+          message.publishInterval = longToNumber(reader.int64() as Long);
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1512,26 +1811,42 @@ export const CreateIssuerRequest = {
       issuerKey: isSet(object.issuerKey) ? IdentityKey.fromJSON(object.issuerKey) : undefined,
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       issuerParams: isSet(object.issuerParams) ? DidParams.fromJSON(object.issuerParams) : undefined,
-      name: isSet(object.name) ? String(object.name) : undefined,
-      description: isSet(object.description) ? String(object.description) : undefined,
-      image: isSet(object.image) ? String(object.image) : undefined,
+      name: isSet(object.name) ? globalThis.String(object.name) : undefined,
+      description: isSet(object.description) ? globalThis.String(object.description) : undefined,
+      image: isSet(object.image) ? globalThis.String(object.image) : undefined,
+      publishInterval: isSet(object.publishInterval) ? globalThis.Number(object.publishInterval) : undefined,
     };
   },
 
   toJSON(message: CreateIssuerRequest): unknown {
     const obj: any = {};
-    message.issuerKey !== undefined &&
-      (obj.issuerKey = message.issuerKey ? IdentityKey.toJSON(message.issuerKey) : undefined);
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.issuerParams !== undefined &&
-      (obj.issuerParams = message.issuerParams ? DidParams.toJSON(message.issuerParams) : undefined);
-    message.name !== undefined && (obj.name = message.name);
-    message.description !== undefined && (obj.description = message.description);
-    message.image !== undefined && (obj.image = message.image);
+    if (message.issuerKey !== undefined) {
+      obj.issuerKey = IdentityKey.toJSON(message.issuerKey);
+    }
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.issuerParams !== undefined) {
+      obj.issuerParams = DidParams.toJSON(message.issuerParams);
+    }
+    if (message.name !== undefined) {
+      obj.name = message.name;
+    }
+    if (message.description !== undefined) {
+      obj.description = message.description;
+    }
+    if (message.image !== undefined) {
+      obj.image = message.image;
+    }
+    if (message.publishInterval !== undefined) {
+      obj.publishInterval = Math.round(message.publishInterval);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateIssuerRequest>, I>>(base?: I): CreateIssuerRequest {
+    return CreateIssuerRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateIssuerRequest>, I>>(object: I): CreateIssuerRequest {
     const message = createBaseCreateIssuerRequest();
     message.issuerKey = (object.issuerKey !== undefined && object.issuerKey !== null)
@@ -1546,6 +1861,7 @@ export const CreateIssuerRequest = {
     message.name = object.name ?? undefined;
     message.description = object.description ?? undefined;
     message.image = object.image ?? undefined;
+    message.publishInterval = object.publishInterval ?? undefined;
     return message;
   },
 };
@@ -1569,25 +1885,38 @@ export const GetIssuerByKeyRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetIssuerByKeyRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetIssuerByKeyRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.issuerKey = IdentityKey.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.issuerParams = DidParams.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1602,15 +1931,21 @@ export const GetIssuerByKeyRequest = {
 
   toJSON(message: GetIssuerByKeyRequest): unknown {
     const obj: any = {};
-    message.issuerKey !== undefined &&
-      (obj.issuerKey = message.issuerKey ? IdentityKey.toJSON(message.issuerKey) : undefined);
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.issuerParams !== undefined &&
-      (obj.issuerParams = message.issuerParams ? DidParams.toJSON(message.issuerParams) : undefined);
+    if (message.issuerKey !== undefined) {
+      obj.issuerKey = IdentityKey.toJSON(message.issuerKey);
+    }
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.issuerParams !== undefined) {
+      obj.issuerParams = DidParams.toJSON(message.issuerParams);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetIssuerByKeyRequest>, I>>(base?: I): GetIssuerByKeyRequest {
+    return GetIssuerByKeyRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetIssuerByKeyRequest>, I>>(object: I): GetIssuerByKeyRequest {
     const message = createBaseGetIssuerByKeyRequest();
     message.issuerKey = (object.issuerKey !== undefined && object.issuerKey !== null)
@@ -1645,25 +1980,38 @@ export const PublishIssuerStateRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): PublishIssuerStateRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBasePublishIssuerStateRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.issuerDid = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1671,20 +2019,28 @@ export const PublishIssuerStateRequest = {
   fromJSON(object: any): PublishIssuerStateRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      issuerDid: isSet(object.issuerDid) ? String(object.issuerDid) : "",
+      issuerDid: isSet(object.issuerDid) ? globalThis.String(object.issuerDid) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
     };
   },
 
   toJSON(message: PublishIssuerStateRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.issuerDid !== undefined && (obj.issuerDid = message.issuerDid);
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.issuerDid !== "") {
+      obj.issuerDid = message.issuerDid;
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<PublishIssuerStateRequest>, I>>(base?: I): PublishIssuerStateRequest {
+    return PublishIssuerStateRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<PublishIssuerStateRequest>, I>>(object: I): PublishIssuerStateRequest {
     const message = createBasePublishIssuerStateRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1714,22 +2070,31 @@ export const CreateCredentialResponseV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateCredentialResponseV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateCredentialResponseV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.credentialReceipt = CredentialReceiptV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1745,13 +2110,18 @@ export const CreateCredentialResponseV2 = {
 
   toJSON(message: CreateCredentialResponseV2): unknown {
     const obj: any = {};
-    message.credentialReceipt !== undefined && (obj.credentialReceipt = message.credentialReceipt
-      ? CredentialReceiptV2.toJSON(message.credentialReceipt)
-      : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.credentialReceipt !== undefined) {
+      obj.credentialReceipt = CredentialReceiptV2.toJSON(message.credentialReceipt);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateCredentialResponseV2>, I>>(base?: I): CreateCredentialResponseV2 {
+    return CreateCredentialResponseV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateCredentialResponseV2>, I>>(object: I): CreateCredentialResponseV2 {
     const message = createBaseCreateCredentialResponseV2();
     message.credentialReceipt = (object.credentialReceipt !== undefined && object.credentialReceipt !== null)
@@ -1778,40 +2148,56 @@ export const CreateIdentityV2Response = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateIdentityV2Response {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateIdentityV2Response();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.did = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CreateIdentityV2Response {
     return {
-      did: isSet(object.did) ? String(object.did) : "",
+      did: isSet(object.did) ? globalThis.String(object.did) : "",
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: CreateIdentityV2Response): unknown {
     const obj: any = {};
-    message.did !== undefined && (obj.did = message.did);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.did !== "") {
+      obj.did = message.did;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateIdentityV2Response>, I>>(base?: I): CreateIdentityV2Response {
+    return CreateIdentityV2Response.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateIdentityV2Response>, I>>(object: I): CreateIdentityV2Response {
     const message = createBaseCreateIdentityV2Response();
     message.did = object.did ?? "";
@@ -1836,40 +2222,56 @@ export const CreateIssuerResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateIssuerResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateIssuerResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.did = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CreateIssuerResponse {
     return {
-      did: isSet(object.did) ? String(object.did) : "",
+      did: isSet(object.did) ? globalThis.String(object.did) : "",
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: CreateIssuerResponse): unknown {
     const obj: any = {};
-    message.did !== undefined && (obj.did = message.did);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.did !== "") {
+      obj.did = message.did;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateIssuerResponse>, I>>(base?: I): CreateIssuerResponse {
+    return CreateIssuerResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateIssuerResponse>, I>>(object: I): CreateIssuerResponse {
     const message = createBaseCreateIssuerResponse();
     message.did = object.did ?? "";
@@ -1894,22 +2296,31 @@ export const BuildSchemaResponseV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BuildSchemaResponseV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBuildSchemaResponseV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.schema = SchemaV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1923,11 +2334,18 @@ export const BuildSchemaResponseV2 = {
 
   toJSON(message: BuildSchemaResponseV2): unknown {
     const obj: any = {};
-    message.schema !== undefined && (obj.schema = message.schema ? SchemaV2.toJSON(message.schema) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.schema !== undefined) {
+      obj.schema = SchemaV2.toJSON(message.schema);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BuildSchemaResponseV2>, I>>(base?: I): BuildSchemaResponseV2 {
+    return BuildSchemaResponseV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<BuildSchemaResponseV2>, I>>(object: I): BuildSchemaResponseV2 {
     const message = createBaseBuildSchemaResponseV2();
     message.schema = (object.schema !== undefined && object.schema !== null)
@@ -1954,22 +2372,31 @@ export const PublishIssuerStateResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): PublishIssuerStateResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBasePublishIssuerStateResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.stateReceipt = IssuerStateReceipt.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1983,12 +2410,18 @@ export const PublishIssuerStateResponse = {
 
   toJSON(message: PublishIssuerStateResponse): unknown {
     const obj: any = {};
-    message.stateReceipt !== undefined &&
-      (obj.stateReceipt = message.stateReceipt ? IssuerStateReceipt.toJSON(message.stateReceipt) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.stateReceipt !== undefined) {
+      obj.stateReceipt = IssuerStateReceipt.toJSON(message.stateReceipt);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<PublishIssuerStateResponse>, I>>(base?: I): PublishIssuerStateResponse {
+    return PublishIssuerStateResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<PublishIssuerStateResponse>, I>>(object: I): PublishIssuerStateResponse {
     const message = createBasePublishIssuerStateResponse();
     message.stateReceipt = (object.stateReceipt !== undefined && object.stateReceipt !== null)
@@ -2000,7 +2433,7 @@ export const PublishIssuerStateResponse = {
 };
 
 function createBaseRevokeCredentialRequestV2(): RevokeCredentialRequestV2 {
-  return { configData: undefined, credential: undefined };
+  return { configData: undefined, credential: undefined, signer: undefined };
 }
 
 export const RevokeCredentialRequestV2 = {
@@ -2011,26 +2444,45 @@ export const RevokeCredentialRequestV2 = {
     if (message.credential !== undefined) {
       CredentialV2.encode(message.credential, writer.uint32(18).fork()).ldelim();
     }
+    if (message.signer !== undefined) {
+      Signer.encode(message.signer, writer.uint32(26).fork()).ldelim();
+    }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RevokeCredentialRequestV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRevokeCredentialRequestV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.credential = CredentialV2.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.signer = Signer.decode(reader, reader.uint32());
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -2039,18 +2491,27 @@ export const RevokeCredentialRequestV2 = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       credential: isSet(object.credential) ? CredentialV2.fromJSON(object.credential) : undefined,
+      signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
     };
   },
 
   toJSON(message: RevokeCredentialRequestV2): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? CredentialV2.toJSON(message.credential) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credential !== undefined) {
+      obj.credential = CredentialV2.toJSON(message.credential);
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RevokeCredentialRequestV2>, I>>(base?: I): RevokeCredentialRequestV2 {
+    return RevokeCredentialRequestV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RevokeCredentialRequestV2>, I>>(object: I): RevokeCredentialRequestV2 {
     const message = createBaseRevokeCredentialRequestV2();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -2058,6 +2519,9 @@ export const RevokeCredentialRequestV2 = {
       : undefined;
     message.credential = (object.credential !== undefined && object.credential !== null)
       ? CredentialV2.fromPartial(object.credential)
+      : undefined;
+    message.signer = (object.signer !== undefined && object.signer !== null)
+      ? Signer.fromPartial(object.signer)
       : undefined;
     return message;
   },
@@ -2079,22 +2543,31 @@ export const RevokeCredentialResponseV2 = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RevokeCredentialResponseV2 {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRevokeCredentialResponseV2();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.result = CredentialRevocationV2.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -2108,12 +2581,18 @@ export const RevokeCredentialResponseV2 = {
 
   toJSON(message: RevokeCredentialResponseV2): unknown {
     const obj: any = {};
-    message.result !== undefined &&
-      (obj.result = message.result ? CredentialRevocationV2.toJSON(message.result) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.result !== undefined) {
+      obj.result = CredentialRevocationV2.toJSON(message.result);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RevokeCredentialResponseV2>, I>>(base?: I): RevokeCredentialResponseV2 {
+    return RevokeCredentialResponseV2.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RevokeCredentialResponseV2>, I>>(object: I): RevokeCredentialResponseV2 {
     const message = createBaseRevokeCredentialResponseV2();
     message.result = (object.result !== undefined && object.result !== null)
@@ -2139,9 +2618,12 @@ export interface IdentityServiceV2 {
   PublishIssuerState(request: PublishIssuerStateRequest): Promise<PublishIssuerStateResponse>;
 }
 
+export const IdentityServiceV2ServiceName = "bloock.IdentityServiceV2";
 export class IdentityServiceV2ClientImpl implements IdentityServiceV2 {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || IdentityServiceV2ServiceName;
     this.rpc = rpc;
     this.CreateIdentity = this.CreateIdentity.bind(this);
     this.CreateIssuer = this.CreateIssuer.bind(this);
@@ -2158,74 +2640,74 @@ export class IdentityServiceV2ClientImpl implements IdentityServiceV2 {
   }
   CreateIdentity(request: CreateIdentityV2Request): Promise<CreateIdentityV2Response> {
     const data = CreateIdentityV2Request.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "CreateIdentity", data);
-    return promise.then((data) => CreateIdentityV2Response.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CreateIdentity", data);
+    return promise.then((data) => CreateIdentityV2Response.decode(_m0.Reader.create(data)));
   }
 
   CreateIssuer(request: CreateIssuerRequest): Promise<CreateIssuerResponse> {
     const data = CreateIssuerRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "CreateIssuer", data);
-    return promise.then((data) => CreateIssuerResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CreateIssuer", data);
+    return promise.then((data) => CreateIssuerResponse.decode(_m0.Reader.create(data)));
   }
 
   GetIssuerList(request: GetIssuerListRequest): Promise<GetIssuerListResponse> {
     const data = GetIssuerListRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "GetIssuerList", data);
-    return promise.then((data) => GetIssuerListResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetIssuerList", data);
+    return promise.then((data) => GetIssuerListResponse.decode(_m0.Reader.create(data)));
   }
 
   GetIssuerByKey(request: GetIssuerByKeyRequest): Promise<GetIssuerByKeyResponse> {
     const data = GetIssuerByKeyRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "GetIssuerByKey", data);
-    return promise.then((data) => GetIssuerByKeyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetIssuerByKey", data);
+    return promise.then((data) => GetIssuerByKeyResponse.decode(_m0.Reader.create(data)));
   }
 
   BuildSchema(request: BuildSchemaRequestV2): Promise<BuildSchemaResponseV2> {
     const data = BuildSchemaRequestV2.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "BuildSchema", data);
-    return promise.then((data) => BuildSchemaResponseV2.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildSchema", data);
+    return promise.then((data) => BuildSchemaResponseV2.decode(_m0.Reader.create(data)));
   }
 
   GetSchema(request: GetSchemaRequestV2): Promise<GetSchemaResponseV2> {
     const data = GetSchemaRequestV2.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "GetSchema", data);
-    return promise.then((data) => GetSchemaResponseV2.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetSchema", data);
+    return promise.then((data) => GetSchemaResponseV2.decode(_m0.Reader.create(data)));
   }
 
   CreateCredential(request: CreateCredentialRequestV2): Promise<CreateCredentialResponseV2> {
     const data = CreateCredentialRequestV2.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "CreateCredential", data);
-    return promise.then((data) => CreateCredentialResponseV2.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CreateCredential", data);
+    return promise.then((data) => CreateCredentialResponseV2.decode(_m0.Reader.create(data)));
   }
 
   GetCredentialProof(request: GetCredentialProofRequest): Promise<GetCredentialProofResponse> {
     const data = GetCredentialProofRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "GetCredentialProof", data);
-    return promise.then((data) => GetCredentialProofResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetCredentialProof", data);
+    return promise.then((data) => GetCredentialProofResponse.decode(_m0.Reader.create(data)));
   }
 
   RevokeCredential(request: RevokeCredentialRequestV2): Promise<RevokeCredentialResponseV2> {
     const data = RevokeCredentialRequestV2.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "RevokeCredential", data);
-    return promise.then((data) => RevokeCredentialResponseV2.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "RevokeCredential", data);
+    return promise.then((data) => RevokeCredentialResponseV2.decode(_m0.Reader.create(data)));
   }
 
   CredentialToJson(request: CredentialToJsonRequestV2): Promise<CredentialToJsonResponseV2> {
     const data = CredentialToJsonRequestV2.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "CredentialToJson", data);
-    return promise.then((data) => CredentialToJsonResponseV2.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CredentialToJson", data);
+    return promise.then((data) => CredentialToJsonResponseV2.decode(_m0.Reader.create(data)));
   }
 
   CredentialFromJson(request: CredentialFromJsonRequestV2): Promise<CredentialFromJsonResponseV2> {
     const data = CredentialFromJsonRequestV2.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "CredentialFromJson", data);
-    return promise.then((data) => CredentialFromJsonResponseV2.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CredentialFromJson", data);
+    return promise.then((data) => CredentialFromJsonResponseV2.decode(_m0.Reader.create(data)));
   }
 
   PublishIssuerState(request: PublishIssuerStateRequest): Promise<PublishIssuerStateResponse> {
     const data = PublishIssuerStateRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "PublishIssuerState", data);
-    return promise.then((data) => PublishIssuerStateResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "PublishIssuerState", data);
+    return promise.then((data) => PublishIssuerStateResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -2337,29 +2819,11 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
-
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
@@ -2368,7 +2832,7 @@ type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+  if (long.gt(globalThis.Number.MAX_SAFE_INTEGER)) {
     throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
   }
   return long.toNumber();

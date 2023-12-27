@@ -53,13 +53,13 @@ export function networkToJSON(object: Network): string {
 }
 
 export interface ConfigData {
-  config?: Configuration;
+  config?: Configuration | undefined;
   networksConfig: { [key: number]: NetworkConfig };
 }
 
 export interface ConfigData_NetworksConfigEntry {
   key: number;
-  value?: NetworkConfig;
+  value?: NetworkConfig | undefined;
 }
 
 export interface Configuration {
@@ -97,25 +97,34 @@ export const ConfigData = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ConfigData {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseConfigData();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.config = Configuration.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           const entry2 = ConfigData_NetworksConfigEntry.decode(reader, reader.uint32());
           if (entry2.value !== undefined) {
             message.networksConfig[entry2.key] = entry2.value;
           }
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -125,7 +134,7 @@ export const ConfigData = {
       config: isSet(object.config) ? Configuration.fromJSON(object.config) : undefined,
       networksConfig: isObject(object.networksConfig)
         ? Object.entries(object.networksConfig).reduce<{ [key: number]: NetworkConfig }>((acc, [key, value]) => {
-          acc[Number(key)] = NetworkConfig.fromJSON(value);
+          acc[globalThis.Number(key)] = NetworkConfig.fromJSON(value);
           return acc;
         }, {})
         : {},
@@ -134,16 +143,24 @@ export const ConfigData = {
 
   toJSON(message: ConfigData): unknown {
     const obj: any = {};
-    message.config !== undefined && (obj.config = message.config ? Configuration.toJSON(message.config) : undefined);
-    obj.networksConfig = {};
+    if (message.config !== undefined) {
+      obj.config = Configuration.toJSON(message.config);
+    }
     if (message.networksConfig) {
-      Object.entries(message.networksConfig).forEach(([k, v]) => {
-        obj.networksConfig[k] = NetworkConfig.toJSON(v);
-      });
+      const entries = Object.entries(message.networksConfig);
+      if (entries.length > 0) {
+        obj.networksConfig = {};
+        entries.forEach(([k, v]) => {
+          obj.networksConfig[k] = NetworkConfig.toJSON(v);
+        });
+      }
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ConfigData>, I>>(base?: I): ConfigData {
+    return ConfigData.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<ConfigData>, I>>(object: I): ConfigData {
     const message = createBaseConfigData();
     message.config = (object.config !== undefined && object.config !== null)
@@ -152,7 +169,7 @@ export const ConfigData = {
     message.networksConfig = Object.entries(object.networksConfig ?? {}).reduce<{ [key: number]: NetworkConfig }>(
       (acc, [key, value]) => {
         if (value !== undefined) {
-          acc[Number(key)] = NetworkConfig.fromPartial(value);
+          acc[globalThis.Number(key)] = NetworkConfig.fromPartial(value);
         }
         return acc;
       },
@@ -178,40 +195,56 @@ export const ConfigData_NetworksConfigEntry = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ConfigData_NetworksConfigEntry {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseConfigData_NetworksConfigEntry();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.key = reader.int32();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.value = NetworkConfig.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): ConfigData_NetworksConfigEntry {
     return {
-      key: isSet(object.key) ? Number(object.key) : 0,
+      key: isSet(object.key) ? globalThis.Number(object.key) : 0,
       value: isSet(object.value) ? NetworkConfig.fromJSON(object.value) : undefined,
     };
   },
 
   toJSON(message: ConfigData_NetworksConfigEntry): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = Math.round(message.key));
-    message.value !== undefined && (obj.value = message.value ? NetworkConfig.toJSON(message.value) : undefined);
+    if (message.key !== 0) {
+      obj.key = Math.round(message.key);
+    }
+    if (message.value !== undefined) {
+      obj.value = NetworkConfig.toJSON(message.value);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ConfigData_NetworksConfigEntry>, I>>(base?: I): ConfigData_NetworksConfigEntry {
+    return ConfigData_NetworksConfigEntry.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<ConfigData_NetworksConfigEntry>, I>>(
     object: I,
   ): ConfigData_NetworksConfigEntry {
@@ -275,84 +308,148 @@ export const Configuration = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Configuration {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseConfiguration();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.libraryName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.host = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.apiKey = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.waitMessageIntervalFactor = reader.int32();
-          break;
+          continue;
         case 5:
+          if (tag !== 40) {
+            break;
+          }
+
           message.waitMessageIntervalDefault = reader.int32();
-          break;
+          continue;
         case 6:
+          if (tag !== 50) {
+            break;
+          }
+
           message.keyTypeAlgorithm = reader.string();
-          break;
+          continue;
         case 7:
+          if (tag !== 58) {
+            break;
+          }
+
           message.ellipticCurveKey = reader.string();
-          break;
+          continue;
         case 8:
+          if (tag !== 66) {
+            break;
+          }
+
           message.signatureAlgorithm = reader.string();
-          break;
+          continue;
         case 9:
+          if (tag !== 72) {
+            break;
+          }
+
           message.disableAnalytics = reader.bool();
-          break;
+          continue;
         case 10:
+          if (tag !== 82) {
+            break;
+          }
+
           message.environment = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): Configuration {
     return {
-      libraryName: isSet(object.libraryName) ? String(object.libraryName) : "",
-      host: isSet(object.host) ? String(object.host) : "",
-      apiKey: isSet(object.apiKey) ? String(object.apiKey) : "",
-      waitMessageIntervalFactor: isSet(object.waitMessageIntervalFactor) ? Number(object.waitMessageIntervalFactor) : 0,
-      waitMessageIntervalDefault: isSet(object.waitMessageIntervalDefault)
-        ? Number(object.waitMessageIntervalDefault)
+      libraryName: isSet(object.libraryName) ? globalThis.String(object.libraryName) : "",
+      host: isSet(object.host) ? globalThis.String(object.host) : "",
+      apiKey: isSet(object.apiKey) ? globalThis.String(object.apiKey) : "",
+      waitMessageIntervalFactor: isSet(object.waitMessageIntervalFactor)
+        ? globalThis.Number(object.waitMessageIntervalFactor)
         : 0,
-      keyTypeAlgorithm: isSet(object.keyTypeAlgorithm) ? String(object.keyTypeAlgorithm) : "",
-      ellipticCurveKey: isSet(object.ellipticCurveKey) ? String(object.ellipticCurveKey) : "",
-      signatureAlgorithm: isSet(object.signatureAlgorithm) ? String(object.signatureAlgorithm) : "",
-      disableAnalytics: isSet(object.disableAnalytics) ? Boolean(object.disableAnalytics) : false,
-      environment: isSet(object.environment) ? String(object.environment) : undefined,
+      waitMessageIntervalDefault: isSet(object.waitMessageIntervalDefault)
+        ? globalThis.Number(object.waitMessageIntervalDefault)
+        : 0,
+      keyTypeAlgorithm: isSet(object.keyTypeAlgorithm) ? globalThis.String(object.keyTypeAlgorithm) : "",
+      ellipticCurveKey: isSet(object.ellipticCurveKey) ? globalThis.String(object.ellipticCurveKey) : "",
+      signatureAlgorithm: isSet(object.signatureAlgorithm) ? globalThis.String(object.signatureAlgorithm) : "",
+      disableAnalytics: isSet(object.disableAnalytics) ? globalThis.Boolean(object.disableAnalytics) : false,
+      environment: isSet(object.environment) ? globalThis.String(object.environment) : undefined,
     };
   },
 
   toJSON(message: Configuration): unknown {
     const obj: any = {};
-    message.libraryName !== undefined && (obj.libraryName = message.libraryName);
-    message.host !== undefined && (obj.host = message.host);
-    message.apiKey !== undefined && (obj.apiKey = message.apiKey);
-    message.waitMessageIntervalFactor !== undefined &&
-      (obj.waitMessageIntervalFactor = Math.round(message.waitMessageIntervalFactor));
-    message.waitMessageIntervalDefault !== undefined &&
-      (obj.waitMessageIntervalDefault = Math.round(message.waitMessageIntervalDefault));
-    message.keyTypeAlgorithm !== undefined && (obj.keyTypeAlgorithm = message.keyTypeAlgorithm);
-    message.ellipticCurveKey !== undefined && (obj.ellipticCurveKey = message.ellipticCurveKey);
-    message.signatureAlgorithm !== undefined && (obj.signatureAlgorithm = message.signatureAlgorithm);
-    message.disableAnalytics !== undefined && (obj.disableAnalytics = message.disableAnalytics);
-    message.environment !== undefined && (obj.environment = message.environment);
+    if (message.libraryName !== "") {
+      obj.libraryName = message.libraryName;
+    }
+    if (message.host !== "") {
+      obj.host = message.host;
+    }
+    if (message.apiKey !== "") {
+      obj.apiKey = message.apiKey;
+    }
+    if (message.waitMessageIntervalFactor !== 0) {
+      obj.waitMessageIntervalFactor = Math.round(message.waitMessageIntervalFactor);
+    }
+    if (message.waitMessageIntervalDefault !== 0) {
+      obj.waitMessageIntervalDefault = Math.round(message.waitMessageIntervalDefault);
+    }
+    if (message.keyTypeAlgorithm !== "") {
+      obj.keyTypeAlgorithm = message.keyTypeAlgorithm;
+    }
+    if (message.ellipticCurveKey !== "") {
+      obj.ellipticCurveKey = message.ellipticCurveKey;
+    }
+    if (message.signatureAlgorithm !== "") {
+      obj.signatureAlgorithm = message.signatureAlgorithm;
+    }
+    if (message.disableAnalytics === true) {
+      obj.disableAnalytics = message.disableAnalytics;
+    }
+    if (message.environment !== undefined) {
+      obj.environment = message.environment;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<Configuration>, I>>(base?: I): Configuration {
+    return Configuration.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<Configuration>, I>>(object: I): Configuration {
     const message = createBaseConfiguration();
     message.libraryName = object.libraryName ?? "";
@@ -388,45 +485,67 @@ export const NetworkConfig = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): NetworkConfig {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseNetworkConfig();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.ContractAddress = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.ContractAbi = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.HttpProvider = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): NetworkConfig {
     return {
-      ContractAddress: isSet(object.ContractAddress) ? String(object.ContractAddress) : "",
-      ContractAbi: isSet(object.ContractAbi) ? String(object.ContractAbi) : "",
-      HttpProvider: isSet(object.HttpProvider) ? String(object.HttpProvider) : "",
+      ContractAddress: isSet(object.ContractAddress) ? globalThis.String(object.ContractAddress) : "",
+      ContractAbi: isSet(object.ContractAbi) ? globalThis.String(object.ContractAbi) : "",
+      HttpProvider: isSet(object.HttpProvider) ? globalThis.String(object.HttpProvider) : "",
     };
   },
 
   toJSON(message: NetworkConfig): unknown {
     const obj: any = {};
-    message.ContractAddress !== undefined && (obj.ContractAddress = message.ContractAddress);
-    message.ContractAbi !== undefined && (obj.ContractAbi = message.ContractAbi);
-    message.HttpProvider !== undefined && (obj.HttpProvider = message.HttpProvider);
+    if (message.ContractAddress !== "") {
+      obj.ContractAddress = message.ContractAddress;
+    }
+    if (message.ContractAbi !== "") {
+      obj.ContractAbi = message.ContractAbi;
+    }
+    if (message.HttpProvider !== "") {
+      obj.HttpProvider = message.HttpProvider;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<NetworkConfig>, I>>(base?: I): NetworkConfig {
+    return NetworkConfig.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<NetworkConfig>, I>>(object: I): NetworkConfig {
     const message = createBaseNetworkConfig();
     message.ContractAddress = object.ContractAddress ?? "";
@@ -439,7 +558,8 @@ export const NetworkConfig = {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

@@ -41,9 +41,10 @@ use super::{
             publish_issuer_state_response::PublishIssuerStateResponse,
             revoke_credential_request::RevokeCredentialRequest,
             revoke_credential_response::RevokeCredentialResponse,
+            update_draft_state_signature_request::UpdateDraftStateSignatureRequest,
+            update_draft_state_signature_response::UpdateDraftStateSignatureResponse,
         },
         proof::CredentialProof,
-        proof_type::ProofType,
         revocation_result::RevocationResult,
         schema::{Attribute, Schema},
     },
@@ -95,6 +96,7 @@ impl<H: Client> IdentityServiceV2<H> {
         name: Option<String>,
         description: Option<String>,
         image: Option<String>,
+        publish_interval: Option<i64>,
     ) -> BloockResult<CreateIssuerResponse> {
         let req = CreateIssuerRequest {
             did_metadata: DidMetadataRequest {
@@ -106,6 +108,7 @@ impl<H: Client> IdentityServiceV2<H> {
             name,
             description,
             image,
+            publish_interval,
         };
 
         let res: CreateIssuerResponse = self
@@ -218,7 +221,6 @@ impl<H: Client> IdentityServiceV2<H> {
         version: Option<i32>,
         mut attributes: Vec<(String, Value)>,
         key: Key,
-        proof_types: Vec<ProofType>,
         api_managed_host: String,
     ) -> BloockResult<CreateCredentialReceipt> {
         _ = Url::parse(&api_managed_host.clone())
@@ -280,7 +282,6 @@ impl<H: Client> IdentityServiceV2<H> {
         let credential_json = vc
             .to_json()
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
-        let credential_keccak_hash = hex::encode(Keccak256::hash(&[credential_json.as_bytes()]));
 
         let mut credential: Credential = serde_json::from_str(&credential_json)
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
@@ -299,28 +300,25 @@ impl<H: Client> IdentityServiceV2<H> {
         let req = CreateCredentialRequest {
             credential_id,
             core_claim: core_claim_hex,
-            bn_128_signature: signature.signature,
-            keccak_256_hash: credential_keccak_hash,
+            bn_128_signature: signature.signature.clone(),
         };
 
         let res: CreateCredentialResponse = self
             .http
             .post_json(
                 format!(
-                    "{}/identityV2/v1/{}/claims?{}",
+                    "{}/identityV2/v1/{}/claims",
                     self.config_service.get_api_base_url(),
                     issuer_did.to_string(),
-                    proof_types
-                        .iter()
-                        .map(|proof_type| format!("proof={}", proof_type.get_proof_type()))
-                        .collect::<Vec<String>>()
-                        .join("&")
                 ),
                 req,
                 None,
             )
             .await
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
+
+        self.update_draft_state_signature(res.new_state, issuer_did.clone(), &key)
+            .await?;
 
         let proof: GetCredentialProofResponse = self
             .http
@@ -334,10 +332,10 @@ impl<H: Client> IdentityServiceV2<H> {
                 None,
             )
             .await
-            .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
+            .map_err(|e| IdentityErrorV2::GetCredentialProofError(e.to_string()))?;
 
         let credential_proof: CredentialProof = serde_json::from_value(proof.proof)
-            .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
+            .map_err(|e| IdentityErrorV2::GetCredentialProofError(e.to_string()))?;
 
         credential.proof = Some(credential_proof);
 
@@ -345,7 +343,6 @@ impl<H: Client> IdentityServiceV2<H> {
             credential,
             credential_id: res.id,
             schema_type: schema_json.schema_type,
-            anchor_id: res.anchor_id,
         })
     }
 
@@ -481,6 +478,7 @@ impl<H: Client> IdentityServiceV2<H> {
     pub async fn revoke_credential(
         &self,
         credential: Credential,
+        key: Key,
     ) -> BloockResult<RevocationResult> {
         parse_did(credential.issuer.clone())
             .map_err(|e| IdentityErrorV2::RevokeCredentialError(e.to_string()))?;
@@ -502,9 +500,64 @@ impl<H: Client> IdentityServiceV2<H> {
             .await
             .map_err(|e| IdentityErrorV2::RevokeCredentialError(e.to_string()))?;
 
-        Ok(RevocationResult {
-            success: res.success,
-        })
+        if !res.success {
+            return Err(
+                IdentityErrorV2::RevokeCredentialError("unsuccess response".to_string()).into(),
+            );
+        }
+
+        self.update_draft_state_signature(res.new_state, credential.issuer.clone(), &key)
+            .await?;
+
+        Ok(RevocationResult { success: true })
+    }
+
+    pub async fn update_draft_state_signature(
+        &self,
+        new_state: String,
+        issuer_did: String,
+        key: &Key,
+    ) -> Result<bool, IdentityErrorV2> {
+        let new_state_decoded = hex::decode(new_state.clone())
+            .map_err(|e| IdentityErrorV2::UpdateDraftStateSignatureError(e.to_string()))?;
+
+        let state_signature = bloock_signer::sign(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            self.config_service.get_environment(),
+            &new_state_decoded,
+            &key,
+            None,
+        )
+        .await
+        .map_err(|e| IdentityErrorV2::UpdateDraftStateSignatureError(e.to_string()))?;
+
+        let new_state_req = UpdateDraftStateSignatureRequest {
+            new_state_hash: new_state.clone(),
+            bn_128_signature: state_signature.signature,
+        };
+
+        let new_state_res: UpdateDraftStateSignatureResponse = self
+            .http
+            .post_json(
+                format!(
+                    "{}/identityV2/v1/{}/state",
+                    self.config_service.get_api_base_url(),
+                    issuer_did.to_string(),
+                ),
+                new_state_req,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityErrorV2::UpdateDraftStateSignatureError(e.to_string()))?;
+
+        if !new_state_res.success {
+            return Err(IdentityErrorV2::UpdateDraftStateSignatureError(
+                "unsuccess response".to_string(),
+            ));
+        }
+
+        return Ok(true);
     }
 }
 

@@ -7,17 +7,18 @@ import {
   GetCredentialProofRequest,
   RevokeCredentialRequestV2,
   GetSchemaRequestV2,
-  CreateIdentityV2Request
+  CreateIdentityV2Request,
+  PublishIssuerStateRequest
 } from "../bridge/proto/identity_v2";
 import { NewConfigData } from "../config/config";
-import { Schema } from "../entity/identity_v2";
+import { IssuerStateReceipt, Schema } from "../entity/identity_v2";
 import { Credential } from "../entity/identity_v2/credential";
 import { CredentialBuilder } from "../entity/identity_v2/credential_builder";
 import { CredentialProof } from "../entity/identity_v2/credential_proof";
 import { IdentityKey } from "../entity/identity_v2/identity_key";
 import { DidParams } from "../entity/identity_v2/did_params";
-import { IssuerStatePublisher } from "../entity/identity_v2/issuer_state_publisher";
 import { SchemaBuilder } from "../entity/identity_v2/schema_builder";
+import { Signer } from "../entity/authenticity";
 
 export class IdentityClient {
   private bridge: BloockBridge;
@@ -56,7 +57,8 @@ export class IdentityClient {
     issuerParams?: DidParams,
     name?: string,
     description?: string,
-    image?: string
+    image?: string,
+    publishInterval?: number,
   ): Promise<string> {
     const request = CreateIssuerRequest.fromPartial({
       issuerKey: issuerKey.toProto(),
@@ -64,6 +66,7 @@ export class IdentityClient {
       name: name,
       description: description,
       image: image,
+      publishInterval: publishInterval,
       configData: this.configData
     });
 
@@ -167,8 +170,22 @@ export class IdentityClient {
     );
   }
 
-  public buildIssuerStatePublisher(issuerDid: string): IssuerStatePublisher {
-    return new IssuerStatePublisher(issuerDid, this.configData);
+  public publishIssuerState(issuerDid: string, signer: Signer): Promise<IssuerStateReceipt> {
+    const req = PublishIssuerStateRequest.fromPartial({
+      configData: this.configData,
+      issuerDid: issuerDid,
+      signer: signer.toProto(),
+    });
+
+    return this.bridge
+      .getIdentityV2()
+      .PublishIssuerState(req)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return IssuerStateReceipt.fromProto(res.stateReceipt!);
+      });
   }
 
   public getCredentialProof(
@@ -192,10 +209,11 @@ export class IdentityClient {
       });
   }
 
-  public revokeCredential(credential: Credential): Promise<boolean> {
+  public revokeCredential(credential: Credential, signer: Signer): Promise<boolean> {
     const request = RevokeCredentialRequestV2.fromPartial({
       configData: this.configData,
-      credential: credential.toProto()
+      credential: credential.toProto(),
+      signer: signer.toProto(),
     });
 
     return this.bridge

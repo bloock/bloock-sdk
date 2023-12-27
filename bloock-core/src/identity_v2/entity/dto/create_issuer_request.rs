@@ -7,6 +7,7 @@ pub struct CreateIssuerRequest {
     pub name: Option<String>,
     pub description: Option<String>,
     pub image: Option<String>,
+    pub publish_interval: Option<i64>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]

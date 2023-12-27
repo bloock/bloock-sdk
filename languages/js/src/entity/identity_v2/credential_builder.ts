@@ -11,7 +11,6 @@ import {
   DateTimeAttributeV2,
   DecimalAttributeV2,
   IntegerAttributeV2,
-  ProofType as ProofTypeProto,
   StringAttributeV2
 } from "../../bridge/proto/identity_entities_v2";
 import { Signer as SignerProto } from "../../bridge/proto/authenticity_entities";
@@ -19,7 +18,6 @@ import { Signer } from "../authenticity/signer";
 import { DecimalAttribute } from "./decimal_attribute";
 import { IntegerAttribute } from "./integer_attribute";
 import { StringAttribute } from "./string_attribute";
-import { ProofType } from "./proof_type";
 
 export class CredentialBuilder {
   schemaId: string;
@@ -29,7 +27,6 @@ export class CredentialBuilder {
   version: number;
   signer?: SignerProto;
   apiManagedHost: string;
-  proof: ProofTypeProto[];
   configData: ConfigData;
 
   stringAttributes: StringAttributeV2[];
@@ -56,7 +53,6 @@ export class CredentialBuilder {
     this.configData = configData;
     this.apiManagedHost = apiManagedHost;
 
-    this.proof = [];
     this.signer = undefined;
     this.stringAttributes = [];
     this.integerAttributes = [];
@@ -101,13 +97,6 @@ export class CredentialBuilder {
     return this;
   }
 
-  public withProofType(proofs: ProofType[]): CredentialBuilder {
-    proofs.forEach(proof => {
-      this.proof.push(ProofType.toProto(proof));
-    });
-    return this;
-  }
-
   async build(): Promise<CredentialReceipt> {
     const bridge = new BloockBridge();
 
@@ -120,7 +109,6 @@ export class CredentialBuilder {
       version: this.version,
       apiManagedHost: this.apiManagedHost,
       signer: this.signer,
-      proofType: this.proof,
       stringAttributes: this.stringAttributes,
       integerAttributes: this.integerAttributes,
       decimalAttributes: this.decimalAttributes,

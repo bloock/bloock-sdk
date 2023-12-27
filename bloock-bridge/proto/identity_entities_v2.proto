@@ -7,11 +7,6 @@ option java_package = "com.bloock.sdk.bridge.proto";
 
 import "keys_entities.proto";
 
-enum ProofType {
-    IntegrityProofType = 0;
-    SparseMtProofType = 1;
-}
-
 message IdentityKey {
     optional LocalKey local_key = 1;
     optional ManagedKey managed_key = 2;
@@ -32,8 +27,7 @@ message CredentialV2 {
 
 message CredentialProofV2 {
     string signature_proof = 1;
-    optional string integrity_proof = 2;
-    optional string sparse_mt_proof = 3;
+    optional string sparse_mt_proof = 2;
 }
 
 message CredentialStatusV2 {
@@ -147,7 +141,6 @@ message CredentialReceiptV2 {
     CredentialV2 credential = 1;
     string credential_id = 2;
     string credential_type = 3;
-    optional int64 anchor_id = 4;
 }
 
 message IssuerStateReceipt {

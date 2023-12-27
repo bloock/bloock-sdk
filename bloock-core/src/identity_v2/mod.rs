@@ -28,6 +28,8 @@ pub enum IdentityErrorV2 {
     InvalidAttributeError(),
     #[error("Error while creating credential: {0}")]
     CreateCredentialError(String),
+    #[error("Error while updating draft state signature: {0}")]
+    UpdateDraftStateSignatureError(String),
     #[error("Error getting issuer by key: {0}")]
     GetIssuerByKeyError(String),
     #[error("Error while getting issuer list: {0}")]

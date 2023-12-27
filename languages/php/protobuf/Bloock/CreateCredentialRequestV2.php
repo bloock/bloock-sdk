@@ -69,10 +69,6 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeV2 datetime_attributes = 14;</code>
      */
     private $datetime_attributes;
-    /**
-     * Generated from protobuf field <code>repeated .bloock.ProofType proof_type = 15;</code>
-     */
-    private $proof_type;
 
     /**
      * Constructor.
@@ -94,7 +90,6 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
      *     @type array<\Bloock\BooleanAttributeV2>|\Google\Protobuf\Internal\RepeatedField $boolean_attributes
      *     @type array<\Bloock\DateAttributeV2>|\Google\Protobuf\Internal\RepeatedField $date_attributes
      *     @type array<\Bloock\DateTimeAttributeV2>|\Google\Protobuf\Internal\RepeatedField $datetime_attributes
-     *     @type array<int>|\Google\Protobuf\Internal\RepeatedField $proof_type
      * }
      */
     public function __construct($data = NULL) {
@@ -436,28 +431,6 @@ class CreateCredentialRequestV2 extends \Google\Protobuf\Internal\Message
     {
         $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\DateTimeAttributeV2::class);
         $this->datetime_attributes = $arr;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>repeated .bloock.ProofType proof_type = 15;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
-     */
-    public function getProofType()
-    {
-        return $this->proof_type;
-    }
-
-    /**
-     * Generated from protobuf field <code>repeated .bloock.ProofType proof_type = 15;</code>
-     * @param array<int>|\Google\Protobuf\Internal\RepeatedField $var
-     * @return $this
-     */
-    public function setProofType($var)
-    {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::ENUM, \Bloock\ProofType::class);
-        $this->proof_type = $arr;
 
         return $this;
     }

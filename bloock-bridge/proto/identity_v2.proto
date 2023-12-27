@@ -99,7 +99,6 @@ message CreateCredentialRequestV2 {
     repeated BooleanAttributeV2 boolean_attributes = 12;
     repeated DateAttributeV2 date_attributes = 13;
     repeated DateTimeAttributeV2 datetime_attributes = 14;
-    repeated ProofType proof_type = 15;
 }
 
 message BuildSchemaRequestV2 {
@@ -133,6 +132,7 @@ message CreateIssuerRequest {
     optional string name = 4;
     optional string description = 5;
     optional string image = 6;
+    optional int64 publish_interval = 7;
 }
 
 message GetIssuerByKeyRequest {
@@ -175,6 +175,7 @@ message PublishIssuerStateResponse {
 message RevokeCredentialRequestV2 {
     ConfigData config_data = 1;
     CredentialV2 credential = 2;
+    Signer signer = 3;
 }
 
 message RevokeCredentialResponseV2 {

@@ -18,11 +18,7 @@ class CredentialProofV2 extends \Google\Protobuf\Internal\Message
      */
     protected $signature_proof = '';
     /**
-     * Generated from protobuf field <code>optional string integrity_proof = 2;</code>
-     */
-    protected $integrity_proof = null;
-    /**
-     * Generated from protobuf field <code>optional string sparse_mt_proof = 3;</code>
+     * Generated from protobuf field <code>optional string sparse_mt_proof = 2;</code>
      */
     protected $sparse_mt_proof = null;
 
@@ -33,7 +29,6 @@ class CredentialProofV2 extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type string $signature_proof
-     *     @type string $integrity_proof
      *     @type string $sparse_mt_proof
      * }
      */
@@ -65,39 +60,7 @@ class CredentialProofV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional string integrity_proof = 2;</code>
-     * @return string
-     */
-    public function getIntegrityProof()
-    {
-        return isset($this->integrity_proof) ? $this->integrity_proof : '';
-    }
-
-    public function hasIntegrityProof()
-    {
-        return isset($this->integrity_proof);
-    }
-
-    public function clearIntegrityProof()
-    {
-        unset($this->integrity_proof);
-    }
-
-    /**
-     * Generated from protobuf field <code>optional string integrity_proof = 2;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setIntegrityProof($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->integrity_proof = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>optional string sparse_mt_proof = 3;</code>
+     * Generated from protobuf field <code>optional string sparse_mt_proof = 2;</code>
      * @return string
      */
     public function getSparseMtProof()
@@ -116,7 +79,7 @@ class CredentialProofV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional string sparse_mt_proof = 3;</code>
+     * Generated from protobuf field <code>optional string sparse_mt_proof = 2;</code>
      * @param string $var
      * @return $this
      */

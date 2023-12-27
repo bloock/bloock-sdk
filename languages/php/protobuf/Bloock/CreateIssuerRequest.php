@@ -37,6 +37,10 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>optional string image = 6;</code>
      */
     protected $image = null;
+    /**
+     * Generated from protobuf field <code>optional int64 publish_interval = 7;</code>
+     */
+    protected $publish_interval = null;
 
     /**
      * Constructor.
@@ -50,6 +54,7 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
      *     @type string $name
      *     @type string $description
      *     @type string $image
+     *     @type int|string $publish_interval
      * }
      */
     public function __construct($data = NULL) {
@@ -245,6 +250,38 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->image = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int64 publish_interval = 7;</code>
+     * @return int|string
+     */
+    public function getPublishInterval()
+    {
+        return isset($this->publish_interval) ? $this->publish_interval : 0;
+    }
+
+    public function hasPublishInterval()
+    {
+        return isset($this->publish_interval);
+    }
+
+    public function clearPublishInterval()
+    {
+        unset($this->publish_interval);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int64 publish_interval = 7;</code>
+     * @param int|string $var
+     * @return $this
+     */
+    public function setPublishInterval($var)
+    {
+        GPBUtil::checkInt64($var);
+        $this->publish_interval = $var;
 
         return $this;
     }

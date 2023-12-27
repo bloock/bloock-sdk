@@ -7,13 +7,11 @@ use serde::{
 use serde_json::Value;
 
 pub const SIGNATURE_PROOF_TYPE: &str = "BJJSignature2021";
-pub const INTEGRITY_PROOF_TYPE: &str = "BloockIntegrityProof";
 pub const SPARSE_MT_PROOF_TYPE: &str = "Iden3SparseMerkleTreeProof";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CredentialProof {
     pub signature_proof: String,
-    pub integrity_proof: Option<String>,
     pub sparse_mt_proof: Option<String>,
 }
 
@@ -31,14 +29,6 @@ impl Serialize for CredentialProof {
             .ok_or_else(|| Error::custom("error serializing zkp signature proof"))?;
         state.serialize_element(&bjj_signature_map)?;
 
-        if let Some(integrity_proof) = self.integrity_proof.clone() {
-            let mut proof = Value::from_str(&integrity_proof.clone())
-                .map_err(|_| Error::custom("error serializing integrity proof"))?;
-            let proof_map = proof
-                .as_object_mut()
-                .ok_or_else(|| Error::custom("error serializing integrity proof"))?;
-            state.serialize_element(&proof_map)?;
-        }
         if let Some(sparse_mt_proof) = self.sparse_mt_proof.clone() {
             let mut sparse_mtp = Value::from_str(&sparse_mt_proof.clone())
                 .map_err(|_| Error::custom("error serializing sparse mtp proof"))?;
@@ -61,7 +51,6 @@ impl<'de> Deserialize<'de> for CredentialProof {
 
         let mut signature_proof = String::new();
         let mut sparse_mt_proof: Option<String> = None;
-        let mut integrity_proof = None;
 
         if let Some(proof_array) = value.as_array() {
             for proof in proof_array.iter() {
@@ -69,9 +58,6 @@ impl<'de> Deserialize<'de> for CredentialProof {
                     match proof_type {
                         SIGNATURE_PROOF_TYPE => {
                             signature_proof = proof.to_string();
-                        }
-                        INTEGRITY_PROOF_TYPE => {
-                            integrity_proof = Some(proof.to_string());
                         }
                         SPARSE_MT_PROOF_TYPE => {
                             sparse_mt_proof = Some(proof.to_string());
@@ -86,7 +72,6 @@ impl<'de> Deserialize<'de> for CredentialProof {
 
         Ok(CredentialProof {
             signature_proof,
-            integrity_proof,
             sparse_mt_proof,
         })
     }

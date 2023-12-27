@@ -9,7 +9,7 @@ import { Record, RecordDetails } from "./record_entities";
 import { Error } from "./shared";
 
 export interface RecordBuilderFromStringRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
@@ -17,7 +17,7 @@ export interface RecordBuilderFromStringRequest {
 }
 
 export interface RecordBuilderFromHexRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
@@ -25,7 +25,7 @@ export interface RecordBuilderFromHexRequest {
 }
 
 export interface RecordBuilderFromJSONRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   payload: string;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
@@ -33,7 +33,7 @@ export interface RecordBuilderFromJSONRequest {
 }
 
 export interface RecordBuilderFromBytesRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   payload: Uint8Array;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
@@ -41,7 +41,7 @@ export interface RecordBuilderFromBytesRequest {
 }
 
 export interface RecordBuilderFromFileRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   payload: Uint8Array;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
@@ -49,39 +49,39 @@ export interface RecordBuilderFromFileRequest {
 }
 
 export interface RecordBuilderFromRecordRequest {
-  configData?: ConfigData;
-  payload?: Record;
+  configData?: ConfigData | undefined;
+  payload?: Record | undefined;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
   decrypter?: Encrypter | undefined;
 }
 
 export interface RecordBuilderResponse {
-  record?: Record;
+  record?: Record | undefined;
   error?: Error | undefined;
 }
 
 export interface RecordBuilderFromLoaderRequest {
-  configData?: ConfigData;
-  loader?: Loader;
+  configData?: ConfigData | undefined;
+  loader?: Loader | undefined;
   signer?: Signer | undefined;
   encrypter?: Encrypter | undefined;
   decrypter?: Encrypter | undefined;
 }
 
 export interface GetDetailsRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   payload: Uint8Array;
 }
 
 export interface GetDetailsResponse {
-  details?: RecordDetails;
+  details?: RecordDetails | undefined;
   error?: Error | undefined;
 }
 
 export interface GetHashRequest {
-  configData?: ConfigData;
-  record?: Record;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
 }
 
 export interface GetHashResponse {
@@ -90,8 +90,8 @@ export interface GetHashResponse {
 }
 
 export interface GetPayloadRequest {
-  configData?: ConfigData;
-  record?: Record;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
 }
 
 export interface GetPayloadResponse {
@@ -100,9 +100,9 @@ export interface GetPayloadResponse {
 }
 
 export interface SetProofRequest {
-  configData?: ConfigData;
-  record?: Record;
-  proof?: Proof;
+  configData?: ConfigData | undefined;
+  record?: Record | undefined;
+  proof?: Proof | undefined;
 }
 
 export interface SetProofResponse {
@@ -135,31 +135,52 @@ export const RecordBuilderFromStringRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderFromStringRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordBuilderFromStringRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.payload = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.encrypter = Encrypter.decode(reader, reader.uint32());
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.decrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -167,7 +188,7 @@ export const RecordBuilderFromStringRequest = {
   fromJSON(object: any): RecordBuilderFromStringRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      payload: isSet(object.payload) ? String(object.payload) : "",
+      payload: isSet(object.payload) ? globalThis.String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
       decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
@@ -176,17 +197,27 @@ export const RecordBuilderFromStringRequest = {
 
   toJSON(message: RecordBuilderFromStringRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.payload !== undefined && (obj.payload = message.payload);
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
-    message.encrypter !== undefined &&
-      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
-    message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.payload !== "") {
+      obj.payload = message.payload;
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
+    if (message.encrypter !== undefined) {
+      obj.encrypter = Encrypter.toJSON(message.encrypter);
+    }
+    if (message.decrypter !== undefined) {
+      obj.decrypter = Encrypter.toJSON(message.decrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RecordBuilderFromStringRequest>, I>>(base?: I): RecordBuilderFromStringRequest {
+    return RecordBuilderFromStringRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RecordBuilderFromStringRequest>, I>>(
     object: I,
   ): RecordBuilderFromStringRequest {
@@ -233,31 +264,52 @@ export const RecordBuilderFromHexRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderFromHexRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordBuilderFromHexRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.payload = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.encrypter = Encrypter.decode(reader, reader.uint32());
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.decrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -265,7 +317,7 @@ export const RecordBuilderFromHexRequest = {
   fromJSON(object: any): RecordBuilderFromHexRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      payload: isSet(object.payload) ? String(object.payload) : "",
+      payload: isSet(object.payload) ? globalThis.String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
       decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
@@ -274,17 +326,27 @@ export const RecordBuilderFromHexRequest = {
 
   toJSON(message: RecordBuilderFromHexRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.payload !== undefined && (obj.payload = message.payload);
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
-    message.encrypter !== undefined &&
-      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
-    message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.payload !== "") {
+      obj.payload = message.payload;
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
+    if (message.encrypter !== undefined) {
+      obj.encrypter = Encrypter.toJSON(message.encrypter);
+    }
+    if (message.decrypter !== undefined) {
+      obj.decrypter = Encrypter.toJSON(message.decrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RecordBuilderFromHexRequest>, I>>(base?: I): RecordBuilderFromHexRequest {
+    return RecordBuilderFromHexRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RecordBuilderFromHexRequest>, I>>(object: I): RecordBuilderFromHexRequest {
     const message = createBaseRecordBuilderFromHexRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -329,31 +391,52 @@ export const RecordBuilderFromJSONRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderFromJSONRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordBuilderFromJSONRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.payload = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.encrypter = Encrypter.decode(reader, reader.uint32());
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.decrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -361,7 +444,7 @@ export const RecordBuilderFromJSONRequest = {
   fromJSON(object: any): RecordBuilderFromJSONRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      payload: isSet(object.payload) ? String(object.payload) : "",
+      payload: isSet(object.payload) ? globalThis.String(object.payload) : "",
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
       decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
@@ -370,17 +453,27 @@ export const RecordBuilderFromJSONRequest = {
 
   toJSON(message: RecordBuilderFromJSONRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.payload !== undefined && (obj.payload = message.payload);
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
-    message.encrypter !== undefined &&
-      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
-    message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.payload !== "") {
+      obj.payload = message.payload;
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
+    if (message.encrypter !== undefined) {
+      obj.encrypter = Encrypter.toJSON(message.encrypter);
+    }
+    if (message.decrypter !== undefined) {
+      obj.decrypter = Encrypter.toJSON(message.decrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RecordBuilderFromJSONRequest>, I>>(base?: I): RecordBuilderFromJSONRequest {
+    return RecordBuilderFromJSONRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RecordBuilderFromJSONRequest>, I>>(object: I): RecordBuilderFromJSONRequest {
     const message = createBaseRecordBuilderFromJSONRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -403,7 +496,7 @@ export const RecordBuilderFromJSONRequest = {
 function createBaseRecordBuilderFromBytesRequest(): RecordBuilderFromBytesRequest {
   return {
     configData: undefined,
-    payload: new Uint8Array(),
+    payload: new Uint8Array(0),
     signer: undefined,
     encrypter: undefined,
     decrypter: undefined,
@@ -431,31 +524,52 @@ export const RecordBuilderFromBytesRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderFromBytesRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordBuilderFromBytesRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.payload = reader.bytes();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.encrypter = Encrypter.decode(reader, reader.uint32());
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.decrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -463,7 +577,7 @@ export const RecordBuilderFromBytesRequest = {
   fromJSON(object: any): RecordBuilderFromBytesRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(0),
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
       decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
@@ -472,18 +586,27 @@ export const RecordBuilderFromBytesRequest = {
 
   toJSON(message: RecordBuilderFromBytesRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.payload !== undefined &&
-      (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
-    message.encrypter !== undefined &&
-      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
-    message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.payload.length !== 0) {
+      obj.payload = base64FromBytes(message.payload);
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
+    if (message.encrypter !== undefined) {
+      obj.encrypter = Encrypter.toJSON(message.encrypter);
+    }
+    if (message.decrypter !== undefined) {
+      obj.decrypter = Encrypter.toJSON(message.decrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RecordBuilderFromBytesRequest>, I>>(base?: I): RecordBuilderFromBytesRequest {
+    return RecordBuilderFromBytesRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RecordBuilderFromBytesRequest>, I>>(
     object: I,
   ): RecordBuilderFromBytesRequest {
@@ -491,7 +614,7 @@ export const RecordBuilderFromBytesRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.payload = object.payload ?? new Uint8Array();
+    message.payload = object.payload ?? new Uint8Array(0);
     message.signer = (object.signer !== undefined && object.signer !== null)
       ? Signer.fromPartial(object.signer)
       : undefined;
@@ -508,7 +631,7 @@ export const RecordBuilderFromBytesRequest = {
 function createBaseRecordBuilderFromFileRequest(): RecordBuilderFromFileRequest {
   return {
     configData: undefined,
-    payload: new Uint8Array(),
+    payload: new Uint8Array(0),
     signer: undefined,
     encrypter: undefined,
     decrypter: undefined,
@@ -536,31 +659,52 @@ export const RecordBuilderFromFileRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderFromFileRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordBuilderFromFileRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.payload = reader.bytes();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.encrypter = Encrypter.decode(reader, reader.uint32());
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.decrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -568,7 +712,7 @@ export const RecordBuilderFromFileRequest = {
   fromJSON(object: any): RecordBuilderFromFileRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(0),
       signer: isSet(object.signer) ? Signer.fromJSON(object.signer) : undefined,
       encrypter: isSet(object.encrypter) ? Encrypter.fromJSON(object.encrypter) : undefined,
       decrypter: isSet(object.decrypter) ? Encrypter.fromJSON(object.decrypter) : undefined,
@@ -577,24 +721,33 @@ export const RecordBuilderFromFileRequest = {
 
   toJSON(message: RecordBuilderFromFileRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.payload !== undefined &&
-      (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
-    message.encrypter !== undefined &&
-      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
-    message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.payload.length !== 0) {
+      obj.payload = base64FromBytes(message.payload);
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
+    if (message.encrypter !== undefined) {
+      obj.encrypter = Encrypter.toJSON(message.encrypter);
+    }
+    if (message.decrypter !== undefined) {
+      obj.decrypter = Encrypter.toJSON(message.decrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RecordBuilderFromFileRequest>, I>>(base?: I): RecordBuilderFromFileRequest {
+    return RecordBuilderFromFileRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RecordBuilderFromFileRequest>, I>>(object: I): RecordBuilderFromFileRequest {
     const message = createBaseRecordBuilderFromFileRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.payload = object.payload ?? new Uint8Array();
+    message.payload = object.payload ?? new Uint8Array(0);
     message.signer = (object.signer !== undefined && object.signer !== null)
       ? Signer.fromPartial(object.signer)
       : undefined;
@@ -633,31 +786,52 @@ export const RecordBuilderFromRecordRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderFromRecordRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordBuilderFromRecordRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.payload = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.encrypter = Encrypter.decode(reader, reader.uint32());
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.decrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -674,17 +848,27 @@ export const RecordBuilderFromRecordRequest = {
 
   toJSON(message: RecordBuilderFromRecordRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.payload !== undefined && (obj.payload = message.payload ? Record.toJSON(message.payload) : undefined);
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
-    message.encrypter !== undefined &&
-      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
-    message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.payload !== undefined) {
+      obj.payload = Record.toJSON(message.payload);
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
+    if (message.encrypter !== undefined) {
+      obj.encrypter = Encrypter.toJSON(message.encrypter);
+    }
+    if (message.decrypter !== undefined) {
+      obj.decrypter = Encrypter.toJSON(message.decrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RecordBuilderFromRecordRequest>, I>>(base?: I): RecordBuilderFromRecordRequest {
+    return RecordBuilderFromRecordRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RecordBuilderFromRecordRequest>, I>>(
     object: I,
   ): RecordBuilderFromRecordRequest {
@@ -724,22 +908,31 @@ export const RecordBuilderResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordBuilderResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -753,11 +946,18 @@ export const RecordBuilderResponse = {
 
   toJSON(message: RecordBuilderResponse): unknown {
     const obj: any = {};
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RecordBuilderResponse>, I>>(base?: I): RecordBuilderResponse {
+    return RecordBuilderResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RecordBuilderResponse>, I>>(object: I): RecordBuilderResponse {
     const message = createBaseRecordBuilderResponse();
     message.record = (object.record !== undefined && object.record !== null)
@@ -793,31 +993,52 @@ export const RecordBuilderFromLoaderRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordBuilderFromLoaderRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordBuilderFromLoaderRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.loader = Loader.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.signer = Signer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.encrypter = Encrypter.decode(reader, reader.uint32());
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.decrypter = Encrypter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -834,17 +1055,27 @@ export const RecordBuilderFromLoaderRequest = {
 
   toJSON(message: RecordBuilderFromLoaderRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.loader !== undefined && (obj.loader = message.loader ? Loader.toJSON(message.loader) : undefined);
-    message.signer !== undefined && (obj.signer = message.signer ? Signer.toJSON(message.signer) : undefined);
-    message.encrypter !== undefined &&
-      (obj.encrypter = message.encrypter ? Encrypter.toJSON(message.encrypter) : undefined);
-    message.decrypter !== undefined &&
-      (obj.decrypter = message.decrypter ? Encrypter.toJSON(message.decrypter) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.loader !== undefined) {
+      obj.loader = Loader.toJSON(message.loader);
+    }
+    if (message.signer !== undefined) {
+      obj.signer = Signer.toJSON(message.signer);
+    }
+    if (message.encrypter !== undefined) {
+      obj.encrypter = Encrypter.toJSON(message.encrypter);
+    }
+    if (message.decrypter !== undefined) {
+      obj.decrypter = Encrypter.toJSON(message.decrypter);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RecordBuilderFromLoaderRequest>, I>>(base?: I): RecordBuilderFromLoaderRequest {
+    return RecordBuilderFromLoaderRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RecordBuilderFromLoaderRequest>, I>>(
     object: I,
   ): RecordBuilderFromLoaderRequest {
@@ -869,7 +1100,7 @@ export const RecordBuilderFromLoaderRequest = {
 };
 
 function createBaseGetDetailsRequest(): GetDetailsRequest {
-  return { configData: undefined, payload: new Uint8Array() };
+  return { configData: undefined, payload: new Uint8Array(0) };
 }
 
 export const GetDetailsRequest = {
@@ -884,22 +1115,31 @@ export const GetDetailsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetDetailsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetDetailsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.payload = reader.bytes();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -907,25 +1147,30 @@ export const GetDetailsRequest = {
   fromJSON(object: any): GetDetailsRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(0),
     };
   },
 
   toJSON(message: GetDetailsRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.payload !== undefined &&
-      (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.payload.length !== 0) {
+      obj.payload = base64FromBytes(message.payload);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetDetailsRequest>, I>>(base?: I): GetDetailsRequest {
+    return GetDetailsRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetDetailsRequest>, I>>(object: I): GetDetailsRequest {
     const message = createBaseGetDetailsRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.payload = object.payload ?? new Uint8Array();
+    message.payload = object.payload ?? new Uint8Array(0);
     return message;
   },
 };
@@ -946,22 +1191,31 @@ export const GetDetailsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetDetailsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetDetailsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.details = RecordDetails.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -975,12 +1229,18 @@ export const GetDetailsResponse = {
 
   toJSON(message: GetDetailsResponse): unknown {
     const obj: any = {};
-    message.details !== undefined &&
-      (obj.details = message.details ? RecordDetails.toJSON(message.details) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.details !== undefined) {
+      obj.details = RecordDetails.toJSON(message.details);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetDetailsResponse>, I>>(base?: I): GetDetailsResponse {
+    return GetDetailsResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetDetailsResponse>, I>>(object: I): GetDetailsResponse {
     const message = createBaseGetDetailsResponse();
     message.details = (object.details !== undefined && object.details !== null)
@@ -1007,22 +1267,31 @@ export const GetHashRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetHashRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetHashRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1036,12 +1305,18 @@ export const GetHashRequest = {
 
   toJSON(message: GetHashRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetHashRequest>, I>>(base?: I): GetHashRequest {
+    return GetHashRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetHashRequest>, I>>(object: I): GetHashRequest {
     const message = createBaseGetHashRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1070,40 +1345,56 @@ export const GetHashResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetHashResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetHashResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.hash = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): GetHashResponse {
     return {
-      hash: isSet(object.hash) ? String(object.hash) : "",
+      hash: isSet(object.hash) ? globalThis.String(object.hash) : "",
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: GetHashResponse): unknown {
     const obj: any = {};
-    message.hash !== undefined && (obj.hash = message.hash);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.hash !== "") {
+      obj.hash = message.hash;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetHashResponse>, I>>(base?: I): GetHashResponse {
+    return GetHashResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetHashResponse>, I>>(object: I): GetHashResponse {
     const message = createBaseGetHashResponse();
     message.hash = object.hash ?? "";
@@ -1128,22 +1419,31 @@ export const GetPayloadRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetPayloadRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetPayloadRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1157,12 +1457,18 @@ export const GetPayloadRequest = {
 
   toJSON(message: GetPayloadRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetPayloadRequest>, I>>(base?: I): GetPayloadRequest {
+    return GetPayloadRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetPayloadRequest>, I>>(object: I): GetPayloadRequest {
     const message = createBaseGetPayloadRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1176,7 +1482,7 @@ export const GetPayloadRequest = {
 };
 
 function createBaseGetPayloadResponse(): GetPayloadResponse {
-  return { payload: new Uint8Array(), error: undefined };
+  return { payload: new Uint8Array(0), error: undefined };
 }
 
 export const GetPayloadResponse = {
@@ -1191,44 +1497,59 @@ export const GetPayloadResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetPayloadResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetPayloadResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.payload = reader.bytes();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): GetPayloadResponse {
     return {
-      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(0),
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: GetPayloadResponse): unknown {
     const obj: any = {};
-    message.payload !== undefined &&
-      (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.payload.length !== 0) {
+      obj.payload = base64FromBytes(message.payload);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetPayloadResponse>, I>>(base?: I): GetPayloadResponse {
+    return GetPayloadResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetPayloadResponse>, I>>(object: I): GetPayloadResponse {
     const message = createBaseGetPayloadResponse();
-    message.payload = object.payload ?? new Uint8Array();
+    message.payload = object.payload ?? new Uint8Array(0);
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
@@ -1253,25 +1574,38 @@ export const SetProofRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SetProofRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSetProofRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.proof = Proof.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1286,13 +1620,21 @@ export const SetProofRequest = {
 
   toJSON(message: SetProofRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
-    message.proof !== undefined && (obj.proof = message.proof ? Proof.toJSON(message.proof) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
+    if (message.proof !== undefined) {
+      obj.proof = Proof.toJSON(message.proof);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<SetProofRequest>, I>>(base?: I): SetProofRequest {
+    return SetProofRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<SetProofRequest>, I>>(object: I): SetProofRequest {
     const message = createBaseSetProofRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1322,22 +1664,31 @@ export const SetProofResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SetProofResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSetProofResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1351,11 +1702,18 @@ export const SetProofResponse = {
 
   toJSON(message: SetProofResponse): unknown {
     const obj: any = {};
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<SetProofResponse>, I>>(base?: I): SetProofResponse {
+    return SetProofResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<SetProofResponse>, I>>(object: I): SetProofResponse {
     const message = createBaseSetProofResponse();
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
@@ -1380,9 +1738,12 @@ export interface RecordService {
   SetProof(request: SetProofRequest): Promise<SetProofResponse>;
 }
 
+export const RecordServiceServiceName = "bloock.RecordService";
 export class RecordServiceClientImpl implements RecordService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || RecordServiceServiceName;
     this.rpc = rpc;
     this.BuildRecordFromString = this.BuildRecordFromString.bind(this);
     this.BuildRecordFromHex = this.BuildRecordFromHex.bind(this);
@@ -1398,68 +1759,68 @@ export class RecordServiceClientImpl implements RecordService {
   }
   BuildRecordFromString(request: RecordBuilderFromStringRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromStringRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromString", data);
-    return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildRecordFromString", data);
+    return promise.then((data) => RecordBuilderResponse.decode(_m0.Reader.create(data)));
   }
 
   BuildRecordFromHex(request: RecordBuilderFromHexRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromHexRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromHex", data);
-    return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildRecordFromHex", data);
+    return promise.then((data) => RecordBuilderResponse.decode(_m0.Reader.create(data)));
   }
 
   BuildRecordFromJson(request: RecordBuilderFromJSONRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromJSONRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromJson", data);
-    return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildRecordFromJson", data);
+    return promise.then((data) => RecordBuilderResponse.decode(_m0.Reader.create(data)));
   }
 
   BuildRecordFromFile(request: RecordBuilderFromFileRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromFileRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromFile", data);
-    return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildRecordFromFile", data);
+    return promise.then((data) => RecordBuilderResponse.decode(_m0.Reader.create(data)));
   }
 
   BuildRecordFromBytes(request: RecordBuilderFromBytesRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromBytesRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromBytes", data);
-    return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildRecordFromBytes", data);
+    return promise.then((data) => RecordBuilderResponse.decode(_m0.Reader.create(data)));
   }
 
   BuildRecordFromRecord(request: RecordBuilderFromRecordRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromRecordRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromRecord", data);
-    return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildRecordFromRecord", data);
+    return promise.then((data) => RecordBuilderResponse.decode(_m0.Reader.create(data)));
   }
 
   BuildRecordFromLoader(request: RecordBuilderFromLoaderRequest): Promise<RecordBuilderResponse> {
     const data = RecordBuilderFromLoaderRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "BuildRecordFromLoader", data);
-    return promise.then((data) => RecordBuilderResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildRecordFromLoader", data);
+    return promise.then((data) => RecordBuilderResponse.decode(_m0.Reader.create(data)));
   }
 
   GetDetails(request: GetDetailsRequest): Promise<GetDetailsResponse> {
     const data = GetDetailsRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "GetDetails", data);
-    return promise.then((data) => GetDetailsResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetDetails", data);
+    return promise.then((data) => GetDetailsResponse.decode(_m0.Reader.create(data)));
   }
 
   GetHash(request: GetHashRequest): Promise<GetHashResponse> {
     const data = GetHashRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "GetHash", data);
-    return promise.then((data) => GetHashResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetHash", data);
+    return promise.then((data) => GetHashResponse.decode(_m0.Reader.create(data)));
   }
 
   GetPayload(request: GetPayloadRequest): Promise<GetPayloadResponse> {
     const data = GetPayloadRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "GetPayload", data);
-    return promise.then((data) => GetPayloadResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetPayload", data);
+    return promise.then((data) => GetPayloadResponse.decode(_m0.Reader.create(data)));
   }
 
   SetProof(request: SetProofRequest): Promise<SetProofResponse> {
     const data = SetProofRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.RecordService", "SetProof", data);
-    return promise.then((data) => SetProofResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "SetProof", data);
+    return promise.then((data) => SetProofResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -1563,25 +1924,6 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
-
 function bytesFromBase64(b64: string): Uint8Array {
   if (globalThis.Buffer) {
     return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
@@ -1601,7 +1943,7 @@ function base64FromBytes(arr: Uint8Array): string {
   } else {
     const bin: string[] = [];
     arr.forEach((byte) => {
-      bin.push(String.fromCharCode(byte));
+      bin.push(globalThis.String.fromCharCode(byte));
     });
     return globalThis.btoa(bin.join(""));
   }
@@ -1610,7 +1952,8 @@ function base64FromBytes(arr: Uint8Array): string {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
