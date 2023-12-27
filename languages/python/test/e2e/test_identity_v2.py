@@ -74,7 +74,8 @@ class TestIdentityV2(unittest.TestCase):
             file_bytes = file.read()
         base64_file = base64.urlsafe_b64encode(file_bytes).decode('utf-8')
 
-        issuer = identity_client.create_issuer(issuer_key, None, "Bloock Test", "bloock description test", base64_file, 1)
+        issuer = identity_client.create_issuer(
+            issuer_key, None, "Bloock Test", "bloock description test", base64_file, 1)
 
         with self.assertRaises(Exception):
             identity_client.create_issuer(issuer_key)
@@ -135,7 +136,8 @@ class TestIdentityV2(unittest.TestCase):
         self.assertEqual("JsonSchema2023", credential.credential_schema.type)
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
 
-        state_receipt = identity_client.publish_issuer_state(issuer, Signer(key_bjj))
+        state_receipt = identity_client.publish_issuer_state(
+            issuer, Signer(key_bjj))
         self.assertIsNotNone(state_receipt)
 
         with self.assertRaises(Exception):
@@ -147,7 +149,8 @@ class TestIdentityV2(unittest.TestCase):
             if datetime.now() > deadline:
                 break
 
-            proof = identity_client.get_credential_proof(issuer, credential.id)
+            proof = identity_client.get_credential_proof(
+                issuer, receipt.credential_id)
 
             if proof.sparse_mt_proof:
                 finish = False

@@ -185,7 +185,7 @@ public class IdentityV2Test {
         break;
       }
 
-      CredentialProof proof = identityClient.getCredentialProof(issuer, credential.getId());
+      CredentialProof proof = identityClient.getCredentialProof(issuer, receipt.getCredentialId());
 
       if (!proof.getSparseMtProof().isEmpty()) {
         finish = false;

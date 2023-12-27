@@ -152,7 +152,7 @@ final class IdentityV2Test extends TestCase
                 break;
             }
 
-            $proof = $identityClient->getCredentialProof($issuer, $credential->getId());
+            $proof = $identityClient->getCredentialProof($issuer, $receipt->getCredentialId());
 
             if ($proof->getSparseMtProof() !== '') {
                 $finish = false;
