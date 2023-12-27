@@ -2,7 +2,6 @@ import base64
 import datetime
 import os
 import unittest
-from datetime import timedelta
 from bloock.entity.identity_v2.credential import Credential
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.identity_v2.blockchain import Blockchain
@@ -136,24 +135,12 @@ class TestIdentityV2(unittest.TestCase):
         self.assertEqual("JsonSchema2023", credential.credential_schema.type)
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
 
+        ok = identity_client.revoke_credential(credential, Signer(key_bjj))
+        self.assertTrue(ok)
+
         state_receipt = identity_client.publish_issuer_state(
             issuer, Signer(key_bjj))
         self.assertIsNotNone(state_receipt)
 
         with self.assertRaises(Exception):
             identity_client.publish_issuer_state(issuer, Signer(key_bjj))
-
-        deadline = datetime.now() + timedelta(seconds=120)
-        finish = True
-        while finish:
-            if datetime.now() > deadline:
-                break
-
-            proof = identity_client.get_credential_proof(
-                issuer, receipt.credential_id)
-
-            if proof.sparse_mt_proof:
-                finish = False
-
-        ok = identity_client.revoke_credential(credential, Signer(key_bjj))
-        self.assertTrue(ok)

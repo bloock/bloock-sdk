@@ -140,26 +140,10 @@ final class IdentityV2Test extends TestCase
         $this->assertEquals("JsonSchema2023", $credential->getCredentialSchema()->getType());
         $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[1]);
 
-        $stateReceipt = $identityClient->publishIssuerState($issuer, new Signer($keyBjj));
-        $this->assertNotNull($stateReceipt->getTxHash());
-
-        $deadline = new DateTime();
-        $deadline->add(new DateInterval('PT' . 120 . 'S'));
-
-        $finish = true;
-        while ($finish) {
-            if (new DateTime() > $deadline) {
-                break;
-            }
-
-            $proof = $identityClient->getCredentialProof($issuer, $receipt->getCredentialId());
-
-            if ($proof->getSparseMtProof() !== '') {
-                $finish = false;
-            }
-        }
-
         $ok = $identityClient->revokeCredential($credential, new Signer($keyBjj));
         $this->assertTrue($ok);
+
+        $stateReceipt = $identityClient->publishIssuerState($issuer, new Signer($keyBjj));
+        $this->assertNotNull($stateReceipt->getTxHash());
     }
 }

@@ -1,6 +1,5 @@
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.bloock.sdk.Bloock;
 import com.bloock.sdk.client.IdentityClient;
 import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.entity.authenticity.Signer;
@@ -169,6 +168,9 @@ public class IdentityV2Test {
     assertEquals("JsonSchema2023", credential.getCredentialSchema().getCredentialType());
     assertEquals(drivingLicenseSchemaType, credential.getType().get(1));
 
+    boolean ok = identityClient.revokeCredential(credential, new Signer(keyBjj));
+    assertTrue(ok);
+
     IssuerStateReceipt stateReceipt = identityClient.publishIssuerState(issuer, new Signer(keyBjj));
     assertNotNull(stateReceipt.getTxHash());
 
@@ -178,22 +180,5 @@ public class IdentityV2Test {
           identityClient.publishIssuerState(issuer, new Signer(keyBjj));
           throw new RuntimeException("This is an intentional exception.");
         });
-
-    long deadline = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2);
-    boolean finish = true;
-    while (finish) {
-      if (System.currentTimeMillis() > deadline) {
-        break;
-      }
-
-      CredentialProof proof = identityClient.getCredentialProof(issuer, receipt.getCredentialId());
-
-      if (!proof.getSparseMtProof().isEmpty()) {
-        finish = false;
-      }
-    }
-
-    boolean ok = identityClient.revokeCredential(credential, new Signer(keyBjj));
-    assertTrue(ok);
   }
 }

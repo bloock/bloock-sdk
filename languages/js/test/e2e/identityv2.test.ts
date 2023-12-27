@@ -186,6 +186,9 @@ describe("Identity V2 Tests", () => {
     expect(credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
     expect(credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
+    const ok = await identityClient.revokeCredential(credential, new Signer(keyBjj));
+    expect(ok).toBeTruthy();
+
     const stateReceipt = await identityClient.publishIssuerState(issuer, new Signer(keyBjj))
     expect(stateReceipt.txHash).toBeTruthy();
 
@@ -194,22 +197,5 @@ describe("Identity V2 Tests", () => {
     } catch (error) {
       expect(error).toBeTruthy();
     }
-
-    const deadline = Date.now() + (2 * 60 * 1000);
-    let finish = true;
-    while (finish) {
-      if (Date.now() > deadline) {
-        break;
-      }
-
-      const proof = await identityClient.getCredentialProof(issuer, receipt.credentialId);
-
-      if (proof.sparseMtProof) {
-        finish = false;
-      }
-    }
-
-    const ok = await identityClient.revokeCredential(credential, new Signer(keyBjj));
-    expect(ok).toBeTruthy();
   });
 });
