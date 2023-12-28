@@ -14,7 +14,7 @@ class Signer:
 
     hash_alg = None
 
-    def __init__(self, key, hash_alg: HashAlg | None = None) -> None:
+    def __init__(self, key, hash_alg = None) -> None:
         if isinstance(key, LocalKey):
             self.local_key = key
         elif isinstance(key, ManagedKey):
@@ -27,7 +27,8 @@ class Signer:
             raise Exception(
                 "Invalid key provided. Must be of type LocalKey or ManagedKey")
         
-        self.hash_alg = hash_alg
+        if isinstance(hash_alg, HashAlg):
+            self.hash_alg = hash_alg
 
     def to_proto(self) -> proto.Signer:
         local_key = None
