@@ -4,7 +4,8 @@ export enum HashAlg {
   UNRECOGNIZED = -1,
   Sha256 = 0,
   Keccak256 = 1,
-  Poseidon = 2
+  Poseidon = 2,
+  None = 3
 }
 
 export namespace HashAlg {
@@ -16,6 +17,8 @@ export namespace HashAlg {
         return HashAlg.Keccak256;
       case proto.HashAlg.POSEIDON:
         return HashAlg.Poseidon;
+      case proto.HashAlg.NONE:
+        return HashAlg.None;
       default:
         return HashAlg.UNRECOGNIZED;
     }
@@ -29,6 +32,8 @@ export namespace HashAlg {
         return proto.HashAlg.KECCAK_256;
       case HashAlg.Poseidon:
         return proto.HashAlg.POSEIDON;
+      case HashAlg.None:
+        return proto.HashAlg.NONE;
       default:
         return proto.HashAlg.UNRECOGNIZED;
     }

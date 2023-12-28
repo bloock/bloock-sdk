@@ -3,6 +3,7 @@ use std::{convert::TryInto, fmt};
 use thiserror::Error as ThisError;
 
 pub mod keccak;
+pub mod none;
 pub mod poseidon;
 pub mod sha256;
 
@@ -11,12 +12,14 @@ pub type Result<T> = std::result::Result<T, HasherError>;
 const SHA_256_ALG: &str = "SHA_256";
 const KECCAK_256_ALG: &str = "KECCAK_256";
 const POSEIDON_ALG: &str = "POSEIDON";
+const NONE_ALG: &str = "NONE";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HashAlg {
     Sha256,
     Keccak256,
     Poseidon,
+    None,
 }
 
 impl Default for HashAlg {
@@ -52,6 +55,7 @@ impl TryFrom<&str> for HashAlg {
             SHA_256_ALG => Ok(Self::Sha256),
             KECCAK_256_ALG => Ok(Self::Keccak256),
             POSEIDON_ALG => Ok(Self::Poseidon),
+            NONE_ALG => Ok(Self::None),
             _ => Err(HasherError::InvalidAlgorithm),
         }
     }
@@ -63,6 +67,7 @@ impl fmt::Display for HashAlg {
             HashAlg::Sha256 => write!(f, "{SHA_256_ALG}"),
             HashAlg::Keccak256 => write!(f, "{KECCAK_256_ALG}"),
             HashAlg::Poseidon => write!(f, "{POSEIDON_ALG}"),
+            HashAlg::None => write!(f, "{NONE_ALG}"),
         }
     }
 }
@@ -73,6 +78,7 @@ impl HashAlg {
             HashAlg::Sha256 => sha256::Sha256::hash(data),
             HashAlg::Keccak256 => keccak::Keccak256::hash(data),
             HashAlg::Poseidon => poseidon::Poseidon::hash(data),
+            HashAlg::None => none::None::hash(data),
         }
     }
 }

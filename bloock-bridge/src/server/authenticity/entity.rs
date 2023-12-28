@@ -46,6 +46,7 @@ impl From<HashAlg> for HashAlgCore {
             HashAlg::Sha256 => HashAlgCore::Sha256,
             HashAlg::Keccak256 => HashAlgCore::Keccak256,
             HashAlg::Poseidon => HashAlgCore::Poseidon,
+            HashAlg::None => HashAlgCore::None,
         }
     }
 }

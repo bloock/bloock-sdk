@@ -6,6 +6,7 @@ export enum HashAlg {
   SHA_256 = 0,
   KECCAK_256 = 1,
   POSEIDON = 2,
+  NONE = 3,
   UNRECOGNIZED = -1,
 }
 
@@ -20,6 +21,9 @@ export function hashAlgFromJSON(object: any): HashAlg {
     case 2:
     case "POSEIDON":
       return HashAlg.POSEIDON;
+    case 3:
+    case "NONE":
+      return HashAlg.NONE;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -35,6 +39,8 @@ export function hashAlgToJSON(object: HashAlg): string {
       return "KECCAK_256";
     case HashAlg.POSEIDON:
       return "POSEIDON";
+    case HashAlg.NONE:
+      return "NONE";
     case HashAlg.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

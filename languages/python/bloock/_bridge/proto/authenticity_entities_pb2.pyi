@@ -26,12 +26,14 @@ class _HashAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTy
     SHA_256: _HashAlg.ValueType  # 0
     KECCAK_256: _HashAlg.ValueType  # 1
     POSEIDON: _HashAlg.ValueType  # 2
+    NONE: _HashAlg.ValueType  # 3
 
 class HashAlg(_HashAlg, metaclass=_HashAlgEnumTypeWrapper): ...
 
 SHA_256: HashAlg.ValueType  # 0
 KECCAK_256: HashAlg.ValueType  # 1
 POSEIDON: HashAlg.ValueType  # 2
+NONE: HashAlg.ValueType  # 3
 global___HashAlg = HashAlg
 
 class Signer(google.protobuf.message.Message):

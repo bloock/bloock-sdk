@@ -6,6 +6,7 @@ public enum HashAlg {
   Sha256,
   Keccak256,
   Poseidon,
+  None,
   UNRECOGNIZED;
 
   public static HashAlg fromProto(AuthenticityEntities.HashAlg alg) {
@@ -16,6 +17,8 @@ public enum HashAlg {
         return HashAlg.Keccak256;
       case POSEIDON:
         return HashAlg.Poseidon;
+      case NONE:
+        return HashAlg.None;
       default:
         return HashAlg.UNRECOGNIZED;
     }
@@ -29,6 +32,8 @@ public enum HashAlg {
         return AuthenticityEntities.HashAlg.KECCAK_256;
       case Poseidon:
         return AuthenticityEntities.HashAlg.POSEIDON;
+      case None:
+        return AuthenticityEntities.HashAlg.NONE;
       default:
         return AuthenticityEntities.HashAlg.UNRECOGNIZED;
     }

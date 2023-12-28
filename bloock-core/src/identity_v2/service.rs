@@ -1,24 +1,3 @@
-use std::sync::Arc;
-
-use bloock_hasher::{keccak::Keccak256, Hasher};
-use bloock_http::Client;
-use bloock_identity_rs::{
-    did::parse_did,
-    schema::{
-        get_json_ld_context_from_json, get_schema_type_from_json, get_type_id_from_context,
-        parse_to_schema_cid,
-    },
-    vc::VC,
-};
-use bloock_keys::entity::key::Key;
-use serde_json::{json, Map, Value};
-
-use crate::{
-    availability::service::AvailabilityService, config::service::ConfigService,
-    error::BloockResult, integrity::service::IntegrityService,
-};
-use url::Url;
-
 use super::{
     entity::{
         create_credential_receipt::CreateCredentialReceipt,
@@ -50,6 +29,24 @@ use super::{
     },
     IdentityErrorV2,
 };
+use crate::{
+    availability::service::AvailabilityService, config::service::ConfigService,
+    error::BloockResult, integrity::service::IntegrityService,
+};
+use bloock_hasher::HashAlg;
+use bloock_http::Client;
+use bloock_identity_rs::{
+    did::parse_did,
+    schema::{
+        get_json_ld_context_from_json, get_schema_type_from_json, get_type_id_from_context,
+        parse_to_schema_cid,
+    },
+    vc::VC,
+};
+use bloock_keys::entity::key::Key;
+use serde_json::{json, Map, Value};
+use std::sync::Arc;
+use url::Url;
 
 pub struct IdentityServiceV2<H: Client> {
     pub http: Arc<H>,
@@ -292,7 +289,7 @@ impl<H: Client> IdentityServiceV2<H> {
             self.config_service.get_environment(),
             &core_claim_hash_decoded,
             &key,
-            None,
+            Some(HashAlg::None),
         )
         .await
         .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()))?;
@@ -420,7 +417,7 @@ impl<H: Client> IdentityServiceV2<H> {
             self.config_service.get_environment(),
             &new_state_hash_decoded,
             &key,
-            None,
+            Some(HashAlg::None),
         )
         .await
         .map_err(|e| IdentityErrorV2::PublishIssuerStateError(e.to_string()))?;
@@ -527,7 +524,7 @@ impl<H: Client> IdentityServiceV2<H> {
             self.config_service.get_environment(),
             &new_state_decoded,
             &key,
-            None,
+            Some(HashAlg::None),
         )
         .await
         .map_err(|e| IdentityErrorV2::UpdateDraftStateSignatureError(e.to_string()))?;

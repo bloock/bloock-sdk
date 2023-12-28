@@ -23,11 +23,16 @@ class HashAlg
      * Generated from protobuf enum <code>POSEIDON = 2;</code>
      */
     const POSEIDON = 2;
+    /**
+     * Generated from protobuf enum <code>NONE = 3;</code>
+     */
+    const NONE = 3;
 
     private static $valueToName = [
         self::SHA_256 => 'SHA_256',
         self::KECCAK_256 => 'KECCAK_256',
         self::POSEIDON => 'POSEIDON',
+        self::NONE => 'NONE',
     ];
 
     public static function name($value)

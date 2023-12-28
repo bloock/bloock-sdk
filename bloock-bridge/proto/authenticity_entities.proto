@@ -11,6 +11,7 @@ enum HashAlg {
     SHA_256 = 0;
     KECCAK_256 = 1;
     POSEIDON = 2;
+    NONE = 3;
 }
 
 message Signer {

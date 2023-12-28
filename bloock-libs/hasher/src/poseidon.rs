@@ -8,7 +8,7 @@ use num_bigint::BigInt;
 const POSEIDON_HASH_OUTPUT_LENGTH: usize = 32;
 
 #[derive(Default)]
-pub struct Poseidon {}
+pub struct Poseidon;
 
 impl Hasher for Poseidon {
     fn hash(data: &[&[u8]]) -> H256 {

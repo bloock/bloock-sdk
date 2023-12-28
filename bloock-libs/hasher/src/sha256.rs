@@ -3,7 +3,7 @@ use crate::H256;
 use sha2::Digest;
 
 #[derive(Default)]
-pub struct Sha256 {}
+pub struct Sha256;
 
 impl Hasher for Sha256 {
     fn hash(data: &[&[u8]]) -> H256 {

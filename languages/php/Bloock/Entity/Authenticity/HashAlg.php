@@ -7,6 +7,7 @@ class HashAlg
     const SHA_256 = "SHA_256";
     const KECCAK_256 = "KECCAK_256";
     const POSEIDON = "POSEIDON";
+    const NONE = "NONE";
     const UNRECOGNIZED = "UNRECOGNIZED";
 
     public static function fromProto(int $alg): string
@@ -18,6 +19,8 @@ class HashAlg
                 return HashAlg::KECCAK_256;
             case \Bloock\HashAlg::POSEIDON:
                 return HashAlg::POSEIDON;
+            case \Bloock\HashAlg::NONE:
+                return HashAlg::NONE;
             default:
                 return HashAlg::SHA_256;
         }
@@ -32,6 +35,8 @@ class HashAlg
                 return \Bloock\HashAlg::KECCAK_256;
             case HashAlg::POSEIDON:
                 return \Bloock\HashAlg::POSEIDON;
+            case HashAlg::NONE:
+                return \Bloock\HashAlg::NONE;
             default:
                 return \Bloock\HashAlg::SHA_256;
         }

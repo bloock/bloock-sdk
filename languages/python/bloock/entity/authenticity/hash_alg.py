@@ -7,6 +7,7 @@ class HashAlg(Enum):
     SHA_256 = 0
     KECCAK_256 = 1
     POSEIDON = 2
+    NONE = 3
     UNRECOGNIZED = -1
 
     def __int__(self):
@@ -20,6 +21,8 @@ class HashAlg(Enum):
             return HashAlg.KECCAK_256
         elif alg == proto.HashAlg.POSEIDON:
             return HashAlg.POSEIDON
+        elif alg == proto.HashAlg.NONE:
+            return HashAlg.NONE
         else:
             return HashAlg.UNRECOGNIZED
 
@@ -30,5 +33,7 @@ class HashAlg(Enum):
             return proto.HashAlg.KECCAK_256
         elif self == HashAlg.POSEIDON:
             return proto.HashAlg.POSEIDON
+        elif self == HashAlg.NONE:
+            return proto.HashAlg.NONE
         else:
             return proto.HashAlg.SHA_256
