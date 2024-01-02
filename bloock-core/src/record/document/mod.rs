@@ -37,10 +37,6 @@ impl Document {
     }
 
     pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>) -> BloockResult<Signature> {
-        if self.is_encrypted() {
-            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
-        }
-
         let signature = self
             .parser
             .sign(
@@ -57,10 +53,6 @@ impl Document {
     }
 
     pub async fn verify(&self) -> BloockResult<bool> {
-        if self.is_encrypted() {
-            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
-        }
-
         let ok = self
             .parser
             .verify(
@@ -102,10 +94,6 @@ impl Document {
     }
 
     pub fn set_proof(&mut self, proof: Proof) -> BloockResult<()> {
-        if self.is_encrypted() {
-            return Err(InfrastructureError::EncrypterError(EncrypterError::Encrypted()).into());
-        }
-
         self.parser
             .set_proof(&proof)
             .map_err(|e| InfrastructureError::MetadataError(e))?;
