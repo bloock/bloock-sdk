@@ -62,6 +62,14 @@ pub enum IdentityErrorV2 {
     ErrorUnprocessedState(),
     #[error("Error while getting credential proof: {0}")]
     GetCredentialProofError(String),
+    #[error("Error while creating verification: {0}")]
+    CreateVerificationError(String),
+    #[error("Invalid JSON provided")]
+    InvalidJson,
+    #[error("Wait Verification timed out")]
+    VerificationTimeout(),
+    #[error("Empty identity api host provided")]
+    EmptyApiHostError(),
 }
 
 impl From<IdentityErrorV2> for BloockError {

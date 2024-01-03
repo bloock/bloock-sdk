@@ -6,7 +6,7 @@ from typing import List, Optional
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.entity.identity_v2.did_params import DidParams
 from bloock._bridge.proto.identity_v2_pb2 import CreateIdentityV2Request, CreateIssuerRequest, GetSchemaRequestV2, \
-    PublishIssuerStateRequest
+    PublishIssuerStateRequest, CreateVerificationRequest, WaitVerificationRequest, GetVerificationStatusRequest
 from bloock._bridge.proto.identity_v2_pb2 import GetIssuerListRequest
 from bloock._bridge.proto.identity_v2_pb2 import GetIssuerByKeyRequest
 from bloock._bridge.proto.identity_v2_pb2 import GetCredentialProofRequest
@@ -17,15 +17,15 @@ from bloock.entity.identity_v2.credential_builder import CredentialBuilder
 from bloock.entity.identity_v2.credential_proof import CredentialProof
 from bloock.entity.identity_v2.credential import Credential
 from bloock.entity.identity_v2.schema import Schema
+from bloock.entity.identity_v2.verification_receipt import VerificationReceipt
 
 
 class IdentityClient:
-    def __init__(self, api_managed_host: str, config_data=None) -> None:
+    def __init__(self, config_data=None) -> None:
         self.bridge_client = bridge.BloockBridge()
         if config_data is None:
             config_data = Config.default()
         self.config_data = config_data
-        self.api_managed_host = api_managed_host
 
     def create_identity(self, identity_key: IdentityKey, did_params: Optional[DidParams] = None) -> str:
         res = self.bridge_client.identity_v2().CreateIdentity(
@@ -97,7 +97,7 @@ class IdentityClient:
         return Schema.from_proto(res.schema)
 
     def build_credential(self, display_name: str, issuer_did: str, holder_did: str, expiration: int, version: int) -> CredentialBuilder:
-        return CredentialBuilder(display_name, issuer_did, holder_did, expiration, version, self.api_managed_host, self.config_data)
+        return CredentialBuilder(display_name, issuer_did, holder_did, expiration, version, self.config_data)
 
     def publish_issuer_state(self, issuer_did: str, signer: Signer) -> IssuerStateReceipt:
         req = PublishIssuerStateRequest(
@@ -137,3 +137,40 @@ class IdentityClient:
         if res.error != Error():
             raise Exception(res.error.message)
         return res.result.success
+
+    def create_verification(self, proof_request: str) -> VerificationReceipt:
+        res = self.bridge_client.identity_v2().CreateVerification(
+            CreateVerificationRequest(
+                config_data=self.config_data,
+                proof_request=proof_request,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return VerificationReceipt.from_proto(res.result)
+
+    def wait_verification(self, session_id: int, timeout=120000) -> bool:
+        res = self.bridge_client.identity_v2().WaitVerification(
+            WaitVerificationRequest(
+                config_data=self.config_data,
+                session_id=session_id,
+                timeout=timeout,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.status
+
+    def get_verification_status(self, session_id: int) -> bool:
+        res = self.bridge_client.identity_v2().GetVerificationStatus(
+            GetVerificationStatusRequest(
+                config_data=self.config_data,
+                session_id=session_id,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.status

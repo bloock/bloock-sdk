@@ -19,7 +19,7 @@ impl ResponseTypeError<CreateIdentityRequest> for CreateIdentityResponse {
         Self {
             identity: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -31,7 +31,7 @@ impl ResponseTypeError<LoadIdentityRequest> for LoadIdentityResponse {
         Self {
             identity: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -43,7 +43,7 @@ impl ResponseTypeError<BuildSchemaRequest> for BuildSchemaResponse {
         Self {
             schema: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -55,7 +55,7 @@ impl ResponseTypeError<GetSchemaRequest> for GetSchemaResponse {
         Self {
             schema: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -67,7 +67,7 @@ impl ResponseTypeError<CreateCredentialRequest> for CreateCredentialResponse {
         Self {
             credential_receipt: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -79,7 +79,7 @@ impl ResponseTypeError<GetOfferRequest> for GetOfferResponse {
         Self {
             offer: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -91,7 +91,7 @@ impl ResponseTypeError<WaitOfferRequest> for WaitOfferResponse {
         Self {
             offer: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -103,7 +103,7 @@ impl ResponseTypeError<CredentialOfferToJsonRequest> for CredentialOfferToJsonRe
         Self {
             json: "".to_string(),
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -115,7 +115,7 @@ impl ResponseTypeError<CredentialOfferFromJsonRequest> for CredentialOfferFromJs
         Self {
             credential_offer: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -127,7 +127,7 @@ impl ResponseTypeError<CredentialOfferRedeemRequest> for CredentialOfferRedeemRe
         Self {
             credential: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -139,7 +139,7 @@ impl ResponseTypeError<CredentialToJsonRequest> for CredentialToJsonResponse {
         Self {
             json: "".to_string(),
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -151,7 +151,7 @@ impl ResponseTypeError<CredentialFromJsonRequest> for CredentialFromJsonResponse
         Self {
             credential: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -163,7 +163,7 @@ impl ResponseTypeError<VerifyCredentialRequest> for VerifyCredentialResponse {
         Self {
             result: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }
@@ -175,7 +175,7 @@ impl ResponseTypeError<RevokeCredentialRequest> for RevokeCredentialResponse {
         Self {
             result: None,
             error: Some(Error {
-                kind: BridgeError::KeysError.to_string(),
+                kind: BridgeError::IdentityError.to_string(),
                 message: err,
             }),
         }

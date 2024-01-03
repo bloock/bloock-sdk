@@ -9,6 +9,7 @@ from bloock.entity.integrity.network import Network
 api_key = ""
 api_host = ""
 force_env = ""
+identity_api_host = ""
 disable_analytics = False
 network_config: Dict[int, NetworkConfig] = {}
 

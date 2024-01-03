@@ -36,7 +36,7 @@ export function dataAvailabilityTypeToJSON(object: DataAvailabilityType): string
 
 export interface Publisher {
   type: DataAvailabilityType;
-  args?: PublisherArgs | undefined;
+  args?: PublisherArgs;
 }
 
 export interface PublisherArgs {
@@ -44,7 +44,7 @@ export interface PublisherArgs {
 
 export interface Loader {
   type: DataAvailabilityType;
-  args?: LoaderArgs | undefined;
+  args?: LoaderArgs;
 }
 
 export interface LoaderArgs {
@@ -67,31 +67,22 @@ export const Publisher = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Publisher {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBasePublisher();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 8) {
-            break;
-          }
-
           message.type = reader.int32() as any;
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.args = PublisherArgs.decode(reader, reader.uint32());
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -105,18 +96,11 @@ export const Publisher = {
 
   toJSON(message: Publisher): unknown {
     const obj: any = {};
-    if (message.type !== 0) {
-      obj.type = dataAvailabilityTypeToJSON(message.type);
-    }
-    if (message.args !== undefined) {
-      obj.args = PublisherArgs.toJSON(message.args);
-    }
+    message.type !== undefined && (obj.type = dataAvailabilityTypeToJSON(message.type));
+    message.args !== undefined && (obj.args = message.args ? PublisherArgs.toJSON(message.args) : undefined);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Publisher>, I>>(base?: I): Publisher {
-    return Publisher.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<Publisher>, I>>(object: I): Publisher {
     const message = createBasePublisher();
     message.type = object.type ?? 0;
@@ -137,17 +121,16 @@ export const PublisherArgs = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): PublisherArgs {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBasePublisherArgs();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -161,9 +144,6 @@ export const PublisherArgs = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<PublisherArgs>, I>>(base?: I): PublisherArgs {
-    return PublisherArgs.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<PublisherArgs>, I>>(_: I): PublisherArgs {
     const message = createBasePublisherArgs();
     return message;
@@ -186,31 +166,22 @@ export const Loader = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Loader {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoader();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 8) {
-            break;
-          }
-
           message.type = reader.int32() as any;
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.args = LoaderArgs.decode(reader, reader.uint32());
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -224,18 +195,11 @@ export const Loader = {
 
   toJSON(message: Loader): unknown {
     const obj: any = {};
-    if (message.type !== 0) {
-      obj.type = dataAvailabilityTypeToJSON(message.type);
-    }
-    if (message.args !== undefined) {
-      obj.args = LoaderArgs.toJSON(message.args);
-    }
+    message.type !== undefined && (obj.type = dataAvailabilityTypeToJSON(message.type));
+    message.args !== undefined && (obj.args = message.args ? LoaderArgs.toJSON(message.args) : undefined);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Loader>, I>>(base?: I): Loader {
-    return Loader.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<Loader>, I>>(object: I): Loader {
     const message = createBaseLoader();
     message.type = object.type ?? 0;
@@ -259,43 +223,33 @@ export const LoaderArgs = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoaderArgs {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoaderArgs();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.id = reader.string();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): LoaderArgs {
-    return { id: isSet(object.id) ? globalThis.String(object.id) : "" };
+    return { id: isSet(object.id) ? String(object.id) : "" };
   },
 
   toJSON(message: LoaderArgs): unknown {
     const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
+    message.id !== undefined && (obj.id = message.id);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<LoaderArgs>, I>>(base?: I): LoaderArgs {
-    return LoaderArgs.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<LoaderArgs>, I>>(object: I): LoaderArgs {
     const message = createBaseLoaderArgs();
     message.id = object.id ?? "";
@@ -306,8 +260,7 @@ export const LoaderArgs = {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

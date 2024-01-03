@@ -17,13 +17,12 @@ from bloock.entity.identity_v2.credential_receipt import CredentialReceipt
 
 
 class CredentialBuilder:
-    def __init__(self, schema_id: str, issuer_did: str, holder_did: str, expiration: int, version: int, api_managed_host: str, config_data: ConfigData) -> None:
+    def __init__(self, schema_id: str, issuer_did: str, holder_did: str, expiration: int, version: int, config_data: ConfigData) -> None:
         self.schema_id = schema_id
         self.issuer_did = issuer_did
         self.holder_did = holder_did
         self.expiration = expiration
         self.version = version
-        self.api_managed_host = api_managed_host
         self.signer = None
         self.config_data = config_data
 
@@ -98,7 +97,6 @@ class CredentialBuilder:
             holder_did=self.holder_did,
             version=self.version,
             expiration=self.expiration,
-            api_managed_host=self.api_managed_host,
             string_attributes=string_attributes,
             integer_attributes=integer_attributes,
             decimal_attributes=decimal_attributes,

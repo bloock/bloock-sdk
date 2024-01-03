@@ -22,7 +22,7 @@ class _Network:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _NetworkEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Network.ValueType], builtins.type):  # noqa: F821
+class _NetworkEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Network.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ETHEREUM_MAINNET: _Network.ValueType  # 0
     ETHEREUM_GOERLI: _Network.ValueType  # 1
@@ -39,9 +39,11 @@ BLOOCK_CHAIN: Network.ValueType  # 3
 POLYGON_CHAIN: Network.ValueType  # 4
 global___Network = Network
 
+@typing_extensions.final
 class ConfigData(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    @typing_extensions.final
     class NetworksConfigEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -76,6 +78,7 @@ class ConfigData(google.protobuf.message.Message):
 
 global___ConfigData = ConfigData
 
+@typing_extensions.final
 class Configuration(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -89,6 +92,7 @@ class Configuration(google.protobuf.message.Message):
     SIGNATURE_ALGORITHM_FIELD_NUMBER: builtins.int
     DISABLE_ANALYTICS_FIELD_NUMBER: builtins.int
     ENVIRONMENT_FIELD_NUMBER: builtins.int
+    IDENTITYAPIHOST_FIELD_NUMBER: builtins.int
     library_name: builtins.str
     host: builtins.str
     api_key: builtins.str
@@ -99,6 +103,7 @@ class Configuration(google.protobuf.message.Message):
     signature_algorithm: builtins.str
     disable_analytics: builtins.bool
     environment: builtins.str
+    identityApiHost: builtins.str
     def __init__(
         self,
         *,
@@ -112,13 +117,18 @@ class Configuration(google.protobuf.message.Message):
         signature_algorithm: builtins.str = ...,
         disable_analytics: builtins.bool = ...,
         environment: builtins.str | None = ...,
+        identityApiHost: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_environment", b"_environment", "environment", b"environment"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_environment", b"_environment", "api_key", b"api_key", "disable_analytics", b"disable_analytics", "elliptic_curve_key", b"elliptic_curve_key", "environment", b"environment", "host", b"host", "key_type_algorithm", b"key_type_algorithm", "library_name", b"library_name", "signature_algorithm", b"signature_algorithm", "wait_message_interval_default", b"wait_message_interval_default", "wait_message_interval_factor", b"wait_message_interval_factor"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_environment", b"_environment", "_identityApiHost", b"_identityApiHost", "environment", b"environment", "identityApiHost", b"identityApiHost"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_environment", b"_environment", "_identityApiHost", b"_identityApiHost", "api_key", b"api_key", "disable_analytics", b"disable_analytics", "elliptic_curve_key", b"elliptic_curve_key", "environment", b"environment", "host", b"host", "identityApiHost", b"identityApiHost", "key_type_algorithm", b"key_type_algorithm", "library_name", b"library_name", "signature_algorithm", b"signature_algorithm", "wait_message_interval_default", b"wait_message_interval_default", "wait_message_interval_factor", b"wait_message_interval_factor"]) -> None: ...
+    @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_environment", b"_environment"]) -> typing_extensions.Literal["environment"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_identityApiHost", b"_identityApiHost"]) -> typing_extensions.Literal["identityApiHost"] | None: ...
 
 global___Configuration = Configuration
 
+@typing_extensions.final
 class NetworkConfig(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

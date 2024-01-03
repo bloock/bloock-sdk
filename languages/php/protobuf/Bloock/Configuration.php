@@ -53,6 +53,10 @@ class Configuration extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>optional string environment = 10;</code>
      */
     protected $environment = null;
+    /**
+     * Generated from protobuf field <code>optional string identityApiHost = 11;</code>
+     */
+    protected $identityApiHost = null;
 
     /**
      * Constructor.
@@ -70,6 +74,7 @@ class Configuration extends \Google\Protobuf\Internal\Message
      *     @type string $signature_algorithm
      *     @type bool $disable_analytics
      *     @type string $environment
+     *     @type string $identityApiHost
      * }
      */
     public function __construct($data = NULL) {
@@ -303,6 +308,38 @@ class Configuration extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->environment = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string identityApiHost = 11;</code>
+     * @return string
+     */
+    public function getIdentityApiHost()
+    {
+        return isset($this->identityApiHost) ? $this->identityApiHost : '';
+    }
+
+    public function hasIdentityApiHost()
+    {
+        return isset($this->identityApiHost);
+    }
+
+    public function clearIdentityApiHost()
+    {
+        unset($this->identityApiHost);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string identityApiHost = 11;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setIdentityApiHost($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->identityApiHost = $var;
 
         return $this;
     }

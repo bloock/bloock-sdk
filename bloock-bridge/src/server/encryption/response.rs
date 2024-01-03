@@ -10,7 +10,7 @@ impl ResponseTypeError<EncryptRequest> for EncryptResponse {
         Self {
             record: None,
             error: Some(Error {
-                kind: BridgeError::RecordError.to_string(),
+                kind: BridgeError::EncryptionError.to_string(),
                 message: err,
             }),
         }
@@ -22,7 +22,7 @@ impl ResponseTypeError<DecryptRequest> for DecryptResponse {
         Self {
             record: None,
             error: Some(Error {
-                kind: BridgeError::RecordError.to_string(),
+                kind: BridgeError::EncryptionError.to_string(),
                 message: err,
             }),
         }
@@ -34,7 +34,7 @@ impl ResponseTypeError<EncryptionAlgRequest> for EncryptionAlgResponse {
         Self {
             alg: 0,
             error: Some(Error {
-                kind: BridgeError::RecordError.to_string(),
+                kind: BridgeError::EncryptionError.to_string(),
                 message: err,
             }),
         }

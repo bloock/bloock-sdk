@@ -44,7 +44,7 @@ class StringEnumAttributeDefinitionV2 extends \Google\Protobuf\Internal\Message
      *     @type string $id
      *     @type string $description
      *     @type bool $required
-     *     @type array<string>|\Google\Protobuf\Internal\RepeatedField $enum
+     *     @type string[]|\Google\Protobuf\Internal\RepeatedField $enum
      * }
      */
     public function __construct($data = NULL) {
@@ -151,7 +151,7 @@ class StringEnumAttributeDefinitionV2 extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated string enum = 5;</code>
-     * @param array<string>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setEnum($var)

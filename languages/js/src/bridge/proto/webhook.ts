@@ -4,7 +4,7 @@ import { ConfigData } from "./config";
 import { Error } from "./shared";
 
 export interface VerifyWebhookSignatureRequest {
-  configData?: ConfigData | undefined;
+  configData?: ConfigData;
   payload: Uint8Array;
   header: string;
   secretKey: string;
@@ -17,7 +17,7 @@ export interface VerifyWebhookSignatureResponse {
 }
 
 function createBaseVerifyWebhookSignatureRequest(): VerifyWebhookSignatureRequest {
-  return { configData: undefined, payload: new Uint8Array(0), header: "", secretKey: "", enforceTolerance: false };
+  return { configData: undefined, payload: new Uint8Array(), header: "", secretKey: "", enforceTolerance: false };
 }
 
 export const VerifyWebhookSignatureRequest = {
@@ -41,52 +41,31 @@ export const VerifyWebhookSignatureRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyWebhookSignatureRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyWebhookSignatureRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.configData = ConfigData.decode(reader, reader.uint32());
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.payload = reader.bytes();
-          continue;
+          break;
         case 3:
-          if (tag !== 26) {
-            break;
-          }
-
           message.header = reader.string();
-          continue;
+          break;
         case 4:
-          if (tag !== 34) {
-            break;
-          }
-
           message.secretKey = reader.string();
-          continue;
+          break;
         case 5:
-          if (tag !== 40) {
-            break;
-          }
-
           message.enforceTolerance = reader.bool();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -94,36 +73,25 @@ export const VerifyWebhookSignatureRequest = {
   fromJSON(object: any): VerifyWebhookSignatureRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(0),
-      header: isSet(object.header) ? globalThis.String(object.header) : "",
-      secretKey: isSet(object.secretKey) ? globalThis.String(object.secretKey) : "",
-      enforceTolerance: isSet(object.enforceTolerance) ? globalThis.Boolean(object.enforceTolerance) : false,
+      payload: isSet(object.payload) ? bytesFromBase64(object.payload) : new Uint8Array(),
+      header: isSet(object.header) ? String(object.header) : "",
+      secretKey: isSet(object.secretKey) ? String(object.secretKey) : "",
+      enforceTolerance: isSet(object.enforceTolerance) ? Boolean(object.enforceTolerance) : false,
     };
   },
 
   toJSON(message: VerifyWebhookSignatureRequest): unknown {
     const obj: any = {};
-    if (message.configData !== undefined) {
-      obj.configData = ConfigData.toJSON(message.configData);
-    }
-    if (message.payload.length !== 0) {
-      obj.payload = base64FromBytes(message.payload);
-    }
-    if (message.header !== "") {
-      obj.header = message.header;
-    }
-    if (message.secretKey !== "") {
-      obj.secretKey = message.secretKey;
-    }
-    if (message.enforceTolerance === true) {
-      obj.enforceTolerance = message.enforceTolerance;
-    }
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.payload !== undefined &&
+      (obj.payload = base64FromBytes(message.payload !== undefined ? message.payload : new Uint8Array()));
+    message.header !== undefined && (obj.header = message.header);
+    message.secretKey !== undefined && (obj.secretKey = message.secretKey);
+    message.enforceTolerance !== undefined && (obj.enforceTolerance = message.enforceTolerance);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<VerifyWebhookSignatureRequest>, I>>(base?: I): VerifyWebhookSignatureRequest {
-    return VerifyWebhookSignatureRequest.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<VerifyWebhookSignatureRequest>, I>>(
     object: I,
   ): VerifyWebhookSignatureRequest {
@@ -131,7 +99,7 @@ export const VerifyWebhookSignatureRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.payload = object.payload ?? new Uint8Array(0);
+    message.payload = object.payload ?? new Uint8Array();
     message.header = object.header ?? "";
     message.secretKey = object.secretKey ?? "";
     message.enforceTolerance = object.enforceTolerance ?? false;
@@ -155,56 +123,40 @@ export const VerifyWebhookSignatureResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyWebhookSignatureResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyWebhookSignatureResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 8) {
-            break;
-          }
-
           message.isValid = reader.bool();
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.error = Error.decode(reader, reader.uint32());
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): VerifyWebhookSignatureResponse {
     return {
-      isValid: isSet(object.isValid) ? globalThis.Boolean(object.isValid) : false,
+      isValid: isSet(object.isValid) ? Boolean(object.isValid) : false,
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: VerifyWebhookSignatureResponse): unknown {
     const obj: any = {};
-    if (message.isValid === true) {
-      obj.isValid = message.isValid;
-    }
-    if (message.error !== undefined) {
-      obj.error = Error.toJSON(message.error);
-    }
+    message.isValid !== undefined && (obj.isValid = message.isValid);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<VerifyWebhookSignatureResponse>, I>>(base?: I): VerifyWebhookSignatureResponse {
-    return VerifyWebhookSignatureResponse.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<VerifyWebhookSignatureResponse>, I>>(
     object: I,
   ): VerifyWebhookSignatureResponse {
@@ -219,19 +171,16 @@ export interface WebhookService {
   VerifyWebhookSignature(request: VerifyWebhookSignatureRequest): Promise<VerifyWebhookSignatureResponse>;
 }
 
-export const WebhookServiceServiceName = "bloock.WebhookService";
 export class WebhookServiceClientImpl implements WebhookService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || WebhookServiceServiceName;
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.VerifyWebhookSignature = this.VerifyWebhookSignature.bind(this);
   }
   VerifyWebhookSignature(request: VerifyWebhookSignatureRequest): Promise<VerifyWebhookSignatureResponse> {
     const data = VerifyWebhookSignatureRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "VerifyWebhookSignature", data);
-    return promise.then((data) => VerifyWebhookSignatureResponse.decode(_m0.Reader.create(data)));
+    const promise = this.rpc.request("bloock.WebhookService", "VerifyWebhookSignature", data);
+    return promise.then((data) => VerifyWebhookSignatureResponse.decode(new _m0.Reader(data)));
   }
 }
 
@@ -255,6 +204,25 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
+declare var self: any | undefined;
+declare var window: any | undefined;
+declare var global: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
+  throw "Unable to locate global object";
+})();
+
 function bytesFromBase64(b64: string): Uint8Array {
   if (globalThis.Buffer) {
     return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
@@ -274,7 +242,7 @@ function base64FromBytes(arr: Uint8Array): string {
   } else {
     const bin: string[] = [];
     arr.forEach((byte) => {
-      bin.push(globalThis.String.fromCharCode(byte));
+      bin.push(String.fromCharCode(byte));
     });
     return globalThis.btoa(bin.join(""));
   }
@@ -283,8 +251,7 @@ function base64FromBytes(arr: Uint8Array): string {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

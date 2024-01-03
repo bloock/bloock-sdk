@@ -23,8 +23,18 @@ pub enum BridgeError {
     PublishError,
     #[error("Keys error")]
     KeysError,
+    #[error("Identity error")]
+    IdentityError,
     #[error("Webhook error")]
     WebhookError,
+    #[error("Integrity error")]
+    IntegrityError,
+    #[error("Encryption error")]
+    EncryptionError,
+    #[error("Availability error")]
+    AvailabilityError,
+    #[error("Authenticity error")]
+    AuthenticityError,
     #[error("Anchor missing from request")]
     MissingAnchor,
     #[error("{0}")]

@@ -16,3 +16,5 @@ pub mod revoke_credential_request;
 pub mod revoke_credential_response;
 pub mod update_draft_state_signature_request;
 pub mod update_draft_state_signature_response;
+pub mod create_verification_response;
+pub mod get_verification_status_response;

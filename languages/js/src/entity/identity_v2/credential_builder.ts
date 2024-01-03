@@ -26,7 +26,6 @@ export class CredentialBuilder {
   expiration: number;
   version: number;
   signer?: SignerProto;
-  apiManagedHost: string;
   configData: ConfigData;
 
   stringAttributes: StringAttributeV2[];
@@ -42,7 +41,6 @@ export class CredentialBuilder {
     holderDid: string,
     expiration: number,
     version: number,
-    apiManagedHost: string,
     configData: ConfigData
   ) {
     this.schemaId = schemaId;
@@ -51,7 +49,6 @@ export class CredentialBuilder {
     this.expiration = expiration;
     this.version = version;
     this.configData = configData;
-    this.apiManagedHost = apiManagedHost;
 
     this.signer = undefined;
     this.stringAttributes = [];
@@ -107,7 +104,6 @@ export class CredentialBuilder {
       holderDid: this.holderDid,
       expiration: this.expiration,
       version: this.version,
-      apiManagedHost: this.apiManagedHost,
       signer: this.signer,
       stringAttributes: this.stringAttributes,
       integerAttributes: this.integerAttributes,

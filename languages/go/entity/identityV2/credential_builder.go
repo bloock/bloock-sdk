@@ -17,7 +17,6 @@ type CredentialBuilder struct {
 	expiration     int64
 	version        int32
 	signer         *proto.Signer
-	apiManagedHost string
 	configData     *proto.ConfigData
 
 	stringAttribute   []StringAttribute
@@ -28,14 +27,13 @@ type CredentialBuilder struct {
 	datetimeAttribute []DatetimeAttribute
 }
 
-func NewCredentialBuilder(schemaId, issuerDid, holderDid string, expiration int64, version int32, apiManagedHost string, configData *proto.ConfigData) CredentialBuilder {
+func NewCredentialBuilder(schemaId, issuerDid, holderDid string, expiration int64, version int32, configData *proto.ConfigData) CredentialBuilder {
 	return CredentialBuilder{
 		schemaId:          schemaId,
 		issuerDid:         issuerDid,
 		holderDid:         holderDid,
 		expiration:        expiration,
 		version:           version,
-		apiManagedHost:    apiManagedHost,
 		configData:        configData,
 		stringAttribute:   []StringAttribute{},
 		integerAttribute:  []IntegerAttribute{},
@@ -121,7 +119,6 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 		Expiration:         c.expiration,
 		Version:            &c.version,
 		Signer:             c.signer,
-		ApiManagedHost:     c.apiManagedHost,
 		ConfigData:         c.configData,
 		StringAttributes:   stringAttributes,
 		IntegerAttributes:  integerAttributes,

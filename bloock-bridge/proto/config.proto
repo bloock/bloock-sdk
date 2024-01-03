@@ -21,6 +21,7 @@ message Configuration {
     string signature_algorithm = 8;
     bool disable_analytics = 9;
     optional string environment = 10;
+    optional string identityApiHost = 11;
 }
 
 enum Network {

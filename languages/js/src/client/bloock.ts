@@ -23,19 +23,20 @@ export class BloockClient {
   public RecordClient: RecordClient;
   public WebhookClient: WebhookClient;
 
-  constructor(apiKey: string, apiManagedHost: string, forceEnv?: string) {
+  constructor(apiKey: string, identityApiHost?: string, forceEnv?: string) {
     this.configData = NewConfigData(undefined);
 
     if (this.configData.config) {
       this.configData.config.apiKey = apiKey;
       this.configData.config.environment = forceEnv;
+      this.configData.config.identityApiHost = identityApiHost;
     }
 
     this.AuthenticityClient = new AuthenticityClient(this.configData);
     this.AvailabilityClient = new AvailabilityClient(this.configData);
     this.EncryptionClient = new EncryptionClient(this.configData);
     this.IdentityLegacyClient = new IdentityLegacyClient(this.configData);
-    this.IdentityClient = new IdentityClient(apiManagedHost, this.configData);
+    this.IdentityClient = new IdentityClient(this.configData);
     this.IntegrityClient = new IntegrityClient(this.configData);
     this.KeyClient = new KeyClient(this.configData);
     this.RecordClient = new RecordClient(this.configData);

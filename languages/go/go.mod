@@ -3,7 +3,7 @@ module github.com/bloock/bloock-sdk-go/v2
 go 1.17
 
 require (
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.4
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.30.0
 )

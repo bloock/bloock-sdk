@@ -16,7 +16,7 @@ impl ResponseTypeError<SendRecordsRequest> for SendRecordsResponse {
         Self {
             records: vec![],
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::IntegrityError.to_string(),
                 message: err,
             }),
         }
@@ -28,7 +28,7 @@ impl ResponseTypeError<VerifyRecordsRequest> for VerifyRecordsResponse {
         Self {
             timestamp: 0,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::IntegrityError.to_string(),
                 message: err,
             }),
         }
@@ -40,7 +40,7 @@ impl ResponseTypeError<VerifyProofRequest> for VerifyProofResponse {
         Self {
             record: None,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::IntegrityError.to_string(),
                 message: err,
             }),
         }
@@ -52,7 +52,7 @@ impl ResponseTypeError<ValidateRootRequest> for ValidateRootResponse {
         Self {
             timestamp: 0,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::IntegrityError.to_string(),
                 message: err,
             }),
         }
@@ -71,7 +71,7 @@ impl ResponseTypeError<GetProofRequest> for GetProofResponse {
         Self {
             proof: None,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::IntegrityError.to_string(),
                 message: err,
             }),
         }
@@ -83,7 +83,7 @@ impl ResponseTypeError<WaitAnchorRequest> for WaitAnchorResponse {
         Self {
             anchor: None,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::IntegrityError.to_string(),
                 message: err,
             }),
         }
@@ -95,7 +95,7 @@ impl ResponseTypeError<GetAnchorRequest> for GetAnchorResponse {
         Self {
             anchor: None,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::IntegrityError.to_string(),
                 message: err,
             }),
         }

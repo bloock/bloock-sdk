@@ -12,6 +12,7 @@ public class Config {
             .setHost(Bloock.apiHost)
             .setApiKey(Bloock.apiKey)
             .setEnvironment(Bloock.forceEnv)
+            .setIdentityApiHost(Bloock.identityApiHost)
             .setDisableAnalytics(Bloock.disableAnalytics)
             .build();
 

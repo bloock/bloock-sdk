@@ -35,6 +35,7 @@ dependencies {
     // Testing
     testImplementation "junit:junit:4.12"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 }
 
 protobuf {

@@ -158,6 +158,11 @@ message CredentialRevocationV2 {
     bool success = 1;
 }
 
+message VerificationReceipt {
+    string verification_request = 1;
+    int64 session_id = 2;
+}
+
 message DidParams {
     Method method = 1;
     Blockchain blockchain = 2;

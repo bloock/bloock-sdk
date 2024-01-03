@@ -31,3 +31,4 @@ export * from "./did_params";
 export * from "./issuer_state_receipt";
 export * from "./schema_builder";
 export * from "./schema";
+export * from "./verification_receipt";

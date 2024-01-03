@@ -19,12 +19,16 @@ type BloockClient struct {
 	WebhookClient        WebhookClient
 }
 
-func NewBloockClient(apiKey, apiManagedHost string, forceEnv *string) BloockClient {
+func NewBloockClient(apiKey string, identityApiHost *string, forceEnv *string) BloockClient {
 	configData := config.NewConfigDataDefault()
 	configData.Config.ApiKey = apiKey
 
 	if forceEnv != nil {
 		configData.Config.Environment = forceEnv
+	}
+
+	if identityApiHost != nil {
+		configData.Config.IdentityApiHost = identityApiHost
 	}
 
 	return BloockClient{
@@ -34,7 +38,7 @@ func NewBloockClient(apiKey, apiManagedHost string, forceEnv *string) BloockClie
 		AvailabilityClient:   NewAvailabilityClientWithConfig(configData),
 		EncryptionClient:     NewEncryptionClientWithConfig(configData),
 		IdentityLegacyClient: NewIdentityLegacyClientWithConfig(configData),
-		IdentityClient:       NewIdentityClientWithConfig(configData, apiManagedHost),
+		IdentityClient:       NewIdentityClientWithConfig(configData),
 		IntegrityClient:      NewIntegrityClientWithConfig(configData),
 		KeyClient:            NewKeyClientWithConfig(configData),
 		RecordClient:         NewRecordClientWithConfig(configData),

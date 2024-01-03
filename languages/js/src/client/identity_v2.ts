@@ -8,10 +8,13 @@ import {
   RevokeCredentialRequestV2,
   GetSchemaRequestV2,
   CreateIdentityV2Request,
-  PublishIssuerStateRequest
+  PublishIssuerStateRequest,
+  CreateVerificationRequest,
+  WaitVerificationRequest,
+  GetVerificationStatusRequest
 } from "../bridge/proto/identity_v2";
 import { NewConfigData } from "../config/config";
-import { IssuerStateReceipt, Schema } from "../entity/identity_v2";
+import { IssuerStateReceipt, Schema, VerificationReceipt } from "../entity/identity_v2";
 import { Credential } from "../entity/identity_v2/credential";
 import { CredentialBuilder } from "../entity/identity_v2/credential_builder";
 import { CredentialProof } from "../entity/identity_v2/credential_proof";
@@ -23,12 +26,10 @@ import { Signer } from "../entity/authenticity";
 export class IdentityClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
-  private apiManagedHost: string;
 
-  constructor(apiManagedHost: string, configData?: ConfigData) {
+  constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
     this.configData = NewConfigData(configData);
-    this.apiManagedHost = apiManagedHost;
   }
 
   public createIdentity(
@@ -165,7 +166,6 @@ export class IdentityClient {
       holderDid,
       expiration,
       version,
-      this.apiManagedHost,
       this.configData
     );
   }
@@ -224,6 +224,58 @@ export class IdentityClient {
           throw res.error;
         }
         return res.result!.success!;
+      });
+  }
+
+  public createVerification(proofRequest: string): Promise<VerificationReceipt> {
+    const request = CreateVerificationRequest.fromPartial({
+      configData: this.configData,
+      proofRequest: proofRequest,
+    });
+
+    return this.bridge
+      .getIdentityV2()
+      .CreateVerification(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return VerificationReceipt.fromProto(res.result!);
+      });
+  }
+
+  public waitVerification(sessionID: number, timeout?: number): Promise<boolean> {
+    const request = WaitVerificationRequest.fromPartial({
+      configData: this.configData,
+      sessionId: sessionID,
+      timeout: timeout !== null ? timeout : 120000,
+    });
+
+    return this.bridge
+      .getIdentityV2()
+      .WaitVerification(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.status;
+      });
+  }
+
+  public getVerificationStatus(sessionID: number): Promise<boolean> {
+    const request = GetVerificationStatusRequest.fromPartial({
+      configData: this.configData,
+      sessionId: sessionID,
+    });
+
+    return this.bridge
+      .getIdentityV2()
+      .GetVerificationStatus(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.status;
       });
   }
 }

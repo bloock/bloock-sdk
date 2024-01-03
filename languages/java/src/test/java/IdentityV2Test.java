@@ -9,18 +9,16 @@ import com.bloock.sdk.entity.key.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.time.LocalDate;
-import java.util.Base64;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class IdentityV2Test {
   String credentialJson = "{\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://schema.iden3.io/core/jsonld/iden3proofs.jsonld\",\"https://api.bloock.dev/hosting/v1/ipfs/QmYMYpSQsFbqXgSRK8KFDGMopD2CUke5yd4m7XFuVAZTat\"],\"id\":\"https://clientHost.com/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/2ff36890-2fc1-4bba-b489-bdd7685e9555\",\"type\":[\"VerifiableCredential\",\"DrivingLicense\"],\"issuanceDate\":\"2023-08-21T10:21:42.402140Z\",\"expirationDate\":\"2099-08-08T06:02:22Z\",\"credentialSubject\":{\"birth_date\":921950325,\"country\":\"Spain\",\"first_surname\":\"Tomas\",\"id\":\"did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr\",\"license_type\":1,\"name\":\"Eduard\",\"nif\":\"54688188M\",\"second_surname\":\"Escoruela\",\"type\":\"DrivingLicense\"},\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identity/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/3553270275\",\"revocationNonce\":3553270275,\"type\":\"SparseMerkleTreeProof\"},\"issuer\":\"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6\",\"credentialSchema\":{\"id\":\"https://api.bloock.dev/hosting/v1/ipfs/QmWkPu699EF334ixBGEK7rDDurQfu2SYBXU39bSozu1i5h\",\"type\":\"JsonSchema2023\"},\"proof\":[{\"coreClaim\":\"e055485e9b8410b3cd71cb3ba3a0b7652a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b0056d1a9bf4e9d10b44fdd5b0f6b740b21dcd6675e770bf882249b8083471858190000000000000000000000000000000000000000000000000000000000000000039acad300000000ee30c6f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"issuerData\":{\"authCoreClaim\":\"cca3371a6cb1b715004407e325bd993c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fbd3b6b8c8e24e08bb982c7d4990e594747e5c24d98ac4ec969e50e437c1eb08407c9e5acc278a1641c82488f7518432a5937973d4ddfe551e32f9f7ba4c4a2e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identity/v1/did%3Apolygonid%3Apolygon%3Amumbai%3A2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/0\",\"revocationNonce\":0,\"type\":\"SparseMerkleTreeProof\"},\"id\":\"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6\",\"mtp\":{\"existence\":true,\"siblings\":[]},\"state\":{\"claimsTreeRoot\":\"0da5ac49846ae0074b986e5eef7c84011529e9902a0ffc6e9973b5cd0d217709\",\"value\":\"778582fc18b636314cc027a7772c1429028d44cdd17234f06e6d2d59bedee31d\"}},\"signature\":\"7bf882354b7cedd4b7ee74590cd3b091fef7545cb4ae8cd35c72b106ff858a0a3b1272ab7748cf7187d2383acda44bdae4bce1a7f9dccc11921fb0f19a70ee03\",\"type\":\"BJJSignature2021\"}]}";
-  String apiManagedHost = "https://clientHost.com";
   String drivingLicenseSchemaType = "DrivingLicense";
   String holderDid = "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr";
   Long expiration = 4089852142L;
@@ -28,7 +26,6 @@ public class IdentityV2Test {
   @BeforeAll
   static void beforeAll() {
     Utils.initDevSdk();
-
   }
 
   @Test
@@ -43,7 +40,7 @@ public class IdentityV2Test {
 
   @Test
   void createIdentity() throws Exception {
-    IdentityClient identityClient = new IdentityClient(apiManagedHost);
+    IdentityClient identityClient = new IdentityClient();
     KeyClient keyClient = new KeyClient();
 
     KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
@@ -61,7 +58,7 @@ public class IdentityV2Test {
 
   @Test
   void endToEnd() throws Exception {
-    IdentityClient identityClient = new IdentityClient(apiManagedHost);
+    IdentityClient identityClient = new IdentityClient();
     KeyClient keyClient = new KeyClient();
 
     KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
@@ -180,5 +177,47 @@ public class IdentityV2Test {
           identityClient.publishIssuerState(issuer, new Signer(keyBjj));
           throw new RuntimeException("This is an intentional exception.");
         });
+
+    String proofRequest = prepareProofRequest(schema.getCidJsonLD());
+
+    VerificationReceipt verification = identityClient.createVerification(proofRequest);
+    assertNotEquals(0, verification.getSessionID());
+    assertNotNull(verification.getVerificationRequest());
+
+    assertThrows(
+        Exception.class,
+        () -> {
+          identityClient.getVerificationStatus(verification.getSessionID());
+          throw new RuntimeException("This is an intentional exception.");
+        });
+
+    assertThrows(
+        Exception.class,
+        () -> {
+          identityClient.waitVerification(verification.getSessionID(), 5);
+          throw new RuntimeException("This is an intentional exception.");
+        });
+  }
+
+  public static String prepareProofRequest(String schemaId) throws JsonProcessingException {
+    Map<String, Object> proofRequestMap = new HashMap<>();
+    proofRequestMap.put("circuitId", "credentialAtomicQuerySigV2");
+    proofRequestMap.put("id", 1704207344);
+
+    Map<String, Object> queryMap = new HashMap<>();
+    queryMap.put("allowedIssuers", List.of("*"));
+
+    Map<String, Object> credentialSubjectMap = new HashMap<>();
+    credentialSubjectMap.put("birth_date", new HashMap<>());
+
+    queryMap.put("credentialSubject", credentialSubjectMap);
+    queryMap.put("type", "DrivingLicense");
+
+    queryMap.put("context", "https://api.bloock.dev/hosting/v1/ipfs/" + schemaId);
+
+    proofRequestMap.put("query", queryMap);
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    return objectMapper.writeValueAsString(proofRequestMap);
   }
 }

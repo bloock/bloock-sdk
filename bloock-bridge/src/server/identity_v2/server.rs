@@ -1,9 +1,7 @@
 use async_trait::async_trait;
 use bloock_core::identity_v2::{
     self,
-    entity::{
-        credential::Credential, did_metadata::DidMetadata, schema::Attribute,
-    },
+    entity::{credential::Credential, did_metadata::DidMetadata, schema::Attribute},
 };
 use bloock_keys::{entity::key::Key, KeyType};
 use serde_json::{Number, Value};
@@ -13,14 +11,16 @@ use crate::{
     items::{
         BuildSchemaRequestV2, BuildSchemaResponseV2, CreateCredentialRequestV2,
         CreateCredentialResponseV2, CreateIdentityV2Request, CreateIdentityV2Response,
-        CreateIssuerRequest, CreateIssuerResponse, CredentialFromJsonRequestV2,
-        CredentialFromJsonResponseV2, CredentialProofV2, CredentialReceiptV2,
-        CredentialRevocationV2, CredentialToJsonRequestV2, CredentialToJsonResponseV2,
-        CredentialV2, GetCredentialProofRequest, GetCredentialProofResponse, GetIssuerByKeyRequest,
-        GetIssuerByKeyResponse, GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2,
-        GetSchemaResponseV2, IdentityServiceV2Handler, IssuerStateReceipt,
-        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
-        RevokeCredentialResponseV2, SchemaV2,
+        CreateIssuerRequest, CreateIssuerResponse, CreateVerificationRequest,
+        CreateVerificationResponse, CredentialFromJsonRequestV2, CredentialFromJsonResponseV2,
+        CredentialProofV2, CredentialReceiptV2, CredentialRevocationV2, CredentialToJsonRequestV2,
+        CredentialToJsonResponseV2, CredentialV2, GetCredentialProofRequest,
+        GetCredentialProofResponse, GetIssuerByKeyRequest, GetIssuerByKeyResponse,
+        GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2, GetSchemaResponseV2,
+        GetVerificationStatusRequest, GetVerificationStatusResponse, IdentityServiceV2Handler,
+        IssuerStateReceipt, PublishIssuerStateRequest, PublishIssuerStateResponse,
+        RevokeCredentialRequestV2, RevokeCredentialResponseV2, SchemaV2, VerificationReceipt,
+        WaitVerificationRequest, WaitVerificationResponse,
     },
     server::response_types::RequestConfigData,
 };
@@ -425,7 +425,6 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 req.version.clone(),
                 attributes,
                 key,
-                req.api_managed_host.clone(),
             )
             .await
             .map_err(|e| e.to_string())?;
@@ -579,6 +578,69 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             result: Some(CredentialRevocationV2 {
                 success: revocation.success,
             }),
+            error: None,
+        })
+    }
+
+    async fn create_verification(
+        &self,
+        req: &CreateVerificationRequest,
+    ) -> Result<CreateVerificationResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity_v2::configure(config_data.clone());
+
+        let res = client
+            .create_verification(req.proof_request.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(CreateVerificationResponse {
+            result: Some(VerificationReceipt {
+                session_id: res.session_id,
+                verification_request: res.verification_request,
+            }),
+            error: None,
+        })
+    }
+
+    async fn wait_verification(
+        &self,
+        req: &WaitVerificationRequest,
+    ) -> Result<WaitVerificationResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity_v2::configure(config_data.clone());
+
+        let res = client
+            .wait_verification(
+                req.session_id.clone(),
+                req.timeout.clone(),
+            )
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(WaitVerificationResponse {
+            status: res,
+            error: None,
+        })
+    }
+
+    async fn get_verification_status(
+        &self,
+        req: &GetVerificationStatusRequest,
+    ) -> Result<GetVerificationStatusResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = identity_v2::configure(config_data.clone());
+
+        let res = client
+            .get_verification_status(req.session_id.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(GetVerificationStatusResponse {
+            status: res.success,
             error: None,
         })
     }

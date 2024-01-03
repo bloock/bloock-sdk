@@ -18,6 +18,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class Identity(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -38,6 +39,7 @@ class Identity(google.protobuf.message.Message):
 
 global___Identity = Identity
 
+@typing_extensions.final
 class BooleanAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -58,6 +60,7 @@ class BooleanAttributeDefinition(google.protobuf.message.Message):
 
 global___BooleanAttributeDefinition = BooleanAttributeDefinition
 
+@typing_extensions.final
 class DateAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -78,6 +81,7 @@ class DateAttributeDefinition(google.protobuf.message.Message):
 
 global___DateAttributeDefinition = DateAttributeDefinition
 
+@typing_extensions.final
 class DateTimeAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -98,6 +102,7 @@ class DateTimeAttributeDefinition(google.protobuf.message.Message):
 
 global___DateTimeAttributeDefinition = DateTimeAttributeDefinition
 
+@typing_extensions.final
 class StringAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -118,6 +123,7 @@ class StringAttributeDefinition(google.protobuf.message.Message):
 
 global___StringAttributeDefinition = StringAttributeDefinition
 
+@typing_extensions.final
 class NumberAttributeDefinition(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -138,6 +144,7 @@ class NumberAttributeDefinition(google.protobuf.message.Message):
 
 global___NumberAttributeDefinition = NumberAttributeDefinition
 
+@typing_extensions.final
 class BooleanAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -155,6 +162,7 @@ class BooleanAttribute(google.protobuf.message.Message):
 
 global___BooleanAttribute = BooleanAttribute
 
+@typing_extensions.final
 class DateAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -172,6 +180,7 @@ class DateAttribute(google.protobuf.message.Message):
 
 global___DateAttribute = DateAttribute
 
+@typing_extensions.final
 class DateTimeAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -189,6 +198,7 @@ class DateTimeAttribute(google.protobuf.message.Message):
 
 global___DateTimeAttribute = DateTimeAttribute
 
+@typing_extensions.final
 class StringAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -206,6 +216,7 @@ class StringAttribute(google.protobuf.message.Message):
 
 global___StringAttribute = StringAttribute
 
+@typing_extensions.final
 class NumberAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -223,6 +234,7 @@ class NumberAttribute(google.protobuf.message.Message):
 
 global___NumberAttribute = NumberAttribute
 
+@typing_extensions.final
 class Schema(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -240,6 +252,7 @@ class Schema(google.protobuf.message.Message):
 
 global___Schema = Schema
 
+@typing_extensions.final
 class CredentialOffer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -265,6 +278,7 @@ class CredentialOffer(google.protobuf.message.Message):
 
 global___CredentialOffer = CredentialOffer
 
+@typing_extensions.final
 class CredentialOfferBody(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -283,6 +297,7 @@ class CredentialOfferBody(google.protobuf.message.Message):
 
 global___CredentialOfferBody = CredentialOfferBody
 
+@typing_extensions.final
 class CredentialOfferBodyCredentials(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -300,6 +315,7 @@ class CredentialOfferBodyCredentials(google.protobuf.message.Message):
 
 global___CredentialOfferBodyCredentials = CredentialOfferBodyCredentials
 
+@typing_extensions.final
 class CredentialReceipt(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -317,6 +333,7 @@ class CredentialReceipt(google.protobuf.message.Message):
 
 global___CredentialReceipt = CredentialReceipt
 
+@typing_extensions.final
 class Credential(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -361,6 +378,7 @@ class Credential(google.protobuf.message.Message):
 
 global___Credential = Credential
 
+@typing_extensions.final
 class CredentialStatus(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -381,6 +399,7 @@ class CredentialStatus(google.protobuf.message.Message):
 
 global___CredentialStatus = CredentialStatus
 
+@typing_extensions.final
 class CredentialSchema(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -398,6 +417,7 @@ class CredentialSchema(google.protobuf.message.Message):
 
 global___CredentialSchema = CredentialSchema
 
+@typing_extensions.final
 class CredentialProof(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -418,6 +438,7 @@ class CredentialProof(google.protobuf.message.Message):
 
 global___CredentialProof = CredentialProof
 
+@typing_extensions.final
 class CredentialVerification(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -438,6 +459,7 @@ class CredentialVerification(google.protobuf.message.Message):
 
 global___CredentialVerification = CredentialVerification
 
+@typing_extensions.final
 class CredentialRevocation(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -452,6 +474,7 @@ class CredentialRevocation(google.protobuf.message.Message):
 
 global___CredentialRevocation = CredentialRevocation
 
+@typing_extensions.final
 class SignatureJWS(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -477,6 +500,7 @@ class SignatureJWS(google.protobuf.message.Message):
 
 global___SignatureJWS = SignatureJWS
 
+@typing_extensions.final
 class SignatureHeaderJWS(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

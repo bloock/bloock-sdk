@@ -9,6 +9,7 @@ export function NewConfigData(configData: ConfigData | undefined): ConfigData {
       libraryName: "Javascript",
       apiKey: Bloock.getApiKey(),
       environment: Bloock.getForceEnv(),
+      identityApiHost: Bloock.getIdentityApiHost(),
       host: Bloock.getApiHost(),
       disableAnalytics: Bloock.getDisableAnalytics()
     }),
