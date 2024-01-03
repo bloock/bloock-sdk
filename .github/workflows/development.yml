@@ -42,6 +42,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_KEY }}
 
   build_js:
     needs: [build_wasm]
@@ -62,6 +63,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_KEY }}
 
   build_go:
     needs: [build_binaries]
@@ -82,6 +84,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_KEY }}
 
   build_python:
     needs: [build_binaries]
@@ -102,6 +105,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_KEY }}
 
   build_java:
     needs: [build_binaries]
@@ -121,6 +125,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_KEY }}
 
   build_php:
     needs: [build_binaries]
@@ -141,3 +146,4 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_KEY }}

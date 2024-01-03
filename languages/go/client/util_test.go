@@ -11,14 +11,9 @@ import (
 func InitSdk() {
 	bloock.ApiKey = os.Getenv("API_KEY")
 	apiHost := os.Getenv("API_HOST")
-	identityApiHost := os.Getenv("IDENTITY_API_HOST")
 
 	if apiHost != "" {
 		bloock.ApiHost = apiHost
-	}
-
-	if identityApiHost != "" {
-		bloock.IdentityApiHost = identityApiHost
 	}
 
 	bloock.DisableAnalytics = true
