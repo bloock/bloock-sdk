@@ -29,7 +29,7 @@ class CredentialOfferBody extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type string $url
-     *     @type array<\Bloock\CredentialOfferBodyCredentials>|\Google\Protobuf\Internal\RepeatedField $credentials
+     *     @type \Bloock\CredentialOfferBodyCredentials[]|\Google\Protobuf\Internal\RepeatedField $credentials
      * }
      */
     public function __construct($data = NULL) {
@@ -70,7 +70,7 @@ class CredentialOfferBody extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.CredentialOfferBodyCredentials credentials = 2;</code>
-     * @param array<\Bloock\CredentialOfferBodyCredentials>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \Bloock\CredentialOfferBodyCredentials[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setCredentials($var)

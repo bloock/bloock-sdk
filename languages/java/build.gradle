@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'com.bloock.sdk'
-version = '2.7.0-beta.15'
+version = '2.7.0-beta.16'
 
 repositories {
     maven { url "https://maven-central.storage-download.googleapis.com/maven2/" }
@@ -35,6 +35,7 @@ dependencies {
     // Testing
     testImplementation "junit:junit:4.12"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 }
 
 protobuf {

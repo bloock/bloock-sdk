@@ -10,7 +10,7 @@ impl ResponseTypeError<SignRequest> for SignResponse {
         Self {
             signature: None,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::AuthenticityError.to_string(),
                 message: err,
             }),
         }
@@ -22,7 +22,7 @@ impl ResponseTypeError<VerifyRequest> for VerifyResponse {
         Self {
             valid: false,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::AuthenticityError.to_string(),
                 message: err,
             }),
         }
@@ -34,7 +34,7 @@ impl ResponseTypeError<GetSignaturesRequest> for GetSignaturesResponse {
         Self {
             signatures: vec![],
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::AuthenticityError.to_string(),
                 message: err,
             }),
         }

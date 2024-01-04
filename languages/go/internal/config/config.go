@@ -12,6 +12,7 @@ func NewConfigDataDefault() *proto.ConfigData {
 			Host:             bloock.ApiHost,
 			ApiKey:           bloock.ApiKey,
 			Environment:      &bloock.ForceEnv,
+			IdentityApiHost:  &bloock.IdentityApiHost,
 			DisableAnalytics: bloock.DisableAnalytics,
 		},
 		NetworksConfig: bloock.NetworkConfig,

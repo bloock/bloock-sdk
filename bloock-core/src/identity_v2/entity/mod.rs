@@ -5,3 +5,4 @@ pub mod revocation_result;
 pub mod schema;
 pub mod create_credential_receipt;
 pub mod proof;
+pub mod verification_result;

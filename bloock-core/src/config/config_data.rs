@@ -14,6 +14,7 @@ impl ConfigData {
     pub fn new(
         api_key: String,
         environment: Option<String>,
+        identity_api_host: Option<String>,
         library_name: String,
         disable_analytics: bool,
     ) -> Self {
@@ -24,6 +25,7 @@ impl ConfigData {
                 cdn_host: String::from("https://cdn.bloock.com"),
                 api_key,
                 environment,
+                identity_api_host,
                 wait_message_interval_factor: 2,
                 wait_message_interval_default: 5000,
                 key_type_algorithm: String::from("EC"),

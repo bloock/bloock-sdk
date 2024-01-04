@@ -20,7 +20,7 @@ class _DataAvailabilityType:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _DataAvailabilityTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_DataAvailabilityType.ValueType], builtins.type):  # noqa: F821
+class _DataAvailabilityTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_DataAvailabilityType.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     HOSTED: _DataAvailabilityType.ValueType  # 0
     IPFS: _DataAvailabilityType.ValueType  # 1
@@ -31,6 +31,7 @@ HOSTED: DataAvailabilityType.ValueType  # 0
 IPFS: DataAvailabilityType.ValueType  # 1
 global___DataAvailabilityType = DataAvailabilityType
 
+@typing_extensions.final
 class Publisher(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -50,6 +51,7 @@ class Publisher(google.protobuf.message.Message):
 
 global___Publisher = Publisher
 
+@typing_extensions.final
 class PublisherArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -59,6 +61,7 @@ class PublisherArgs(google.protobuf.message.Message):
 
 global___PublisherArgs = PublisherArgs
 
+@typing_extensions.final
 class Loader(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -78,6 +81,7 @@ class Loader(google.protobuf.message.Message):
 
 global___Loader = Loader
 
+@typing_extensions.final
 class LoaderArgs(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

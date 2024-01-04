@@ -18,7 +18,6 @@ class CredentialBuilder
     private int $expiration;
     private int $version;
     private SingerProto $signer;
-    private string $apiManagedHost;
     private ConfigData $configData;
 
     private array $stringAttributes;
@@ -28,14 +27,13 @@ class CredentialBuilder
     private array $dateAttributes;
     private array $datetimeAttributes;
 
-    public function __construct(string $schemaId, string $issuerDid, string $holderDid, int $expiration, int $version, string $apiManagedHost, ConfigData $configData)
+    public function __construct(string $schemaId, string $issuerDid, string $holderDid, int $expiration, int $version, ConfigData $configData)
     {
         $this->schemaId = $schemaId;
         $this->issuerDid = $issuerDid;
         $this->holderDid = $holderDid;
         $this->expiration = $expiration;
         $this->version = $version;
-        $this->apiManagedHost = $apiManagedHost;
         $this->signer = new SingerProto();
         $this->configData = $configData;
 
@@ -108,7 +106,6 @@ class CredentialBuilder
         $req->setHolderDid($this->holderDid);
         $req->setExpiration($this->expiration);
         $req->setVersion($this->version);
-        $req->setApiManagedHost($this->apiManagedHost);
         $req->setSigner($this->signer);
         $req->setstringAttributes($this->stringAttributes);
         $req->setIntegerAttributes($this->integerAttributes);

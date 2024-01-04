@@ -7,6 +7,7 @@ export class Bloock {
   private static instance: Bloock;
   private apiKey?: string;
   private forceEnv?: string;
+  private identityApiHost?: string;
   private apiHost?: string;
   private disableAnalytics: boolean = false;
   private networksConfig?: {
@@ -45,6 +46,20 @@ export class Bloock {
       Bloock.instance = new Bloock();
     }
     Bloock.instance.forceEnv = forceEnv;
+  }
+
+  public static getIdentityApiHost(): string | undefined {
+    if (!Bloock.instance) {
+      Bloock.instance = new Bloock();
+    }
+    return Bloock.instance.identityApiHost;
+  }
+
+  public static setIdentityApiHost(identityApiHost: string) {
+    if (!Bloock.instance) {
+      Bloock.instance = new Bloock();
+    }
+    Bloock.instance.identityApiHost = identityApiHost;
   }
 
   public static getApiHost(): string | undefined {

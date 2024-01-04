@@ -136,6 +136,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_HOST }}
 
   test_go:
     needs: [build_go]
@@ -148,6 +149,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_HOST }}
 
   test_python:
     needs: [build_python]
@@ -160,6 +162,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_HOST }}
 
   test_java:
     needs: [build_java]
@@ -172,6 +175,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_HOST }}
 
   test_php:
     needs: [build_php]
@@ -184,6 +188,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_HOST }}
 
   test_js:
     needs: [build_js]
@@ -196,6 +201,7 @@ jobs:
       dev_api_host: ${{ secrets.DEV_API_HOST }}
       api_key: ${{ secrets.API_KEY }}
       dev_api_key: ${{ secrets.DEV_API_KEY }}
+      dev_identity_api_host: ${{ secrets.DEV_IDENTITY_API_HOST }}
 
   compat_go:
     needs: [test_go]

@@ -14,18 +14,15 @@ import java.util.List;
 public class IdentityClient {
   private final Bridge bridge;
   private final ConfigData configData;
-  private final String apiManagedHost;
 
-  public IdentityClient(String apiManagedHost) {
+  public IdentityClient() {
     this.bridge = new Bridge();
     this.configData = Config.newConfigDataDefault();
-    this.apiManagedHost = apiManagedHost;
   }
 
-  public IdentityClient(ConfigData configData, String apiManagedHost) {
+  public IdentityClient(ConfigData configData) {
     this.bridge = new Bridge();
     this.configData = Config.newConfigData(configData);
-    this.apiManagedHost = apiManagedHost;
   }
 
   public String createIdentity(IdentityKey issuerKey, DidParams didParams) throws Exception {
@@ -83,19 +80,6 @@ public class IdentityClient {
     return response.getDid();
   }
 
-  public List<String> getIssuerList() throws Exception {
-    IdentityV2.GetIssuerListRequest request = IdentityV2.GetIssuerListRequest.newBuilder()
-        .setConfigData(this.configData).build();
-
-    IdentityV2.GetIssuerListResponse response = bridge.getIdentityV2().getIssuerList(request);
-
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
-    }
-
-    return response.getDidList();
-  }
-
   public String getIssuerByKey(IdentityKey issuerKey) throws Exception {
     return getIssuerByKey(issuerKey, new DidParams());
   }
@@ -140,7 +124,7 @@ public class IdentityClient {
       String schemaId, String issuerDid, String holderDid, Long expiration, int version)
       throws Exception {
     return new CredentialBuilder(
-        schemaId, issuerDid, holderDid, expiration, version, this.apiManagedHost, this.configData);
+        schemaId, issuerDid, holderDid, expiration, version, this.configData);
   }
 
   public IssuerStateReceipt publishIssuerState(String issuerDid, Signer signer) throws Exception {
@@ -191,5 +175,51 @@ public class IdentityClient {
     }
 
     return response.getResult().getSuccess();
+  }
+
+  public VerificationReceipt createVerification(String proofRequest) throws Exception {
+    IdentityV2.CreateVerificationRequest request = IdentityV2.CreateVerificationRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setProofRequest(proofRequest)
+            .build();
+
+    IdentityV2.CreateVerificationResponse response = bridge.getIdentityV2().createVerification(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return VerificationReceipt.fromProto(response.getResult());
+  }
+
+  public boolean waitVerification(long sessionID, long timeout) throws Exception {
+    IdentityV2.WaitVerificationRequest request = IdentityV2.WaitVerificationRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setSessionId(sessionID)
+            .setTimeout(timeout)
+            .build();
+
+    IdentityV2.WaitVerificationResponse response = bridge.getIdentityV2().waitVerification(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return response.getStatus();
+  }
+
+  public boolean getVerificationStatus(long sessionID) throws Exception {
+    IdentityV2.GetVerificationStatusRequest request = IdentityV2.GetVerificationStatusRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setSessionId(sessionID)
+            .build();
+
+    IdentityV2.GetVerificationStatusResponse response = bridge.getIdentityV2().getVerificationStatus(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return response.getStatus();
   }
 }

@@ -10,7 +10,7 @@ impl ResponseTypeError<PublishRequest> for PublishResponse {
         Self {
             id: "".to_string(),
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::AvailabilityError.to_string(),
                 message: err,
             }),
         }
@@ -22,7 +22,7 @@ impl ResponseTypeError<RetrieveRequest> for RetrieveResponse {
         Self {
             record: None,
             error: Some(Error {
-                kind: BridgeError::WebhookError.to_string(),
+                kind: BridgeError::AvailabilityError.to_string(),
                 message: err,
             }),
         }

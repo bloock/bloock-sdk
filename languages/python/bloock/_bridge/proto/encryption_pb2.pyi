@@ -18,6 +18,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class EncryptRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -42,6 +43,7 @@ class EncryptRequest(google.protobuf.message.Message):
 
 global___EncryptRequest = EncryptRequest
 
+@typing_extensions.final
 class EncryptResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -63,6 +65,7 @@ class EncryptResponse(google.protobuf.message.Message):
 
 global___EncryptResponse = EncryptResponse
 
+@typing_extensions.final
 class DecryptRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -87,6 +90,7 @@ class DecryptRequest(google.protobuf.message.Message):
 
 global___DecryptRequest = DecryptRequest
 
+@typing_extensions.final
 class DecryptResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -108,6 +112,7 @@ class DecryptResponse(google.protobuf.message.Message):
 
 global___DecryptResponse = DecryptResponse
 
+@typing_extensions.final
 class EncryptionAlgRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -128,6 +133,7 @@ class EncryptionAlgRequest(google.protobuf.message.Message):
 
 global___EncryptionAlgRequest = EncryptionAlgRequest
 
+@typing_extensions.final
 class EncryptionAlgResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

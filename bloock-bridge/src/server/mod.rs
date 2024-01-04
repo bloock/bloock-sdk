@@ -616,15 +616,6 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
-            BloockServer::IdentityServiceV2GetIssuerList => {
-                let req: crate::items::GetIssuerListRequest = self.serialize_request(payload)?;
-                Ok(self
-                    .identity_v2
-                    .get_issuer_list(&req)
-                    .await
-                    .to_response_type(&req)
-                    .await)
-            }
             BloockServer::IdentityServiceV2GetIssuerByKey => {
                 let req: crate::items::GetIssuerByKeyRequest = self.serialize_request(payload)?;
                 Ok(self
@@ -639,6 +630,33 @@ impl Server {
                 Ok(self
                     .identity_v2
                     .get_schema(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2CreateVerification => {
+                let req: crate::items::CreateVerificationRequest = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .create_verification(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2WaitVerification => {
+                let req: crate::items::WaitVerificationRequest = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .wait_verification(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceV2GetVerificationStatus => {
+                let req: crate::items::GetVerificationStatusRequest = self.serialize_request(payload)?;
+                Ok(self
+                    .identity_v2
+                    .get_verification_status(&req)
                     .await
                     .to_response_type(&req)
                     .await)

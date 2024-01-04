@@ -44,7 +44,7 @@ class IntegerEnumAttributeDefinitionV2 extends \Google\Protobuf\Internal\Message
      *     @type string $id
      *     @type string $description
      *     @type bool $required
-     *     @type array<int>|array<string>|\Google\Protobuf\Internal\RepeatedField $enum
+     *     @type int[]|string[]|\Google\Protobuf\Internal\RepeatedField $enum
      * }
      */
     public function __construct($data = NULL) {
@@ -151,7 +151,7 @@ class IntegerEnumAttributeDefinitionV2 extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated int64 enum = 5;</code>
-     * @param array<int>|array<string>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param int[]|string[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setEnum($var)

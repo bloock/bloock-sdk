@@ -13,7 +13,6 @@ import "identity_entities_v2.proto";
 service IdentityServiceV2 {
     rpc CreateIdentity(CreateIdentityV2Request) returns (CreateIdentityV2Response);
     rpc CreateIssuer(CreateIssuerRequest) returns (CreateIssuerResponse);
-    rpc GetIssuerList(GetIssuerListRequest) returns (GetIssuerListResponse);
     rpc GetIssuerByKey(GetIssuerByKeyRequest) returns (GetIssuerByKeyResponse);
 
     rpc BuildSchema(BuildSchemaRequestV2) returns (BuildSchemaResponseV2);
@@ -27,6 +26,10 @@ service IdentityServiceV2 {
     rpc CredentialFromJson(CredentialFromJsonRequestV2) returns (CredentialFromJsonResponseV2);
 
     rpc PublishIssuerState(PublishIssuerStateRequest) returns (PublishIssuerStateResponse);
+
+    rpc CreateVerification(CreateVerificationRequest) returns (CreateVerificationResponse);
+    rpc WaitVerification(WaitVerificationRequest) returns (WaitVerificationResponse);
+    rpc GetVerificationStatus(GetVerificationStatusRequest) returns (GetVerificationStatusResponse);
 }
 
 message GetSchemaRequestV2 {
@@ -36,15 +39,6 @@ message GetSchemaRequestV2 {
 
 message GetSchemaResponseV2 {
     SchemaV2 schema = 1;
-    optional Error error = 2;
-}
-
-message GetIssuerListRequest {
-    ConfigData config_data = 1;
-}
-
-message GetIssuerListResponse {
-    repeated string did = 1;
     optional Error error = 2;
 }
 
@@ -92,13 +86,12 @@ message CreateCredentialRequestV2 {
     int64 expiration = 5;
     optional int32 version = 6;
     Signer signer = 7;
-    string api_managed_host = 8;
-    repeated StringAttributeV2 string_attributes = 9;
-    repeated IntegerAttributeV2 integer_attributes = 10;
-    repeated DecimalAttributeV2 decimal_attributes = 11;
-    repeated BooleanAttributeV2 boolean_attributes = 12;
-    repeated DateAttributeV2 date_attributes = 13;
-    repeated DateTimeAttributeV2 datetime_attributes = 14;
+    repeated StringAttributeV2 string_attributes = 8;
+    repeated IntegerAttributeV2 integer_attributes = 9;
+    repeated DecimalAttributeV2 decimal_attributes = 10;
+    repeated BooleanAttributeV2 boolean_attributes = 11;
+    repeated DateAttributeV2 date_attributes = 12;
+    repeated DateTimeAttributeV2 datetime_attributes = 13;
 }
 
 message BuildSchemaRequestV2 {
@@ -183,3 +176,33 @@ message RevokeCredentialResponseV2 {
     optional Error error = 2;
 }
 
+message CreateVerificationRequest {
+    ConfigData config_data = 1;
+    string proof_request = 2;
+}
+
+message CreateVerificationResponse {
+    VerificationReceipt result = 1;
+    optional Error error = 2;
+}
+
+message WaitVerificationRequest {
+    ConfigData config_data = 1;
+    int64 session_id = 2;
+    int64 timeout = 3;
+}
+
+message WaitVerificationResponse {
+    bool status = 1;
+    optional Error error = 2;
+}
+
+message GetVerificationStatusRequest {
+    ConfigData config_data = 1;
+    int64 session_id = 2;
+}
+
+message GetVerificationStatusResponse {
+    bool status = 1;
+    optional Error error = 2;
+}

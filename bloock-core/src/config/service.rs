@@ -32,4 +32,8 @@ impl ConfigService {
     pub fn get_environment(&self) -> Option<String> {
         self.config_data.get_config().environment
     }
+
+    pub fn get_identity_api_host(&self) -> Option<String> {
+        self.config_data.get_config().identity_api_host
+    }
 }

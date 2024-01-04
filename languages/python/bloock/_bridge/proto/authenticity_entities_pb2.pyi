@@ -21,7 +21,7 @@ class _HashAlg:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _HashAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_HashAlg.ValueType], builtins.type):  # noqa: F821
+class _HashAlgEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_HashAlg.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     SHA_256: _HashAlg.ValueType  # 0
     KECCAK_256: _HashAlg.ValueType  # 1
@@ -36,6 +36,7 @@ POSEIDON: HashAlg.ValueType  # 2
 NONE: HashAlg.ValueType  # 3
 global___HashAlg = HashAlg
 
+@typing_extensions.final
 class Signer(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -77,6 +78,7 @@ class Signer(google.protobuf.message.Message):
 
 global___Signer = Signer
 
+@typing_extensions.final
 class Signature(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

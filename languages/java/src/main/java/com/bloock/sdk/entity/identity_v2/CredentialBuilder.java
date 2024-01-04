@@ -17,7 +17,6 @@ public class CredentialBuilder {
   private final String holderKey;
   private final Long expiration;
   private final int version;
-  private final String apiManagedHost;
   private Signer signer;
   private final Config.ConfigData configData;
 
@@ -34,14 +33,12 @@ public class CredentialBuilder {
       String holderKey,
       Long expiration,
       int version,
-      String apiManagedHost,
       Config.ConfigData configData) {
     this.schemaId = schemaId;
     this.issuerDid = issuerDid;
     this.holderKey = holderKey;
     this.expiration = expiration;
     this.version = version;
-    this.apiManagedHost = apiManagedHost;
     this.signer = null;
     this.configData = configData;
 
@@ -99,7 +96,6 @@ public class CredentialBuilder {
             .setHolderDid(this.holderKey)
             .setExpiration(this.expiration)
             .setVersion(this.version)
-            .setApiManagedHost(this.apiManagedHost)
             .setSigner(this.signer)
             .addAllStringAttributes(this.stringAttributes)
             .addAllIntegerAttributes(this.integerAttributes)

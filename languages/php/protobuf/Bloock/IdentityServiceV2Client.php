@@ -45,20 +45,6 @@ class IdentityServiceV2Client extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\GetIssuerListRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function GetIssuerList(\Bloock\GetIssuerListRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityServiceV2/GetIssuerList',
-        $argument,
-        ['\Bloock\GetIssuerListResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
      * @param \Bloock\GetIssuerByKeyRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
@@ -181,6 +167,48 @@ class IdentityServiceV2Client extends \Bloock\Bridge\Connection {
         return $this->_simpleRequest('/bloock.IdentityServiceV2/PublishIssuerState',
         $argument,
         ['\Bloock\PublishIssuerStateResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\CreateVerificationRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function CreateVerification(\Bloock\CreateVerificationRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityServiceV2/CreateVerification',
+        $argument,
+        ['\Bloock\CreateVerificationResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\WaitVerificationRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function WaitVerification(\Bloock\WaitVerificationRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityServiceV2/WaitVerification',
+        $argument,
+        ['\Bloock\WaitVerificationResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\GetVerificationStatusRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GetVerificationStatus(\Bloock\GetVerificationStatusRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityServiceV2/GetVerificationStatus',
+        $argument,
+        ['\Bloock\GetVerificationStatusResponse', 'decode'],
         $metadata, $options);
     }
 

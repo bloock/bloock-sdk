@@ -12,10 +12,11 @@ use super::{
             create_issuer_response::CreateIssuerResponse,
             create_schema_request::CreateSchemaRequest,
             create_schema_response::CreateSchemaResponse,
+            create_verification_response::CreateVerificationResponse,
             get_credential_proof_response::GetCredentialProofResponse,
             get_issuer_by_key_response::GetIssuerByKeyResponse,
-            get_issuer_list_response::GetIssuerListResponse,
             get_issuer_new_state_response::GetIssuerNewStateResponse,
+            get_verification_status_response::GetVerificationStatusResponse,
             publish_issuer_state_request::PublishIssuerStateRequest,
             publish_issuer_state_response::PublishIssuerStateResponse,
             revoke_credential_request::RevokeCredentialRequest,
@@ -26,13 +27,18 @@ use super::{
         proof::CredentialProof,
         revocation_result::RevocationResult,
         schema::{Attribute, Schema},
+        verification_result::VerificationResult,
     },
     IdentityErrorV2,
 };
 use crate::{
-    availability::service::AvailabilityService, config::service::ConfigService,
-    error::BloockResult, integrity::service::IntegrityService,
+    availability::service::AvailabilityService,
+    config::service::ConfigService,
+    error::{BloockResult, InfrastructureError},
+    integrity::service::IntegrityService,
+    shared::util,
 };
+use async_std::task;
 use bloock_hasher::HashAlg;
 use bloock_http::Client;
 use bloock_identity_rs::{
@@ -45,8 +51,8 @@ use bloock_identity_rs::{
 };
 use bloock_keys::entity::key::Key;
 use serde_json::{json, Map, Value};
-use std::sync::Arc;
-use url::Url;
+use std::{sync::Arc, time::Duration};
+use url::{form_urlencoded::parse, Url};
 
 pub struct IdentityServiceV2<H: Client> {
     pub http: Arc<H>,
@@ -148,22 +154,6 @@ impl<H: Client> IdentityServiceV2<H> {
         Ok(res.did)
     }
 
-    pub async fn get_issuer_list(&self) -> BloockResult<Vec<GetIssuerListResponse>> {
-        let res: Vec<GetIssuerListResponse> = self
-            .http
-            .get_json(
-                format!(
-                    "{}/identityV2/v1/issuers",
-                    self.config_service.get_api_base_url(),
-                ),
-                None,
-            )
-            .await
-            .map_err(|e| IdentityErrorV2::IssuerListError(e.to_string()))?;
-
-        Ok(res)
-    }
-
     pub async fn build_schema(
         &self,
         display_name: String,
@@ -218,8 +208,11 @@ impl<H: Client> IdentityServiceV2<H> {
         version: Option<i32>,
         mut attributes: Vec<(String, Value)>,
         key: Key,
-        api_managed_host: String,
     ) -> BloockResult<CreateCredentialReceipt> {
+        let api_managed_host = match self.config_service.get_identity_api_host() {
+            Some(host) => host,
+            None => Err(IdentityErrorV2::EmptyApiHostError())?,
+        };
         _ = Url::parse(&api_managed_host.clone())
             .map_err(|e| IdentityErrorV2::CreateCredentialError(e.to_string()));
 
@@ -555,6 +548,115 @@ impl<H: Client> IdentityServiceV2<H> {
         }
 
         return Ok(true);
+    }
+
+    pub async fn create_verification(
+        &self,
+        proof_request: String,
+    ) -> BloockResult<VerificationResult> {
+        let api_managed_host = match self.config_service.get_identity_api_host() {
+            Some(host) => host,
+            None => Err(IdentityErrorV2::EmptyApiHostError())?,
+        };
+        _ = Url::parse(&api_managed_host.clone())
+            .map_err(|e| IdentityErrorV2::CreateVerificationError(e.to_string()));
+
+        let payload: Value = serde_json::from_str(&proof_request.clone())
+            .map_err(|_| IdentityErrorV2::InvalidJson)?;
+
+        let res: CreateVerificationResponse = self
+            .http
+            .post_json(
+                format!("{}/v1/verifications", api_managed_host,),
+                payload,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityErrorV2::CreateVerificationError(e.to_string()))?;
+
+        let session_id: i64 = match res.body.callback_url.split("=").last() {
+            Some(session_string) => match session_string.parse::<i64>() {
+                Ok(session) => session,
+                Err(_) => Err(IdentityErrorV2::CreateVerificationError(
+                    "cannot convert session id to u64".to_string(),
+                ))?,
+            },
+            None => Err(IdentityErrorV2::CreateVerificationError(
+                "empty session id".to_string(),
+            ))?,
+        };
+
+        let json = serde_json::to_string(&res)
+            .map_err(|e| IdentityErrorV2::CreateVerificationError(e.to_string()))?;
+
+        return Ok(VerificationResult {
+            session_id,
+            verification_request: json,
+        });
+    }
+
+    pub async fn wait_verification(&self, session_id: i64, mut timeout: i64) -> BloockResult<bool> {
+        if timeout == 0 {
+            timeout = 120000;
+        }
+        let config = self.config_service.get_config();
+
+        let mut attempts = 0;
+        let start = util::get_current_timestamp();
+        let mut next_try = start + config.wait_message_interval_default;
+
+        let timeout_time = start + timeout as u128;
+
+        loop {
+            if let Ok(status) = self.get_verification_status(session_id.clone()).await {
+                if status.success {
+                    return Ok(true);
+                }
+            }
+
+            let mut current_time = util::get_current_timestamp();
+            if current_time > timeout_time {
+                return Err(IdentityErrorV2::VerificationTimeout()).map_err(|e| e.into());
+            }
+
+            task::sleep(Duration::from_millis(1000)).await;
+
+            current_time = util::get_current_timestamp();
+            while current_time < next_try && current_time < timeout_time {
+                task::sleep(Duration::from_millis(200)).await;
+                current_time = util::get_current_timestamp();
+            }
+
+            if current_time >= timeout_time {
+                return Err(IdentityErrorV2::VerificationTimeout()).map_err(|e| e.into());
+            }
+
+            next_try += attempts * config.wait_message_interval_factor
+                + config.wait_message_interval_default;
+            attempts += 1;
+        }
+    }
+
+    pub async fn get_verification_status(
+        &self,
+        session_id: i64,
+    ) -> BloockResult<GetVerificationStatusResponse> {
+        let api_managed_host = match self.config_service.get_identity_api_host() {
+            Some(host) => host,
+            None => Err(IdentityErrorV2::EmptyApiHostError())?,
+        };
+        _ = Url::parse(&api_managed_host.clone())
+            .map_err(|e| IdentityErrorV2::CreateVerificationError(e.to_string()));
+
+        let url = format!("{api_managed_host}/v1/verifications/status?session_id={session_id}");
+        match self
+            .http
+            .get_json::<String, GetVerificationStatusResponse>(url, None)
+            .await
+        {
+            Ok(res) => Ok(res),
+            Err(e) => Err(e).map_err(|e| InfrastructureError::Http(e).into()),
+        }
     }
 }
 

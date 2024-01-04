@@ -21,6 +21,7 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+@typing_extensions.final
 class GetSchemaRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -40,6 +41,7 @@ class GetSchemaRequestV2(google.protobuf.message.Message):
 
 global___GetSchemaRequestV2 = GetSchemaRequestV2
 
+@typing_extensions.final
 class GetSchemaResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -61,43 +63,7 @@ class GetSchemaResponseV2(google.protobuf.message.Message):
 
 global___GetSchemaResponseV2 = GetSchemaResponseV2
 
-class GetIssuerListRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> None: ...
-
-global___GetIssuerListRequest = GetIssuerListRequest
-
-class GetIssuerListResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    DID_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def did(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        did: collections.abc.Iterable[builtins.str] | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "did", b"did", "error", b"error"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___GetIssuerListResponse = GetIssuerListResponse
-
+@typing_extensions.final
 class GetIssuerByKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -118,6 +84,7 @@ class GetIssuerByKeyResponse(google.protobuf.message.Message):
 
 global___GetIssuerByKeyResponse = GetIssuerByKeyResponse
 
+@typing_extensions.final
 class GetCredentialProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -140,6 +107,7 @@ class GetCredentialProofRequest(google.protobuf.message.Message):
 
 global___GetCredentialProofRequest = GetCredentialProofRequest
 
+@typing_extensions.final
 class GetCredentialProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -161,6 +129,7 @@ class GetCredentialProofResponse(google.protobuf.message.Message):
 
 global___GetCredentialProofResponse = GetCredentialProofResponse
 
+@typing_extensions.final
 class CredentialToJsonRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -181,6 +150,7 @@ class CredentialToJsonRequestV2(google.protobuf.message.Message):
 
 global___CredentialToJsonRequestV2 = CredentialToJsonRequestV2
 
+@typing_extensions.final
 class CredentialToJsonResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -201,6 +171,7 @@ class CredentialToJsonResponseV2(google.protobuf.message.Message):
 
 global___CredentialToJsonResponseV2 = CredentialToJsonResponseV2
 
+@typing_extensions.final
 class CredentialFromJsonRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -220,6 +191,7 @@ class CredentialFromJsonRequestV2(google.protobuf.message.Message):
 
 global___CredentialFromJsonRequestV2 = CredentialFromJsonRequestV2
 
+@typing_extensions.final
 class CredentialFromJsonResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -241,6 +213,7 @@ class CredentialFromJsonResponseV2(google.protobuf.message.Message):
 
 global___CredentialFromJsonResponseV2 = CredentialFromJsonResponseV2
 
+@typing_extensions.final
 class CreateCredentialRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -251,7 +224,6 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
     EXPIRATION_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
     SIGNER_FIELD_NUMBER: builtins.int
-    API_MANAGED_HOST_FIELD_NUMBER: builtins.int
     STRING_ATTRIBUTES_FIELD_NUMBER: builtins.int
     INTEGER_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DECIMAL_ATTRIBUTES_FIELD_NUMBER: builtins.int
@@ -267,7 +239,6 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
     version: builtins.int
     @property
     def signer(self) -> authenticity_entities_pb2.Signer: ...
-    api_managed_host: builtins.str
     @property
     def string_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_v2_pb2.StringAttributeV2]: ...
     @property
@@ -290,7 +261,6 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
         expiration: builtins.int = ...,
         version: builtins.int | None = ...,
         signer: authenticity_entities_pb2.Signer | None = ...,
-        api_managed_host: builtins.str = ...,
         string_attributes: collections.abc.Iterable[identity_entities_v2_pb2.StringAttributeV2] | None = ...,
         integer_attributes: collections.abc.Iterable[identity_entities_v2_pb2.IntegerAttributeV2] | None = ...,
         decimal_attributes: collections.abc.Iterable[identity_entities_v2_pb2.DecimalAttributeV2] | None = ...,
@@ -299,11 +269,12 @@ class CreateCredentialRequestV2(google.protobuf.message.Message):
         datetime_attributes: collections.abc.Iterable[identity_entities_v2_pb2.DateTimeAttributeV2] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_version", b"_version", "config_data", b"config_data", "signer", b"signer", "version", b"version"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "api_managed_host", b"api_managed_host", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "issuer_did", b"issuer_did", "schema_id", b"schema_id", "signer", b"signer", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "issuer_did", b"issuer_did", "schema_id", b"schema_id", "signer", b"signer", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_version", b"_version"]) -> typing_extensions.Literal["version"] | None: ...
 
 global___CreateCredentialRequestV2 = CreateCredentialRequestV2
 
+@typing_extensions.final
 class BuildSchemaRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -371,6 +342,7 @@ class BuildSchemaRequestV2(google.protobuf.message.Message):
 
 global___BuildSchemaRequestV2 = BuildSchemaRequestV2
 
+@typing_extensions.final
 class CreateIdentityV2Request(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -396,6 +368,7 @@ class CreateIdentityV2Request(google.protobuf.message.Message):
 
 global___CreateIdentityV2Request = CreateIdentityV2Request
 
+@typing_extensions.final
 class CreateIssuerRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -442,6 +415,7 @@ class CreateIssuerRequest(google.protobuf.message.Message):
 
 global___CreateIssuerRequest = CreateIssuerRequest
 
+@typing_extensions.final
 class GetIssuerByKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -467,6 +441,7 @@ class GetIssuerByKeyRequest(google.protobuf.message.Message):
 
 global___GetIssuerByKeyRequest = GetIssuerByKeyRequest
 
+@typing_extensions.final
 class PublishIssuerStateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -490,6 +465,7 @@ class PublishIssuerStateRequest(google.protobuf.message.Message):
 
 global___PublishIssuerStateRequest = PublishIssuerStateRequest
 
+@typing_extensions.final
 class CreateCredentialResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -511,6 +487,7 @@ class CreateCredentialResponseV2(google.protobuf.message.Message):
 
 global___CreateCredentialResponseV2 = CreateCredentialResponseV2
 
+@typing_extensions.final
 class CreateIdentityV2Response(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -531,6 +508,7 @@ class CreateIdentityV2Response(google.protobuf.message.Message):
 
 global___CreateIdentityV2Response = CreateIdentityV2Response
 
+@typing_extensions.final
 class CreateIssuerResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -551,6 +529,7 @@ class CreateIssuerResponse(google.protobuf.message.Message):
 
 global___CreateIssuerResponse = CreateIssuerResponse
 
+@typing_extensions.final
 class BuildSchemaResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -572,6 +551,7 @@ class BuildSchemaResponseV2(google.protobuf.message.Message):
 
 global___BuildSchemaResponseV2 = BuildSchemaResponseV2
 
+@typing_extensions.final
 class PublishIssuerStateResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -593,6 +573,7 @@ class PublishIssuerStateResponse(google.protobuf.message.Message):
 
 global___PublishIssuerStateResponse = PublishIssuerStateResponse
 
+@typing_extensions.final
 class RevokeCredentialRequestV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -617,6 +598,7 @@ class RevokeCredentialRequestV2(google.protobuf.message.Message):
 
 global___RevokeCredentialRequestV2 = RevokeCredentialRequestV2
 
+@typing_extensions.final
 class RevokeCredentialResponseV2(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -637,3 +619,130 @@ class RevokeCredentialResponseV2(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___RevokeCredentialResponseV2 = RevokeCredentialResponseV2
+
+@typing_extensions.final
+class CreateVerificationRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    PROOF_REQUEST_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    proof_request: builtins.str
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        proof_request: builtins.str = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "proof_request", b"proof_request"]) -> None: ...
+
+global___CreateVerificationRequest = CreateVerificationRequest
+
+@typing_extensions.final
+class CreateVerificationResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    RESULT_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def result(self) -> identity_entities_v2_pb2.VerificationReceipt: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        result: identity_entities_v2_pb2.VerificationReceipt | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "result", b"result"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "result", b"result"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___CreateVerificationResponse = CreateVerificationResponse
+
+@typing_extensions.final
+class WaitVerificationRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    SESSION_ID_FIELD_NUMBER: builtins.int
+    TIMEOUT_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    session_id: builtins.int
+    timeout: builtins.int
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        session_id: builtins.int = ...,
+        timeout: builtins.int = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "session_id", b"session_id", "timeout", b"timeout"]) -> None: ...
+
+global___WaitVerificationRequest = WaitVerificationRequest
+
+@typing_extensions.final
+class WaitVerificationResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STATUS_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    status: builtins.bool
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        status: builtins.bool = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "status", b"status"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___WaitVerificationResponse = WaitVerificationResponse
+
+@typing_extensions.final
+class GetVerificationStatusRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    SESSION_ID_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    session_id: builtins.int
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        session_id: builtins.int = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "session_id", b"session_id"]) -> None: ...
+
+global___GetVerificationStatusRequest = GetVerificationStatusRequest
+
+@typing_extensions.final
+class GetVerificationStatusResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STATUS_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    status: builtins.bool
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        status: builtins.bool = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "status", b"status"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___GetVerificationStatusResponse = GetVerificationStatusResponse

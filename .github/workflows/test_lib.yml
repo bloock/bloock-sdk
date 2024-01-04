@@ -18,6 +18,8 @@ on:
         required: true
       dev_api_key:
         required: true
+      dev_identity_api_host:
+        required: true
 
 jobs:
   test:
@@ -63,4 +65,5 @@ jobs:
           DEV_API_HOST: ${{ secrets.dev_api_host }}
           API_KEY: ${{ secrets.api_key }}
           DEV_API_KEY: ${{ secrets.dev_api_key }}
+          DEV_IDENTITY_API_HOST: ${{ secrets.dev_identity_api_host }}
         working-directory: languages/${{ inputs.lang }}
