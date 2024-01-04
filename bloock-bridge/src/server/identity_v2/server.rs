@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use bloock_core::identity_v2::{
     self,
-    entity::{credential::Credential, did_metadata::DidMetadata, schema::Attribute},
+    entity::{credential::Credential, did_metadata::DidMetadata, schema::Attribute, publish_interval::PublishInterval},
 };
 use bloock_keys::{entity::key::Key, KeyType};
 use serde_json::{Number, Value};
@@ -117,6 +117,8 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
             None => DidMetadata::default(),
         };
 
+        let interval: PublishInterval = req.publish_interval().into();
+
         let client = identity_v2::configure(config_data.clone());
         let receipt = client
             .create_issuer(
@@ -125,7 +127,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 req.name.clone(),
                 req.description.clone(),
                 req.image.clone(),
-                req.publish_interval.clone(),
+                interval,
             )
             .await
             .map_err(|e| e.to_string())?;

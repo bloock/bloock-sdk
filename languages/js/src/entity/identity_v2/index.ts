@@ -32,3 +32,4 @@ export * from "./issuer_state_receipt";
 export * from "./schema_builder";
 export * from "./schema";
 export * from "./verification_receipt";
+export * from "./publish_interval_params";

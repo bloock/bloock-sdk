@@ -74,6 +74,25 @@ UNKNOWN_NETWORK: NetworkId.ValueType  # 3
 NO_NETWORK: NetworkId.ValueType  # 4
 global___NetworkId = NetworkId
 
+class _PublishInterval:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _PublishIntervalEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_PublishInterval.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    INTERVAL_1: _PublishInterval.ValueType  # 0
+    INTERVAL_5: _PublishInterval.ValueType  # 1
+    INTERVAL_15: _PublishInterval.ValueType  # 2
+    INTERVAL_60: _PublishInterval.ValueType  # 3
+
+class PublishInterval(_PublishInterval, metaclass=_PublishIntervalEnumTypeWrapper): ...
+
+INTERVAL_1: PublishInterval.ValueType  # 0
+INTERVAL_5: PublishInterval.ValueType  # 1
+INTERVAL_15: PublishInterval.ValueType  # 2
+INTERVAL_60: PublishInterval.ValueType  # 3
+global___PublishInterval = PublishInterval
+
 @typing_extensions.final
 class IdentityKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor

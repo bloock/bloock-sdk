@@ -125,7 +125,7 @@ message CreateIssuerRequest {
     optional string name = 4;
     optional string description = 5;
     optional string image = 6;
-    optional int64 publish_interval = 7;
+    PublishInterval publish_interval = 7;
 }
 
 message GetIssuerByKeyRequest {

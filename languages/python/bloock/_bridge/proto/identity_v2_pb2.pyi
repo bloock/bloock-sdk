@@ -388,7 +388,7 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     name: builtins.str
     description: builtins.str
     image: builtins.str
-    publish_interval: builtins.int
+    publish_interval: identity_entities_v2_pb2.PublishInterval.ValueType
     def __init__(
         self,
         *,
@@ -398,10 +398,10 @@ class CreateIssuerRequest(google.protobuf.message.Message):
         name: builtins.str | None = ...,
         description: builtins.str | None = ...,
         image: builtins.str | None = ...,
-        publish_interval: builtins.int | None = ...,
+        publish_interval: identity_entities_v2_pb2.PublishInterval.ValueType = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "_publish_interval", b"_publish_interval", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name", "publish_interval", b"publish_interval"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "_publish_interval", b"_publish_interval", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name", "publish_interval", b"publish_interval"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_issuer_params", b"_issuer_params", "_name", b"_name", "config_data", b"config_data", "description", b"description", "image", b"image", "issuer_key", b"issuer_key", "issuer_params", b"issuer_params", "name", b"name", "publish_interval", b"publish_interval"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_description", b"_description"]) -> typing_extensions.Literal["description"] | None: ...
     @typing.overload
@@ -410,8 +410,6 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_issuer_params", b"_issuer_params"]) -> typing_extensions.Literal["issuer_params"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_name", b"_name"]) -> typing_extensions.Literal["name"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_publish_interval", b"_publish_interval"]) -> typing_extensions.Literal["publish_interval"] | None: ...
 
 global___CreateIssuerRequest = CreateIssuerRequest
 

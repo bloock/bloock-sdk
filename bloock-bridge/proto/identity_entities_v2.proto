@@ -188,3 +188,10 @@ enum NetworkId {
     UNKNOWN_NETWORK = 3;
     NO_NETWORK = 4;
 }
+
+enum PublishInterval {
+    INTERVAL_1 = 0;
+    INTERVAL_5 = 1;
+    INTERVAL_15 = 2;
+    INTERVAL_60 = 3;
+}

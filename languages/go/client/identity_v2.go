@@ -12,21 +12,21 @@ import (
 )
 
 type IdentityClient struct {
-	bridgeClient   bridge.BloockBridge
-	configData     *proto.ConfigData
+	bridgeClient bridge.BloockBridge
+	configData   *proto.ConfigData
 }
 
 func NewIdentityClient() IdentityClient {
 	return IdentityClient{
-		bridgeClient:   bridge.NewBloockBridge(),
-		configData:     config.NewConfigDataDefault(),
+		bridgeClient: bridge.NewBloockBridge(),
+		configData:   config.NewConfigDataDefault(),
 	}
 }
 
 func NewIdentityClientWithConfig(configData *proto.ConfigData) IdentityClient {
 	return IdentityClient{
-		bridgeClient:   bridge.NewBloockBridge(),
-		configData:     configData,
+		bridgeClient: bridge.NewBloockBridge(),
+		configData:   configData,
 	}
 }
 
@@ -48,9 +48,8 @@ func (c *IdentityClient) CreateIdentity(issuerKey identityV2.IdentityKey, params
 	return res.Did, nil
 }
 
-func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, params identityV2.DidParams, name, description, image string, publishInterval int64) (string, error) {
+func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, publishInterval identityV2.PublishIntervalParams, params identityV2.DidParams, name, description, image string) (string, error) {
 	var iName, iDescription, iImage *string
-	var pInterval *int64
 	if name != "" {
 		iName = &name
 	}
@@ -60,9 +59,6 @@ func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, params i
 	if image != "" {
 		iImage = &image
 	}
-	if publishInterval != 0 {
-		pInterval = &publishInterval
-	}
 
 	res, err := c.bridgeClient.IdentityV2().CreateIssuer(context.Background(), &proto.CreateIssuerRequest{
 		IssuerKey:       issuerKey.ToProto(),
@@ -70,7 +66,7 @@ func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, params i
 		Name:            iName,
 		Description:     iDescription,
 		Image:           iImage,
-		PublishInterval: pInterval,
+		PublishInterval: identityV2.PublishIntervalParamsToProto[publishInterval],
 		ConfigData:      c.configData,
 	})
 
@@ -183,8 +179,8 @@ func (c *IdentityClient) RevokeCredential(credential identityV2.Credential, sign
 
 func (c *IdentityClient) CreateVerification(proofRequest string) (identityV2.VerificationReceipt, error) {
 	res, err := c.bridgeClient.IdentityV2().CreateVerification(context.Background(), &proto.CreateVerificationRequest{
-		ConfigData:     c.configData,
-		ProofRequest:   proofRequest,
+		ConfigData:   c.configData,
+		ProofRequest: proofRequest,
 	})
 
 	if err != nil {
@@ -204,9 +200,9 @@ func (c *IdentityClient) WaitVerification(sessionID int64, params identityV2.Ver
 	}
 
 	res, err := c.bridgeClient.IdentityV2().WaitVerification(context.Background(), &proto.WaitVerificationRequest{
-		ConfigData:     c.configData,
-		SessionId:      sessionID,
-		Timeout:        params.Timeout,
+		ConfigData: c.configData,
+		SessionId:  sessionID,
+		Timeout:    params.Timeout,
 	})
 
 	if err != nil {
@@ -222,8 +218,8 @@ func (c *IdentityClient) WaitVerification(sessionID int64, params identityV2.Ver
 
 func (c *IdentityClient) GetVerificationStatus(sessionID int64) (bool, error) {
 	res, err := c.bridgeClient.IdentityV2().GetVerificationStatus(context.Background(), &proto.GetVerificationStatusRequest{
-		ConfigData:     c.configData,
-		SessionId:      sessionID,
+		ConfigData: c.configData,
+		SessionId:  sessionID,
 	})
 
 	if err != nil {

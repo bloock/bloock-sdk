@@ -88,11 +88,11 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		encodedImage := base64.URLEncoding.EncodeToString(profileImage)
 
-		issuer, err := identityClient.CreateIssuer(issuerKey, identityV2.NewDidParams(), "Bloock Test", "bloock description test", encodedImage, 1)
+		issuer, err := identityClient.CreateIssuer(issuerKey, identityV2.Interval1, identityV2.NewDidParams(), "Bloock Test", "bloock description test", encodedImage)
 		assert.NoError(t, err)
 		assert.True(t, strings.Contains(issuer, "polygonid"))
 
-		_, err = identityClient.CreateIssuer(issuerKey, identityV2.NewDidParams(), "", "", "", 0)
+		_, err = identityClient.CreateIssuer(issuerKey, identityV2.Interval5, identityV2.NewDidParams(), "", "", "")
 		assert.Error(t, err)
 
 		getIssuerDid, err := identityClient.GetIssuerByKey(issuerKey, identityV2.NewDidParams())
@@ -167,7 +167,7 @@ func TestIdentityV2(t *testing.T) {
 		status, err := identityClient.GetVerificationStatus(verification.SessionID)
 		assert.Error(t, err)
 		assert.False(t, status)
-		
+
 		status, err = identityClient.WaitVerification(verification.SessionID, identityV2.VerificationParams{Timeout: 5})
 		assert.Error(t, err)
 		assert.False(t, status)
@@ -186,7 +186,7 @@ func TestIdentityV2(t *testing.T) {
 		issuerParams.Blockchain = identityV2.ListOfBlockchains().Polygon
 		issuerParams.NetworkId = identityV2.ListOfNetworkIds().Mumbai
 
-		issuer, err := identityClient.CreateIssuer(issuerKey, issuerParams, "", "", "", 0)
+		issuer, err := identityClient.CreateIssuer(issuerKey, identityV2.Interval1, issuerParams, "", "", "")
 		assert.NoError(t, err)
 		assert.True(t, strings.Contains(issuer, "iden3"))
 

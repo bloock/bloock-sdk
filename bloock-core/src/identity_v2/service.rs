@@ -27,7 +27,7 @@ use super::{
         proof::CredentialProof,
         revocation_result::RevocationResult,
         schema::{Attribute, Schema},
-        verification_result::VerificationResult,
+        verification_result::VerificationResult, publish_interval::PublishInterval,
     },
     IdentityErrorV2,
 };
@@ -99,7 +99,7 @@ impl<H: Client> IdentityServiceV2<H> {
         name: Option<String>,
         description: Option<String>,
         image: Option<String>,
-        publish_interval: Option<i64>,
+        interval: PublishInterval,
     ) -> BloockResult<CreateIssuerResponse> {
         let req = CreateIssuerRequest {
             did_metadata: DidMetadataRequest {
@@ -111,7 +111,7 @@ impl<H: Client> IdentityServiceV2<H> {
             name,
             description,
             image,
-            publish_interval,
+            publish_interval: interval.get_publish_interval(),
         };
 
         let res: CreateIssuerResponse = self

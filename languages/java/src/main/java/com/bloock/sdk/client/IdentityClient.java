@@ -42,15 +42,16 @@ public class IdentityClient {
     return response.getDid();
   }
 
-  public String createIssuer(IdentityKey issuerKey, String name, String description, String image, long publishInterval) throws Exception {
-    return createIssuer(issuerKey, new DidParams(), name, description, image, publishInterval);
+  public String createIssuer(IdentityKey issuerKey, PublishIntervalParams publishInterval, String name, String description, String image) throws Exception {
+    return createIssuer(issuerKey, publishInterval, new DidParams(), name, description, image);
   }
 
-  public String createIssuer(IdentityKey issuerKey, DidParams issuerParams, String name, String description,
-                             String image, long publishInterval) throws Exception {
+  public String createIssuer(IdentityKey issuerKey, PublishIntervalParams publishInterval, DidParams issuerParams, String name, String description,
+                             String image) throws Exception {
     IdentityV2.CreateIssuerRequest.Builder builder = IdentityV2.CreateIssuerRequest.newBuilder()
         .setIssuerKey(issuerKey.toProto())
         .setIssuerParams(issuerParams.toProto())
+        .setPublishInterval(publishInterval.toProto())
         .setConfigData(this.configData);
 
     if (name != null) {
@@ -63,10 +64,6 @@ public class IdentityClient {
 
     if (image != null) {
       builder.setImage(image);
-    }
-
-    if (publishInterval != 0) {
-      builder.setPublishInterval(publishInterval);
     }
 
     IdentityV2.CreateIssuerRequest request = builder.build();

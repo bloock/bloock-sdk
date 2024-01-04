@@ -23,6 +23,9 @@ import {
   IntegerAttributeV2,
   IntegerEnumAttributeDefinitionV2,
   IssuerStateReceipt,
+  PublishInterval,
+  publishIntervalFromJSON,
+  publishIntervalToJSON,
   SchemaV2,
   StringAttributeDefinitionV2,
   StringAttributeV2,
@@ -124,7 +127,7 @@ export interface CreateIssuerRequest {
   name?: string | undefined;
   description?: string | undefined;
   image?: string | undefined;
-  publishInterval?: number | undefined;
+  publishInterval: PublishInterval;
 }
 
 export interface GetIssuerByKeyRequest {
@@ -1321,7 +1324,7 @@ function createBaseCreateIssuerRequest(): CreateIssuerRequest {
     name: undefined,
     description: undefined,
     image: undefined,
-    publishInterval: undefined,
+    publishInterval: 0,
   };
 }
 
@@ -1345,8 +1348,8 @@ export const CreateIssuerRequest = {
     if (message.image !== undefined) {
       writer.uint32(50).string(message.image);
     }
-    if (message.publishInterval !== undefined) {
-      writer.uint32(56).int64(message.publishInterval);
+    if (message.publishInterval !== 0) {
+      writer.uint32(56).int32(message.publishInterval);
     }
     return writer;
   },
@@ -1377,7 +1380,7 @@ export const CreateIssuerRequest = {
           message.image = reader.string();
           break;
         case 7:
-          message.publishInterval = longToNumber(reader.int64() as Long);
+          message.publishInterval = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1395,7 +1398,7 @@ export const CreateIssuerRequest = {
       name: isSet(object.name) ? String(object.name) : undefined,
       description: isSet(object.description) ? String(object.description) : undefined,
       image: isSet(object.image) ? String(object.image) : undefined,
-      publishInterval: isSet(object.publishInterval) ? Number(object.publishInterval) : undefined,
+      publishInterval: isSet(object.publishInterval) ? publishIntervalFromJSON(object.publishInterval) : 0,
     };
   },
 
@@ -1410,7 +1413,7 @@ export const CreateIssuerRequest = {
     message.name !== undefined && (obj.name = message.name);
     message.description !== undefined && (obj.description = message.description);
     message.image !== undefined && (obj.image = message.image);
-    message.publishInterval !== undefined && (obj.publishInterval = Math.round(message.publishInterval));
+    message.publishInterval !== undefined && (obj.publishInterval = publishIntervalToJSON(message.publishInterval));
     return obj;
   },
 
@@ -1428,7 +1431,7 @@ export const CreateIssuerRequest = {
     message.name = object.name ?? undefined;
     message.description = object.description ?? undefined;
     message.image = object.image ?? undefined;
-    message.publishInterval = object.publishInterval ?? undefined;
+    message.publishInterval = object.publishInterval ?? 0;
     return message;
   },
 };

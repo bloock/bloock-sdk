@@ -20,6 +20,7 @@ use Bloock\Entity\IdentityV2\IssuerStatePublisher;
 use Bloock\Entity\IdentityV2\IssuerStateReceipt;
 use Bloock\Entity\IdentityV2\SchemaBuilder;
 use Bloock\Entity\IdentityV2\VerificationReceipt;
+use Bloock\Entity\IdentityV2\PublishIntervalParams;
 use Bloock\GetIssuerByKeyRequest;
 use Bloock\GetCredentialProofRequest;
 use Bloock\GetSchemaRequestV2;
@@ -63,10 +64,11 @@ class IdentityClient
         return $res->getDid();
     }
 
-    public function createIssuer(IdentityKey $issuerKey, DidParams $didParams = null, string $name = null, string $description = null, string $image = null, int $publishInterval = null): string
+    public function createIssuer(IdentityKey $issuerKey, int $publishInterval, DidParams $didParams = null, string $name = null, string $description = null, string $image = null): string
     {
         $req = new CreateIssuerRequest();
         $req->setIssuerKey($issuerKey->toProto());
+        $req->setPublishInterval(PublishIntervalParams::toProto($publishInterval));
         $req->setConfigData($this->config);
 
         if ($didParams != null) {
@@ -83,10 +85,6 @@ class IdentityClient
 
         if ($image != null) {
             $req->setImage($image);
-        }
-
-        if ($publishInterval != null) {
-            $req->setPublishInterval($publishInterval);
         }
 
         $res = $this->bridge->identityV2->CreateIssuer($req);

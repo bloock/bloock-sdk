@@ -13,7 +13,7 @@ import {
   GetVerificationStatusRequest
 } from "../bridge/proto/identity_v2";
 import { NewConfigData } from "../config/config";
-import { IssuerStateReceipt, Schema, VerificationReceipt } from "../entity/identity_v2";
+import { IssuerStateReceipt, PublishIntervalParams, Schema, VerificationReceipt } from "../entity/identity_v2";
 import { Credential } from "../entity/identity_v2/credential";
 import { CredentialBuilder } from "../entity/identity_v2/credential_builder";
 import { CredentialProof } from "../entity/identity_v2/credential_proof";
@@ -54,11 +54,11 @@ export class IdentityClient {
 
   public createIssuer(
     issuerKey: IdentityKey,
+    publishInterval: PublishIntervalParams,
     issuerParams?: DidParams,
     name?: string,
     description?: string,
     image?: string,
-    publishInterval?: number,
   ): Promise<string> {
     const request = CreateIssuerRequest.fromPartial({
       issuerKey: issuerKey.toProto(),
@@ -66,7 +66,7 @@ export class IdentityClient {
       name: name,
       description: description,
       image: image,
-      publishInterval: publishInterval,
+      publishInterval: PublishIntervalParams.toProto(publishInterval),
       configData: this.configData
     });
 

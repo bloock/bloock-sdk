@@ -11,6 +11,7 @@ use Bloock\Entity\IdentityV2\DidParams;
 use Bloock\Entity\IdentityV2\IdentityKeyArgs;
 use Bloock\Entity\IdentityV2\Method;
 use Bloock\Entity\IdentityV2\Network;
+use Bloock\Entity\IdentityV2\PublishIntervalParams;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
 use Bloock\Entity\Key\ManagedKeyParams;
@@ -81,7 +82,7 @@ final class IdentityV2Test extends TestCase
         $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/profile_image.png");
         $base64File = rtrim(strtr(base64_encode($fileContents), '+/', '-_'), '=');
 
-        $issuer = $identityClient->createIssuer($issuerKey, null, "Bloock Test", "bloock description test", $base64File, 1);
+        $issuer = $identityClient->createIssuer($issuerKey, PublishIntervalParams::Interval1, null, "Bloock Test", "bloock description test", $base64File);
         $this->assertStringContainsString("polygonid", $issuer);
 
         $getIssuerDid = $identityClient->getIssuerByKey($issuerKey);
@@ -91,7 +92,7 @@ final class IdentityV2Test extends TestCase
         $this->assertEquals(null, $getNotFoundIssuerDid);
 
         $issuerParams = new DidParams(Method::IDEN3, Blockchain::POLYGON, Network::MUMBAI);
-        $newIssuer = $identityClient->createIssuer($notFoundIssuerKey, $issuerParams);
+        $newIssuer = $identityClient->createIssuer($notFoundIssuerKey, PublishIntervalParams::Interval5, $issuerParams);
         $this->assertStringContainsString("iden3", $newIssuer);
 
         $schema = $identityClient->buildSchema("Driving License", self::drivingLicenseSchemaType, "1.0", "driving license schema", $issuer)

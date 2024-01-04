@@ -132,6 +132,51 @@ export function networkIdToJSON(object: NetworkId): string {
   }
 }
 
+export enum PublishInterval {
+  INTERVAL_1 = 0,
+  INTERVAL_5 = 1,
+  INTERVAL_15 = 2,
+  INTERVAL_60 = 3,
+  UNRECOGNIZED = -1,
+}
+
+export function publishIntervalFromJSON(object: any): PublishInterval {
+  switch (object) {
+    case 0:
+    case "INTERVAL_1":
+      return PublishInterval.INTERVAL_1;
+    case 1:
+    case "INTERVAL_5":
+      return PublishInterval.INTERVAL_5;
+    case 2:
+    case "INTERVAL_15":
+      return PublishInterval.INTERVAL_15;
+    case 3:
+    case "INTERVAL_60":
+      return PublishInterval.INTERVAL_60;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return PublishInterval.UNRECOGNIZED;
+  }
+}
+
+export function publishIntervalToJSON(object: PublishInterval): string {
+  switch (object) {
+    case PublishInterval.INTERVAL_1:
+      return "INTERVAL_1";
+    case PublishInterval.INTERVAL_5:
+      return "INTERVAL_5";
+    case PublishInterval.INTERVAL_15:
+      return "INTERVAL_15";
+    case PublishInterval.INTERVAL_60:
+      return "INTERVAL_60";
+    case PublishInterval.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface IdentityKey {
   localKey?: LocalKey | undefined;
   managedKey?: ManagedKey | undefined;

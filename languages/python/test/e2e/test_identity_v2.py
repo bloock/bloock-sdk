@@ -13,6 +13,7 @@ from bloock.client.identity_v2 import IdentityClient
 from bloock.client.key import KeyClient
 from bloock.entity.identity_v2.bjj_identity_key import BjjIdentityKey
 from bloock.entity.identity_v2.identity_key_args import IdentityKeyArgs
+from bloock.entity.identity_v2.publish_interval_params import PublishIntervalParams
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed_key_params import ManagedKeyParams
@@ -74,10 +75,10 @@ class TestIdentityV2(unittest.TestCase):
         base64_file = base64.urlsafe_b64encode(file_bytes).decode('utf-8')
 
         issuer = identity_client.create_issuer(
-            issuer_key, None, "Bloock Test", "bloock description test", base64_file, 1)
+            issuer_key, PublishIntervalParams.Interval1, None, "Bloock Test", "bloock description test", base64_file)
 
         with self.assertRaises(Exception):
-            identity_client.create_issuer(issuer_key)
+            identity_client.create_issuer(issuer_key, PublishIntervalParams.Interval1)
 
         get_issuer_did = identity_client.get_issuer_by_key(issuer_key)
         self.assertTrue(get_issuer_did.__contains__("polygonid"))
@@ -89,7 +90,7 @@ class TestIdentityV2(unittest.TestCase):
         issuer_params = DidParams(
             Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI)
         new_issuer = identity_client.create_issuer(
-            not_found_issuer_key, issuer_params)
+            not_found_issuer_key, PublishIntervalParams.Interval5, issuer_params)
         self.assertTrue(new_issuer.__contains__("iden3"))
 
         schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema", issuer) \

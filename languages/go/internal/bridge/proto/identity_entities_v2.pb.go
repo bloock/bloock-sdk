@@ -173,6 +173,58 @@ func (NetworkId) EnumDescriptor() ([]byte, []int) {
 	return file_identity_entities_v2_proto_rawDescGZIP(), []int{2}
 }
 
+type PublishInterval int32
+
+const (
+	PublishInterval_INTERVAL_1  PublishInterval = 0
+	PublishInterval_INTERVAL_5  PublishInterval = 1
+	PublishInterval_INTERVAL_15 PublishInterval = 2
+	PublishInterval_INTERVAL_60 PublishInterval = 3
+)
+
+// Enum value maps for PublishInterval.
+var (
+	PublishInterval_name = map[int32]string{
+		0: "INTERVAL_1",
+		1: "INTERVAL_5",
+		2: "INTERVAL_15",
+		3: "INTERVAL_60",
+	}
+	PublishInterval_value = map[string]int32{
+		"INTERVAL_1":  0,
+		"INTERVAL_5":  1,
+		"INTERVAL_15": 2,
+		"INTERVAL_60": 3,
+	}
+)
+
+func (x PublishInterval) Enum() *PublishInterval {
+	p := new(PublishInterval)
+	*p = x
+	return p
+}
+
+func (x PublishInterval) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PublishInterval) Descriptor() protoreflect.EnumDescriptor {
+	return file_identity_entities_v2_proto_enumTypes[3].Descriptor()
+}
+
+func (PublishInterval) Type() protoreflect.EnumType {
+	return &file_identity_entities_v2_proto_enumTypes[3]
+}
+
+func (x PublishInterval) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PublishInterval.Descriptor instead.
+func (PublishInterval) EnumDescriptor() ([]byte, []int) {
+	return file_identity_entities_v2_proto_rawDescGZIP(), []int{3}
+}
+
 type IdentityKey struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2079,13 +2131,18 @@ var file_identity_entities_v2_proto_rawDesc = []byte{
 	0x42, 0x41, 0x49, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x47, 0x4f, 0x45, 0x52, 0x4c, 0x49, 0x10,
 	0x02, 0x12, 0x13, 0x0a, 0x0f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x5f, 0x4e, 0x45, 0x54,
 	0x57, 0x4f, 0x52, 0x4b, 0x10, 0x03, 0x12, 0x0e, 0x0a, 0x0a, 0x4e, 0x4f, 0x5f, 0x4e, 0x45, 0x54,
-	0x57, 0x4f, 0x52, 0x4b, 0x10, 0x04, 0x42, 0x57, 0x0a, 0x1b, 0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x6c,
-	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x5a, 0x38, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2d,
-	0x73, 0x64, 0x6b, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e,
-	0x61, 0x6c, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x57, 0x4f, 0x52, 0x4b, 0x10, 0x04, 0x2a, 0x53, 0x0a, 0x0f, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x73,
+	0x68, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x12, 0x0e, 0x0a, 0x0a, 0x49, 0x4e, 0x54,
+	0x45, 0x52, 0x56, 0x41, 0x4c, 0x5f, 0x31, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x49, 0x4e, 0x54,
+	0x45, 0x52, 0x56, 0x41, 0x4c, 0x5f, 0x35, 0x10, 0x01, 0x12, 0x0f, 0x0a, 0x0b, 0x49, 0x4e, 0x54,
+	0x45, 0x52, 0x56, 0x41, 0x4c, 0x5f, 0x31, 0x35, 0x10, 0x02, 0x12, 0x0f, 0x0a, 0x0b, 0x49, 0x4e,
+	0x54, 0x45, 0x52, 0x56, 0x41, 0x4c, 0x5f, 0x36, 0x30, 0x10, 0x03, 0x42, 0x57, 0x0a, 0x1b, 0x63,
+	0x6f, 0x6d, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x62, 0x72,
+	0x69, 0x64, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x5a, 0x38, 0x67, 0x69, 0x74, 0x68,
+	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2f, 0x62, 0x6c,
+	0x6f, 0x6f, 0x63, 0x6b, 0x2d, 0x73, 0x64, 0x6b, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f, 0x69,
+	0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2100,48 +2157,49 @@ func file_identity_entities_v2_proto_rawDescGZIP() []byte {
 	return file_identity_entities_v2_proto_rawDescData
 }
 
-var file_identity_entities_v2_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_identity_entities_v2_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_identity_entities_v2_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_identity_entities_v2_proto_goTypes = []interface{}{
 	(Method)(0),                              // 0: bloock.Method
 	(Blockchain)(0),                          // 1: bloock.Blockchain
 	(NetworkId)(0),                           // 2: bloock.NetworkId
-	(*IdentityKey)(nil),                      // 3: bloock.IdentityKey
-	(*CredentialV2)(nil),                     // 4: bloock.CredentialV2
-	(*CredentialProofV2)(nil),                // 5: bloock.CredentialProofV2
-	(*CredentialStatusV2)(nil),               // 6: bloock.CredentialStatusV2
-	(*CredentialSchemaV2)(nil),               // 7: bloock.CredentialSchemaV2
-	(*StringAttributeV2)(nil),                // 8: bloock.StringAttributeV2
-	(*IntegerAttributeV2)(nil),               // 9: bloock.IntegerAttributeV2
-	(*DecimalAttributeV2)(nil),               // 10: bloock.DecimalAttributeV2
-	(*BooleanAttributeV2)(nil),               // 11: bloock.BooleanAttributeV2
-	(*DateAttributeV2)(nil),                  // 12: bloock.DateAttributeV2
-	(*DateTimeAttributeV2)(nil),              // 13: bloock.DateTimeAttributeV2
-	(*StringAttributeDefinitionV2)(nil),      // 14: bloock.StringAttributeDefinitionV2
-	(*IntegerAttributeDefinitionV2)(nil),     // 15: bloock.IntegerAttributeDefinitionV2
-	(*DecimalAttributeDefinitionV2)(nil),     // 16: bloock.DecimalAttributeDefinitionV2
-	(*BooleanAttributeDefinitionV2)(nil),     // 17: bloock.BooleanAttributeDefinitionV2
-	(*DateAttributeDefinitionV2)(nil),        // 18: bloock.DateAttributeDefinitionV2
-	(*DateTimeAttributeDefinitionV2)(nil),    // 19: bloock.DateTimeAttributeDefinitionV2
-	(*StringEnumAttributeDefinitionV2)(nil),  // 20: bloock.StringEnumAttributeDefinitionV2
-	(*IntegerEnumAttributeDefinitionV2)(nil), // 21: bloock.IntegerEnumAttributeDefinitionV2
-	(*DecimalEnumAttributeDefinitionV2)(nil), // 22: bloock.DecimalEnumAttributeDefinitionV2
-	(*CredentialReceiptV2)(nil),              // 23: bloock.CredentialReceiptV2
-	(*IssuerStateReceipt)(nil),               // 24: bloock.IssuerStateReceipt
-	(*SchemaV2)(nil),                         // 25: bloock.SchemaV2
-	(*CredentialRevocationV2)(nil),           // 26: bloock.CredentialRevocationV2
-	(*VerificationReceipt)(nil),              // 27: bloock.VerificationReceipt
-	(*DidParams)(nil),                        // 28: bloock.DidParams
-	(*LocalKey)(nil),                         // 29: bloock.LocalKey
-	(*ManagedKey)(nil),                       // 30: bloock.ManagedKey
+	(PublishInterval)(0),                     // 3: bloock.PublishInterval
+	(*IdentityKey)(nil),                      // 4: bloock.IdentityKey
+	(*CredentialV2)(nil),                     // 5: bloock.CredentialV2
+	(*CredentialProofV2)(nil),                // 6: bloock.CredentialProofV2
+	(*CredentialStatusV2)(nil),               // 7: bloock.CredentialStatusV2
+	(*CredentialSchemaV2)(nil),               // 8: bloock.CredentialSchemaV2
+	(*StringAttributeV2)(nil),                // 9: bloock.StringAttributeV2
+	(*IntegerAttributeV2)(nil),               // 10: bloock.IntegerAttributeV2
+	(*DecimalAttributeV2)(nil),               // 11: bloock.DecimalAttributeV2
+	(*BooleanAttributeV2)(nil),               // 12: bloock.BooleanAttributeV2
+	(*DateAttributeV2)(nil),                  // 13: bloock.DateAttributeV2
+	(*DateTimeAttributeV2)(nil),              // 14: bloock.DateTimeAttributeV2
+	(*StringAttributeDefinitionV2)(nil),      // 15: bloock.StringAttributeDefinitionV2
+	(*IntegerAttributeDefinitionV2)(nil),     // 16: bloock.IntegerAttributeDefinitionV2
+	(*DecimalAttributeDefinitionV2)(nil),     // 17: bloock.DecimalAttributeDefinitionV2
+	(*BooleanAttributeDefinitionV2)(nil),     // 18: bloock.BooleanAttributeDefinitionV2
+	(*DateAttributeDefinitionV2)(nil),        // 19: bloock.DateAttributeDefinitionV2
+	(*DateTimeAttributeDefinitionV2)(nil),    // 20: bloock.DateTimeAttributeDefinitionV2
+	(*StringEnumAttributeDefinitionV2)(nil),  // 21: bloock.StringEnumAttributeDefinitionV2
+	(*IntegerEnumAttributeDefinitionV2)(nil), // 22: bloock.IntegerEnumAttributeDefinitionV2
+	(*DecimalEnumAttributeDefinitionV2)(nil), // 23: bloock.DecimalEnumAttributeDefinitionV2
+	(*CredentialReceiptV2)(nil),              // 24: bloock.CredentialReceiptV2
+	(*IssuerStateReceipt)(nil),               // 25: bloock.IssuerStateReceipt
+	(*SchemaV2)(nil),                         // 26: bloock.SchemaV2
+	(*CredentialRevocationV2)(nil),           // 27: bloock.CredentialRevocationV2
+	(*VerificationReceipt)(nil),              // 28: bloock.VerificationReceipt
+	(*DidParams)(nil),                        // 29: bloock.DidParams
+	(*LocalKey)(nil),                         // 30: bloock.LocalKey
+	(*ManagedKey)(nil),                       // 31: bloock.ManagedKey
 }
 var file_identity_entities_v2_proto_depIdxs = []int32{
-	29, // 0: bloock.IdentityKey.local_key:type_name -> bloock.LocalKey
-	30, // 1: bloock.IdentityKey.managed_key:type_name -> bloock.ManagedKey
-	6,  // 2: bloock.CredentialV2.credential_status:type_name -> bloock.CredentialStatusV2
-	7,  // 3: bloock.CredentialV2.credential_schema:type_name -> bloock.CredentialSchemaV2
-	5,  // 4: bloock.CredentialV2.proof:type_name -> bloock.CredentialProofV2
-	4,  // 5: bloock.CredentialReceiptV2.credential:type_name -> bloock.CredentialV2
+	30, // 0: bloock.IdentityKey.local_key:type_name -> bloock.LocalKey
+	31, // 1: bloock.IdentityKey.managed_key:type_name -> bloock.ManagedKey
+	7,  // 2: bloock.CredentialV2.credential_status:type_name -> bloock.CredentialStatusV2
+	8,  // 3: bloock.CredentialV2.credential_schema:type_name -> bloock.CredentialSchemaV2
+	6,  // 4: bloock.CredentialV2.proof:type_name -> bloock.CredentialProofV2
+	5,  // 5: bloock.CredentialReceiptV2.credential:type_name -> bloock.CredentialV2
 	0,  // 6: bloock.DidParams.method:type_name -> bloock.Method
 	1,  // 7: bloock.DidParams.blockchain:type_name -> bloock.Blockchain
 	2,  // 8: bloock.DidParams.network_id:type_name -> bloock.NetworkId
@@ -2479,7 +2537,7 @@ func file_identity_entities_v2_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_identity_entities_v2_proto_rawDesc,
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   0,

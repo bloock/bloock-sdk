@@ -4,7 +4,7 @@ use bloock_core::identity_v2::entity::{
         CredentialStatus as CoreCredentialStatus,
     },
     did_metadata::DidMetadata,
-    proof::CredentialProof as CoreCredentialProof,
+    proof::CredentialProof as CoreCredentialProof, publish_interval::PublishInterval as CorePublishInterval,
 };
 use bloock_identity_rs::did::{Blockchain as CoreBlockchain, DIDMethod, Network as CoreNetworkId};
 
@@ -12,7 +12,7 @@ use crate::{
     error::BridgeError,
     items::{
         Blockchain, CredentialProofV2, CredentialSchemaV2, CredentialStatusV2, CredentialV2,
-        DidParams, Method, NetworkId,
+        DidParams, Method, NetworkId, PublishInterval,
     },
 };
 
@@ -65,6 +65,17 @@ impl From<NetworkId> for CoreNetworkId {
             NetworkId::Goerli => CoreNetworkId::Goerli,
             NetworkId::UnknownNetwork => CoreNetworkId::Mumbai,
             NetworkId::NoNetwork => CoreNetworkId::Mumbai,
+        }
+    }
+}
+
+impl From<PublishInterval> for CorePublishInterval {
+    fn from(p: PublishInterval) -> Self {
+        match p {
+            PublishInterval::Interval1 => CorePublishInterval::Interval1,
+            PublishInterval::Interval5 => CorePublishInterval::Interval5,
+            PublishInterval::Interval15 => CorePublishInterval::Interval15,
+            PublishInterval::Interval60 => CorePublishInterval::Interval60,
         }
     }
 }

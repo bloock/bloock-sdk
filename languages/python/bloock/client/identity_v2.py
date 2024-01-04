@@ -11,6 +11,7 @@ from bloock._bridge.proto.identity_v2_pb2 import GetIssuerByKeyRequest
 from bloock._bridge.proto.identity_v2_pb2 import GetCredentialProofRequest
 from bloock._bridge.proto.identity_v2_pb2 import RevokeCredentialRequestV2
 from bloock.entity.identity_v2.issuer_state_receipt import IssuerStateReceipt
+from bloock.entity.identity_v2.publish_interval_params import PublishIntervalParams
 from bloock.entity.identity_v2.schema_builder import SchemaBuilder
 from bloock.entity.identity_v2.credential_builder import CredentialBuilder
 from bloock.entity.identity_v2.credential_proof import CredentialProof
@@ -39,7 +40,7 @@ class IdentityClient:
             raise Exception(res.error.message)
         return res.did
     
-    def create_issuer(self, issuer_key: IdentityKey, issuer_params: Optional[DidParams] = None, name: str = None, description: str = None, image: str = None, publish_interval: int = None) -> str:
+    def create_issuer(self, issuer_key: IdentityKey, publish_interval: PublishIntervalParams, issuer_params: Optional[DidParams] = None, name: str = None, description: str = None, image: str = None) -> str:
         res = self.bridge_client.identity_v2().CreateIssuer(
             CreateIssuerRequest(
                 config_data=self.config_data,
@@ -48,7 +49,7 @@ class IdentityClient:
                 name=name if name is not None else None,
                 description=description if description is not None else None,
                 image=image if image is not None else None,
-                publish_interval=publish_interval if publish_interval is not None else None,
+                publish_interval=PublishIntervalParams.to_proto(publish_interval),
             )
         )
 

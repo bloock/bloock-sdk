@@ -16,6 +16,7 @@ import { initDevSdk } from "./util";
 import path from "path";
 import { readFileSync } from "fs";
 import base64url from "urlsafe-base64";
+import { PublishIntervalParams } from "../../dist/entity/identity_v2";
 
 describe("Identity V2 Tests", () => {
   const credentialJson =
@@ -83,16 +84,16 @@ describe("Identity V2 Tests", () => {
 
     let issuer = await identityClient.createIssuer(
       issuerKey,
+      PublishIntervalParams.Interval1,
       undefined,
       "Bloock Test",
       "bloock description test",
-      encodedFile,
-      1
+      encodedFile
     );
     expect(issuer.includes("polygonid")).toBeTruthy();
 
     try {
-      await identityClient.createIssuer(issuerKey);
+      await identityClient.createIssuer(issuerKey, PublishIntervalParams.Interval5);
     } catch (error) {
       expect(error).toBeTruthy;
     }
@@ -112,6 +113,7 @@ describe("Identity V2 Tests", () => {
     );
     let newIssuer = await identityClient.createIssuer(
       notFoundIssuerKey,
+      PublishIntervalParams.Interval1,
       issuerParams
     );
     expect(newIssuer.includes("iden3")).toBeTruthy();
