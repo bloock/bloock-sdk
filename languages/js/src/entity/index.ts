@@ -36,6 +36,7 @@ export {
   IssuerStateReceipt,
   SchemaBuilder,
   Schema,
+  PublishIntervalParams
 } from "./identity_v2";
 export * from "./integrity";
 export * from "./key";

@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { BjjIdentityKey, Signer } from "../../dist/index";
+import { BjjIdentityKey, PublishIntervalParams, Signer } from "../../dist/index";
 import {
   CredentialV2,
   IdentityClient,
@@ -16,7 +16,6 @@ import { initDevSdk } from "./util";
 import path from "path";
 import { readFileSync } from "fs";
 import base64url from "urlsafe-base64";
-import { PublishIntervalParams } from "../../dist/entity/identity_v2";
 
 describe("Identity V2 Tests", () => {
   const credentialJson =
