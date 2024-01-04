@@ -64,45 +64,6 @@ class GetSchemaResponseV2(google.protobuf.message.Message):
 global___GetSchemaResponseV2 = GetSchemaResponseV2
 
 @typing_extensions.final
-class GetIssuerListRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> None: ...
-
-global___GetIssuerListRequest = GetIssuerListRequest
-
-@typing_extensions.final
-class GetIssuerListResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    DID_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def did(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        did: collections.abc.Iterable[builtins.str] | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "did", b"did", "error", b"error"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___GetIssuerListResponse = GetIssuerListResponse
-
-@typing_extensions.final
 class GetIssuerByKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

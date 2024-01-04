@@ -92,9 +92,6 @@ class TestIdentityV2(unittest.TestCase):
             not_found_issuer_key, issuer_params)
         self.assertTrue(new_issuer.__contains__("iden3"))
 
-        issuers = identity_client.get_issuer_list()
-        self.assertIsNotNone(issuers)
-
         schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema", issuer) \
             .add_integer_attribute("License Type", "license_type", "license type", False) \
             .add_decimal_attribute("Quantity Oil", "quantity_oil", "quantity oil", True) \

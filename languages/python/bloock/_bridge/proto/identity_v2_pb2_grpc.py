@@ -24,11 +24,6 @@ class IdentityServiceV2Stub(object):
                 request_serializer=identity__v2__pb2.CreateIssuerRequest.SerializeToString,
                 response_deserializer=identity__v2__pb2.CreateIssuerResponse.FromString,
                 )
-        self.GetIssuerList = channel.unary_unary(
-                '/bloock.IdentityServiceV2/GetIssuerList',
-                request_serializer=identity__v2__pb2.GetIssuerListRequest.SerializeToString,
-                response_deserializer=identity__v2__pb2.GetIssuerListResponse.FromString,
-                )
         self.GetIssuerByKey = channel.unary_unary(
                 '/bloock.IdentityServiceV2/GetIssuerByKey',
                 request_serializer=identity__v2__pb2.GetIssuerByKeyRequest.SerializeToString,
@@ -101,12 +96,6 @@ class IdentityServiceV2Servicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def CreateIssuer(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetIssuerList(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -196,11 +185,6 @@ def add_IdentityServiceV2Servicer_to_server(servicer, server):
                     servicer.CreateIssuer,
                     request_deserializer=identity__v2__pb2.CreateIssuerRequest.FromString,
                     response_serializer=identity__v2__pb2.CreateIssuerResponse.SerializeToString,
-            ),
-            'GetIssuerList': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetIssuerList,
-                    request_deserializer=identity__v2__pb2.GetIssuerListRequest.FromString,
-                    response_serializer=identity__v2__pb2.GetIssuerListResponse.SerializeToString,
             ),
             'GetIssuerByKey': grpc.unary_unary_rpc_method_handler(
                     servicer.GetIssuerByKey,
@@ -303,23 +287,6 @@ class IdentityServiceV2(object):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityServiceV2/CreateIssuer',
             identity__v2__pb2.CreateIssuerRequest.SerializeToString,
             identity__v2__pb2.CreateIssuerResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetIssuerList(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/bloock.IdentityServiceV2/GetIssuerList',
-            identity__v2__pb2.GetIssuerListRequest.SerializeToString,
-            identity__v2__pb2.GetIssuerListResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
