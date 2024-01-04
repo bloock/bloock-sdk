@@ -2,7 +2,6 @@ import { BloockBridge } from "../bridge/bridge";
 import { ConfigData } from "../bridge/proto/config";
 import {
   CreateIssuerRequest,
-  GetIssuerListRequest,
   GetIssuerByKeyRequest,
   GetCredentialProofRequest,
   RevokeCredentialRequestV2,
@@ -74,22 +73,6 @@ export class IdentityClient {
     return this.bridge
       .getIdentityV2()
       .CreateIssuer(request)
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return res.did;
-      });
-  }
-
-  public getIssuerList(): Promise<string[]> {
-    const request = GetIssuerListRequest.fromPartial({
-      configData: this.configData
-    });
-
-    return this.bridge
-      .getIdentityV2()
-      .GetIssuerList(request)
       .then(res => {
         if (res.error) {
           throw res.error;

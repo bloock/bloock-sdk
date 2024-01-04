@@ -94,9 +94,6 @@ final class IdentityV2Test extends TestCase
         $newIssuer = $identityClient->createIssuer($notFoundIssuerKey, $issuerParams);
         $this->assertStringContainsString("iden3", $newIssuer);
 
-        $issuers = $identityClient->getIssuerList();
-        $this->assertNotNull($issuers);
-
         $schema = $identityClient->buildSchema("Driving License", self::drivingLicenseSchemaType, "1.0", "driving license schema", $issuer)
             ->addIntegerAttribute("License Type", "license_type", "license type", false)
             ->addDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true)

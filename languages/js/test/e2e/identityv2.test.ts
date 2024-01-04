@@ -116,9 +116,6 @@ describe("Identity V2 Tests", () => {
     );
     expect(newIssuer.includes("iden3")).toBeTruthy();
 
-    let issuers = await identityClient.getIssuerList();
-    expect(issuers).toBeTruthy();
-
     let schema = await identityClient
       .buildSchema(
         "Driving License",

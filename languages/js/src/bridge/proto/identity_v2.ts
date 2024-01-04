@@ -41,15 +41,6 @@ export interface GetSchemaResponseV2 {
   error?: Error | undefined;
 }
 
-export interface GetIssuerListRequest {
-  configData?: ConfigData;
-}
-
-export interface GetIssuerListResponse {
-  did: string[];
-  error?: Error | undefined;
-}
-
 export interface GetIssuerByKeyResponse {
   did: string;
   error?: Error | undefined;
@@ -331,118 +322,6 @@ export const GetSchemaResponseV2 = {
     message.schema = (object.schema !== undefined && object.schema !== null)
       ? SchemaV2.fromPartial(object.schema)
       : undefined;
-    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
-    return message;
-  },
-};
-
-function createBaseGetIssuerListRequest(): GetIssuerListRequest {
-  return { configData: undefined };
-}
-
-export const GetIssuerListRequest = {
-  encode(message: GetIssuerListRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.configData !== undefined) {
-      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): GetIssuerListRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetIssuerListRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GetIssuerListRequest {
-    return { configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined };
-  },
-
-  toJSON(message: GetIssuerListRequest): unknown {
-    const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<GetIssuerListRequest>, I>>(object: I): GetIssuerListRequest {
-    const message = createBaseGetIssuerListRequest();
-    message.configData = (object.configData !== undefined && object.configData !== null)
-      ? ConfigData.fromPartial(object.configData)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseGetIssuerListResponse(): GetIssuerListResponse {
-  return { did: [], error: undefined };
-}
-
-export const GetIssuerListResponse = {
-  encode(message: GetIssuerListResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.did) {
-      writer.uint32(10).string(v!);
-    }
-    if (message.error !== undefined) {
-      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): GetIssuerListResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetIssuerListResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.did.push(reader.string());
-          break;
-        case 2:
-          message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GetIssuerListResponse {
-    return {
-      did: Array.isArray(object?.did) ? object.did.map((e: any) => String(e)) : [],
-      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
-    };
-  },
-
-  toJSON(message: GetIssuerListResponse): unknown {
-    const obj: any = {};
-    if (message.did) {
-      obj.did = message.did.map((e) => e);
-    } else {
-      obj.did = [];
-    }
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<GetIssuerListResponse>, I>>(object: I): GetIssuerListResponse {
-    const message = createBaseGetIssuerListResponse();
-    message.did = object.did?.map((e) => e) || [];
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },
@@ -2513,7 +2392,6 @@ export const GetVerificationStatusResponse = {
 export interface IdentityServiceV2 {
   CreateIdentity(request: CreateIdentityV2Request): Promise<CreateIdentityV2Response>;
   CreateIssuer(request: CreateIssuerRequest): Promise<CreateIssuerResponse>;
-  GetIssuerList(request: GetIssuerListRequest): Promise<GetIssuerListResponse>;
   GetIssuerByKey(request: GetIssuerByKeyRequest): Promise<GetIssuerByKeyResponse>;
   BuildSchema(request: BuildSchemaRequestV2): Promise<BuildSchemaResponseV2>;
   GetSchema(request: GetSchemaRequestV2): Promise<GetSchemaResponseV2>;
@@ -2534,7 +2412,6 @@ export class IdentityServiceV2ClientImpl implements IdentityServiceV2 {
     this.rpc = rpc;
     this.CreateIdentity = this.CreateIdentity.bind(this);
     this.CreateIssuer = this.CreateIssuer.bind(this);
-    this.GetIssuerList = this.GetIssuerList.bind(this);
     this.GetIssuerByKey = this.GetIssuerByKey.bind(this);
     this.BuildSchema = this.BuildSchema.bind(this);
     this.GetSchema = this.GetSchema.bind(this);
@@ -2558,12 +2435,6 @@ export class IdentityServiceV2ClientImpl implements IdentityServiceV2 {
     const data = CreateIssuerRequest.encode(request).finish();
     const promise = this.rpc.request("bloock.IdentityServiceV2", "CreateIssuer", data);
     return promise.then((data) => CreateIssuerResponse.decode(new _m0.Reader(data)));
-  }
-
-  GetIssuerList(request: GetIssuerListRequest): Promise<GetIssuerListResponse> {
-    const data = GetIssuerListRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityServiceV2", "GetIssuerList", data);
-    return promise.then((data) => GetIssuerListResponse.decode(new _m0.Reader(data)));
   }
 
   GetIssuerByKey(request: GetIssuerByKeyRequest): Promise<GetIssuerByKeyResponse> {
@@ -2657,14 +2528,6 @@ export const IdentityServiceV2Definition = {
       requestType: CreateIssuerRequest,
       requestStream: false,
       responseType: CreateIssuerResponse,
-      responseStream: false,
-      options: {},
-    },
-    getIssuerList: {
-      name: "GetIssuerList",
-      requestType: GetIssuerListRequest,
-      requestStream: false,
-      responseType: GetIssuerListResponse,
       responseStream: false,
       options: {},
     },

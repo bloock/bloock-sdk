@@ -16,11 +16,11 @@ use crate::{
         CredentialProofV2, CredentialReceiptV2, CredentialRevocationV2, CredentialToJsonRequestV2,
         CredentialToJsonResponseV2, CredentialV2, GetCredentialProofRequest,
         GetCredentialProofResponse, GetIssuerByKeyRequest, GetIssuerByKeyResponse,
-        GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2, GetSchemaResponseV2,
-        GetVerificationStatusRequest, GetVerificationStatusResponse, IdentityServiceV2Handler,
-        IssuerStateReceipt, PublishIssuerStateRequest, PublishIssuerStateResponse,
-        RevokeCredentialRequestV2, RevokeCredentialResponseV2, SchemaV2, VerificationReceipt,
-        WaitVerificationRequest, WaitVerificationResponse,
+        GetSchemaRequestV2, GetSchemaResponseV2, GetVerificationStatusRequest,
+        GetVerificationStatusResponse, IdentityServiceV2Handler, IssuerStateReceipt,
+        PublishIssuerStateRequest, PublishIssuerStateResponse, RevokeCredentialRequestV2,
+        RevokeCredentialResponseV2, SchemaV2, VerificationReceipt, WaitVerificationRequest,
+        WaitVerificationResponse,
     },
     server::response_types::RequestConfigData,
 };
@@ -181,23 +181,6 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
 
         Ok(GetIssuerByKeyResponse {
             did: issuer,
-            error: None,
-        })
-    }
-
-    async fn get_issuer_list(
-        &self,
-        req: &GetIssuerListRequest,
-    ) -> Result<GetIssuerListResponse, String> {
-        let config_data = req.get_config_data()?;
-
-        let client = identity_v2::configure(config_data.clone());
-        let receipt = client.get_issuer_list().await.map_err(|e| e.to_string())?;
-
-        let res: Vec<String> = receipt.iter().map(|r| r.did.clone()).collect();
-
-        Ok(GetIssuerListResponse {
-            did: res,
             error: None,
         })
     }
@@ -613,10 +596,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
         let client = identity_v2::configure(config_data.clone());
 
         let res = client
-            .wait_verification(
-                req.session_id.clone(),
-                req.timeout.clone(),
-            )
+            .wait_verification(req.session_id.clone(), req.timeout.clone())
             .await
             .map_err(|e| e.to_string())?;
 

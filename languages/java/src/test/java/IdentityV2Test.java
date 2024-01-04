@@ -102,9 +102,6 @@ public class IdentityV2Test {
     String newIssuer = identityClient.createIssuer(notFoundIssuerKey, issuerParams, null, null, null, 0);
     assertTrue(newIssuer.contains("iden3"));
 
-    List<String> issuers = identityClient.getIssuerList();
-    assertNotNull(issuers);
-
     List<String> stringList = new ArrayList<>();
     stringList.add("big");
     stringList.add("medium");
@@ -205,7 +202,7 @@ public class IdentityV2Test {
     proofRequestMap.put("id", 1704207344);
 
     Map<String, Object> queryMap = new HashMap<>();
-    queryMap.put("allowedIssuers", List.of("*"));
+    queryMap.put("allowedIssuers", Arrays.asList("*"));
 
     Map<String, Object> credentialSubjectMap = new HashMap<>();
     credentialSubjectMap.put("birth_date", new HashMap<>());

@@ -32,8 +32,6 @@ pub enum IdentityErrorV2 {
     UpdateDraftStateSignatureError(String),
     #[error("Error getting issuer by key: {0}")]
     GetIssuerByKeyError(String),
-    #[error("Error while getting issuer list: {0}")]
-    IssuerListError(String),
     #[error("Error while getting offer: {0}")]
     GetOfferError(String),
     #[error("Error while redeeming credential: {0}")]

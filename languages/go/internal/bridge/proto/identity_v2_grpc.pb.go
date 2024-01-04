@@ -24,7 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type IdentityServiceV2Client interface {
 	CreateIdentity(ctx context.Context, in *CreateIdentityV2Request, opts ...grpc.CallOption) (*CreateIdentityV2Response, error)
 	CreateIssuer(ctx context.Context, in *CreateIssuerRequest, opts ...grpc.CallOption) (*CreateIssuerResponse, error)
-	GetIssuerList(ctx context.Context, in *GetIssuerListRequest, opts ...grpc.CallOption) (*GetIssuerListResponse, error)
 	GetIssuerByKey(ctx context.Context, in *GetIssuerByKeyRequest, opts ...grpc.CallOption) (*GetIssuerByKeyResponse, error)
 	BuildSchema(ctx context.Context, in *BuildSchemaRequestV2, opts ...grpc.CallOption) (*BuildSchemaResponseV2, error)
 	GetSchema(ctx context.Context, in *GetSchemaRequestV2, opts ...grpc.CallOption) (*GetSchemaResponseV2, error)
@@ -59,15 +58,6 @@ func (c *identityServiceV2Client) CreateIdentity(ctx context.Context, in *Create
 func (c *identityServiceV2Client) CreateIssuer(ctx context.Context, in *CreateIssuerRequest, opts ...grpc.CallOption) (*CreateIssuerResponse, error) {
 	out := new(CreateIssuerResponse)
 	err := c.cc.Invoke(ctx, "/bloock.IdentityServiceV2/CreateIssuer", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *identityServiceV2Client) GetIssuerList(ctx context.Context, in *GetIssuerListRequest, opts ...grpc.CallOption) (*GetIssuerListResponse, error) {
-	out := new(GetIssuerListResponse)
-	err := c.cc.Invoke(ctx, "/bloock.IdentityServiceV2/GetIssuerList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +178,6 @@ func (c *identityServiceV2Client) GetVerificationStatus(ctx context.Context, in 
 type IdentityServiceV2Server interface {
 	CreateIdentity(context.Context, *CreateIdentityV2Request) (*CreateIdentityV2Response, error)
 	CreateIssuer(context.Context, *CreateIssuerRequest) (*CreateIssuerResponse, error)
-	GetIssuerList(context.Context, *GetIssuerListRequest) (*GetIssuerListResponse, error)
 	GetIssuerByKey(context.Context, *GetIssuerByKeyRequest) (*GetIssuerByKeyResponse, error)
 	BuildSchema(context.Context, *BuildSchemaRequestV2) (*BuildSchemaResponseV2, error)
 	GetSchema(context.Context, *GetSchemaRequestV2) (*GetSchemaResponseV2, error)
@@ -213,9 +202,6 @@ func (UnimplementedIdentityServiceV2Server) CreateIdentity(context.Context, *Cre
 }
 func (UnimplementedIdentityServiceV2Server) CreateIssuer(context.Context, *CreateIssuerRequest) (*CreateIssuerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateIssuer not implemented")
-}
-func (UnimplementedIdentityServiceV2Server) GetIssuerList(context.Context, *GetIssuerListRequest) (*GetIssuerListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetIssuerList not implemented")
 }
 func (UnimplementedIdentityServiceV2Server) GetIssuerByKey(context.Context, *GetIssuerByKeyRequest) (*GetIssuerByKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIssuerByKey not implemented")
@@ -298,24 +284,6 @@ func _IdentityServiceV2_CreateIssuer_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentityServiceV2Server).CreateIssuer(ctx, req.(*CreateIssuerRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IdentityServiceV2_GetIssuerList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetIssuerListRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IdentityServiceV2Server).GetIssuerList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bloock.IdentityServiceV2/GetIssuerList",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceV2Server).GetIssuerList(ctx, req.(*GetIssuerListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -550,10 +518,6 @@ var IdentityServiceV2_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateIssuer",
 			Handler:    _IdentityServiceV2_CreateIssuer_Handler,
-		},
-		{
-			MethodName: "GetIssuerList",
-			Handler:    _IdentityServiceV2_GetIssuerList_Handler,
 		},
 		{
 			MethodName: "GetIssuerByKey",

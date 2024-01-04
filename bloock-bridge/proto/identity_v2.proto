@@ -13,7 +13,6 @@ import "identity_entities_v2.proto";
 service IdentityServiceV2 {
     rpc CreateIdentity(CreateIdentityV2Request) returns (CreateIdentityV2Response);
     rpc CreateIssuer(CreateIssuerRequest) returns (CreateIssuerResponse);
-    rpc GetIssuerList(GetIssuerListRequest) returns (GetIssuerListResponse);
     rpc GetIssuerByKey(GetIssuerByKeyRequest) returns (GetIssuerByKeyResponse);
 
     rpc BuildSchema(BuildSchemaRequestV2) returns (BuildSchemaResponseV2);
@@ -40,15 +39,6 @@ message GetSchemaRequestV2 {
 
 message GetSchemaResponseV2 {
     SchemaV2 schema = 1;
-    optional Error error = 2;
-}
-
-message GetIssuerListRequest {
-    ConfigData config_data = 1;
-}
-
-message GetIssuerListResponse {
-    repeated string did = 1;
     optional Error error = 2;
 }
 

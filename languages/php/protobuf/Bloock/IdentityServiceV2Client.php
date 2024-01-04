@@ -45,20 +45,6 @@ class IdentityServiceV2Client extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\GetIssuerListRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function GetIssuerList(\Bloock\GetIssuerListRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityServiceV2/GetIssuerList',
-        $argument,
-        ['\Bloock\GetIssuerListResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
      * @param \Bloock\GetIssuerByKeyRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options

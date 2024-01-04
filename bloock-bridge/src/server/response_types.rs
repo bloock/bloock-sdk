@@ -17,7 +17,6 @@ use crate::items::GetCredentialProofResponse;
 use crate::items::GetDetailsResponse;
 use crate::items::GetHashResponse;
 use crate::items::GetIssuerByKeyResponse;
-use crate::items::GetIssuerListResponse;
 use crate::items::GetOfferResponse;
 use crate::items::GetPayloadResponse;
 use crate::items::GetProofResponse;
@@ -106,7 +105,6 @@ pub enum ResponseType {
     CredentialToJsonResponseV2(CredentialToJsonResponseV2),
     CredentialFromJsonResponseV2(CredentialFromJsonResponseV2),
     GetCredentialProofResponse(GetCredentialProofResponse),
-    GetIssuerListResponse(GetIssuerListResponse),
     GetIssuerByKeyResponse(GetIssuerByKeyResponse),
     GenerateLocalCertificateResponse(GenerateLocalCertificateResponse),
     GenerateManagedCertificateResponse(GenerateManagedCertificateResponse),
@@ -173,7 +171,6 @@ impl ResponseType {
             ResponseType::CredentialToJsonResponseV2(r) => r.encode(&mut result_vec),
             ResponseType::CredentialFromJsonResponseV2(r) => r.encode(&mut result_vec),
             ResponseType::GetCredentialProofResponse(r) => r.encode(&mut result_vec),
-            ResponseType::GetIssuerListResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetIssuerByKeyResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateLocalCertificateResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateManagedCertificateResponse(r) => r.encode(&mut result_vec),
@@ -240,7 +237,6 @@ impl ResponseType {
             ResponseType::CredentialToJsonResponseV2(r) => r.encoded_len(),
             ResponseType::CredentialFromJsonResponseV2(r) => r.encoded_len(),
             ResponseType::GetCredentialProofResponse(r) => r.encoded_len(),
-            ResponseType::GetIssuerListResponse(r) => r.encoded_len(),
             ResponseType::GetIssuerByKeyResponse(r) => r.encoded_len(),
             ResponseType::GenerateLocalCertificateResponse(r) => r.encoded_len(),
             ResponseType::GenerateManagedCertificateResponse(r) => r.encoded_len(),

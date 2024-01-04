@@ -85,22 +85,6 @@ func (c *IdentityClient) CreateIssuer(issuerKey identityV2.IdentityKey, params i
 	return res.Did, nil
 }
 
-func (c *IdentityClient) GetIssuerList() ([]string, error) {
-	res, err := c.bridgeClient.IdentityV2().GetIssuerList(context.Background(), &proto.GetIssuerListRequest{
-		ConfigData: c.configData,
-	})
-
-	if err != nil {
-		return []string{}, err
-	}
-
-	if res.Error != nil {
-		return []string{}, errors.New(res.Error.Message)
-	}
-
-	return res.Did, nil
-}
-
 func (c *IdentityClient) GetIssuerByKey(issuerKey identityV2.IdentityKey, params identityV2.DidParams) (string, error) {
 	res, err := c.bridgeClient.IdentityV2().GetIssuerByKey(context.Background(), &proto.GetIssuerByKeyRequest{
 		ConfigData:   c.configData,

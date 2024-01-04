@@ -15,7 +15,6 @@ use super::{
             create_verification_response::CreateVerificationResponse,
             get_credential_proof_response::GetCredentialProofResponse,
             get_issuer_by_key_response::GetIssuerByKeyResponse,
-            get_issuer_list_response::GetIssuerListResponse,
             get_issuer_new_state_response::GetIssuerNewStateResponse,
             get_verification_status_response::GetVerificationStatusResponse,
             publish_issuer_state_request::PublishIssuerStateRequest,
@@ -153,22 +152,6 @@ impl<H: Client> IdentityServiceV2<H> {
             .map_err(|e| IdentityErrorV2::GetIssuerByKeyError(e.to_string()))?;
 
         Ok(res.did)
-    }
-
-    pub async fn get_issuer_list(&self) -> BloockResult<Vec<GetIssuerListResponse>> {
-        let res: Vec<GetIssuerListResponse> = self
-            .http
-            .get_json(
-                format!(
-                    "{}/identityV2/v1/issuers",
-                    self.config_service.get_api_base_url(),
-                ),
-                None,
-            )
-            .await
-            .map_err(|e| IdentityErrorV2::IssuerListError(e.to_string()))?;
-
-        Ok(res)
     }
 
     pub async fn build_schema(

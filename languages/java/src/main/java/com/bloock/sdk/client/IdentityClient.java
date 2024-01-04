@@ -80,19 +80,6 @@ public class IdentityClient {
     return response.getDid();
   }
 
-  public List<String> getIssuerList() throws Exception {
-    IdentityV2.GetIssuerListRequest request = IdentityV2.GetIssuerListRequest.newBuilder()
-        .setConfigData(this.configData).build();
-
-    IdentityV2.GetIssuerListResponse response = bridge.getIdentityV2().getIssuerList(request);
-
-    if (response.getError() != Error.getDefaultInstance()) {
-      throw new Exception(response.getError().getMessage());
-    }
-
-    return response.getDidList();
-  }
-
   public String getIssuerByKey(IdentityKey issuerKey) throws Exception {
     return getIssuerByKey(issuerKey, new DidParams());
   }

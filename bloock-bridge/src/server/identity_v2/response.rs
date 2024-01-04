@@ -9,10 +9,10 @@ use crate::{
         CreateVerificationResponse, CredentialFromJsonRequestV2, CredentialFromJsonResponseV2,
         CredentialToJsonRequestV2, CredentialToJsonResponseV2, Error, GetCredentialProofRequest,
         GetCredentialProofResponse, GetIssuerByKeyRequest, GetIssuerByKeyResponse,
-        GetIssuerListRequest, GetIssuerListResponse, GetSchemaRequestV2, GetSchemaResponseV2,
-        GetVerificationStatusRequest, GetVerificationStatusResponse, PublishIssuerStateRequest,
-        PublishIssuerStateResponse, RevokeCredentialRequestV2, RevokeCredentialResponseV2,
-        WaitVerificationRequest, WaitVerificationResponse,
+        GetSchemaRequestV2, GetSchemaResponseV2, GetVerificationStatusRequest,
+        GetVerificationStatusResponse, PublishIssuerStateRequest, PublishIssuerStateResponse,
+        RevokeCredentialRequestV2, RevokeCredentialResponseV2, WaitVerificationRequest,
+        WaitVerificationResponse,
     },
     server::response_types::ResponseTypeError,
 };
@@ -117,18 +117,6 @@ impl ResponseTypeError<GetCredentialProofRequest> for GetCredentialProofResponse
     fn build_error(err: String) -> Self {
         Self {
             proof: None,
-            error: Some(Error {
-                kind: BridgeError::IdentityError.to_string(),
-                message: err,
-            }),
-        }
-    }
-}
-
-impl ResponseTypeError<GetIssuerListRequest> for GetIssuerListResponse {
-    fn build_error(err: String) -> Self {
-        Self {
-            did: vec![],
             error: Some(Error {
                 kind: BridgeError::IdentityError.to_string(),
                 message: err,

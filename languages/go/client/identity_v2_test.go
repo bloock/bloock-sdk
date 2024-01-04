@@ -103,10 +103,6 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "", getIssuerDid)
 
-		issuers, err := identityClient.GetIssuerList()
-		assert.NoError(t, err)
-		assert.NotNil(t, issuers)
-
 		schema, err := identityClient.BuildSchema("Driving License", DrivingLicenseSchemaType, "1.0", "driving license schema", issuer).
 			AddIntegerAttribute("License Type", "license_type", "license type", false).
 			AddDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true).

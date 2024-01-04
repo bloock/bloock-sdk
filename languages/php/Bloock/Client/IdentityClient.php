@@ -98,24 +98,6 @@ class IdentityClient
         return $res->getDid();
     }
 
-    public function getIssuerList(): array
-    {
-        $req = new GetIssuerListRequest();
-        $req->setConfigData($this->config);
-
-        $res = $this->bridge->identityV2->GetIssuerList($req);
-
-        if ($res->getError() != null) {
-            throw new Exception($res->getError()->getMessage());
-        }
-
-        $didList = [];
-        foreach ($res->getDid() as $did) {
-            $didList[] = $did;
-        }
-        return $didList;
-    }
-
     public function getIssuerByKey(IdentityKey $issuerKey, DidParams $didParams = null): string
     {
         $req = new GetIssuerByKeyRequest();
