@@ -84,6 +84,14 @@ impl MetadataParser for PdfParser {
         api_key: String,
         environment: Option<String>,
     ) -> BloockResult<Signature> {
+        let old_signatures =  match self.get_signatures() {
+            Ok(s) => s,
+            Err(_) => vec![],
+        };
+        if !old_signatures.is_empty() {
+            return Err(MetadataError::UnsupportedMultiSignature())
+        }
+        
         self.modified = true;
 
         // Preparation of the file

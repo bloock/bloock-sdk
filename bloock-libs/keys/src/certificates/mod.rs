@@ -22,6 +22,7 @@ pub mod local;
 pub mod managed;
 mod p12;
 
+#[derive(Clone)]
 pub struct CertificateSubject {
     pub common_name: String,
     pub organizational_unit: Option<String>,
