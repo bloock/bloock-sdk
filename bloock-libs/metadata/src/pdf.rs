@@ -70,6 +70,15 @@ impl PdfParser {
             original_payload: payload.to_vec(),
         };
 
+        match parser.get_signatures() {
+            Ok(s) => {
+                if !s.is_empty() {
+                    return Err(MetadataError::UnsupportedMultiSignature());
+                }
+            },
+            Err(_) => return Ok(parser)
+        }
+
         Ok(parser)
     }
 }

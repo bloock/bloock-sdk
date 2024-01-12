@@ -229,4 +229,6 @@ pub enum MetadataError {
     WriteError(String),
     #[error("This feature is not available for this file type")]
     Unsupported(),
+    #[error("Multisignature feature is not available")]
+    UnsupportedMultiSignature(),
 }
