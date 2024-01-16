@@ -283,7 +283,6 @@ class BuildSchemaRequestV2(google.protobuf.message.Message):
     SCHEMA_TYPE_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
-    ISSUER_DID_FIELD_NUMBER: builtins.int
     STRING_ATTRIBUTES_FIELD_NUMBER: builtins.int
     INTEGER_ATTRIBUTES_FIELD_NUMBER: builtins.int
     DECIMAL_ATTRIBUTES_FIELD_NUMBER: builtins.int
@@ -299,7 +298,6 @@ class BuildSchemaRequestV2(google.protobuf.message.Message):
     schema_type: builtins.str
     version: builtins.str
     description: builtins.str
-    issuer_did: builtins.str
     @property
     def string_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_v2_pb2.StringAttributeDefinitionV2]: ...
     @property
@@ -326,7 +324,6 @@ class BuildSchemaRequestV2(google.protobuf.message.Message):
         schema_type: builtins.str = ...,
         version: builtins.str = ...,
         description: builtins.str = ...,
-        issuer_did: builtins.str = ...,
         string_attributes: collections.abc.Iterable[identity_entities_v2_pb2.StringAttributeDefinitionV2] | None = ...,
         integer_attributes: collections.abc.Iterable[identity_entities_v2_pb2.IntegerAttributeDefinitionV2] | None = ...,
         decimal_attributes: collections.abc.Iterable[identity_entities_v2_pb2.DecimalAttributeDefinitionV2] | None = ...,
@@ -338,7 +335,7 @@ class BuildSchemaRequestV2(google.protobuf.message.Message):
         decimal_enum_attributes: collections.abc.Iterable[identity_entities_v2_pb2.DecimalEnumAttributeDefinitionV2] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "decimal_enum_attributes", b"decimal_enum_attributes", "description", b"description", "display_name", b"display_name", "integer_attributes", b"integer_attributes", "integer_enum_attributes", b"integer_enum_attributes", "issuer_did", b"issuer_did", "schema_type", b"schema_type", "string_attributes", b"string_attributes", "string_enum_attributes", b"string_enum_attributes", "version", b"version"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "decimal_enum_attributes", b"decimal_enum_attributes", "description", b"description", "display_name", b"display_name", "integer_attributes", b"integer_attributes", "integer_enum_attributes", b"integer_enum_attributes", "schema_type", b"schema_type", "string_attributes", b"string_attributes", "string_enum_attributes", b"string_enum_attributes", "version", b"version"]) -> None: ...
 
 global___BuildSchemaRequestV2 = BuildSchemaRequestV2
 

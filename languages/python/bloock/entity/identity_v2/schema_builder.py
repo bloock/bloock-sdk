@@ -17,13 +17,13 @@ from bloock.entity.identity_v2.string_enum_attribute_descriptor import StringEnu
 from bloock.entity.identity_v2.integer_enum_attribute_descriptor import IntegerEnumAttributeDescriptor
 from bloock.entity.identity_v2.decimal_enum_attribute_descriptor import DecimalEnumAttributeDescriptor
 
+
 class SchemaBuilder:
-    def __init__(self, display_name: str, schema_type: str, version: str, description: str, issuer_did: str, config_data: ConfigData) -> None:
+    def __init__(self, display_name: str, schema_type: str, version: str, description: str, config_data: ConfigData) -> None:
         self.display_name = display_name
         self.schema_type = schema_type
         self.version = version
         self.description = description
-        self.issuer_did = issuer_did
         self.config_data = config_data
 
         self.string_attributes = []
@@ -35,42 +35,50 @@ class SchemaBuilder:
         self.string_enum_attributes = []
         self.integer_enum_attributes = []
         self.decimal_enum_attributes = []
-    
+
     def add_string_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
         self.string_attributes.append(
             StringAttributeDescriptor(name, technical_name, description, required))
         return self
 
     def add_integer_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
-        self.integer_attributes.append(IntegerAttributeDescriptor(name, technical_name, description, required))
+        self.integer_attributes.append(IntegerAttributeDescriptor(
+            name, technical_name, description, required))
         return self
-    
+
     def add_decimal_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
-        self.decimal_attributes.append(DecimalAttributeDescriptor(name, technical_name, description, required))
+        self.decimal_attributes.append(DecimalAttributeDescriptor(
+            name, technical_name, description, required))
         return self
 
     def add_boolean_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
-        self.boolean_attributes.append(BooleanAttributeDescriptor(name, technical_name, description, required))
+        self.boolean_attributes.append(BooleanAttributeDescriptor(
+            name, technical_name, description, required))
         return self
 
     def add_date_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
-        self.date_attributes.append(DateAttributeDescriptor(name, technical_name, description, required))
+        self.date_attributes.append(DateAttributeDescriptor(
+            name, technical_name, description, required))
         return self
 
     def add_string_enum_attribute(self, name: str, technical_name: str, description: str, required: bool, enumeration: List[str]) -> SchemaBuilder:
-        self.string_enum_attributes.append(StringEnumAttributeDescriptor(name, technical_name, description, required, enumeration))
+        self.string_enum_attributes.append(StringEnumAttributeDescriptor(
+            name, technical_name, description, required, enumeration))
         return self
-    
+
     def add_integer_enum_attribute(self, name: str, technical_name: str, description: str, required: bool, enumeration: List[int]) -> SchemaBuilder:
-        self.integer_enum_attributes.append(IntegerEnumAttributeDescriptor(name, technical_name, description, required, enumeration))
+        self.integer_enum_attributes.append(IntegerEnumAttributeDescriptor(
+            name, technical_name, description, required, enumeration))
         return self
-    
+
     def add_decimal_enum_attribute(self, name: str, technical_name: str, description: str, required: bool, enumeration: List[float]) -> SchemaBuilder:
-        self.decimal_enum_attributes.append(DecimalEnumAttributeDescriptor(name, technical_name, description, required, enumeration))
+        self.decimal_enum_attributes.append(DecimalEnumAttributeDescriptor(
+            name, technical_name, description, required, enumeration))
         return self
-    
+
     def add_datetime_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
-        self.datetime_attributes.append(DatetimeAttributeDescriptor(name, technical_name, description, required))
+        self.datetime_attributes.append(DatetimeAttributeDescriptor(
+            name, technical_name, description, required))
         return self
 
     def build(self) -> Schema:
@@ -118,7 +126,6 @@ class SchemaBuilder:
             schema_type=self.schema_type,
             version=self.version,
             description=self.description,
-            issuer_did=self.issuer_did,
             string_attributes=string_attributes,
             integer_attributes=integer_attributes,
             decimal_attributes=decimal_attributes,
