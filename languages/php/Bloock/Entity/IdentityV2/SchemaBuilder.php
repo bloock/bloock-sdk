@@ -14,7 +14,6 @@ class SchemaBuilder
     private string $schemaType;
     private string $version;
     private string $description;
-    private string $issuerDid;
     private ConfigData $configData;
 
     private array $stringAttributes;
@@ -27,13 +26,12 @@ class SchemaBuilder
     private array $integerEnumAttributes;
     private array $decimalEnumAttributes;
 
-    public function __construct(string $displayName, string $schemaType, string $version, string $description, string $issuerDid, ConfigData $configData)
+    public function __construct(string $displayName, string $schemaType, string $version, string $description, ConfigData $configData)
     {
         $this->displayName = $displayName;
         $this->schemaType = $schemaType;
         $this->version = $version;
         $this->description = $description;
-        $this->issuerDid = $issuerDid;
         $this->configData = $configData;
 
         $this->stringAttributes = [];
@@ -132,7 +130,6 @@ class SchemaBuilder
         $req->setSchemaType($this->schemaType);
         $req->setVersion($this->version);
         $req->setDescription($this->description);
-        $req->setIssuerDid($this->issuerDid);
         $req->setStringAttributes($this->stringAttributes);
         $req->setIntegerAttributes($this->integerAttributes);
         $req->setDecimalAttributes($this->decimalAttributes);

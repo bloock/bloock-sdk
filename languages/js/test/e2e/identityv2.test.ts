@@ -122,8 +122,7 @@ describe("Identity V2 Tests", () => {
         "Driving License",
         drivingLicenseSchemaType,
         "1.0",
-        "driving license schema",
-        issuer
+        "driving license schema"
       )
       .addIntegerAttribute(
         "License Type",

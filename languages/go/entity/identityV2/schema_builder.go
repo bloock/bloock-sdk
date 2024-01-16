@@ -13,7 +13,6 @@ type SchemaBuilder struct {
 	schemaType  string
 	version     string
 	description string
-	issuerDid   string
 	configData  *proto.ConfigData
 
 	stringAttributeDescriptor      []StringAttributeDescriptor
@@ -27,13 +26,12 @@ type SchemaBuilder struct {
 	decimalEnumAttributeDescriptor []DecimalEnumAttributeDescriptor
 }
 
-func NewSchemaBuilder(displayName string, schemaType, version, description, issuerDid string, configData *proto.ConfigData) SchemaBuilder {
+func NewSchemaBuilder(displayName string, schemaType, version, description string, configData *proto.ConfigData) SchemaBuilder {
 	return SchemaBuilder{
 		displayName:                    displayName,
 		schemaType:                     schemaType,
 		version:                        version,
 		description:                    description,
-		issuerDid:                      issuerDid,
 		configData:                     configData,
 		stringAttributeDescriptor:      []StringAttributeDescriptor{},
 		integerAttributeDescriptor:     []IntegerAttributeDescriptor{},
@@ -145,7 +143,6 @@ func (c SchemaBuilder) Build() (Schema, error) {
 		SchemaType:            c.schemaType,
 		Version:               c.version,
 		Description:           c.description,
-		IssuerDid:             c.issuerDid,
 		ConfigData:            c.configData,
 		StringAttributes:      stringAttributesDescriptor,
 		IntegerAttributes:     integerAttributesDescriptor,

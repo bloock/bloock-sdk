@@ -98,8 +98,8 @@ func (c *IdentityClient) GetIssuerByKey(issuerKey identityV2.IdentityKey, params
 	return res.GetDid(), nil
 }
 
-func (c *IdentityClient) BuildSchema(displayName string, schemaType, version, description, issuerDid string) identityV2.SchemaBuilder {
-	return identityV2.NewSchemaBuilder(displayName, schemaType, version, description, issuerDid, c.configData)
+func (c *IdentityClient) BuildSchema(displayName string, schemaType, version, description string) identityV2.SchemaBuilder {
+	return identityV2.NewSchemaBuilder(displayName, schemaType, version, description, c.configData)
 }
 
 func (c *IdentityClient) GetSchema(id string) (identityV2.Schema, error) {

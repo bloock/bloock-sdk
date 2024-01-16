@@ -13,7 +13,6 @@ public class SchemaBuilder {
   private final String schemaType;
   private final String version;
   private final String description;
-  private final String issuerDid;
   private final Config.ConfigData configData;
 
   private final List<IdentityEntitiesV2.StringAttributeDefinitionV2> stringAttributes;
@@ -31,13 +30,11 @@ public class SchemaBuilder {
       String schemaType,
       String version,
       String description,
-      String issuerDid,
       Config.ConfigData configData) {
     this.displayName = displayName;
     this.schemaType = schemaType;
     this.version = version;
     this.description = description;
-    this.issuerDid = issuerDid;
     this.configData = configData;
 
     this.stringAttributes = new ArrayList<>();
@@ -139,7 +136,6 @@ public class SchemaBuilder {
             .setSchemaType(this.schemaType)
             .setVersion(this.version)
             .setDescription(this.description)
-            .setIssuerDid(this.issuerDid)
             .addAllStringAttributes(this.stringAttributes)
             .addAllIntegerAttributes(this.integerAttributes)
             .addAllDecimalAttributes(this.decimalAttributes)

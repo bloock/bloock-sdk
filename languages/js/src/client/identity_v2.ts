@@ -106,15 +106,13 @@ export class IdentityClient {
     displayName: string,
     schemaType: string,
     version: string,
-    description: string,
-    issuerDid: string
+    description: string
   ): SchemaBuilder {
     return new SchemaBuilder(
       displayName,
       schemaType,
       version,
       description,
-      issuerDid,
       this.configData
     );
   }

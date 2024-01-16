@@ -100,16 +100,15 @@ message BuildSchemaRequestV2 {
     string schema_type = 3;
     string version = 4;
     string description = 5;
-    string issuer_did = 6;
-    repeated StringAttributeDefinitionV2 string_attributes = 7;
-    repeated IntegerAttributeDefinitionV2 integer_attributes = 8;
-    repeated DecimalAttributeDefinitionV2 decimal_attributes = 9;
-    repeated BooleanAttributeDefinitionV2 boolean_attributes = 10;
-    repeated DateAttributeDefinitionV2 date_attributes = 11;
-    repeated DateTimeAttributeDefinitionV2 datetime_attributes = 12;
-    repeated StringEnumAttributeDefinitionV2 string_enum_attributes = 13;
-    repeated IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 14;
-    repeated DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 15;
+    repeated StringAttributeDefinitionV2 string_attributes = 6;
+    repeated IntegerAttributeDefinitionV2 integer_attributes = 7;
+    repeated DecimalAttributeDefinitionV2 decimal_attributes = 8;
+    repeated BooleanAttributeDefinitionV2 boolean_attributes = 9;
+    repeated DateAttributeDefinitionV2 date_attributes = 10;
+    repeated DateTimeAttributeDefinitionV2 datetime_attributes = 11;
+    repeated StringEnumAttributeDefinitionV2 string_enum_attributes = 12;
+    repeated IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 13;
+    repeated DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 14;
 }
 
 message CreateIdentityV2Request {

@@ -114,9 +114,9 @@ class IdentityClient
         return $res->getDid();
     }
 
-    public function buildSchema(string $displayName, string $schemaType, string $version, string $description, $issuerDid): SchemaBuilder
+    public function buildSchema(string $displayName, string $schemaType, string $version, string $description): SchemaBuilder
     {
-        return new SchemaBuilder($displayName, $schemaType, $version, $description, $issuerDid, $this->config);
+        return new SchemaBuilder($displayName, $schemaType, $version, $description, $this->config);
     }
 
     public function getSchema(string $id): Schema
