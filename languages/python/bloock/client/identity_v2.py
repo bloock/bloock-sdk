@@ -70,8 +70,8 @@ class IdentityClient:
             raise Exception(res.error.message)
         return res.did
 
-    def build_schema(self, display_name: str, schema_type: str, version: str, description: str, issuer_did: str) -> SchemaBuilder:
-        return SchemaBuilder(display_name, schema_type, version, description, issuer_did, self.config_data)
+    def build_schema(self, display_name: str, schema_type: str, version: str, description: str) -> SchemaBuilder:
+        return SchemaBuilder(display_name, schema_type, version, description, self.config_data)
 
     def get_schema(self, schema_id: str) -> Schema:
         res = self.bridge_client.identity_v2().GetSchema(
