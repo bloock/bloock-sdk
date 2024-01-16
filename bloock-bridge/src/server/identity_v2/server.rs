@@ -300,7 +300,6 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 req.schema_type.clone(),
                 req.version.clone(),
                 req.description.clone(),
-                req.issuer_did.clone(),
                 attributes,
             )
             .await

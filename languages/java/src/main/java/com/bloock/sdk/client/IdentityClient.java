@@ -98,10 +98,10 @@ public class IdentityClient {
   }
 
   public SchemaBuilder buildSchema(
-      String displayName, String schemaType, String version, String description, String issuerDid)
+      String displayName, String schemaType, String version, String description)
       throws Exception {
     return new SchemaBuilder(
-        displayName, schemaType, version, description, issuerDid, this.configData);
+        displayName, schemaType, version, description, this.configData);
   }
 
   public Schema getSchema(String id) throws Exception {

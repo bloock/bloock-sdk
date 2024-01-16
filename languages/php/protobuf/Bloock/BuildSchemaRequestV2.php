@@ -34,43 +34,39 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
      */
     protected $description = '';
     /**
-     * Generated from protobuf field <code>string issuer_did = 6;</code>
-     */
-    protected $issuer_did = '';
-    /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinitionV2 string_attributes = 7;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinitionV2 string_attributes = 6;</code>
      */
     private $string_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinitionV2 integer_attributes = 8;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinitionV2 integer_attributes = 7;</code>
      */
     private $integer_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinitionV2 decimal_attributes = 9;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinitionV2 decimal_attributes = 8;</code>
      */
     private $decimal_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinitionV2 boolean_attributes = 10;</code>
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinitionV2 boolean_attributes = 9;</code>
      */
     private $boolean_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinitionV2 date_attributes = 11;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinitionV2 date_attributes = 10;</code>
      */
     private $date_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinitionV2 datetime_attributes = 12;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinitionV2 datetime_attributes = 11;</code>
      */
     private $datetime_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinitionV2 string_enum_attributes = 13;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinitionV2 string_enum_attributes = 12;</code>
      */
     private $string_enum_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 14;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 13;</code>
      */
     private $integer_enum_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 15;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 14;</code>
      */
     private $decimal_enum_attributes;
 
@@ -85,7 +81,6 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
      *     @type string $schema_type
      *     @type string $version
      *     @type string $description
-     *     @type string $issuer_did
      *     @type \Bloock\StringAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $string_attributes
      *     @type \Bloock\IntegerAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $integer_attributes
      *     @type \Bloock\DecimalAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $decimal_attributes
@@ -223,29 +218,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string issuer_did = 6;</code>
-     * @return string
-     */
-    public function getIssuerDid()
-    {
-        return $this->issuer_did;
-    }
-
-    /**
-     * Generated from protobuf field <code>string issuer_did = 6;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setIssuerDid($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->issuer_did = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinitionV2 string_attributes = 7;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinitionV2 string_attributes = 6;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getStringAttributes()
@@ -254,7 +227,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinitionV2 string_attributes = 7;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinitionV2 string_attributes = 6;</code>
      * @param \Bloock\StringAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -267,7 +240,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinitionV2 integer_attributes = 8;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinitionV2 integer_attributes = 7;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getIntegerAttributes()
@@ -276,7 +249,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinitionV2 integer_attributes = 8;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinitionV2 integer_attributes = 7;</code>
      * @param \Bloock\IntegerAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -289,7 +262,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinitionV2 decimal_attributes = 9;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinitionV2 decimal_attributes = 8;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getDecimalAttributes()
@@ -298,7 +271,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinitionV2 decimal_attributes = 9;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinitionV2 decimal_attributes = 8;</code>
      * @param \Bloock\DecimalAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -311,7 +284,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinitionV2 boolean_attributes = 10;</code>
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinitionV2 boolean_attributes = 9;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getBooleanAttributes()
@@ -320,7 +293,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinitionV2 boolean_attributes = 10;</code>
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinitionV2 boolean_attributes = 9;</code>
      * @param \Bloock\BooleanAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -333,7 +306,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinitionV2 date_attributes = 11;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinitionV2 date_attributes = 10;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getDateAttributes()
@@ -342,7 +315,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinitionV2 date_attributes = 11;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinitionV2 date_attributes = 10;</code>
      * @param \Bloock\DateAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -355,7 +328,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinitionV2 datetime_attributes = 12;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinitionV2 datetime_attributes = 11;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getDatetimeAttributes()
@@ -364,7 +337,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinitionV2 datetime_attributes = 12;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinitionV2 datetime_attributes = 11;</code>
      * @param \Bloock\DateTimeAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -377,7 +350,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinitionV2 string_enum_attributes = 13;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinitionV2 string_enum_attributes = 12;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getStringEnumAttributes()
@@ -386,7 +359,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinitionV2 string_enum_attributes = 13;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinitionV2 string_enum_attributes = 12;</code>
      * @param \Bloock\StringEnumAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -399,7 +372,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 14;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 13;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getIntegerEnumAttributes()
@@ -408,7 +381,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 14;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinitionV2 integer_enum_attributes = 13;</code>
      * @param \Bloock\IntegerEnumAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -421,7 +394,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 15;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 14;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getDecimalEnumAttributes()
@@ -430,7 +403,7 @@ class BuildSchemaRequestV2 extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 15;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinitionV2 decimal_enum_attributes = 14;</code>
      * @param \Bloock\DecimalEnumAttributeDefinitionV2[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */

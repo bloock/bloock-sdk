@@ -17,7 +17,6 @@ export class SchemaBuilder {
   schemaType: string;
   version: string;
   description: string;
-  issuerDid: string;
   configData: ConfigData;
 
   stringAttributes: StringAttributeDescriptor[];
@@ -35,14 +34,12 @@ export class SchemaBuilder {
     schemaType: string,
     version: string,
     description: string,
-    issuerDid: string,
     configData: ConfigData
   ) {
     this.displayName = displayName;
     this.schemaType = schemaType;
     this.version = version;
     this.description = description;
-    this.issuerDid = issuerDid;
     this.configData = configData;
     this.stringAttributes = [];
     this.integerAttributes = [];
@@ -198,7 +195,6 @@ export class SchemaBuilder {
       schemaType: this.schemaType,
       version: this.version,
       description: this.description,
-      issuerDid: this.issuerDid,
       stringAttributes: this.stringAttributes.map(a => a.toProto()),
       integerAttributes: this.integerAttributes.map(a => a.toProto()),
       decimalAttributes: this.decimalAttributes.map(a => a.toProto()),

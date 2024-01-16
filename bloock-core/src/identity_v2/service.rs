@@ -25,9 +25,10 @@ use super::{
             update_draft_state_signature_response::UpdateDraftStateSignatureResponse,
         },
         proof::CredentialProof,
+        publish_interval::PublishInterval,
         revocation_result::RevocationResult,
         schema::{Attribute, Schema},
-        verification_result::VerificationResult, publish_interval::PublishInterval,
+        verification_result::VerificationResult,
     },
     IdentityErrorV2,
 };
@@ -160,12 +161,8 @@ impl<H: Client> IdentityServiceV2<H> {
         schema_type: String,
         version: String,
         description: String,
-        issuer_did: String,
         attributes: Vec<Attribute>,
     ) -> BloockResult<Schema> {
-        parse_did(issuer_did.clone())
-            .map_err(|e| IdentityErrorV2::CreateSchemaError(e.to_string()))?;
-
         let mut attr = Map::new();
         for a in attributes {
             let r#type = a.r#type;
@@ -186,9 +183,8 @@ impl<H: Client> IdentityServiceV2<H> {
             .http
             .post_json(
                 format!(
-                    "{}/identityV2/v1/{}/schemas",
+                    "{}/identityV2/v1/schemas",
                     self.config_service.get_api_base_url(),
-                    issuer_did
                 ),
                 req,
                 None,

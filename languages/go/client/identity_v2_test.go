@@ -103,7 +103,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "", getIssuerDid)
 
-		schema, err := identityClient.BuildSchema("Driving License", DrivingLicenseSchemaType, "1.0", "driving license schema", issuer).
+		schema, err := identityClient.BuildSchema("Driving License", DrivingLicenseSchemaType, "1.0", "driving license schema").
 			AddIntegerAttribute("License Type", "license_type", "license type", false).
 			AddDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true).
 			AddStringAttribute("Nif", "nif", "nif", true).
@@ -190,7 +190,7 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		assert.True(t, strings.Contains(issuer, "iden3"))
 
-		schema2, err := identityClient.BuildSchema("KYC Age Credential", KYCAgeSchemaType, "1.0", "kyc age schema", issuer).
+		schema2, err := identityClient.BuildSchema("KYC Age Credential", KYCAgeSchemaType, "1.0", "kyc age schema").
 			AddIntegerAttribute("Birth Date", "birth_date", "your bityh date", true).
 			AddStringAttribute("Name", "name", "your name", true).
 			AddIntegerAttribute("Document Type", "document_type", "your document type", false).

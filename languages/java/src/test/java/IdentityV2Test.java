@@ -122,8 +122,7 @@ public class IdentityV2Test {
             "Driving License",
             drivingLicenseSchemaType,
             "1.0",
-            "driving license schema",
-            issuer)
+            "driving license schema")
         .addIntegerAttribute("License Type", "license_type", "license type", false)
         .addDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true)
         .addStringAttribute("Nif", "nif", "nif", true)

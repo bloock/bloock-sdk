@@ -102,7 +102,6 @@ export interface BuildSchemaRequestV2 {
   schemaType: string;
   version: string;
   description: string;
-  issuerDid: string;
   stringAttributes: StringAttributeDefinitionV2[];
   integerAttributes: IntegerAttributeDefinitionV2[];
   decimalAttributes: DecimalAttributeDefinitionV2[];
@@ -981,7 +980,6 @@ function createBaseBuildSchemaRequestV2(): BuildSchemaRequestV2 {
     schemaType: "",
     version: "",
     description: "",
-    issuerDid: "",
     stringAttributes: [],
     integerAttributes: [],
     decimalAttributes: [],
@@ -1011,35 +1009,32 @@ export const BuildSchemaRequestV2 = {
     if (message.description !== "") {
       writer.uint32(42).string(message.description);
     }
-    if (message.issuerDid !== "") {
-      writer.uint32(50).string(message.issuerDid);
-    }
     for (const v of message.stringAttributes) {
-      StringAttributeDefinitionV2.encode(v!, writer.uint32(58).fork()).ldelim();
+      StringAttributeDefinitionV2.encode(v!, writer.uint32(50).fork()).ldelim();
     }
     for (const v of message.integerAttributes) {
-      IntegerAttributeDefinitionV2.encode(v!, writer.uint32(66).fork()).ldelim();
+      IntegerAttributeDefinitionV2.encode(v!, writer.uint32(58).fork()).ldelim();
     }
     for (const v of message.decimalAttributes) {
-      DecimalAttributeDefinitionV2.encode(v!, writer.uint32(74).fork()).ldelim();
+      DecimalAttributeDefinitionV2.encode(v!, writer.uint32(66).fork()).ldelim();
     }
     for (const v of message.booleanAttributes) {
-      BooleanAttributeDefinitionV2.encode(v!, writer.uint32(82).fork()).ldelim();
+      BooleanAttributeDefinitionV2.encode(v!, writer.uint32(74).fork()).ldelim();
     }
     for (const v of message.dateAttributes) {
-      DateAttributeDefinitionV2.encode(v!, writer.uint32(90).fork()).ldelim();
+      DateAttributeDefinitionV2.encode(v!, writer.uint32(82).fork()).ldelim();
     }
     for (const v of message.datetimeAttributes) {
-      DateTimeAttributeDefinitionV2.encode(v!, writer.uint32(98).fork()).ldelim();
+      DateTimeAttributeDefinitionV2.encode(v!, writer.uint32(90).fork()).ldelim();
     }
     for (const v of message.stringEnumAttributes) {
-      StringEnumAttributeDefinitionV2.encode(v!, writer.uint32(106).fork()).ldelim();
+      StringEnumAttributeDefinitionV2.encode(v!, writer.uint32(98).fork()).ldelim();
     }
     for (const v of message.integerEnumAttributes) {
-      IntegerEnumAttributeDefinitionV2.encode(v!, writer.uint32(114).fork()).ldelim();
+      IntegerEnumAttributeDefinitionV2.encode(v!, writer.uint32(106).fork()).ldelim();
     }
     for (const v of message.decimalEnumAttributes) {
-      DecimalEnumAttributeDefinitionV2.encode(v!, writer.uint32(122).fork()).ldelim();
+      DecimalEnumAttributeDefinitionV2.encode(v!, writer.uint32(114).fork()).ldelim();
     }
     return writer;
   },
@@ -1067,33 +1062,30 @@ export const BuildSchemaRequestV2 = {
           message.description = reader.string();
           break;
         case 6:
-          message.issuerDid = reader.string();
-          break;
-        case 7:
           message.stringAttributes.push(StringAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
-        case 8:
+        case 7:
           message.integerAttributes.push(IntegerAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
-        case 9:
+        case 8:
           message.decimalAttributes.push(DecimalAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
-        case 10:
+        case 9:
           message.booleanAttributes.push(BooleanAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
-        case 11:
+        case 10:
           message.dateAttributes.push(DateAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
-        case 12:
+        case 11:
           message.datetimeAttributes.push(DateTimeAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
-        case 13:
+        case 12:
           message.stringEnumAttributes.push(StringEnumAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
-        case 14:
+        case 13:
           message.integerEnumAttributes.push(IntegerEnumAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
-        case 15:
+        case 14:
           message.decimalEnumAttributes.push(DecimalEnumAttributeDefinitionV2.decode(reader, reader.uint32()));
           break;
         default:
@@ -1111,7 +1103,6 @@ export const BuildSchemaRequestV2 = {
       schemaType: isSet(object.schemaType) ? String(object.schemaType) : "",
       version: isSet(object.version) ? String(object.version) : "",
       description: isSet(object.description) ? String(object.description) : "",
-      issuerDid: isSet(object.issuerDid) ? String(object.issuerDid) : "",
       stringAttributes: Array.isArray(object?.stringAttributes)
         ? object.stringAttributes.map((e: any) => StringAttributeDefinitionV2.fromJSON(e))
         : [],
@@ -1150,7 +1141,6 @@ export const BuildSchemaRequestV2 = {
     message.schemaType !== undefined && (obj.schemaType = message.schemaType);
     message.version !== undefined && (obj.version = message.version);
     message.description !== undefined && (obj.description = message.description);
-    message.issuerDid !== undefined && (obj.issuerDid = message.issuerDid);
     if (message.stringAttributes) {
       obj.stringAttributes = message.stringAttributes.map((e) => e ? StringAttributeDefinitionV2.toJSON(e) : undefined);
     } else {
@@ -1222,7 +1212,6 @@ export const BuildSchemaRequestV2 = {
     message.schemaType = object.schemaType ?? "";
     message.version = object.version ?? "";
     message.description = object.description ?? "";
-    message.issuerDid = object.issuerDid ?? "";
     message.stringAttributes = object.stringAttributes?.map((e) => StringAttributeDefinitionV2.fromPartial(e)) || [];
     message.integerAttributes = object.integerAttributes?.map((e) => IntegerAttributeDefinitionV2.fromPartial(e)) || [];
     message.decimalAttributes = object.decimalAttributes?.map((e) => DecimalAttributeDefinitionV2.fromPartial(e)) || [];
