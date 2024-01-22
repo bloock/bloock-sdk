@@ -88,18 +88,22 @@ func TestIdentityV2(t *testing.T) {
 		assert.NoError(t, err)
 		encodedImage := base64.URLEncoding.EncodeToString(profileImage)
 
-		issuer, err := identityClient.CreateIssuer(issuerKey, identityV2.Interval1, identityV2.NewDidParams(), "Bloock Test", "bloock description test", encodedImage)
+		issuerParams := identityV2.NewDidParams()
+		issuerParams.Method = identityV2.ListOfMethods().PolygonId
+		issuerParams.Blockchain = identityV2.ListOfBlockchains().Polygon
+		issuerParams.NetworkId = identityV2.ListOfNetworkIds().Mumbai
+		issuer, err := identityClient.CreateIssuer(issuerKey, identityV2.Interval1, issuerParams, "Bloock Test", "bloock description test", encodedImage)
 		assert.NoError(t, err)
 		assert.True(t, strings.Contains(issuer, "polygonid"))
 
-		_, err = identityClient.CreateIssuer(issuerKey, identityV2.Interval5, identityV2.NewDidParams(), "", "", "")
+		_, err = identityClient.CreateIssuer(issuerKey, identityV2.Interval5, issuerParams, "", "", "")
 		assert.Error(t, err)
 
-		getIssuerDid, err := identityClient.GetIssuerByKey(issuerKey, identityV2.NewDidParams())
+		getIssuerDid, err := identityClient.GetIssuerByKey(issuerKey, issuerParams)
 		assert.NoError(t, err)
 		assert.Equal(t, issuer, getIssuerDid)
 
-		getIssuerDid, err = identityClient.GetIssuerByKey(notFoundIssuerKey, identityV2.NewDidParams())
+		getIssuerDid, err = identityClient.GetIssuerByKey(notFoundIssuerKey, issuerParams)
 		assert.NoError(t, err)
 		assert.Equal(t, "", getIssuerDid)
 

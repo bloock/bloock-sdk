@@ -82,21 +82,22 @@ public class IdentityV2Test {
     }
     String encodedFile = Base64.getUrlEncoder().encodeToString(fileBytes);
 
-    String issuer = identityClient.createIssuer(issuerKey, PublishIntervalParams.Interval1, "Bloock Test",
+    DidParams params = new DidParams(Method.POLYGONID, Blockchain.POLYGON, Network.MUMBAI);
+    String issuer = identityClient.createIssuer(issuerKey, PublishIntervalParams.Interval1, params, "Bloock Test",
         "bloock description test", encodedFile);
     assertTrue(issuer.contains("polygonid"));
 
     assertThrows(
         Exception.class,
         () -> {
-          identityClient.createIssuer(issuerKey, PublishIntervalParams.Interval1, null, null, null);
+          identityClient.createIssuer(issuerKey, PublishIntervalParams.Interval1, params, null, null, null);
           throw new RuntimeException("This is an intentional exception.");
         });
 
-    String getIssuerDid = identityClient.getIssuerByKey(issuerKey);
+    String getIssuerDid = identityClient.getIssuerByKey(issuerKey, params);
     assertEquals(issuer, getIssuerDid);
 
-    String getNotFoundIssuerDid = identityClient.getIssuerByKey(notFoundIssuerKey);
+    String getNotFoundIssuerDid = identityClient.getIssuerByKey(notFoundIssuerKey, params);
     assertTrue(getNotFoundIssuerDid.isEmpty());
 
     DidParams issuerParams = new DidParams(Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI);

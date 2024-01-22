@@ -13,7 +13,7 @@ impl DidMetadata {
         Self {
             method: DIDMethod::PolygonID,
             blockchain: Blockchain::Polygon,
-            network: Network::Mumbai,
+            network: Network::Main,
         }
     }
 }
