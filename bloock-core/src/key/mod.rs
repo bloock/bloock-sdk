@@ -31,6 +31,12 @@ pub enum KeyError {
     LoadManagedCertificateError(String),
     #[error("Error importing managed certificate: {0}")]
     ImportManagedCertificateError(String),
+    #[error("Error setting up OTP access control: {0}")]
+    SetupOTPAccessControlError(String),
+    #[error("Error recovering OTP access control: {0}")]
+    RecoverOTPAccessControlError(String),
+    #[error("Error setting up secret access control: {0}")]
+    SetupSecretAccessControlError(String),
 }
 
 impl From<KeyError> for BloockError {

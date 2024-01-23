@@ -9,111 +9,163 @@ import "keys_entities.proto";
 import "shared.proto";
 import "config.proto";
 
-
 service KeyService {
-    rpc GenerateLocalKey(GenerateLocalKeyRequest) returns (GenerateLocalKeyResponse);
-    rpc GenerateManagedKey(GenerateManagedKeyRequest) returns (GenerateManagedKeyResponse);
-    rpc LoadLocalKey(LoadLocalKeyRequest) returns (LoadLocalKeyResponse);
-    rpc LoadManagedKey(LoadManagedKeyRequest) returns (LoadManagedKeyResponse);
+  rpc GenerateLocalKey(GenerateLocalKeyRequest)
+      returns (GenerateLocalKeyResponse);
+  rpc LoadLocalKey(LoadLocalKeyRequest) returns (LoadLocalKeyResponse);
 
-    rpc GenerateLocalCertificate(GenerateLocalCertificateRequest) returns (GenerateLocalCertificateResponse);
-    rpc GenerateManagedCertificate(GenerateManagedCertificateRequest) returns (GenerateManagedCertificateResponse);
-    rpc LoadLocalCertificate(LoadLocalCertificateRequest) returns (LoadLocalCertificateResponse);
-    rpc LoadManagedCertificate(LoadManagedCertificateRequest) returns (LoadManagedCertificateResponse);
-    rpc ImportManagedCertificate(ImportManagedCertificateRequest) returns (ImportManagedCertificateResponse);
+  rpc GenerateManagedKey(GenerateManagedKeyRequest)
+      returns (GenerateManagedKeyResponse);
+  rpc LoadManagedKey(LoadManagedKeyRequest) returns (LoadManagedKeyResponse);
+
+  rpc GenerateLocalCertificate(GenerateLocalCertificateRequest)
+      returns (GenerateLocalCertificateResponse);
+  rpc LoadLocalCertificate(LoadLocalCertificateRequest)
+      returns (LoadLocalCertificateResponse);
+
+  rpc GenerateManagedCertificate(GenerateManagedCertificateRequest)
+      returns (GenerateManagedCertificateResponse);
+  rpc LoadManagedCertificate(LoadManagedCertificateRequest)
+      returns (LoadManagedCertificateResponse);
+  rpc ImportManagedCertificate(ImportManagedCertificateRequest)
+      returns (ImportManagedCertificateResponse);
+
+  rpc SetupOTPAccessControl(SetupOTPAccessControlRequest)
+      returns (SetupOTPAccessControlResponse);
+  rpc SetupSecretAccessControl(SetupSecretAccessControlRequest)
+      returns (SetupSecretAccessControlResponse);
+
+  rpc RecoverOTPAccessControl(RecoverOTPAccessControlRequest)
+      returns (RecoverOTPAccessControlResponse);
 }
 
 message GenerateLocalKeyRequest {
-    ConfigData config_data = 1;
-    KeyType key_type = 2;
+  ConfigData config_data = 1;
+  KeyType key_type = 2;
 }
 
 message GenerateLocalKeyResponse {
-    LocalKey local_key = 1;
-    optional Error error = 2;
+  LocalKey local_key = 1;
+  optional Error error = 2;
 }
 
 message GenerateManagedKeyRequest {
-    ConfigData config_data = 1;
-    ManagedKeyParams params = 2;
+  ConfigData config_data = 1;
+  ManagedKeyParams params = 2;
 }
 
 message GenerateManagedKeyResponse {
-    ManagedKey managed_key = 1;
-    optional Error error = 2;
+  ManagedKey managed_key = 1;
+  optional Error error = 2;
 }
 
 message LoadLocalKeyRequest {
-    ConfigData config_data = 1;
-    KeyType key_type = 2;
-    string key = 3;
+  ConfigData config_data = 1;
+  KeyType key_type = 2;
+  string key = 3;
 }
 
 message LoadLocalKeyResponse {
-    LocalKey local_key = 1;
-    optional Error error = 2;
+  LocalKey local_key = 1;
+  optional Error error = 2;
 }
 
 message LoadManagedKeyRequest {
-    ConfigData config_data = 1;
-    string id = 2;
+  ConfigData config_data = 1;
+  string id = 2;
 }
 
 message LoadManagedKeyResponse {
-    ManagedKey managed_key = 1;
-    optional Error error = 2;
+  ManagedKey managed_key = 1;
+  optional Error error = 2;
 }
 
-
 message GenerateLocalCertificateRequest {
-    ConfigData config_data = 1;
-    LocalCertificateParams params = 2;
+  ConfigData config_data = 1;
+  LocalCertificateParams params = 2;
 }
 
 message GenerateLocalCertificateResponse {
-    LocalCertificate local_certificate = 1;
-    optional Error error = 2;
+  LocalCertificate local_certificate = 1;
+  optional Error error = 2;
 }
 
 message GenerateManagedCertificateRequest {
-    ConfigData config_data = 1;
-    ManagedCertificateParams params = 2;
+  ConfigData config_data = 1;
+  ManagedCertificateParams params = 2;
 }
 
 message GenerateManagedCertificateResponse {
-    ManagedCertificate managed_certificate = 1;
-    optional Error error = 2;
+  ManagedCertificate managed_certificate = 1;
+  optional Error error = 2;
 }
 
 message LoadLocalCertificateRequest {
-    ConfigData config_data = 1;
-    bytes pkcs12 = 2;
-    string password = 3;
+  ConfigData config_data = 1;
+  bytes pkcs12 = 2;
+  string password = 3;
 }
 
 message LoadLocalCertificateResponse {
-    LocalCertificate local_certificate = 1;
-    optional Error error = 2;
+  LocalCertificate local_certificate = 1;
+  optional Error error = 2;
 }
 
 message LoadManagedCertificateRequest {
-    ConfigData config_data = 1;
-    string id = 2;
+  ConfigData config_data = 1;
+  string id = 2;
 }
 
 message LoadManagedCertificateResponse {
-    ManagedCertificate managed_certificate = 1;
-    optional Error error = 2;
+  ManagedCertificate managed_certificate = 1;
+  optional Error error = 2;
 }
 
 message ImportManagedCertificateRequest {
-    ConfigData config_data = 1;
-    bytes certificate = 2;
-    optional string password = 3;
-    CertificateType certificate_type = 4; 
+  ConfigData config_data = 1;
+  bytes certificate = 2;
+  optional string password = 3;
+  CertificateType certificate_type = 4;
 }
 
 message ImportManagedCertificateResponse {
-    ManagedCertificate managed_certificate = 1;
-    optional Error error = 2;
+  ManagedCertificate managed_certificate = 1;
+  optional Error error = 2;
+}
+
+message SetupOTPAccessControlRequest {
+  ConfigData config_data = 1;
+  optional ManagedKey managed_key = 2;
+  optional ManagedCertificate managed_certificate = 3;
+}
+
+message SetupOTPAccessControlResponse {
+  string secret = 1;
+  string secret_qr = 2;
+  repeated string recovery_codes = 3;
+  optional Error error = 4;
+}
+
+message SetupSecretAccessControlRequest {
+  ConfigData config_data = 1;
+  string secret = 2;
+  string email = 3;
+  optional ManagedKey managed_key = 4;
+  optional ManagedCertificate managed_certificate = 5;
+}
+
+message SetupSecretAccessControlResponse { optional Error error = 1; }
+
+message RecoverOTPAccessControlRequest {
+  ConfigData config_data = 1;
+  string code = 2;
+  optional ManagedKey managed_key = 3;
+  optional ManagedCertificate managed_certificate = 4;
+}
+
+message RecoverOTPAccessControlResponse {
+  string secret = 1;
+  string secret_qr = 2;
+  repeated string recovery_codes = 3;
+  optional Error error = 4;
 }

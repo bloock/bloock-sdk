@@ -341,4 +341,73 @@ func TestKey(t *testing.T) {
 
 		assert.NotEmpty(t, signature.Signature)
 	})
+
+	t.Run("setup & recover otp access control", func(t *testing.T) {
+		keyClient := NewKeyClient()
+		authenticityClient := NewAuthenticityClient()
+		recordClient := NewRecordClient()
+
+		protection := key.KEY_PROTECTION_SOFTWARE
+		keyType := key.EcP256k
+		params := key.ManagedKeyParams{
+			Protection: protection,
+			KeyType:    keyType,
+		}
+		managedKey, err := keyClient.NewManagedKey(params)
+		assert.NoError(t, err)
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		_, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
+		assert.NoError(t, err)
+
+		otp, err := keyClient.SetupOTPAccessControl(key.Managed{
+			ManagedKey: &managedKey,
+		})
+		assert.NoError(t, err)
+		assert.NotEmpty(t, otp.Secret)
+		assert.NotEmpty(t, otp.SecretQr)
+		assert.NotEmpty(t, otp.RecoveryCodes)
+
+		_, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
+		assert.Error(t, err)
+	})
+
+	t.Run("setup & recover otp access control", func(t *testing.T) {
+		keyClient := NewKeyClient()
+		authenticityClient := NewAuthenticityClient()
+		recordClient := NewRecordClient()
+
+		protection := key.KEY_PROTECTION_SOFTWARE
+		keyType := key.EcP256k
+		params := key.ManagedKeyParams{
+			Protection: protection,
+			KeyType:    keyType,
+		}
+		managedKey, err := keyClient.NewManagedKey(params)
+		assert.NoError(t, err)
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		_, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
+		assert.NoError(t, err)
+
+		err = keyClient.SetupSecretAccessControl(key.Managed{
+			ManagedKey: &managedKey,
+		}, "password", "it@bloock.com")
+		assert.NoError(t, err)
+
+		_, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
+		assert.Error(t, err)
+	})
 }

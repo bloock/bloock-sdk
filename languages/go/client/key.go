@@ -190,3 +190,54 @@ func (c *KeyClient) ImportManagedCertificate(_type keyEntity.CertificateType, ce
 
 	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }
+
+func (c *KeyClient) SetupOTPAccessControl(key keyEntity.Managed) (keyEntity.OtpAccessControl, error) {
+	res, err := c.bridgeClient.Key().SetupOTPAccessControl(context.Background(), &proto.SetupOTPAccessControlRequest{
+		ConfigData: c.configData,
+	})
+
+	if err != nil {
+		return keyEntity.OtpAccessControl{}, err
+	}
+
+	if res.Error != nil {
+		return keyEntity.OtpAccessControl{}, errors.New(res.Error.Message)
+	}
+
+	return keyEntity.New(res.Secret, res.SecretQr, res.RecoveryCodes), nil
+}
+
+func (c *KeyClient) RecoverOTPAccessControl(key keyEntity.Managed, code string) (keyEntity.OtpAccessControl, error) {
+	res, err := c.bridgeClient.Key().RecoverOTPAccessControl(context.Background(), &proto.RecoverOTPAccessControlRequest{
+		ConfigData: c.configData,
+		Code:       code,
+	})
+
+	if err != nil {
+		return keyEntity.OtpAccessControl{}, err
+	}
+
+	if res.Error != nil {
+		return keyEntity.OtpAccessControl{}, errors.New(res.Error.Message)
+	}
+
+	return keyEntity.New(res.Secret, res.SecretQr, res.RecoveryCodes), nil
+}
+
+func (c *KeyClient) SetupSecretAccessControl(key keyEntity.Managed, secret string, email string) error {
+	res, err := c.bridgeClient.Key().SetupSecretAccessControl(context.Background(), &proto.SetupSecretAccessControlRequest{
+		ConfigData: c.configData,
+		Secret:     secret,
+		Email:      email,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if res.Error != nil {
+		return errors.New(res.Error.Message)
+	}
+
+	return nil
+}

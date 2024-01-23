@@ -1,9 +1,16 @@
 use crate::{
     error::BridgeError,
     items::{
-        Error, GenerateLocalKeyRequest, GenerateLocalKeyResponse, GenerateManagedKeyRequest,
-        GenerateManagedKeyResponse, LoadLocalKeyRequest, LoadLocalKeyResponse,
-        LoadManagedKeyRequest, LoadManagedKeyResponse, GenerateLocalCertificateRequest, GenerateLocalCertificateResponse, GenerateManagedCertificateRequest, GenerateManagedCertificateResponse, LoadLocalCertificateRequest, LoadLocalCertificateResponse, LoadManagedCertificateRequest, LoadManagedCertificateResponse, ImportManagedCertificateRequest, ImportManagedCertificateResponse,
+        Error, GenerateLocalCertificateRequest, GenerateLocalCertificateResponse,
+        GenerateLocalKeyRequest, GenerateLocalKeyResponse, GenerateManagedCertificateRequest,
+        GenerateManagedCertificateResponse, GenerateManagedKeyRequest, GenerateManagedKeyResponse,
+        ImportManagedCertificateRequest, ImportManagedCertificateResponse,
+        LoadLocalCertificateRequest, LoadLocalCertificateResponse, LoadLocalKeyRequest,
+        LoadLocalKeyResponse, LoadManagedCertificateRequest, LoadManagedCertificateResponse,
+        LoadManagedKeyRequest, LoadManagedKeyResponse, RecoverOtpAccessControlRequest,
+        RecoverOtpAccessControlResponse, SetupOtpAccessControlRequest,
+        SetupOtpAccessControlResponse, SetupSecretAccessControlRequest,
+        SetupSecretAccessControlResponse,
     },
     server::response_types::ResponseTypeError,
 };
@@ -108,6 +115,45 @@ impl ResponseTypeError<ImportManagedCertificateRequest> for ImportManagedCertifi
     fn build_error(err: String) -> Self {
         Self {
             managed_certificate: None,
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<SetupOtpAccessControlRequest> for SetupOtpAccessControlResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            secret: String::default(),
+            secret_qr: String::default(),
+            recovery_codes: Vec::default(),
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<SetupSecretAccessControlRequest> for SetupSecretAccessControlResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            error: Some(Error {
+                kind: BridgeError::KeysError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<RecoverOtpAccessControlRequest> for RecoverOtpAccessControlResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            secret: String::default(),
+            secret_qr: String::default(),
+            recovery_codes: Vec::default(),
             error: Some(Error {
                 kind: BridgeError::KeysError.to_string(),
                 message: err,

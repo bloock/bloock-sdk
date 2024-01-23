@@ -24,26 +24,26 @@ import {
 import { Error } from "./shared";
 
 export interface CreateIdentityRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
 }
 
 export interface CreateIdentityResponse {
-  identity?: Identity;
+  identity?: Identity | undefined;
   error?: Error | undefined;
 }
 
 export interface LoadIdentityRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   mnemonic: string;
 }
 
 export interface LoadIdentityResponse {
-  identity?: Identity;
+  identity?: Identity | undefined;
   error?: Error | undefined;
 }
 
 export interface BuildSchemaRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   displayName: string;
   technicalName: string;
   booleanAttributes: BooleanAttributeDefinition[];
@@ -54,22 +54,22 @@ export interface BuildSchemaRequest {
 }
 
 export interface BuildSchemaResponse {
-  schema?: Schema;
+  schema?: Schema | undefined;
   error?: Error | undefined;
 }
 
 export interface GetSchemaRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   id: string;
 }
 
 export interface GetSchemaResponse {
-  schema?: Schema;
+  schema?: Schema | undefined;
   error?: Error | undefined;
 }
 
 export interface CreateCredentialRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   schemaId: string;
   holderKey: string;
   booleanAttributes: BooleanAttribute[];
@@ -80,22 +80,22 @@ export interface CreateCredentialRequest {
 }
 
 export interface CreateCredentialResponse {
-  credentialReceipt?: CredentialReceipt;
+  credentialReceipt?: CredentialReceipt | undefined;
   error?: Error | undefined;
 }
 
 export interface GetOfferRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   id: string;
 }
 
 export interface GetOfferResponse {
-  offer?: CredentialOffer;
+  offer?: CredentialOffer | undefined;
   error?: Error | undefined;
 }
 
 export interface WaitOfferRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   offerId: string;
   timeout: number;
 }
@@ -106,8 +106,8 @@ export interface WaitOfferResponse {
 }
 
 export interface CredentialOfferToJsonRequest {
-  configData?: ConfigData;
-  credentialOffer?: CredentialOffer;
+  configData?: ConfigData | undefined;
+  credentialOffer?: CredentialOffer | undefined;
 }
 
 export interface CredentialOfferToJsonResponse {
@@ -116,29 +116,29 @@ export interface CredentialOfferToJsonResponse {
 }
 
 export interface CredentialOfferFromJsonRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   json: string;
 }
 
 export interface CredentialOfferFromJsonResponse {
-  credentialOffer?: CredentialOffer;
+  credentialOffer?: CredentialOffer | undefined;
   error?: Error | undefined;
 }
 
 export interface CredentialOfferRedeemRequest {
-  configData?: ConfigData;
-  credentialOffer?: CredentialOffer;
+  configData?: ConfigData | undefined;
+  credentialOffer?: CredentialOffer | undefined;
   identityPrivateKey: string;
 }
 
 export interface CredentialOfferRedeemResponse {
-  credential?: Credential;
+  credential?: Credential | undefined;
   error?: Error | undefined;
 }
 
 export interface CredentialToJsonRequest {
-  configData?: ConfigData;
-  credential?: Credential;
+  configData?: ConfigData | undefined;
+  credential?: Credential | undefined;
 }
 
 export interface CredentialToJsonResponse {
@@ -147,32 +147,32 @@ export interface CredentialToJsonResponse {
 }
 
 export interface CredentialFromJsonRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   json: string;
 }
 
 export interface CredentialFromJsonResponse {
-  credential?: Credential;
+  credential?: Credential | undefined;
   error?: Error | undefined;
 }
 
 export interface VerifyCredentialRequest {
-  configData?: ConfigData;
-  credential?: Credential;
+  configData?: ConfigData | undefined;
+  credential?: Credential | undefined;
 }
 
 export interface VerifyCredentialResponse {
-  result?: CredentialVerification;
+  result?: CredentialVerification | undefined;
   error?: Error | undefined;
 }
 
 export interface RevokeCredentialRequest {
-  configData?: ConfigData;
-  credential?: Credential;
+  configData?: ConfigData | undefined;
+  credential?: Credential | undefined;
 }
 
 export interface RevokeCredentialResponse {
-  result?: CredentialRevocation;
+  result?: CredentialRevocation | undefined;
   error?: Error | undefined;
 }
 
@@ -189,19 +189,24 @@ export const CreateIdentityRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateIdentityRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateIdentityRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -212,11 +217,15 @@ export const CreateIdentityRequest = {
 
   toJSON(message: CreateIdentityRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateIdentityRequest>, I>>(base?: I): CreateIdentityRequest {
+    return CreateIdentityRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateIdentityRequest>, I>>(object: I): CreateIdentityRequest {
     const message = createBaseCreateIdentityRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -242,22 +251,31 @@ export const CreateIdentityResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateIdentityResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateIdentityResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.identity = Identity.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -271,11 +289,18 @@ export const CreateIdentityResponse = {
 
   toJSON(message: CreateIdentityResponse): unknown {
     const obj: any = {};
-    message.identity !== undefined && (obj.identity = message.identity ? Identity.toJSON(message.identity) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.identity !== undefined) {
+      obj.identity = Identity.toJSON(message.identity);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateIdentityResponse>, I>>(base?: I): CreateIdentityResponse {
+    return CreateIdentityResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateIdentityResponse>, I>>(object: I): CreateIdentityResponse {
     const message = createBaseCreateIdentityResponse();
     message.identity = (object.identity !== undefined && object.identity !== null)
@@ -302,22 +327,31 @@ export const LoadIdentityRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadIdentityRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadIdentityRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.mnemonic = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -325,18 +359,24 @@ export const LoadIdentityRequest = {
   fromJSON(object: any): LoadIdentityRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      mnemonic: isSet(object.mnemonic) ? String(object.mnemonic) : "",
+      mnemonic: isSet(object.mnemonic) ? globalThis.String(object.mnemonic) : "",
     };
   },
 
   toJSON(message: LoadIdentityRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.mnemonic !== undefined && (obj.mnemonic = message.mnemonic);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.mnemonic !== "") {
+      obj.mnemonic = message.mnemonic;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadIdentityRequest>, I>>(base?: I): LoadIdentityRequest {
+    return LoadIdentityRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadIdentityRequest>, I>>(object: I): LoadIdentityRequest {
     const message = createBaseLoadIdentityRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -363,22 +403,31 @@ export const LoadIdentityResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): LoadIdentityResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseLoadIdentityResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.identity = Identity.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -392,11 +441,18 @@ export const LoadIdentityResponse = {
 
   toJSON(message: LoadIdentityResponse): unknown {
     const obj: any = {};
-    message.identity !== undefined && (obj.identity = message.identity ? Identity.toJSON(message.identity) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.identity !== undefined) {
+      obj.identity = Identity.toJSON(message.identity);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<LoadIdentityResponse>, I>>(base?: I): LoadIdentityResponse {
+    return LoadIdentityResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<LoadIdentityResponse>, I>>(object: I): LoadIdentityResponse {
     const message = createBaseLoadIdentityResponse();
     message.identity = (object.identity !== undefined && object.identity !== null)
@@ -450,40 +506,73 @@ export const BuildSchemaRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BuildSchemaRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBuildSchemaRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.displayName = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.technicalName = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.booleanAttributes.push(BooleanAttributeDefinition.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.dateAttributes.push(DateAttributeDefinition.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 6:
+          if (tag !== 50) {
+            break;
+          }
+
           message.datetimeAttributes.push(DateTimeAttributeDefinition.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 7:
+          if (tag !== 58) {
+            break;
+          }
+
           message.stringAttributes.push(StringAttributeDefinition.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 8:
+          if (tag !== 66) {
+            break;
+          }
+
           message.numberAttributes.push(NumberAttributeDefinition.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -491,21 +580,21 @@ export const BuildSchemaRequest = {
   fromJSON(object: any): BuildSchemaRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      displayName: isSet(object.displayName) ? String(object.displayName) : "",
-      technicalName: isSet(object.technicalName) ? String(object.technicalName) : "",
-      booleanAttributes: Array.isArray(object?.booleanAttributes)
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      technicalName: isSet(object.technicalName) ? globalThis.String(object.technicalName) : "",
+      booleanAttributes: globalThis.Array.isArray(object?.booleanAttributes)
         ? object.booleanAttributes.map((e: any) => BooleanAttributeDefinition.fromJSON(e))
         : [],
-      dateAttributes: Array.isArray(object?.dateAttributes)
+      dateAttributes: globalThis.Array.isArray(object?.dateAttributes)
         ? object.dateAttributes.map((e: any) => DateAttributeDefinition.fromJSON(e))
         : [],
-      datetimeAttributes: Array.isArray(object?.datetimeAttributes)
+      datetimeAttributes: globalThis.Array.isArray(object?.datetimeAttributes)
         ? object.datetimeAttributes.map((e: any) => DateTimeAttributeDefinition.fromJSON(e))
         : [],
-      stringAttributes: Array.isArray(object?.stringAttributes)
+      stringAttributes: globalThis.Array.isArray(object?.stringAttributes)
         ? object.stringAttributes.map((e: any) => StringAttributeDefinition.fromJSON(e))
         : [],
-      numberAttributes: Array.isArray(object?.numberAttributes)
+      numberAttributes: globalThis.Array.isArray(object?.numberAttributes)
         ? object.numberAttributes.map((e: any) => NumberAttributeDefinition.fromJSON(e))
         : [],
     };
@@ -513,42 +602,36 @@ export const BuildSchemaRequest = {
 
   toJSON(message: BuildSchemaRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.displayName !== undefined && (obj.displayName = message.displayName);
-    message.technicalName !== undefined && (obj.technicalName = message.technicalName);
-    if (message.booleanAttributes) {
-      obj.booleanAttributes = message.booleanAttributes.map((e) =>
-        e ? BooleanAttributeDefinition.toJSON(e) : undefined
-      );
-    } else {
-      obj.booleanAttributes = [];
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
     }
-    if (message.dateAttributes) {
-      obj.dateAttributes = message.dateAttributes.map((e) => e ? DateAttributeDefinition.toJSON(e) : undefined);
-    } else {
-      obj.dateAttributes = [];
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
     }
-    if (message.datetimeAttributes) {
-      obj.datetimeAttributes = message.datetimeAttributes.map((e) =>
-        e ? DateTimeAttributeDefinition.toJSON(e) : undefined
-      );
-    } else {
-      obj.datetimeAttributes = [];
+    if (message.technicalName !== "") {
+      obj.technicalName = message.technicalName;
     }
-    if (message.stringAttributes) {
-      obj.stringAttributes = message.stringAttributes.map((e) => e ? StringAttributeDefinition.toJSON(e) : undefined);
-    } else {
-      obj.stringAttributes = [];
+    if (message.booleanAttributes?.length) {
+      obj.booleanAttributes = message.booleanAttributes.map((e) => BooleanAttributeDefinition.toJSON(e));
     }
-    if (message.numberAttributes) {
-      obj.numberAttributes = message.numberAttributes.map((e) => e ? NumberAttributeDefinition.toJSON(e) : undefined);
-    } else {
-      obj.numberAttributes = [];
+    if (message.dateAttributes?.length) {
+      obj.dateAttributes = message.dateAttributes.map((e) => DateAttributeDefinition.toJSON(e));
+    }
+    if (message.datetimeAttributes?.length) {
+      obj.datetimeAttributes = message.datetimeAttributes.map((e) => DateTimeAttributeDefinition.toJSON(e));
+    }
+    if (message.stringAttributes?.length) {
+      obj.stringAttributes = message.stringAttributes.map((e) => StringAttributeDefinition.toJSON(e));
+    }
+    if (message.numberAttributes?.length) {
+      obj.numberAttributes = message.numberAttributes.map((e) => NumberAttributeDefinition.toJSON(e));
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BuildSchemaRequest>, I>>(base?: I): BuildSchemaRequest {
+    return BuildSchemaRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<BuildSchemaRequest>, I>>(object: I): BuildSchemaRequest {
     const message = createBaseBuildSchemaRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -582,22 +665,31 @@ export const BuildSchemaResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BuildSchemaResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBuildSchemaResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.schema = Schema.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -611,11 +703,18 @@ export const BuildSchemaResponse = {
 
   toJSON(message: BuildSchemaResponse): unknown {
     const obj: any = {};
-    message.schema !== undefined && (obj.schema = message.schema ? Schema.toJSON(message.schema) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.schema !== undefined) {
+      obj.schema = Schema.toJSON(message.schema);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BuildSchemaResponse>, I>>(base?: I): BuildSchemaResponse {
+    return BuildSchemaResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<BuildSchemaResponse>, I>>(object: I): BuildSchemaResponse {
     const message = createBaseBuildSchemaResponse();
     message.schema = (object.schema !== undefined && object.schema !== null)
@@ -642,22 +741,31 @@ export const GetSchemaRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetSchemaRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetSchemaRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -665,18 +773,24 @@ export const GetSchemaRequest = {
   fromJSON(object: any): GetSchemaRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      id: isSet(object.id) ? String(object.id) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
     };
   },
 
   toJSON(message: GetSchemaRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.id !== undefined && (obj.id = message.id);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetSchemaRequest>, I>>(base?: I): GetSchemaRequest {
+    return GetSchemaRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetSchemaRequest>, I>>(object: I): GetSchemaRequest {
     const message = createBaseGetSchemaRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -703,22 +817,31 @@ export const GetSchemaResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetSchemaResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetSchemaResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.schema = Schema.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -732,11 +855,18 @@ export const GetSchemaResponse = {
 
   toJSON(message: GetSchemaResponse): unknown {
     const obj: any = {};
-    message.schema !== undefined && (obj.schema = message.schema ? Schema.toJSON(message.schema) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.schema !== undefined) {
+      obj.schema = Schema.toJSON(message.schema);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetSchemaResponse>, I>>(base?: I): GetSchemaResponse {
+    return GetSchemaResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetSchemaResponse>, I>>(object: I): GetSchemaResponse {
     const message = createBaseGetSchemaResponse();
     message.schema = (object.schema !== undefined && object.schema !== null)
@@ -790,40 +920,73 @@ export const CreateCredentialRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateCredentialRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateCredentialRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.schemaId = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.holderKey = reader.string();
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.booleanAttributes.push(BooleanAttribute.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.dateAttributes.push(DateAttribute.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 6:
+          if (tag !== 50) {
+            break;
+          }
+
           message.datetimeAttributes.push(DateTimeAttribute.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 7:
+          if (tag !== 58) {
+            break;
+          }
+
           message.stringAttributes.push(StringAttribute.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 8:
+          if (tag !== 66) {
+            break;
+          }
+
           message.numberAttributes.push(NumberAttribute.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -831,21 +994,21 @@ export const CreateCredentialRequest = {
   fromJSON(object: any): CreateCredentialRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      schemaId: isSet(object.schemaId) ? String(object.schemaId) : "",
-      holderKey: isSet(object.holderKey) ? String(object.holderKey) : "",
-      booleanAttributes: Array.isArray(object?.booleanAttributes)
+      schemaId: isSet(object.schemaId) ? globalThis.String(object.schemaId) : "",
+      holderKey: isSet(object.holderKey) ? globalThis.String(object.holderKey) : "",
+      booleanAttributes: globalThis.Array.isArray(object?.booleanAttributes)
         ? object.booleanAttributes.map((e: any) => BooleanAttribute.fromJSON(e))
         : [],
-      dateAttributes: Array.isArray(object?.dateAttributes)
+      dateAttributes: globalThis.Array.isArray(object?.dateAttributes)
         ? object.dateAttributes.map((e: any) => DateAttribute.fromJSON(e))
         : [],
-      datetimeAttributes: Array.isArray(object?.datetimeAttributes)
+      datetimeAttributes: globalThis.Array.isArray(object?.datetimeAttributes)
         ? object.datetimeAttributes.map((e: any) => DateTimeAttribute.fromJSON(e))
         : [],
-      stringAttributes: Array.isArray(object?.stringAttributes)
+      stringAttributes: globalThis.Array.isArray(object?.stringAttributes)
         ? object.stringAttributes.map((e: any) => StringAttribute.fromJSON(e))
         : [],
-      numberAttributes: Array.isArray(object?.numberAttributes)
+      numberAttributes: globalThis.Array.isArray(object?.numberAttributes)
         ? object.numberAttributes.map((e: any) => NumberAttribute.fromJSON(e))
         : [],
     };
@@ -853,38 +1016,36 @@ export const CreateCredentialRequest = {
 
   toJSON(message: CreateCredentialRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.schemaId !== undefined && (obj.schemaId = message.schemaId);
-    message.holderKey !== undefined && (obj.holderKey = message.holderKey);
-    if (message.booleanAttributes) {
-      obj.booleanAttributes = message.booleanAttributes.map((e) => e ? BooleanAttribute.toJSON(e) : undefined);
-    } else {
-      obj.booleanAttributes = [];
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
     }
-    if (message.dateAttributes) {
-      obj.dateAttributes = message.dateAttributes.map((e) => e ? DateAttribute.toJSON(e) : undefined);
-    } else {
-      obj.dateAttributes = [];
+    if (message.schemaId !== "") {
+      obj.schemaId = message.schemaId;
     }
-    if (message.datetimeAttributes) {
-      obj.datetimeAttributes = message.datetimeAttributes.map((e) => e ? DateTimeAttribute.toJSON(e) : undefined);
-    } else {
-      obj.datetimeAttributes = [];
+    if (message.holderKey !== "") {
+      obj.holderKey = message.holderKey;
     }
-    if (message.stringAttributes) {
-      obj.stringAttributes = message.stringAttributes.map((e) => e ? StringAttribute.toJSON(e) : undefined);
-    } else {
-      obj.stringAttributes = [];
+    if (message.booleanAttributes?.length) {
+      obj.booleanAttributes = message.booleanAttributes.map((e) => BooleanAttribute.toJSON(e));
     }
-    if (message.numberAttributes) {
-      obj.numberAttributes = message.numberAttributes.map((e) => e ? NumberAttribute.toJSON(e) : undefined);
-    } else {
-      obj.numberAttributes = [];
+    if (message.dateAttributes?.length) {
+      obj.dateAttributes = message.dateAttributes.map((e) => DateAttribute.toJSON(e));
+    }
+    if (message.datetimeAttributes?.length) {
+      obj.datetimeAttributes = message.datetimeAttributes.map((e) => DateTimeAttribute.toJSON(e));
+    }
+    if (message.stringAttributes?.length) {
+      obj.stringAttributes = message.stringAttributes.map((e) => StringAttribute.toJSON(e));
+    }
+    if (message.numberAttributes?.length) {
+      obj.numberAttributes = message.numberAttributes.map((e) => NumberAttribute.toJSON(e));
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateCredentialRequest>, I>>(base?: I): CreateCredentialRequest {
+    return CreateCredentialRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateCredentialRequest>, I>>(object: I): CreateCredentialRequest {
     const message = createBaseCreateCredentialRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -917,22 +1078,31 @@ export const CreateCredentialResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CreateCredentialResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCreateCredentialResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.credentialReceipt = CredentialReceipt.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -948,13 +1118,18 @@ export const CreateCredentialResponse = {
 
   toJSON(message: CreateCredentialResponse): unknown {
     const obj: any = {};
-    message.credentialReceipt !== undefined && (obj.credentialReceipt = message.credentialReceipt
-      ? CredentialReceipt.toJSON(message.credentialReceipt)
-      : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.credentialReceipt !== undefined) {
+      obj.credentialReceipt = CredentialReceipt.toJSON(message.credentialReceipt);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CreateCredentialResponse>, I>>(base?: I): CreateCredentialResponse {
+    return CreateCredentialResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CreateCredentialResponse>, I>>(object: I): CreateCredentialResponse {
     const message = createBaseCreateCredentialResponse();
     message.credentialReceipt = (object.credentialReceipt !== undefined && object.credentialReceipt !== null)
@@ -981,22 +1156,31 @@ export const GetOfferRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetOfferRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetOfferRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.id = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1004,18 +1188,24 @@ export const GetOfferRequest = {
   fromJSON(object: any): GetOfferRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      id: isSet(object.id) ? String(object.id) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
     };
   },
 
   toJSON(message: GetOfferRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.id !== undefined && (obj.id = message.id);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetOfferRequest>, I>>(base?: I): GetOfferRequest {
+    return GetOfferRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetOfferRequest>, I>>(object: I): GetOfferRequest {
     const message = createBaseGetOfferRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1042,22 +1232,31 @@ export const GetOfferResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetOfferResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetOfferResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.offer = CredentialOffer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1071,11 +1270,18 @@ export const GetOfferResponse = {
 
   toJSON(message: GetOfferResponse): unknown {
     const obj: any = {};
-    message.offer !== undefined && (obj.offer = message.offer ? CredentialOffer.toJSON(message.offer) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.offer !== undefined) {
+      obj.offer = CredentialOffer.toJSON(message.offer);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetOfferResponse>, I>>(base?: I): GetOfferResponse {
+    return GetOfferResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetOfferResponse>, I>>(object: I): GetOfferResponse {
     const message = createBaseGetOfferResponse();
     message.offer = (object.offer !== undefined && object.offer !== null)
@@ -1105,25 +1311,38 @@ export const WaitOfferRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): WaitOfferRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseWaitOfferRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.offerId = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.timeout = longToNumber(reader.int64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1131,20 +1350,28 @@ export const WaitOfferRequest = {
   fromJSON(object: any): WaitOfferRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      offerId: isSet(object.offerId) ? String(object.offerId) : "",
-      timeout: isSet(object.timeout) ? Number(object.timeout) : 0,
+      offerId: isSet(object.offerId) ? globalThis.String(object.offerId) : "",
+      timeout: isSet(object.timeout) ? globalThis.Number(object.timeout) : 0,
     };
   },
 
   toJSON(message: WaitOfferRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.offerId !== undefined && (obj.offerId = message.offerId);
-    message.timeout !== undefined && (obj.timeout = Math.round(message.timeout));
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.offerId !== "") {
+      obj.offerId = message.offerId;
+    }
+    if (message.timeout !== 0) {
+      obj.timeout = Math.round(message.timeout);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<WaitOfferRequest>, I>>(base?: I): WaitOfferRequest {
+    return WaitOfferRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<WaitOfferRequest>, I>>(object: I): WaitOfferRequest {
     const message = createBaseWaitOfferRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1172,22 +1399,31 @@ export const WaitOfferResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): WaitOfferResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseWaitOfferResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.offer = CredentialOffer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1201,11 +1437,18 @@ export const WaitOfferResponse = {
 
   toJSON(message: WaitOfferResponse): unknown {
     const obj: any = {};
-    message.offer !== undefined && (obj.offer = message.offer ? CredentialOffer.toJSON(message.offer) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.offer !== undefined) {
+      obj.offer = CredentialOffer.toJSON(message.offer);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<WaitOfferResponse>, I>>(base?: I): WaitOfferResponse {
+    return WaitOfferResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<WaitOfferResponse>, I>>(object: I): WaitOfferResponse {
     const message = createBaseWaitOfferResponse();
     message.offer = (object.offer !== undefined && object.offer !== null)
@@ -1232,22 +1475,31 @@ export const CredentialOfferToJsonRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOfferToJsonRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialOfferToJsonRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.credentialOffer = CredentialOffer.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1261,13 +1513,18 @@ export const CredentialOfferToJsonRequest = {
 
   toJSON(message: CredentialOfferToJsonRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.credentialOffer !== undefined &&
-      (obj.credentialOffer = message.credentialOffer ? CredentialOffer.toJSON(message.credentialOffer) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credentialOffer !== undefined) {
+      obj.credentialOffer = CredentialOffer.toJSON(message.credentialOffer);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialOfferToJsonRequest>, I>>(base?: I): CredentialOfferToJsonRequest {
+    return CredentialOfferToJsonRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialOfferToJsonRequest>, I>>(object: I): CredentialOfferToJsonRequest {
     const message = createBaseCredentialOfferToJsonRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1296,40 +1553,56 @@ export const CredentialOfferToJsonResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOfferToJsonResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialOfferToJsonResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.json = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CredentialOfferToJsonResponse {
     return {
-      json: isSet(object.json) ? String(object.json) : "",
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: CredentialOfferToJsonResponse): unknown {
     const obj: any = {};
-    message.json !== undefined && (obj.json = message.json);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.json !== "") {
+      obj.json = message.json;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialOfferToJsonResponse>, I>>(base?: I): CredentialOfferToJsonResponse {
+    return CredentialOfferToJsonResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialOfferToJsonResponse>, I>>(
     object: I,
   ): CredentialOfferToJsonResponse {
@@ -1356,22 +1629,31 @@ export const CredentialOfferFromJsonRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOfferFromJsonRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialOfferFromJsonRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.json = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1379,18 +1661,24 @@ export const CredentialOfferFromJsonRequest = {
   fromJSON(object: any): CredentialOfferFromJsonRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      json: isSet(object.json) ? String(object.json) : "",
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
     };
   },
 
   toJSON(message: CredentialOfferFromJsonRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.json !== undefined && (obj.json = message.json);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.json !== "") {
+      obj.json = message.json;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialOfferFromJsonRequest>, I>>(base?: I): CredentialOfferFromJsonRequest {
+    return CredentialOfferFromJsonRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialOfferFromJsonRequest>, I>>(
     object: I,
   ): CredentialOfferFromJsonRequest {
@@ -1419,22 +1707,31 @@ export const CredentialOfferFromJsonResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOfferFromJsonResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialOfferFromJsonResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.credentialOffer = CredentialOffer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1448,12 +1745,18 @@ export const CredentialOfferFromJsonResponse = {
 
   toJSON(message: CredentialOfferFromJsonResponse): unknown {
     const obj: any = {};
-    message.credentialOffer !== undefined &&
-      (obj.credentialOffer = message.credentialOffer ? CredentialOffer.toJSON(message.credentialOffer) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.credentialOffer !== undefined) {
+      obj.credentialOffer = CredentialOffer.toJSON(message.credentialOffer);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialOfferFromJsonResponse>, I>>(base?: I): CredentialOfferFromJsonResponse {
+    return CredentialOfferFromJsonResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialOfferFromJsonResponse>, I>>(
     object: I,
   ): CredentialOfferFromJsonResponse {
@@ -1485,25 +1788,38 @@ export const CredentialOfferRedeemRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOfferRedeemRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialOfferRedeemRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.credentialOffer = CredentialOffer.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.identityPrivateKey = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1512,20 +1828,27 @@ export const CredentialOfferRedeemRequest = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       credentialOffer: isSet(object.credentialOffer) ? CredentialOffer.fromJSON(object.credentialOffer) : undefined,
-      identityPrivateKey: isSet(object.identityPrivateKey) ? String(object.identityPrivateKey) : "",
+      identityPrivateKey: isSet(object.identityPrivateKey) ? globalThis.String(object.identityPrivateKey) : "",
     };
   },
 
   toJSON(message: CredentialOfferRedeemRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.credentialOffer !== undefined &&
-      (obj.credentialOffer = message.credentialOffer ? CredentialOffer.toJSON(message.credentialOffer) : undefined);
-    message.identityPrivateKey !== undefined && (obj.identityPrivateKey = message.identityPrivateKey);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credentialOffer !== undefined) {
+      obj.credentialOffer = CredentialOffer.toJSON(message.credentialOffer);
+    }
+    if (message.identityPrivateKey !== "") {
+      obj.identityPrivateKey = message.identityPrivateKey;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialOfferRedeemRequest>, I>>(base?: I): CredentialOfferRedeemRequest {
+    return CredentialOfferRedeemRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialOfferRedeemRequest>, I>>(object: I): CredentialOfferRedeemRequest {
     const message = createBaseCredentialOfferRedeemRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1555,22 +1878,31 @@ export const CredentialOfferRedeemResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOfferRedeemResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialOfferRedeemResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.credential = Credential.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1584,12 +1916,18 @@ export const CredentialOfferRedeemResponse = {
 
   toJSON(message: CredentialOfferRedeemResponse): unknown {
     const obj: any = {};
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? Credential.toJSON(message.credential) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.credential !== undefined) {
+      obj.credential = Credential.toJSON(message.credential);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialOfferRedeemResponse>, I>>(base?: I): CredentialOfferRedeemResponse {
+    return CredentialOfferRedeemResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialOfferRedeemResponse>, I>>(
     object: I,
   ): CredentialOfferRedeemResponse {
@@ -1618,22 +1956,31 @@ export const CredentialToJsonRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialToJsonRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialToJsonRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.credential = Credential.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1647,13 +1994,18 @@ export const CredentialToJsonRequest = {
 
   toJSON(message: CredentialToJsonRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? Credential.toJSON(message.credential) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credential !== undefined) {
+      obj.credential = Credential.toJSON(message.credential);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialToJsonRequest>, I>>(base?: I): CredentialToJsonRequest {
+    return CredentialToJsonRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialToJsonRequest>, I>>(object: I): CredentialToJsonRequest {
     const message = createBaseCredentialToJsonRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1682,40 +2034,56 @@ export const CredentialToJsonResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialToJsonResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialToJsonResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.json = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): CredentialToJsonResponse {
     return {
-      json: isSet(object.json) ? String(object.json) : "",
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: CredentialToJsonResponse): unknown {
     const obj: any = {};
-    message.json !== undefined && (obj.json = message.json);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.json !== "") {
+      obj.json = message.json;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialToJsonResponse>, I>>(base?: I): CredentialToJsonResponse {
+    return CredentialToJsonResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialToJsonResponse>, I>>(object: I): CredentialToJsonResponse {
     const message = createBaseCredentialToJsonResponse();
     message.json = object.json ?? "";
@@ -1740,22 +2108,31 @@ export const CredentialFromJsonRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialFromJsonRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialFromJsonRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.json = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1763,18 +2140,24 @@ export const CredentialFromJsonRequest = {
   fromJSON(object: any): CredentialFromJsonRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      json: isSet(object.json) ? String(object.json) : "",
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
     };
   },
 
   toJSON(message: CredentialFromJsonRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.json !== undefined && (obj.json = message.json);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.json !== "") {
+      obj.json = message.json;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialFromJsonRequest>, I>>(base?: I): CredentialFromJsonRequest {
+    return CredentialFromJsonRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialFromJsonRequest>, I>>(object: I): CredentialFromJsonRequest {
     const message = createBaseCredentialFromJsonRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1801,22 +2184,31 @@ export const CredentialFromJsonResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CredentialFromJsonResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCredentialFromJsonResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.credential = Credential.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1830,12 +2222,18 @@ export const CredentialFromJsonResponse = {
 
   toJSON(message: CredentialFromJsonResponse): unknown {
     const obj: any = {};
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? Credential.toJSON(message.credential) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.credential !== undefined) {
+      obj.credential = Credential.toJSON(message.credential);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<CredentialFromJsonResponse>, I>>(base?: I): CredentialFromJsonResponse {
+    return CredentialFromJsonResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<CredentialFromJsonResponse>, I>>(object: I): CredentialFromJsonResponse {
     const message = createBaseCredentialFromJsonResponse();
     message.credential = (object.credential !== undefined && object.credential !== null)
@@ -1862,22 +2260,31 @@ export const VerifyCredentialRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyCredentialRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyCredentialRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.credential = Credential.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1891,13 +2298,18 @@ export const VerifyCredentialRequest = {
 
   toJSON(message: VerifyCredentialRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? Credential.toJSON(message.credential) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credential !== undefined) {
+      obj.credential = Credential.toJSON(message.credential);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<VerifyCredentialRequest>, I>>(base?: I): VerifyCredentialRequest {
+    return VerifyCredentialRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<VerifyCredentialRequest>, I>>(object: I): VerifyCredentialRequest {
     const message = createBaseVerifyCredentialRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -1926,22 +2338,31 @@ export const VerifyCredentialResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyCredentialResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyCredentialResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.result = CredentialVerification.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1955,12 +2376,18 @@ export const VerifyCredentialResponse = {
 
   toJSON(message: VerifyCredentialResponse): unknown {
     const obj: any = {};
-    message.result !== undefined &&
-      (obj.result = message.result ? CredentialVerification.toJSON(message.result) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.result !== undefined) {
+      obj.result = CredentialVerification.toJSON(message.result);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<VerifyCredentialResponse>, I>>(base?: I): VerifyCredentialResponse {
+    return VerifyCredentialResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<VerifyCredentialResponse>, I>>(object: I): VerifyCredentialResponse {
     const message = createBaseVerifyCredentialResponse();
     message.result = (object.result !== undefined && object.result !== null)
@@ -1987,22 +2414,31 @@ export const RevokeCredentialRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RevokeCredentialRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRevokeCredentialRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.credential = Credential.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -2016,13 +2452,18 @@ export const RevokeCredentialRequest = {
 
   toJSON(message: RevokeCredentialRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.credential !== undefined &&
-      (obj.credential = message.credential ? Credential.toJSON(message.credential) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credential !== undefined) {
+      obj.credential = Credential.toJSON(message.credential);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RevokeCredentialRequest>, I>>(base?: I): RevokeCredentialRequest {
+    return RevokeCredentialRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RevokeCredentialRequest>, I>>(object: I): RevokeCredentialRequest {
     const message = createBaseRevokeCredentialRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -2051,22 +2492,31 @@ export const RevokeCredentialResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RevokeCredentialResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRevokeCredentialResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.result = CredentialRevocation.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -2080,12 +2530,18 @@ export const RevokeCredentialResponse = {
 
   toJSON(message: RevokeCredentialResponse): unknown {
     const obj: any = {};
-    message.result !== undefined &&
-      (obj.result = message.result ? CredentialRevocation.toJSON(message.result) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.result !== undefined) {
+      obj.result = CredentialRevocation.toJSON(message.result);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<RevokeCredentialResponse>, I>>(base?: I): RevokeCredentialResponse {
+    return RevokeCredentialResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<RevokeCredentialResponse>, I>>(object: I): RevokeCredentialResponse {
     const message = createBaseRevokeCredentialResponse();
     message.result = (object.result !== undefined && object.result !== null)
@@ -2113,9 +2569,12 @@ export interface IdentityService {
   RevokeCredential(request: RevokeCredentialRequest): Promise<RevokeCredentialResponse>;
 }
 
+export const IdentityServiceServiceName = "bloock.IdentityService";
 export class IdentityServiceClientImpl implements IdentityService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || IdentityServiceServiceName;
     this.rpc = rpc;
     this.CreateIdentity = this.CreateIdentity.bind(this);
     this.LoadIdentity = this.LoadIdentity.bind(this);
@@ -2134,86 +2593,86 @@ export class IdentityServiceClientImpl implements IdentityService {
   }
   CreateIdentity(request: CreateIdentityRequest): Promise<CreateIdentityResponse> {
     const data = CreateIdentityRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "CreateIdentity", data);
-    return promise.then((data) => CreateIdentityResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CreateIdentity", data);
+    return promise.then((data) => CreateIdentityResponse.decode(_m0.Reader.create(data)));
   }
 
   LoadIdentity(request: LoadIdentityRequest): Promise<LoadIdentityResponse> {
     const data = LoadIdentityRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "LoadIdentity", data);
-    return promise.then((data) => LoadIdentityResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "LoadIdentity", data);
+    return promise.then((data) => LoadIdentityResponse.decode(_m0.Reader.create(data)));
   }
 
   BuildSchema(request: BuildSchemaRequest): Promise<BuildSchemaResponse> {
     const data = BuildSchemaRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "BuildSchema", data);
-    return promise.then((data) => BuildSchemaResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "BuildSchema", data);
+    return promise.then((data) => BuildSchemaResponse.decode(_m0.Reader.create(data)));
   }
 
   GetSchema(request: GetSchemaRequest): Promise<GetSchemaResponse> {
     const data = GetSchemaRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "GetSchema", data);
-    return promise.then((data) => GetSchemaResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetSchema", data);
+    return promise.then((data) => GetSchemaResponse.decode(_m0.Reader.create(data)));
   }
 
   CreateCredential(request: CreateCredentialRequest): Promise<CreateCredentialResponse> {
     const data = CreateCredentialRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "CreateCredential", data);
-    return promise.then((data) => CreateCredentialResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CreateCredential", data);
+    return promise.then((data) => CreateCredentialResponse.decode(_m0.Reader.create(data)));
   }
 
   GetOffer(request: GetOfferRequest): Promise<GetOfferResponse> {
     const data = GetOfferRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "GetOffer", data);
-    return promise.then((data) => GetOfferResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetOffer", data);
+    return promise.then((data) => GetOfferResponse.decode(_m0.Reader.create(data)));
   }
 
   WaitOffer(request: WaitOfferRequest): Promise<WaitOfferResponse> {
     const data = WaitOfferRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "WaitOffer", data);
-    return promise.then((data) => WaitOfferResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "WaitOffer", data);
+    return promise.then((data) => WaitOfferResponse.decode(_m0.Reader.create(data)));
   }
 
   CredentialOfferToJson(request: CredentialOfferToJsonRequest): Promise<CredentialOfferToJsonResponse> {
     const data = CredentialOfferToJsonRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "CredentialOfferToJson", data);
-    return promise.then((data) => CredentialOfferToJsonResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CredentialOfferToJson", data);
+    return promise.then((data) => CredentialOfferToJsonResponse.decode(_m0.Reader.create(data)));
   }
 
   CredentialOfferFromJson(request: CredentialOfferFromJsonRequest): Promise<CredentialOfferFromJsonResponse> {
     const data = CredentialOfferFromJsonRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "CredentialOfferFromJson", data);
-    return promise.then((data) => CredentialOfferFromJsonResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CredentialOfferFromJson", data);
+    return promise.then((data) => CredentialOfferFromJsonResponse.decode(_m0.Reader.create(data)));
   }
 
   CredentialOfferRedeem(request: CredentialOfferRedeemRequest): Promise<CredentialOfferRedeemResponse> {
     const data = CredentialOfferRedeemRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "CredentialOfferRedeem", data);
-    return promise.then((data) => CredentialOfferRedeemResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CredentialOfferRedeem", data);
+    return promise.then((data) => CredentialOfferRedeemResponse.decode(_m0.Reader.create(data)));
   }
 
   CredentialToJson(request: CredentialToJsonRequest): Promise<CredentialToJsonResponse> {
     const data = CredentialToJsonRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "CredentialToJson", data);
-    return promise.then((data) => CredentialToJsonResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CredentialToJson", data);
+    return promise.then((data) => CredentialToJsonResponse.decode(_m0.Reader.create(data)));
   }
 
   CredentialFromJson(request: CredentialFromJsonRequest): Promise<CredentialFromJsonResponse> {
     const data = CredentialFromJsonRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "CredentialFromJson", data);
-    return promise.then((data) => CredentialFromJsonResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "CredentialFromJson", data);
+    return promise.then((data) => CredentialFromJsonResponse.decode(_m0.Reader.create(data)));
   }
 
   VerifyCredential(request: VerifyCredentialRequest): Promise<VerifyCredentialResponse> {
     const data = VerifyCredentialRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "VerifyCredential", data);
-    return promise.then((data) => VerifyCredentialResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "VerifyCredential", data);
+    return promise.then((data) => VerifyCredentialResponse.decode(_m0.Reader.create(data)));
   }
 
   RevokeCredential(request: RevokeCredentialRequest): Promise<RevokeCredentialResponse> {
     const data = RevokeCredentialRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IdentityService", "RevokeCredential", data);
-    return promise.then((data) => RevokeCredentialResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "RevokeCredential", data);
+    return promise.then((data) => RevokeCredentialResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -2341,29 +2800,11 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
-
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
@@ -2372,7 +2813,7 @@ type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+  if (long.gt(globalThis.Number.MAX_SAFE_INTEGER)) {
     throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
   }
   return long.toNumber();

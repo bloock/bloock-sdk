@@ -7,7 +7,7 @@ import { Record } from "./record_entities";
 import { Error } from "./shared";
 
 export interface SendRecordsRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   records: Record[];
 }
 
@@ -17,7 +17,7 @@ export interface SendRecordsResponse {
 }
 
 export interface GetAnchorRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   anchorId: number;
 }
 
@@ -27,7 +27,7 @@ export interface GetAnchorResponse {
 }
 
 export interface WaitAnchorRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   anchorId: number;
   timeout: number;
 }
@@ -38,17 +38,17 @@ export interface WaitAnchorResponse {
 }
 
 export interface GetProofRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   records: Record[];
 }
 
 export interface GetProofResponse {
-  proof?: Proof;
+  proof?: Proof | undefined;
   error?: Error | undefined;
 }
 
 export interface ValidateRootRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   root: string;
   network: Network;
 }
@@ -60,8 +60,8 @@ export interface ValidateRootResponse {
 }
 
 export interface VerifyProofRequest {
-  configData?: ConfigData;
-  proof?: Proof;
+  configData?: ConfigData | undefined;
+  proof?: Proof | undefined;
 }
 
 export interface VerifyProofResponse {
@@ -70,7 +70,7 @@ export interface VerifyProofResponse {
 }
 
 export interface VerifyRecordsRequest {
-  configData?: ConfigData;
+  configData?: ConfigData | undefined;
   records: Record[];
   network?: Network | undefined;
 }
@@ -97,22 +97,31 @@ export const SendRecordsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SendRecordsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSendRecordsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.records.push(Record.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -120,22 +129,24 @@ export const SendRecordsRequest = {
   fromJSON(object: any): SendRecordsRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      records: Array.isArray(object?.records) ? object.records.map((e: any) => Record.fromJSON(e)) : [],
+      records: globalThis.Array.isArray(object?.records) ? object.records.map((e: any) => Record.fromJSON(e)) : [],
     };
   },
 
   toJSON(message: SendRecordsRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    if (message.records) {
-      obj.records = message.records.map((e) => e ? Record.toJSON(e) : undefined);
-    } else {
-      obj.records = [];
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.records?.length) {
+      obj.records = message.records.map((e) => Record.toJSON(e));
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<SendRecordsRequest>, I>>(base?: I): SendRecordsRequest {
+    return SendRecordsRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<SendRecordsRequest>, I>>(object: I): SendRecordsRequest {
     const message = createBaseSendRecordsRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -162,44 +173,58 @@ export const SendRecordsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SendRecordsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSendRecordsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.records.push(RecordReceipt.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): SendRecordsResponse {
     return {
-      records: Array.isArray(object?.records) ? object.records.map((e: any) => RecordReceipt.fromJSON(e)) : [],
+      records: globalThis.Array.isArray(object?.records)
+        ? object.records.map((e: any) => RecordReceipt.fromJSON(e))
+        : [],
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: SendRecordsResponse): unknown {
     const obj: any = {};
-    if (message.records) {
-      obj.records = message.records.map((e) => e ? RecordReceipt.toJSON(e) : undefined);
-    } else {
-      obj.records = [];
+    if (message.records?.length) {
+      obj.records = message.records.map((e) => RecordReceipt.toJSON(e));
     }
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<SendRecordsResponse>, I>>(base?: I): SendRecordsResponse {
+    return SendRecordsResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<SendRecordsResponse>, I>>(object: I): SendRecordsResponse {
     const message = createBaseSendRecordsResponse();
     message.records = object.records?.map((e) => RecordReceipt.fromPartial(e)) || [];
@@ -224,22 +249,31 @@ export const GetAnchorRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetAnchorRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetAnchorRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.anchorId = longToNumber(reader.int64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -247,18 +281,24 @@ export const GetAnchorRequest = {
   fromJSON(object: any): GetAnchorRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      anchorId: isSet(object.anchorId) ? Number(object.anchorId) : 0,
+      anchorId: isSet(object.anchorId) ? globalThis.Number(object.anchorId) : 0,
     };
   },
 
   toJSON(message: GetAnchorRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.anchorId !== undefined && (obj.anchorId = Math.round(message.anchorId));
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.anchorId !== 0) {
+      obj.anchorId = Math.round(message.anchorId);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetAnchorRequest>, I>>(base?: I): GetAnchorRequest {
+    return GetAnchorRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetAnchorRequest>, I>>(object: I): GetAnchorRequest {
     const message = createBaseGetAnchorRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -285,22 +325,31 @@ export const GetAnchorResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetAnchorResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetAnchorResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.anchor = Anchor.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -314,11 +363,18 @@ export const GetAnchorResponse = {
 
   toJSON(message: GetAnchorResponse): unknown {
     const obj: any = {};
-    message.anchor !== undefined && (obj.anchor = message.anchor ? Anchor.toJSON(message.anchor) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.anchor !== undefined) {
+      obj.anchor = Anchor.toJSON(message.anchor);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetAnchorResponse>, I>>(base?: I): GetAnchorResponse {
+    return GetAnchorResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetAnchorResponse>, I>>(object: I): GetAnchorResponse {
     const message = createBaseGetAnchorResponse();
     message.anchor = (object.anchor !== undefined && object.anchor !== null)
@@ -348,25 +404,38 @@ export const WaitAnchorRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): WaitAnchorRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseWaitAnchorRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.anchorId = longToNumber(reader.int64() as Long);
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.timeout = longToNumber(reader.int64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -374,20 +443,28 @@ export const WaitAnchorRequest = {
   fromJSON(object: any): WaitAnchorRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      anchorId: isSet(object.anchorId) ? Number(object.anchorId) : 0,
-      timeout: isSet(object.timeout) ? Number(object.timeout) : 0,
+      anchorId: isSet(object.anchorId) ? globalThis.Number(object.anchorId) : 0,
+      timeout: isSet(object.timeout) ? globalThis.Number(object.timeout) : 0,
     };
   },
 
   toJSON(message: WaitAnchorRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.anchorId !== undefined && (obj.anchorId = Math.round(message.anchorId));
-    message.timeout !== undefined && (obj.timeout = Math.round(message.timeout));
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.anchorId !== 0) {
+      obj.anchorId = Math.round(message.anchorId);
+    }
+    if (message.timeout !== 0) {
+      obj.timeout = Math.round(message.timeout);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<WaitAnchorRequest>, I>>(base?: I): WaitAnchorRequest {
+    return WaitAnchorRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<WaitAnchorRequest>, I>>(object: I): WaitAnchorRequest {
     const message = createBaseWaitAnchorRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -415,22 +492,31 @@ export const WaitAnchorResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): WaitAnchorResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseWaitAnchorResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.anchor = Anchor.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -444,11 +530,18 @@ export const WaitAnchorResponse = {
 
   toJSON(message: WaitAnchorResponse): unknown {
     const obj: any = {};
-    message.anchor !== undefined && (obj.anchor = message.anchor ? Anchor.toJSON(message.anchor) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.anchor !== undefined) {
+      obj.anchor = Anchor.toJSON(message.anchor);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<WaitAnchorResponse>, I>>(base?: I): WaitAnchorResponse {
+    return WaitAnchorResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<WaitAnchorResponse>, I>>(object: I): WaitAnchorResponse {
     const message = createBaseWaitAnchorResponse();
     message.anchor = (object.anchor !== undefined && object.anchor !== null)
@@ -475,22 +568,31 @@ export const GetProofRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetProofRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetProofRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.records.push(Record.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -498,22 +600,24 @@ export const GetProofRequest = {
   fromJSON(object: any): GetProofRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      records: Array.isArray(object?.records) ? object.records.map((e: any) => Record.fromJSON(e)) : [],
+      records: globalThis.Array.isArray(object?.records) ? object.records.map((e: any) => Record.fromJSON(e)) : [],
     };
   },
 
   toJSON(message: GetProofRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    if (message.records) {
-      obj.records = message.records.map((e) => e ? Record.toJSON(e) : undefined);
-    } else {
-      obj.records = [];
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.records?.length) {
+      obj.records = message.records.map((e) => Record.toJSON(e));
     }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetProofRequest>, I>>(base?: I): GetProofRequest {
+    return GetProofRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetProofRequest>, I>>(object: I): GetProofRequest {
     const message = createBaseGetProofRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -540,22 +644,31 @@ export const GetProofResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetProofResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetProofResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.proof = Proof.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -569,11 +682,18 @@ export const GetProofResponse = {
 
   toJSON(message: GetProofResponse): unknown {
     const obj: any = {};
-    message.proof !== undefined && (obj.proof = message.proof ? Proof.toJSON(message.proof) : undefined);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.proof !== undefined) {
+      obj.proof = Proof.toJSON(message.proof);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<GetProofResponse>, I>>(base?: I): GetProofResponse {
+    return GetProofResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<GetProofResponse>, I>>(object: I): GetProofResponse {
     const message = createBaseGetProofResponse();
     message.proof = (object.proof !== undefined && object.proof !== null) ? Proof.fromPartial(object.proof) : undefined;
@@ -601,25 +721,38 @@ export const ValidateRootRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ValidateRootRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseValidateRootRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.root = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.network = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -627,20 +760,28 @@ export const ValidateRootRequest = {
   fromJSON(object: any): ValidateRootRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      root: isSet(object.root) ? String(object.root) : "",
+      root: isSet(object.root) ? globalThis.String(object.root) : "",
       network: isSet(object.network) ? networkFromJSON(object.network) : 0,
     };
   },
 
   toJSON(message: ValidateRootRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.root !== undefined && (obj.root = message.root);
-    message.network !== undefined && (obj.network = networkToJSON(message.network));
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.root !== "") {
+      obj.root = message.root;
+    }
+    if (message.network !== 0) {
+      obj.network = networkToJSON(message.network);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ValidateRootRequest>, I>>(base?: I): ValidateRootRequest {
+    return ValidateRootRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<ValidateRootRequest>, I>>(object: I): ValidateRootRequest {
     const message = createBaseValidateRootRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -668,40 +809,56 @@ export const ValidateRootResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ValidateRootResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseValidateRootResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.timestamp = longToNumber(reader.uint64() as Long);
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): ValidateRootResponse {
     return {
-      timestamp: isSet(object.timestamp) ? Number(object.timestamp) : 0,
+      timestamp: isSet(object.timestamp) ? globalThis.Number(object.timestamp) : 0,
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: ValidateRootResponse): unknown {
     const obj: any = {};
-    message.timestamp !== undefined && (obj.timestamp = Math.round(message.timestamp));
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.timestamp !== 0) {
+      obj.timestamp = Math.round(message.timestamp);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ValidateRootResponse>, I>>(base?: I): ValidateRootResponse {
+    return ValidateRootResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<ValidateRootResponse>, I>>(object: I): ValidateRootResponse {
     const message = createBaseValidateRootResponse();
     message.timestamp = object.timestamp ?? 0;
@@ -726,22 +883,31 @@ export const VerifyProofRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyProofRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyProofRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.proof = Proof.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -755,12 +921,18 @@ export const VerifyProofRequest = {
 
   toJSON(message: VerifyProofRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    message.proof !== undefined && (obj.proof = message.proof ? Proof.toJSON(message.proof) : undefined);
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.proof !== undefined) {
+      obj.proof = Proof.toJSON(message.proof);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<VerifyProofRequest>, I>>(base?: I): VerifyProofRequest {
+    return VerifyProofRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<VerifyProofRequest>, I>>(object: I): VerifyProofRequest {
     const message = createBaseVerifyProofRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -787,40 +959,56 @@ export const VerifyProofResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyProofResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyProofResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.record = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): VerifyProofResponse {
     return {
-      record: isSet(object.record) ? String(object.record) : undefined,
+      record: isSet(object.record) ? globalThis.String(object.record) : undefined,
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: VerifyProofResponse): unknown {
     const obj: any = {};
-    message.record !== undefined && (obj.record = message.record);
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.record !== undefined) {
+      obj.record = message.record;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<VerifyProofResponse>, I>>(base?: I): VerifyProofResponse {
+    return VerifyProofResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<VerifyProofResponse>, I>>(object: I): VerifyProofResponse {
     const message = createBaseVerifyProofResponse();
     message.record = object.record ?? undefined;
@@ -848,25 +1036,38 @@ export const VerifyRecordsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyRecordsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyRecordsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.configData = ConfigData.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.records.push(Record.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.network = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -874,25 +1075,28 @@ export const VerifyRecordsRequest = {
   fromJSON(object: any): VerifyRecordsRequest {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      records: Array.isArray(object?.records) ? object.records.map((e: any) => Record.fromJSON(e)) : [],
+      records: globalThis.Array.isArray(object?.records) ? object.records.map((e: any) => Record.fromJSON(e)) : [],
       network: isSet(object.network) ? networkFromJSON(object.network) : undefined,
     };
   },
 
   toJSON(message: VerifyRecordsRequest): unknown {
     const obj: any = {};
-    message.configData !== undefined &&
-      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
-    if (message.records) {
-      obj.records = message.records.map((e) => e ? Record.toJSON(e) : undefined);
-    } else {
-      obj.records = [];
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
     }
-    message.network !== undefined &&
-      (obj.network = message.network !== undefined ? networkToJSON(message.network) : undefined);
+    if (message.records?.length) {
+      obj.records = message.records.map((e) => Record.toJSON(e));
+    }
+    if (message.network !== undefined) {
+      obj.network = networkToJSON(message.network);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<VerifyRecordsRequest>, I>>(base?: I): VerifyRecordsRequest {
+    return VerifyRecordsRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<VerifyRecordsRequest>, I>>(object: I): VerifyRecordsRequest {
     const message = createBaseVerifyRecordsRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -920,40 +1124,56 @@ export const VerifyRecordsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): VerifyRecordsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVerifyRecordsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.timestamp = longToNumber(reader.uint64() as Long);
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): VerifyRecordsResponse {
     return {
-      timestamp: isSet(object.timestamp) ? Number(object.timestamp) : 0,
+      timestamp: isSet(object.timestamp) ? globalThis.Number(object.timestamp) : 0,
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: VerifyRecordsResponse): unknown {
     const obj: any = {};
-    message.timestamp !== undefined && (obj.timestamp = Math.round(message.timestamp));
-    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
+    if (message.timestamp !== 0) {
+      obj.timestamp = Math.round(message.timestamp);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<VerifyRecordsResponse>, I>>(base?: I): VerifyRecordsResponse {
+    return VerifyRecordsResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<VerifyRecordsResponse>, I>>(object: I): VerifyRecordsResponse {
     const message = createBaseVerifyRecordsResponse();
     message.timestamp = object.timestamp ?? 0;
@@ -972,9 +1192,12 @@ export interface IntegrityService {
   VerifyRecords(request: VerifyRecordsRequest): Promise<VerifyRecordsResponse>;
 }
 
+export const IntegrityServiceServiceName = "bloock.IntegrityService";
 export class IntegrityServiceClientImpl implements IntegrityService {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || IntegrityServiceServiceName;
     this.rpc = rpc;
     this.SendRecords = this.SendRecords.bind(this);
     this.GetAnchor = this.GetAnchor.bind(this);
@@ -986,44 +1209,44 @@ export class IntegrityServiceClientImpl implements IntegrityService {
   }
   SendRecords(request: SendRecordsRequest): Promise<SendRecordsResponse> {
     const data = SendRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IntegrityService", "SendRecords", data);
-    return promise.then((data) => SendRecordsResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "SendRecords", data);
+    return promise.then((data) => SendRecordsResponse.decode(_m0.Reader.create(data)));
   }
 
   GetAnchor(request: GetAnchorRequest): Promise<GetAnchorResponse> {
     const data = GetAnchorRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IntegrityService", "GetAnchor", data);
-    return promise.then((data) => GetAnchorResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetAnchor", data);
+    return promise.then((data) => GetAnchorResponse.decode(_m0.Reader.create(data)));
   }
 
   WaitAnchor(request: WaitAnchorRequest): Promise<WaitAnchorResponse> {
     const data = WaitAnchorRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IntegrityService", "WaitAnchor", data);
-    return promise.then((data) => WaitAnchorResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "WaitAnchor", data);
+    return promise.then((data) => WaitAnchorResponse.decode(_m0.Reader.create(data)));
   }
 
   GetProof(request: GetProofRequest): Promise<GetProofResponse> {
     const data = GetProofRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IntegrityService", "GetProof", data);
-    return promise.then((data) => GetProofResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "GetProof", data);
+    return promise.then((data) => GetProofResponse.decode(_m0.Reader.create(data)));
   }
 
   ValidateRoot(request: ValidateRootRequest): Promise<ValidateRootResponse> {
     const data = ValidateRootRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IntegrityService", "ValidateRoot", data);
-    return promise.then((data) => ValidateRootResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "ValidateRoot", data);
+    return promise.then((data) => ValidateRootResponse.decode(_m0.Reader.create(data)));
   }
 
   VerifyProof(request: VerifyProofRequest): Promise<VerifyProofResponse> {
     const data = VerifyProofRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IntegrityService", "VerifyProof", data);
-    return promise.then((data) => VerifyProofResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "VerifyProof", data);
+    return promise.then((data) => VerifyProofResponse.decode(_m0.Reader.create(data)));
   }
 
   VerifyRecords(request: VerifyRecordsRequest): Promise<VerifyRecordsResponse> {
     const data = VerifyRecordsRequest.encode(request).finish();
-    const promise = this.rpc.request("bloock.IntegrityService", "VerifyRecords", data);
-    return promise.then((data) => VerifyRecordsResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "VerifyRecords", data);
+    return promise.then((data) => VerifyRecordsResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -1095,29 +1318,11 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof self !== "undefined") {
-    return self;
-  }
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  throw "Unable to locate global object";
-})();
-
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
@@ -1126,7 +1331,7 @@ type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+  if (long.gt(globalThis.Number.MAX_SAFE_INTEGER)) {
     throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
   }
   return long.toNumber();

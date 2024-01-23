@@ -6,13 +6,20 @@ use crate::{
         ImportManagedCertificateRequest, ImportManagedCertificateResponse, KeyServiceHandler,
         LoadLocalCertificateRequest, LoadLocalCertificateResponse, LoadLocalKeyRequest,
         LoadLocalKeyResponse, LoadManagedCertificateRequest, LoadManagedCertificateResponse,
-        LoadManagedKeyRequest, LoadManagedKeyResponse,
+        LoadManagedKeyRequest, LoadManagedKeyResponse, RecoverOtpAccessControlRequest,
+        RecoverOtpAccessControlResponse, SetupOtpAccessControlRequest,
+        SetupOtpAccessControlResponse, SetupSecretAccessControlRequest,
+        SetupSecretAccessControlResponse,
     },
     server::response_types::RequestConfigData,
 };
 use async_trait::async_trait;
 use bloock_core::key;
+use bloock_keys::keys::managed::ManagedKey as ManagedKeyCore;
 use bloock_keys::CertificateType;
+use bloock_keys::{
+    certificates::managed::ManagedCertificate as ManagedCertificateCore, entity::key::Managed,
+};
 
 pub struct KeyServer {}
 
@@ -222,6 +229,94 @@ impl KeyServiceHandler for KeyServer {
 
         Ok(ImportManagedCertificateResponse {
             managed_certificate: Some(certificate.into()),
+            error: None,
+        })
+    }
+
+    async fn setup_otp_access_control(
+        &self,
+        req: &SetupOtpAccessControlRequest,
+    ) -> Result<SetupOtpAccessControlResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = key::configure(config_data.clone());
+
+        let key: Managed = if let Some(managed_key) = req.managed_key.clone() {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.into()
+        } else if let Some(managed_certificate) = req.managed_certificate.clone() {
+            let managed_certificate_core: ManagedCertificateCore = managed_certificate.into();
+            managed_certificate_core.into()
+        } else {
+            return Err("invalid managed key provided".to_string());
+        };
+
+        let result = client
+            .setup_otp_access_control(&key)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(SetupOtpAccessControlResponse {
+            secret: result.secret,
+            secret_qr: result.secret_qr,
+            recovery_codes: result.recovery_codes,
+            error: None,
+        })
+    }
+
+    async fn setup_secret_access_control(
+        &self,
+        req: &SetupSecretAccessControlRequest,
+    ) -> Result<SetupSecretAccessControlResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = key::configure(config_data.clone());
+
+        let key: Managed = if let Some(managed_key) = req.managed_key.clone() {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.into()
+        } else if let Some(managed_certificate) = req.managed_certificate.clone() {
+            let managed_certificate_core: ManagedCertificateCore = managed_certificate.into();
+            managed_certificate_core.into()
+        } else {
+            return Err("invalid managed key provided".to_string());
+        };
+
+        client
+            .setup_secret_access_control(&key, req.secret.clone(), req.email.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(SetupSecretAccessControlResponse { error: None })
+    }
+
+    async fn recover_otp_access_control(
+        &self,
+        req: &RecoverOtpAccessControlRequest,
+    ) -> Result<RecoverOtpAccessControlResponse, String> {
+        let config_data = req.get_config_data()?;
+
+        let client = key::configure(config_data.clone());
+
+        let key: Managed = if let Some(managed_key) = req.managed_key.clone() {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.into()
+        } else if let Some(managed_certificate) = req.managed_certificate.clone() {
+            let managed_certificate_core: ManagedCertificateCore = managed_certificate.into();
+            managed_certificate_core.into()
+        } else {
+            return Err("invalid managed key provided".to_string());
+        };
+
+        let result = client
+            .recover_otp_access_control(&key, req.code.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(RecoverOtpAccessControlResponse {
+            secret: result.secret,
+            secret_qr: result.secret_qr,
+            recovery_codes: result.recovery_codes,
             error: None,
         })
     }
