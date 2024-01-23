@@ -1,5 +1,6 @@
 <?php
 
+use Bloock\Blockchain as BloockBlockchain;
 use Bloock\Bloock;
 use Bloock\Client\IdentityClient;
 use Bloock\Client\KeyClient;
@@ -15,6 +16,9 @@ use Bloock\Entity\IdentityV2\PublishIntervalParams;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
 use Bloock\Entity\Key\ManagedKeyParams;
+use Bloock\Method as BloockMethod;
+use Bloock\Network as BloockNetwork;
+use Bloock\NetworkId;
 use PHPUnit\Framework\TestCase;
 
 final class IdentityV2Test extends TestCase
@@ -82,13 +86,14 @@ final class IdentityV2Test extends TestCase
         $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/profile_image.png");
         $base64File = rtrim(strtr(base64_encode($fileContents), '+/', '-_'), '=');
 
-        $issuer = $identityClient->createIssuer($issuerKey, PublishIntervalParams::Interval1, null, "Bloock Test", "bloock description test", $base64File);
+        $params = new DidParams(Method::POLYGON_ID, Blockchain::POLYGON, NetworkId::MAIN);
+        $issuer = $identityClient->createIssuer($issuerKey, PublishIntervalParams::Interval1, $params, "Bloock Test", "bloock description test", $base64File);
         $this->assertStringContainsString("polygonid", $issuer);
 
-        $getIssuerDid = $identityClient->getIssuerByKey($issuerKey);
+        $getIssuerDid = $identityClient->getIssuerByKey($issuerKey, $params);
         $this->assertEquals($issuer, $getIssuerDid);
 
-        $getNotFoundIssuerDid = $identityClient->getIssuerByKey($notFoundIssuerKey);
+        $getNotFoundIssuerDid = $identityClient->getIssuerByKey($notFoundIssuerKey, $params);
         $this->assertEquals(null, $getNotFoundIssuerDid);
 
         $issuerParams = new DidParams(Method::IDEN3, Blockchain::POLYGON, Network::MUMBAI);

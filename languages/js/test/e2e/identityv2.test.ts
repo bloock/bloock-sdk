@@ -81,10 +81,11 @@ describe("Identity V2 Tests", () => {
     let fileBytes = readFileSync(dirPath);
     let encodedFile = base64url.encode(fileBytes);
 
+    let params = new DidParams(Method.POLYGON_ID, Blockchain.POLYGON, NetworkId.MAIN)
     let issuer = await identityClient.createIssuer(
       issuerKey,
       PublishIntervalParams.Interval1,
-      undefined,
+      params,
       "Bloock Test",
       "bloock description test",
       encodedFile
@@ -92,16 +93,16 @@ describe("Identity V2 Tests", () => {
     expect(issuer.includes("polygonid")).toBeTruthy();
 
     try {
-      await identityClient.createIssuer(issuerKey, PublishIntervalParams.Interval5);
+      await identityClient.createIssuer(issuerKey, PublishIntervalParams.Interval5, params);
     } catch (error) {
       expect(error).toBeTruthy;
     }
 
-    let getIssuerDid = await identityClient.getIssuerByKey(issuerKey);
+    let getIssuerDid = await identityClient.getIssuerByKey(issuerKey, params);
     expect(getIssuerDid).toStrictEqual(issuer);
 
     let getNotFoundIssuerDid = await identityClient.getIssuerByKey(
-      notFoundIssuerKey
+      notFoundIssuerKey, params
     );
     expect(getNotFoundIssuerDid).toStrictEqual("");
 

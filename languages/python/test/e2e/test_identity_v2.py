@@ -74,17 +74,20 @@ class TestIdentityV2(unittest.TestCase):
             file_bytes = file.read()
         base64_file = base64.urlsafe_b64encode(file_bytes).decode('utf-8')
 
+        params = DidParams(Method.POLYGON_ID,
+                           Blockchain.POLYGON, Network.MUMBAI)
         issuer = identity_client.create_issuer(
-            issuer_key, PublishIntervalParams.Interval1, None, "Bloock Test", "bloock description test", base64_file)
+            issuer_key, PublishIntervalParams.Interval1, params, "Bloock Test", "bloock description test", base64_file)
 
         with self.assertRaises(Exception):
-            identity_client.create_issuer(issuer_key, PublishIntervalParams.Interval1)
+            identity_client.create_issuer(
+                issuer_key, PublishIntervalParams.Interval1, params)
 
-        get_issuer_did = identity_client.get_issuer_by_key(issuer_key)
+        get_issuer_did = identity_client.get_issuer_by_key(issuer_key, params)
         self.assertTrue(get_issuer_did.__contains__("polygonid"))
 
         get_not_found_issuer_did = identity_client.get_issuer_by_key(
-            not_found_issuer_key)
+            not_found_issuer_key, params)
         self.assertEqual("", get_not_found_issuer_did)
 
         issuer_params = DidParams(
@@ -154,6 +157,7 @@ class TestIdentityV2(unittest.TestCase):
 
         with self.assertRaises(Exception):
             identity_client.wait_verification(verification.session_id, 5)
+
 
 def prepare_proof_request(schema_id):
     json_string = '''
