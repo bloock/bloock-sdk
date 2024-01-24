@@ -24,6 +24,7 @@ x509-cert = { version = "0.2.4", features = ["builder"] }
 bloock-babyjubjub-rs = "0.0.11"
 num-bigint = { version = "0.4", features = ["rand"] }
 async-trait = "0.1.57"
+regex = "1.9.1"
 
 # P12
 des = "^0.8"

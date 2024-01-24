@@ -178,7 +178,7 @@ final class KeyTest extends TestCase
         $keyClient = new KeyClient();
 
         $keyType = KeyType::Rsa2048;
-        $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", null, null, "US");
+        $subjectParams = new SubjectCertificateParams("Google, internet, Authority G2", "Google, Inc", "IT + Department", null, null, "US");
 
         $params = new LocalCertificateArgs($keyType, $subjectParams, "password", 2);
         $certificate = $keyClient->newLocalCertificate($params);
@@ -215,7 +215,7 @@ final class KeyTest extends TestCase
         $keyClient = new KeyClient();
 
         $keyType = KeyType::EcP256k;
-        $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", null, null, "US");
+        $subjectParams = new SubjectCertificateParams("Google, internet, Authority G2", "Google, Inc", "IT + Department", null, null, "US");
 
         $params = new ManagedCertificateParams($keyType, $subjectParams, 5);
         $certificate = $keyClient->newManagedCertificate($params);

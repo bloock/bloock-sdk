@@ -189,9 +189,9 @@ describe("Key Tests", () => {
 
     let keyType = KeyType.Rsa2048;
     let subjectParams = new SubjectCertificateParams(
-      "Google internet Authority G2",
-      "Google Inc",
-      "IT Department",
+      "Google, internet, Authority G2",
+      "Google, Inc",
+      "IT + Department",
       undefined,
       undefined,
       "US"
@@ -239,9 +239,9 @@ describe("Key Tests", () => {
 
     let keyType = KeyType.EcP256k;
     let subjectParams = new SubjectCertificateParams(
-      "Google internet Authority G2",
-      "Google Inc",
-      "IT Department",
+      "Google, internet, Authority G2",
+      "Google, Inc",
+      "IT + Department",
       undefined,
       undefined,
       "US"

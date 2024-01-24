@@ -129,7 +129,7 @@ fn create_certificate(
     );
     let validity = from_now(now).map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
 
-    let subject = Name::from_str(&subject.serialize())
+    let subject = Name::from_str(&subject.serialize_local())
         .map_err(|e| KeysError::NewLocalCertificateError(e.to_string()))?;
 
     let profile = Profile::Leaf {
@@ -195,10 +195,10 @@ mod tests {
             key_type: cert_type.clone(),
             password: "password".to_string(),
             subject: CertificateSubject {
-                common_name: "a common name".to_string(),
+                common_name: "a, common name".to_string(),
                 organizational_unit: None,
                 organization: None,
-                location: Some("a location".to_string()),
+                location: Some("a + location".to_string()),
                 state: None,
                 country: None,
             },
@@ -206,11 +206,11 @@ mod tests {
         };
         let certificate = LocalCertificate::new(&params).unwrap();
         let subject = certificate.certificate.tbs_certificate.subject;
-        assert_eq!("CN=a common name,L=a location", subject.to_string());
+        assert_eq!("CN=a\\, common name,L=a \\+ location", subject.to_string());
 
         let certificate = LocalCertificate::load_pkcs12(&certificate.pkcs12, "password").unwrap();
         let subject = certificate.certificate.tbs_certificate.subject;
-        assert_eq!("CN=a common name,L=a location", subject.to_string());
+        assert_eq!("CN=a\\, common name,L=a \\+ location", subject.to_string());
     }
 
     #[test]

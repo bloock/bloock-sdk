@@ -154,7 +154,7 @@ class TestKey(unittest.TestCase):
 
         key_type = KeyType.Rsa2048
         subject_params = SubjectCertificateParams(
-            "Google internet Authority G2", "IT Department", "IT Department", None, None, "US")
+            "Google, internet, Authority G2", "IT, Department", "IT + Department", None, None, "US")
         params = LocalCertificateParams(
             key_type, subject_params, "password", 2)
         local_certificate = key_client.new_local_certificate(params)
@@ -192,7 +192,7 @@ class TestKey(unittest.TestCase):
 
         key_type = KeyType.EcP256k
         subject_params = SubjectCertificateParams(
-            "Google internet Authority G2", "IT Department", "IT Department", None, None, "US")
+            "Google, internet, Authority G2", "IT, Department", "IT + Department", None, None, "US")
         params = ManagedCertificateParams(key_type, subject_params, 5)
         managed_certificate = key_client.new_managed_certificate(params)
 

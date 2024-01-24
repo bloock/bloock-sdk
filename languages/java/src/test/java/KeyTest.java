@@ -174,7 +174,7 @@ class KeyTest {
     KeyType keyType = KeyType.Rsa2048;
     SubjectCertificateParams subjectParams =
         new SubjectCertificateParams(
-            "Google internet Authority G2", "Google Inc", "IT Department", "", "", "US");
+            "Google, internet, Authority G2", "Google, Inc", "IT + Department", "", "", "US");
 
     LocalCertificate localCertificate =
         keyClient.newLocalCertificate(
@@ -221,7 +221,7 @@ class KeyTest {
     KeyType keyType = KeyType.EcP256k;
     SubjectCertificateParams subjectParams =
         new SubjectCertificateParams(
-            "Google internet Authority G2", "Google Inc", "IT Department", "", "", "US");
+            "Google, internet, Authority G2", "Google, Inc", "IT + Department", "", "", "US");
 
     ManagedCertificate managedCertificate =
         keyClient.newManagedCertificate(new ManagedCertificateParams(keyType, subjectParams, 5));

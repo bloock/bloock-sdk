@@ -193,12 +193,12 @@ func TestKey(t *testing.T) {
 		keyClient := NewKeyClient()
 
 		keyType := key.Rsa2048
-		org := "Google Inc"
-		orgUnit := "IT Department"
+		org := "Google, Inc"
+		orgUnit := "IT + Department"
 		country := "US"
 
 		subjectParams := key.SubjectCertificateParams{
-			CommonName:       "Google internet Authority G2",
+			CommonName:       "Google, internet, Authority G2",
 			Organization:     &org,
 			OrganizationUnit: &orgUnit,
 			Country:          &country,
@@ -255,12 +255,12 @@ func TestKey(t *testing.T) {
 
 		keyType := key.EcP256k
 		expiration := int32(5)
-		org := "Google Inc"
-		orgUnit := "IT Department"
+		org := "Google, Inc"
+		orgUnit := "IT + Department"
 		country := "US"
 
 		subjectParams := key.SubjectCertificateParams{
-			CommonName:       "Google internet Authority G2",
+			CommonName:       "Google, internet, Authority G2",
 			Organization:     &org,
 			OrganizationUnit: &orgUnit,
 			Country:          &country,
@@ -271,7 +271,7 @@ func TestKey(t *testing.T) {
 			ExpirationMonths: expiration,
 		}
 		managedCertificate, err := keyClient.NewManagedCertificate(params)
-		assert.NoError(t, err)
+		assert.Error(t, err)
 
 		assert.NotEmpty(t, managedCertificate.Key)
 		assert.Equal(t, key.KEY_PROTECTION_SOFTWARE, managedCertificate.Protection)

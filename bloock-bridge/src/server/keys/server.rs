@@ -237,7 +237,6 @@ impl KeyServiceHandler for KeyServer {
         &self,
         req: &SetupTotpAccessControlRequest,
     ) -> Result<SetupTotpAccessControlResponse, String> {
-        println!("{}", "Hello world");
         let config_data = req.get_config_data()?;
 
         let client = key::configure(config_data.clone());
