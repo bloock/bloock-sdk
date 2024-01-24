@@ -14,6 +14,7 @@ use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\SubjectCertificateParams;
 use Bloock\Entity\Authenticity\Signer;
 use Bloock\Entity\Authenticity\SignerArgs;
+use Bloock\Entity\Key\Managed;
 use PHPUnit\Framework\TestCase;
 
 final class KeyTest extends TestCase
@@ -280,4 +281,74 @@ final class KeyTest extends TestCase
 
         $this->assertNotNull($signature);
     }
+
+    public function testSetupAndRecoverTotpAccessControl()
+    {
+        $keyClient = new KeyClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::EcP256k;
+
+        $params = new ManagedKeyParams($keyProtection, $keyType);
+        $managedKey = $keyClient->newManagedKey($params);
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient->sign($record, new Signer($managedKey));
+
+        $totp = $keyClient->setupTotpAccessControl(new Managed($managedKey));
+        $this->assertNotNull($totp->getSecret());
+        $this->assertNotNull($totp->getSecretQr());
+        $this->assertNotNull($totp->getRecoveryCodes());
+
+        try {
+            $authenticityClient->sign($record, new Signer($managedKey));
+        } catch (Exception $e) {
+            $this->assertNotNull($e->getMessage());
+        }
+
+        $totpRecovered = $keyClient->recoverTotpAccessControl(new Managed($managedKey), $totp->getRecoveryCodes()[0]);
+        $this->assertNotNull($totpRecovered->getSecret());
+        $this->assertNotNull($totpRecovered->getSecretQr());
+        $this->assertNotNull($totpRecovered->getRecoveryCodes());
+    }
+
+    public function testSetupSecretAccessControl()
+    {
+        $keyClient = new KeyClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::EcP256k;
+
+        $params = new ManagedKeyParams($keyProtection, $keyType);
+        $managedKey = $keyClient->newManagedKey($params);
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient->sign($record, new Signer($managedKey));
+
+        $email = generateRandomString(8) . "@bloock.com";
+        $keyClient->setupSecretAccessControl(new Managed($managedKey), "password", $email);
+
+        try {
+            $authenticityClient->sign($record, new Signer($managedKey));
+        } catch (Exception $e) {
+            $this->assertNotNull($e->getMessage());
+        }
+    }
+}
+
+function generateRandomString($length) {
+    $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $randomString = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+
+    return $randomString;
 }

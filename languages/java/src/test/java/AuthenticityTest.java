@@ -122,11 +122,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -140,11 +136,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.Bjj);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -158,11 +150,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -178,10 +166,7 @@ class AuthenticityTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
 
     Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(managedKey))
-            .build();
+        recordClient.fromString("Hello world").withSigner(new Signer(managedKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -197,10 +182,7 @@ class AuthenticityTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj));
 
     Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(managedKey))
-            .build();
+        recordClient.fromString("Hello world").withSigner(new Signer(managedKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -216,10 +198,7 @@ class AuthenticityTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
 
     Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(managedKey))
-            .build();
+        recordClient.fromString("Hello world").withSigner(new Signer(managedKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -262,11 +241,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -282,10 +257,7 @@ class AuthenticityTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
 
     Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(managedKey))
-            .build();
+        recordClient.fromString("Hello world").withSigner(new Signer(managedKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -299,11 +271,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     List<Signature> signatures = authenticityClient.getSignatures(record);
 

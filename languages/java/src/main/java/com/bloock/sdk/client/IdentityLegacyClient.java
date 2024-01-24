@@ -12,8 +12,7 @@ public class IdentityLegacyClient {
   private final ConfigData configData;
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public IdentityLegacyClient() {
@@ -22,8 +21,7 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public IdentityLegacyClient(ConfigData configData) {
@@ -32,13 +30,12 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public com.bloock.sdk.entity.identity.Identity createIdentity() throws Exception {
-    Identity.CreateIdentityRequest request = Identity.CreateIdentityRequest.newBuilder().setConfigData(this.configData)
-        .build();
+    Identity.CreateIdentityRequest request =
+        Identity.CreateIdentityRequest.newBuilder().setConfigData(this.configData).build();
 
     Identity.CreateIdentityResponse response = bridge.getIdentity().createIdentity(request);
 
@@ -50,15 +47,15 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public com.bloock.sdk.entity.identity.Identity loadIdentity(String mnemonic) throws Exception {
-    Identity.LoadIdentityRequest request = Identity.LoadIdentityRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setMnemonic(mnemonic)
-        .build();
+    Identity.LoadIdentityRequest request =
+        Identity.LoadIdentityRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setMnemonic(mnemonic)
+            .build();
 
     Identity.LoadIdentityResponse response = bridge.getIdentity().loadIdentity(request);
 
@@ -70,8 +67,7 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public SchemaBuilder buildSchema(String displayName, String technicalName) throws Exception {
@@ -79,13 +75,12 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public Schema getSchema(String id) throws Exception {
-    Identity.GetSchemaRequest request = Identity.GetSchemaRequest.newBuilder().setConfigData(this.configData).setId(id)
-        .build();
+    Identity.GetSchemaRequest request =
+        Identity.GetSchemaRequest.newBuilder().setConfigData(this.configData).setId(id).build();
 
     Identity.GetSchemaResponse response = bridge.getIdentity().getSchema(request);
 
@@ -97,8 +92,7 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public CredentialBuilder buildCredential(String schemaId, String holderKey) throws Exception {
@@ -106,13 +100,12 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public CredentialOffer getOffer(String id) throws Exception {
-    Identity.GetOfferRequest request = Identity.GetOfferRequest.newBuilder().setConfigData(this.configData).setId(id)
-        .build();
+    Identity.GetOfferRequest request =
+        Identity.GetOfferRequest.newBuilder().setConfigData(this.configData).setId(id).build();
 
     Identity.GetOfferResponse response = bridge.getIdentity().getOffer(request);
 
@@ -124,15 +117,15 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public CredentialOffer waitOffer(String offerId) throws Exception {
-    Identity.WaitOfferRequest request = Identity.WaitOfferRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setOfferId(offerId)
-        .build();
+    Identity.WaitOfferRequest request =
+        Identity.WaitOfferRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setOfferId(offerId)
+            .build();
 
     Identity.WaitOfferResponse response = bridge.getIdentity().waitOffer(request);
 
@@ -144,19 +137,20 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public Credential redeemOffer(CredentialOffer credentialOffer, String holderPrivateKey)
       throws Exception {
-    Identity.CredentialOfferRedeemRequest request = Identity.CredentialOfferRedeemRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setCredentialOffer(credentialOffer.toProto())
-        .setIdentityPrivateKey(holderPrivateKey)
-        .build();
+    Identity.CredentialOfferRedeemRequest request =
+        Identity.CredentialOfferRedeemRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setCredentialOffer(credentialOffer.toProto())
+            .setIdentityPrivateKey(holderPrivateKey)
+            .build();
 
-    Identity.CredentialOfferRedeemResponse response = bridge.getIdentity().credentialOfferRedeem(request);
+    Identity.CredentialOfferRedeemResponse response =
+        bridge.getIdentity().credentialOfferRedeem(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
@@ -166,15 +160,15 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public CredentialVerification verifyCredential(Credential credential) throws Exception {
-    Identity.VerifyCredentialRequest request = Identity.VerifyCredentialRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setCredential(credential.toProto())
-        .build();
+    Identity.VerifyCredentialRequest request =
+        Identity.VerifyCredentialRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setCredential(credential.toProto())
+            .build();
 
     Identity.VerifyCredentialResponse response = bridge.getIdentity().verifyCredential(request);
 
@@ -186,15 +180,15 @@ public class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function
-   *             instead.
+   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
    */
   @Deprecated
   public boolean revokeCredential(Credential credential) throws Exception {
-    Identity.RevokeCredentialRequest request = Identity.RevokeCredentialRequest.newBuilder()
-        .setConfigData(this.configData)
-        .setCredential(credential.toProto())
-        .build();
+    Identity.RevokeCredentialRequest request =
+        Identity.RevokeCredentialRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setCredential(credential.toProto())
+            .build();
 
     Identity.RevokeCredentialResponse response = bridge.getIdentity().revokeCredential(request);
 

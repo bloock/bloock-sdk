@@ -6,9 +6,9 @@ import { Record } from "./record_entities";
 import { Error } from "./shared";
 
 export interface PublishRequest {
-  configData?: ConfigData | undefined;
-  record?: Record | undefined;
-  publisher?: Publisher | undefined;
+  configData?: ConfigData;
+  record?: Record;
+  publisher?: Publisher;
 }
 
 export interface PublishResponse {
@@ -17,12 +17,12 @@ export interface PublishResponse {
 }
 
 export interface RetrieveRequest {
-  configData?: ConfigData | undefined;
-  loader?: Loader | undefined;
+  configData?: ConfigData;
+  loader?: Loader;
 }
 
 export interface RetrieveResponse {
-  record?: Record | undefined;
+  record?: Record;
   error?: Error | undefined;
 }
 
@@ -45,38 +45,25 @@ export const PublishRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): PublishRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBasePublishRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.configData = ConfigData.decode(reader, reader.uint32());
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.record = Record.decode(reader, reader.uint32());
-          continue;
+          break;
         case 3:
-          if (tag !== 26) {
-            break;
-          }
-
           message.publisher = Publisher.decode(reader, reader.uint32());
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -91,21 +78,14 @@ export const PublishRequest = {
 
   toJSON(message: PublishRequest): unknown {
     const obj: any = {};
-    if (message.configData !== undefined) {
-      obj.configData = ConfigData.toJSON(message.configData);
-    }
-    if (message.record !== undefined) {
-      obj.record = Record.toJSON(message.record);
-    }
-    if (message.publisher !== undefined) {
-      obj.publisher = Publisher.toJSON(message.publisher);
-    }
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    message.publisher !== undefined &&
+      (obj.publisher = message.publisher ? Publisher.toJSON(message.publisher) : undefined);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<PublishRequest>, I>>(base?: I): PublishRequest {
-    return PublishRequest.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<PublishRequest>, I>>(object: I): PublishRequest {
     const message = createBasePublishRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -137,56 +117,40 @@ export const PublishResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): PublishResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBasePublishResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.id = reader.string();
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.error = Error.decode(reader, reader.uint32());
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): PublishResponse {
     return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      id: isSet(object.id) ? String(object.id) : "",
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
 
   toJSON(message: PublishResponse): unknown {
     const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.error !== undefined) {
-      obj.error = Error.toJSON(message.error);
-    }
+    message.id !== undefined && (obj.id = message.id);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<PublishResponse>, I>>(base?: I): PublishResponse {
-    return PublishResponse.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<PublishResponse>, I>>(object: I): PublishResponse {
     const message = createBasePublishResponse();
     message.id = object.id ?? "";
@@ -211,31 +175,22 @@ export const RetrieveRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RetrieveRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRetrieveRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.configData = ConfigData.decode(reader, reader.uint32());
-          continue;
+          break;
         case 3:
-          if (tag !== 26) {
-            break;
-          }
-
           message.loader = Loader.decode(reader, reader.uint32());
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -249,18 +204,12 @@ export const RetrieveRequest = {
 
   toJSON(message: RetrieveRequest): unknown {
     const obj: any = {};
-    if (message.configData !== undefined) {
-      obj.configData = ConfigData.toJSON(message.configData);
-    }
-    if (message.loader !== undefined) {
-      obj.loader = Loader.toJSON(message.loader);
-    }
+    message.configData !== undefined &&
+      (obj.configData = message.configData ? ConfigData.toJSON(message.configData) : undefined);
+    message.loader !== undefined && (obj.loader = message.loader ? Loader.toJSON(message.loader) : undefined);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<RetrieveRequest>, I>>(base?: I): RetrieveRequest {
-    return RetrieveRequest.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<RetrieveRequest>, I>>(object: I): RetrieveRequest {
     const message = createBaseRetrieveRequest();
     message.configData = (object.configData !== undefined && object.configData !== null)
@@ -289,31 +238,22 @@ export const RetrieveResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RetrieveResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRetrieveResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.record = Record.decode(reader, reader.uint32());
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.error = Error.decode(reader, reader.uint32());
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -327,18 +267,11 @@ export const RetrieveResponse = {
 
   toJSON(message: RetrieveResponse): unknown {
     const obj: any = {};
-    if (message.record !== undefined) {
-      obj.record = Record.toJSON(message.record);
-    }
-    if (message.error !== undefined) {
-      obj.error = Error.toJSON(message.error);
-    }
+    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    message.error !== undefined && (obj.error = message.error ? Error.toJSON(message.error) : undefined);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<RetrieveResponse>, I>>(base?: I): RetrieveResponse {
-    return RetrieveResponse.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<RetrieveResponse>, I>>(object: I): RetrieveResponse {
     const message = createBaseRetrieveResponse();
     message.record = (object.record !== undefined && object.record !== null)
@@ -354,26 +287,23 @@ export interface AvailabilityService {
   Retrieve(request: RetrieveRequest): Promise<RetrieveResponse>;
 }
 
-export const AvailabilityServiceServiceName = "bloock.AvailabilityService";
 export class AvailabilityServiceClientImpl implements AvailabilityService {
   private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || AvailabilityServiceServiceName;
+  constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.Publish = this.Publish.bind(this);
     this.Retrieve = this.Retrieve.bind(this);
   }
   Publish(request: PublishRequest): Promise<PublishResponse> {
     const data = PublishRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "Publish", data);
-    return promise.then((data) => PublishResponse.decode(_m0.Reader.create(data)));
+    const promise = this.rpc.request("bloock.AvailabilityService", "Publish", data);
+    return promise.then((data) => PublishResponse.decode(new _m0.Reader(data)));
   }
 
   Retrieve(request: RetrieveRequest): Promise<RetrieveResponse> {
     const data = RetrieveRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "Retrieve", data);
-    return promise.then((data) => RetrieveResponse.decode(_m0.Reader.create(data)));
+    const promise = this.rpc.request("bloock.AvailabilityService", "Retrieve", data);
+    return promise.then((data) => RetrieveResponse.decode(new _m0.Reader(data)));
   }
 }
 
@@ -408,8 +338,7 @@ interface Rpc {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

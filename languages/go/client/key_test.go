@@ -3,6 +3,7 @@
 package client
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -342,7 +343,7 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, signature.Signature)
 	})
 
-	t.Run("setup & recover otp access control", func(t *testing.T) {
+	t.Run("setup & recover totp access control", func(t *testing.T) {
 		keyClient := NewKeyClient()
 		authenticityClient := NewAuthenticityClient()
 		recordClient := NewRecordClient()
@@ -365,20 +366,28 @@ func TestKey(t *testing.T) {
 			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
 		assert.NoError(t, err)
 
-		otp, err := keyClient.SetupOTPAccessControl(key.Managed{
+		totp, err := keyClient.SetupTotpAccessControl(key.Managed{
 			ManagedKey: &managedKey,
 		})
 		assert.NoError(t, err)
-		assert.NotEmpty(t, otp.Secret)
-		assert.NotEmpty(t, otp.SecretQr)
-		assert.NotEmpty(t, otp.RecoveryCodes)
+		assert.NotEmpty(t, totp.Secret)
+		assert.NotEmpty(t, totp.SecretQr)
+		assert.NotEmpty(t, totp.RecoveryCodes)
 
 		_, err = authenticityClient.
 			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
 		assert.Error(t, err)
+
+		totpRecovered, err := keyClient.RecoverTotpAccessControl(key.Managed{
+			ManagedKey: &managedKey,
+		}, totp.RecoveryCodes[0])
+		assert.NoError(t, err)
+		assert.NotEmpty(t, totpRecovered.Secret)
+		assert.NotEmpty(t, totpRecovered.SecretQr)
+		assert.NotEmpty(t, totpRecovered.RecoveryCodes)
 	})
 
-	t.Run("setup & recover otp access control", func(t *testing.T) {
+	t.Run("setup secret access control", func(t *testing.T) {
 		keyClient := NewKeyClient()
 		authenticityClient := NewAuthenticityClient()
 		recordClient := NewRecordClient()
@@ -401,9 +410,10 @@ func TestKey(t *testing.T) {
 			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
 		assert.NoError(t, err)
 
+		email := fmt.Sprintf("%s@%s", generateRandomString(8), "bloock.com")
 		err = keyClient.SetupSecretAccessControl(key.Managed{
 			ManagedKey: &managedKey,
-		}, "password", "it@bloock.com")
+		}, "password", email)
 		assert.NoError(t, err)
 
 		_, err = authenticityClient.

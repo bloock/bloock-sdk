@@ -1,9 +1,7 @@
 package com.bloock.sdk.entity.record;
 
-import com.bloock.sdk.bridge.proto.Config.ConfigData;
 import com.bloock.sdk.bridge.proto.RecordEntities;
 import com.bloock.sdk.entity.integrity.Proof;
-import com.google.protobuf.ByteString;
 
 public class IntegrityDetails {
   String hash;

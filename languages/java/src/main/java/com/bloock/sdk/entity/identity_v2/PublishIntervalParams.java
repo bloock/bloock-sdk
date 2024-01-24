@@ -3,10 +3,10 @@ package com.bloock.sdk.entity.identity_v2;
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2.PublishInterval;
 
 public enum PublishIntervalParams {
-    Interval1,
-    Interval5,
-    Interval15,
-    Interval60;
+  Interval1,
+  Interval5,
+  Interval15,
+  Interval60;
 
   public static PublishIntervalParams fromProto(PublishInterval type) {
     switch (type) {
@@ -23,18 +23,18 @@ public enum PublishIntervalParams {
     }
   }
 
-    public PublishInterval toProto() {
-        switch (this) {
-            case Interval1:
-                return PublishInterval.INTERVAL_1;
-            case Interval5:
-                return PublishInterval.INTERVAL_5;
-            case Interval15:
-                return PublishInterval.INTERVAL_15;
-            case Interval60:
-                return PublishInterval.INTERVAL_60;
-            default:
-                return PublishInterval.UNRECOGNIZED;
-        }
+  public PublishInterval toProto() {
+    switch (this) {
+      case Interval1:
+        return PublishInterval.INTERVAL_1;
+      case Interval5:
+        return PublishInterval.INTERVAL_5;
+      case Interval15:
+        return PublishInterval.INTERVAL_15;
+      case Interval60:
+        return PublishInterval.INTERVAL_60;
+      default:
+        return PublishInterval.UNRECOGNIZED;
     }
+  }
 }

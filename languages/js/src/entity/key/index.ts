@@ -12,3 +12,5 @@ export * from "./local_certificate_args";
 export * from "./managed_certificate_params";
 export * from "./subject_certificate_params";
 export * from "./certificate_type";
+export * from "./managed";
+export * from "./totp_access_control";

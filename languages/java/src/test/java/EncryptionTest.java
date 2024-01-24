@@ -117,10 +117,7 @@ class EncryptionTest {
     Record encryptedRecord = encryptionClient.encrypt(record, new Encrypter(managedKey));
 
     Record decryptedRecord =
-        recordClient
-            .fromRecord(encryptedRecord)
-            .withDecrypter(new Encrypter(managedKey))
-            .build();
+        recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(managedKey)).build();
 
     String decryptedRecordHash = decryptedRecord.getHash();
     assertEquals(recordHash, decryptedRecordHash);
@@ -141,8 +138,7 @@ class EncryptionTest {
         recordClient.fromString(payload).withEncrypter(new Encrypter(managedKey)).build();
     String encryptedRecordHash = encryptedRecord.getHash();
 
-    Record decryptedRecord =
-        encryptionClient.decrypt(encryptedRecord, new Encrypter(managedKey));
+    Record decryptedRecord = encryptionClient.decrypt(encryptedRecord, new Encrypter(managedKey));
     String decryptedRecordHash = decryptedRecord.getHash();
 
     assertEquals(encryptedRecordHash, decryptedRecordHash);

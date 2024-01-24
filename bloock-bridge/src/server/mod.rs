@@ -395,11 +395,11 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
-            BloockServer::KeyServiceSetupOtpAccessControl => {
+            BloockServer::KeyServiceSetupTotpAccessControl => {
                 let req = self.serialize_request(payload)?;
                 Ok(self
                     .key
-                    .setup_otp_access_control(&req)
+                    .setup_totp_access_control(&req)
                     .await
                     .to_response_type(&req)
                     .await)
@@ -413,11 +413,11 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
-            BloockServer::KeyServiceRecoverOtpAccessControl => {
+            BloockServer::KeyServiceRecoverTotpAccessControl => {
                 let req = self.serialize_request(payload)?;
                 Ok(self
                     .key
-                    .recover_otp_access_control(&req)
+                    .recover_totp_access_control(&req)
                     .await
                     .to_response_type(&req)
                     .await)

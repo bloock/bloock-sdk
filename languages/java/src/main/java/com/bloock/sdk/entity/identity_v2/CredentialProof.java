@@ -12,8 +12,7 @@ public class CredentialProof {
   }
 
   public static CredentialProof fromProto(IdentityEntitiesV2.CredentialProofV2 res) {
-    return new CredentialProof(
-        res.getSignatureProof(), res.getSparseMtProof());
+    return new CredentialProof(res.getSignatureProof(), res.getSparseMtProof());
   }
 
   public IdentityEntitiesV2.CredentialProofV2 toProto() {

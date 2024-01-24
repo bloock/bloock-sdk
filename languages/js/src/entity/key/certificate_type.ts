@@ -2,11 +2,13 @@ import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
 
 export enum CertificateType {
   PEM,
-  PFX,
+  PFX
 }
 
 export namespace CertificateType {
-  export function toProto(type: CertificateType): keysEntitiesProto.CertificateType {
+  export function toProto(
+    type: CertificateType
+  ): keysEntitiesProto.CertificateType {
     switch (type) {
       case CertificateType.PEM:
         return keysEntitiesProto.CertificateType.PEM;

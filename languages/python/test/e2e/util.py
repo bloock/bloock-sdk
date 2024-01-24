@@ -1,4 +1,6 @@
 import os
+import random
+import string
 
 import bloock
 
@@ -16,3 +18,8 @@ def init_dev_sdk():
     bloock.identity_api_host = os.environ.get("DEV_IDENTITY_API_HOST")
 
     bloock.disable_analytics = True
+
+def generate_random_string(length):
+    characters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(characters) for i in range(length))
+    return random_string

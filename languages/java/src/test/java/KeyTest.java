@@ -1,6 +1,5 @@
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.bloock.sdk.client.AuthenticityClient;
 import com.bloock.sdk.client.KeyClient;
@@ -29,8 +28,7 @@ class KeyTest {
     assertNotNull(localKey.getKey());
     assertNotNull(localKey.getPrivateKey());
 
-    LocalKey loadedKey =
-        keyClient.loadLocalKey(KeyType.EcP256k, localKey.getPrivateKey());
+    LocalKey loadedKey = keyClient.loadLocalKey(KeyType.EcP256k, localKey.getPrivateKey());
     assertEquals(localKey.getKey(), loadedKey.getKey());
     assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
   }
@@ -43,8 +41,7 @@ class KeyTest {
     assertNotNull(localKey.getKey());
     assertNotNull(localKey.getPrivateKey());
 
-    LocalKey loadedKey =
-        keyClient.loadLocalKey(KeyType.Bjj, localKey.getPrivateKey());
+    LocalKey loadedKey = keyClient.loadLocalKey(KeyType.Bjj, localKey.getPrivateKey());
     assertEquals(localKey.getKey(), loadedKey.getKey());
     assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
   }
@@ -57,8 +54,7 @@ class KeyTest {
     assertNotNull(localKey.getKey());
     assertNotNull(localKey.getPrivateKey());
 
-    LocalKey loadedKey =
-        keyClient.loadLocalKey(KeyType.Rsa2048, localKey.getPrivateKey());
+    LocalKey loadedKey = keyClient.loadLocalKey(KeyType.Rsa2048, localKey.getPrivateKey());
     assertEquals(localKey.getKey(), loadedKey.getKey());
     assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
   }
@@ -71,8 +67,7 @@ class KeyTest {
     assertNotNull(localKey.getKey());
     assertEquals(localKey.getPrivateKey(), "");
 
-    LocalKey loadedKey =
-        keyClient.loadLocalKey(KeyType.Aes256, localKey.getKey());
+    LocalKey loadedKey = keyClient.loadLocalKey(KeyType.Aes256, localKey.getKey());
     assertEquals(localKey.getKey(), loadedKey.getKey());
     assertEquals(localKey.getPrivateKey(), loadedKey.getPrivateKey());
   }
@@ -196,8 +191,7 @@ class KeyTest {
     Record record = recordClient.fromString("Hello world").build();
 
     AuthenticityClient authenticityClient = new AuthenticityClient();
-    Signature signature =
-        authenticityClient.sign(record, new Signer(loadedCertificate));
+    Signature signature = authenticityClient.sign(record, new Signer(loadedCertificate));
 
     assertNotNull(signature);
   }
@@ -306,9 +300,71 @@ class KeyTest {
     Record record = recordClient.fromString("Hello world").build();
 
     AuthenticityClient authenticityClient = new AuthenticityClient();
-    Signature signature =
-        authenticityClient.sign(record, new Signer(loadedCertificate));
+    Signature signature = authenticityClient.sign(record, new Signer(loadedCertificate));
 
     assertNotNull(signature);
+  }
+
+  @Test
+  void setupAndRecoverTotpAccessControl() throws Exception {
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+    RecordClient recordClient = new RecordClient();
+    KeyClient keyClient = new KeyClient();
+
+    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+    KeyType keyType = KeyType.EcP256k;
+
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+
+    Record record = recordClient.fromString("Hello world").build();
+
+    authenticityClient.sign(record, new Signer(managedKey));
+
+    TotpAccessControl totp = keyClient.setupTotpAccessControl(new Managed(managedKey));
+    assertNotNull(totp.getSecret());
+    assertNotNull(totp.getSecretQr());
+    assertNotNull(totp.getRecoveryCodes());
+
+    assertThrows(
+        Exception.class,
+        () -> {
+          authenticityClient.sign(record, new Signer(managedKey));
+          throw new RuntimeException("This is an intentional exception.");
+        });
+
+    TotpAccessControl totpRecovered =
+        keyClient.recoverTotpAccessControl(new Managed(managedKey), totp.getRecoveryCodes().get(0));
+    assertNotNull(totp.getSecret());
+    assertNotNull(totp.getSecretQr());
+    assertNotNull(totp.getRecoveryCodes());
+  }
+
+  @Test
+  void setupSecretAccessControl() throws Exception {
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+    RecordClient recordClient = new RecordClient();
+    KeyClient keyClient = new KeyClient();
+
+    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+    KeyType keyType = KeyType.EcP256k;
+
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+
+    Record record = recordClient.fromString("Hello world").build();
+
+    authenticityClient.sign(record, new Signer(managedKey));
+
+    String email = Utils.generateRandomString(8) + "@bloock.com";
+
+    keyClient.setupSecretAccessControl(new Managed(managedKey), "password", email);
+
+    assertThrows(
+        Exception.class,
+        () -> {
+          authenticityClient.sign(record, new Signer(managedKey));
+          throw new RuntimeException("This is an intentional exception.");
+        });
   }
 }

@@ -1,7 +1,8 @@
 from bloock._bridge import bridge
 from bloock._bridge.proto.keys_pb2 import GenerateLocalKeyRequest, GenerateManagedKeyRequest, LoadLocalKeyRequest, \
     LoadManagedKeyRequest, GenerateManagedCertificateRequest, LoadManagedCertificateRequest, \
-    ImportManagedCertificateRequest, GenerateLocalCertificateRequest, LoadLocalCertificateRequest
+    ImportManagedCertificateRequest, GenerateLocalCertificateRequest, LoadLocalCertificateRequest, SetupTotpAccessControlRequest, \
+    RecoverTotpAccessControlRequest, SetupSecretAccessControlRequest
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.key.certificate_type import CertificateType
@@ -13,6 +14,8 @@ from bloock.entity.key.local_certificate import LocalCertificate
 from bloock.entity.key.managed_certificate_params import ManagedCertificateParams
 from bloock.entity.key.local_certificate_params import LocalCertificateParams
 from bloock.entity.key.managed_key import ManagedKey
+from bloock.entity.key.managed import Managed
+from bloock.entity.key.totp_access_control import TotpAccessControl
 from bloock.entity.key.managed_key_params import ManagedKeyParams
 
 
@@ -120,3 +123,43 @@ class KeyClient:
             raise Exception(res.error.message)
 
         return ManagedCertificate.from_proto(res.managed_certificate)
+
+    def setup_totp_access_control(self, key: Managed) -> TotpAccessControl:
+        res = self.bridge_client.key().SetupTotpAccessControl(
+            SetupTotpAccessControlRequest(
+                config_data=self.config_data,
+                managed_key=key.managed_key if key.managed_key is not None else None,
+                managed_certificate=key.managed_certificate if key.managed_certificate is not None else None)
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return TotpAccessControl(res.secret, res.secret_qr, res.recovery_codes)
+
+    def recover_totp_access_control(self, key: Managed, code: str) -> TotpAccessControl:
+        res = self.bridge_client.key().RecoverTotpAccessControl(
+            RecoverTotpAccessControlRequest(
+                config_data=self.config_data,
+                code=code,
+                managed_key=key.managed_key if key.managed_key is not None else None,
+                managed_certificate=key.managed_certificate if key.managed_certificate is not None else None)
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return TotpAccessControl(res.secret, res.secret_qr, res.recovery_codes)
+
+    def setup_secret_access_control(self, key: Managed, secret: str, email: str):
+        res = self.bridge_client.key().SetupSecretAccessControl(
+            SetupSecretAccessControlRequest(
+                config_data=self.config_data,
+                secret=secret,
+                email=email,
+                managed_key=key.managed_key if key.managed_key is not None else None,
+                managed_certificate=key.managed_certificate if key.managed_certificate is not None else None)
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)

@@ -13,7 +13,12 @@ import {
   GetVerificationStatusRequest
 } from "../bridge/proto/identity_v2";
 import { NewConfigData } from "../config/config";
-import { IssuerStateReceipt, PublishIntervalParams, Schema, VerificationReceipt } from "../entity/identity_v2";
+import {
+  IssuerStateReceipt,
+  PublishIntervalParams,
+  Schema,
+  VerificationReceipt
+} from "../entity/identity_v2";
 import { Credential } from "../entity/identity_v2/credential";
 import { CredentialBuilder } from "../entity/identity_v2/credential_builder";
 import { CredentialProof } from "../entity/identity_v2/credential_proof";
@@ -58,7 +63,7 @@ export class IdentityClient {
     issuerParams?: DidParams,
     name?: string,
     description?: string,
-    image?: string,
+    image?: string
   ): Promise<string> {
     const request = CreateIssuerRequest.fromPartial({
       issuerKey: issuerKey.toProto(),
@@ -151,11 +156,14 @@ export class IdentityClient {
     );
   }
 
-  public publishIssuerState(issuerDid: string, signer: Signer): Promise<IssuerStateReceipt> {
+  public publishIssuerState(
+    issuerDid: string,
+    signer: Signer
+  ): Promise<IssuerStateReceipt> {
     const req = PublishIssuerStateRequest.fromPartial({
       configData: this.configData,
       issuerDid: issuerDid,
-      signer: signer.toProto(),
+      signer: signer.toProto()
     });
 
     return this.bridge
@@ -190,11 +198,14 @@ export class IdentityClient {
       });
   }
 
-  public revokeCredential(credential: Credential, signer: Signer): Promise<boolean> {
+  public revokeCredential(
+    credential: Credential,
+    signer: Signer
+  ): Promise<boolean> {
     const request = RevokeCredentialRequestV2.fromPartial({
       configData: this.configData,
       credential: credential.toProto(),
-      signer: signer.toProto(),
+      signer: signer.toProto()
     });
 
     return this.bridge
@@ -208,10 +219,12 @@ export class IdentityClient {
       });
   }
 
-  public createVerification(proofRequest: string): Promise<VerificationReceipt> {
+  public createVerification(
+    proofRequest: string
+  ): Promise<VerificationReceipt> {
     const request = CreateVerificationRequest.fromPartial({
       configData: this.configData,
-      proofRequest: proofRequest,
+      proofRequest: proofRequest
     });
 
     return this.bridge
@@ -225,11 +238,14 @@ export class IdentityClient {
       });
   }
 
-  public waitVerification(sessionID: number, timeout?: number): Promise<boolean> {
+  public waitVerification(
+    sessionID: number,
+    timeout?: number
+  ): Promise<boolean> {
     const request = WaitVerificationRequest.fromPartial({
       configData: this.configData,
       sessionId: sessionID,
-      timeout: timeout !== null ? timeout : 120000,
+      timeout: timeout !== null ? timeout : 120000
     });
 
     return this.bridge
@@ -246,7 +262,7 @@ export class IdentityClient {
   public getVerificationStatus(sessionID: number): Promise<boolean> {
     const request = GetVerificationStatusRequest.fromPartial({
       configData: this.configData,
-      sessionId: sessionID,
+      sessionId: sessionID
     });
 
     return this.bridge

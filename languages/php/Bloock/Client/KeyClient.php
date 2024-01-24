@@ -15,6 +15,8 @@ use Bloock\Entity\Key\ManagedKey;
 use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\LocalCertificate;
 use Bloock\Entity\Key\LocalCertificateArgs;
+use Bloock\Entity\Key\Managed;
+use Bloock\Entity\Key\TotpAccessControl;
 use Bloock\GenerateLocalKeyRequest;
 use Bloock\GenerateManagedKeyRequest;
 use Bloock\LoadLocalKeyRequest;
@@ -24,6 +26,9 @@ use Bloock\GenerateLocalCertificateRequest;
 use Bloock\LoadManagedCertificateRequest;
 use Bloock\LoadLocalCertificateRequest;
 use Bloock\ImportManagedCertificateRequest;
+use Bloock\RecoverTotpAccessControlRequest;
+use Bloock\SetupSecretAccessControlRequest;
+use Bloock\SetupTotpAccessControlRequest;
 use Exception;
 
 class KeyClient
@@ -174,5 +179,72 @@ class KeyClient
         }
 
         return ManagedCertificate::fromProto($res->getManagedCertificate());
+    }
+
+    public function setupTotpAccessControl(Managed $key): TotpAccessControl
+    {
+        $req = new SetupTotpAccessControlRequest();
+        $req->setConfigData($this->config);
+
+        if ($key->managedKey != null) {
+            $req->setManagedKey($key->managedKey->toProto());
+        }
+
+        if ($key->managedCertificate != null) {
+            $req->setManagedCertificate($key->managedCertificate->toProto());
+        }
+
+        $res = $this->bridge->key->SetupTotpAccessControl($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return new TotpAccessControl($res->getSecret(), $res->getSecretQr(), $res->getRecoveryCodes());
+    }
+
+    public function recoverTotpAccessControl(Managed $key, string $code): TotpAccessControl
+    {
+        $req = new RecoverTotpAccessControlRequest();
+        $req->setConfigData($this->config);
+        $req->setCode($code);
+
+        if ($key->managedKey != null) {
+            $req->setManagedKey($key->managedKey->toProto());
+        }
+
+        if ($key->managedCertificate != null) {
+            $req->setManagedCertificate($key->managedCertificate->toProto());
+        }
+
+        $res = $this->bridge->key->RecoverTotpAccessControl($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return new TotpAccessControl($res->getSecret(), $res->getSecretQr(), $res->getRecoveryCodes());
+    }
+
+    public function setupSecretAccessControl(Managed $key, string $secret, string $email)
+    {
+        $req = new SetupSecretAccessControlRequest();
+        $req->setConfigData($this->config);
+        $req->setSecret($secret);
+        $req->setEmail($email);
+
+        if ($key->managedKey != null) {
+            $req->setManagedKey($key->managedKey->toProto());
+        }
+
+        if ($key->managedCertificate != null) {
+            $req->setManagedCertificate($key->managedCertificate->toProto());
+        }
+
+        $res = $this->bridge->key->SetupSecretAccessControl($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
     }
 }

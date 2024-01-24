@@ -95,52 +95,31 @@ export const Signer = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Signer {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSigner();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.localKey = LocalKey.decode(reader, reader.uint32());
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.managedKey = ManagedKey.decode(reader, reader.uint32());
-          continue;
+          break;
         case 3:
-          if (tag !== 26) {
-            break;
-          }
-
           message.localCertificate = LocalCertificate.decode(reader, reader.uint32());
-          continue;
+          break;
         case 4:
-          if (tag !== 34) {
-            break;
-          }
-
           message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
-          continue;
+          break;
         case 5:
-          if (tag !== 40) {
-            break;
-          }
-
           message.hashAlg = reader.int32() as any;
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -159,27 +138,19 @@ export const Signer = {
 
   toJSON(message: Signer): unknown {
     const obj: any = {};
-    if (message.localKey !== undefined) {
-      obj.localKey = LocalKey.toJSON(message.localKey);
-    }
-    if (message.managedKey !== undefined) {
-      obj.managedKey = ManagedKey.toJSON(message.managedKey);
-    }
-    if (message.localCertificate !== undefined) {
-      obj.localCertificate = LocalCertificate.toJSON(message.localCertificate);
-    }
-    if (message.managedCertificate !== undefined) {
-      obj.managedCertificate = ManagedCertificate.toJSON(message.managedCertificate);
-    }
-    if (message.hashAlg !== undefined) {
-      obj.hashAlg = hashAlgToJSON(message.hashAlg);
-    }
+    message.localKey !== undefined && (obj.localKey = message.localKey ? LocalKey.toJSON(message.localKey) : undefined);
+    message.managedKey !== undefined &&
+      (obj.managedKey = message.managedKey ? ManagedKey.toJSON(message.managedKey) : undefined);
+    message.localCertificate !== undefined &&
+      (obj.localCertificate = message.localCertificate ? LocalCertificate.toJSON(message.localCertificate) : undefined);
+    message.managedCertificate !== undefined && (obj.managedCertificate = message.managedCertificate
+      ? ManagedCertificate.toJSON(message.managedCertificate)
+      : undefined);
+    message.hashAlg !== undefined &&
+      (obj.hashAlg = message.hashAlg !== undefined ? hashAlgToJSON(message.hashAlg) : undefined);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Signer>, I>>(base?: I): Signer {
-    return Signer.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<Signer>, I>>(object: I): Signer {
     const message = createBaseSigner();
     message.localKey = (object.localKey !== undefined && object.localKey !== null)
@@ -227,100 +198,60 @@ export const Signature = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Signature {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSignature();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 10) {
-            break;
-          }
-
           message.signature = reader.string();
-          continue;
+          break;
         case 2:
-          if (tag !== 18) {
-            break;
-          }
-
           message.alg = reader.string();
-          continue;
+          break;
         case 3:
-          if (tag !== 26) {
-            break;
-          }
-
           message.kid = reader.string();
-          continue;
+          break;
         case 4:
-          if (tag !== 34) {
-            break;
-          }
-
           message.messageHash = reader.string();
-          continue;
+          break;
         case 5:
-          if (tag !== 42) {
-            break;
-          }
-
           message.subject = reader.string();
-          continue;
+          break;
         case 6:
-          if (tag !== 50) {
-            break;
-          }
-
           message.hashAlg = reader.string();
-          continue;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): Signature {
     return {
-      signature: isSet(object.signature) ? globalThis.String(object.signature) : "",
-      alg: isSet(object.alg) ? globalThis.String(object.alg) : "",
-      kid: isSet(object.kid) ? globalThis.String(object.kid) : "",
-      messageHash: isSet(object.messageHash) ? globalThis.String(object.messageHash) : "",
-      subject: isSet(object.subject) ? globalThis.String(object.subject) : undefined,
-      hashAlg: isSet(object.hashAlg) ? globalThis.String(object.hashAlg) : undefined,
+      signature: isSet(object.signature) ? String(object.signature) : "",
+      alg: isSet(object.alg) ? String(object.alg) : "",
+      kid: isSet(object.kid) ? String(object.kid) : "",
+      messageHash: isSet(object.messageHash) ? String(object.messageHash) : "",
+      subject: isSet(object.subject) ? String(object.subject) : undefined,
+      hashAlg: isSet(object.hashAlg) ? String(object.hashAlg) : undefined,
     };
   },
 
   toJSON(message: Signature): unknown {
     const obj: any = {};
-    if (message.signature !== "") {
-      obj.signature = message.signature;
-    }
-    if (message.alg !== "") {
-      obj.alg = message.alg;
-    }
-    if (message.kid !== "") {
-      obj.kid = message.kid;
-    }
-    if (message.messageHash !== "") {
-      obj.messageHash = message.messageHash;
-    }
-    if (message.subject !== undefined) {
-      obj.subject = message.subject;
-    }
-    if (message.hashAlg !== undefined) {
-      obj.hashAlg = message.hashAlg;
-    }
+    message.signature !== undefined && (obj.signature = message.signature);
+    message.alg !== undefined && (obj.alg = message.alg);
+    message.kid !== undefined && (obj.kid = message.kid);
+    message.messageHash !== undefined && (obj.messageHash = message.messageHash);
+    message.subject !== undefined && (obj.subject = message.subject);
+    message.hashAlg !== undefined && (obj.hashAlg = message.hashAlg);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Signature>, I>>(base?: I): Signature {
-    return Signature.fromPartial(base ?? ({} as any));
-  },
   fromPartial<I extends Exact<DeepPartial<Signature>, I>>(object: I): Signature {
     const message = createBaseSignature();
     message.signature = object.signature ?? "";
@@ -336,8 +267,7 @@ export const Signature = {
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
 type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 

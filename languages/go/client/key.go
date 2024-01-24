@@ -191,44 +191,80 @@ func (c *KeyClient) ImportManagedCertificate(_type keyEntity.CertificateType, ce
 	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }
 
-func (c *KeyClient) SetupOTPAccessControl(key keyEntity.Managed) (keyEntity.OtpAccessControl, error) {
-	res, err := c.bridgeClient.Key().SetupOTPAccessControl(context.Background(), &proto.SetupOTPAccessControlRequest{
-		ConfigData: c.configData,
+func (c *KeyClient) SetupTotpAccessControl(key keyEntity.Managed) (keyEntity.TotpAccessControl, error) {
+	var managedKey *proto.ManagedKey
+	if key.ManagedKey != nil {
+		managedKey = key.ManagedKey.ToProto()
+	}
+
+	var managedCertificate *proto.ManagedCertificate
+	if key.ManagedCertificate != nil {
+		managedCertificate = key.ManagedCertificate.ToProto()
+	}
+
+	res, err := c.bridgeClient.Key().SetupTotpAccessControl(context.Background(), &proto.SetupTotpAccessControlRequest{
+		ConfigData:         c.configData,
+		ManagedKey:         managedKey,
+		ManagedCertificate: managedCertificate,
 	})
 
 	if err != nil {
-		return keyEntity.OtpAccessControl{}, err
+		return keyEntity.TotpAccessControl{}, err
 	}
 
 	if res.Error != nil {
-		return keyEntity.OtpAccessControl{}, errors.New(res.Error.Message)
+		return keyEntity.TotpAccessControl{}, errors.New(res.Error.Message)
 	}
 
 	return keyEntity.New(res.Secret, res.SecretQr, res.RecoveryCodes), nil
 }
 
-func (c *KeyClient) RecoverOTPAccessControl(key keyEntity.Managed, code string) (keyEntity.OtpAccessControl, error) {
-	res, err := c.bridgeClient.Key().RecoverOTPAccessControl(context.Background(), &proto.RecoverOTPAccessControlRequest{
-		ConfigData: c.configData,
-		Code:       code,
+func (c *KeyClient) RecoverTotpAccessControl(key keyEntity.Managed, code string) (keyEntity.TotpAccessControl, error) {
+	var managedKey *proto.ManagedKey
+	if key.ManagedKey != nil {
+		managedKey = key.ManagedKey.ToProto()
+	}
+
+	var managedCertificate *proto.ManagedCertificate
+	if key.ManagedCertificate != nil {
+		managedCertificate = key.ManagedCertificate.ToProto()
+	}
+
+	res, err := c.bridgeClient.Key().RecoverTotpAccessControl(context.Background(), &proto.RecoverTotpAccessControlRequest{
+		ConfigData:         c.configData,
+		Code:               code,
+		ManagedKey:         managedKey,
+		ManagedCertificate: managedCertificate,
 	})
 
 	if err != nil {
-		return keyEntity.OtpAccessControl{}, err
+		return keyEntity.TotpAccessControl{}, err
 	}
 
 	if res.Error != nil {
-		return keyEntity.OtpAccessControl{}, errors.New(res.Error.Message)
+		return keyEntity.TotpAccessControl{}, errors.New(res.Error.Message)
 	}
 
 	return keyEntity.New(res.Secret, res.SecretQr, res.RecoveryCodes), nil
 }
 
 func (c *KeyClient) SetupSecretAccessControl(key keyEntity.Managed, secret string, email string) error {
+	var managedKey *proto.ManagedKey
+	if key.ManagedKey != nil {
+		managedKey = key.ManagedKey.ToProto()
+	}
+
+	var managedCertificate *proto.ManagedCertificate
+	if key.ManagedCertificate != nil {
+		managedCertificate = key.ManagedCertificate.ToProto()
+	}
+
 	res, err := c.bridgeClient.Key().SetupSecretAccessControl(context.Background(), &proto.SetupSecretAccessControlRequest{
-		ConfigData: c.configData,
-		Secret:     secret,
-		Email:      email,
+		ConfigData:         c.configData,
+		Secret:             secret,
+		Email:              email,
+		ManagedKey:         managedKey,
+		ManagedCertificate: managedCertificate,
 	})
 
 	if err != nil {

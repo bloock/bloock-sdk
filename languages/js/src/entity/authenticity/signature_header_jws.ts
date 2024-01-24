@@ -13,6 +13,9 @@ export class SignatureHeaderJws {
   }
 
   toProto(): proto.SignatureHeaderJWS {
-    return proto.SignatureHeaderJWS.fromPartial({ alg: this.alg, kid: this.kid });
+    return proto.SignatureHeaderJWS.fromPartial({
+      alg: this.alg,
+      kid: this.kid
+    });
   }
 }

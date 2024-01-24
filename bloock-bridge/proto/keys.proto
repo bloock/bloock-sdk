@@ -30,13 +30,13 @@ service KeyService {
   rpc ImportManagedCertificate(ImportManagedCertificateRequest)
       returns (ImportManagedCertificateResponse);
 
-  rpc SetupOTPAccessControl(SetupOTPAccessControlRequest)
-      returns (SetupOTPAccessControlResponse);
+  rpc SetupTotpAccessControl(SetupTotpAccessControlRequest)
+      returns (SetupTotpAccessControlResponse);
   rpc SetupSecretAccessControl(SetupSecretAccessControlRequest)
       returns (SetupSecretAccessControlResponse);
 
-  rpc RecoverOTPAccessControl(RecoverOTPAccessControlRequest)
-      returns (RecoverOTPAccessControlResponse);
+  rpc RecoverTotpAccessControl(RecoverTotpAccessControlRequest)
+      returns (RecoverTotpAccessControlResponse);
 }
 
 message GenerateLocalKeyRequest {
@@ -133,13 +133,13 @@ message ImportManagedCertificateResponse {
   optional Error error = 2;
 }
 
-message SetupOTPAccessControlRequest {
+message SetupTotpAccessControlRequest {
   ConfigData config_data = 1;
   optional ManagedKey managed_key = 2;
   optional ManagedCertificate managed_certificate = 3;
 }
 
-message SetupOTPAccessControlResponse {
+message SetupTotpAccessControlResponse {
   string secret = 1;
   string secret_qr = 2;
   repeated string recovery_codes = 3;
@@ -156,14 +156,14 @@ message SetupSecretAccessControlRequest {
 
 message SetupSecretAccessControlResponse { optional Error error = 1; }
 
-message RecoverOTPAccessControlRequest {
+message RecoverTotpAccessControlRequest {
   ConfigData config_data = 1;
   string code = 2;
   optional ManagedKey managed_key = 3;
   optional ManagedCertificate managed_certificate = 4;
 }
 
-message RecoverOTPAccessControlResponse {
+message RecoverTotpAccessControlResponse {
   string secret = 1;
   string secret_qr = 2;
   repeated string recovery_codes = 3;

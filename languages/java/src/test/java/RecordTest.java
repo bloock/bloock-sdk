@@ -12,9 +12,8 @@ import com.bloock.sdk.entity.integrity.Proof;
 import com.bloock.sdk.entity.integrity.ProofAnchor;
 import com.bloock.sdk.entity.key.*;
 import com.bloock.sdk.entity.record.Record;
-import java.util.Collections;
-
 import com.bloock.sdk.entity.record.RecordDetails;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +35,7 @@ class RecordTest {
   @Test
   void testFromBytes() throws Exception {
     RecordClient recordClient = new RecordClient();
-    Record record = recordClient.fromBytes(new byte[] { 1, 2, 3, 4, 5 }).build();
+    Record record = recordClient.fromBytes(new byte[] {1, 2, 3, 4, 5}).build();
     String hash = record.getHash();
     assertEquals(hash, "7d87c5ea75f7378bb701e404c50639161af3eff66293e9f375b5f17eb50476f4");
   }
@@ -60,7 +59,7 @@ class RecordTest {
   @Test
   void testFromFile() throws Exception {
     RecordClient recordClient = new RecordClient();
-    Record record = recordClient.fromFile(new byte[] { 2, 3, 4, 5, 6 }).build();
+    Record record = recordClient.fromFile(new byte[] {2, 3, 4, 5, 6}).build();
     String hash = record.getHash();
     assertEquals(hash, "507aa5dd7b2e52180b764db13c8289ed204109cafe2ef4e453366da8654dc446");
   }
@@ -98,46 +97,46 @@ class RecordTest {
    * KeyClient keyClient = new KeyClient();
    * LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
    * String name = "Some name";
-   * 
+   *
    * RecordClient recordClient = new RecordClient();
    * Record signedRecord =
    * recordClient
    * .fromString("Hello world 3")
    * .withSigner(new Signer(new SignerArgs(localKey, name)))
    * .build();
-   * 
+   *
    * Record recordWithMultipleSignatures =
    * recordClient
    * .fromRecord(signedRecord)
    * .withSigner(new Signer(new SignerArgs(localKey)))
    * .build();
-   * 
+   *
    * List<Signature> signatures =
    * authenticityClient.getSignatures(recordWithMultipleSignatures);
    * assertEquals(signatures.size(), 2);
-   * 
+   *
    * assertEquals(authenticityClient.getSignatureCommonName(signatures.get(0)),
    * name);
    * assertEquals(signatures.get(0).getAlg(), SignatureAlg.ECDSA);
    * }
-   * 
+   *
    * @Test
    * void testEnsSignature() throws Exception {
    * AuthenticityClient authenticityClient = new AuthenticityClient();
    * KeyClient keyClient = new KeyClient();
    * LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
-   * 
+   *
    * RecordClient recordClient = new RecordClient();
    * Record record =
    * recordClient
    * .fromString("Hello world 4")
    * .withSigner(new Signer(new SignerArgs(localKey)))
    * .build();
-   * 
+   *
    * List<Signature> signatures = authenticityClient.getSignatures(record);
    * assertEquals(signatures.size(), 1);
    * assertEquals(signatures.get(0).getAlg(), SignatureAlg.ENS);
-   * 
+   *
    * signatures
    * .get(0)
    * .setSignature(
@@ -159,7 +158,8 @@ class RecordTest {
     LocalKey localKey = keyClient.newLocalKey(KeyType.Aes256);
 
     RecordClient recordClient = new RecordClient();
-    Record encryptedRecord = recordClient.fromString(payload).withEncrypter(new Encrypter(localKey)).build();
+    Record encryptedRecord =
+        recordClient.fromString(payload).withEncrypter(new Encrypter(localKey)).build();
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
 
     EncryptionClient encryptionClient = new EncryptionClient();
@@ -168,16 +168,14 @@ class RecordTest {
     boolean throwsException = false;
     try {
       LocalKey invalidKey = keyClient.newLocalKey(KeyType.Aes256);
-      recordClient
-          .fromRecord(encryptedRecord)
-          .withDecrypter(new Encrypter(invalidKey))
-          .build();
+      recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(invalidKey)).build();
     } catch (Exception e) {
       throwsException = true;
     }
     assertTrue(throwsException);
 
-    Record decryptedRecord = recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(localKey)).build();
+    Record decryptedRecord =
+        recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(localKey)).build();
 
     assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -194,12 +192,14 @@ class RecordTest {
     LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
 
     RecordClient recordClient = new RecordClient();
-    Record encryptedRecord = recordClient.fromString(payload).withEncrypter(new Encrypter(localKey)).build();
+    Record encryptedRecord =
+        recordClient.fromString(payload).withEncrypter(new Encrypter(localKey)).build();
 
     assertNotEquals(payload.getBytes(), encryptedRecord.retrieve());
     assertEquals(encryptionClient.getEncryptionAlg(encryptedRecord), EncryptionAlg.RSA);
 
-    Record decryptedRecord = recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(localKey)).build();
+    Record decryptedRecord =
+        recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(localKey)).build();
 
     assertArrayEquals(decryptedRecord.retrieve(), payload.getBytes());
 
@@ -212,10 +212,13 @@ class RecordTest {
     String payload = "Hello world 2";
 
     KeyClient keyClient = new KeyClient();
-    LocalCertificate localCert = keyClient.newLocalCertificate(new LocalCertificateParams(
-        KeyType.Rsa2048,
-        new SubjectCertificateParams("Bloock", "", "", "", "", ""),
-        "", 0));
+    LocalCertificate localCert =
+        keyClient.newLocalCertificate(
+            new LocalCertificateParams(
+                KeyType.Rsa2048,
+                new SubjectCertificateParams("Bloock", "", "", "", "", ""),
+                "",
+                0));
 
     RecordClient recordClient = new RecordClient();
     Record record = recordClient.fromString(payload).withSigner(new Signer(localCert)).build();
@@ -265,23 +268,24 @@ class RecordTest {
     RecordClient recordClient = new RecordClient();
     Record record = recordClient.fromString("Hello world").build();
 
-    Proof originalProof = new Proof(
-        Collections.singletonList(
-            "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
-        Collections.singletonList(
-            "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
-        "1010101",
-        "0101010",
-        new ProofAnchor(
-            42L,
+    Proof originalProof =
+        new Proof(
             Collections.singletonList(
-                new AnchorNetwork(
-                    "Ethereum",
-                    "state",
-                    "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
-                    "root")),
-            "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
-            "succes"));
+                "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
+            Collections.singletonList(
+                "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd"),
+            "1010101",
+            "0101010",
+            new ProofAnchor(
+                42L,
+                Collections.singletonList(
+                    new AnchorNetwork(
+                        "Ethereum",
+                        "state",
+                        "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+                        "root")),
+                "ed6c11b0b5b808960df26f5bfc471d04c1995b0ffd2055925ad1be28d6baadfd",
+                "succes"));
 
     record.setProof(originalProof);
 

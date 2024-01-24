@@ -6,10 +6,10 @@ use crate::{
         ImportManagedCertificateRequest, ImportManagedCertificateResponse, KeyServiceHandler,
         LoadLocalCertificateRequest, LoadLocalCertificateResponse, LoadLocalKeyRequest,
         LoadLocalKeyResponse, LoadManagedCertificateRequest, LoadManagedCertificateResponse,
-        LoadManagedKeyRequest, LoadManagedKeyResponse, RecoverOtpAccessControlRequest,
-        RecoverOtpAccessControlResponse, SetupOtpAccessControlRequest,
-        SetupOtpAccessControlResponse, SetupSecretAccessControlRequest,
-        SetupSecretAccessControlResponse,
+        LoadManagedKeyRequest, LoadManagedKeyResponse, RecoverTotpAccessControlRequest,
+        RecoverTotpAccessControlResponse, SetupSecretAccessControlRequest,
+        SetupSecretAccessControlResponse, SetupTotpAccessControlRequest,
+        SetupTotpAccessControlResponse,
     },
     server::response_types::RequestConfigData,
 };
@@ -233,10 +233,11 @@ impl KeyServiceHandler for KeyServer {
         })
     }
 
-    async fn setup_otp_access_control(
+    async fn setup_totp_access_control(
         &self,
-        req: &SetupOtpAccessControlRequest,
-    ) -> Result<SetupOtpAccessControlResponse, String> {
+        req: &SetupTotpAccessControlRequest,
+    ) -> Result<SetupTotpAccessControlResponse, String> {
+        println!("{}", "Hello world");
         let config_data = req.get_config_data()?;
 
         let client = key::configure(config_data.clone());
@@ -252,11 +253,11 @@ impl KeyServiceHandler for KeyServer {
         };
 
         let result = client
-            .setup_otp_access_control(&key)
+            .setup_totp_access_control(&key)
             .await
             .map_err(|e| e.to_string())?;
 
-        Ok(SetupOtpAccessControlResponse {
+        Ok(SetupTotpAccessControlResponse {
             secret: result.secret,
             secret_qr: result.secret_qr,
             recovery_codes: result.recovery_codes,
@@ -290,10 +291,10 @@ impl KeyServiceHandler for KeyServer {
         Ok(SetupSecretAccessControlResponse { error: None })
     }
 
-    async fn recover_otp_access_control(
+    async fn recover_totp_access_control(
         &self,
-        req: &RecoverOtpAccessControlRequest,
-    ) -> Result<RecoverOtpAccessControlResponse, String> {
+        req: &RecoverTotpAccessControlRequest,
+    ) -> Result<RecoverTotpAccessControlResponse, String> {
         let config_data = req.get_config_data()?;
 
         let client = key::configure(config_data.clone());
@@ -309,11 +310,11 @@ impl KeyServiceHandler for KeyServer {
         };
 
         let result = client
-            .recover_otp_access_control(&key, req.code.clone())
+            .recover_totp_access_control(&key, req.code.clone())
             .await
             .map_err(|e| e.to_string())?;
 
-        Ok(RecoverOtpAccessControlResponse {
+        Ok(RecoverTotpAccessControlResponse {
             secret: result.secret,
             secret_qr: result.secret_qr,
             recovery_codes: result.recovery_codes,

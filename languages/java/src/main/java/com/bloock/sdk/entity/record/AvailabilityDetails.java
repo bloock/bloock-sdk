@@ -1,7 +1,6 @@
 package com.bloock.sdk.entity.record;
 
 import com.bloock.sdk.bridge.proto.RecordEntities;
-import com.bloock.sdk.entity.integrity.Proof;
 
 public class AvailabilityDetails {
   String contentType;

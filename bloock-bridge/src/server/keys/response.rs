@@ -7,9 +7,9 @@ use crate::{
         ImportManagedCertificateRequest, ImportManagedCertificateResponse,
         LoadLocalCertificateRequest, LoadLocalCertificateResponse, LoadLocalKeyRequest,
         LoadLocalKeyResponse, LoadManagedCertificateRequest, LoadManagedCertificateResponse,
-        LoadManagedKeyRequest, LoadManagedKeyResponse, RecoverOtpAccessControlRequest,
-        RecoverOtpAccessControlResponse, SetupOtpAccessControlRequest,
-        SetupOtpAccessControlResponse, SetupSecretAccessControlRequest,
+        LoadManagedKeyRequest, LoadManagedKeyResponse, RecoverTotpAccessControlRequest,
+        RecoverTotpAccessControlResponse, SetupTotpAccessControlRequest,
+        SetupTotpAccessControlResponse, SetupSecretAccessControlRequest,
         SetupSecretAccessControlResponse,
     },
     server::response_types::ResponseTypeError,
@@ -123,7 +123,7 @@ impl ResponseTypeError<ImportManagedCertificateRequest> for ImportManagedCertifi
     }
 }
 
-impl ResponseTypeError<SetupOtpAccessControlRequest> for SetupOtpAccessControlResponse {
+impl ResponseTypeError<SetupTotpAccessControlRequest> for SetupTotpAccessControlResponse {
     fn build_error(err: String) -> Self {
         Self {
             secret: String::default(),
@@ -148,7 +148,7 @@ impl ResponseTypeError<SetupSecretAccessControlRequest> for SetupSecretAccessCon
     }
 }
 
-impl ResponseTypeError<RecoverOtpAccessControlRequest> for RecoverOtpAccessControlResponse {
+impl ResponseTypeError<RecoverTotpAccessControlRequest> for RecoverTotpAccessControlResponse {
     fn build_error(err: String) -> Self {
         Self {
             secret: String::default(),

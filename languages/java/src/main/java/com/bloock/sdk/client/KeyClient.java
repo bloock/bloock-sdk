@@ -175,4 +175,80 @@ public class KeyClient {
 
     return ManagedCertificate.fromProto(response.getManagedCertificate());
   }
+
+  public TotpAccessControl setupTotpAccessControl(Managed key) throws Exception {
+    Keys.SetupTotpAccessControlRequest.Builder builder =
+        Keys.SetupTotpAccessControlRequest.newBuilder().setConfigData(this.configData);
+
+    if (key.getManagedKey() != null) {
+      builder.setManagedKey(key.getManagedKey().toProto());
+    }
+
+    if (key.getManagedCertificate() != null) {
+      builder.setManagedCertificate(key.getManagedCertificate().toProto());
+    }
+
+    Keys.SetupTotpAccessControlRequest request = builder.build();
+
+    Keys.SetupTotpAccessControlResponse response = bridge.getKey().setupTotpAccessControl(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return new TotpAccessControl(
+        response.getSecret(), response.getSecretQr(), response.getRecoveryCodesList());
+  }
+
+  public TotpAccessControl recoverTotpAccessControl(Managed key, String code) throws Exception {
+    Keys.RecoverTotpAccessControlRequest.Builder builder =
+        Keys.RecoverTotpAccessControlRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setCode(code);
+
+    if (key.getManagedKey() != null) {
+      builder.setManagedKey(key.getManagedKey().toProto());
+    }
+
+    if (key.getManagedCertificate() != null) {
+      builder.setManagedCertificate(key.getManagedCertificate().toProto());
+    }
+
+    Keys.RecoverTotpAccessControlRequest request = builder.build();
+
+    Keys.RecoverTotpAccessControlResponse response =
+        bridge.getKey().recoverTotpAccessControl(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return new TotpAccessControl(
+        response.getSecret(), response.getSecretQr(), response.getRecoveryCodesList());
+  }
+
+  public void setupSecretAccessControl(Managed key, String secret, String email) throws Exception {
+    Keys.SetupSecretAccessControlRequest.Builder builder =
+        Keys.SetupSecretAccessControlRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setSecret(secret)
+            .setEmail(email);
+
+    if (key.getManagedKey() != null) {
+      builder.setManagedKey(key.getManagedKey().toProto());
+    }
+
+    if (key.getManagedCertificate() != null) {
+      builder.setManagedCertificate(key.getManagedCertificate().toProto());
+    }
+
+    Keys.SetupSecretAccessControlRequest request = builder.build();
+
+    Keys.SetupSecretAccessControlResponse response =
+        bridge.getKey().setupSecretAccessControl(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+  }
 }

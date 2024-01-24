@@ -31,20 +31,6 @@ class KeyServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\GenerateManagedKeyRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function GenerateManagedKey(\Bloock\GenerateManagedKeyRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.KeyService/GenerateManagedKey',
-        $argument,
-        ['\Bloock\GenerateManagedKeyResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
      * @param \Bloock\LoadLocalKeyRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
@@ -55,6 +41,20 @@ class KeyServiceClient extends \Bloock\Bridge\Connection {
         return $this->_simpleRequest('/bloock.KeyService/LoadLocalKey',
         $argument,
         ['\Bloock\LoadLocalKeyResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\GenerateManagedKeyRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GenerateManagedKey(\Bloock\GenerateManagedKeyRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.KeyService/GenerateManagedKey',
+        $argument,
+        ['\Bloock\GenerateManagedKeyResponse', 'decode'],
         $metadata, $options);
     }
 
@@ -87,20 +87,6 @@ class KeyServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\GenerateManagedCertificateRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function GenerateManagedCertificate(\Bloock\GenerateManagedCertificateRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.KeyService/GenerateManagedCertificate',
-        $argument,
-        ['\Bloock\GenerateManagedCertificateResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
      * @param \Bloock\LoadLocalCertificateRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
@@ -111,6 +97,20 @@ class KeyServiceClient extends \Bloock\Bridge\Connection {
         return $this->_simpleRequest('/bloock.KeyService/LoadLocalCertificate',
         $argument,
         ['\Bloock\LoadLocalCertificateResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\GenerateManagedCertificateRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GenerateManagedCertificate(\Bloock\GenerateManagedCertificateRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.KeyService/GenerateManagedCertificate',
+        $argument,
+        ['\Bloock\GenerateManagedCertificateResponse', 'decode'],
         $metadata, $options);
     }
 
@@ -139,6 +139,48 @@ class KeyServiceClient extends \Bloock\Bridge\Connection {
         return $this->_simpleRequest('/bloock.KeyService/ImportManagedCertificate',
         $argument,
         ['\Bloock\ImportManagedCertificateResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\SetupTotpAccessControlRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function SetupTotpAccessControl(\Bloock\SetupTotpAccessControlRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.KeyService/SetupTotpAccessControl',
+        $argument,
+        ['\Bloock\SetupTotpAccessControlResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\SetupSecretAccessControlRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function SetupSecretAccessControl(\Bloock\SetupSecretAccessControlRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.KeyService/SetupSecretAccessControl',
+        $argument,
+        ['\Bloock\SetupSecretAccessControlResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\RecoverTotpAccessControlRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function RecoverTotpAccessControl(\Bloock\RecoverTotpAccessControlRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.KeyService/RecoverTotpAccessControl',
+        $argument,
+        ['\Bloock\RecoverTotpAccessControlResponse', 'decode'],
         $metadata, $options);
     }
 

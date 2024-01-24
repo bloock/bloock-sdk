@@ -16,7 +16,7 @@ export class LocalKey {
     return keysEntitiesProto.LocalKey.fromPartial({
       key: this.key,
       privateKey: this.privateKey,
-      keyType: KeyType.toProto(this.keyType),
+      keyType: KeyType.toProto(this.keyType)
     });
   }
 

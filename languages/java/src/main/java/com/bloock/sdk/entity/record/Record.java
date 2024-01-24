@@ -4,10 +4,10 @@ import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
 import com.bloock.sdk.bridge.proto.Record.GetHashRequest;
 import com.bloock.sdk.bridge.proto.Record.GetHashResponse;
-import com.bloock.sdk.bridge.proto.Record.SetProofRequest;
-import com.bloock.sdk.bridge.proto.Record.SetProofResponse;
 import com.bloock.sdk.bridge.proto.Record.GetPayloadRequest;
 import com.bloock.sdk.bridge.proto.Record.GetPayloadResponse;
+import com.bloock.sdk.bridge.proto.Record.SetProofRequest;
+import com.bloock.sdk.bridge.proto.Record.SetProofResponse;
 import com.bloock.sdk.bridge.proto.RecordEntities;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.entity.integrity.Proof;
@@ -55,10 +55,10 @@ public class Record {
   public byte[] getPayload() throws Exception {
     Bridge bridge = new Bridge();
     GetPayloadRequest request =
-            com.bloock.sdk.bridge.proto.Record.GetPayloadRequest.newBuilder()
-                    .setConfigData(this.configData)
-                    .setRecord(this.toProto())
-                    .build();
+        com.bloock.sdk.bridge.proto.Record.GetPayloadRequest.newBuilder()
+            .setConfigData(this.configData)
+            .setRecord(this.toProto())
+            .build();
     GetPayloadResponse res = bridge.getRecord().getPayload(request);
 
     if (res.getError() != Error.getDefaultInstance()) {

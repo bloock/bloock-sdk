@@ -9,7 +9,7 @@ export class CredentialReceipt {
   constructor(
     credential: Credential,
     credentialId: string,
-    credentialType: string,
+    credentialType: string
   ) {
     this.credential = credential;
     this.credentialId = credentialId;
@@ -20,7 +20,7 @@ export class CredentialReceipt {
     return identityEntitiesProto.CredentialReceiptV2.fromPartial({
       credential: this.credential.toProto(),
       credentialId: this.credentialId,
-      credentialType: this.credentialType,
+      credentialType: this.credentialType
     });
   }
 
@@ -30,7 +30,7 @@ export class CredentialReceipt {
     return new CredentialReceipt(
       Credential.fromProto(r.credential!),
       r.credentialId,
-      r.credentialType,
+      r.credentialType
     );
   }
 }

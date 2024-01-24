@@ -2,40 +2,34 @@ use crate::{entity::key::Managed, KeysError, Result};
 use bloock_http::Client;
 use serde::{Deserialize, Serialize};
 
-pub struct OtpAccessControlResult {
+pub struct TotpAccessControlResult {
     pub secret: String,
     pub secret_qr: String,
     pub recovery_codes: Vec<String>,
 }
 
-pub struct OtpAccessControl {
+pub struct TotpAccessControl {
     api_host: String,
     api_key: String,
     environment: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
-struct SetupOtpAccessControlRequest {}
+struct SetupTotpAccessControlRequest {}
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
-struct SetupOtpAccessControlResponse {
+struct SetupTotpAccessControlResponse {
     pub secret: String,
     pub secret_qr: String,
-    pub recovery_codes: Vec<String>,
+    pub recovery_code: Vec<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
-struct RecoverOtpAccessControlRequest {
+struct RecoverTotpAccessControlRequest {
     pub recovery_code: String,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
-struct RecoverOtpAccessControlResponse {
-    secret: String,
-    secret_qr: String,
-}
-
-impl OtpAccessControl {
+impl TotpAccessControl {
     pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
         Self {
             api_host,
@@ -44,7 +38,7 @@ impl OtpAccessControl {
         }
     }
 
-    pub async fn setup(&self, key: &Managed) -> Result<OtpAccessControlResult> {
+    pub async fn setup(&self, key: &Managed) -> Result<TotpAccessControlResult> {
         let managed = match key {
             Managed::Key(k) => k.clone(),
             Managed::Certificate(c) => c.key.clone(),
@@ -56,23 +50,23 @@ impl OtpAccessControl {
             None,
         );
 
-        let res: SetupOtpAccessControlResponse = client
+        let res: SetupTotpAccessControlResponse = client
             .post_json(
                 format!("{}/keys/v1/keys/{}/access", self.api_host, managed.id),
-                SetupOtpAccessControlRequest {},
+                SetupTotpAccessControlRequest {},
                 None,
             )
             .await
             .map_err(|e| KeysError::ManagedKeyRequestError(e.to_string()))?;
 
-        Ok(OtpAccessControlResult {
+        Ok(TotpAccessControlResult {
             secret: res.secret,
             secret_qr: res.secret_qr,
-            recovery_codes: res.recovery_codes,
+            recovery_codes: res.recovery_code,
         })
     }
 
-    pub async fn recover(&self, key: &Managed, code: String) -> Result<OtpAccessControlResult> {
+    pub async fn recover(&self, key: &Managed, code: String) -> Result<TotpAccessControlResult> {
         let managed = match key {
             Managed::Key(k) => k.clone(),
             Managed::Certificate(c) => c.key.clone(),
@@ -84,13 +78,13 @@ impl OtpAccessControl {
             None,
         );
 
-        let res: SetupOtpAccessControlResponse = client
+        let res: SetupTotpAccessControlResponse = client
             .post_json(
                 format!(
                     "{}/keys/v1/keys/{}/access/totp/recovery",
                     self.api_host, managed.id
                 ),
-                RecoverOtpAccessControlRequest {
+                RecoverTotpAccessControlRequest {
                     recovery_code: code,
                 },
                 None,
@@ -98,10 +92,10 @@ impl OtpAccessControl {
             .await
             .map_err(|e| KeysError::ManagedKeyRequestError(e.to_string()))?;
 
-        Ok(OtpAccessControlResult {
+        Ok(TotpAccessControlResult {
             secret: res.secret,
             secret_qr: res.secret_qr,
-            recovery_codes: res.recovery_codes,
+            recovery_codes: res.recovery_code,
         })
     }
 }

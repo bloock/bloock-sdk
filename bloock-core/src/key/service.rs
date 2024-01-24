@@ -3,8 +3,8 @@ use crate::{config::service::ConfigService, error::BloockResult};
 use bloock_http::Client;
 use bloock_keys::{
     access_control::{
-        otp::{OtpAccessControl, OtpAccessControlResult},
         secret::SecretAccessControl,
+        totp::{TotpAccessControl, TotpAccessControlResult},
     },
     certificates::CertificateSubject,
     certificates::{
@@ -145,27 +145,27 @@ impl<H: Client> KeyService<H> {
         .map_err(|e| KeyError::ImportManagedCertificateError(e.to_string()).into())
     }
 
-    pub async fn setup_otp_access_control(
+    pub async fn setup_totp_access_control(
         &self,
         key: &Managed,
-    ) -> BloockResult<OtpAccessControlResult> {
-        let otp_access_control = OtpAccessControl::new(
+    ) -> BloockResult<TotpAccessControlResult> {
+        let totp_access_control = TotpAccessControl::new(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
             self.config_service.get_environment(),
         );
-        otp_access_control
+        totp_access_control
             .setup(key)
             .await
-            .map_err(|e| KeyError::SetupOTPAccessControlError(e.to_string()).into())
+            .map_err(|e| KeyError::SetupTOTPAccessControlError(e.to_string()).into())
     }
 
-    pub async fn recover_otp_access_control(
+    pub async fn recover_totp_access_control(
         &self,
         key: &Managed,
         code: String,
-    ) -> BloockResult<OtpAccessControlResult> {
-        let otp_access_control = OtpAccessControl::new(
+    ) -> BloockResult<TotpAccessControlResult> {
+        let otp_access_control = TotpAccessControl::new(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
             self.config_service.get_environment(),
@@ -173,7 +173,7 @@ impl<H: Client> KeyService<H> {
         otp_access_control
             .recover(key, code)
             .await
-            .map_err(|e| KeyError::RecoverOTPAccessControlError(e.to_string()).into())
+            .map_err(|e| KeyError::RecoverTOTPAccessControlError(e.to_string()).into())
     }
 
     pub async fn setup_secret_access_control(

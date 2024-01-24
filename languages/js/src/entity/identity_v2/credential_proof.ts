@@ -4,10 +4,7 @@ export class CredentialProof {
   signatureProof: string;
   sparseMtProof?: string;
 
-  constructor(
-    signatureProof: string,
-    sparseMtProof?: string
-  ) {
+  constructor(signatureProof: string, sparseMtProof?: string) {
     this.signatureProof = signatureProof;
     this.sparseMtProof = sparseMtProof;
   }
@@ -22,9 +19,6 @@ export class CredentialProof {
   static fromProto(
     r: identityEntitiesProto.CredentialProofV2
   ): CredentialProof {
-    return new CredentialProof(
-      r.signatureProof,
-      r.sparseMtProof
-    );
+    return new CredentialProof(r.signatureProof, r.sparseMtProof);
   }
 }

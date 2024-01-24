@@ -12,8 +12,8 @@ pub struct SecretAccessControl {
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 struct SetupSecretAccessControlRequest {
-    secret: String,
-    email: String,
+    pub secret: String,
+    pub email: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]

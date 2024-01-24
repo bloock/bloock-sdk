@@ -3,12 +3,15 @@
 isort:skip_file
 """
 import builtins
+import collections.abc
 import config_pb2
 import google.protobuf.descriptor
+import google.protobuf.internal.containers
 import google.protobuf.message
 import keys_entities_pb2
 import shared_pb2
 import sys
+import typing
 
 if sys.version_info >= (3, 8):
     import typing as typing_extensions
@@ -410,3 +413,173 @@ class ImportManagedCertificateResponse(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___ImportManagedCertificateResponse = ImportManagedCertificateResponse
+
+@typing_extensions.final
+class SetupTotpAccessControlRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    MANAGED_KEY_FIELD_NUMBER: builtins.int
+    MANAGED_CERTIFICATE_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    @property
+    def managed_key(self) -> keys_entities_pb2.ManagedKey: ...
+    @property
+    def managed_certificate(self) -> keys_entities_pb2.ManagedCertificate: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        managed_key: keys_entities_pb2.ManagedKey | None = ...,
+        managed_certificate: keys_entities_pb2.ManagedCertificate | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_managed_certificate", b"_managed_certificate", "_managed_key", b"_managed_key", "config_data", b"config_data", "managed_certificate", b"managed_certificate", "managed_key", b"managed_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_managed_certificate", b"_managed_certificate", "_managed_key", b"_managed_key", "config_data", b"config_data", "managed_certificate", b"managed_certificate", "managed_key", b"managed_key"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_certificate", b"_managed_certificate"]) -> typing_extensions.Literal["managed_certificate"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
+
+global___SetupTotpAccessControlRequest = SetupTotpAccessControlRequest
+
+@typing_extensions.final
+class SetupTotpAccessControlResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SECRET_FIELD_NUMBER: builtins.int
+    SECRET_QR_FIELD_NUMBER: builtins.int
+    RECOVERY_CODES_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    secret: builtins.str
+    secret_qr: builtins.str
+    @property
+    def recovery_codes(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        secret: builtins.str = ...,
+        secret_qr: builtins.str = ...,
+        recovery_codes: collections.abc.Iterable[builtins.str] | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "recovery_codes", b"recovery_codes", "secret", b"secret", "secret_qr", b"secret_qr"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___SetupTotpAccessControlResponse = SetupTotpAccessControlResponse
+
+@typing_extensions.final
+class SetupSecretAccessControlRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    SECRET_FIELD_NUMBER: builtins.int
+    EMAIL_FIELD_NUMBER: builtins.int
+    MANAGED_KEY_FIELD_NUMBER: builtins.int
+    MANAGED_CERTIFICATE_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    secret: builtins.str
+    email: builtins.str
+    @property
+    def managed_key(self) -> keys_entities_pb2.ManagedKey: ...
+    @property
+    def managed_certificate(self) -> keys_entities_pb2.ManagedCertificate: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        secret: builtins.str = ...,
+        email: builtins.str = ...,
+        managed_key: keys_entities_pb2.ManagedKey | None = ...,
+        managed_certificate: keys_entities_pb2.ManagedCertificate | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_managed_certificate", b"_managed_certificate", "_managed_key", b"_managed_key", "config_data", b"config_data", "managed_certificate", b"managed_certificate", "managed_key", b"managed_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_managed_certificate", b"_managed_certificate", "_managed_key", b"_managed_key", "config_data", b"config_data", "email", b"email", "managed_certificate", b"managed_certificate", "managed_key", b"managed_key", "secret", b"secret"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_certificate", b"_managed_certificate"]) -> typing_extensions.Literal["managed_certificate"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
+
+global___SetupSecretAccessControlRequest = SetupSecretAccessControlRequest
+
+@typing_extensions.final
+class SetupSecretAccessControlResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___SetupSecretAccessControlResponse = SetupSecretAccessControlResponse
+
+@typing_extensions.final
+class RecoverTotpAccessControlRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    CODE_FIELD_NUMBER: builtins.int
+    MANAGED_KEY_FIELD_NUMBER: builtins.int
+    MANAGED_CERTIFICATE_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    code: builtins.str
+    @property
+    def managed_key(self) -> keys_entities_pb2.ManagedKey: ...
+    @property
+    def managed_certificate(self) -> keys_entities_pb2.ManagedCertificate: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        code: builtins.str = ...,
+        managed_key: keys_entities_pb2.ManagedKey | None = ...,
+        managed_certificate: keys_entities_pb2.ManagedCertificate | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_managed_certificate", b"_managed_certificate", "_managed_key", b"_managed_key", "config_data", b"config_data", "managed_certificate", b"managed_certificate", "managed_key", b"managed_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_managed_certificate", b"_managed_certificate", "_managed_key", b"_managed_key", "code", b"code", "config_data", b"config_data", "managed_certificate", b"managed_certificate", "managed_key", b"managed_key"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_certificate", b"_managed_certificate"]) -> typing_extensions.Literal["managed_certificate"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
+
+global___RecoverTotpAccessControlRequest = RecoverTotpAccessControlRequest
+
+@typing_extensions.final
+class RecoverTotpAccessControlResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SECRET_FIELD_NUMBER: builtins.int
+    SECRET_QR_FIELD_NUMBER: builtins.int
+    RECOVERY_CODES_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    secret: builtins.str
+    secret_qr: builtins.str
+    @property
+    def recovery_codes(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        secret: builtins.str = ...,
+        secret_qr: builtins.str = ...,
+        recovery_codes: collections.abc.Iterable[builtins.str] | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "recovery_codes", b"recovery_codes", "secret", b"secret", "secret_qr", b"secret_qr"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___RecoverTotpAccessControlResponse = RecoverTotpAccessControlResponse
