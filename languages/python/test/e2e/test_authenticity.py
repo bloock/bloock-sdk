@@ -112,7 +112,7 @@ class TestAuthenticity(unittest.TestCase):
         signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
-    '''def test_sign_managed_rsa_with_totp_access_control(self):
+    def test_sign_managed_rsa_with_totp_access_control(self):
         record_client = RecordClient()
         authenticity_client = AuthenticityClient()
 
@@ -133,7 +133,7 @@ class TestAuthenticity(unittest.TestCase):
         invalid_totp_access_control = AccessControlTotp(invalid_code)
 
         with self.assertRaises(Exception):
-            authenticity_client.sign(record, Signer(key, None, AccessControl(invalid_totp_access_control)))'''
+            authenticity_client.sign(record, Signer(key, None, AccessControl(invalid_totp_access_control)))
 
     def test_verify_local_ecdsa(self):
         authenticity_client = AuthenticityClient()
