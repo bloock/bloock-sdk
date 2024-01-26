@@ -28,8 +28,8 @@ func InitSdk() {
 }
 
 func InitDevSdk() {
-	bloock.ApiKey = "no9rLf9dOMjXGvXQX3I96a39qYFoZknGd6YHtY3x1VPelr6M-TmTLpAF-fm1k9Zp"
-	apiHost := "https://api.bloock.dev"
+	bloock.ApiKey = os.Getenv("DEV_API_KEY")
+	apiHost := os.Getenv("DEV_API_HOST")
 	identityApiHost := os.Getenv("DEV_IDENTITY_API_HOST")
 
 	if apiHost != "" {
