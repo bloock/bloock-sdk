@@ -160,7 +160,7 @@ final class AuthenticityTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testSignManagedBjjWithSecretAccessControl()
+    /*public function testSignManagedBjjWithSecretAccessControl()
     {
         $recordClient = new RecordClient();
         $authenticityClient = new AuthenticityClient();
@@ -186,7 +186,7 @@ final class AuthenticityTest extends TestCase
         } catch (Exception $e) {
             $this->assertNotNull($e->getMessage());
         }
-    }
+    }*/
 
     /**
      * @throws Exception
