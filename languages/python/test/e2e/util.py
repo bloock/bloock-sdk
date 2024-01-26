@@ -30,7 +30,7 @@ def generate_random_string(length):
 
 
 def generate_totp_client(secret_key, timestamp):
-    base32_decoder = base64.b32decode(secret_key.upper().strip() + '=' * (8 - (len(secret_key) % 8)), casefold=True)
+    base32_decoder = base64.b32decode(secret_key.upper().strip() + '=' * (8 - (len(secret_key) % 8)))
 
     time_bytes = struct.pack('>Q', timestamp // 30)
 
