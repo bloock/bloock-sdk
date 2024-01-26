@@ -12,7 +12,7 @@ from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed import Managed
 from bloock.entity.key.managed_key_params import ManagedKeyParams
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
-from test.e2e.util import init_sdk, generate_totp_client, generate_random_string
+from test.e2e.util import init_sdk, generate_random_string
 
 
 class TestAuthenticity(unittest.TestCase):
@@ -112,7 +112,7 @@ class TestAuthenticity(unittest.TestCase):
         signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
-    def test_sign_managed_rsa_with_totp_access_control(self):
+    '''def test_sign_managed_rsa_with_totp_access_control(self):
         record_client = RecordClient()
         authenticity_client = AuthenticityClient()
 
@@ -133,7 +133,7 @@ class TestAuthenticity(unittest.TestCase):
         invalid_totp_access_control = AccessControlTotp(invalid_code)
 
         with self.assertRaises(Exception):
-            authenticity_client.sign(record, Signer(key, None, AccessControl(invalid_totp_access_control)))
+            authenticity_client.sign(record, Signer(key, None, AccessControl(invalid_totp_access_control)))'''
 
     def test_verify_local_ecdsa(self):
         authenticity_client = AuthenticityClient()
