@@ -1,20 +1,18 @@
-import { describe, test, expect } from "@jest/globals";
-import { generateRandomString, generateTOTPClient, initSdk } from "./util";
+import { describe, expect, test } from "@jest/globals";
 import {
+  AccessControl,
+  AccessControlSecret,
+  AccessControlTotp,
   AuthenticityClient,
-  Signer,
   KeyClient,
   KeyProtectionLevel,
   KeyType,
+  Managed,
   ManagedKeyParams,
   RecordClient,
-  Managed,
-  AccessControlTotp,
-  AccessControl,
-  AccessControlSecret,
+  Signer
 } from "../../dist";
-import { time } from "console";
-import { totalmem } from "os";
+import { generateRandomString, generateTOTPClient, initSdk } from "./util";
 
 describe("Authenticity Tests", () => {
   test("generate ecdsa keys", async () => {
@@ -103,20 +101,26 @@ describe("Authenticity Tests", () => {
       new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k)
     );
 
-    let totp = await keyClient.setupTotpAccessControl(new Managed(key))
+    let totp = await keyClient.setupTotpAccessControl(new Managed(key));
 
     const timestamp = Math.floor(Date.now() / 1000);
-    let code = generateTOTPClient(totp.secret, timestamp)
+    let code = generateTOTPClient(totp.secret, timestamp);
 
-    let totpAccessControl = new AccessControlTotp(code)
-    let signature = await authenticityClient.sign(record, new Signer(key, undefined, new AccessControl(totpAccessControl)));
+    let totpAccessControl = new AccessControlTotp(code);
+    let signature = await authenticityClient.sign(
+      record,
+      new Signer(key, undefined, new AccessControl(totpAccessControl))
+    );
     expect(signature.signature).toBeTruthy();
 
-    const invalidCode = "123456"
-    let invalidTotpAccessControl = new AccessControlTotp(invalidCode)
+    const invalidCode = "123456";
+    let invalidTotpAccessControl = new AccessControlTotp(invalidCode);
 
     try {
-      await authenticityClient.sign(record, new Signer(key, undefined, new AccessControl(invalidTotpAccessControl)));
+      await authenticityClient.sign(
+        record,
+        new Signer(key, undefined, new AccessControl(invalidTotpAccessControl))
+      );
     } catch (error) {
       expect(error).toBeTruthy();
     }
@@ -152,20 +156,29 @@ describe("Authenticity Tests", () => {
       new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj)
     );
 
-    let secret = "password"
+    let secret = "password";
     let email = generateRandomString(8) + "@bloock.com";
-    await keyClient.setupSecretAccessControl(new Managed(key), secret, email)
+    await keyClient.setupSecretAccessControl(new Managed(key), secret, email);
 
-
-    let secretAccessControl = new AccessControlSecret(secret)
-    let signature = await authenticityClient.sign(record, new Signer(key, undefined, new AccessControl(secretAccessControl)));
+    let secretAccessControl = new AccessControlSecret(secret);
+    let signature = await authenticityClient.sign(
+      record,
+      new Signer(key, undefined, new AccessControl(secretAccessControl))
+    );
     expect(signature.signature).toBeTruthy();
 
-    let invalidSecret = "password1"
-    let invalidSecretAccessControl = new AccessControlSecret(invalidSecret)
+    let invalidSecret = "password1";
+    let invalidSecretAccessControl = new AccessControlSecret(invalidSecret);
 
     try {
-      await authenticityClient.sign(record, new Signer(key, undefined, new AccessControl(invalidSecretAccessControl)));
+      await authenticityClient.sign(
+        record,
+        new Signer(
+          key,
+          undefined,
+          new AccessControl(invalidSecretAccessControl)
+        )
+      );
     } catch (error) {
       expect(error).toBeTruthy();
     }
