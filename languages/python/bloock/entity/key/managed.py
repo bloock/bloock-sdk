@@ -8,7 +8,7 @@ class Managed:
     managed_key = None
     managed_certificate = None
 
-    def __init__(self, key) -> None:
+    def __init__(self, key: ManagedKey | ManagedCertificate) -> None:
         if isinstance(key, ManagedKey):
             self.managed_key = key
         elif isinstance(key, ManagedCertificate):
