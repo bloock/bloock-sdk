@@ -15,7 +15,7 @@ from bloock.entity.key.managed_certificate_params import ManagedCertificateParam
 from bloock.entity.key.local_certificate_params import LocalCertificateParams
 from bloock.entity.key.managed_key import ManagedKey
 from bloock.entity.key.managed import Managed
-from bloock.entity.key.totp_access_control import TotpAccessControl
+from bloock.entity.key.totp_access_control_receipt import TotpAccessControlReceipt
 from bloock.entity.key.managed_key_params import ManagedKeyParams
 
 
@@ -124,7 +124,7 @@ class KeyClient:
 
         return ManagedCertificate.from_proto(res.managed_certificate)
 
-    def setup_totp_access_control(self, key: Managed) -> TotpAccessControl:
+    def setup_totp_access_control(self, key: Managed) -> TotpAccessControlReceipt:
         res = self.bridge_client.key().SetupTotpAccessControl(
             SetupTotpAccessControlRequest(
                 config_data=self.config_data,
@@ -135,9 +135,9 @@ class KeyClient:
         if res.error != Error():
             raise Exception(res.error.message)
 
-        return TotpAccessControl(res.secret, res.secret_qr, res.recovery_codes)
+        return TotpAccessControlReceipt(res.secret, res.secret_qr, res.recovery_codes)
 
-    def recover_totp_access_control(self, key: Managed, code: str) -> TotpAccessControl:
+    def recover_totp_access_control(self, key: Managed, code: str) -> TotpAccessControlReceipt:
         res = self.bridge_client.key().RecoverTotpAccessControl(
             RecoverTotpAccessControlRequest(
                 config_data=self.config_data,
@@ -149,7 +149,7 @@ class KeyClient:
         if res.error != Error():
             raise Exception(res.error.message)
 
-        return TotpAccessControl(res.secret, res.secret_qr, res.recovery_codes)
+        return TotpAccessControlReceipt(res.secret, res.secret_qr, res.recovery_codes)
 
     def setup_secret_access_control(self, key: Managed, secret: str, email: str):
         res = self.bridge_client.key().SetupSecretAccessControl(

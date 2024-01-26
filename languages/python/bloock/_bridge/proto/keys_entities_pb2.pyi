@@ -287,3 +287,58 @@ class ManagedCertificate(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["expiration", b"expiration", "id", b"id", "key", b"key", "key_type", b"key_type", "protection", b"protection"]) -> None: ...
 
 global___ManagedCertificate = ManagedCertificate
+
+@typing_extensions.final
+class AccessControl(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ACCESS_CONTROL_TOTP_FIELD_NUMBER: builtins.int
+    ACCESS_CONTROL_SECRET_FIELD_NUMBER: builtins.int
+    @property
+    def access_control_totp(self) -> global___AccessControlTotp: ...
+    @property
+    def access_control_secret(self) -> global___AccessControlSecret: ...
+    def __init__(
+        self,
+        *,
+        access_control_totp: global___AccessControlTotp | None = ...,
+        access_control_secret: global___AccessControlSecret | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_access_control_secret", b"_access_control_secret", "_access_control_totp", b"_access_control_totp", "access_control_secret", b"access_control_secret", "access_control_totp", b"access_control_totp"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_access_control_secret", b"_access_control_secret", "_access_control_totp", b"_access_control_totp", "access_control_secret", b"access_control_secret", "access_control_totp", b"access_control_totp"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_access_control_secret", b"_access_control_secret"]) -> typing_extensions.Literal["access_control_secret"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_access_control_totp", b"_access_control_totp"]) -> typing_extensions.Literal["access_control_totp"] | None: ...
+
+global___AccessControl = AccessControl
+
+@typing_extensions.final
+class AccessControlTotp(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CODE_FIELD_NUMBER: builtins.int
+    code: builtins.str
+    def __init__(
+        self,
+        *,
+        code: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["code", b"code"]) -> None: ...
+
+global___AccessControlTotp = AccessControlTotp
+
+@typing_extensions.final
+class AccessControlSecret(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SECRET_FIELD_NUMBER: builtins.int
+    secret: builtins.str
+    def __init__(
+        self,
+        *,
+        secret: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["secret", b"secret"]) -> None: ...
+
+global___AccessControlSecret = AccessControlSecret
