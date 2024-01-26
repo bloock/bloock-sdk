@@ -326,6 +326,19 @@ async fn build_record(
             .and_then(|h| HashAlg::from_i32(h))
             .and_then(|h| Some(HashAlgCore::from(h)));
 
+        let access_control: Option<String> = match signer.access_control {
+            Some(ac) => {
+                if let Some(ac_totp) = ac.access_control_totp {
+                    Some(ac_totp.code)
+                } else if let Some(ac_secret) = ac.access_control_secret {
+                    Some(ac_secret.secret)
+                } else {
+                    return Err("invalid access control provided".to_string());
+                }
+            }
+            None => None,
+        };
+
         let key: Key = if let Some(managed_key) = signer.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
             managed_key_core.into()
@@ -344,10 +357,23 @@ async fn build_record(
             return Err("invalid key provided".to_string());
         };
 
-        builder = builder.with_signer(&key, hash_alg);
+        builder = builder.with_signer(&key, hash_alg, access_control);
     }
 
     if let Some(encrypt) = encrypter {
+        let access_control: Option<String> = match encrypt.access_control {
+            Some(ac) => {
+                if let Some(ac_totp) = ac.access_control_totp {
+                    Some(ac_totp.code)
+                } else if let Some(ac_secret) = ac.access_control_secret {
+                    Some(ac_secret.secret)
+                } else {
+                    return Err("invalid access control provided".to_string());
+                }
+            }
+            None => None,
+        };
+
         let key: Key = if let Some(managed_key) = encrypt.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
             managed_key_core.into()
@@ -366,10 +392,23 @@ async fn build_record(
             return Err("invalid key provided".to_string());
         };
 
-        builder = builder.with_encrypter(&key);
+        builder = builder.with_encrypter(&key, access_control);
     }
 
     if let Some(decrypt) = decrypter {
+        let access_control: Option<String> = match decrypt.access_control {
+            Some(ac) => {
+                if let Some(ac_totp) = ac.access_control_totp {
+                    Some(ac_totp.code)
+                } else if let Some(ac_secret) = ac.access_control_secret {
+                    Some(ac_secret.secret)
+                } else {
+                    return Err("invalid access control provided".to_string());
+                }
+            }
+            None => None,
+        };
+        
         let key: Key = if let Some(managed_key) = decrypt.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
             managed_key_core.into()
@@ -388,7 +427,7 @@ async fn build_record(
             return Err("invalid key provided".to_string());
         };
 
-        builder = builder.with_decrypter(&key);
+        builder = builder.with_decrypter(&key, access_control);
     }
 
     match builder.build().await {

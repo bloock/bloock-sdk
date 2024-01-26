@@ -1,19 +1,22 @@
 import { describe, test, expect } from "@jest/globals";
-import { initSdk } from "./util";
+import { generateTOTPClient, initDevSdk } from "./util";
 import {
+  AccessControl,
+  AccessControlTotp,
   Encrypter,
   EncryptionAlg,
   EncryptionClient,
   KeyClient,
   KeyProtectionLevel,
   KeyType,
+  Managed,
   ManagedKeyParams,
   RecordClient
 } from "../../dist";
 
 describe("Encryptions Tests", () => {
   test("encrypt local aes", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -42,7 +45,7 @@ describe("Encryptions Tests", () => {
   });
 
   test("decrypt local aes", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -71,7 +74,7 @@ describe("Encryptions Tests", () => {
   });
 
   test("encrypt local rsa", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -99,7 +102,7 @@ describe("Encryptions Tests", () => {
   });
 
   test("encrypt managed rsa", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -128,8 +131,44 @@ describe("Encryptions Tests", () => {
     expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
   });
 
+  test("encrypt managed rsa with totp access control", async () => {
+    initDevSdk();
+
+    let payload = "Hello world";
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString(payload).build();
+    let recordHash = await record.getHash();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048)
+    );
+
+    let totp = await keyClient.setupTotpAccessControl(new Managed(key))
+
+    const timestamp = Math.floor(Date.now() / 1000);
+    let code = generateTOTPClient(totp.secret, timestamp)
+
+    let totpAccessControl = new AccessControlTotp(code)
+    let encryptionClient = new EncryptionClient();
+    let encryptedRecord = await encryptionClient.encrypt(
+      record,
+      new Encrypter(key, new AccessControl(totpAccessControl))
+    );
+
+    let decryptedRecord = await recordClient
+      .fromRecord(encryptedRecord)
+      .withDecrypter(new Encrypter(key, new AccessControl(totpAccessControl)))
+      .build();
+
+    let decryptedRecordHash = await decryptedRecord.getHash();
+
+    expect(decryptedRecordHash).toBe(recordHash);
+    expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
+  });
+
   test("decrypt local rsa", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -157,7 +196,7 @@ describe("Encryptions Tests", () => {
   });
 
   test("decrypt managed rsa", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -187,7 +226,7 @@ describe("Encryptions Tests", () => {
   });
 
   test("get encryption alg", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();

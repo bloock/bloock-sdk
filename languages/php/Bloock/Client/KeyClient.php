@@ -16,7 +16,7 @@ use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\LocalCertificate;
 use Bloock\Entity\Key\LocalCertificateArgs;
 use Bloock\Entity\Key\Managed;
-use Bloock\Entity\Key\TotpAccessControl;
+use Bloock\Entity\Key\TotpAccessControlReceipt;
 use Bloock\GenerateLocalKeyRequest;
 use Bloock\GenerateManagedKeyRequest;
 use Bloock\LoadLocalKeyRequest;
@@ -181,7 +181,7 @@ class KeyClient
         return ManagedCertificate::fromProto($res->getManagedCertificate());
     }
 
-    public function setupTotpAccessControl(Managed $key): TotpAccessControl
+    public function setupTotpAccessControl(Managed $key): TotpAccessControlReceipt
     {
         $req = new SetupTotpAccessControlRequest();
         $req->setConfigData($this->config);
@@ -200,10 +200,10 @@ class KeyClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return new TotpAccessControl($res->getSecret(), $res->getSecretQr(), $res->getRecoveryCodes());
+        return new TotpAccessControlReceipt($res->getSecret(), $res->getSecretQr(), $res->getRecoveryCodes());
     }
 
-    public function recoverTotpAccessControl(Managed $key, string $code): TotpAccessControl
+    public function recoverTotpAccessControl(Managed $key, string $code): TotpAccessControlReceipt
     {
         $req = new RecoverTotpAccessControlRequest();
         $req->setConfigData($this->config);
@@ -223,7 +223,7 @@ class KeyClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return new TotpAccessControl($res->getSecret(), $res->getSecretQr(), $res->getRecoveryCodes());
+        return new TotpAccessControlReceipt($res->getSecret(), $res->getSecretQr(), $res->getRecoveryCodes());
     }
 
     public function setupSecretAccessControl(Managed $key, string $secret, string $email)

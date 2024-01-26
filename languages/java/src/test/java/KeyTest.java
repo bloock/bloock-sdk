@@ -321,7 +321,7 @@ class KeyTest {
 
     authenticityClient.sign(record, new Signer(managedKey));
 
-    TotpAccessControl totp = keyClient.setupTotpAccessControl(new Managed(managedKey));
+    TotpAccessControlReceipt totp = keyClient.setupTotpAccessControl(new Managed(managedKey));
     assertNotNull(totp.getSecret());
     assertNotNull(totp.getSecretQr());
     assertNotNull(totp.getRecoveryCodes());
@@ -333,7 +333,7 @@ class KeyTest {
           throw new RuntimeException("This is an intentional exception.");
         });
 
-    TotpAccessControl totpRecovered =
+    TotpAccessControlReceipt totpRecovered =
         keyClient.recoverTotpAccessControl(new Managed(managedKey), totp.getRecoveryCodes().get(0));
     assertNotNull(totp.getSecret());
     assertNotNull(totp.getSecretQr());

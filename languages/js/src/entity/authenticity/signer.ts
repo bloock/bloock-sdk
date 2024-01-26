@@ -1,5 +1,7 @@
 import * as proto from "../../bridge/proto/authenticity_entities";
+import * as protoKey from "../../bridge/proto/keys_entities";
 import {
+  AccessControl,
   LocalCertificate,
   LocalKey,
   ManagedCertificate,
@@ -14,10 +16,12 @@ export class Signer {
   localCertificate?: LocalCertificate;
 
   hashAlg?: HashAlg;
+  accessControl?: AccessControl;
 
   constructor(
     key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate | string,
-    hashAlg?: HashAlg
+    hashAlg?: HashAlg,
+    accessControl?: AccessControl,
   ) {
     if (key instanceof LocalKey) {
       this.localKey = key;
@@ -34,6 +38,9 @@ export class Signer {
     if (hashAlg) {
       this.hashAlg = hashAlg;
     }
+    if (accessControl) {
+      this.accessControl = accessControl;
+    }
   }
 
   public toProto(): proto.Signer {
@@ -41,13 +48,18 @@ export class Signer {
     if (this.hashAlg) {
       hashAlg = this.hashAlg && HashAlg.toProto(this.hashAlg);
     }
+    let accessControl: protoKey.AccessControl | undefined;
+    if (this.accessControl) {
+      accessControl = this.accessControl && this.accessControl.toProto();
+    }
 
     return proto.Signer.fromPartial({
       localKey: this.localKey?.toProto(),
       managedKey: this.managedKey?.toProto(),
       managedCertificate: this.managedCertificate?.toProto(),
       localCertificate: this.localCertificate?.toProto(),
-      hashAlg: hashAlg
+      hashAlg: hashAlg,
+      accessControl: accessControl,
     });
   }
 }

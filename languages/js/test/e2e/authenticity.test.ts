@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { initSdk } from "./util";
+import { generateRandomString, generateTOTPClient, initSdk } from "./util";
 import {
   AuthenticityClient,
   Signer,
@@ -7,8 +7,14 @@ import {
   KeyProtectionLevel,
   KeyType,
   ManagedKeyParams,
-  RecordClient
+  RecordClient,
+  Managed,
+  AccessControlTotp,
+  AccessControl,
+  AccessControlSecret,
 } from "../../dist";
+import { time } from "console";
+import { totalmem } from "os";
 
 describe("Authenticity Tests", () => {
   test("generate ecdsa keys", async () => {
@@ -84,6 +90,38 @@ describe("Authenticity Tests", () => {
     expect(signature.signature).toBeTruthy();
   });
 
+  test("sign managed ecdsa with totp access control", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let authenticityClient = new AuthenticityClient();
+
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k)
+    );
+
+    let totp = await keyClient.setupTotpAccessControl(new Managed(key))
+
+    const timestamp = Math.floor(Date.now() / 1000);
+    let code = generateTOTPClient(totp.secret, timestamp)
+
+    let totpAccessControl = new AccessControlTotp(code)
+    let signature = await authenticityClient.sign(record, new Signer(key, undefined, new AccessControl(totpAccessControl)));
+    expect(signature.signature).toBeTruthy();
+
+    const invalidCode = "123456"
+    let invalidTotpAccessControl = new AccessControlTotp(invalidCode)
+
+    try {
+      await authenticityClient.sign(record, new Signer(key, undefined, new AccessControl(invalidTotpAccessControl)));
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
+  });
+
   test("sign managed bjj", async () => {
     initSdk();
 
@@ -99,6 +137,38 @@ describe("Authenticity Tests", () => {
     let signature = await authenticityClient.sign(record, new Signer(key));
 
     expect(signature.signature).toBeTruthy();
+  });
+
+  test("sign managed bjj with secret access control", async () => {
+    initSdk();
+
+    let recordClient = new RecordClient();
+    let authenticityClient = new AuthenticityClient();
+
+    let record = await recordClient.fromString("Hello world").build();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj)
+    );
+
+    let secret = "password"
+    let email = generateRandomString(8) + "@bloock.com";
+    await keyClient.setupSecretAccessControl(new Managed(key), secret, email)
+
+
+    let secretAccessControl = new AccessControlSecret(secret)
+    let signature = await authenticityClient.sign(record, new Signer(key, undefined, new AccessControl(secretAccessControl)));
+    expect(signature.signature).toBeTruthy();
+
+    let invalidSecret = "password1"
+    let invalidSecretAccessControl = new AccessControlSecret(invalidSecret)
+
+    try {
+      await authenticityClient.sign(record, new Signer(key, undefined, new AccessControl(invalidSecretAccessControl)));
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
   });
 
   test("sign managed rsa", async () => {

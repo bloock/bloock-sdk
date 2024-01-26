@@ -10,6 +10,7 @@ type Encrypter struct {
 	ManagedKey         *key.ManagedKey
 	ManagedCertificate *key.ManagedCertificate
 	LocalCertificate   *key.LocalCertificate
+	AccessControl      *key.AccessControl
 }
 
 func NewEncrypterWithLocalKey(key key.LocalKey) Encrypter {
@@ -18,9 +19,10 @@ func NewEncrypterWithLocalKey(key key.LocalKey) Encrypter {
 	}
 }
 
-func NewEncrypterWithManagedKey(key key.ManagedKey) Encrypter {
+func NewEncrypterWithManagedKey(key key.ManagedKey, accessControl *key.AccessControl) Encrypter {
 	return Encrypter{
-		ManagedKey: &key,
+		ManagedKey:    &key,
+		AccessControl: accessControl,
 	}
 }
 
@@ -30,9 +32,10 @@ func NewEncrypterWithLocalCertificate(key key.LocalCertificate) Encrypter {
 	}
 }
 
-func NewEncrypterWithManagedCertificate(key key.ManagedCertificate) Encrypter {
+func NewEncrypterWithManagedCertificate(key key.ManagedCertificate, accessControl *key.AccessControl) Encrypter {
 	return Encrypter{
 		ManagedCertificate: &key,
+		AccessControl:      accessControl,
 	}
 }
 
@@ -57,10 +60,16 @@ func (s Encrypter) ToProto() *proto.Encrypter {
 		localCertificate = s.LocalCertificate.ToProto()
 	}
 
+	var accessControl *proto.AccessControl
+	if s.AccessControl != nil {
+		accessControl = s.AccessControl.ToProto()
+	}
+
 	return &proto.Encrypter{
 		LocalKey:           localKey,
 		ManagedKey:         managedKey,
 		ManagedCertificate: managedCertificate,
 		LocalCertificate:   localCertificate,
+		AccessControl:      accessControl,
 	}
 }

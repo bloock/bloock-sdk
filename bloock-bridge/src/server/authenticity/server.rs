@@ -43,6 +43,19 @@ impl AuthenticityServiceHandler for AuthenticityServer {
             .and_then(|h| HashAlg::from_i32(h))
             .and_then(|h| Some(HashAlgCore::from(h)));
 
+        let access_control: Option<String> = match signer.access_control {
+            Some(ac) => {
+                if let Some(ac_totp) = ac.access_control_totp {
+                    Some(ac_totp.code)
+                } else if let Some(ac_secret) = ac.access_control_secret {
+                    Some(ac_secret.secret)
+                } else {
+                    return Err("invalid access control provided".to_string());
+                }
+            }
+            None => None,
+        };
+
         let key: Key = if let Some(managed_key) = signer.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
             managed_key_core.into()
@@ -62,7 +75,7 @@ impl AuthenticityServiceHandler for AuthenticityServer {
         };
 
         let signature: SignatureCore = client
-            .sign(record, &key, hash_alg)
+            .sign(record, &key, hash_alg, access_control)
             .await
             .map_err(|e| e.to_string())?;
 

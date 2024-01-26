@@ -246,7 +246,7 @@ mod tests {
         let record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -292,7 +292,7 @@ mod tests {
         let record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -346,8 +346,8 @@ mod tests {
         let record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -357,7 +357,7 @@ mod tests {
         let unencrypted_record = service
             .from_record(record.clone())
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -390,7 +390,7 @@ mod tests {
         let default_record = service
             .from_file(payload.to_vec())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -399,8 +399,8 @@ mod tests {
         let encrypted_record = service
             .from_file(payload.to_vec())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -410,7 +410,7 @@ mod tests {
         let unencrypted_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -435,7 +435,7 @@ mod tests {
         let encrypted_record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -448,7 +448,7 @@ mod tests {
         let record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -479,8 +479,8 @@ mod tests {
         let record = service
             .from_string(content.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -488,7 +488,7 @@ mod tests {
         let decrypted_record = service
             .from_record(record.clone())
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -545,7 +545,7 @@ mod tests {
         let encrypted_record = service
             .from_record(record.clone())
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -559,7 +559,7 @@ mod tests {
         let decrypted_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -708,7 +708,7 @@ mod hash_tests {
         let record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(&local_key.into())
+            .with_encrypter(&local_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -738,7 +738,7 @@ mod hash_tests {
         let record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -771,8 +771,8 @@ mod hash_tests {
         let record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.into())
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -789,7 +789,7 @@ mod hash_tests {
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -799,7 +799,7 @@ mod hash_tests {
         let record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -821,7 +821,7 @@ mod hash_tests {
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -831,8 +831,8 @@ mod hash_tests {
         let final_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
-            .with_encrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -863,7 +863,7 @@ mod hash_tests {
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -873,8 +873,8 @@ mod hash_tests {
         let final_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.into())
-            .with_signer(&local_key.clone().into(), None)
+            .with_decrypter(&local_aes_key.into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -901,7 +901,7 @@ mod hash_tests {
         let encrypted_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -911,9 +911,9 @@ mod hash_tests {
         let final_record = service
             .from_record(encrypted_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -939,7 +939,7 @@ mod hash_tests {
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -972,7 +972,7 @@ mod hash_tests {
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -980,7 +980,7 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_encrypter(&local_aes_key.into())
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1015,7 +1015,7 @@ mod hash_tests {
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1023,7 +1023,7 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_signer(&local_key_2.clone().into(), None)
+            .with_signer(&local_key_2.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1057,7 +1057,7 @@ mod hash_tests {
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1065,8 +1065,8 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_signer(&local_key_2.clone().into(), None)
-            .with_encrypter(&local_aes_key.into())
+            .with_signer(&local_key_2.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1093,8 +1093,8 @@ mod hash_tests {
         let record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
-            .with_signer(&local_key.clone().into(), None)
+            .with_encrypter(&local_aes_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1104,7 +1104,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1129,8 +1129,8 @@ mod hash_tests {
         let record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
-            .with_signer(&local_key.clone().into(), None)
+            .with_encrypter(&local_aes_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1140,8 +1140,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record.clone())
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
-            .with_encrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1177,8 +1177,8 @@ mod hash_tests {
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1186,8 +1186,8 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.into())
-            .with_signer(&local_key_2.clone().into(), None)
+            .with_decrypter(&local_aes_key.into(), None)
+            .with_signer(&local_key_2.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1223,8 +1223,8 @@ mod hash_tests {
         let signed_record = service
             .from_string(PAYLOAD.to_string())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1232,9 +1232,9 @@ mod hash_tests {
         let final_record = service
             .from_record(signed_record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
-            .with_signer(&local_key_2.clone().into(), None)
-            .with_encrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
+            .with_signer(&local_key_2.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1269,7 +1269,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.into())
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1301,7 +1301,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1334,8 +1334,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.into())
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1360,7 +1360,7 @@ mod hash_tests {
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1370,7 +1370,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1392,7 +1392,7 @@ mod hash_tests {
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1402,8 +1402,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
-            .with_encrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1434,7 +1434,7 @@ mod hash_tests {
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1444,8 +1444,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.into())
-            .with_signer(&local_key.clone().into(), None)
+            .with_decrypter(&local_aes_key.into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1476,7 +1476,7 @@ mod hash_tests {
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1486,9 +1486,9 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1512,7 +1512,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1546,7 +1546,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1561,7 +1561,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.into())
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1596,7 +1596,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1610,7 +1610,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_signer(&local_key_2.clone().into(), None)
+            .with_signer(&local_key_2.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1645,7 +1645,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1660,8 +1660,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_signer(&local_key_2.clone().into(), None)
-            .with_encrypter(&local_aes_key.into())
+            .with_signer(&local_key_2.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1687,7 +1687,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1700,7 +1700,7 @@ mod hash_tests {
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1710,7 +1710,7 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1734,7 +1734,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1747,7 +1747,7 @@ mod hash_tests {
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1757,8 +1757,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
-            .with_encrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();
@@ -1793,7 +1793,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1806,7 +1806,7 @@ mod hash_tests {
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1816,8 +1816,8 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.into())
-            .with_signer(&local_key_2.clone().into(), None)
+            .with_decrypter(&local_aes_key.into(), None)
+            .with_signer(&local_key_2.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1850,7 +1850,7 @@ mod hash_tests {
         let mut record = service
             .from_string(PAYLOAD)
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap();
@@ -1863,7 +1863,7 @@ mod hash_tests {
         record = service
             .from_record(record)
             .unwrap()
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap();
@@ -1873,9 +1873,9 @@ mod hash_tests {
         let final_record = service
             .from_record(record)
             .unwrap()
-            .with_decrypter(&local_aes_key.clone().into())
-            .with_signer(&local_key_2.clone().into(), None)
-            .with_encrypter(&local_aes_key.into())
+            .with_decrypter(&local_aes_key.clone().into(), None)
+            .with_signer(&local_key_2.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.into(), None)
             .build()
             .await
             .unwrap();

@@ -1,4 +1,4 @@
-export class TotpAccessControl {
+export class TotpAccessControlReceipt {
   secret: string;
   secretQr: string;
   recoveryCodes: string[];

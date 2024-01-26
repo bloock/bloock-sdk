@@ -29,6 +29,10 @@ class Encrypter extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>optional .bloock.ManagedCertificate managed_certificate = 4;</code>
      */
     protected $managed_certificate = null;
+    /**
+     * Generated from protobuf field <code>optional .bloock.AccessControl access_control = 6;</code>
+     */
+    protected $access_control = null;
 
     /**
      * Constructor.
@@ -40,6 +44,7 @@ class Encrypter extends \Google\Protobuf\Internal\Message
      *     @type \Bloock\ManagedKey $managed_key
      *     @type \Bloock\LocalCertificate $local_certificate
      *     @type \Bloock\ManagedCertificate $managed_certificate
+     *     @type \Bloock\AccessControl $access_control
      * }
      */
     public function __construct($data = NULL) {
@@ -171,6 +176,38 @@ class Encrypter extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkMessage($var, \Bloock\ManagedCertificate::class);
         $this->managed_certificate = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.AccessControl access_control = 6;</code>
+     * @return \Bloock\AccessControl|null
+     */
+    public function getAccessControl()
+    {
+        return $this->access_control;
+    }
+
+    public function hasAccessControl()
+    {
+        return isset($this->access_control);
+    }
+
+    public function clearAccessControl()
+    {
+        unset($this->access_control);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.AccessControl access_control = 6;</code>
+     * @param \Bloock\AccessControl $var
+     * @return $this
+     */
+    public function setAccessControl($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\AccessControl::class);
+        $this->access_control = $var;
 
         return $this;
     }

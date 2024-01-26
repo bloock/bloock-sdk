@@ -13,12 +13,13 @@ use Bloock\Entity\Key\LocalCertificateArgs;
 use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\SubjectCertificateParams;
 use Bloock\Entity\Authenticity\Signer;
-use Bloock\Entity\Authenticity\SignerArgs;
 use Bloock\Entity\Key\Managed;
 use PHPUnit\Framework\TestCase;
 
 final class KeyTest extends TestCase
 {
+    use Utils;
+
     public static function setUpBeforeClass(): void
     {
         Bloock::$apiKey = getenv("DEV_API_KEY");
@@ -331,7 +332,7 @@ final class KeyTest extends TestCase
 
         $authenticityClient->sign($record, new Signer($managedKey));
 
-        $email = generateRandomString(8) . "@bloock.com";
+        $email = $this->generateRandomString(8) . "@bloock.com";
         $keyClient->setupSecretAccessControl(new Managed($managedKey), "password", $email);
 
         try {
@@ -340,15 +341,4 @@ final class KeyTest extends TestCase
             $this->assertNotNull($e->getMessage());
         }
     }
-}
-
-function generateRandomString($length) {
-    $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    $randomString = '';
-
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, strlen($characters) - 1)];
-    }
-
-    return $randomString;
 }

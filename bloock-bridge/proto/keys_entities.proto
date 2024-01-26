@@ -81,3 +81,16 @@ enum CertificateType {
 	PEM = 0;
 	PFX = 1;
 }
+
+message AccessControl {
+    optional AccessControlTotp access_control_totp = 1;
+    optional AccessControlSecret access_control_secret = 2;
+}
+
+message AccessControlTotp {
+    string code = 1;
+}
+
+message AccessControlSecret {
+    string secret = 1;
+}

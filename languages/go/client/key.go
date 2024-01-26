@@ -191,7 +191,7 @@ func (c *KeyClient) ImportManagedCertificate(_type keyEntity.CertificateType, ce
 	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }
 
-func (c *KeyClient) SetupTotpAccessControl(key keyEntity.Managed) (keyEntity.TotpAccessControl, error) {
+func (c *KeyClient) SetupTotpAccessControl(key keyEntity.Managed) (keyEntity.TotpAccessControlReceipt, error) {
 	var managedKey *proto.ManagedKey
 	if key.ManagedKey != nil {
 		managedKey = key.ManagedKey.ToProto()
@@ -209,17 +209,17 @@ func (c *KeyClient) SetupTotpAccessControl(key keyEntity.Managed) (keyEntity.Tot
 	})
 
 	if err != nil {
-		return keyEntity.TotpAccessControl{}, err
+		return keyEntity.TotpAccessControlReceipt{}, err
 	}
 
 	if res.Error != nil {
-		return keyEntity.TotpAccessControl{}, errors.New(res.Error.Message)
+		return keyEntity.TotpAccessControlReceipt{}, errors.New(res.Error.Message)
 	}
 
 	return keyEntity.New(res.Secret, res.SecretQr, res.RecoveryCodes), nil
 }
 
-func (c *KeyClient) RecoverTotpAccessControl(key keyEntity.Managed, code string) (keyEntity.TotpAccessControl, error) {
+func (c *KeyClient) RecoverTotpAccessControl(key keyEntity.Managed, code string) (keyEntity.TotpAccessControlReceipt, error) {
 	var managedKey *proto.ManagedKey
 	if key.ManagedKey != nil {
 		managedKey = key.ManagedKey.ToProto()
@@ -238,11 +238,11 @@ func (c *KeyClient) RecoverTotpAccessControl(key keyEntity.Managed, code string)
 	})
 
 	if err != nil {
-		return keyEntity.TotpAccessControl{}, err
+		return keyEntity.TotpAccessControlReceipt{}, err
 	}
 
 	if res.Error != nil {
-		return keyEntity.TotpAccessControl{}, errors.New(res.Error.Message)
+		return keyEntity.TotpAccessControlReceipt{}, errors.New(res.Error.Message)
 	}
 
 	return keyEntity.New(res.Secret, res.SecretQr, res.RecoveryCodes), nil

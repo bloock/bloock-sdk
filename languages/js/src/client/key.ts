@@ -25,7 +25,7 @@ import {
   ImportCertificateParams,
   ManagedCertificateParams
 } from "../entity/key/managed_certificate_params";
-import { TotpAccessControl } from "../entity/key/totp_access_control";
+import { TotpAccessControlReceipt } from "../entity/key/totp_access_control_receipt";
 
 export class KeyClient {
   private bridge: BloockBridge;
@@ -202,7 +202,7 @@ export class KeyClient {
       });
   }
 
-  async setupTotpAccessControl(key: Managed): Promise<TotpAccessControl> {
+  async setupTotpAccessControl(key: Managed): Promise<TotpAccessControlReceipt> {
     const request = SetupTotpAccessControlRequest.fromPartial({
       configData: this.configData,
       managedKey: key.managedKey?.toProto(),
@@ -216,7 +216,7 @@ export class KeyClient {
         if (res.error) {
           throw res.error;
         }
-        return new TotpAccessControl(
+        return new TotpAccessControlReceipt(
           res.secret!,
           res.secretQr!,
           res.recoveryCodes!
@@ -227,7 +227,7 @@ export class KeyClient {
   async recoverTotpAccessControl(
     key: Managed,
     code: string
-  ): Promise<TotpAccessControl> {
+  ): Promise<TotpAccessControlReceipt> {
     const request = RecoverTotpAccessControlRequest.fromPartial({
       configData: this.configData,
       managedKey: key.managedKey?.toProto(),
@@ -242,7 +242,7 @@ export class KeyClient {
         if (res.error) {
           throw res.error;
         }
-        return new TotpAccessControl(
+        return new TotpAccessControlReceipt(
           res.secret!,
           res.secretQr!,
           res.recoveryCodes!

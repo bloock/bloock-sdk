@@ -3,10 +3,13 @@
 package client
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
 	"github.com/bloock/bloock-sdk-go/v2/entity/key"
+	managedKey "github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -113,10 +116,44 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(key, nil))
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
+	})
+
+	t.Run("sign managed ecdsa with totp access control", func(t *testing.T) {
+		recordClient := NewRecordClient()
+		authenticityClient := NewAuthenticityClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.EcP256k,
+		})
+		assert.NoError(t, err)
+
+		totp, err := keyClient.SetupTotpAccessControl(managedKey.Managed{ManagedKey: &key})
+		assert.NoError(t, err)
+
+		code := generateTOTPClient(totp.Secret, time.Now().Unix())
+
+		totpAccessControl := managedKey.NewAccessControlTotp(code)
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		assert.NoError(t, err)
+		assert.NotEmpty(t, signature.Signature)
+
+		invalidCode := "123456"
+		totpAccessControl = managedKey.NewAccessControlTotp(invalidCode)
+		signature, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		assert.Error(t, err)
 	})
 
 	t.Run("sign managed bjj", func(t *testing.T) {
@@ -136,10 +173,44 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(key, nil))
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
+	})
+
+	t.Run("sign managed bjj with secret access control", func(t *testing.T) {
+		recordClient := NewRecordClient()
+		authenticityClient := NewAuthenticityClient()
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.Bjj,
+		})
+		assert.NoError(t, err)
+
+		secret := "password"
+		email := fmt.Sprintf("%s@%s", generateRandomString(8), "bloock.com")
+		err = keyClient.SetupSecretAccessControl(managedKey.Managed{ManagedKey: &key}, secret, email)
+		assert.NoError(t, err)
+
+		secretAccessControl := managedKey.NewAccessControlSecret(secret)
+		signature, err := authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, &managedKey.AccessControl{AccessControlSecret: secretAccessControl}))
+		assert.NoError(t, err)
+		assert.NotEmpty(t, signature.Signature)
+
+		invalidSecret := "password1"
+		secretAccessControl = managedKey.NewAccessControlSecret(invalidSecret)
+		signature, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, &managedKey.AccessControl{AccessControlSecret: secretAccessControl}))
+		assert.Error(t, err)
 	})
 
 	t.Run("sign managed rsa", func(t *testing.T) {
@@ -159,7 +230,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(key, nil))
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -239,7 +310,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithManagedKey(key, nil)).
+			WithSigner(authenticity.NewSignerWithManagedKey(key, nil, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -263,7 +334,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithManagedKey(key, nil)).
+			WithSigner(authenticity.NewSignerWithManagedKey(key, nil, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -287,7 +358,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithManagedKey(key, nil)).
+			WithSigner(authenticity.NewSignerWithManagedKey(key, nil, nil)).
 			Build()
 		assert.NoError(t, err)
 
@@ -334,7 +405,7 @@ func TestAuthenticity(t *testing.T) {
 
 		authenticityClient := NewAuthenticityClient()
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(key, nil))
+			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -374,7 +445,7 @@ func TestAuthenticity(t *testing.T) {
 
 		record, err := recordClient.
 			FromString("Hello world").
-			WithSigner(authenticity.NewSignerWithManagedKey(key, nil)).
+			WithSigner(authenticity.NewSignerWithManagedKey(key, nil, nil)).
 			Build()
 		assert.NoError(t, err)
 

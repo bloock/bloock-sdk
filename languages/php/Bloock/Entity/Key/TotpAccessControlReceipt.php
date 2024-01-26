@@ -4,7 +4,7 @@ namespace Bloock\Entity\Key;
 
 use Google\Protobuf\Internal\RepeatedField;
 
-class TotpAccessControl
+class TotpAccessControlReceipt
 {
     public string $secret;
     public string $secretQr;

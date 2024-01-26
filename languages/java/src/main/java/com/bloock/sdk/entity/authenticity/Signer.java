@@ -1,10 +1,7 @@
 package com.bloock.sdk.entity.authenticity;
 
 import com.bloock.sdk.bridge.proto.AuthenticityEntities;
-import com.bloock.sdk.entity.key.LocalCertificate;
-import com.bloock.sdk.entity.key.LocalKey;
-import com.bloock.sdk.entity.key.ManagedCertificate;
-import com.bloock.sdk.entity.key.ManagedKey;
+import com.bloock.sdk.entity.key.*;
 
 public class Signer {
 
@@ -12,6 +9,7 @@ public class Signer {
   ManagedKey managedKey;
   ManagedCertificate managedCertificate;
   LocalCertificate localCertificate;
+  AccessControl accessControl;
 
   HashAlg hashAlg;
 
@@ -28,18 +26,20 @@ public class Signer {
     this.managedKey = managedKey;
   }
 
-  public Signer(ManagedKey managedKey, HashAlg hashAlg) {
+  public Signer(ManagedKey managedKey, HashAlg hashAlg, AccessControl accessControl) {
     this.managedKey = managedKey;
     this.hashAlg = hashAlg;
+    this.accessControl = accessControl;
   }
 
   public Signer(ManagedCertificate managedCertificate) {
     this.managedCertificate = managedCertificate;
   }
 
-  public Signer(ManagedCertificate managedCertificate, HashAlg hashAlg) {
+  public Signer(ManagedCertificate managedCertificate, HashAlg hashAlg, AccessControl accessControl) {
     this.managedCertificate = managedCertificate;
     this.hashAlg = hashAlg;
+    this.accessControl = accessControl;
   }
 
   public Signer(LocalCertificate localCertificate) {
@@ -72,6 +72,10 @@ public class Signer {
 
     if (this.hashAlg != null) {
       builder.setHashAlg(this.hashAlg.toProto());
+    }
+
+    if (this.accessControl != null) {
+      builder.setAccessControl(this.accessControl.toProto());
     }
 
     return builder.build();

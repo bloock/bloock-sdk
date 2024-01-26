@@ -4,9 +4,11 @@ package client
 
 import (
 	"testing"
+	"time"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/encryption"
 	"github.com/bloock/bloock-sdk-go/v2/entity/key"
+	managedKey "github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -113,11 +115,48 @@ func TestEncryption(t *testing.T) {
 		})
 		assert.NoError(t, err)
 
-		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewEncrypterWithManagedKey(key))
+		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewEncrypterWithManagedKey(key, nil))
 		assert.NoError(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
-			WithDecrypter(encryption.NewEncrypterWithManagedKey(key)).
+			WithDecrypter(encryption.NewEncrypterWithManagedKey(key, nil)).
+			Build()
+		assert.NoError(t, err)
+
+		decryptedRecordHash, err := decryptedRecord.GetHash()
+		assert.NoError(t, err)
+
+		assert.Equal(t, recordHash, decryptedRecordHash)
+	})
+
+	t.Run("encrypt managed rsa with totp access control", func(t *testing.T) {
+		payload := "Hello world"
+		recordClient := NewRecordClient()
+		record, err := recordClient.FromString(payload).Build()
+		assert.NoError(t, err)
+
+		recordHash, err := record.GetHash()
+		assert.NoError(t, err)
+
+		encryptionClient := NewEncryptionClient()
+		keyClient := NewKeyClient()
+		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+			KeyType:    key.Rsa2048,
+		})
+		assert.NoError(t, err)
+
+		totp, err := keyClient.SetupTotpAccessControl(managedKey.Managed{ManagedKey: &key})
+		assert.NoError(t, err)
+
+		code := generateTOTPClient(totp.Secret, time.Now().Unix())
+
+		totpAccessControl := managedKey.NewAccessControlTotp(code)
+		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewEncrypterWithManagedKey(key, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		assert.NoError(t, err)
+
+		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).
+			WithDecrypter(encryption.NewEncrypterWithManagedKey(key, &managedKey.AccessControl{AccessControlTotp: totpAccessControl})).
 			Build()
 		assert.NoError(t, err)
 
@@ -168,13 +207,13 @@ func TestEncryption(t *testing.T) {
 
 		encryptedRecord, err := recordClient.
 			FromString(payload).
-			WithEncrypter(encryption.NewEncrypterWithManagedKey(key)).
+			WithEncrypter(encryption.NewEncrypterWithManagedKey(key, nil)).
 			Build()
 		assert.NoError(t, err)
 		encryptedRecordHash, err := encryptedRecord.GetHash()
 		assert.NoError(t, err)
 
-		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewEncrypterWithManagedKey(key))
+		decryptedRecord, err := encryptionClient.Decrypt(encryptedRecord, encryption.NewEncrypterWithManagedKey(key, nil))
 		assert.NoError(t, err)
 
 		decryptedRecordHash, err := decryptedRecord.GetHash()

@@ -20,6 +20,7 @@ message Signer {
     optional LocalCertificate local_certificate = 3;
     optional ManagedCertificate managed_certificate = 4;
     optional HashAlg hash_alg = 5;
+    optional AccessControl access_control = 6;
 }
 
 message Signature {

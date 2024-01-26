@@ -33,6 +33,10 @@ class Signer extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>optional .bloock.HashAlg hash_alg = 5;</code>
      */
     protected $hash_alg = null;
+    /**
+     * Generated from protobuf field <code>optional .bloock.AccessControl access_control = 6;</code>
+     */
+    protected $access_control = null;
 
     /**
      * Constructor.
@@ -45,6 +49,7 @@ class Signer extends \Google\Protobuf\Internal\Message
      *     @type \Bloock\LocalCertificate $local_certificate
      *     @type \Bloock\ManagedCertificate $managed_certificate
      *     @type int $hash_alg
+     *     @type \Bloock\AccessControl $access_control
      * }
      */
     public function __construct($data = NULL) {
@@ -208,6 +213,38 @@ class Signer extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkEnum($var, \Bloock\HashAlg::class);
         $this->hash_alg = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.AccessControl access_control = 6;</code>
+     * @return \Bloock\AccessControl|null
+     */
+    public function getAccessControl()
+    {
+        return $this->access_control;
+    }
+
+    public function hasAccessControl()
+    {
+        return isset($this->access_control);
+    }
+
+    public function clearAccessControl()
+    {
+        unset($this->access_control);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.AccessControl access_control = 6;</code>
+     * @param \Bloock\AccessControl $var
+     * @return $this
+     */
+    public function setAccessControl($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\AccessControl::class);
+        $this->access_control = $var;
 
         return $this;
     }

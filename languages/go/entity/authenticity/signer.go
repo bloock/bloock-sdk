@@ -11,6 +11,7 @@ type Signer struct {
 	ManagedCertificate *key.ManagedCertificate
 	LocalCertificate   *key.LocalCertificate
 	HashAlg            *HashAlg
+	AccessControl      *key.AccessControl
 }
 
 func NewSignerWithLocalKey(key key.LocalKey, hashAlg *HashAlg) Signer {
@@ -20,10 +21,11 @@ func NewSignerWithLocalKey(key key.LocalKey, hashAlg *HashAlg) Signer {
 	}
 }
 
-func NewSignerWithManagedKey(key key.ManagedKey, hashAlg *HashAlg) Signer {
+func NewSignerWithManagedKey(key key.ManagedKey, hashAlg *HashAlg, accessControl *key.AccessControl) Signer {
 	return Signer{
-		ManagedKey: &key,
-		HashAlg:    hashAlg,
+		ManagedKey:    &key,
+		HashAlg:       hashAlg,
+		AccessControl: accessControl,
 	}
 }
 
@@ -34,10 +36,11 @@ func NewSignerWithLocalCertificate(key key.LocalCertificate, hashAlg *HashAlg) S
 	}
 }
 
-func NewSignerWithManagedCertificate(key key.ManagedCertificate, hashAlg *HashAlg) Signer {
+func NewSignerWithManagedCertificate(key key.ManagedCertificate, hashAlg *HashAlg, accessControl *key.AccessControl) Signer {
 	return Signer{
 		ManagedCertificate: &key,
 		HashAlg:            hashAlg,
+		AccessControl:      accessControl,
 	}
 }
 
@@ -67,11 +70,17 @@ func (s Signer) ToProto() *proto.Signer {
 		hashAlg = HashAlgToProto[*s.HashAlg]
 	}
 
+	var accessControl *proto.AccessControl
+	if s.AccessControl != nil {
+		accessControl = s.AccessControl.ToProto()
+	}
+
 	return &proto.Signer{
 		LocalKey:           localKey,
 		ManagedKey:         managedKey,
 		ManagedCertificate: managedCertificate,
 		LocalCertificate:   localCertificate,
 		HashAlg:            hashAlg,
+		AccessControl:      accessControl,
 	}
 }

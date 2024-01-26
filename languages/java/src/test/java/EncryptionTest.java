@@ -114,10 +114,39 @@ class EncryptionTest {
     ManagedKey managedKey =
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
 
-    Record encryptedRecord = encryptionClient.encrypt(record, new Encrypter(managedKey));
+    Record encryptedRecord = encryptionClient.encrypt(record, new Encrypter(managedKey, null));
 
     Record decryptedRecord =
-        recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(managedKey)).build();
+        recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(managedKey, null)).build();
+
+    String decryptedRecordHash = decryptedRecord.getHash();
+    assertEquals(recordHash, decryptedRecordHash);
+  }
+
+  @Test
+  void encryptManagedRsaWithTotpAccessControl() throws Exception {
+    String payload = "Hello world";
+
+    RecordClient recordClient = new RecordClient();
+    Record record = recordClient.fromString(payload).build();
+    String recordHash = record.getHash();
+
+    EncryptionClient encryptionClient = new EncryptionClient();
+
+    KeyClient keyClient = new KeyClient();
+    ManagedKey managedKey =
+            keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
+
+    TotpAccessControlReceipt totp = keyClient.setupTotpAccessControl(new Managed(managedKey));
+
+    long timestamp = System.currentTimeMillis() / 1000;
+    String code = Utils.generateTOTPClient(totp.getSecret(), timestamp);
+
+    AccessControlTotp totpAccessControl = new AccessControlTotp(code);
+    Record encryptedRecord = encryptionClient.encrypt(record, new Encrypter(managedKey, new AccessControl(totpAccessControl)));
+
+    Record decryptedRecord =
+            recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(managedKey, new AccessControl(totpAccessControl))).build();
 
     String decryptedRecordHash = decryptedRecord.getHash();
     assertEquals(recordHash, decryptedRecordHash);
@@ -135,10 +164,10 @@ class EncryptionTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
 
     Record encryptedRecord =
-        recordClient.fromString(payload).withEncrypter(new Encrypter(managedKey)).build();
+        recordClient.fromString(payload).withEncrypter(new Encrypter(managedKey, null)).build();
     String encryptedRecordHash = encryptedRecord.getHash();
 
-    Record decryptedRecord = encryptionClient.decrypt(encryptedRecord, new Encrypter(managedKey));
+    Record decryptedRecord = encryptionClient.decrypt(encryptedRecord, new Encrypter(managedKey, null));
     String decryptedRecordHash = decryptedRecord.getHash();
 
     assertEquals(encryptedRecordHash, decryptedRecordHash);

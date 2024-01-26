@@ -24,6 +24,7 @@ pub async fn sign(
     payload: &[u8],
     key: &Key,
     hash_alg: Option<HashAlg>,
+    access_control: Option<String>,
 ) -> Result<Signature> {
     let alg = match key {
         Key::Local(l) => match l {
@@ -50,7 +51,7 @@ pub async fn sign(
 
     match key {
         Key::Local(l) => signer.sign_local(payload, l, hash_alg).await,
-        Key::Managed(m) => signer.sign_managed(payload, m, hash_alg).await,
+        Key::Managed(m) => signer.sign_managed(payload, m, hash_alg, access_control).await,
     }
 }
 
@@ -109,6 +110,7 @@ pub trait Signer {
         payload: &[u8],
         key: &Managed,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
     ) -> Result<Signature>;
 
     async fn verify_local(&self, payload: &[u8], signature: &Signature) -> Result<bool>;

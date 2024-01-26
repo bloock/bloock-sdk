@@ -55,6 +55,7 @@ impl Signer for EnsSigner {
         payload: &[u8],
         key: &Managed,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
     ) -> crate::Result<Signature> {
         let managed = match key {
             Managed::Key(k) => k.clone(),
@@ -68,7 +69,7 @@ impl Signer for EnsSigner {
             None,
         );
         let mut signature = ecdsa_signer
-            .sign_managed(payload, &managed.into(), hash_alg)
+            .sign_managed(payload, &managed.into(), hash_alg, access_control)
             .await?;
         signature.alg = SignAlg::Es256kM;
         Ok(signature)
@@ -266,7 +267,7 @@ mod tests {
         let signer = EnsSigner::new(api_host, api_key, None);
 
         let signature = signer
-            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None)
+            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None, None)
             .await
             .unwrap();
 

@@ -44,13 +44,13 @@ impl Record {
         }
     }
 
-    pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>) -> BloockResult<Signature> {
+    pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>, access_control: Option<String>) -> BloockResult<Signature> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
 
-        let signature = doc.sign(key, hash_alg).await?;
+        let signature = doc.sign(key, hash_alg, access_control).await?;
         Ok(signature)
     }
 
@@ -64,23 +64,23 @@ impl Record {
         Ok(signature)
     }
 
-    pub async fn encrypt(&mut self, key: &Key) -> BloockResult<()> {
+    pub async fn encrypt(&mut self, key: &Key, access_control: Option<String>) -> BloockResult<()> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
 
-        doc.encrypt(key).await?;
+        doc.encrypt(key, access_control).await?;
         Ok(())
     }
 
-    pub async fn decrypt(&mut self, key: &Key) -> BloockResult<()> {
+    pub async fn decrypt(&mut self, key: &Key, access_control: Option<String>) -> BloockResult<()> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),
         };
 
-        doc.decrypt(key).await?;
+        doc.decrypt(key, access_control).await?;
         Ok(())
     }
 
@@ -265,6 +265,7 @@ mod tests {
                 &bloock_keys::entity::key::Key::Local(bloock_keys::entity::key::Local::Key(
                     local_key,
                 )),
+                None,
                 None,
             )
             .await

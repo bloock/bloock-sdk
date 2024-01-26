@@ -176,7 +176,7 @@ public class KeyClient {
     return ManagedCertificate.fromProto(response.getManagedCertificate());
   }
 
-  public TotpAccessControl setupTotpAccessControl(Managed key) throws Exception {
+  public TotpAccessControlReceipt setupTotpAccessControl(Managed key) throws Exception {
     Keys.SetupTotpAccessControlRequest.Builder builder =
         Keys.SetupTotpAccessControlRequest.newBuilder().setConfigData(this.configData);
 
@@ -196,11 +196,11 @@ public class KeyClient {
       throw new Exception(response.getError().getMessage());
     }
 
-    return new TotpAccessControl(
+    return new TotpAccessControlReceipt(
         response.getSecret(), response.getSecretQr(), response.getRecoveryCodesList());
   }
 
-  public TotpAccessControl recoverTotpAccessControl(Managed key, String code) throws Exception {
+  public TotpAccessControlReceipt recoverTotpAccessControl(Managed key, String code) throws Exception {
     Keys.RecoverTotpAccessControlRequest.Builder builder =
         Keys.RecoverTotpAccessControlRequest.newBuilder()
             .setConfigData(this.configData)
@@ -223,7 +223,7 @@ public class KeyClient {
       throw new Exception(response.getError().getMessage());
     }
 
-    return new TotpAccessControl(
+    return new TotpAccessControlReceipt(
         response.getSecret(), response.getSecretQr(), response.getRecoveryCodesList());
   }
 

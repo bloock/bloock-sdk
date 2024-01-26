@@ -36,6 +36,19 @@ impl EncryptionServiceHandler for EncryptionServer {
             .encrypter
             .ok_or_else(|| "no signer provided".to_string())?;
 
+        let access_control: Option<String> = match encrypter.access_control {
+            Some(ac) => {
+                if let Some(ac_totp) = ac.access_control_totp {
+                    Some(ac_totp.code)
+                } else if let Some(ac_secret) = ac.access_control_secret {
+                    Some(ac_secret.secret)
+                } else {
+                    return Err("invalid access control provided".to_string());
+                }
+            }
+            None => None,
+        };
+
         let key: Key = if let Some(managed_key) = encrypter.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
             managed_key_core.into()
@@ -55,7 +68,7 @@ impl EncryptionServiceHandler for EncryptionServer {
         };
 
         let result = client
-            .encrypt(record, &key)
+            .encrypt(record, &key, access_control)
             .await
             .map_err(|e| e.to_string())?;
 
@@ -85,6 +98,19 @@ impl EncryptionServiceHandler for EncryptionServer {
             .decrypter
             .ok_or_else(|| "no signer provided".to_string())?;
 
+        let access_control: Option<String> = match decrypter.access_control {
+            Some(ac) => {
+                if let Some(ac_totp) = ac.access_control_totp {
+                    Some(ac_totp.code)
+                } else if let Some(ac_secret) = ac.access_control_secret {
+                    Some(ac_secret.secret)
+                } else {
+                    return Err("invalid access control provided".to_string());
+                }
+            }
+            None => None,
+        };
+
         let key: Key = if let Some(managed_key) = decrypter.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
             managed_key_core.into()
@@ -104,7 +130,7 @@ impl EncryptionServiceHandler for EncryptionServer {
         };
 
         let result = client
-            .decrypt(record, &key)
+            .decrypt(record, &key, access_control)
             .await
             .map_err(|e| e.to_string())?;
 

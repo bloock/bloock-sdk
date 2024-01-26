@@ -337,7 +337,7 @@ func TestKey(t *testing.T) {
 		assert.NoError(t, err)
 
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedCertificate(loadedCertificate, nil))
+			Sign(record, authenticity.NewSignerWithManagedCertificate(loadedCertificate, nil, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
@@ -363,7 +363,7 @@ func TestKey(t *testing.T) {
 		assert.NoError(t, err)
 
 		_, err = authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
 		assert.NoError(t, err)
 
 		totp, err := keyClient.SetupTotpAccessControl(key.Managed{
@@ -375,7 +375,7 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, totp.RecoveryCodes)
 
 		_, err = authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
 		assert.Error(t, err)
 
 		totpRecovered, err := keyClient.RecoverTotpAccessControl(key.Managed{
@@ -407,7 +407,7 @@ func TestKey(t *testing.T) {
 		assert.NoError(t, err)
 
 		_, err = authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
 		assert.NoError(t, err)
 
 		email := fmt.Sprintf("%s@%s", generateRandomString(8), "bloock.com")
@@ -417,7 +417,7 @@ func TestKey(t *testing.T) {
 		assert.NoError(t, err)
 
 		_, err = authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil))
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
 		assert.Error(t, err)
 	})
 }
