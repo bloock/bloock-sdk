@@ -271,7 +271,7 @@ func TestKey(t *testing.T) {
 			ExpirationMonths: expiration,
 		}
 		managedCertificate, err := keyClient.NewManagedCertificate(params)
-		assert.Error(t, err)
+		assert.NoError(t, err)
 
 		assert.NotEmpty(t, managedCertificate.Key)
 		assert.Equal(t, key.KEY_PROTECTION_SOFTWARE, managedCertificate.Protection)
