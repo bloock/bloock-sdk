@@ -128,8 +128,8 @@ class KeyClient:
         res = self.bridge_client.key().SetupTotpAccessControl(
             SetupTotpAccessControlRequest(
                 config_data=self.config_data,
-                managed_key=key.managed_key if key.managed_key is not None else None,
-                managed_certificate=key.managed_certificate if key.managed_certificate is not None else None)
+                managed_key=key.managed_key.to_proto() if key.managed_key is not None else None,
+                managed_certificate=key.managed_certificate.to_proto() if key.managed_certificate is not None else None)
         )
 
         if res.error != Error():
@@ -142,8 +142,8 @@ class KeyClient:
             RecoverTotpAccessControlRequest(
                 config_data=self.config_data,
                 code=code,
-                managed_key=key.managed_key if key.managed_key is not None else None,
-                managed_certificate=key.managed_certificate if key.managed_certificate is not None else None)
+                managed_key=key.managed_key.to_proto() if key.managed_key is not None else None,
+                managed_certificate=key.managed_certificate.to_proto() if key.managed_certificate is not None else None)
         )
 
         if res.error != Error():
@@ -157,8 +157,8 @@ class KeyClient:
                 config_data=self.config_data,
                 secret=secret,
                 email=email,
-                managed_key=key.managed_key if key.managed_key is not None else None,
-                managed_certificate=key.managed_certificate if key.managed_certificate is not None else None)
+                managed_key=key.managed_key.to_proto() if key.managed_key is not None else None,
+                managed_certificate=key.managed_certificate.to_proto() if key.managed_certificate is not None else None)
         )
 
         if res.error != Error():
