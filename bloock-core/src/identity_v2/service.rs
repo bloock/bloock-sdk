@@ -101,6 +101,7 @@ impl<H: Client> IdentityServiceV2<H> {
         description: Option<String>,
         image: Option<String>,
         interval: PublishInterval,
+        key_reference: String,
     ) -> BloockResult<CreateIssuerResponse> {
         let req = CreateIssuerRequest {
             did_metadata: DidMetadataRequest {
@@ -113,6 +114,7 @@ impl<H: Client> IdentityServiceV2<H> {
             description,
             image,
             publish_interval: interval.get_publish_interval(),
+            key: key_reference,
         };
 
         let res: CreateIssuerResponse = self

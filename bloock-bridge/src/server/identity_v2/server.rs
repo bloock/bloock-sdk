@@ -94,17 +94,17 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
         let local_key = issuer_key.local_key;
         let managed_key = issuer_key.managed_key;
 
-        let public_key = if let Some(key) = managed_key {
+        let (public_key, key_reference) = if let Some(key) = managed_key {
             let key_type: KeyType = key.key_type().into();
             if key_type == KeyType::BJJ {
-                key.key
+                (key.key.clone(), key.id.clone())
             } else {
                 return Err("invalid key type provided".to_string());
             }
         } else if let Some(key) = local_key {
             let key_type: KeyType = key.key_type().into();
             if key_type == KeyType::BJJ {
-                key.key
+                (key.key.clone(), key.key.clone())
             } else {
                 return Err("invalid key type provided".to_string());
             }
@@ -128,6 +128,7 @@ impl IdentityServiceV2Handler for IdentityServerV2 {
                 req.description.clone(),
                 req.image.clone(),
                 interval,
+                key_reference,
             )
             .await
             .map_err(|e| e.to_string())?;
