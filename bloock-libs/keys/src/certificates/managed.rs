@@ -65,7 +65,7 @@ impl ManagedCertificate {
 
         let req = CreateManagedCertificateRequest {
             key_type: params.key_type.get_key_type(),
-            subject: params.subject.serialize(),
+            subject: params.subject.serialize_managed(),
             expiration: params.expiration,
         };
         let res: CreateManagedCertificateResponse = client

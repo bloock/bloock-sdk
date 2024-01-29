@@ -146,7 +146,7 @@ mod tests {
         let payload = service
             .from_file(PAYLOAD.to_vec())
             .unwrap()
-            .with_encrypter(&local_key.clone().into())
+            .with_encrypter(&local_key.clone().into(), None)
             .build()
             .await
             .unwrap()
@@ -250,7 +250,7 @@ mod tests {
         let payload = service
             .from_file(PAYLOAD.to_vec())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
+            .with_signer(&local_key.clone().into(), None, None)
             .build()
             .await
             .unwrap()
@@ -311,7 +311,7 @@ mod tests {
         let payload = service
             .from_file(PAYLOAD.to_vec())
             .unwrap()
-            .with_signer(&local_cert.clone().into(), None)
+            .with_signer(&local_cert.clone().into(), None, None)
             .build()
             .await
             .unwrap()
@@ -365,8 +365,8 @@ mod tests {
         let payload = service
             .from_file(PAYLOAD.to_vec())
             .unwrap()
-            .with_signer(&local_key.clone().into(), None)
-            .with_encrypter(&local_aes_key.clone().into())
+            .with_signer(&local_key.clone().into(), None, None)
+            .with_encrypter(&local_aes_key.clone().into(), None)
             .build()
             .await
             .unwrap()

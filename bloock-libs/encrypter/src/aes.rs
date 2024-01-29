@@ -105,7 +105,12 @@ impl Encrypter for AesEncrypter {
         })
     }
 
-    async fn encrypt_managed(&self, _payload: &[u8], _key: &Managed) -> Result<Encryption> {
+    async fn encrypt_managed(
+        &self,
+        _payload: &[u8],
+        _key: &Managed,
+        access_control: Option<String>,
+    ) -> Result<Encryption> {
         Err(EncrypterError::InvalidAlgorithm())
     }
 
@@ -156,6 +161,7 @@ impl Encrypter for AesEncrypter {
         _payload: &[u8],
         _encryption_key: Option<EncryptionKey>,
         _key: &Managed,
+        access_control: Option<String>,
     ) -> Result<Vec<u8>> {
         Err(EncrypterError::InvalidAlgorithm())
     }

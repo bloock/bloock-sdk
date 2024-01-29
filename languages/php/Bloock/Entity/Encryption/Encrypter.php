@@ -2,6 +2,7 @@
 
 namespace Bloock\Entity\Encryption;
 
+use Bloock\Entity\Key\AccessControl;
 use Exception;
 use Bloock\Entity\Key\LocalKey;
 use Bloock\Entity\Key\ManagedKey;
@@ -14,11 +15,12 @@ class Encrypter
     public ?ManagedKey $managedKey = null;
     public ?ManagedCertificate $managedCertificate = null;
     public ?LocalCertificate $localCertificate = null;
+    public ?AccessControl $accessControl = null;
 
     /**
      * @throws Exception
      */
-    public function __construct($key)
+    public function __construct($key, ?AccessControl $accessControl = null)
     {
         if ($key instanceof LocalKey) {
             $this->localKey = $key;
@@ -30,6 +32,10 @@ class Encrypter
             $this->localCertificate = $key;
         } else {
             throw new Exception("Invalid key provided");
+        }
+
+        if ($accessControl != null) {
+            $this->accessControl = $accessControl;
         }
     }
 
@@ -51,6 +57,10 @@ class Encrypter
 
         if ($this->localCertificate != null) {
             $s->setLocalCertificate($this->localCertificate->toProto());
+        }
+
+        if ($this->accessControl != null) {
+            $s->setAccessControl($this->accessControl->toProto());
         }
 
         return $s;

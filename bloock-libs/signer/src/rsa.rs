@@ -94,6 +94,7 @@ impl BloockSigner for RsaSigner {
         payload: &[u8],
         key: &Managed,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
     ) -> crate::Result<BloockSignature> {
         let managed = match key {
             Managed::Key(k) => k.clone(),
@@ -119,6 +120,7 @@ impl BloockSigner for RsaSigner {
             key_id: managed.id.clone(),
             algorithm: "RSA".to_string(),
             payload: hex::encode(hash),
+            access_code: access_control.clone(),
         };
 
         let res: SignResponse = http
@@ -460,7 +462,7 @@ mod tests {
         let signer = RsaSigner::new(api_host, api_key, None);
 
         let signature = signer
-            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None)
+            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None, None)
             .await
             .unwrap();
 

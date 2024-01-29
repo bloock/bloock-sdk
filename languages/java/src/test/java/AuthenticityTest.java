@@ -4,6 +4,7 @@ import com.bloock.sdk.client.AuthenticityClient;
 import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.client.RecordClient;
 import com.bloock.sdk.entity.authenticity.*;
+import com.bloock.sdk.entity.identity_v2.PublishIntervalParams;
 import com.bloock.sdk.entity.key.*;
 import com.bloock.sdk.entity.record.Record;
 import java.util.List;
@@ -85,6 +86,36 @@ class AuthenticityTest {
   }
 
   @Test
+  void signManagedEcdsaWithTotpAccessControl() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+
+    Record record = recordClient.fromString("Hello world").build();
+
+    KeyClient keyClient = new KeyClient();
+    ManagedKey managedKey =
+            keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
+
+    TotpAccessControlReceipt totp = keyClient.setupTotpAccessControl(new Managed(managedKey));
+
+    long timestamp = System.currentTimeMillis() / 1000;
+    String code = Utils.generateTOTPClient(totp.getSecret(), timestamp);
+
+    AccessControlTotp totpAccessControl = new AccessControlTotp(code);
+    Signature signature = authenticityClient.sign(record, new Signer(managedKey, null, new AccessControl(totpAccessControl)));
+    assertNotNull(signature);
+
+    String invalidCode = "123456";
+    AccessControlTotp invalidTotpAccessControl = new AccessControlTotp(invalidCode);
+    assertThrows(
+            Exception.class,
+            () -> {
+              authenticityClient.sign(record, new Signer(managedKey, null, new AccessControl(invalidTotpAccessControl)));
+              throw new RuntimeException("This is an intentional exception.");
+            });
+  }
+
+  @Test
   void signManagedBjj() throws Exception {
     RecordClient recordClient = new RecordClient();
     Record record = recordClient.fromString("Hello world").build();
@@ -97,6 +128,35 @@ class AuthenticityTest {
     Signature signature = authenticityClient.sign(record, new Signer(managedKey));
 
     assertNotNull(signature);
+  }
+
+  @Test
+  void signManagedBjjWithSecretAccessControl() throws Exception {
+    RecordClient recordClient = new RecordClient();
+    AuthenticityClient authenticityClient = new AuthenticityClient();
+
+    Record record = recordClient.fromString("Hello world").build();
+
+    KeyClient keyClient = new KeyClient();
+    ManagedKey managedKey =
+            keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj));
+
+    String secret = "password";
+    String email = Utils.generateRandomString(8) + "@bloock.com";
+    keyClient.setupSecretAccessControl(new Managed(managedKey), secret, email);
+
+    AccessControlSecret secretAccessControl = new AccessControlSecret(secret);
+    Signature signature = authenticityClient.sign(record, new Signer(managedKey, null, new AccessControl(secretAccessControl)));
+    assertNotNull(signature);
+
+    String invalidSecret = "password1";
+    AccessControlSecret invalidSecretAccessControl = new AccessControlSecret(secret);
+    assertThrows(
+            Exception.class,
+            () -> {
+              authenticityClient.sign(record, new Signer(managedKey, null, new AccessControl(invalidSecretAccessControl)));
+              throw new RuntimeException("This is an intentional exception.");
+            });
   }
 
   @Test
@@ -122,11 +182,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -140,11 +196,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.Bjj);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -158,11 +210,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.Rsa2048);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -178,10 +226,7 @@ class AuthenticityTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
 
     Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(managedKey))
-            .build();
+        recordClient.fromString("Hello world").withSigner(new Signer(managedKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -197,10 +242,7 @@ class AuthenticityTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj));
 
     Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(managedKey))
-            .build();
+        recordClient.fromString("Hello world").withSigner(new Signer(managedKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -216,10 +258,7 @@ class AuthenticityTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048));
 
     Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(managedKey))
-            .build();
+        recordClient.fromString("Hello world").withSigner(new Signer(managedKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -262,11 +301,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -282,10 +317,7 @@ class AuthenticityTest {
         keyClient.newManagedKey(new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.EcP256k));
 
     Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(managedKey))
-            .build();
+        recordClient.fromString("Hello world").withSigner(new Signer(managedKey)).build();
 
     boolean valid = authenticityClient.verify(record);
     assertTrue(valid);
@@ -299,11 +331,7 @@ class AuthenticityTest {
     KeyClient keyClient = new KeyClient();
     LocalKey localKey = keyClient.newLocalKey(KeyType.EcP256k);
 
-    Record record =
-        recordClient
-            .fromString("Hello world")
-            .withSigner(new Signer(localKey))
-            .build();
+    Record record = recordClient.fromString("Hello world").withSigner(new Signer(localKey)).build();
 
     List<Signature> signatures = authenticityClient.getSignatures(record);
 

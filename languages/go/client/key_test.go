@@ -3,6 +3,7 @@
 package client
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -192,12 +193,12 @@ func TestKey(t *testing.T) {
 		keyClient := NewKeyClient()
 
 		keyType := key.Rsa2048
-		org := "Google Inc"
-		orgUnit := "IT Department"
+		org := "Google, Inc"
+		orgUnit := "IT + Department"
 		country := "US"
 
 		subjectParams := key.SubjectCertificateParams{
-			CommonName:       "Google internet Authority G2",
+			CommonName:       "Google, internet, Authority G2",
 			Organization:     &org,
 			OrganizationUnit: &orgUnit,
 			Country:          &country,
@@ -254,12 +255,12 @@ func TestKey(t *testing.T) {
 
 		keyType := key.EcP256k
 		expiration := int32(5)
-		org := "Google Inc"
-		orgUnit := "IT Department"
+		org := "Google, Inc"
+		orgUnit := "IT + Department"
 		country := "US"
 
 		subjectParams := key.SubjectCertificateParams{
-			CommonName:       "Google internet Authority G2",
+			CommonName:       "Google, internet, Authority G2",
 			Organization:     &org,
 			OrganizationUnit: &orgUnit,
 			Country:          &country,
@@ -336,9 +337,87 @@ func TestKey(t *testing.T) {
 		assert.NoError(t, err)
 
 		signature, err := authenticityClient.
-			Sign(record, authenticity.NewSignerWithManagedCertificate(loadedCertificate, nil))
+			Sign(record, authenticity.NewSignerWithManagedCertificate(loadedCertificate, nil, nil))
 		assert.NoError(t, err)
 
 		assert.NotEmpty(t, signature.Signature)
+	})
+
+	t.Run("setup & recover totp access control", func(t *testing.T) {
+		keyClient := NewKeyClient()
+		authenticityClient := NewAuthenticityClient()
+		recordClient := NewRecordClient()
+
+		protection := key.KEY_PROTECTION_SOFTWARE
+		keyType := key.EcP256k
+		params := key.ManagedKeyParams{
+			Protection: protection,
+			KeyType:    keyType,
+		}
+		managedKey, err := keyClient.NewManagedKey(params)
+		assert.NoError(t, err)
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		_, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
+		assert.NoError(t, err)
+
+		totp, err := keyClient.SetupTotpAccessControl(key.Managed{
+			ManagedKey: &managedKey,
+		})
+		assert.NoError(t, err)
+		assert.NotEmpty(t, totp.Secret)
+		assert.NotEmpty(t, totp.SecretQr)
+		assert.NotEmpty(t, totp.RecoveryCodes)
+
+		_, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
+		assert.Error(t, err)
+
+		totpRecovered, err := keyClient.RecoverTotpAccessControl(key.Managed{
+			ManagedKey: &managedKey,
+		}, totp.RecoveryCodes[0])
+		assert.NoError(t, err)
+		assert.NotEmpty(t, totpRecovered.Secret)
+		assert.NotEmpty(t, totpRecovered.SecretQr)
+		assert.NotEmpty(t, totpRecovered.RecoveryCodes)
+	})
+
+	t.Run("setup secret access control", func(t *testing.T) {
+		keyClient := NewKeyClient()
+		authenticityClient := NewAuthenticityClient()
+		recordClient := NewRecordClient()
+
+		protection := key.KEY_PROTECTION_SOFTWARE
+		keyType := key.EcP256k
+		params := key.ManagedKeyParams{
+			Protection: protection,
+			KeyType:    keyType,
+		}
+		managedKey, err := keyClient.NewManagedKey(params)
+		assert.NoError(t, err)
+
+		record, err := recordClient.
+			FromString("Hello world").
+			Build()
+		assert.NoError(t, err)
+
+		_, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
+		assert.NoError(t, err)
+
+		email := fmt.Sprintf("%s@%s", generateRandomString(8), "bloock.com")
+		err = keyClient.SetupSecretAccessControl(key.Managed{
+			ManagedKey: &managedKey,
+		}, "password", email)
+		assert.NoError(t, err)
+
+		_, err = authenticityClient.
+			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
+		assert.Error(t, err)
 	})
 }

@@ -1,5 +1,9 @@
 import { describe, test, expect } from "@jest/globals";
-import { BjjIdentityKey, PublishIntervalParams, Signer } from "../../dist/index";
+import {
+  BjjIdentityKey,
+  PublishIntervalParams,
+  Signer
+} from "../../dist/index";
 import {
   CredentialV2,
   IdentityClient,
@@ -81,7 +85,11 @@ describe("Identity V2 Tests", () => {
     let fileBytes = readFileSync(dirPath);
     let encodedFile = base64url.encode(fileBytes);
 
-    let params = new DidParams(Method.POLYGON_ID, Blockchain.POLYGON, NetworkId.MAIN)
+    let params = new DidParams(
+      Method.POLYGON_ID,
+      Blockchain.POLYGON,
+      NetworkId.MAIN
+    );
     let issuer = await identityClient.createIssuer(
       issuerKey,
       PublishIntervalParams.Interval1,
@@ -93,7 +101,11 @@ describe("Identity V2 Tests", () => {
     expect(issuer.includes("polygonid")).toBeTruthy();
 
     try {
-      await identityClient.createIssuer(issuerKey, PublishIntervalParams.Interval5, params);
+      await identityClient.createIssuer(
+        issuerKey,
+        PublishIntervalParams.Interval5,
+        params
+      );
     } catch (error) {
       expect(error).toBeTruthy;
     }
@@ -102,7 +114,8 @@ describe("Identity V2 Tests", () => {
     expect(getIssuerDid).toStrictEqual(issuer);
 
     let getNotFoundIssuerDid = await identityClient.getIssuerByKey(
-      notFoundIssuerKey, params
+      notFoundIssuerKey,
+      params
     );
     expect(getNotFoundIssuerDid).toStrictEqual("");
 
@@ -183,32 +196,38 @@ describe("Identity V2 Tests", () => {
     expect(credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
     expect(credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
-    const ok = await identityClient.revokeCredential(credential, new Signer(keyBjj));
+    const ok = await identityClient.revokeCredential(
+      credential,
+      new Signer(keyBjj)
+    );
     expect(ok).toBeTruthy();
 
-    const stateReceipt = await identityClient.publishIssuerState(issuer, new Signer(keyBjj))
+    const stateReceipt = await identityClient.publishIssuerState(
+      issuer,
+      new Signer(keyBjj)
+    );
     expect(stateReceipt.txHash).toBeTruthy();
 
     try {
-      await identityClient.publishIssuerState(issuer, new Signer(keyBjj))
+      await identityClient.publishIssuerState(issuer, new Signer(keyBjj));
     } catch (error) {
       expect(error).toBeTruthy();
     }
 
     const proofRequest = prepareProofRequest(schema.cidJsonLd);
 
-    const verification = await identityClient.createVerification(proofRequest)
+    const verification = await identityClient.createVerification(proofRequest);
     expect(verification.sessionID).toBeTruthy();
     expect(verification.verificationRequest).toBeTruthy();
 
     try {
-      await identityClient.waitVerification(verification.sessionID, 5)
+      await identityClient.waitVerification(verification.sessionID, 5);
     } catch (error) {
       expect(error).toBeTruthy();
     }
 
     try {
-      await identityClient.getVerificationStatus(verification.sessionID)
+      await identityClient.getVerificationStatus(verification.sessionID);
     } catch (error) {
       expect(error).toBeTruthy();
     }

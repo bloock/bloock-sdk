@@ -80,6 +80,7 @@ impl MetadataParser for PdfParser {
         &mut self,
         key: &Key,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
@@ -184,6 +185,7 @@ impl MetadataParser for PdfParser {
             &signed_attributes_encoded,
             key,
             hash_alg,
+            access_control,
         )
         .await
         .map_err(|e| MetadataError::LoadError(e.to_string()))?;
@@ -257,6 +259,7 @@ impl MetadataParser for PdfParser {
     async fn encrypt(
         &mut self,
         _key: &Key,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
@@ -267,6 +270,7 @@ impl MetadataParser for PdfParser {
     async fn decrypt(
         &mut self,
         _key: &Key,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,

@@ -3,7 +3,7 @@ use bloock_encrypter::entity::{
     alg::EncryptionAlg, encryption::Encryption, encryption_key::EncryptionKey,
 };
 use bloock_hasher::HashAlg;
-use bloock_keys::entity::key::Key;
+use bloock_keys::{access_control, entity::key::Key};
 use bloock_signer::entity::signature::Signature;
 use default::DefaultParser;
 use pdf::PdfParser;
@@ -47,13 +47,14 @@ impl MetadataParser for FileParser {
         &mut self,
         key: &Key,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
     ) -> Result<Signature> {
         match self {
-            FileParser::Pdf(p) => p.sign(key, hash_alg, api_host, api_key, environment).await,
-            FileParser::Default(p) => p.sign(key, hash_alg, api_host, api_key, environment).await,
+            FileParser::Pdf(p) => p.sign(key, hash_alg, access_control, api_host, api_key, environment).await,
+            FileParser::Default(p) => p.sign(key, hash_alg, access_control, api_host, api_key, environment).await,
         }
     }
 
@@ -72,6 +73,7 @@ impl MetadataParser for FileParser {
     async fn encrypt(
         &mut self,
         key: &Key,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
@@ -81,23 +83,24 @@ impl MetadataParser for FileParser {
                 //p.encrypt(encrypter).await,
                 let payload = p.build()?;
                 *self = FileParser::Default(DefaultParser::load(&payload)?);
-                self.encrypt(key, api_host, api_key, environment).await
+                self.encrypt(key, access_control, api_host, api_key, environment).await
             }
-            FileParser::Default(p) => p.encrypt(key, api_host, api_key, environment).await,
+            FileParser::Default(p) => p.encrypt(key, access_control, api_host, api_key, environment).await,
         }
     }
 
     async fn decrypt(
         &mut self,
         key: &Key,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
     ) -> Result<()> {
         match self {
-            FileParser::Pdf(p) => p.decrypt(key, api_host, api_key, environment).await,
+            FileParser::Pdf(p) => p.decrypt(key, access_control, api_host, api_key, environment).await,
             FileParser::Default(p) => {
-                p.decrypt(key, api_host, api_key, environment).await?;
+                p.decrypt(key, access_control, api_host, api_key, environment).await?;
                 let payload = &p.build()?;
                 *self = FileParser::load(payload)?;
                 Ok(())
@@ -171,6 +174,7 @@ where
         &mut self,
         key: &Key,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
@@ -184,6 +188,7 @@ where
     async fn encrypt(
         &mut self,
         key: &Key,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
@@ -191,6 +196,7 @@ where
     async fn decrypt(
         &mut self,
         key: &Key,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,

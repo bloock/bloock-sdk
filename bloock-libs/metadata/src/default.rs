@@ -48,16 +48,24 @@ impl MetadataParser for DefaultParser {
         &mut self,
         key: &Key,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
     ) -> Result<Signature> {
         let payload = self.get_data()?;
 
-        let signature =
-            bloock_signer::sign(api_host, api_key, environment, &payload, key, hash_alg)
-                .await
-                .map_err(|e| MetadataError::SignError(e.to_string()))?;
+        let signature = bloock_signer::sign(
+            api_host,
+            api_key,
+            environment,
+            &payload,
+            key,
+            hash_alg,
+            access_control,
+        )
+        .await
+        .map_err(|e| MetadataError::SignError(e.to_string()))?;
 
         let mut signatures = match self.get_signatures() {
             Some(s) => s,
@@ -107,15 +115,23 @@ impl MetadataParser for DefaultParser {
     async fn encrypt(
         &mut self,
         key: &Key,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
     ) -> Result<Encryption> {
         let payload = self.build()?;
 
-        let encryption = bloock_encrypter::encrypt(api_host, api_key, environment, &payload, key)
-            .await
-            .map_err(|e| MetadataError::EncryptError(e.to_string()))?;
+        let encryption = bloock_encrypter::encrypt(
+            api_host,
+            api_key,
+            environment,
+            &payload,
+            key,
+            access_control,
+        )
+        .await
+        .map_err(|e| MetadataError::EncryptError(e.to_string()))?;
         self.payload._data_ = encryption.ciphertext.clone();
 
         self.del("proof")?;
@@ -131,6 +147,7 @@ impl MetadataParser for DefaultParser {
     async fn decrypt(
         &mut self,
         key: &Key,
+        access_control: Option<String>,
         api_host: String,
         api_key: String,
         environment: Option<String>,
@@ -144,6 +161,7 @@ impl MetadataParser for DefaultParser {
             &ciphertext,
             self.get_encryption_key(),
             key,
+            access_control,
         )
         .await
         .map_err(|e| MetadataError::EncryptError(e.to_string()))?;
@@ -411,6 +429,7 @@ mod tests {
         parser
             .encrypt(
                 &local_aes_key.clone().into(),
+                None,
                 api_host.clone(),
                 api_key.clone(),
                 None,
@@ -422,7 +441,7 @@ mod tests {
         assert_eq!(None, parser.get_signatures());
 
         parser
-            .decrypt(&local_aes_key.into(), api_host, api_key, None)
+            .decrypt(&local_aes_key.into(), None, api_host, api_key, None)
             .await
             .unwrap();
 
@@ -485,6 +504,7 @@ mod tests {
                 &bloock_keys::entity::key::Key::Local(bloock_keys::entity::key::Local::Key(
                     local_key,
                 )),
+                None,
                 None,
                 "".to_string(),
                 "".to_string(),

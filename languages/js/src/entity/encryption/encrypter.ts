@@ -3,7 +3,8 @@ import {
   LocalKey,
   ManagedKey,
   ManagedCertificate,
-  LocalCertificate
+  LocalCertificate,
+  AccessControl
 } from "../key";
 
 export class Encrypter {
@@ -11,9 +12,11 @@ export class Encrypter {
   managedKey?: ManagedKey;
   managedCertificate?: ManagedCertificate;
   localCertificate?: LocalCertificate;
+  accessControl?: AccessControl;
 
   constructor(
-    key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate
+    key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate,
+    accessControl?: AccessControl
   ) {
     if (key instanceof LocalKey) {
       this.localKey = key;
@@ -26,6 +29,10 @@ export class Encrypter {
     } else {
       throw new Error("invalid key provided");
     }
+
+    if (accessControl) {
+      this.accessControl = accessControl;
+    }
   }
 
   public toProto(): proto.Encrypter {
@@ -33,7 +40,8 @@ export class Encrypter {
       localKey: this.localKey?.toProto(),
       managedKey: this.managedKey?.toProto(),
       managedCertificate: this.managedCertificate?.toProto(),
-      localCertificate: this.localCertificate?.toProto()
+      localCertificate: this.localCertificate?.toProto(),
+      accessControl: this.accessControl?.toProto(),
     });
   }
 }

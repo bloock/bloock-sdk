@@ -2,12 +2,16 @@ use super::KeyError;
 use crate::{config::service::ConfigService, error::BloockResult};
 use bloock_http::Client;
 use bloock_keys::{
+    access_control::{
+        secret::SecretAccessControl,
+        totp::{TotpAccessControl, TotpAccessControlResult},
+    },
     certificates::CertificateSubject,
     certificates::{
         local::{LocalCertificate, LocalCertificateParams},
         managed::{ManagedCertificate, ManagedCertificateParams},
     },
-    entity::protection_level::ProtectionLevel,
+    entity::{key::Managed, protection_level::ProtectionLevel},
     keys::local::{LocalKey, LocalKeyParams},
     keys::managed::{ManagedKey, ManagedKeyParams},
     CertificateType, KeyType,
@@ -139,5 +143,53 @@ impl<H: Client> KeyService<H> {
         )
         .await
         .map_err(|e| KeyError::ImportManagedCertificateError(e.to_string()).into())
+    }
+
+    pub async fn setup_totp_access_control(
+        &self,
+        key: &Managed,
+    ) -> BloockResult<TotpAccessControlResult> {
+        let totp_access_control = TotpAccessControl::new(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            self.config_service.get_environment(),
+        );
+        totp_access_control
+            .setup(key)
+            .await
+            .map_err(|e| KeyError::SetupTOTPAccessControlError(e.to_string()).into())
+    }
+
+    pub async fn recover_totp_access_control(
+        &self,
+        key: &Managed,
+        code: String,
+    ) -> BloockResult<TotpAccessControlResult> {
+        let otp_access_control = TotpAccessControl::new(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            self.config_service.get_environment(),
+        );
+        otp_access_control
+            .recover(key, code)
+            .await
+            .map_err(|e| KeyError::RecoverTOTPAccessControlError(e.to_string()).into())
+    }
+
+    pub async fn setup_secret_access_control(
+        &self,
+        key: &Managed,
+        secret: String,
+        email: String,
+    ) -> BloockResult<()> {
+        let secret_access_control = SecretAccessControl::new(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            self.config_service.get_environment(),
+        );
+        secret_access_control
+            .setup(key, secret, email)
+            .await
+            .map_err(|e| KeyError::SetupSecretAccessControlError(e.to_string()).into())
     }
 }

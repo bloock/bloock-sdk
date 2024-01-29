@@ -33,7 +33,9 @@ export class ManagedCertificate {
     });
   }
 
-  static fromProto(r: keysEntitiesProto.ManagedCertificate): ManagedCertificate {
+  static fromProto(
+    r: keysEntitiesProto.ManagedCertificate
+  ): ManagedCertificate {
     return new ManagedCertificate(
       r.id,
       KeyProtectionLevel.fromProto(r.protection),

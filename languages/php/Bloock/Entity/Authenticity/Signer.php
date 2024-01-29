@@ -8,6 +8,7 @@ use Bloock\Entity\Key\ManagedKey;
 use Bloock\Entity\Key\LocalCertificate;
 use Bloock\Entity\Key\ManagedCertificate;
 use Bloock\Entity\Authenticity\HashAlg;
+use Bloock\Entity\Key\AccessControl;
 
 class Signer
 {
@@ -17,11 +18,12 @@ class Signer
     public ?LocalCertificate $localCertificate = null;
 
     public ?string $hashAlg = null;
+    public ?AccessControl $accessControl = null;
 
     /**
      * @throws Exception
      */
-    public function __construct($key, ?string $hashAlg = null)
+    public function __construct($key, ?string $hashAlg = null, ?AccessControl $accessControl = null)
     {
         if ($key instanceof LocalKey) {
             $this->localKey = $key;
@@ -37,6 +39,9 @@ class Signer
 
         if ($hashAlg != null) {
             $this->hashAlg = $hashAlg;
+        }
+        if ($accessControl != null) {
+            $this->accessControl = $accessControl;
         }
     }
 
@@ -62,6 +67,10 @@ class Signer
 
         if ($this->hashAlg != null) {
             $s->setHashAlg(HashAlg::toProto($this->hashAlg));
+        }
+
+        if ($this->accessControl != null) {
+            $s->setAccessControl($this->accessControl->toProto());
         }
 
         return $s;

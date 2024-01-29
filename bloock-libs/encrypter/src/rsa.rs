@@ -89,7 +89,12 @@ impl Encrypter for RsaEncrypter {
         })
     }
 
-    async fn encrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Encryption> {
+    async fn encrypt_managed(
+        &self,
+        payload: &[u8],
+        key: &Managed,
+        access_control: Option<String>,
+    ) -> Result<Encryption> {
         let managed = match key.clone() {
             Managed::Key(k) => k.clone(),
             Managed::Certificate(c) => c.key.clone(),
@@ -120,7 +125,7 @@ impl Encrypter for RsaEncrypter {
             .await?;
 
         let aes_key_encrypted = self
-            .internal_encrypt_managed(aes_key.key.as_bytes(), key)
+            .internal_encrypt_managed(aes_key.key.as_bytes(), key, access_control)
             .await?;
 
         Ok(Encryption {
@@ -171,6 +176,7 @@ impl Encrypter for RsaEncrypter {
         payload: &[u8],
         encryption_key: Option<EncryptionKey>,
         key: &Managed,
+        access_control: Option<String>,
     ) -> Result<Vec<u8>> {
         let encrypted_aes_key = encryption_key
             .and_then(|e| e.aes_key_enc)
@@ -180,7 +186,7 @@ impl Encrypter for RsaEncrypter {
             })?;
 
         let aes_key = self
-            .internal_decrypt_managed(&encrypted_aes_key, key)
+            .internal_decrypt_managed(&encrypted_aes_key, key, access_control)
             .await?;
         let aes_key = String::from_utf8(aes_key).map_err(|_| {
             EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
@@ -239,7 +245,12 @@ impl RsaEncrypter {
         })
     }
 
-    async fn internal_encrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Encryption> {
+    async fn internal_encrypt_managed(
+        &self,
+        payload: &[u8],
+        key: &Managed,
+        access_control: Option<String>,
+    ) -> Result<Encryption> {
         let managed = match key.clone() {
             Managed::Key(k) => k.clone(),
             Managed::Certificate(c) => c.key.clone(),
@@ -260,6 +271,7 @@ impl RsaEncrypter {
             key_id: managed.id.clone(),
             algorithm: "RSA1_5".to_string(),
             payload: base64_url::encode(payload),
+            access_code: access_control,
         };
 
         let res: EncryptResponse = http
@@ -296,7 +308,12 @@ impl RsaEncrypter {
             .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))
     }
 
-    async fn internal_decrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Vec<u8>> {
+    async fn internal_decrypt_managed(
+        &self,
+        payload: &[u8],
+        key: &Managed,
+        access_control: Option<String>,
+    ) -> Result<Vec<u8>> {
         let managed = match key.clone() {
             Managed::Key(k) => k.clone(),
             Managed::Certificate(c) => c.key.clone(),
@@ -308,6 +325,7 @@ impl RsaEncrypter {
             key_id: managed.id.clone(),
             algorithm: "RSA1_5".to_string(),
             cipher: String::from_utf8_lossy(payload).to_string(),
+            access_code: access_control,
         };
         let res: DecryptResponse = http
             .post_json(format!("{}/keys/v1/decrypt", self.api_host), req, None)
@@ -465,7 +483,7 @@ mod tests {
         let encrypter = RsaEncrypter::new(api_host, api_key, None);
 
         let encryption = encrypter
-            .encrypt_managed(string_payload.as_bytes(), &managed_key.clone().into())
+            .encrypt_managed(string_payload.as_bytes(), &managed_key.clone().into(), None)
             .await
             .unwrap();
 
@@ -473,7 +491,12 @@ mod tests {
         assert_eq!(encryption.clone().key.unwrap().key, managed_key.public_key);
 
         let result = encrypter
-            .decrypt_managed(&encryption.ciphertext, encryption.key, &managed_key.into())
+            .decrypt_managed(
+                &encryption.ciphertext,
+                encryption.key,
+                &managed_key.into(),
+                None,
+            )
             .await
             .unwrap();
 
@@ -499,7 +522,7 @@ mod tests {
         let encrypter = RsaEncrypter::new(api_host, api_key, None);
 
         let result = encrypter
-            .decrypt_managed(string_payload.as_bytes(), None, &managed_key.into())
+            .decrypt_managed(string_payload.as_bytes(), None, &managed_key.into(), None)
             .await;
 
         assert!(result.is_err());
@@ -528,7 +551,7 @@ mod tests {
         let encrypter = RsaEncrypter::new(api_host, api_key, None);
 
         let encryption = encrypter
-            .encrypt_managed(string_payload.as_bytes(), &managed_key.clone().into())
+            .encrypt_managed(string_payload.as_bytes(), &managed_key.clone().into(), None)
             .await
             .unwrap();
 
@@ -544,6 +567,7 @@ mod tests {
                     aes_key_enc: Some("invalid_aes_key".to_string()),
                 }),
                 &managed_key.into(),
+                None,
             )
             .await;
 
@@ -571,7 +595,7 @@ mod tests {
         let signer = RsaEncrypter::new(api_host, api_key, None);
 
         let result = signer
-            .decrypt_managed(invalid_payload.as_bytes(), None, &managed_key.into())
+            .decrypt_managed(invalid_payload.as_bytes(), None, &managed_key.into(), None)
             .await;
 
         assert!(result.is_err());

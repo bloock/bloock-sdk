@@ -6,7 +6,12 @@ export class Schema {
   schemaType: string;
   json: string;
 
-  constructor(cid: string, cidJsonLd: string, schemaType: string, json: string) {
+  constructor(
+    cid: string,
+    cidJsonLd: string,
+    schemaType: string,
+    json: string
+  ) {
     this.cid = cid;
     this.cidJsonLd = cidJsonLd;
     this.schemaType = schemaType;

@@ -1,27 +1,27 @@
 package com.bloock.sdk.entity.encryption;
 
 import com.bloock.sdk.bridge.proto.EncryptionEntities;
-import com.bloock.sdk.entity.key.LocalCertificate;
-import com.bloock.sdk.entity.key.LocalKey;
-import com.bloock.sdk.entity.key.ManagedCertificate;
-import com.bloock.sdk.entity.key.ManagedKey;
+import com.bloock.sdk.entity.key.*;
 
 public class Encrypter {
   LocalKey localKey;
   ManagedKey managedKey;
   ManagedCertificate managedCertificate;
   LocalCertificate localCertificate;
+  AccessControl accessControl;
 
   public Encrypter(LocalKey localKey) {
     this.localKey = localKey;
   }
 
-  public Encrypter(ManagedKey managedKey) {
+  public Encrypter(ManagedKey managedKey, AccessControl accessControl) {
     this.managedKey = managedKey;
+    this.accessControl = accessControl;
   }
 
-  public Encrypter(ManagedCertificate managedCertificate) {
+  public Encrypter(ManagedCertificate managedCertificate, AccessControl accessControl) {
     this.managedCertificate = managedCertificate;
+    this.accessControl = accessControl;
   }
 
   public Encrypter(LocalCertificate localCertificate) {
@@ -45,6 +45,10 @@ public class Encrypter {
 
     if (this.localCertificate != null) {
       builder.setLocalCertificate(this.localCertificate.toProto());
+    }
+
+    if (this.accessControl != null) {
+      builder.setAccessControl(this.accessControl.toProto());
     }
 
     return builder.build();

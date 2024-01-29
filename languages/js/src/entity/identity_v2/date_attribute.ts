@@ -5,7 +5,7 @@ export class DateAttribute extends Attribute<Date> {
   public toProto(): identityEntitiesProto.DateAttributeV2 {
     return identityEntitiesProto.DateAttributeV2.fromPartial({
       id: this.id,
-      value: this.value.toISOString().split('T')[0]
+      value: this.value.toISOString().split("T")[0]
     });
   }
 

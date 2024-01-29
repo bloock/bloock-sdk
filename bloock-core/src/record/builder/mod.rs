@@ -9,9 +9,9 @@ use bloock_keys::entity::key::Key;
 
 pub struct Builder {
     document: Document,
-    signer: Option<(Key, Option<HashAlg>)>,
-    encrypter: Option<Key>,
-    decrypter: Option<Key>,
+    signer: Option<(Key, Option<HashAlg>, Option<String>)>,
+    encrypter: Option<(Key, Option<String>)>,
+    decrypter: Option<(Key, Option<String>)>,
 }
 
 impl Builder {
@@ -44,18 +44,23 @@ impl Builder {
         }
     }
 
-    pub fn with_signer(mut self, key: &Key, hash_alg: Option<HashAlg>) -> Self {
-        self.signer = Some((key.clone(), hash_alg));
+    pub fn with_signer(
+        mut self,
+        key: &Key,
+        hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
+    ) -> Self {
+        self.signer = Some((key.clone(), hash_alg, access_control));
         self
     }
 
-    pub fn with_encrypter(mut self, key: &Key) -> Self {
-        self.encrypter = Some(key.clone());
+    pub fn with_encrypter(mut self, key: &Key, access_control: Option<String>) -> Self {
+        self.encrypter = Some((key.clone(), access_control));
         self
     }
 
-    pub fn with_decrypter(mut self, key: &Key) -> Self {
-        self.decrypter = Some(key.clone());
+    pub fn with_decrypter(mut self, key: &Key, access_control: Option<String>) -> Self {
+        self.decrypter = Some((key.clone(), access_control));
         self
     }
 
@@ -65,17 +70,19 @@ impl Builder {
                 Err(EncrypterError::NotEncrypted()).map_err(InfrastructureError::EncrypterError)?;
             }
 
-            self.document.decrypt(&decrypter).await?;
+            self.document.decrypt(&decrypter.0, decrypter.1).await?;
         }
 
         if let Some(signer) = &self.signer {
-            self.document.sign(&signer.0, signer.1.clone()).await?;
+            self.document
+                .sign(&signer.0, signer.1.clone(), signer.2.clone())
+                .await?;
         }
 
         let mut record = Record::new(self.document)?;
 
         if let Some(encrypter) = self.encrypter {
-            record.encrypt(&encrypter).await?;
+            record.encrypt(&encrypter.0, encrypter.1).await?;
         }
 
         Ok(record)

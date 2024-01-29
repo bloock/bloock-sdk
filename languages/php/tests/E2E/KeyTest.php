@@ -13,11 +13,13 @@ use Bloock\Entity\Key\LocalCertificateArgs;
 use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\SubjectCertificateParams;
 use Bloock\Entity\Authenticity\Signer;
-use Bloock\Entity\Authenticity\SignerArgs;
+use Bloock\Entity\Key\Managed;
 use PHPUnit\Framework\TestCase;
 
 final class KeyTest extends TestCase
 {
+    use Utils;
+
     public static function setUpBeforeClass(): void
     {
         Bloock::$apiKey = getenv("DEV_API_KEY");
@@ -177,7 +179,7 @@ final class KeyTest extends TestCase
         $keyClient = new KeyClient();
 
         $keyType = KeyType::Rsa2048;
-        $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", null, null, "US");
+        $subjectParams = new SubjectCertificateParams("Google, internet, Authority G2", "Google, Inc", "IT + Department", null, null, "US");
 
         $params = new LocalCertificateArgs($keyType, $subjectParams, "password", 2);
         $certificate = $keyClient->newLocalCertificate($params);
@@ -214,7 +216,7 @@ final class KeyTest extends TestCase
         $keyClient = new KeyClient();
 
         $keyType = KeyType::EcP256k;
-        $subjectParams = new SubjectCertificateParams("Google internet Authority G2", "Google Inc", "IT Department", null, null, "US");
+        $subjectParams = new SubjectCertificateParams("Google, internet, Authority G2", "Google, Inc", "IT + Department", null, null, "US");
 
         $params = new ManagedCertificateParams($keyType, $subjectParams, 5);
         $certificate = $keyClient->newManagedCertificate($params);
@@ -279,5 +281,64 @@ final class KeyTest extends TestCase
         $signature = $authenticityClient->sign($record, new Signer($loadedCertificate));
 
         $this->assertNotNull($signature);
+    }
+
+    public function testSetupAndRecoverTotpAccessControl()
+    {
+        $keyClient = new KeyClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::EcP256k;
+
+        $params = new ManagedKeyParams($keyProtection, $keyType);
+        $managedKey = $keyClient->newManagedKey($params);
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient->sign($record, new Signer($managedKey));
+
+        $totp = $keyClient->setupTotpAccessControl(new Managed($managedKey));
+        $this->assertNotNull($totp->getSecret());
+        $this->assertNotNull($totp->getSecretQr());
+        $this->assertNotNull($totp->getRecoveryCodes());
+
+        try {
+            $authenticityClient->sign($record, new Signer($managedKey));
+        } catch (Exception $e) {
+            $this->assertNotNull($e->getMessage());
+        }
+
+        $totpRecovered = $keyClient->recoverTotpAccessControl(new Managed($managedKey), $totp->getRecoveryCodes()[0]);
+        $this->assertNotNull($totpRecovered->getSecret());
+        $this->assertNotNull($totpRecovered->getSecretQr());
+        $this->assertNotNull($totpRecovered->getRecoveryCodes());
+    }
+
+    public function testSetupSecretAccessControl()
+    {
+        $keyClient = new KeyClient();
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::EcP256k;
+
+        $params = new ManagedKeyParams($keyProtection, $keyType);
+        $managedKey = $keyClient->newManagedKey($params);
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $authenticityClient->sign($record, new Signer($managedKey));
+
+        $email = $this->generateRandomString(8) . "@bloock.com";
+        $keyClient->setupSecretAccessControl(new Managed($managedKey), "password", $email);
+
+        try {
+            $authenticityClient->sign($record, new Signer($managedKey));
+        } catch (Exception $e) {
+            $this->assertNotNull($e->getMessage());
+        }
     }
 }

@@ -18,6 +18,7 @@ pub async fn encrypt(
     environment: Option<String>,
     payload: &[u8],
     key: &Key,
+    access_control: Option<String>,
 ) -> Result<Encryption> {
     let alg = match key {
         Key::Local(l) => match l {
@@ -42,7 +43,7 @@ pub async fn encrypt(
 
     match key {
         Key::Local(l) => encrypter.encrypt_local(payload, l).await,
-        Key::Managed(m) => encrypter.encrypt_managed(payload, m).await,
+        Key::Managed(m) => encrypter.encrypt_managed(payload, m, access_control).await,
     }
 }
 
@@ -53,6 +54,7 @@ pub async fn decrypt(
     payload: &[u8],
     encryption_key: Option<EncryptionKey>,
     key: &Key,
+    access_control: Option<String>,
 ) -> Result<Vec<u8>> {
     let alg = match key {
         Key::Local(l) => match l {
@@ -77,14 +79,14 @@ pub async fn decrypt(
 
     match key {
         Key::Local(l) => encrypter.decrypt_local(payload, encryption_key, l).await,
-        Key::Managed(m) => encrypter.decrypt_managed(payload, encryption_key, m).await,
+        Key::Managed(m) => encrypter.decrypt_managed(payload, encryption_key, m, access_control).await,
     }
 }
 
 #[async_trait(?Send)]
 pub trait Encrypter {
     async fn encrypt_local(&self, payload: &[u8], key: &Local) -> Result<Encryption>;
-    async fn encrypt_managed(&self, payload: &[u8], key: &Managed) -> Result<Encryption>;
+    async fn encrypt_managed(&self, payload: &[u8], key: &Managed, access_control: Option<String>) -> Result<Encryption>;
 
     async fn decrypt_local(
         &self,
@@ -97,6 +99,7 @@ pub trait Encrypter {
         payload: &[u8],
         encryption_key: Option<EncryptionKey>,
         key: &Managed,
+        access_control: Option<String>
     ) -> Result<Vec<u8>>;
 }
 

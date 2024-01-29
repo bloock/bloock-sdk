@@ -395,6 +395,33 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::KeyServiceSetupTotpAccessControl => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .setup_totp_access_control(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceSetupSecretAccessControl => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .setup_secret_access_control(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::KeyServiceRecoverTotpAccessControl => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .key
+                    .recover_totp_access_control(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::IdentityServiceCreateIdentity => {
                 let req = self.serialize_request(payload)?;
                 Ok(self
@@ -635,7 +662,8 @@ impl Server {
                     .await)
             }
             BloockServer::IdentityServiceV2CreateVerification => {
-                let req: crate::items::CreateVerificationRequest = self.serialize_request(payload)?;
+                let req: crate::items::CreateVerificationRequest =
+                    self.serialize_request(payload)?;
                 Ok(self
                     .identity_v2
                     .create_verification(&req)
@@ -653,7 +681,8 @@ impl Server {
                     .await)
             }
             BloockServer::IdentityServiceV2GetVerificationStatus => {
-                let req: crate::items::GetVerificationStatusRequest = self.serialize_request(payload)?;
+                let req: crate::items::GetVerificationStatusRequest =
+                    self.serialize_request(payload)?;
                 Ok(self
                     .identity_v2
                     .get_verification_status(&req)

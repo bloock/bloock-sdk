@@ -31,10 +31,13 @@ use crate::items::LoadManagedKeyResponse;
 use crate::items::PublishIssuerStateResponse;
 use crate::items::PublishResponse;
 use crate::items::RecordBuilderResponse;
+use crate::items::RecoverTotpAccessControlResponse;
 use crate::items::RetrieveResponse;
 use crate::items::RevokeCredentialResponseV2;
 use crate::items::SendRecordsResponse;
 use crate::items::SetProofResponse;
+use crate::items::SetupSecretAccessControlResponse;
+use crate::items::SetupTotpAccessControlResponse;
 use crate::items::SignResponse;
 use crate::items::ValidateRootResponse;
 use crate::items::VerifyProofResponse;
@@ -81,6 +84,9 @@ pub enum ResponseType {
     GenerateManagedKeyResponse(GenerateManagedKeyResponse),
     LoadLocalKeyResponse(LoadLocalKeyResponse),
     LoadManagedKeyResponse(LoadManagedKeyResponse),
+    SetupTotpAccessControlResponse(SetupTotpAccessControlResponse),
+    RecoverTotpAccessControlResponse(RecoverTotpAccessControlResponse),
+    SetupSecretAccessControlResponse(SetupSecretAccessControlResponse),
     CreateIdentityResponse(CreateIdentityResponse),
     LoadIdentityResponse(LoadIdentityResponse),
     BuildSchemaResponse(BuildSchemaResponse),
@@ -147,6 +153,9 @@ impl ResponseType {
             ResponseType::GenerateManagedKeyResponse(r) => r.encode(&mut result_vec),
             ResponseType::LoadLocalKeyResponse(r) => r.encode(&mut result_vec),
             ResponseType::LoadManagedKeyResponse(r) => r.encode(&mut result_vec),
+            ResponseType::SetupTotpAccessControlResponse(r) => r.encode(&mut result_vec),
+            ResponseType::RecoverTotpAccessControlResponse(r) => r.encode(&mut result_vec),
+            ResponseType::SetupSecretAccessControlResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateIdentityResponse(r) => r.encode(&mut result_vec),
             ResponseType::LoadIdentityResponse(r) => r.encode(&mut result_vec),
@@ -213,6 +222,9 @@ impl ResponseType {
             ResponseType::GenerateManagedKeyResponse(r) => r.encoded_len(),
             ResponseType::LoadLocalKeyResponse(r) => r.encoded_len(),
             ResponseType::LoadManagedKeyResponse(r) => r.encoded_len(),
+            ResponseType::SetupTotpAccessControlResponse(r) => r.encoded_len(),
+            ResponseType::RecoverTotpAccessControlResponse(r) => r.encoded_len(),
+            ResponseType::SetupSecretAccessControlResponse(r) => r.encoded_len(),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encoded_len(),
             ResponseType::CreateIdentityResponse(r) => r.encoded_len(),
             ResponseType::LoadIdentityResponse(r) => r.encoded_len(),

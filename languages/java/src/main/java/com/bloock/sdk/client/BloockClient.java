@@ -17,13 +17,18 @@ public class BloockClient {
 
   public BloockClient(String apiKey, String identityApiHost, String forceEnv) {
     ConfigData configData = Config.newConfigDataDefault();
-    Configuration configuration = Configuration.newBuilder().setApiKey(apiKey)
-        .setEnvironment(forceEnv).setIdentityApiHost(identityApiHost).build();
+    Configuration configuration =
+        Configuration.newBuilder()
+            .setApiKey(apiKey)
+            .setEnvironment(forceEnv)
+            .setIdentityApiHost(identityApiHost)
+            .build();
 
-    this.configData = ConfigData.newBuilder()
-        .setConfig(configuration)
-        .putAllNetworksConfig(configData.getNetworksConfigMap())
-        .build();
+    this.configData =
+        ConfigData.newBuilder()
+            .setConfig(configuration)
+            .putAllNetworksConfig(configData.getNetworksConfigMap())
+            .build();
 
     this.integrityClient = new IntegrityClient(this.configData);
     this.authenticityClient = new AuthenticityClient(this.configData);

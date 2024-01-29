@@ -19,4 +19,5 @@ message Encrypter {
     optional ManagedKey managed_key = 2;
     optional LocalCertificate local_certificate = 3;
     optional ManagedCertificate managed_certificate = 4;
+    optional AccessControl access_control = 6;
 }

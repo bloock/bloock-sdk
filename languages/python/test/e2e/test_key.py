@@ -13,7 +13,8 @@ from bloock.entity.key.managed_certificate_params import ManagedCertificateParam
 from bloock.entity.key.local_certificate_params import LocalCertificateParams
 from bloock.entity.key.managed_key_params import ManagedKeyParams
 from bloock.entity.key.subject_certificate_params import SubjectCertificateParams
-from test.e2e.util import init_sdk, init_dev_sdk
+from bloock.entity.key.managed import Managed
+from test.e2e.util import init_sdk, init_dev_sdk, generate_random_string
 
 
 class TestKey(unittest.TestCase):
@@ -153,8 +154,9 @@ class TestKey(unittest.TestCase):
 
         key_type = KeyType.Rsa2048
         subject_params = SubjectCertificateParams(
-            "Google internet Authority G2", "IT Department", "IT Department", None, None, "US")
-        params = LocalCertificateParams(key_type, subject_params, "password", 2)
+            "Google, internet, Authority G2", "IT, Department", "IT + Department", None, None, "US")
+        params = LocalCertificateParams(
+            key_type, subject_params, "password", 2)
         local_certificate = key_client.new_local_certificate(params)
 
         self.assertIsNotNone(local_certificate.pkcs12)
@@ -180,7 +182,8 @@ class TestKey(unittest.TestCase):
         with open(file_path, 'rb') as file:
             file_bytes = file.read()
 
-        local_certificate = key_client.load_local_certificate(file_bytes, "bloock")
+        local_certificate = key_client.load_local_certificate(
+            file_bytes, "bloock")
 
         self.assertEqual(local_certificate.password, "bloock")
 
@@ -189,7 +192,7 @@ class TestKey(unittest.TestCase):
 
         key_type = KeyType.EcP256k
         subject_params = SubjectCertificateParams(
-            "Google internet Authority G2", "IT Department", "IT Department", None, None, "US")
+            "Google, internet, Authority G2", "IT, Department", "IT + Department", None, None, "US")
         params = ManagedCertificateParams(key_type, subject_params, 5)
         managed_certificate = key_client.new_managed_certificate(params)
 
@@ -265,3 +268,52 @@ class TestKey(unittest.TestCase):
         signature = authenticity_client.sign(
             record, Signer(loaded_certificate))
         self.assertNotEqual(signature, "")
+
+    def test_setup_and_recover_totp_access_control(self):
+        key_client = KeyClient()
+        record_client = RecordClient()
+        authenticity_client = AuthenticityClient()
+
+        protection = KeyProtectionLevel.SOFTWARE
+        key_type = KeyType.Rsa2048
+        params = ManagedKeyParams(protection, key_type)
+        managed_key = key_client.new_managed_key(params)
+
+        record = record_client.from_string("Hello world").build()
+
+        authenticity_client.sign(record, Signer(managed_key))
+
+        totp = key_client.setup_totp_access_control(Managed(managed_key))
+        self.assertNotEqual(totp.secret, "")
+        self.assertNotEqual(totp.secret_qr, "")
+        self.assertNotEqual(totp.recovery_codes, [""])
+
+        with self.assertRaises(Exception):
+            authenticity_client.sign(record, Signer(managed_key))
+
+        totp_recovered = key_client.recover_totp_access_control(
+            Managed(managed_key), totp.recovery_codes[0])
+        self.assertNotEqual(totp_recovered.secret, "")
+        self.assertNotEqual(totp_recovered.secret_qr, "")
+        self.assertNotEqual(totp_recovered.recovery_codes, [""])
+
+    def test_setup_secret_access_control(self):
+        key_client = KeyClient()
+        record_client = RecordClient()
+        authenticity_client = AuthenticityClient()
+
+        protection = KeyProtectionLevel.SOFTWARE
+        key_type = KeyType.Rsa2048
+        params = ManagedKeyParams(protection, key_type)
+        managed_key = key_client.new_managed_key(params)
+
+        record = record_client.from_string("Hello world").build()
+
+        authenticity_client.sign(record, Signer(managed_key))
+
+        email = generate_random_string(8) + "@bloock.com"
+        key_client.setup_secret_access_control(
+            Managed(managed_key), "password", email)
+
+        with self.assertRaises(Exception):
+            authenticity_client.sign(record, Signer(managed_key))

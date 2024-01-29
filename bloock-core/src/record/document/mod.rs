@@ -36,12 +36,13 @@ impl Document {
         })
     }
 
-    pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>) -> BloockResult<Signature> {
+    pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>, access_control: Option<String>) -> BloockResult<Signature> {
         let signature = self
             .parser
             .sign(
                 key,
                 hash_alg,
+                access_control,
                 self.api_host.clone(),
                 self.api_key.clone(),
                 self.environment.clone(),
@@ -65,10 +66,11 @@ impl Document {
         Ok(ok)
     }
 
-    pub async fn encrypt(&mut self, key: &Key) -> BloockResult<()> {
+    pub async fn encrypt(&mut self, key: &Key, access_control: Option<String>) -> BloockResult<()> {
         self.parser
             .encrypt(
                 key,
+                access_control,
                 self.api_host.clone(),
                 self.api_key.clone(),
                 self.environment.clone(),
@@ -79,10 +81,11 @@ impl Document {
         Ok(())
     }
 
-    pub async fn decrypt(&mut self, key: &Key) -> BloockResult<()> {
+    pub async fn decrypt(&mut self, key: &Key, access_control: Option<String>) -> BloockResult<()> {
         self.parser
             .decrypt(
                 key,
+                access_control,
                 self.api_host.clone(),
                 self.api_key.clone(),
                 self.environment.clone(),
@@ -211,6 +214,7 @@ mod tests {
                     local_certificate,
                 )),
                 None,
+                None,
             )
             .await
             .unwrap();
@@ -252,6 +256,7 @@ mod tests {
                 &Key::Local(bloock_keys::entity::key::Local::Certificate(
                     local_certificate,
                 )),
+                None,
                 None,
             )
             .await
@@ -303,6 +308,7 @@ mod tests {
                     local_certificate,
                 )),
                 None,
+                None,
             )
             .await
             .unwrap();
@@ -339,7 +345,7 @@ mod tests {
         )
         .unwrap();
         let signature: Signature = document
-            .sign(&Key::Local(bloock_keys::entity::key::Local::Key(key)), None)
+            .sign(&Key::Local(bloock_keys::entity::key::Local::Key(key)), None, None)
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
@@ -388,6 +394,7 @@ mod tests {
                 &Key::Managed(bloock_keys::entity::key::Managed::Certificate(
                     managed_certificate,
                 )),
+                None,
                 None,
             )
             .await
@@ -497,7 +504,7 @@ mod tests {
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        document.encrypt(&local_key.clone().into()).await.unwrap();
+        document.encrypt(&local_key.clone().into(), None).await.unwrap();
 
         let built_doc = document.build().unwrap();
         let mut encrypted_doc = Document::new(
@@ -508,7 +515,7 @@ mod tests {
         )
         .unwrap();
 
-        encrypted_doc.decrypt(&local_key.into()).await.unwrap();
+        encrypted_doc.decrypt(&local_key.into(), None).await.unwrap();
         let decrypted_payload = encrypted_doc.build().unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
@@ -566,7 +573,7 @@ mod tests {
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        document.encrypt(&local_key.clone().into()).await.unwrap();
+        document.encrypt(&local_key.clone().into(), None).await.unwrap();
 
         let built_doc = document.build().unwrap();
         let mut encrypted_doc = Document::new(
@@ -577,7 +584,7 @@ mod tests {
         )
         .unwrap();
 
-        encrypted_doc.decrypt(&local_key.into()).await.unwrap();
+        encrypted_doc.decrypt(&local_key.into(), None).await.unwrap();
         let decrypted_payload = encrypted_doc.build().unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
@@ -653,6 +660,7 @@ mod tests {
                     local_certificate,
                 )),
                 None,
+                None,
             )
             .await
             .unwrap();
@@ -661,7 +669,7 @@ mod tests {
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        document.encrypt(&local_key.clone().into()).await.unwrap();
+        document.encrypt(&local_key.clone().into(), None).await.unwrap();
 
         let built_doc = document.build().unwrap();
         let mut encrypted_doc = Document::new(
@@ -672,7 +680,7 @@ mod tests {
         )
         .unwrap();
 
-        encrypted_doc.decrypt(&local_key.into()).await.unwrap();
+        encrypted_doc.decrypt(&local_key.into(), None).await.unwrap();
 
         let decrypted_payload = encrypted_doc.build().unwrap();
 

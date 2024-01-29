@@ -6,14 +6,19 @@ use Bloock\Client\KeyClient;
 use Bloock\Client\RecordClient;
 use Bloock\Entity\Authenticity\Signer;
 use Bloock\Entity\Authenticity\SignatureAlg;
-use Bloock\Entity\Authenticity\SignerArgs;
+use Bloock\Entity\Key\AccessControl;
+use Bloock\Entity\Key\AccessControlSecret;
+use Bloock\Entity\Key\AccessControlTotp;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
+use Bloock\Entity\Key\Managed;
 use Bloock\Entity\Key\ManagedKeyParams;
 use PHPUnit\Framework\TestCase;
 
 final class AuthenticityTest extends TestCase
 {
+    use Utils;
+
     public static function setUpBeforeClass(): void
     {
         Bloock::$apiKey = getenv("API_KEY");
@@ -106,6 +111,37 @@ final class AuthenticityTest extends TestCase
     /**
      * @throws Exception
      */
+    /*public function testSignManagedEcdsaWithTotpAccessControl()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::EcP256k));
+
+        $totp = $keyClient->setupTotpAccessControl(new Managed($key));
+
+        $code = $this->generateTOTPClient($totp->getSecret(), time());
+
+        $totpAccessControl = new AccessControlTotp($code);
+        $signature = $authenticityClient->sign($record, new Signer($key, null, new AccessControl($totpAccessControl)));
+        $this->assertNotNull($signature);
+
+        $invalidCode = "123456";
+        $invalidTotpAccessControl = new AccessControlTotp($invalidCode);
+
+        try {
+            $authenticityClient->sign($record, new Signer($key, null, new AccessControl($invalidTotpAccessControl)));
+        } catch (Exception $e) {
+            $this->assertNotNull($e->getMessage());
+        }
+    }*/
+
+    /**
+     * @throws Exception
+     */
     public function testSignManagedBjj()
     {
         $recordClient = new RecordClient();
@@ -119,6 +155,37 @@ final class AuthenticityTest extends TestCase
         $signature = $authenticityClient->sign($record, new Signer($key));
 
         $this->assertNotNull($signature);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSignManagedBjjWithSecretAccessControl()
+    {
+        $recordClient = new RecordClient();
+        $authenticityClient = new AuthenticityClient();
+
+        $record = $recordClient->fromString("Hello world")->build();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Bjj));
+
+        $secret = "password";
+        $email = $this->generateRandomString(8) . "@bloock.com";
+        $signature = $authenticityClient->sign($record, new Signer($key));
+        $keyClient->setupSecretAccessControl(new Managed($key), $secret, $email);
+
+        $secretAccessControl = new AccessControlSecret($secret);
+        $signature = $authenticityClient->sign($record, new Signer($key, null, new AccessControl($secretAccessControl)));
+        $this->assertNotNull($signature);
+
+        $invalidSecret = "password1";
+        $invalidSecretAccessControl = new AccessControlSecret($invalidSecret);
+        try {
+            $authenticityClient->sign($record, new Signer($key, null, new AccessControl($invalidSecretAccessControl)));
+        } catch (Exception $e) {
+            $this->assertNotNull($e->getMessage());
+        }
     }
 
     /**

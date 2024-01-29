@@ -19,8 +19,9 @@ impl<H: Client> AuthenticityService<H> {
         mut record: Record,
         key: &Key,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
     ) -> BloockResult<Signature> {
-        let signature = record.sign(key, hash_alg).await?;
+        let signature = record.sign(key, hash_alg, access_control).await?;
 
         Ok(signature)
     }
@@ -77,6 +78,7 @@ mod tests {
                 record,
                 &Key::Local(bloock_keys::entity::key::Local::Key(local_key)),
                 None,
+                None,
             )
             .await
             .unwrap();
@@ -112,6 +114,7 @@ mod tests {
             .sign(
                 record,
                 &Key::Local(bloock_keys::entity::key::Local::Key(local_key)),
+                None,
                 None,
             )
             .await

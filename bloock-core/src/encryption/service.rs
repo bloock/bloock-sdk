@@ -11,15 +11,25 @@ pub struct EncryptionService<H: Client> {
 }
 
 impl<H: Client> EncryptionService<H> {
-    pub async fn encrypt(&self, mut record: Record, key: &Key) -> BloockResult<Record> {
+    pub async fn encrypt(
+        &self,
+        mut record: Record,
+        key: &Key,
+        access_control: Option<String>,
+    ) -> BloockResult<Record> {
         record
-            .encrypt(key)
+            .encrypt(key, access_control)
             .await
             .map_err(|e| EncryptionError::EncryptionError(e.to_string()))?;
         Ok(record)
     }
 
-    pub async fn decrypt(&self, mut record: Record, key: &Key) -> BloockResult<Record> {
+    pub async fn decrypt(
+        &self,
+        mut record: Record,
+        key: &Key,
+        access_control: Option<String>,
+    ) -> BloockResult<Record> {
         let doc = match record.document.clone() {
             Some(doc) => doc,
             None => return Err(EncryptionError::PayloadNotFoundError().into()),
@@ -30,7 +40,7 @@ impl<H: Client> EncryptionService<H> {
         }
 
         record
-            .decrypt(key)
+            .decrypt(key, access_control)
             .await
             .map_err(|e| EncryptionError::DecryptionError(e.to_string()))?;
 
@@ -69,7 +79,7 @@ mod tests {
         let local_key =
             LocalKey::load(bloock_keys::KeyType::Aes128, "new_password".to_string()).unwrap();
         let encrypted = service
-            .encrypt(record.clone(), &local_key.clone().into())
+            .encrypt(record.clone(), &local_key.clone().into(), None)
             .await
             .unwrap();
 
@@ -79,7 +89,7 @@ mod tests {
             "Should not return same hash"
         );
 
-        let decrypted = service.decrypt(encrypted, &local_key.into()).await.unwrap();
+        let decrypted = service.decrypt(encrypted, &local_key.into(), None).await.unwrap();
 
         assert_eq!(
             record.serialize().unwrap().clone(),
@@ -111,7 +121,7 @@ mod tests {
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
         let encrypted = service
-            .encrypt(record.clone(), &local_key.clone().into())
+            .encrypt(record.clone(), &local_key.clone().into(), None)
             .await
             .unwrap();
 
@@ -121,7 +131,7 @@ mod tests {
             "Should not return same hash"
         );
 
-        let decrypted = service.decrypt(encrypted, &local_key.into()).await.unwrap();
+        let decrypted = service.decrypt(encrypted, &local_key.into(), None).await.unwrap();
 
         assert_eq!(
             record.serialize().unwrap().clone(),

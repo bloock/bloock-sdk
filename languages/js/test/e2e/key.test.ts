@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { initDevSdk, initSdk } from "./util";
+import { generateRandomString, initDevSdk, initSdk } from "./util";
 import {
   AuthenticityClient,
   CertificateType,
@@ -12,7 +12,8 @@ import {
   ManagedKeyParams,
   RecordClient,
   SubjectCertificateParams,
-  LocalCertificateParams
+  LocalCertificateParams,
+  Managed
 } from "../../dist";
 import { readFileSync } from "fs";
 import path from "path";
@@ -188,9 +189,9 @@ describe("Key Tests", () => {
 
     let keyType = KeyType.Rsa2048;
     let subjectParams = new SubjectCertificateParams(
-      "Google internet Authority G2",
-      "Google Inc",
-      "IT Department",
+      "Google, internet, Authority G2",
+      "Google, Inc",
+      "IT + Department",
       undefined,
       undefined,
       "US"
@@ -238,9 +239,9 @@ describe("Key Tests", () => {
 
     let keyType = KeyType.EcP256k;
     let subjectParams = new SubjectCertificateParams(
-      "Google internet Authority G2",
-      "Google Inc",
-      "IT Department",
+      "Google, internet, Authority G2",
+      "Google, Inc",
+      "IT + Department",
       undefined,
       undefined,
       "US"
@@ -328,5 +329,73 @@ describe("Key Tests", () => {
     );
 
     expect(signature.signature).toBeTruthy();
+  });
+
+  test("setup & recover totp access control", async () => {
+    initDevSdk();
+
+    let keyClient = new KeyClient();
+    let recordClient = new RecordClient();
+    let authenticityClient = new AuthenticityClient();
+
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.EcP256k;
+    let managedKey = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType)
+    );
+
+    let record = await recordClient.fromString("Hello world").build();
+
+    await authenticityClient.sign(record, new Signer(managedKey));
+
+    let totp = await keyClient.setupTotpAccessControl(new Managed(managedKey));
+    expect(totp.secret).toBeTruthy();
+    expect(totp.secretQr).toBeTruthy();
+    expect(totp.recoveryCodes).toBeTruthy();
+
+    try {
+      await authenticityClient.sign(record, new Signer(managedKey));
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
+
+    let totpRecovered = await keyClient.recoverTotpAccessControl(
+      new Managed(managedKey),
+      totp.recoveryCodes[0]
+    );
+    expect(totpRecovered.secret).toBeTruthy();
+    expect(totpRecovered.secretQr).toBeTruthy();
+    expect(totpRecovered.recoveryCodes).toBeTruthy();
+  });
+
+  test("setup secret access control", async () => {
+    initDevSdk();
+
+    let keyClient = new KeyClient();
+    let recordClient = new RecordClient();
+    let authenticityClient = new AuthenticityClient();
+
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.EcP256k;
+    let managedKey = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType)
+    );
+
+    let record = await recordClient.fromString("Hello world").build();
+
+    await authenticityClient.sign(record, new Signer(managedKey));
+
+    let email = generateRandomString(8) + "@bloock.com";
+    await keyClient.setupSecretAccessControl(
+      new Managed(managedKey),
+      "password",
+      email
+    );
+
+    try {
+      await authenticityClient.sign(record, new Signer(managedKey));
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
   });
 });

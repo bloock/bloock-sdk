@@ -106,6 +106,7 @@ impl Signer for EcdsaSigner {
         payload: &[u8],
         key: &Managed,
         hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
     ) -> crate::Result<Signature> {
         let managed = match key {
             Managed::Key(k) => k.clone(),
@@ -131,6 +132,7 @@ impl Signer for EcdsaSigner {
             key_id: managed.id.clone(),
             algorithm: "ES256K".to_string(),
             payload: hex::encode(hash),
+            access_code: access_control.clone(),
         };
         let res: SignResponse = http
             .post_json(format!("{}/keys/v1/sign", self.api_host), req, None)
@@ -362,7 +364,7 @@ mod tests {
         let signer = EcdsaSigner::new(api_host, api_key, None, None);
 
         let signature = signer
-            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None)
+            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None, None)
             .await
             .unwrap();
 

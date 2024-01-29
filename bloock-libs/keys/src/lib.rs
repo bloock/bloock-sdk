@@ -2,6 +2,7 @@ use bloock_hasher::HashAlg;
 use serde::Serialize;
 use thiserror::Error as ThisError;
 
+pub mod access_control;
 pub mod algs;
 pub mod certificates;
 pub mod entity;

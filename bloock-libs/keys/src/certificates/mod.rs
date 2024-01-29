@@ -33,28 +33,58 @@ pub struct CertificateSubject {
 }
 
 impl CertificateSubject {
-    pub fn serialize(&self) -> String {
+    pub fn serialize_managed(&self) -> String {
         let mut subject_names = vec![];
-        subject_names.push(format!("CN={}", self.common_name));
+        subject_names.push(format!(
+            "CN={}",
+            normalize_value_with_quotes(&self.common_name)
+        ));
 
         if let Some(ou) = &self.organizational_unit {
-            subject_names.push(format!("OU={}", ou));
+            subject_names.push(format!("OU={}", normalize_value_with_quotes(ou)));
         }
 
         if let Some(o) = &self.organization {
-            subject_names.push(format!("O={}", o));
+            subject_names.push(format!("O={}", normalize_value_with_quotes(o)));
         }
 
         if let Some(l) = &self.location {
-            subject_names.push(format!("L={}", l));
+            subject_names.push(format!("L={}", normalize_value_with_quotes(l)));
         }
 
         if let Some(s) = &self.state {
-            subject_names.push(format!("S={}", s));
+            subject_names.push(format!("S={}", normalize_value_with_quotes(s)));
         }
 
         if let Some(c) = &self.country {
-            subject_names.push(format!("C={}", c));
+            subject_names.push(format!("C={}", normalize_value_with_quotes(c)));
+        }
+
+        subject_names.join(",")
+    }
+
+    pub fn serialize_local(&self) -> String {
+        let mut subject_names = vec![];
+        subject_names.push(format!("CN={}", normalize_value_with_back_slash(&self.common_name)));
+
+        if let Some(ou) = &self.organizational_unit {
+            subject_names.push(format!("OU={}", normalize_value_with_back_slash(ou)));
+        }
+
+        if let Some(o) = &self.organization {
+            subject_names.push(format!("O={}", normalize_value_with_back_slash(o)));
+        }
+
+        if let Some(l) = &self.location {
+            subject_names.push(format!("L={}", normalize_value_with_back_slash(l)));
+        }
+
+        if let Some(s) = &self.state {
+            subject_names.push(format!("S={}", normalize_value_with_back_slash(s)));
+        }
+
+        if let Some(c) = &self.country {
+            subject_names.push(format!("C={}", normalize_value_with_back_slash(c)));
         }
 
         subject_names.join(",")
@@ -157,6 +187,34 @@ fn create_self_certificate() -> Certificate {
     certificate.certificate
 }
 
+fn normalize_value_with_quotes(input: &str) -> String {
+    let special_characters = ",\\+=\"\n<>#;";
+
+    let contains_special_character = input.chars().any(|c| special_characters.contains(c));
+
+    if contains_special_character {
+        format!("\"{}\"", input)
+    } else {
+        input.to_owned()
+    }
+}
+
+fn normalize_value_with_back_slash(input: &str) -> String {
+    let special_characters = ",\\+=\"\n<>#;";
+
+    let normalized_string: String = input
+        .chars()
+        .map(|c| {
+            if special_characters.contains(c) {
+                format!("\\{}", c)
+            } else {
+                c.to_string()
+            }
+        })
+        .collect();
+    normalized_string
+}
+
 pub fn from_now(duration: Duration) -> der::Result<Validity> {
     let now = u128_to_system_time(get_current_timestamp());
     let then = now + duration;
@@ -185,4 +243,39 @@ fn get_current_timestamp() -> u128 {
 fn u128_to_system_time(nanoseconds: u128) -> SystemTime {
     let duration = TimeDuration::from_millis(nanoseconds.try_into().unwrap());
     SystemTime::UNIX_EPOCH + duration
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{normalize_value_with_quotes, CertificateSubject};
+    use regex::Regex;
+
+    #[test]
+    fn test_normalize_rdn_value() {
+        let input = "Hello, World + Byte".to_string();
+
+        let res = normalize_value_with_quotes(&input);
+        assert!(contains_quoted_content(&res))
+    }
+
+    #[test]
+    fn test_serialize() {
+        let input = CertificateSubject {
+            common_name: "Bloock, SL".to_string(),
+            organizational_unit: Some("BloockI+D".to_string()),
+            organization: Some("Bloock=ID".to_string()),
+            location: Some("Sant;Cugat".to_string()),
+            state: Some("BloockI+D".to_string()),
+            country: Some("Spain\"".to_string()),
+        };
+
+        let res = input.serialize_managed();
+        assert!(contains_quoted_content(&res))
+    }
+
+    fn contains_quoted_content(input: &str) -> bool {
+        let re = Regex::new(r#""[^"]*""#).unwrap();
+
+        re.is_match(input)
+    }
 }

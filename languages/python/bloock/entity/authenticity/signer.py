@@ -3,6 +3,7 @@ from bloock.entity.key.local_certificate import LocalCertificate
 from bloock.entity.key.local_key import LocalKey
 from bloock.entity.key.managed_certificate import ManagedCertificate
 from bloock.entity.key.managed_key import ManagedKey
+from bloock.entity.key.access_control import AccessControl
 from bloock.entity.authenticity.hash_alg import HashAlg
 
 
@@ -13,8 +14,9 @@ class Signer:
     local_certificate = None
 
     hash_alg = None
+    access_control = None
 
-    def __init__(self, key, hash_alg = None) -> None:
+    def __init__(self, key, hash_alg = None, access_control = None) -> None:
         if isinstance(key, LocalKey):
             self.local_key = key
         elif isinstance(key, ManagedKey):
@@ -29,6 +31,8 @@ class Signer:
         
         if isinstance(hash_alg, HashAlg):
             self.hash_alg = hash_alg
+        if isinstance(access_control, AccessControl):
+            self.access_control = access_control
 
     def to_proto(self) -> proto.Signer:
         local_key = None
@@ -51,10 +55,15 @@ class Signer:
         if self.hash_alg is not None:
             hash_alg = self.hash_alg.to_proto()
 
+        access_control = None
+        if self.access_control is not None:
+            access_control = self.access_control.to_proto()
+
         return proto.Signer(
             local_key=local_key,
             managed_key=managed_key,
             managed_certificate=managed_certificate,
             local_certificate=local_certificate,
             hash_alg=hash_alg,
+            access_control=access_control,
         )

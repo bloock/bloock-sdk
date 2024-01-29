@@ -1,11 +1,6 @@
 package com.bloock.sdk.entity.record;
 
 import com.bloock.sdk.bridge.proto.RecordEntities;
-import com.bloock.sdk.entity.authenticity.Signature;
-import com.bloock.sdk.entity.encryption.EncryptionAlg;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class EncryptionDetails {
   String alg;
@@ -51,7 +46,9 @@ public class EncryptionDetails {
 
   public RecordEntities.EncryptionDetails toProto() {
     return RecordEntities.EncryptionDetails.newBuilder()
-        .setAlg(alg).setKey(key).setSubject(subject)
+        .setAlg(alg)
+        .setKey(key)
+        .setSubject(subject)
         .build();
   }
 }

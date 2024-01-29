@@ -245,6 +245,7 @@ impl<H: Client> IdentityService<H> {
             id.as_bytes(),
             &key.into(),
             None,
+            None,
         )
         .await
         .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;

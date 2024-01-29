@@ -5,6 +5,7 @@ const config: Config.InitialOptions = {
   globals: {
     'ts-jest': {
       useESM: true,
+      tsconfig: 'tsconfig.test.json'
     },
   },
   preset: 'ts-jest',

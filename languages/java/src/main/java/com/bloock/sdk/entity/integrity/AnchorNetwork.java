@@ -16,7 +16,8 @@ public class AnchorNetwork {
   }
 
   static AnchorNetwork fromProto(IntegrityEntities.AnchorNetwork network) {
-    return new AnchorNetwork(network.getName(), network.getState(), network.getTxHash(), network.getRoot());
+    return new AnchorNetwork(
+        network.getName(), network.getState(), network.getTxHash(), network.getRoot());
   }
 
   IntegrityEntities.AnchorNetwork toProto() {

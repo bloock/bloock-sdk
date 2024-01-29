@@ -128,6 +128,44 @@ describe("Encryptions Tests", () => {
     expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
   });
 
+  /*test("encrypt managed rsa with totp access control", async () => {
+    initSdk();
+
+    let payload = "Hello world";
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString(payload).build();
+    let recordHash = await record.getHash();
+
+    let keyClient = new KeyClient();
+    let key = await keyClient.newManagedKey(
+      new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048)
+    );
+
+    let totp = await keyClient.setupTotpAccessControl(new Managed(key))
+
+    const timestamp = Math.floor(Date.now() / 1000);
+    console.log(timestamp);
+    let code = generateTOTPClient(totp.secret, timestamp)
+    console.log(code);
+
+    let totpAccessControl = new AccessControlTotp(code)
+    let encryptionClient = new EncryptionClient();
+    let encryptedRecord = await encryptionClient.encrypt(
+      record,
+      new Encrypter(key, new AccessControl(totpAccessControl))
+    );
+
+    let decryptedRecord = await recordClient
+      .fromRecord(encryptedRecord)
+      .withDecrypter(new Encrypter(key, new AccessControl(totpAccessControl)))
+      .build();
+
+    let decryptedRecordHash = await decryptedRecord.getHash();
+
+    expect(decryptedRecordHash).toBe(recordHash);
+    expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
+  });*/
+
   test("decrypt local rsa", async () => {
     initSdk();
 

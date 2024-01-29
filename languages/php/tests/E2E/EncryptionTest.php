@@ -9,16 +9,15 @@ use Bloock\Client\EncryptionClient;
 use Bloock\Entity\Encryption\Encrypter;
 use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\KeyProtectionLevel;
-use Bloock\Entity\Encryption\AesDecrypter;
-use Bloock\Entity\Encryption\AesEncrypter;
-use Bloock\Entity\Encryption\RsaDecrypter;
-use Bloock\Entity\Encryption\RsaEncrypter;
-use Bloock\Entity\Encryption\DecrypterArgs;
-use Bloock\Entity\Encryption\EncrypterArgs;
 use Bloock\Entity\Encryption\EncryptionAlg;
+use Bloock\Entity\Key\AccessControl;
+use Bloock\Entity\Key\AccessControlTotp;
+use Bloock\Entity\Key\Managed;
 
 final class EncryptionTest extends TestCase
 {
+    use Utils;
+
     public static function setUpBeforeClass(): void
     {
         Bloock::$apiKey = getenv("API_KEY");
@@ -45,7 +44,7 @@ final class EncryptionTest extends TestCase
         $encryptedRecord = $encryptionClient->encrypt($record, new Encrypter($key));
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
-            ->withDecrypter(new Encrypter($key))
+            ->withDecrypter(new Encrypter($key, null))
             ->build();
 
         $decryptedRecordHash = $decryptedRecord->getHash();
@@ -147,6 +146,37 @@ final class EncryptionTest extends TestCase
         $decryptedRecordHash = $decryptedRecord->getHash();
         $this->assertEquals($recordHash, $decryptedRecordHash);
     }
+
+    /**
+     * @throws Exception
+     */
+    /*public function testEncryptManagedRsaWithTotpAccessControl()
+    {
+        $payload = "Hello world";
+
+        $recordClient = new RecordClient();
+        $record = $recordClient->fromString($payload)->build();
+        $recordHash = $record->getHash();
+
+        $encryptionClient = new EncryptionClient();
+
+        $keyClient = new KeyClient();
+        $key = $keyClient->newManagedKey(new ManagedKeyParams(KeyProtectionLevel::SOFTWARE, KeyType::Rsa2048));
+
+        $totp = $keyClient->setupTotpAccessControl(new Managed($key));
+
+        $code = $this->generateTOTPClient($totp->getSecret(), time());
+
+        $totpAccessControl = new AccessControlTotp($code);
+        $encryptedRecord = $encryptionClient->encrypt($record, new Encrypter($key, new AccessControl($totpAccessControl)));
+
+        $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
+            ->withDecrypter(new Encrypter($key, new AccessControl($totpAccessControl)))
+            ->build();
+
+        $decryptedRecordHash = $decryptedRecord->getHash();
+        $this->assertEquals($recordHash, $decryptedRecordHash);
+    }*/
 
     /**
      * @throws Exception

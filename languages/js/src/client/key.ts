@@ -9,18 +9,23 @@ import {
   LoadLocalCertificateRequest,
   LoadLocalKeyRequest,
   LoadManagedCertificateRequest,
-  LoadManagedKeyRequest
+  LoadManagedKeyRequest,
+  RecoverTotpAccessControlRequest,
+  SetupSecretAccessControlRequest,
+  SetupTotpAccessControlRequest
 } from "../bridge/proto/keys";
 import { NewConfigData } from "../config/config";
 import { CertificateType, KeyType, LocalCertificate } from "../entity/key";
 import { LocalKey } from "../entity/key";
 import { ManagedKey, ManagedKeyParams } from "../entity/key";
 import { LocalCertificateParams } from "../entity/key/local_certificate_args";
+import { Managed } from "../entity/key/managed";
 import { ManagedCertificate } from "../entity/key/managed_certificate";
 import {
   ImportCertificateParams,
   ManagedCertificateParams
 } from "../entity/key/managed_certificate_params";
+import { TotpAccessControlReceipt } from "../entity/key/totp_access_control_receipt";
 
 export class KeyClient {
   private bridge: BloockBridge;
@@ -194,6 +199,73 @@ export class KeyClient {
           throw res.error;
         }
         return ManagedCertificate.fromProto(res.managedCertificate!);
+      });
+  }
+
+  async setupTotpAccessControl(key: Managed): Promise<TotpAccessControlReceipt> {
+    const request = SetupTotpAccessControlRequest.fromPartial({
+      configData: this.configData,
+      managedKey: key.managedKey?.toProto(),
+      managedCertificate: key.managedCertificate?.toProto()
+    });
+
+    return this.bridge
+      .getKey()
+      .SetupTotpAccessControl(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return new TotpAccessControlReceipt(
+          res.secret!,
+          res.secretQr!,
+          res.recoveryCodes!
+        );
+      });
+  }
+
+  async recoverTotpAccessControl(
+    key: Managed,
+    code: string
+  ): Promise<TotpAccessControlReceipt> {
+    const request = RecoverTotpAccessControlRequest.fromPartial({
+      configData: this.configData,
+      managedKey: key.managedKey?.toProto(),
+      managedCertificate: key.managedCertificate?.toProto(),
+      code: code
+    });
+
+    return this.bridge
+      .getKey()
+      .RecoverTotpAccessControl(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return new TotpAccessControlReceipt(
+          res.secret!,
+          res.secretQr!,
+          res.recoveryCodes!
+        );
+      });
+  }
+
+  async setupSecretAccessControl(key: Managed, secret: string, email: string) {
+    const request = SetupSecretAccessControlRequest.fromPartial({
+      configData: this.configData,
+      managedKey: key.managedKey?.toProto(),
+      managedCertificate: key.managedCertificate?.toProto(),
+      secret: secret,
+      email: email
+    });
+
+    return this.bridge
+      .getKey()
+      .SetupSecretAccessControl(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
       });
   }
 }
