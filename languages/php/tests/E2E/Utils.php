@@ -1,24 +1,18 @@
 <?php
 
-use Base32\Base32;
+use OTPHP\TOTP;
 
 trait Utils
 {
-    public function generateTOTPClient($secretKey, $timestamp)
+    public function generateTOTPClient($secretKey)
     {
-        $base32Decoder = new Base32();
-        $secretKey = strtoupper(trim($secretKey));
-        $secretBytes = $base32Decoder->decode($secretKey);
+        $timestamp = time();
 
-        $timeBytes = pack('N*', 0, (int)($timestamp / 30));
+        $otp = TOTP::create($secretKey);
 
-        $hash = hash_hmac('sha1', $timeBytes, $secretBytes, true);
+        $code = $otp->at($timestamp);
 
-        $offset = ord($hash[strlen($hash) - 1]) & 0x0F;
-
-        $truncatedHash = unpack('N', substr($hash, $offset, 4))[1] & 0x7FFFFFFF;
-
-        return strval($truncatedHash % 1_000_000);
+        return $code;
     }
 
     public function generateRandomString($length)
