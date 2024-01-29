@@ -2,6 +2,7 @@ import { describe, expect, test } from "@jest/globals";
 import {
   AccessControl,
   AccessControlSecret,
+  AccessControlTotp,
   AuthenticityClient,
   KeyClient,
   KeyProtectionLevel,
@@ -11,7 +12,7 @@ import {
   RecordClient,
   Signer
 } from "../../dist";
-import { generateRandomString, initSdk } from "./util";
+import { generateRandomString, generateTOTPClient, initSdk } from "./util";
 
 describe("Authenticity Tests", () => {
   test("generate ecdsa keys", async () => {
@@ -87,7 +88,7 @@ describe("Authenticity Tests", () => {
     expect(signature.signature).toBeTruthy();
   });
 
-  /*test("sign managed ecdsa with totp access control", async () => {
+  test("sign managed ecdsa with totp access control", async () => {
     initSdk();
 
     let recordClient = new RecordClient();
@@ -102,8 +103,7 @@ describe("Authenticity Tests", () => {
 
     let totp = await keyClient.setupTotpAccessControl(new Managed(key));
 
-    const timestamp = Math.floor(Date.now() / 1000);
-    let code = generateTOTPClient(totp.secret, timestamp);
+    let code = generateTOTPClient(totp.secret);
 
     let totpAccessControl = new AccessControlTotp(code);
     let signature = await authenticityClient.sign(
@@ -123,7 +123,7 @@ describe("Authenticity Tests", () => {
     } catch (error) {
       expect(error).toBeTruthy();
     }
-  });*/
+  });
 
   test("sign managed bjj", async () => {
     initSdk();

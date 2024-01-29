@@ -1,4 +1,4 @@
-import * as crypto from "crypto";
+import { createHmac } from "crypto";
 import { Bloock } from "../../dist/index";
 
 export function initSdk() {
@@ -44,56 +44,39 @@ export function generateRandomString(length: number) {
 
 export function generateTOTPClient(
   secretKey: string,
-  timestamp: number
+  timestamp = Date.now()
 ): string {
-  const base32Decoder = (base32: string) =>
-    base32Encode(Buffer.from(base32), false);
-  secretKey = secretKey.toUpperCase().trim();
-  const secretBytes = base32Decoder(secretKey);
-
-  const timeBytes = Buffer.alloc(8);
-  timeBytes.writeUIntBE(Math.floor(timestamp / 30), 0, 8);
-
-  const hash = crypto.createHmac("sha1", secretBytes);
-  hash.update(timeBytes);
-
-  const h = hash.digest();
-
-  const offset = h[h.length - 1] & 0x0f;
-
-  const truncatedHash = h.readUInt32BE(offset) & 0x7fffffff;
-
-  return (truncatedHash % 1_000_000).toString().padStart(6, "0");
+  const message = Buffer.from(
+    `0000000000000000${Math.floor(Math.round(timestamp / 1000) / 30).toString(
+      16
+    )}`.slice(-16),
+    "hex"
+  )
+  const key = Buffer.from(base32ToHex(secretKey.toUpperCase()), "hex")
+  const hmac = createHmac("sha1", key)
+  hmac.setEncoding("hex")
+  hmac.update(message)
+  hmac.end()
+  const data = hmac.read()
+  return (
+    parseInt(data.substr(parseInt(data.slice(-1), 16) * 2, 8), 16) & 2147483647
+  )
+    .toString()
+    .slice(-6)
 }
 
-function base32Encode(data: Buffer, padding: boolean): string {
-  let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
-  const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-
-  let bits = 0;
-  let value = 0;
-  let output = "";
-
-  for (let i = 0; i < view.byteLength; i++) {
-    value = (value << 8) | view.getUint8(i);
-    bits += 8;
-
-    while (bits >= 5) {
-      output += alphabet[(value >>> (bits - 5)) & 31];
-      bits -= 5;
-    }
+const base32ToHex = (base32: string) => {
+  let bits = ""
+  let hex = ""
+  for (let index = 0; index < base32.length; index++) {
+    const value = charset.indexOf(base32.charAt(index))
+    bits += `00000${value.toString(2)}`.slice(-5)
   }
-
-  if (bits > 0) {
-    output += alphabet[(value << (5 - bits)) & 31];
+  for (let index = 0; index < bits.length - 3; index += 4) {
+    const chunk = bits.substring(index, index + 4)
+    hex = hex + parseInt(chunk, 2).toString(16)
   }
-
-  if (padding) {
-    while (output.length % 8 !== 0) {
-      output += "=";
-    }
-  }
-
-  return output;
+  return hex
 }

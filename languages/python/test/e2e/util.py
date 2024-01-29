@@ -9,7 +9,7 @@ import bloock
 def init_sdk():
     bloock.api_key = os.environ.get("API_KEY")
     bloock.api_host = os.environ.get("API_HOST")
-    
+
     bloock.disable_analytics = True
 
 
@@ -19,6 +19,7 @@ def init_dev_sdk():
     bloock.identity_api_host = os.environ.get("DEV_IDENTITY_API_HOST")
 
     bloock.disable_analytics = True
+
 
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits
@@ -30,4 +31,3 @@ def generate_totp_client(secret_key):
     totp = pyotp.TOTP(secret_key)
 
     return totp.now()
-    
