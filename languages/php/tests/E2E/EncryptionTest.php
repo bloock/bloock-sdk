@@ -150,7 +150,7 @@ final class EncryptionTest extends TestCase
     /**
      * @throws Exception
      */
-    /*public function testEncryptManagedRsaWithTotpAccessControl()
+    public function testEncryptManagedRsaWithTotpAccessControl()
     {
         $payload = "Hello world";
 
@@ -165,7 +165,7 @@ final class EncryptionTest extends TestCase
 
         $totp = $keyClient->setupTotpAccessControl(new Managed($key));
 
-        $code = $this->generateTOTPClient($totp->getSecret(), time());
+        $code = $this->generateTOTPClient($totp->getSecret());
 
         $totpAccessControl = new AccessControlTotp($code);
         $encryptedRecord = $encryptionClient->encrypt($record, new Encrypter($key, new AccessControl($totpAccessControl)));
@@ -176,7 +176,7 @@ final class EncryptionTest extends TestCase
 
         $decryptedRecordHash = $decryptedRecord->getHash();
         $this->assertEquals($recordHash, $decryptedRecordHash);
-    }*/
+    }
 
     /**
      * @throws Exception

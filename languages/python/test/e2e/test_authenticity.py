@@ -12,7 +12,7 @@ from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed import Managed
 from bloock.entity.key.managed_key_params import ManagedKeyParams
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
-from test.e2e.util import init_sdk, generate_random_string
+from test.e2e.util import generate_totp_client, init_sdk, generate_random_string
 
 
 class TestAuthenticity(unittest.TestCase):
@@ -70,7 +70,8 @@ class TestAuthenticity(unittest.TestCase):
         record = record_client.from_string("Hello world").build()
 
         key_client = KeyClient()
-        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
+        key = key_client.new_managed_key(ManagedKeyParams(
+            KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
 
         authenticity_client = AuthenticityClient()
         signature = authenticity_client.sign(record, Signer(key))
@@ -83,7 +84,8 @@ class TestAuthenticity(unittest.TestCase):
         record = record_client.from_string("Hello world").build()
 
         key_client = KeyClient()
-        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
+        key = key_client.new_managed_key(ManagedKeyParams(
+            KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
 
         email = generate_random_string(8) + "@bloock.com"
         secret = "password"
@@ -91,14 +93,16 @@ class TestAuthenticity(unittest.TestCase):
             Managed(key), secret, email)
 
         secret_access_control = AccessControlSecret(secret)
-        signature = authenticity_client.sign(record, Signer(key, None, AccessControl(secret_access_control)))
+        signature = authenticity_client.sign(record, Signer(
+            key, None, AccessControl(secret_access_control)))
         self.assertNotEqual(signature, "")
 
         invalid_secret = "password1"
         invalid_secret_access_control = AccessControlSecret(invalid_secret)
 
         with self.assertRaises(Exception):
-            authenticity_client.sign(record, Signer(key, None, AccessControl(invalid_secret_access_control)))
+            authenticity_client.sign(record, Signer(
+                key, None, AccessControl(invalid_secret_access_control)))
 
     def test_sign_managed_rsa(self):
         record_client = RecordClient()
@@ -106,34 +110,38 @@ class TestAuthenticity(unittest.TestCase):
         record = record_client.from_string("Hello world").build()
 
         key_client = KeyClient()
-        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
+        key = key_client.new_managed_key(ManagedKeyParams(
+            KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
 
         authenticity_client = AuthenticityClient()
         signature = authenticity_client.sign(record, Signer(key))
         self.assertNotEqual(signature, "")
 
-    '''def test_sign_managed_rsa_with_totp_access_control(self):
+    def test_sign_managed_rsa_with_totp_access_control(self):
         record_client = RecordClient()
         authenticity_client = AuthenticityClient()
 
         record = record_client.from_string("Hello world").build()
 
         key_client = KeyClient()
-        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
+        key = key_client.new_managed_key(ManagedKeyParams(
+            KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
 
         totp = key_client.setup_totp_access_control(Managed(key))
 
-        code = generate_totp_client(totp.secret, int(time.time()))
+        code = generate_totp_client(totp.secret)
 
         totp_access_control = AccessControlTotp(code)
-        signature = authenticity_client.sign(record, Signer(key, None, AccessControl(totp_access_control)))
+        signature = authenticity_client.sign(record, Signer(
+            key, None, AccessControl(totp_access_control)))
         self.assertNotEqual(signature, "")
 
         invalid_code = "123456"
         invalid_totp_access_control = AccessControlTotp(invalid_code)
 
         with self.assertRaises(Exception):
-            authenticity_client.sign(record, Signer(key, None, AccessControl(invalid_totp_access_control)))'''
+            authenticity_client.sign(record, Signer(
+                key, None, AccessControl(invalid_totp_access_control)))
 
     def test_verify_local_ecdsa(self):
         authenticity_client = AuthenticityClient()
@@ -187,7 +195,8 @@ class TestAuthenticity(unittest.TestCase):
         authenticity_client = AuthenticityClient()
 
         key_client = KeyClient()
-        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
+        key = key_client.new_managed_key(ManagedKeyParams(
+            KeyProtectionLevel.SOFTWARE, KeyType.Bjj))
 
         record_client = RecordClient()
         record = (
@@ -203,7 +212,8 @@ class TestAuthenticity(unittest.TestCase):
         authenticity_client = AuthenticityClient()
 
         key_client = KeyClient()
-        key = key_client.new_managed_key(ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
+        key = key_client.new_managed_key(ManagedKeyParams(
+            KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048))
 
         record_client = RecordClient()
         record = (
