@@ -1,10 +1,8 @@
 <?php
 
-use OTPHP\TOTP;
-
 trait Utils
 {
-    public function generateTOTPClient($secretKey)
+    /*public function generateTOTPClient($secretKey)
     {
         $timestamp = time();
 
@@ -13,7 +11,7 @@ trait Utils
         $code = $otp->at($timestamp);
 
         return $code;
-    }
+    }*/
 
     public function generateRandomString($length)
     {
