@@ -2,6 +2,7 @@ package integrity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// Anchor represents information about an anchor.
 type Anchor struct {
 	Id         int64
 	BlockRoots []string

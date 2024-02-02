@@ -15,6 +15,9 @@ import com.bloock.sdk.entity.record.Record;
 import com.bloock.sdk.entity.record.RecordDetails;
 import com.google.protobuf.ByteString;
 
+/**
+ * Assists in constructing records with various configurations.
+ */
 public class RecordBuilder {
   Object payload;
   RecordTypes type;
@@ -29,21 +32,41 @@ public class RecordBuilder {
     this.configData = configData;
   }
 
+  /**
+   * Sets the signer for the RecordBuilder.
+   * @param signer
+   * @return
+   */
   public RecordBuilder withSigner(Signer signer) {
     this.signer = signer.toProto();
     return this;
   }
 
+  /**
+   * Sets the encrypter for the RecordBuilder.
+   * @param encrypter
+   * @return
+   */
   public RecordBuilder withEncrypter(Encrypter encrypter) {
     this.encrypter = encrypter.toProto();
     return this;
   }
 
+  /**
+   * Sets the decrypter for the RecordBuilder.
+   * @param decrypter
+   * @return
+   */
   public RecordBuilder withDecrypter(Encrypter decrypter) {
     this.decrypter = decrypter.toProto();
     return this;
   }
 
+  /**
+   * Constructs a record based on the RecordBuilder's configuration.
+   * @return
+   * @throws Exception
+   */
   public Record build() throws Exception {
     Bridge bridge = new Bridge();
 
@@ -201,6 +224,11 @@ public class RecordBuilder {
     return Record.fromProto(response.getRecord(), this.configData);
   }
 
+  /**
+   * Gets details about other Bloock services (Integrity, Authenticity, Encryption, Availability) configured in the RecordBuilder.
+   * @return
+   * @throws Exception
+   */
   public RecordDetails getDetails() throws Exception {
     Bridge bridge = new Bridge();
 

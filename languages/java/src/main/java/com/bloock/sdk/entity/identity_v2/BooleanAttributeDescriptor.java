@@ -3,7 +3,17 @@ package com.bloock.sdk.entity.identity_v2;
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2.BooleanAttributeDefinitionV2;
 
+/**
+ * Represents a descriptor for a boolean attribute.
+ */
 public class BooleanAttributeDescriptor extends AttributeDescriptor {
+  /**
+   * Creates a new BooleanAttributeDescriptor instance with the provided details.
+   * @param displayName
+   * @param technicalName
+   * @param description
+   * @param required
+   */
   public BooleanAttributeDescriptor(
       String displayName, String technicalName, String description, Boolean required) {
     super(displayName, technicalName, description, required);

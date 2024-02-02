@@ -8,20 +8,36 @@ import com.bloock.sdk.config.Config;
 import com.bloock.sdk.entity.key.*;
 import com.google.protobuf.ByteString;
 
+/**
+ * Provides functionality to interact with the <a href="https://dashboard.bloock.com/login">Bloock Keys service</a>.
+ */
 public class KeyClient {
   private final Bridge bridge;
   private final ConfigData configData;
 
+  /**
+   * Creates a new KeyClient with default configuration.
+   */
   public KeyClient() {
     this.bridge = new Bridge();
     this.configData = Config.newConfigDataDefault();
   }
 
+  /**
+   * Creates a new KeyClient with the given configuration.
+   * @param configData
+   */
   public KeyClient(ConfigData configData) {
     this.bridge = new Bridge();
     this.configData = Config.newConfigData(configData);
   }
 
+  /**
+   * Generates a new local key of the specified type.
+   * @param keyType
+   * @return
+   * @throws Exception
+   */
   public LocalKey newLocalKey(KeyType keyType) throws Exception {
     Keys.GenerateLocalKeyRequest request =
         Keys.GenerateLocalKeyRequest.newBuilder()
@@ -38,6 +54,13 @@ public class KeyClient {
     return LocalKey.fromProto(response.getLocalKey());
   }
 
+  /**
+   * Loads a local key of the specified type from a public key string.
+   * @param keyType
+   * @param key
+   * @return
+   * @throws Exception
+   */
   public LocalKey loadLocalKey(KeyType keyType, String key) throws Exception {
     Keys.LoadLocalKeyRequest request =
         Keys.LoadLocalKeyRequest.newBuilder()
@@ -55,6 +78,12 @@ public class KeyClient {
     return LocalKey.fromProto(response.getLocalKey());
   }
 
+  /**
+   * Generates a new managed key with the specified parameters.
+   * @param params
+   * @return
+   * @throws Exception
+   */
   public ManagedKey newManagedKey(ManagedKeyParams params) throws Exception {
     Keys.GenerateManagedKeyRequest request =
         Keys.GenerateManagedKeyRequest.newBuilder()
@@ -71,6 +100,12 @@ public class KeyClient {
     return ManagedKey.fromProto(response.getManagedKey());
   }
 
+  /**
+   * Loads a managed key by its ID (ex: 51d22546-68f1-4340-b94b-2a80e60b8933).
+   * @param id
+   * @return
+   * @throws Exception
+   */
   public ManagedKey loadManagedKey(String id) throws Exception {
     Keys.LoadManagedKeyRequest request =
         Keys.LoadManagedKeyRequest.newBuilder().setConfigData(this.configData).setId(id).build();
@@ -84,6 +119,12 @@ public class KeyClient {
     return ManagedKey.fromProto(response.getManagedKey());
   }
 
+  /**
+   * Generates a new local certificate with the specified parameters.
+   * @param params
+   * @return
+   * @throws Exception
+   */
   public LocalCertificate newLocalCertificate(LocalCertificateParams params) throws Exception {
     Keys.GenerateLocalCertificateRequest request =
         Keys.GenerateLocalCertificateRequest.newBuilder()
@@ -101,6 +142,13 @@ public class KeyClient {
     return LocalCertificate.fromProto(response.getLocalCertificate());
   }
 
+  /**
+   * Loads a local certificate from a PKCS12 file.
+   * @param pkcs12
+   * @param password
+   * @return
+   * @throws Exception
+   */
   public LocalCertificate loadLocalCertificate(byte[] pkcs12, String password) throws Exception {
     Keys.LoadLocalCertificateRequest request =
         Keys.LoadLocalCertificateRequest.newBuilder()
@@ -118,6 +166,12 @@ public class KeyClient {
     return LocalCertificate.fromProto(response.getLocalCertificate());
   }
 
+  /**
+   * Generates a new managed certificate with the specified parameters.
+   * @param params
+   * @return
+   * @throws Exception
+   */
   public ManagedCertificate newManagedCertificate(ManagedCertificateParams params)
       throws Exception {
     Keys.GenerateManagedCertificateRequest request =
@@ -136,6 +190,12 @@ public class KeyClient {
     return ManagedCertificate.fromProto(response.getManagedCertificate());
   }
 
+  /**
+   * Loads a managed certificate by its ID (ex: ceef5b02-af17-43d8-ae7b-31d9bdf8027f).
+   * @param id
+   * @return
+   * @throws Exception
+   */
   public ManagedCertificate loadManagedCertificate(String id) throws Exception {
     Keys.LoadManagedCertificateRequest request =
         Keys.LoadManagedCertificateRequest.newBuilder()
@@ -152,6 +212,14 @@ public class KeyClient {
     return ManagedCertificate.fromProto(response.getManagedCertificate());
   }
 
+  /**
+   * Imports a managed certificate with the specified parameters, supported types: .pem, .pfx.
+   * @param type
+   * @param certificate
+   * @param params
+   * @return
+   * @throws Exception
+   */
   public ManagedCertificate importManagedCertificate(
       CertificateType type, byte[] certificate, ImportCertificateParams params) throws Exception {
     Keys.ImportManagedCertificateRequest.Builder builder =
@@ -176,6 +244,12 @@ public class KeyClient {
     return ManagedCertificate.fromProto(response.getManagedCertificate());
   }
 
+  /**
+   * Sets up TOTP-based access control for the given managed key or managed certificate.
+   * @param key
+   * @return
+   * @throws Exception
+   */
   public TotpAccessControlReceipt setupTotpAccessControl(Managed key) throws Exception {
     Keys.SetupTotpAccessControlRequest.Builder builder =
         Keys.SetupTotpAccessControlRequest.newBuilder().setConfigData(this.configData);
@@ -200,6 +274,13 @@ public class KeyClient {
         response.getSecret(), response.getSecretQr(), response.getRecoveryCodesList());
   }
 
+  /**
+   * Recovers TOTP-based access control for the given managed key or managed certificate using a recovery code.
+   * @param key
+   * @param code
+   * @return
+   * @throws Exception
+   */
   public TotpAccessControlReceipt recoverTotpAccessControl(Managed key, String code) throws Exception {
     Keys.RecoverTotpAccessControlRequest.Builder builder =
         Keys.RecoverTotpAccessControlRequest.newBuilder()
@@ -227,6 +308,13 @@ public class KeyClient {
         response.getSecret(), response.getSecretQr(), response.getRecoveryCodesList());
   }
 
+  /**
+   * Sets up secret-based access control for the given managed key or managed certificate.
+   * @param key
+   * @param secret
+   * @param email
+   * @throws Exception
+   */
   public void setupSecretAccessControl(Managed key, String secret, String email) throws Exception {
     Keys.SetupSecretAccessControlRequest.Builder builder =
         Keys.SetupSecretAccessControlRequest.newBuilder()

@@ -2,7 +2,15 @@ package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 
+/**
+ * Represents an attribute with an integer value.
+ */
 public class IntegerAttribute extends Attribute<Long> {
+  /**
+   * Creates a new IntegerAttribute instance with the provided key and value.
+   * @param id
+   * @param value
+   */
   public IntegerAttribute(String id, Long value) {
     super(id, value);
   }

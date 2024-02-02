@@ -2,12 +2,17 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// PublishIntervalParams represents different publish intervals.
 type PublishIntervalParams int32
 
 const (
+	// Interval1 represents a 1-minute publish interval.
 	Interval1  PublishIntervalParams = iota
+	// Interval5 represents a 5-minute publish interval.
 	Interval5  PublishIntervalParams = iota
+	// Interval15 represents a 15-minute publish interval.
 	Interval15 PublishIntervalParams = iota
+	// Interval60 represents a 60-minute publish interval.
 	Interval60 PublishIntervalParams = iota
 )
 

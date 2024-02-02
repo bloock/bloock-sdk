@@ -2,10 +2,12 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// StringAttribute represents an attribute with a string value.
 type StringAttribute struct {
 	Attribute
 }
 
+// NewStringAttribute creates a new StringAttribute instance with the provided key and value.
 func NewStringAttribute(key string, value string) StringAttribute {
 	a := Attribute{
 		Id:    key,

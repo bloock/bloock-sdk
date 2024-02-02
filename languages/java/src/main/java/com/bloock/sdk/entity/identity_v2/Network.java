@@ -2,6 +2,9 @@ package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 
+/**
+ * Represents an enumeration of network identifiers.
+ */
 public enum Network {
   GOERLI,
   MAIN,

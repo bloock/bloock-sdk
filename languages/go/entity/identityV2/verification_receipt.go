@@ -2,6 +2,7 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// VerificationReceipt represents a receipt for a verification session.
 type VerificationReceipt struct {
 	SessionID int64
 	VerificationRequest string

@@ -2,11 +2,20 @@ package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 
+/**
+ * Represents a receipt for a credential, including the credential itself, its ID, and type.
+ */
 public class CredentialReceipt {
   private final Credential credential;
   private final String credentialId;
   private final String credentialType;
 
+  /**
+   * Constructs an CredentialReceipt object with the specified parameters.
+   * @param credential
+   * @param credentialId
+   * @param credentialType
+   */
   public CredentialReceipt(Credential credential, String credentialId, String credentialType) {
     this.credential = credential;
     this.credentialId = credentialId;
@@ -26,14 +35,26 @@ public class CredentialReceipt {
         .build();
   }
 
+  /**
+   * Gets the credential object.
+   * @return
+   */
   public Credential getCredential() {
     return credential;
   }
 
+  /**
+   * Gets the ID associated with the credential.
+   * @return
+   */
   public String getCredentialId() {
     return credentialId;
   }
 
+  /**
+   * Gets the type of the credential.
+   * @return
+   */
   public String getCredentialType() {
     return credentialType;
   }

@@ -3,7 +3,15 @@ package com.bloock.sdk.entity.identity_v2;
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 import java.time.LocalDate;
 
+/**
+ * Represents an attribute with a date value, including its key and formatted value.
+ */
 public class DateAttribute extends Attribute<LocalDate> {
+  /**
+   * Creates a new DateAttribute instance with the provided key and time value.
+   * @param id
+   * @param value
+   */
   public DateAttribute(String id, LocalDate value) {
     super(id, value);
   }

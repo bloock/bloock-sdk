@@ -2,6 +2,7 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// Schema represents a schema with its attributes.
 type Schema struct {
 	Cid        string
 	CidJsonLd  string

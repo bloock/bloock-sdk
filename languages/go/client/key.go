@@ -10,11 +10,15 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
+// KeyClient provides functionality to interact with the [Bloock Key service].
+//
+// [Bloock Key service]: https://bloock.com
 type KeyClient struct {
 	bridgeClient bridge.BloockBridge
 	configData   *proto.ConfigData
 }
 
+// NewKeyClient creates a new KeyClient with default configuration.
 func NewKeyClient() KeyClient {
 	return KeyClient{
 		bridgeClient: bridge.NewBloockBridge(),
@@ -22,6 +26,7 @@ func NewKeyClient() KeyClient {
 	}
 }
 
+// NewKeyClientWithConfig creates a new KeyClient with the given configuration.
 func NewKeyClientWithConfig(configData *proto.ConfigData) KeyClient {
 	return KeyClient{
 		bridgeClient: bridge.NewBloockBridge(),
@@ -29,6 +34,7 @@ func NewKeyClientWithConfig(configData *proto.ConfigData) KeyClient {
 	}
 }
 
+// NewLocalKey generates a new local key of the specified type.
 func (c *KeyClient) NewLocalKey(keyType keyEntity.KeyType) (keyEntity.LocalKey, error) {
 	res, err := c.bridgeClient.Key().GenerateLocalKey(context.Background(), &proto.GenerateLocalKeyRequest{
 		ConfigData: c.configData,
@@ -46,6 +52,7 @@ func (c *KeyClient) NewLocalKey(keyType keyEntity.KeyType) (keyEntity.LocalKey, 
 	return keyEntity.NewLocalKeyFromProto(res.GetLocalKey()), nil
 }
 
+// LoadLocalKey loads a local key of the specified type from a public key string.
 func (c *KeyClient) LoadLocalKey(keyType keyEntity.KeyType, key string) (keyEntity.LocalKey, error) {
 	res, err := c.bridgeClient.Key().LoadLocalKey(context.Background(), &proto.LoadLocalKeyRequest{
 		ConfigData: c.configData,
@@ -64,6 +71,7 @@ func (c *KeyClient) LoadLocalKey(keyType keyEntity.KeyType, key string) (keyEnti
 	return keyEntity.NewLocalKeyFromProto(res.GetLocalKey()), nil
 }
 
+// NewManagedKey generates a new managed key with the specified parameters.
 func (c *KeyClient) NewManagedKey(params keyEntity.ManagedKeyParams) (keyEntity.ManagedKey, error) {
 	res, err := c.bridgeClient.Key().GenerateManagedKey(context.Background(), &proto.GenerateManagedKeyRequest{
 		ConfigData: c.configData,
@@ -81,6 +89,7 @@ func (c *KeyClient) NewManagedKey(params keyEntity.ManagedKeyParams) (keyEntity.
 	return keyEntity.NewManagedKeyFromProto(res.GetManagedKey()), nil
 }
 
+// LoadManagedKey loads a managed key by its ID (ex: 51d22546-68f1-4340-b94b-2a80e60b8933).
 func (c *KeyClient) LoadManagedKey(id string) (keyEntity.ManagedKey, error) {
 	res, err := c.bridgeClient.Key().LoadManagedKey(context.Background(), &proto.LoadManagedKeyRequest{
 		ConfigData: c.configData,
@@ -98,6 +107,7 @@ func (c *KeyClient) LoadManagedKey(id string) (keyEntity.ManagedKey, error) {
 	return keyEntity.NewManagedKeyFromProto(res.GetManagedKey()), nil
 }
 
+// NewLocalCertificate generates a new local certificate with the specified parameters.
 func (c *KeyClient) NewLocalCertificate(params keyEntity.LocalCertificateParams) (keyEntity.LocalCertificate, error) {
 	res, err := c.bridgeClient.Key().GenerateLocalCertificate(context.Background(), &proto.GenerateLocalCertificateRequest{
 		ConfigData: c.configData,
@@ -115,6 +125,7 @@ func (c *KeyClient) NewLocalCertificate(params keyEntity.LocalCertificateParams)
 	return keyEntity.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
 }
 
+// LoadLocalCertificate loads a local certificate from a PKCS12 file.
 func (c *KeyClient) LoadLocalCertificate(pkcs12 []byte, password string) (keyEntity.LocalCertificate, error) {
 	res, err := c.bridgeClient.Key().LoadLocalCertificate(context.Background(), &proto.LoadLocalCertificateRequest{
 		ConfigData: c.configData,
@@ -133,6 +144,7 @@ func (c *KeyClient) LoadLocalCertificate(pkcs12 []byte, password string) (keyEnt
 	return keyEntity.NewLocalCertificateFromProto(res.GetLocalCertificate()), nil
 }
 
+// NewManagedCertificate generates a new managed certificate with the specified parameters.
 func (c *KeyClient) NewManagedCertificate(params keyEntity.ManagedCertificateParams) (keyEntity.ManagedCertificate, error) {
 	res, err := c.bridgeClient.Key().GenerateManagedCertificate(context.Background(), &proto.GenerateManagedCertificateRequest{
 		ConfigData: c.configData,
@@ -150,6 +162,7 @@ func (c *KeyClient) NewManagedCertificate(params keyEntity.ManagedCertificatePar
 	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }
 
+// LoadManagedCertificate loads a managed certificate by its ID (ex: ceef5b02-af17-43d8-ae7b-31d9bdf8027f).
 func (c *KeyClient) LoadManagedCertificate(id string) (keyEntity.ManagedCertificate, error) {
 	res, err := c.bridgeClient.Key().LoadManagedCertificate(context.Background(), &proto.LoadManagedCertificateRequest{
 		ConfigData: c.configData,
@@ -167,6 +180,9 @@ func (c *KeyClient) LoadManagedCertificate(id string) (keyEntity.ManagedCertific
 	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }
 
+// ImportManagedCertificate imports a managed certificate with the specified parameters.
+//
+// Supported types: .pem, .pfx.	
 func (c *KeyClient) ImportManagedCertificate(_type keyEntity.CertificateType, certificate []byte, params keyEntity.ImportCertificateParams) (keyEntity.ManagedCertificate, error) {
 	var password *string
 	if params.Password != "" {
@@ -191,6 +207,7 @@ func (c *KeyClient) ImportManagedCertificate(_type keyEntity.CertificateType, ce
 	return keyEntity.NewManagedCertificateFromProto(res.GetManagedCertificate()), nil
 }
 
+// SetupTotpAccessControl sets up TOTP-based access control for the given managed key or managed certificate.
 func (c *KeyClient) SetupTotpAccessControl(key keyEntity.Managed) (keyEntity.TotpAccessControlReceipt, error) {
 	var managedKey *proto.ManagedKey
 	if key.ManagedKey != nil {
@@ -219,6 +236,7 @@ func (c *KeyClient) SetupTotpAccessControl(key keyEntity.Managed) (keyEntity.Tot
 	return keyEntity.New(res.Secret, res.SecretQr, res.RecoveryCodes), nil
 }
 
+// RecoverTotpAccessControl recovers TOTP-based access control for the given managed key or managed certificate using a recovery code.
 func (c *KeyClient) RecoverTotpAccessControl(key keyEntity.Managed, code string) (keyEntity.TotpAccessControlReceipt, error) {
 	var managedKey *proto.ManagedKey
 	if key.ManagedKey != nil {
@@ -248,6 +266,7 @@ func (c *KeyClient) RecoverTotpAccessControl(key keyEntity.Managed, code string)
 	return keyEntity.New(res.Secret, res.SecretQr, res.RecoveryCodes), nil
 }
 
+// SetupSecretAccessControl sets up secret-based access control for the given managed key or managed certificate.
 func (c *KeyClient) SetupSecretAccessControl(key keyEntity.Managed, secret string, email string) error {
 	var managedKey *proto.ManagedKey
 	if key.ManagedKey != nil {

@@ -5,13 +5,24 @@ import com.bloock.sdk.entity.authenticity.Signature;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents details related to the authenticity of a record, including signatures.
+ */
 public class AuthenticityDetails {
   List<Signature> signatures;
 
+  /**
+   * Constructs a AuthenticityDetails object with the specified parameters.
+   * @param signatures
+   */
   AuthenticityDetails(List<Signature> signatures) {
     this.signatures = signatures;
   }
 
+  /**
+   * Gets the signatures of the record.
+   * @return
+   */
   public List<Signature> getSignatures() {
     return signatures;
   }

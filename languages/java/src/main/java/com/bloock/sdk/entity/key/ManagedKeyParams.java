@@ -2,12 +2,34 @@ package com.bloock.sdk.entity.key;
 
 import com.bloock.sdk.bridge.proto.KeysEntities;
 
+/**
+ * Represents the parameters for creating a managed key.
+ */
 public class ManagedKeyParams {
+  /**
+   * Is the name of the managed key.
+   */
   String name;
+  /**
+   * Is the protection level for the key.
+   */
   KeyProtectionLevel protection;
+  /**
+   * Is the type of the key.
+   */
   KeyType keyType;
+  /**
+   * Is the timestamp indicating when the key expires.
+   */
   Long expiration;
 
+  /**
+   * Constructs a ManagedKeyParams object for a given managed key object.
+   * @param protection
+   * @param keyType
+   * @param name
+   * @param expiration
+   */
   public ManagedKeyParams(
       KeyProtectionLevel protection, KeyType keyType, String name, long expiration) {
     this.name = name;
@@ -16,17 +38,34 @@ public class ManagedKeyParams {
     this.expiration = expiration;
   }
 
+  /**
+   * Constructs a ManagedKeyParams object for a given managed key object.
+   * @param protection
+   * @param keyType
+   */
   public ManagedKeyParams(KeyProtectionLevel protection, KeyType keyType) {
     this.protection = protection;
     this.keyType = keyType;
   }
 
+  /**
+   * Constructs a ManagedKeyParams object for a given managed key object.
+   * @param protection
+   * @param keyType
+   * @param name
+   */
   public ManagedKeyParams(KeyProtectionLevel protection, KeyType keyType, String name) {
     this.protection = protection;
     this.keyType = keyType;
     this.name = name;
   }
 
+  /**
+   * Constructs a ManagedKeyParams object for a given managed key object.
+   * @param protection
+   * @param keyType
+   * @param expiration
+   */
   public ManagedKeyParams(KeyProtectionLevel protection, KeyType keyType, long expiration) {
     this.protection = protection;
     this.keyType = keyType;
@@ -53,18 +92,34 @@ public class ManagedKeyParams {
     return params.build();
   }
 
+  /**
+   * Gets the name of the managed key params.
+   * @return
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Gets the protection level of the managed key params.
+   * @return
+   */
   public KeyProtectionLevel getProtection() {
     return protection;
   }
 
+  /**
+   * Gets the key type of the managed key params.
+   * @return
+   */
   public KeyType getKeyType() {
     return keyType;
   }
 
+  /**
+   * Gets the expiration of the managed key params.
+   * @return
+   */
   public long getExpiration() {
     return expiration;
   }

@@ -2,12 +2,22 @@ package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 
+/**
+ * Represents a schema with its attributes.
+ */
 public class Schema {
   private final String cid;
   private final String cidJsonLD;
   private final String schemaType;
   private final String json;
 
+  /**
+   * Constructs a Schema object with the specified parameters.
+   * @param cid
+   * @param cidJsonLD
+   * @param schemaType
+   * @param json
+   */
   public Schema(String cid, String cidJsonLD, String schemaType, String json) {
     this.cid = cid;
     this.cidJsonLD = cidJsonLD;

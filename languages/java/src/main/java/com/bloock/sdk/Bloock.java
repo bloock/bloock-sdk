@@ -6,13 +6,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Bloock {
+  /**
+   * Is a string variable representing the API key used for authentication with the Bloock SDK, create <a href="https://dashboard.bloock.com/login">here</a>.
+   */
   public static String apiKey = "";
+  /**
+   * Is a string variable representing the host URL used for API communication with the Bloock SDK.
+   */
   public static String apiHost = "";
+  /**
+   * Is a string variable used to force a specific environment configuration, it allows developers to set a predefined environment for the Bloock SDK.
+   */
   public static String forceEnv = "";
+  /**
+   * Is a string variable representing the host URL used for Identity Managed API, required to be set for identity-related features of the Bloock SDK.
+   */
   public static String identityApiHost = "";
+  /**
+   * Is a boolean variable that, when set to true, disables the analytics feature in the Bloock SDK.
+   */
   public static Boolean disableAnalytics = false;
+  /**
+   * Is a map variable that holds network configurations associated with specific network IDs in the Bloock SDK.
+   */
   public static Map<Integer, NetworkConfig> networkConfig = new HashMap<>();
 
+  /**
+   * Sets the HTTP provider for the specified network in the Bloock SDK configuration.
+   * @param network
+   * @param provider
+   */
   public static void setProvider(Network network, String provider) {
     if (Bloock.networkConfig.containsKey(network.toProto().ordinal())) {
       Bloock.networkConfig.put(
@@ -27,6 +50,11 @@ public class Bloock {
     }
   }
 
+  /**
+   * Sets the contract address for the specified network in the Bloock SDK configuration.
+   * @param network
+   * @param contractAddress
+   */
   public static void setContractAddress(Network network, String contractAddress) {
     if (Bloock.networkConfig.containsKey(network.toProto().ordinal())) {
       Bloock.networkConfig.put(

@@ -13,11 +13,20 @@ import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.entity.integrity.Proof;
 import com.google.protobuf.ByteString;
 
+/**
+ * Represents a record with payload, hash, and configuration data.
+ */
 public class Record {
   byte[] payload;
   String hash;
   ConfigData configData;
 
+  /**
+   * Constructs a Record object with the specified parameters.
+   * @param payload
+   * @param hash
+   * @param configData
+   */
   Record(byte[] payload, String hash, ConfigData configData) {
     this.payload = payload;
     this.hash = hash;
@@ -36,6 +45,11 @@ public class Record {
         .build();
   }
 
+  /**
+   * Retrieves the hash of the record.
+   * @return
+   * @throws Exception
+   */
   public String getHash() throws Exception {
     Bridge bridge = new Bridge();
     GetHashRequest request =
@@ -52,6 +66,11 @@ public class Record {
     return recordHash.getHash();
   }
 
+  /**
+   * Retrieves the payload of the record.
+   * @return
+   * @throws Exception
+   */
   public byte[] getPayload() throws Exception {
     Bridge bridge = new Bridge();
     GetPayloadRequest request =
@@ -68,10 +87,19 @@ public class Record {
     return res.getPayload().toByteArray();
   }
 
+  /**
+   * Returns the payload of the record.
+   * @return
+   */
   public byte[] retrieve() {
     return this.payload;
   }
 
+  /**
+   * Sets the proof for a record.
+   * @param proof
+   * @throws Exception
+   */
   public void setProof(Proof proof) throws Exception {
     Bridge bridge = new Bridge();
     SetProofRequest request =

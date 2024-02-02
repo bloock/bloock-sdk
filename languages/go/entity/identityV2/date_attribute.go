@@ -6,10 +6,12 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// DateAttribute represents an attribute with a date value, including its key and formatted value.
 type DateAttribute struct {
 	Attribute
 }
 
+// NewDateAttribute creates a new DateAttribute instance with the provided key and time value.
 func NewDateAttribute(key string, value time.Time) DateAttribute {
 	a := Attribute{
 		Id:    key,

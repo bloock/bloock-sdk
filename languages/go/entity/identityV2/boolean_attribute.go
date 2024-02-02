@@ -2,10 +2,12 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// BooleanAttribute represents an attribute with a boolean value.
 type BooleanAttribute struct {
 	Attribute
 }
 
+// NewBooleanAttribute creates a new BooleanAttribute instance with the provided key and value.
 func NewBooleanAttribute(key string, value bool) BooleanAttribute {
 	a := Attribute{
 		Id:    key,

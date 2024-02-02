@@ -4,12 +4,22 @@ import com.bloock.sdk.bridge.proto.IntegrityEntities;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a proof anchor.
+ */
 public class ProofAnchor {
   long anchorId;
   List<AnchorNetwork> networks;
   String root;
   String status;
 
+  /**
+   * Constructs a ProofAnchor object with the specified parameters.
+   * @param anchorId
+   * @param networks
+   * @param root
+   * @param status
+   */
   public ProofAnchor(long anchorId, List<AnchorNetwork> networks, String root, String status) {
     this.anchorId = anchorId;
     this.networks = networks;
@@ -36,18 +46,34 @@ public class ProofAnchor {
         .build();
   }
 
+  /**
+   * Gets the anchor id of the anchor proof.
+   * @return
+   */
   public long getAnchorId() {
     return anchorId;
   }
 
+  /**
+   * Gets the networks of the anchor proof
+   * @return
+   */
   public List<AnchorNetwork> getNetworks() {
     return networks;
   }
 
+  /**
+   * Gets the root of the anchor proof.
+   * @return
+   */
   public String getRoot() {
     return root;
   }
 
+  /**
+   * Gets the status of the anchor proof.
+   * @return
+   */
   public String getStatus() {
     return status;
   }

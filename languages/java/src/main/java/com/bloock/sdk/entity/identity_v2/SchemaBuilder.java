@@ -8,6 +8,9 @@ import com.bloock.sdk.bridge.proto.Shared;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Is a builder pattern for constructing schema instances.
+ */
 public class SchemaBuilder {
   private final String displayName;
   private final String schemaType;
@@ -25,6 +28,14 @@ public class SchemaBuilder {
   private final List<IdentityEntitiesV2.IntegerEnumAttributeDefinitionV2> integerEnumAttributes;
   private final List<IdentityEntitiesV2.DecimalEnumAttributeDefinitionV2> decimalEnumAttributes;
 
+  /**
+   * Creates a new instance of SchemaBuilder with initial values.
+   * @param displayName
+   * @param schemaType
+   * @param version
+   * @param description
+   * @param configData
+   */
   public SchemaBuilder(
       String displayName,
       String schemaType,
@@ -48,6 +59,14 @@ public class SchemaBuilder {
     this.decimalEnumAttributes = new ArrayList<>();
   }
 
+  /**
+   * Adds a string attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @return
+   */
   public SchemaBuilder addStringAttribute(
       String name, String technicalName, String description, Boolean required) {
     this.stringAttributes.add(
@@ -55,6 +74,14 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Adds an integer attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @return
+   */
   public SchemaBuilder addIntegerAttribute(
       String name, String technicalName, String description, Boolean required) {
     this.integerAttributes.add(
@@ -62,6 +89,14 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Adds a decimal attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @return
+   */
   public SchemaBuilder addDecimalAttribute(
       String name, String technicalName, String description, Boolean required) {
     this.decimalAttributes.add(
@@ -69,6 +104,14 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Adds a boolean attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @return
+   */
   public SchemaBuilder addBooleanAttribute(
       String name, String technicalName, String description, Boolean required) {
     this.booleanAttributes.add(
@@ -76,6 +119,14 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Adds a date attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @return
+   */
   public SchemaBuilder addDateAttribute(
       String name, String technicalName, String description, Boolean required) {
     this.dateAttributes.add(
@@ -83,6 +134,14 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Adds a datetime attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @return
+   */
   public SchemaBuilder addDatetimeAttribute(
       String name, String technicalName, String description, Boolean required) {
     this.datetimeAttributes.add(
@@ -90,6 +149,15 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Adds a string enum attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @param enumeration
+   * @return
+   */
   public SchemaBuilder addStringEnumAttribute(
       String name,
       String technicalName,
@@ -102,6 +170,15 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Adds an integer enum attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @param enumeration
+   * @return
+   */
   public SchemaBuilder addIntegerEnumAttribute(
       String name,
       String technicalName,
@@ -114,6 +191,15 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Adds a decimal enum attribute descriptor to the schema builder.
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @param enumeration
+   * @return
+   */
   public SchemaBuilder addDecimalEnumAttribute(
       String name,
       String technicalName,
@@ -126,6 +212,11 @@ public class SchemaBuilder {
     return this;
   }
 
+  /**
+   * Creates a schema using the configured attributes.
+   * @return
+   * @throws Exception
+   */
   public Schema build() throws Exception {
     Bridge bridge = new Bridge();
 

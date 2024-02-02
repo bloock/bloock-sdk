@@ -5,6 +5,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// Signer represents a signer with various key types and additional configurations.
 type Signer struct {
 	LocalKey           *key.LocalKey
 	ManagedKey         *key.ManagedKey
@@ -14,6 +15,7 @@ type Signer struct {
 	AccessControl      *key.AccessControl
 }
 
+// NewSignerWithLocalKey creates a Signer instance with a local key and specified hash algorithm.
 func NewSignerWithLocalKey(key key.LocalKey, hashAlg *HashAlg) Signer {
 	return Signer{
 		LocalKey: &key,
@@ -21,6 +23,8 @@ func NewSignerWithLocalKey(key key.LocalKey, hashAlg *HashAlg) Signer {
 	}
 }
 
+// NewSignerWithManagedKey creates a Signer instance with a managed key, specified hash algorithm,
+// and access control configuration.
 func NewSignerWithManagedKey(key key.ManagedKey, hashAlg *HashAlg, accessControl *key.AccessControl) Signer {
 	return Signer{
 		ManagedKey:    &key,
@@ -29,6 +33,7 @@ func NewSignerWithManagedKey(key key.ManagedKey, hashAlg *HashAlg, accessControl
 	}
 }
 
+// NewSignerWithLocalCertificate creates a Signer instance with a local certificate and specified hash algorithm.
 func NewSignerWithLocalCertificate(key key.LocalCertificate, hashAlg *HashAlg) Signer {
 	return Signer{
 		LocalCertificate: &key,
@@ -36,6 +41,8 @@ func NewSignerWithLocalCertificate(key key.LocalCertificate, hashAlg *HashAlg) S
 	}
 }
 
+// NewSignerWithManagedCertificate creates a Signer instance with a managed certificate, specified hash algorithm,
+// and access control configuration.
 func NewSignerWithManagedCertificate(key key.ManagedCertificate, hashAlg *HashAlg, accessControl *key.AccessControl) Signer {
 	return Signer{
 		ManagedCertificate: &key,

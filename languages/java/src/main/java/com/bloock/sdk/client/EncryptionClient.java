@@ -14,21 +14,32 @@ import com.bloock.sdk.entity.key.KeyType;
 import com.bloock.sdk.entity.key.RsaKeyPair;
 import com.bloock.sdk.entity.record.Record;
 
+/**
+ * Represents a client for interacting with the <a href="https://dashboard.bloock.com/login">Bloock Encryption service</a>.
+ */
 public class EncryptionClient {
   private final Bridge bridge;
   private final ConfigData configData;
 
+  /**
+   * Creates a new instance of the EncryptionClient with default configuration.
+   */
   public EncryptionClient() {
     this.bridge = new Bridge();
     this.configData = Config.newConfigDataDefault();
   }
 
+  /**
+   * Creates a new instance of the EncryptionClient with the provided configuration.
+   * @param configData
+   */
   public EncryptionClient(ConfigData configData) {
     this.bridge = new Bridge();
     this.configData = Config.newConfigData(configData);
   }
 
   /**
+   * GenerateRsaKeyPair generates an RSA key pair for encryption.
    * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
    */
   @Deprecated
@@ -48,6 +59,13 @@ public class EncryptionClient {
     return RsaKeyPair.fromProto(response);
   }
 
+  /**
+   * Encrypts a Bloock record using the specified encrypter.
+   * @param record
+   * @param encrypter
+   * @return
+   * @throws Exception
+   */
   public Record encrypt(Record record, Encrypter encrypter) throws Exception {
     Encryption.EncryptRequest request =
         Encryption.EncryptRequest.newBuilder()
@@ -65,6 +83,13 @@ public class EncryptionClient {
     return Record.fromProto(response.getRecord(), this.configData);
   }
 
+  /**
+   * Decrypts a Bloock record using the specified decrypter.
+   * @param record
+   * @param decrypter
+   * @return
+   * @throws Exception
+   */
   public Record decrypt(Record record, Encrypter decrypter) throws Exception {
     Encryption.DecryptRequest request =
         Encryption.DecryptRequest.newBuilder()
@@ -82,6 +107,12 @@ public class EncryptionClient {
     return Record.fromProto(response.getRecord(), this.configData);
   }
 
+  /**
+   * Gets the encryption algorithm used for a Bloock record.
+   * @param record
+   * @return
+   * @throws Exception
+   */
   public EncryptionAlg getEncryptionAlg(Record record) throws Exception {
     Bridge bridge = new Bridge();
 

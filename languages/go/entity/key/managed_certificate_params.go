@@ -2,9 +2,13 @@ package key
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// ManagedCertificateParams represents parameters for creating a managed certificate.
 type ManagedCertificateParams struct {
+	// KeyType is the type of the key.
 	KeyType          KeyType
+	// Subject represents the subject details of the certificate.
 	Subject          SubjectCertificateParams
+	// ExpirationMonths is the number of months until the certificate expiration.
 	ExpirationMonths int32
 }
 
@@ -41,10 +45,12 @@ func (s ManagedCertificateParams) ToProto() *proto.ManagedCertificateParams {
 	}
 }
 
+// ImportCertificateParams represents parameters for importing a certificate.
 type ImportCertificateParams struct {
 	Password string
 }
 
+// NewImportCertificateParams creates an ImportCertificateParams instance with default values.
 func NewImportCertificateParams() ImportCertificateParams {
 	return ImportCertificateParams{}
 }

@@ -2,11 +2,13 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// IntegerEnumAttributeDescriptor represents a descriptor for an attribute with an integer enum value.
 type IntegerEnumAttributeDescriptor struct {
 	AttributeDescriptor
 	Enum []int64
 }
 
+// NewIntegerEnumAttributeDescriptor creates a new IntegerEnumAttributeDescriptor instance with the provided details.
 func NewIntegerEnumAttributeDescriptor(name string, id string, description string, required bool, enum []int64) IntegerEnumAttributeDescriptor {
 	a := AttributeDescriptor{
 		DisplayName: name,

@@ -14,21 +14,32 @@ import com.bloock.sdk.entity.record.Record;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a client for interacting with the <a href="https://dashboard.bloock.com/login">Bloock Authenticity service</a>.
+ */
 public class AuthenticityClient {
   private final Bridge bridge;
   private final ConfigData configData;
 
+  /**
+   * Creates a new instance of the AuthenticityClient with default configuration.
+   */
   public AuthenticityClient() {
     this.bridge = new Bridge();
     this.configData = Config.newConfigDataDefault();
   }
 
+  /**
+   * Creates a new instance of the AuthenticityClient with the provided configuration.
+   * @param configData
+   */
   public AuthenticityClient(ConfigData configData) {
     this.bridge = new Bridge();
     this.configData = Config.newConfigData(configData);
   }
 
   /**
+   * Generates ECDSA key pair for signing records.
    * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
    */
   @Deprecated
@@ -48,6 +59,13 @@ public class AuthenticityClient {
     return EcdsaKeyPair.fromProto(response);
   }
 
+  /**
+   * Signs a Bloock record using the specified signer.
+   * @param record
+   * @param signer
+   * @return
+   * @throws Exception
+   */
   public Signature sign(Record record, Signer signer) throws Exception {
     SignRequest request =
         SignRequest.newBuilder()
@@ -64,6 +82,12 @@ public class AuthenticityClient {
     return Signature.fromProto(response.getSignature());
   }
 
+  /**
+   * Verifies the authenticity of a Bloock record.
+   * @param record
+   * @return
+   * @throws Exception
+   */
   public boolean verify(Record record) throws Exception {
     VerifyRequest request =
         VerifyRequest.newBuilder()
@@ -79,6 +103,12 @@ public class AuthenticityClient {
     return response.getValid();
   }
 
+  /**
+   * Gets the signatures associated with a Bloock record.
+   * @param record
+   * @return
+   * @throws Exception
+   */
   public List<Signature> getSignatures(Record record) throws Exception {
     GetSignaturesRequest req =
         GetSignaturesRequest.newBuilder()

@@ -2,10 +2,25 @@ package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2.PublishInterval;
 
+/**
+ * Represents different publish intervals.
+ */
 public enum PublishIntervalParams {
+  /**
+   * Represents a 1-minute publish interval.
+   */
   Interval1,
+  /**
+   * Represents a 5-minute publish interval.
+   */
   Interval5,
+  /**
+   * Represents a 15-minute publish interval.
+   */
   Interval15,
+  /**
+   * Represents a 60-minute publish interval.
+   */
   Interval60;
 
   public static PublishIntervalParams fromProto(PublishInterval type) {

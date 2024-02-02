@@ -2,6 +2,7 @@ package integrity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// AnchorNetwork represents information about an anchor network.
 type AnchorNetwork struct {
 	Name   string
 	State  string

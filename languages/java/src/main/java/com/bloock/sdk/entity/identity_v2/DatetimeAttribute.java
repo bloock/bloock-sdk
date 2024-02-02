@@ -4,7 +4,15 @@ import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents an attribute with a datetime value.
+ */
 public class DatetimeAttribute extends Attribute<LocalDateTime> {
+  /**
+   * Creates a new DatetimeAttribute instance with the provided key and value.
+   * @param id
+   * @param value
+   */
   public DatetimeAttribute(String id, LocalDateTime value) {
     super(id, value);
   }

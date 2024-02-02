@@ -2,10 +2,12 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// DecimalAttributeDescriptor represents a descriptor for an attribute with a decimal value.
 type DecimalAttributeDescriptor struct {
 	AttributeDescriptor
 }
 
+// NewDecimalAttributeDescriptor creates a new DecimalAttributeDescriptor instance with the provided details.
 func NewDecimalAttributeDescriptor(name string, id string, description string, required bool) DecimalAttributeDescriptor {
 	a := AttributeDescriptor{
 		DisplayName: name,

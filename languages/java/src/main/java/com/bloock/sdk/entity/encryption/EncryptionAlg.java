@@ -2,11 +2,29 @@ package com.bloock.sdk.entity.encryption;
 
 import com.bloock.sdk.bridge.proto.EncryptionEntities;
 
+/**
+ * Represents encryption algorithm types.
+ */
 public enum EncryptionAlg {
+  /**
+   * Represents the AES-256-GCM encryption algorithm.
+   */
   AES256GCM,
+  /**
+   * Represents the AES-256-GCM with managed key encryption algorithm.
+   */
   AES256GCM_M,
+  /**
+   * Represents the RSA encryption algorithm.
+   */
   RSA,
+  /**
+   * Represents the RSA with managed key encryption algorithm.
+   */
   RSA_M,
+  /**
+   * Represents an unrecognized encryption algorithm.
+   */
   UNRECOGNIZED;
 
   public static EncryptionAlg fromProto(EncryptionEntities.EncryptionAlg alg) {

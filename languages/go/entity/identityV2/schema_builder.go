@@ -8,6 +8,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// SchemaBuilder is a builder pattern for constructing schema instances.
 type SchemaBuilder struct {
 	displayName string
 	schemaType  string
@@ -26,6 +27,7 @@ type SchemaBuilder struct {
 	decimalEnumAttributeDescriptor []DecimalEnumAttributeDescriptor
 }
 
+// NewSchemaBuilder creates a new instance of SchemaBuilder with initial values.
 func NewSchemaBuilder(displayName string, schemaType, version, description string, configData *proto.ConfigData) SchemaBuilder {
 	return SchemaBuilder{
 		displayName:                    displayName,
@@ -45,51 +47,61 @@ func NewSchemaBuilder(displayName string, schemaType, version, description strin
 	}
 }
 
+// AddStringAttribute adds a string attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddStringAttribute(name string, id string, description string, required bool) SchemaBuilder {
 	c.stringAttributeDescriptor = append(c.stringAttributeDescriptor, NewStringAttributeDescriptor(name, id, description, required))
 	return c
 }
 
+// AddIntegerAttribute adds an integer attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddIntegerAttribute(name string, id string, description string, required bool) SchemaBuilder {
 	c.integerAttributeDescriptor = append(c.integerAttributeDescriptor, NewIntegerAttributeDescriptor(name, id, description, required))
 	return c
 }
 
+// AddDecimalAttribute adds a decimal attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddDecimalAttribute(name string, id string, description string, required bool) SchemaBuilder {
 	c.decimalAttributeDescriptor = append(c.decimalAttributeDescriptor, NewDecimalAttributeDescriptor(name, id, description, required))
 	return c
 }
 
+// AddBooleanAttribute adds a boolean attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddBooleanAttribute(name string, id string, description string, required bool) SchemaBuilder {
 	c.booleanAttributeDescriptor = append(c.booleanAttributeDescriptor, NewBooleanAttributeDescriptor(name, id, description, required))
 	return c
 }
 
+// AddDateAttribute adds a date attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddDateAttribute(name string, id string, description string, required bool) SchemaBuilder {
 	c.dateAttributeDescriptor = append(c.dateAttributeDescriptor, NewDateAttributeDescriptor(name, id, description, required))
 	return c
 }
 
+// AddDatetimeAttribute adds a datetime attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddDatetimeAttribute(name string, id string, description string, required bool) SchemaBuilder {
 	c.datetimeAttributeDescriptor = append(c.datetimeAttributeDescriptor, NewDatetimeAttributeDescriptor(name, id, description, required))
 	return c
 }
 
+// AddStringEnumAttribute adds a string enum attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddStringEnumAttribute(name string, id string, description string, required bool, enum []string) SchemaBuilder {
 	c.stringEnumAttributeDescriptor = append(c.stringEnumAttributeDescriptor, NewStringEnumAttributeDescriptor(name, id, description, required, enum))
 	return c
 }
 
+// AddIntegerEnumAttribute adds an integer enum attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddIntegerEnumAttribute(name string, id string, description string, required bool, enum []int64) SchemaBuilder {
 	c.integerEnumAttributeDescriptor = append(c.integerEnumAttributeDescriptor, NewIntegerEnumAttributeDescriptor(name, id, description, required, enum))
 	return c
 }
 
+// AddDecimalEnumAttribute adds a decimal enum attribute descriptor to the schema builder.
 func (c SchemaBuilder) AddDecimalEnumAttribute(name string, id string, description string, required bool, enum []float64) SchemaBuilder {
 	c.decimalEnumAttributeDescriptor = append(c.decimalEnumAttributeDescriptor, NewDecimalEnumAttributeDescriptor(name, id, description, required, enum))
 	return c
 }
 
+// Build creates a schema using the configured attributes.
 func (c SchemaBuilder) Build() (Schema, error) {
 	bridge := bridge.NewBloockBridge()
 

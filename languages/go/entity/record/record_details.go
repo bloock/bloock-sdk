@@ -6,6 +6,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// IntegrityDetails represents details related to the integrity of a record, including hash and proof.
 type IntegrityDetails struct {
 	Hash  string
 	Proof *integrity.Proof
@@ -36,6 +37,7 @@ func (r *IntegrityDetails) ToProto() *proto.IntegrityDetails {
 	}
 }
 
+// AuthenticityDetails represents details related to the authenticity of a record, including signatures.
 type AuthenticityDetails struct {
 	Signatures []authenticity.Signature
 }
@@ -66,6 +68,7 @@ func (r *AuthenticityDetails) ToProto() *proto.AuthenticityDetails {
 	}
 }
 
+// EncryptionDetails represents details related to the encryption of a record, including algorithm, key, and subject.
 type EncryptionDetails struct {
 	Alg     *string
 	Key     *string
@@ -92,6 +95,7 @@ func (r *EncryptionDetails) ToProto() *proto.EncryptionDetails {
 	}
 }
 
+// AvailabilityDetails represents details related to the availability of a record, including content type and size.
 type AvailabilityDetails struct {
 	ContentType *string
 	Size        int64
@@ -115,6 +119,7 @@ func (r *AvailabilityDetails) ToProto() *proto.AvailabilityDetails {
 	}
 }
 
+// RecordDetails represents all details related to a record, including integrity, authenticity, encryption, and availability details.
 type RecordDetails struct {
 	IntegrityDetails    *IntegrityDetails
 	AuthenticityDetails *AuthenticityDetails

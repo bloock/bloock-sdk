@@ -2,8 +2,18 @@ package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 
+/**
+ * Represents a descriptor for an attribute with a string value.
+ */
 public class StringAttributeDescriptor extends AttributeDescriptor {
 
+  /**
+   * Constructs an StringAttributeDescriptor object with the specified parameters.
+   * @param displayName
+   * @param technicalName
+   * @param description
+   * @param required
+   */
   public StringAttributeDescriptor(
       String displayName, String technicalName, String description, Boolean required) {
     super(displayName, technicalName, description, required);

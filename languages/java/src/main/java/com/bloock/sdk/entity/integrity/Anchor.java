@@ -4,6 +4,9 @@ import com.bloock.sdk.bridge.proto.IntegrityEntities;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents information about an anchor.
+ */
 public class Anchor {
   long id;
   List<String> blockRoots;
@@ -11,6 +14,14 @@ public class Anchor {
   String root;
   String status;
 
+  /**
+   * Constructs an Anchor object with the specified parameters.
+   * @param id
+   * @param blockRoots
+   * @param networks
+   * @param root
+   * @param status
+   */
   Anchor(
       long id, List<String> blockRoots, List<AnchorNetwork> networks, String root, String status) {
     this.id = id;
@@ -56,22 +67,42 @@ public class Anchor {
         + "}";
   }
 
+  /**
+   * Gets id from the anchor.
+   * @return
+   */
   public long getId() {
     return id;
   }
 
+  /**
+   * Gets block roots from the anchor.
+   * @return
+   */
   public List<String> getBlockRoots() {
     return blockRoots;
   }
 
+  /**
+   * Gets networks from the anchor.
+   * @return
+   */
   public List<AnchorNetwork> getNetworks() {
     return networks;
   }
 
+  /**
+   * Gets root from the anchor.
+   * @return
+   */
   public String getRoot() {
     return root;
   }
 
+  /**
+   * Get status from the anchor.
+   * @return
+   */
   public String getStatus() {
     return status;
   }
