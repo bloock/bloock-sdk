@@ -1,5 +1,8 @@
 import { Method as MethodProto } from "../../bridge/proto/identity_entities_v2";
 
+/**
+ * Represents an enumeration of methods used in the DID.
+ */
 export enum Method {
   UNRECOGNIZED = -1,
   POLYGON_ID = 0,

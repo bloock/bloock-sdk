@@ -15,19 +15,26 @@ import {
   VerifyRecordsRequest
 } from "../bridge/proto/integrity";
 
+/**
+ * Provides functionality to interact with the [Bloock Integrity service](https://dashboard.bloock.com/login).
+ */
 export class IntegrityClient {
   private bridge: BloockBridge;
   private configData: ConfigData | undefined;
 
+  /**
+   * Creates a new IntegrityClient with default configuration.
+   * @param configData 
+   */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
     this.configData = NewConfigData(configData);
   }
 
   /**
-   * Sends a list of Record to Bloock.
-   * @param  {Record[]} records List of Record to send.
-   * @returns {Promise<RecordReceipt[]>} List of RecordReceipt of each Record sent or error.
+   * Sends records to the Bloock Integrity service for certification.
+   * @param records 
+   * @returns 
    */
   public async sendRecords(records: Record[]): Promise<RecordReceipt[]> {
     const request = SendRecordsRequest.fromPartial({
@@ -47,9 +54,9 @@ export class IntegrityClient {
   }
 
   /**
-   * Gets an specific anchor id details.
-   * @param  {number} anchorId Id of the Anchor to look for.
-   * @returns {Promise<Anchor>} Anchor object matching the id or error
+   * Gets an anchor by its ID from the Bloock Integrity service.
+   * @param anchorId 
+   * @returns 
    */
   public async getAnchor(anchorId: number): Promise<Anchor> {
     const request = GetAnchorRequest.fromPartial({
@@ -69,10 +76,10 @@ export class IntegrityClient {
   }
 
   /**
-   * Waits until the anchor specified is confirmed in Bloock.
-   * @param  {number} anchorId Id of the Anchor to wait for.
-   * @param  {number} [timeout=120000] Timeout time in miliseconds. After exceeding this time returns an exception.
-   * @returns {Promise<Anchor>} Anchor object matching the id.
+   * Waits for the completion of an anchor on the Bloock Integrity service.
+   * @param anchorId 
+   * @param timeout 
+   * @returns 
    */
   public async waitAnchor(anchorId: number, timeout?: number): Promise<Anchor> {
     const request = WaitAnchorRequest.fromPartial({
@@ -93,10 +100,9 @@ export class IntegrityClient {
   }
 
   /**
-   * Retrieves an integrity Proof for the specified list of Record.
-   * @param  {Record[]} records List of records to validate.
-   * @returns {Promise<Proof>} The Proof object containing the elements necessary to verify
-   * the integrity of the records in the input list. If no record was requested, then returns None.
+   * Gets a proof for a set of records from the Bloock Integrity service.
+   * @param records 
+   * @returns 
    */
   public async getProof(records: Record[]): Promise<Proof> {
     const request = GetProofRequest.fromPartial({
@@ -116,10 +122,10 @@ export class IntegrityClient {
   }
 
   /**
-   * Validates if the root it's currently included in the blockchain.
-   * @param {Record} root root to validate
-   * @param {Network} network blockchain network where the record will be validated
-   * @returns {Promise<number>} A number representing the timestamp in milliseconds when the anchor was registered in Blockchain
+   * Validates the integrity of a merkle root proof on blockchain.
+   * @param root 
+   * @param network 
+   * @returns 
    */
   public async validateRoot(root: string, network: Network): Promise<number> {
     const request = ValidateRootRequest.fromPartial({
@@ -140,10 +146,9 @@ export class IntegrityClient {
   }
 
   /**
-   * Verifies if the specified integrity Proof is valid.
-   * @param  {Proof} proof Proof to validate.
-   * @returns {Promise<Record>} Record prepared to validate in Blockchain
-   * @throws {ProofException} Error when verifying the proof
+   * Verifies the integrity of a proof.
+   * @param proof 
+   * @returns 
    */
   public async verifyProof(proof: Proof): Promise<string> {
     const request = VerifyProofRequest.fromPartial({
@@ -163,10 +168,10 @@ export class IntegrityClient {
   }
 
   /**
-   * It retrieves a proof for the specified list of Anchor using getProof and verifies it using verifyProof.
-   * @param  {Record[]} records list of records to validate
-   * @param  {Network} network OPTIONAL. Blockchain network where the records will be validated
-   * @returns {Promise<number>} A number representing the timestamp in milliseconds when the anchor was registered in Blockchain
+   * Verifies the integrity of a set of records.
+   * @param records 
+   * @param network 
+   * @returns 
    */
   public async verifyRecords(
     records: Record[],

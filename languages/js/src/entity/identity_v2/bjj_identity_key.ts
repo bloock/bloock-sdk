@@ -3,9 +3,16 @@ import { LocalKey, ManagedKey } from "../key";
 import { IdentityKey } from "./identity_key";
 import { IdentityKeyArgs } from "./identity_key_args";
 
+/**
+ * Represents an identity BJJ key used.
+ */
 export class BjjIdentityKey implements IdentityKey {
   args: IdentityKeyArgs;
 
+  /**
+   * Creates a new BjjIdentityKey instance with the provided issuer key arguments.
+   * @param key 
+   */
   constructor(key: LocalKey | ManagedKey) {
     this.args = new IdentityKeyArgs(key);
   }

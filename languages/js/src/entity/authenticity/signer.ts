@@ -9,6 +9,9 @@ import {
 } from "../key";
 import { HashAlg } from "./hash_alg";
 
+/**
+ * Represents a signer with various key types and additional configurations.
+ */
 export class Signer {
   localKey?: LocalKey;
   managedKey?: ManagedKey;
@@ -18,6 +21,12 @@ export class Signer {
   hashAlg?: HashAlg;
   accessControl?: AccessControl;
 
+  /**
+   * Creates a Signer instance with a local key, managed key, local certificate or managed certificate.
+   * @param key 
+   * @param hashAlg 
+   * @param accessControl 
+   */
   constructor(
     key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate | string,
     hashAlg?: HashAlg,

@@ -1,13 +1,39 @@
 import * as proto from "../../bridge/proto/authenticity_entities";
 import { SignatureAlg } from "./signature_alg";
 
+/**
+ * Represents a cryptographic signature along with additional metadata.
+ */
 export class Signature {
+  /**
+   * Is the cryptographic signature.
+   */
   signature: string;
+  /**
+   * Is the algorithm used for the signature.
+   */
   alg: string;
+  /**
+   * Is the key identifier associated with the signature. (public key or key ID).
+   */
   kid: string;
+  /**
+   * Is the hash of the message that was signed.
+   */
   messageHash: string;
+  /**
+   * Is an optional field representing the subject of the signature.
+   */
   subject?: string;
 
+  /**
+   * Constructs a Signature object with the specified parameters.
+   * @param messageHash 
+   * @param signature 
+   * @param alg 
+   * @param kid 
+   * @param subject 
+   */
   constructor(
     messageHash: string,
     signature: string,
@@ -36,6 +62,10 @@ export class Signature {
     });
   }
 
+  /**
+   * Returns the SignatureAlg based on the algorithm specified in the Alg field.
+   * @returns 
+   */
   getAlg(): SignatureAlg {
     return SignatureAlg.fromString(this.alg);
   }

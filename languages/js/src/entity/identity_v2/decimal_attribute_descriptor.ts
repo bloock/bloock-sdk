@@ -1,6 +1,9 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 import { AttributeDescriptor } from "./attribute_descriptor";
 
+/**
+ * Represents a descriptor for an attribute with a decimal value.
+ */
 export class DecimalAttributeDescriptor extends AttributeDescriptor {
   public toProto(): identityEntitiesProto.DecimalAttributeDefinitionV2 {
     return identityEntitiesProto.DecimalAttributeDefinitionV2.fromPartial({

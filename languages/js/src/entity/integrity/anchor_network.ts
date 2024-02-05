@@ -1,11 +1,21 @@
 import * as proto from "../../bridge/proto/integrity_entities";
 
+/**
+ * Represents information about an anchor network.
+ */
 export class AnchorNetwork {
   name: string;
   state: string;
   txHash: string;
   root?: string;
 
+  /**
+   * Constructs an AnchorNetwork object with the specified parameters.
+   * @param name 
+   * @param state 
+   * @param txHash 
+   * @param root 
+   */
   constructor(name: string, state: string, txHash: string, root?: string) {
     this.name = name;
     this.state = state;

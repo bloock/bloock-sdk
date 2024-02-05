@@ -1,8 +1,15 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 
+/**
+ * Represents a receipt for the issuer's state.
+ */
 export class IssuerStateReceipt {
   txHash: string;
 
+  /**
+   * Constructs an IssuerStateReceipt object with the specified parameters.
+   * @param txHash 
+   */
   constructor(txHash: string) {
     this.txHash = txHash;
   }

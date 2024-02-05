@@ -10,6 +10,9 @@ import { KeyClient } from "./key";
 import { RecordClient } from "./record";
 import { WebhookClient } from "./webhook";
 
+/**
+ * Represents a client for interacting with the Bloock SDK.
+ */
 export class BloockClient {
   private configData: ConfigData;
 
@@ -23,6 +26,12 @@ export class BloockClient {
   public RecordClient: RecordClient;
   public WebhookClient: WebhookClient;
 
+  /**
+   * Creates a new instance of the Bloock SDK client with the specified configuration.
+   * @param apiKey 
+   * @param identityApiHost 
+   * @param forceEnv 
+   */
   constructor(apiKey: string, identityApiHost?: string, forceEnv?: string) {
     this.configData = NewConfigData(undefined);
 

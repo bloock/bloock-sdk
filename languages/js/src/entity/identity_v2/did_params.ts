@@ -3,11 +3,20 @@ import { NetworkId } from "./network";
 import { Blockchain } from "./blockchain";
 import { Method } from "./method";
 
+/**
+ * Represents parameters used for generating DIDs.
+ */
 export class DidParams {
   method: Method;
   blockchain: Blockchain;
   network: NetworkId;
 
+  /**
+   * Constructs a DidParams object with the specified parameters.
+   * @param method 
+   * @param blockchain 
+   * @param network 
+   */
   constructor(method: Method, blockchain: Blockchain, network: NetworkId) {
     this.method = method;
     this.blockchain = blockchain;

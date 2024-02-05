@@ -1,11 +1,20 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 import { Credential } from "../identity_v2/credential";
 
+/**
+ * Represents a receipt for a credential, including the credential itself, its ID, and type.
+ */
 export class CredentialReceipt {
   credential: Credential;
   credentialId: string;
   credentialType: string;
 
+  /**
+   * Constructs an CredentialReceipt object with the specified parameters.
+   * @param credential 
+   * @param credentialId 
+   * @param credentialType 
+   */
   constructor(
     credential: Credential,
     credentialId: string,

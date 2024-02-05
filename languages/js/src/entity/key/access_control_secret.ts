@@ -1,8 +1,15 @@
 import * as proto from "../../bridge/proto/keys_entities";
 
+/**
+ * Represents a secret used for secret-based access control.
+ */
 export class AccessControlSecret {
     secret: string;
 
+    /**
+     * Creates a new AccessControlSecret instance with the provided secret.
+     * @param secret 
+     */
     constructor(
         secret: string,
     ) {

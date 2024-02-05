@@ -5,15 +5,28 @@ import { NewConfigData } from "../config/config";
 import { Publisher, Loader } from "../entity/availability";
 import { Record } from "../entity/record";
 
+/**
+ * Represents a client for interacting with the [Bloock Availability service](https://dashboard.bloock.com/login).
+ */
 export class AvailabilityClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
+  /**
+   * Creates a new instance of the AvailabilityClient with default configuration.
+   * @param configData 
+   */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
     this.configData = NewConfigData(configData);
   }
 
+  /**
+   * Publishes a Bloock record to the Availability service using the specified publisher.
+   * @param record 
+   * @param publisher 
+   * @returns 
+   */
   async publish(record: Record, publisher: Publisher): Promise<string> {
     const request = PublishRequest.fromPartial({
       configData: this.configData,
@@ -31,6 +44,11 @@ export class AvailabilityClient {
       });
   }
 
+  /**
+   * Gets a Bloock record from the Availability service using the specified loader.
+   * @param loader 
+   * @returns 
+   */
   async retrieve(loader: Loader): Promise<Record> {
     const request = RetrieveRequest.fromPartial({
       configData: this.configData,

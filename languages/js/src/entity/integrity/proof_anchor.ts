@@ -1,12 +1,22 @@
 import * as proto from "../../bridge/proto/integrity_entities";
 import { AnchorNetwork } from "./anchor_network";
 
+/**
+ * Represents a proof anchor.
+ */
 export class ProofAnchor {
   anchorID: number;
   networks: AnchorNetwork[];
   root: string;
   status: string;
 
+  /**
+   * Constructs a ProofAnchor object with the specified parameters.
+   * @param anchorID 
+   * @param networks 
+   * @param root 
+   * @param status 
+   */
   constructor(
     anchorID: number,
     networks: AnchorNetwork[],

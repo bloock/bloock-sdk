@@ -7,6 +7,9 @@ import {
   AccessControl
 } from "../key";
 
+/**
+ * Represents an encryption configuration with various key types and access control.
+ */
 export class Encrypter {
   localKey?: LocalKey;
   managedKey?: ManagedKey;
@@ -14,6 +17,11 @@ export class Encrypter {
   localCertificate?: LocalCertificate;
   accessControl?: AccessControl;
 
+  /**
+   * Creates a new Encrypter instance with a local encryption key.
+   * @param key 
+   * @param accessControl 
+   */
   constructor(
     key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate,
     accessControl?: AccessControl

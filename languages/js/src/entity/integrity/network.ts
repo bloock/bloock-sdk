@@ -1,5 +1,8 @@
 import * as proto from "../../bridge/proto/config";
 
+/**
+ * Represents a network.
+ */
 export enum Network {
   UNRECOGNIZED = -1,
   ETHEREUM_MAINNET = 0,

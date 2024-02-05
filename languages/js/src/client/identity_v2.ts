@@ -27,15 +27,28 @@ import { DidParams } from "../entity/identity_v2/did_params";
 import { SchemaBuilder } from "../entity/identity_v2/schema_builder";
 import { Signer } from "../entity/authenticity";
 
+/**
+ * Represents a client for interacting with the [Bloock Identity service](https://dashboard.bloock.com/login).
+ */
 export class IdentityClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
+  /**
+   * Creates a new instance of the IdentityClient with default configuration.
+   * @param configData 
+   */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
     this.configData = NewConfigData(configData);
   }
 
+  /**
+   * Creates a new identity.
+   * @param issuerKey 
+   * @param didParams 
+   * @returns 
+   */
   public createIdentity(
     issuerKey: IdentityKey,
     didParams?: DidParams
@@ -57,6 +70,16 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Creates a new issuer on the Bloock Identity service.
+   * @param issuerKey 
+   * @param publishInterval 
+   * @param issuerParams 
+   * @param name 
+   * @param description 
+   * @param image 
+   * @returns 
+   */
   public createIssuer(
     issuerKey: IdentityKey,
     publishInterval: PublishIntervalParams,
@@ -86,6 +109,12 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Gets the DID of an issuer based on the issuer key.
+   * @param issuerKey 
+   * @param issuerParams 
+   * @returns 
+   */
   public getIssuerByKey(
     issuerKey: IdentityKey,
     issuerParams?: DidParams
@@ -107,6 +136,14 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Creates a new schema builder for defining a schema on the Bloock Identity service.
+   * @param displayName 
+   * @param schemaType 
+   * @param version 
+   * @param description 
+   * @returns 
+   */
   public buildSchema(
     displayName: string,
     schemaType: string,
@@ -122,6 +159,11 @@ export class IdentityClient {
     );
   }
 
+  /**
+   * Gets a schema from the Bloock Identity service based on the schema ID (ex: Qma1t4uzbnB93E4rasNdu5UWMDh5qg3wMkPm68cnEyfnoM).
+   * @param id 
+   * @returns 
+   */
   public getSchema(id: string): Promise<Schema> {
     const request = GetSchemaRequestV2.fromPartial({
       configData: this.configData,
@@ -139,6 +181,15 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Creates a new credential builder for defining a credential on the Bloock Identity service.
+   * @param schemaId 
+   * @param issuerDid 
+   * @param holderDid 
+   * @param expiration 
+   * @param version 
+   * @returns 
+   */
   public buildCredential(
     schemaId: string,
     issuerDid: string,
@@ -156,6 +207,12 @@ export class IdentityClient {
     );
   }
 
+  /**
+   * Publishes the state of an issuer on the Bloock Identity service.
+   * @param issuerDid 
+   * @param signer 
+   * @returns 
+   */
   public publishIssuerState(
     issuerDid: string,
     signer: Signer
@@ -177,6 +234,12 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Gets the proof of a credential on the Bloock Identity service.
+   * @param issuerDid 
+   * @param credentialId 
+   * @returns 
+   */
   public getCredentialProof(
     issuerDid: string,
     credentialId: string
@@ -198,6 +261,12 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Revokes a credential on the Bloock Identity service.
+   * @param credential 
+   * @param signer 
+   * @returns 
+   */
   public revokeCredential(
     credential: Credential,
     signer: Signer
@@ -219,6 +288,11 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Creates a new verification session on the identity managed API provided.
+   * @param proofRequest 
+   * @returns 
+   */
   public createVerification(
     proofRequest: string
   ): Promise<VerificationReceipt> {
@@ -238,6 +312,12 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Waits for the completion of a verification session on the identity managed API provided.
+   * @param sessionID 
+   * @param timeout 
+   * @returns 
+   */
   public waitVerification(
     sessionID: number,
     timeout?: number
@@ -259,6 +339,11 @@ export class IdentityClient {
       });
   }
 
+  /**
+   * Gets the status of a verification session on the identity managed API provided.
+   * @param sessionID 
+   * @returns 
+   */
   public getVerificationStatus(sessionID: number): Promise<boolean> {
     const request = GetVerificationStatusRequest.fromPartial({
       configData: this.configData,

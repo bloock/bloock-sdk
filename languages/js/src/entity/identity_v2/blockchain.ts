@@ -8,6 +8,9 @@ export enum Blockchain {
   UNKNOWN_CHAIN = 3
 }
 
+/**
+ * Represents an enumeration of blockchains used in the DID.
+ */
 export namespace Blockchain {
   export function toProto(blockchain: Blockchain): BlockchainProto {
     switch (blockchain) {

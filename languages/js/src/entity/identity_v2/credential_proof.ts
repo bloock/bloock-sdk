@@ -1,9 +1,17 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 
+/**
+ * Represents the proof associated with a credential, including signature and sparse merkle tree proof.
+ */
 export class CredentialProof {
   signatureProof: string;
   sparseMtProof?: string;
 
+  /**
+   * Constructs an CredentialProof object with the specified parameters.
+   * @param signatureProof 
+   * @param sparseMtProof 
+   */
   constructor(signatureProof: string, sparseMtProof?: string) {
     this.signatureProof = signatureProof;
     this.sparseMtProof = sparseMtProof;
