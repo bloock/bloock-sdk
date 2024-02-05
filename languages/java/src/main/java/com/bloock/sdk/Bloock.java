@@ -5,6 +5,9 @@ import com.bloock.sdk.entity.integrity.Network;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides a centralized configuration for the Bloock SDK library. For information about Bloock SDK in Go, see https://bloock.com.
+ */
 public class Bloock {
   /**
    * Is a string variable representing the API key used for authentication with the Bloock SDK, create <a href="https://dashboard.bloock.com/login">here</a>.

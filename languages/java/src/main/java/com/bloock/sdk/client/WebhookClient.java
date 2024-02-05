@@ -9,7 +9,7 @@ import com.bloock.sdk.config.Config;
 import com.google.protobuf.ByteString;
 
 /**
- * provides functionality for interacting with <a href="https://dashboard.bloock.com/login">Bloock webhooks</a>.
+ * Provides functionality for interacting with <a href="https://dashboard.bloock.com/login">Bloock webhooks</a>.
  */
 public class WebhookClient {
   private final Bridge bridge;

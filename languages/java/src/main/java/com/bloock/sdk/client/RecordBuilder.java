@@ -26,6 +26,12 @@ public class RecordBuilder {
   EncryptionEntities.Encrypter encrypter;
   EncryptionEntities.Encrypter decrypter;
 
+  /**
+   * Creates a new RecordBuilder with default configuration.
+   * @param payload
+   * @param type
+   * @param configData
+   */
   RecordBuilder(Object payload, RecordTypes type, ConfigData configData) {
     this.payload = payload;
     this.type = type;
