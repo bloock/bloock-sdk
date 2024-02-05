@@ -4,6 +4,9 @@ namespace Bloock\Entity\IdentityV2;
 
 use Bloock\DecimalAttributeDefinitionV2;
 
+/**
+ * Represents a descriptor for an attribute with a decimal value.
+ */
 class DecimalAttributeDescriptor extends AttributeDescriptor
 {
     public static function fromProto(DecimalAttributeDefinitionV2 $res): DecimalAttributeDescriptor

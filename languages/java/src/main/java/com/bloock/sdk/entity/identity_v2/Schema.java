@@ -38,18 +38,34 @@ public class Schema {
         .build();
   }
 
+  /**
+   * Gets the cid of the schema.
+   * @return
+   */
   public String getCid() {
     return cid;
   }
 
+  /**
+   * Gets de cid json-ld of the schema.
+   * @return
+   */
   public String getCidJsonLD() {
     return cidJsonLD;
   }
 
+  /**
+   * Gets the schema type of the schema.
+   * @return
+   */
   public String getSchemaType() {
     return schemaType;
   }
 
+  /**
+   * Gets the json representation of the schema.
+   * @return
+   */
   public String getJson() {
     return json;
   }

@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents a receipt for a credential, including the credential itself, its ID, and type.
+ */
 class CredentialReceipt
 {
     private Credential $credential;
@@ -9,6 +12,7 @@ class CredentialReceipt
     private string $credentialType;
 
     /**
+     * Constructs an CredentialReceipt object with the specified parameters.
      * @param Credential $credential
      * @param string $credentialId
      * @param string $credentialType
@@ -26,6 +30,7 @@ class CredentialReceipt
     }
 
     /**
+     * Gets the credential object.
      * @return Credential
      */
     public function getCredential(): Credential
@@ -34,6 +39,7 @@ class CredentialReceipt
     }
 
     /**
+     * Gets the ID associated with the credential.
      * @return string
      */
     public function getCredentialId(): string
@@ -42,6 +48,7 @@ class CredentialReceipt
     }
 
     /**
+     * Gets the type of the credential.
      * @return string
      */
     public function getCredentialType(): string

@@ -4,11 +4,17 @@ namespace Bloock\Entity\Availability;
 
 use Bloock\DataAvailabilityType;
 
+/**
+ * Represents a publisher for hosted data availability.
+ */
 class HostedPublisher implements Publisher
 {
     private int $type;
     private PublisherArgs $args;
 
+    /**
+     * Constructs a HostedPublisher object with the specified parameters.
+     */
     public function __construct()
     {
         $this->type = DataAvailabilityType::HOSTED;

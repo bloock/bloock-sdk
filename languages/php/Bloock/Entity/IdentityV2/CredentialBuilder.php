@@ -10,6 +10,9 @@ use Bloock\Entity\Authenticity\Signer;
 use DateTime;
 use Exception;
 
+/**
+ * Helps construct credentials by specifying various attributes.
+ */
 class CredentialBuilder
 {
     private string $schemaId;
@@ -27,6 +30,15 @@ class CredentialBuilder
     private array $dateAttributes;
     private array $datetimeAttributes;
 
+    /**
+     * Creates a new CredentialBuilder instance with the specified parameters.
+     * @param string $schemaId
+     * @param string $issuerDid
+     * @param string $holderDid
+     * @param int $expiration
+     * @param int $version
+     * @param ConfigData $configData
+     */
     public function __construct(string $schemaId, string $issuerDid, string $holderDid, int $expiration, int $version, ConfigData $configData)
     {
         $this->schemaId = $schemaId;
@@ -45,6 +57,12 @@ class CredentialBuilder
         $this->datetimeAttributes = [];
     }
 
+    /**
+     * Adds a string attribute to the CredentialBuilder.
+     * @param string $key
+     * @param string $value
+     * @return $this
+     */
     public function withStringAttribute(string $key, string $value): CredentialBuilder
     {
         $attribute = new StringAttribute($key, $value);
@@ -52,6 +70,12 @@ class CredentialBuilder
         return $this;
     }
 
+    /**
+     * Adds an integer attribute to the CredentialBuilder.
+     * @param string $key
+     * @param int $value
+     * @return $this
+     */
     public function withIntegerAttribute(string $key, int $value): CredentialBuilder
     {
         $attribute = new IntegerAttribute($key, $value);
@@ -59,6 +83,12 @@ class CredentialBuilder
         return $this;
     }
 
+    /**
+     * Adds a decimal attribute to the CredentialBuilder.
+     * @param string $key
+     * @param float $value
+     * @return $this
+     */
     public function withDecimalAttribute(string $key, float $value): CredentialBuilder
     {
         $attribute = new DecimalAttribute($key, $value);
@@ -66,6 +96,12 @@ class CredentialBuilder
         return $this;
     }
 
+    /**
+     * Adds a boolean attribute to the CredentialBuilder.
+     * @param string $key
+     * @param bool $value
+     * @return $this
+     */
     public function withBooleanAttribute(string $key, bool $value): CredentialBuilder
     {
         $attribute = new BooleanAttribute($key, $value);
@@ -73,6 +109,12 @@ class CredentialBuilder
         return $this;
     }
 
+    /**
+     * Adds a date attribute to the CredentialBuilder.
+     * @param string $key
+     * @param DateTime $value
+     * @return $this
+     */
     public function withDateAttribute(string $key, DateTime $value): CredentialBuilder
     {
         $formated = $value->format('Y-m-d');
@@ -81,6 +123,12 @@ class CredentialBuilder
         return $this;
     }
 
+    /**
+     * Adds a datetime attribute to the CredentialBuilder.
+     * @param string $key
+     * @param DateTime $value
+     * @return $this
+     */
     public function withDatetimeAttribute(string $key, DateTime $value): CredentialBuilder
     {
         $formated = $value->format('Y-m-d\TH:i:sP');
@@ -89,12 +137,22 @@ class CredentialBuilder
         return $this;
     }
 
+    /**
+     * Sets the signer for the CredentialBuilder.
+     * @param Signer $signer
+     * @return $this
+     */
     public function withSigner(Signer $signer): CredentialBuilder
     {
         $this->signer = $signer->toProto();
         return $this;
     }
 
+    /**
+     * Creates and returns a Credential using the specified attributes.
+     * @return CredentialReceipt
+     * @throws Exception
+     */
     public function build(): CredentialReceipt
     {
         $bridge = new Bridge();

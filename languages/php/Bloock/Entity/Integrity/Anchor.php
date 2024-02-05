@@ -4,6 +4,9 @@ namespace Bloock\Entity\Integrity;
 
 use Google\Protobuf\Internal\RepeatedField;
 
+/**
+ * Represents information about an anchor.
+ */
 class Anchor
 {
     private int $id;
@@ -12,6 +15,14 @@ class Anchor
     private string $root;
     private string $status;
 
+    /**
+     * Constructs an Anchor object with the specified parameters.
+     * @param int $id
+     * @param RepeatedField $blockRoots
+     * @param RepeatedField $networks
+     * @param string $root
+     * @param string $status
+     */
     public function __construct(int $id, RepeatedField $blockRoots, RepeatedField $networks, string $root, string $status)
     {
         $this->id = $id;
@@ -27,6 +38,7 @@ class Anchor
     }
 
     /**
+     * Gets id from the anchor.
      * @return int
      */
     public function getId(): int
@@ -35,6 +47,7 @@ class Anchor
     }
 
     /**
+     * Gets block roots from the anchor.
      * @return RepeatedField
      */
     public function getBlockRoots(): RepeatedField
@@ -43,6 +56,7 @@ class Anchor
     }
 
     /**
+     * Gets networks from the anchor.
      * @return RepeatedField
      */
     public function getNetworks(): RepeatedField
@@ -51,6 +65,7 @@ class Anchor
     }
 
     /**
+     * Gets root from the anchor.
      * @return string
      */
     public function getRoot(): string
@@ -59,6 +74,7 @@ class Anchor
     }
 
     /**
+     * Get status from the anchor.
      * @return string
      */
     public function getStatus(): string

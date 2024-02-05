@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Record;
 
+/**
+ * Represents all details related to a record, including integrity, authenticity, encryption, and availability details.
+ */
 class RecordDetails
 {
     private ?IntegrityDetails $integrity;
@@ -9,6 +12,13 @@ class RecordDetails
     private ?EncryptionDetails $encryption;
     private ?AvailabilityDetails $availability;
 
+    /**
+     * Constructs a RecordDetails object with the specified parameters.
+     * @param IntegrityDetails|null $integrity
+     * @param AuthenticityDetails|null $authenticity
+     * @param EncryptionDetails|null $encryption
+     * @param AvailabilityDetails|null $availability
+     */
     public function __construct(?IntegrityDetails $integrity, ?AuthenticityDetails $authenticity, ?EncryptionDetails $encryption, ?AvailabilityDetails $availability)
     {
         $this->integrity = $integrity;
@@ -18,7 +28,8 @@ class RecordDetails
     }
 
     /**
-     * @return IntegrityDetails
+     * Gets the integrity details of the record.
+     * @return IntegrityDetails|null
      */
     public function getIntegrity(): ?IntegrityDetails
     {
@@ -26,7 +37,8 @@ class RecordDetails
     }
 
     /**
-     * @return AuthenticityDetails
+     * Gets the authenticity details of the record.
+     * @return AuthenticityDetails|null
      */
     public function getAuthenticity(): ?AuthenticityDetails
     {
@@ -34,7 +46,8 @@ class RecordDetails
     }
 
     /**
-     * @return EncryptionDetails
+     * Gets the encryption details of the record.
+     * @return EncryptionDetails|null
      */
     public function getEncryption(): ?EncryptionDetails
     {
@@ -42,7 +55,8 @@ class RecordDetails
     }
 
     /**
-     * @return AvailabilityDetails
+     * Gets the availability details of the record.
+     * @return AvailabilityDetails|null
      */
     public function getAvailability(): ?AvailabilityDetails
     {

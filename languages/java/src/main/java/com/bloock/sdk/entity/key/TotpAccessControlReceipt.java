@@ -39,7 +39,7 @@ public class TotpAccessControlReceipt {
   }
 
   /**
-   * Gets the recorvery codes of the totp access control receipt.
+   * Gets the recovery codes of the totp access control receipt.
    * @return
    */
   public List<String> getRecoveryCodes() {

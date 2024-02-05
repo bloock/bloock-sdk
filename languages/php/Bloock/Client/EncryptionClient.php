@@ -18,11 +18,18 @@ use Bloock\GenerateLocalKeyRequest;
 use Bloock\KeyType;
 use Exception;
 
+/**
+ * Represents a client for interacting with the [Bloock Encryption service](https://dashboard.bloock.com/login).
+ */
 class EncryptionClient
 {
     private $bridge;
     private $config;
 
+    /**
+     * Creates a new instance of the EncryptionClient with the provided configuration.
+     * @param ConfigData|null $config
+     */
     public function __construct(ConfigData $config = null)
     {
         $this->bridge = new Bridge();
@@ -34,6 +41,7 @@ class EncryptionClient
     }
 
     /**
+     * GenerateRsaKeyPair generates an RSA key pair for encryption.
      * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
      */
     public function generateRsaKeyPair(): RsaKeyPair
@@ -51,6 +59,13 @@ class EncryptionClient
         return RsaKeyPair::fromProto($res);
     }
 
+    /**
+     * Encrypts a Bloock record using the specified encrypter.
+     * @param Record $record
+     * @param Encrypter $encrypter
+     * @return Record
+     * @throws Exception
+     */
     public function encrypt(Record $record, Encrypter $encrypter): Record
     {
         $req = new EncryptRequest();
@@ -65,6 +80,13 @@ class EncryptionClient
         return Record::fromProto($res->getRecord(), $this->config);
     }
 
+    /**
+     * Decrypts a Bloock record using the specified decrypter.
+     * @param Record $record
+     * @param Encrypter $decrypter
+     * @return Record
+     * @throws Exception
+     */
     public function decrypt(Record $record, Encrypter $decrypter): Record
     {
         $req = new DecryptRequest();
@@ -79,6 +101,12 @@ class EncryptionClient
         return Record::fromProto($res->getRecord(), $this->config);
     }
 
+    /**
+     * Gets the encryption algorithm used for a Bloock record.
+     * @param Record $record
+     * @return string
+     * @throws Exception
+     */
     public function getEncryptionAlg(Record $record): string
     {
         $req = new EncryptionAlgRequest();

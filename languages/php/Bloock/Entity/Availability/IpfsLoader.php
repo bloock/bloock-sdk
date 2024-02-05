@@ -4,11 +4,18 @@ namespace Bloock\Entity\Availability;
 
 use Bloock\DataAvailabilityType;
 
+/**
+ * Represents a loader for IPFS data availability.
+ */
 class IpfsLoader implements Loader
 {
     private int $type;
     private LoaderArgs $args;
 
+    /**
+     * Constructs a IpfsLoader object with the specified parameters.
+     * @param string $id
+     */
     public function __construct(string $id)
     {
         $this->type = DataAvailabilityType::IPFS;

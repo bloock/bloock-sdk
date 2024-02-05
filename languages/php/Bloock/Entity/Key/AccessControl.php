@@ -4,12 +4,17 @@ namespace Bloock\Entity\Key;
 
 use Exception;
 
+/**
+ * Represents access control information, including Time-based One-Time Password (TOTP) and secret-based access.
+ */
 class AccessControl
 {
     public ?AccessControlTotp $accessControlTotp = null;
     public ?AccessControlSecret $accessControlSecret = null;
 
     /**
+     * Constructs AccessControl object from an AccessControlTotp or AccessControlSecret object.
+     * @param $accessControl
      * @throws Exception
      */
     public function __construct($accessControl)

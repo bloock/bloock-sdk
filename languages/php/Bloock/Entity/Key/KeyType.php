@@ -2,14 +2,38 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents the type of cryptographic key.
+ */
 class KeyType
 {
+    /**
+     * Represents the elliptic curve key type P-256k.
+     */
     const EcP256k = "EcP256k";
+    /**
+     * Represents the RSA key type with a 2048-bit modulus.
+     */
     const Rsa2048 = "Rsa2048";
+    /**
+     * Represents the RSA key type with a 3072-bit modulus.
+     */
     const Rsa3072 = "Rsa3072";
+    /**
+     * Represents the RSA key type with a 4096-bit modulus.
+     */
     const Rsa4096 = "Rsa4096";
+    /**
+     * Represents the AES key type with a 128-bit key length.
+     */
     const Aes128 = "Aes128";
+    /**
+     * Represents the AES key type with a 256-bit key length.
+     */
     const Aes256 = "Aes256";
+    /**
+     * Represents the Baby JubJub key type, elliptic curve defined over the large prime subgroup of BN128.
+     */
     const Bjj = "Bjj";
     const UNRECOGNIZED = "UNRECOGNIZED";
 

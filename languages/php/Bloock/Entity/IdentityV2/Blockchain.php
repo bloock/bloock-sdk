@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents an enumeration of blockchains used in the DID.
+ */
 class Blockchain
 {
     const POLYGON = "POLYGON";

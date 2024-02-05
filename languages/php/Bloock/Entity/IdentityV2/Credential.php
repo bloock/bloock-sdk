@@ -9,6 +9,9 @@ use Bloock\CredentialFromJsonRequestV2;
 use Bloock\CredentialToJsonRequestV2;
 use Exception;
 
+/**
+ * Represents a verifiable credential with its associated information. [Verifiable Credentials Data Model v2.0](https://www.w3.org/TR/vc-data-model-2.0/).
+ */
 class Credential
 {
     private RepeatedField $context;
@@ -23,6 +26,7 @@ class Credential
     private CredentialProof $credentialProof;
 
     /**
+     * Creates a new Credential instance with the provided details.
      * @param RepeatedField $context
      * @param string $id
      * @param RepeatedField $type
@@ -64,6 +68,12 @@ class Credential
         );
     }
 
+    /**
+     * Creates a Credential instance from a JSON string representation.
+     * @param string $json
+     * @return Credential
+     * @throws Exception
+     */
     public static function fromJson(string $json): Credential
     {
         $bridge = new Bridge();
@@ -81,6 +91,11 @@ class Credential
         return Credential::fromProto($res->getCredential());
     }
 
+    /**
+     * Converts the Credential instance to its JSON string representation.
+     * @return string
+     * @throws Exception
+     */
     public function toJson(): string
     {
         $bridge = new Bridge();
@@ -99,6 +114,7 @@ class Credential
     }
 
     /**
+     * Gets the context associated with the credential.
      * @return RepeatedField
      */
     public function getContext(): RepeatedField
@@ -107,6 +123,7 @@ class Credential
     }
 
     /**
+     * Gets the ID associated with the credential.
      * @return string
      */
     public function getId(): string
@@ -115,6 +132,7 @@ class Credential
     }
 
     /**
+     * Gets the types associated with the credential.
      * @return RepeatedField
      */
     public function getType(): RepeatedField
@@ -123,6 +141,7 @@ class Credential
     }
 
     /**
+     * Gets the issuance date of the credential.
      * @return string
      */
     public function getIssuanceDate(): string
@@ -131,6 +150,7 @@ class Credential
     }
 
     /**
+     * Gets the expiration date of the credential.
      * @return string
      */
     public function getExpiration(): string
@@ -139,6 +159,7 @@ class Credential
     }
 
     /**
+     * Gets the subject of the credential.
      * @return mixed
      */
     public function getCredentialSubject()
@@ -147,6 +168,7 @@ class Credential
     }
 
     /**
+     * Gets the status of the credential.
      * @return CredentialStatus
      */
     public function getCredentialStatus(): CredentialStatus
@@ -155,6 +177,7 @@ class Credential
     }
 
     /**
+     * Gets the issuer of the credential.
      * @return string
      */
     public function getIssuer(): string
@@ -163,6 +186,7 @@ class Credential
     }
 
     /**
+     * Gets the schema associated with the credential.
      * @return CredentialSchema
      */
     public function getCredentialSchema(): CredentialSchema
@@ -171,6 +195,7 @@ class Credential
     }
 
     /**
+     * Gets the proof associated with the credential.
      * @return CredentialProof
      */
     public function getCredentialProof(): CredentialProof

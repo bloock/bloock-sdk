@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents an attribute with an integer value.
+ */
 class IntegerAttribute extends Attribute
 {
     public static function fromProto(\Bloock\IntegerAttributeV2 $res): IntegerAttribute

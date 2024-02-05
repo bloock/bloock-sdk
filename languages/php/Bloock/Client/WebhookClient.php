@@ -8,11 +8,18 @@ use Bloock\ConfigData;
 use Bloock\VerifyWebhookSignatureRequest;
 use Exception;
 
+/**
+ * Provides functionality for interacting with [Bloock webhooks](https://dashboard.bloock.com/login).
+ */
 class WebhookClient
 {
     private $bridge;
     private $config;
 
+    /**
+     * Creates a new WebhookClient with the provided configuration.
+     * @param ConfigData|null $config
+     */
     public function __construct(ConfigData $config = null)
     {
         $this->bridge = new Bridge();
@@ -23,6 +30,15 @@ class WebhookClient
         }
     }
 
+    /**
+     * Verifies the signature of a webhook payload using the provided parameters.
+     * @param string $payload
+     * @param string $header
+     * @param string $secretKey
+     * @param bool $enforceTolerance
+     * @return bool
+     * @throws Exception
+     */
     public function verifyWebhookSignature(string $payload, string $header, string $secretKey, bool $enforceTolerance): bool
     {
         $req = new VerifyWebhookSignatureRequest();

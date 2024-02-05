@@ -4,11 +4,18 @@ namespace Bloock\Entity\Availability;
 
 use Bloock\DataAvailabilityType;
 
+/**
+ * Represents a loader for hosted data availability.
+ */
 class HostedLoader implements Loader
 {
     private int $type;
     private LoaderArgs $args;
 
+    /**
+     * Constructs a HostedLoader object with the specified parameters.
+     * @param string $id
+     */
     public function __construct(string $id)
     {
         $this->type = DataAvailabilityType::HOSTED;

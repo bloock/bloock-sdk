@@ -10,12 +10,21 @@ use Bloock\GetPayloadRequest;
 use Bloock\SetProofRequest;
 use Exception;
 
+/**
+ * Represents a record with payload, hash, and configuration data.
+ */
 class Record
 {
     private string $payload;
     private string $hash;
     private ConfigData $configData;
 
+    /**
+     * Constructs a Record object with the specified parameters.
+     * @param string $payload
+     * @param string $hash
+     * @param ConfigData $configData
+     */
     public function __construct(string $payload, string $hash, ConfigData $configData)
     {
         $this->payload = $payload;
@@ -28,6 +37,11 @@ class Record
         return new Record($record->getPayload(), $record->getHash(), $configData);
     }
 
+    /**
+     * Retrieves the hash of the record.
+     * @return string
+     * @throws Exception
+     */
     public function getHash(): string
     {
         $bridge = new Bridge();
@@ -42,6 +56,11 @@ class Record
         return $res->getHash();
     }
 
+    /**
+     * Retrieves the payload of the record.
+     * @return array
+     * @throws Exception
+     */
     public function getPayload(): array
     {
         $bridge = new Bridge();
@@ -65,11 +84,21 @@ class Record
         return $p;
     }
 
+    /**
+     * Returns the payload of the record.
+     * @return array
+     */
     public function retrieve(): array
     {
         return unpack("C*", $this->payload);
     }
 
+    /**
+     * Sets the proof for a record.
+     * @param Proof $proof
+     * @return void
+     * @throws Exception
+     */
     public function setProof(Proof $proof)
     {
         $bridge = new Bridge();

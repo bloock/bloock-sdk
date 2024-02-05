@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents a schema with its attributes.
+ */
 class Schema
 {
     private string $cid;
@@ -10,7 +13,10 @@ class Schema
     private string $json;
 
     /**
-     * @param string $id
+     * Constructs a Schema object with the specified parameters.
+     * @param string $cid
+     * @param string $cidJsonLd
+     * @param string $schemaType
      * @param string $json
      */
     public function __construct(string $cid, string $cidJsonLd, string $schemaType, string $json)
@@ -27,6 +33,7 @@ class Schema
     }
 
     /**
+     * Gets the cid of the schema.
      * @return string
      */
     public function getCid(): string
@@ -35,6 +42,7 @@ class Schema
     }
 
     /**
+     * Gets de cid json-ld of the schema.
      * @return string
      */
     public function getCidJsonLd(): string
@@ -43,6 +51,7 @@ class Schema
     }
 
     /**
+     * Gets the schema type of the schema.
      * @return string
      */
     public function getSchemaType(): string
@@ -61,6 +70,7 @@ class Schema
     }
 
     /**
+     * Gets the json representation of the schema.
      * @return string
      */
     public function getJson(): string

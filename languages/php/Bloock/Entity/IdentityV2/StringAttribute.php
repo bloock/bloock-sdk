@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents an attribute with a string value.
+ */
 class StringAttribute extends Attribute
 {
     public static function fromProto(\Bloock\StringAttributeV2 $res): StringAttribute

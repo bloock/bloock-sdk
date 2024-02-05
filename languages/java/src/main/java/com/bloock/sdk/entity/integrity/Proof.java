@@ -82,7 +82,7 @@ public class Proof {
   }
 
   /**
-   * gets the anchor of the proof.
+   * Gets the anchor of the proof.
    * @return
    */
   public ProofAnchor getAnchor() {

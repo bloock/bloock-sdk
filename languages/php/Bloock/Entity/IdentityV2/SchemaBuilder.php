@@ -8,6 +8,9 @@ use Bloock\ConfigData;
 use Exception;
 use Google\Protobuf\Internal\RepeatedField;
 
+/**
+ * Is a builder pattern for constructing schema instances.
+ */
 class SchemaBuilder
 {
     private string $displayName;
@@ -26,6 +29,14 @@ class SchemaBuilder
     private array $integerEnumAttributes;
     private array $decimalEnumAttributes;
 
+    /**
+     * Creates a new instance of SchemaBuilder with initial values.
+     * @param string $displayName
+     * @param string $schemaType
+     * @param string $version
+     * @param string $description
+     * @param ConfigData $configData
+     */
     public function __construct(string $displayName, string $schemaType, string $version, string $description, ConfigData $configData)
     {
         $this->displayName = $displayName;
@@ -45,6 +56,14 @@ class SchemaBuilder
         $this->decimalEnumAttributes = [];
     }
 
+    /**
+     * Adds a string attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @return $this
+     */
     public function addStringAttribute(string $name, string $technicalName, ?string $description, bool $required): SchemaBuilder
     {
         $attribute = new StringAttributeDescriptor($name, $technicalName, $description, $required);
@@ -52,6 +71,14 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Adds an integer attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @return $this
+     */
     public function addIntegerAttribute(string $name, string $technicalName, ?string $description, bool $required): SchemaBuilder
     {
         $attribute = new IntegerAttributeDescriptor($name, $technicalName, $description, $required);
@@ -59,6 +86,14 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Adds a decimal attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @return $this
+     */
     public function addDecimalAttribute(string $name, string $technicalName, ?string $description, bool $required): SchemaBuilder
     {
         $attribute = new DecimalAttributeDescriptor($name, $technicalName, $description, $required);
@@ -66,6 +101,14 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Adds a boolean attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @return $this
+     */
     public function addBooleanAttribute(string $name, string $technicalName, ?string $description, bool $required): SchemaBuilder
     {
         $attribute = new BooleanAttributeDescriptor($name, $technicalName, $description, $required);
@@ -73,6 +116,14 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Adds a date attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @return $this
+     */
     public function addDateAttribute(string $name, string $technicalName, ?string $description, bool $required): SchemaBuilder
     {
         $attribute = new DateAttributeDescriptor($name, $technicalName, $description, $required);
@@ -80,6 +131,14 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Adds a datetime attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @return $this
+     */
     public function addDateTimeAttribute(string $name, string $technicalName, ?string $description, bool $required): SchemaBuilder
     {
         $attribute = new DatetimeAttributeDescriptor($name, $technicalName, $description, $required);
@@ -87,6 +146,15 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Adds a string enum attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @param array $enumeration
+     * @return $this
+     */
     public function addStringEnumAttribute(string $name, string $technicalName, ?string $description, bool $required, array $enumeration): SchemaBuilder
     {
         $repeatedField = new RepeatedField(\Google\Protobuf\Internal\GPBType::STRING);
@@ -98,6 +166,15 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Adds an integer enum attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @param array $enumeration
+     * @return $this
+     */
     public function addIntegerEnumAttribute(string $name, string $technicalName, ?string $description, bool $required, array $enumeration): SchemaBuilder
     {
         $repeatedField = new RepeatedField(\Google\Protobuf\Internal\GPBType::INT64);
@@ -109,6 +186,15 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Adds a decimal enum attribute descriptor to the schema builder.
+     * @param string $name
+     * @param string $technicalName
+     * @param string|null $description
+     * @param bool $required
+     * @param array $enumeration
+     * @return $this
+     */
     public function addDecimalEnumAttribute(string $name, string $technicalName, ?string $description, bool $required, array $enumeration): SchemaBuilder
     {
         $repeatedField = new RepeatedField(\Google\Protobuf\Internal\GPBType::DOUBLE);
@@ -120,6 +206,11 @@ class SchemaBuilder
         return $this;
     }
 
+    /**
+     * Creates a schema using the configured attributes.
+     * @return Schema
+     * @throws Exception
+     */
     public function build(): Schema
     {
         $bridge = new Bridge();

@@ -26,7 +26,7 @@ public class KeyPair {
   }
 
   /**
-   * gets the private key.
+   * Gets the private key.
    * @return
    */
   public String getPrivateKey() {

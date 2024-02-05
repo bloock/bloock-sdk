@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Integrity;
 
+/**
+ * Represents information about an anchor network.
+ */
 class AnchorNetwork
 {
     private string $name;
@@ -9,6 +12,13 @@ class AnchorNetwork
     private string $txHash;
     private ?string $root;
 
+    /**
+     * Constructs an AnchorNetwork object with the specified parameters.
+     * @param string $name
+     * @param string $state
+     * @param string $txHash
+     * @param string|null $root
+     */
     public function __construct(string $name, string $state, string $txHash, ?string $root)
     {
         $this->name = $name;
@@ -23,6 +33,7 @@ class AnchorNetwork
     }
 
     /**
+     * Gets name of the anchor network.
      * @return string
      */
     public function getName(): string
@@ -31,6 +42,7 @@ class AnchorNetwork
     }
 
     /**
+     * Gets state of the anchor network.
      * @return string
      */
     public function getState(): string
@@ -39,6 +51,7 @@ class AnchorNetwork
     }
 
     /**
+     * Gets transaction hash of the anchor network.
      * @return string
      */
     public function getTxHash(): string
@@ -47,7 +60,8 @@ class AnchorNetwork
     }
 
     /**
-     * @return ?string
+     * Gets root of the anchor network.
+     * @return string
      */
     public function getRoot(): string
     {

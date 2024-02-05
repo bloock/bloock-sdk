@@ -9,7 +9,7 @@ public class Attribute<T> {
   T value;
 
   /**
-   * Constructs a Attribute object with the specified parameters.
+   * Constructs an Attribute object with the specified parameters.
    * @param id
    * @param value
    */

@@ -3,7 +3,7 @@ package com.bloock.sdk.entity.key;
 import com.bloock.sdk.bridge.proto.KeysEntities;
 
 /**
- * Represents the type of a cryptographic key.
+ * Represents the type of cryptographic key.
  */
 public enum KeyType {
   /**

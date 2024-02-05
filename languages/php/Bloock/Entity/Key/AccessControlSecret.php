@@ -2,12 +2,16 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents a secret used for secret-based access control.
+ */
 class AccessControlSecret
 {
     public string $secret;
 
     /**
-     * @throws Exception
+     * Creates a new AccessControlSecret instance with the provided secret.
+     * @param string $secret
      */
     public function __construct(string $secret)
     {

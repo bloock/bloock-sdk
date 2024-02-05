@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents an enumeration of methods used in the DID.
+ */
 class Method
 {
     const IDEN3 = "IDEN3";

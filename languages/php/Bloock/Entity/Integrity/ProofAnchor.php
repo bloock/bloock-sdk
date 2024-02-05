@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Integrity;
 
+/**
+ * Represents a proof anchor.
+ */
 class ProofAnchor
 {
     private int $anchorId;
@@ -9,6 +12,13 @@ class ProofAnchor
     private string $root;
     private string $status;
 
+    /**
+     * Constructs a ProofAnchor object with the specified parameters.
+     * @param int $anchorId
+     * @param array $networks
+     * @param string $root
+     * @param string $status
+     */
     public function __construct(int $anchorId, array $networks, string $root, string $status)
     {
         $this->anchorId = $anchorId;
@@ -27,6 +37,7 @@ class ProofAnchor
     }
 
     /**
+     * Gets the networks of the anchor proof
      * @return array
      */
     public function getNetworks(): array
@@ -35,6 +46,7 @@ class ProofAnchor
     }
 
     /**
+     * Gets the anchor id of the anchor proof.
      * @return int
      */
     public function getAnchorId(): int
@@ -43,6 +55,7 @@ class ProofAnchor
     }
 
     /**
+     * Gets the root of the anchor proof.
      * @return string
      */
     public function getRoot(): string
@@ -51,6 +64,7 @@ class ProofAnchor
     }
 
     /**
+     * Gets the status of the anchor proof.
      * @return string
      */
     public function getStatus(): string

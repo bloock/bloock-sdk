@@ -1,7 +1,7 @@
 import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
 
 /**
- * Represents the type of a cryptographic key.
+ * Represents the type of cryptographic key.
  */
 export enum KeyType {
   /**

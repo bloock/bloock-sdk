@@ -4,16 +4,24 @@ namespace Bloock\Entity\Record;
 
 use Bloock\Entity\Authenticity\Signature;
 
+/**
+ * Represents details related to the authenticity of a record, including signatures.
+ */
 class AuthenticityDetails
 {
     private array $signatures;
 
+    /**
+     * Constructs a AuthenticityDetails object with the specified parameters.
+     * @param array $signatures
+     */
     public function __construct(array $signatures)
     {
         $this->signatures = $signatures;
     }
 
     /**
+     * Gets the signatures of the record.
      * @return array
      */
     public function getSignatures(): array

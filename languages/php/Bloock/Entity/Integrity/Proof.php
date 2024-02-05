@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Integrity;
 
+/**
+ * Represents a proof, including leaves, nodes, depth, bitmap, and anchor information.
+ */
 class Proof
 {
     private array $leaves;
@@ -10,6 +13,14 @@ class Proof
     private string $bitmap;
     private ProofAnchor $anchor;
 
+    /**
+     * Constructs a Proof object with the specified parameters.
+     * @param array $leaves
+     * @param array $nodes
+     * @param string $depth
+     * @param string $bitmap
+     * @param ProofAnchor $anchor
+     */
     public function __construct(array $leaves, array $nodes, string $depth, string $bitmap, ProofAnchor $anchor)
     {
         $this->leaves = $leaves;
@@ -34,6 +45,7 @@ class Proof
     }
 
     /**
+     * Gets the leaves of the proof.
      * @return array
      */
     public function getLeaves(): array
@@ -42,6 +54,7 @@ class Proof
     }
 
     /**
+     * Gets the nodes of the proof.
      * @return array
      */
     public function getNodes(): array
@@ -50,6 +63,7 @@ class Proof
     }
 
     /**
+     * Gets the depth of the proof.
      * @return string
      */
     public function getDepth(): string
@@ -58,6 +72,7 @@ class Proof
     }
 
     /**
+     * Gets the bitmap of the proof.
      * @return string
      */
     public function getBitmap(): string
@@ -66,6 +81,7 @@ class Proof
     }
 
     /**
+     * Gets the anchor of the proof.
      * @return ProofAnchor
      */
     public function getAnchor(): ProofAnchor

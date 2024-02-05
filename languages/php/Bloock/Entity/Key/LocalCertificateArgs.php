@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents the parameters for generating a local certificate.
+ */
 class LocalCertificateArgs
 {
     public string $keyType;
@@ -10,8 +13,9 @@ class LocalCertificateArgs
     public int $expiration;
 
     /**
+     * Constructs an LocalCertificateParams object with the specified parameters.
      * @param string $keyType
-     * @param SubjectCertficateParams $params
+     * @param SubjectCertificateParams $params
      * @param string $password
      * @param int $expiration
      */

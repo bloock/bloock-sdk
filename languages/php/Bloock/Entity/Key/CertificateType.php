@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents the type of certificate.
+ */
 class CertificateType
 {
     const PEM = "PEM";

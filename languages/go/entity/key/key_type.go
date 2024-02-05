@@ -2,7 +2,7 @@ package key
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
-// KeyType represents the type of a cryptographic key.
+// KeyType represents the type of cryptographic key.
 type KeyType int32
 
 const (

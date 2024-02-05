@@ -2,12 +2,16 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents a receipt for a verification session.
+ */
 class VerificationReceipt
 {
     private int $sessionID;
     private string $verificationRequest;
 
     /**
+     * Constructs a VerificationReceipt object with the specified parameters.
      * @param int $sessionID
      * @param string $verificationRequest
      */
@@ -23,6 +27,7 @@ class VerificationReceipt
     }
 
     /**
+     * Gets the session id of the verification.
      * @return int
      */
     public function getSessionID(): int
@@ -31,6 +36,7 @@ class VerificationReceipt
     }
 
     /**
+     * Gets the verification request json.
      * @return string
      */
     public function getVerificationRequest(): string

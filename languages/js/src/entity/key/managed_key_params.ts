@@ -24,7 +24,7 @@ export class ManagedKeyParams {
   public expiration?: number;
 
   /**
-   * Constructs a ManagedKeyParams object for a given managed key object.
+   * Constructs a ManagedKeyParams object with the specified parameters.
    * @param protection 
    * @param keyType 
    * @param name 

@@ -24,7 +24,7 @@ public class ManagedKeyParams {
   Long expiration;
 
   /**
-   * Constructs a ManagedKeyParams object for a given managed key object.
+   * Constructs a ManagedKeyParams object with the specified parameters.
    * @param protection
    * @param keyType
    * @param name
@@ -39,7 +39,7 @@ public class ManagedKeyParams {
   }
 
   /**
-   * Constructs a ManagedKeyParams object for a given managed key object.
+   * Constructs a ManagedKeyParams object with the specified parameters.
    * @param protection
    * @param keyType
    */
@@ -49,7 +49,7 @@ public class ManagedKeyParams {
   }
 
   /**
-   * Constructs a ManagedKeyParams object for a given managed key object.
+   * Constructs a ManagedKeyParams object with the specified parameters.
    * @param protection
    * @param keyType
    * @param name
@@ -61,7 +61,7 @@ public class ManagedKeyParams {
   }
 
   /**
-   * Constructs a ManagedKeyParams object for a given managed key object.
+   * Constructs a ManagedKeyParams object with the specified parameters.
    * @param protection
    * @param keyType
    * @param expiration

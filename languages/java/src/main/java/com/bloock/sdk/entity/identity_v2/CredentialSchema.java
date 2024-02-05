@@ -31,6 +31,14 @@ public class CredentialSchema {
   }
 
   /**
+   * Gets the id of the credential.
+   * @return
+   */
+  public String getCredentialID() {
+    return id;
+  }
+
+  /**
    * Gets the type of the credential.
    * @return
    */
