@@ -13,20 +13,36 @@ import com.bloock.sdk.entity.record.Record;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Provides functionality to interact with the <a href="https://dashboard.bloock.com/login">Bloock Integrity service</a>.
+ */
 public class IntegrityClient {
   private final Bridge bridge;
   private final ConfigData configData;
 
+  /**
+   * Creates a new IntegrityClient with default configuration.
+   */
   public IntegrityClient() {
     this.bridge = new Bridge();
     this.configData = Config.newConfigDataDefault();
   }
 
+  /**
+   * Creates a new IntegrityClient with the given configuration.
+   * @param configData
+   */
   public IntegrityClient(ConfigData configData) {
     this.bridge = new Bridge();
     this.configData = Config.newConfigData(configData);
   }
 
+  /**
+   * Sends records to the Bloock Integrity service for certification.
+   * @param records
+   * @return
+   * @throws Exception
+   */
   public List<RecordReceipt> sendRecords(List<Record> records) throws Exception {
     SendRecordsRequest request =
         SendRecordsRequest.newBuilder()
@@ -45,6 +61,12 @@ public class IntegrityClient {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Gets an anchor by its ID from the Bloock Integrity service.
+   * @param id
+   * @return
+   * @throws Exception
+   */
   public Anchor getAnchor(long id) throws Exception {
     GetAnchorRequest request =
         GetAnchorRequest.newBuilder().setConfigData(this.configData).setAnchorId(id).build();
@@ -58,10 +80,23 @@ public class IntegrityClient {
     return Anchor.fromProto(response.getAnchor());
   }
 
+  /**
+   * Waits for the completion of an anchor on the Bloock Integrity service.
+   * @param id
+   * @return
+   * @throws Exception
+   */
   public Anchor waitAnchor(long id) throws Exception {
     return waitAnchor(id, 120000);
   }
 
+  /**
+   * Waits for the completion of an anchor on the Bloock Integrity service.
+   * @param id
+   * @param timeout
+   * @return
+   * @throws Exception
+   */
   public Anchor waitAnchor(long id, long timeout) throws Exception {
     WaitAnchorRequest request =
         WaitAnchorRequest.newBuilder()
@@ -79,6 +114,12 @@ public class IntegrityClient {
     return Anchor.fromProto(response.getAnchor());
   }
 
+  /**
+   * Gets a proof for a set of records from the Bloock Integrity service.
+   * @param records
+   * @return
+   * @throws Exception
+   */
   public Proof getProof(List<Record> records) throws Exception {
     GetProofRequest request =
         GetProofRequest.newBuilder()
@@ -95,6 +136,12 @@ public class IntegrityClient {
     return Proof.fromProto(response.getProof());
   }
 
+  /**
+   * Verifies the integrity of a proof.
+   * @param proof
+   * @return
+   * @throws Exception
+   */
   public String verifyProof(Proof proof) throws Exception {
     VerifyProofRequest request =
         VerifyProofRequest.newBuilder()
@@ -111,10 +158,23 @@ public class IntegrityClient {
     return response.getRecord();
   }
 
+  /**
+   * Verifies the integrity of a set of records.
+   * @param records
+   * @return
+   * @throws Exception
+   */
   public long verifyRecords(List<Record> records) throws Exception {
     return verifyRecords(records, null);
   }
 
+  /**
+   * Verifies the integrity of a set of records for a given network.
+   * @param records
+   * @param network
+   * @return
+   * @throws Exception
+   */
   public long verifyRecords(List<Record> records, Network network) throws Exception {
     VerifyRecordsRequest.Builder builder =
         VerifyRecordsRequest.newBuilder()
@@ -135,6 +195,13 @@ public class IntegrityClient {
     return response.getTimestamp();
   }
 
+  /**
+   * Validates the integrity of a merkle root proof on blockchain.
+   * @param root
+   * @param network
+   * @return
+   * @throws Exception
+   */
   public long validateRoot(String root, Network network) throws Exception {
     ValidateRootRequest request =
         ValidateRootRequest.newBuilder()

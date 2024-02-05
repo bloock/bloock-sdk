@@ -10,6 +10,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// CredentialBuilder helps construct credentials by specifying various attributes.
 type CredentialBuilder struct {
 	schemaId       string
 	issuerDid      string
@@ -27,6 +28,7 @@ type CredentialBuilder struct {
 	datetimeAttribute []DatetimeAttribute
 }
 
+// NewCredentialBuilder creates a new CredentialBuilder instance with the specified parameters.
 func NewCredentialBuilder(schemaId, issuerDid, holderDid string, expiration int64, version int32, configData *proto.ConfigData) CredentialBuilder {
 	return CredentialBuilder{
 		schemaId:          schemaId,
@@ -44,41 +46,49 @@ func NewCredentialBuilder(schemaId, issuerDid, holderDid string, expiration int6
 	}
 }
 
+// WithStringAttribute adds a string attribute to the CredentialBuilder.
 func (c CredentialBuilder) WithStringAttribute(key string, value string) CredentialBuilder {
 	c.stringAttribute = append(c.stringAttribute, NewStringAttribute(key, value))
 	return c
 }
 
+// WithIntegerAttribute adds an integer attribute to the CredentialBuilder.
 func (c CredentialBuilder) WithIntegerAttribute(key string, value int64) CredentialBuilder {
 	c.integerAttribute = append(c.integerAttribute, NewIntegerAttribute(key, value))
 	return c
 }
 
+// WithDecimalAttribute adds a decimal attribute to the CredentialBuilder.
 func (c CredentialBuilder) WithDecimalAttribute(key string, value float64) CredentialBuilder {
 	c.decimalAttribute = append(c.decimalAttribute, NewDecimalAttribute(key, value))
 	return c
 }
 
+// WithBooleanAttribute adds a boolean attribute to the CredentialBuilder.
 func (c CredentialBuilder) WithBooleanAttribute(key string, value bool) CredentialBuilder {
 	c.booleanAttribute = append(c.booleanAttribute, NewBooleanAttribute(key, value))
 	return c
 }
 
+// WithDateAttribute adds a date attribute to the CredentialBuilder.
 func (c CredentialBuilder) WithDateAttribute(key string, value time.Time) CredentialBuilder {
 	c.dateAttribute = append(c.dateAttribute, NewDateAttribute(key, value))
 	return c
 }
 
+// WithDatetimeAttribute adds a datetime attribute to the CredentialBuilder.
 func (c CredentialBuilder) WithDatetimeAttribute(key string, value time.Time) CredentialBuilder {
 	c.datetimeAttribute = append(c.datetimeAttribute, NewDatetimeAttribute(key, value))
 	return c
 }
 
+// WithSigner sets the signer for the CredentialBuilder.
 func (c CredentialBuilder) WithSigner(signer authenticity.Signer) CredentialBuilder {
 	c.signer = signer.ToProto()
 	return c
 }
 
+// Build creates and returns a Credential using the specified attributes.
 func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 	bridge := bridge.NewBloockBridge()
 

@@ -2,12 +2,16 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents a local certificate along with its password.
+ */
 class LocalCertificate
 {
     public array $pkcs12;
     public string $password;
 
     /**
+     * Constructs a LocalCertificate object with the specified parameters.
      * @param array $pkcs12
      * @param string $password
      */

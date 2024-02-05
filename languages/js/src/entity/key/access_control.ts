@@ -2,10 +2,17 @@ import * as proto from "../../bridge/proto/keys_entities";
 import { AccessControlSecret } from "./access_control_secret";
 import { AccessControlTotp } from "./access_control_totp";
 
+/**
+ * Represents access control information, including Time-based One-Time Password (TOTP) and secret-based access.
+ */
 export class AccessControl {
     accessControlTotp?: AccessControlTotp;
     accessControlSecret?: AccessControlSecret;
 
+    /**
+     * Constructs AccessControl object from an AccessControlTotp or AccessControlSecret object.
+     * @param accessControl 
+     */
     constructor(
         accessControl: AccessControlTotp | AccessControlSecret,
     ) {

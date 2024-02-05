@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents an attribute with a decimal value.
+ */
 class DecimalAttribute extends Attribute
 {
     public static function fromProto(\Bloock\DecimalAttributeV2 $res): DecimalAttribute

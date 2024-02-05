@@ -5,6 +5,9 @@ from bloock.entity.identity_v2.attribute import Attribute
 
 
 class IntegerAttribute(Attribute):
+    """
+    Represents an attribute with an integer value.
+    """
     @staticmethod
     def from_proto(a: proto.IntegerAttributeV2) -> IntegerAttribute:
         return IntegerAttribute(

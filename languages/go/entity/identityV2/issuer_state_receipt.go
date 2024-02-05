@@ -2,6 +2,7 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// IssuerStateReceipt represents a receipt for the issuer's state.
 type IssuerStateReceipt struct {
 	TxHash string
 }

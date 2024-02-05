@@ -5,6 +5,9 @@ from bloock._bridge.proto.identity_entities_v2_pb2 import Blockchain as Blockcha
 
 
 class Blockchain(Enum):
+    """
+    Represents an enumeration of blockchains used in the DID.
+    """
     POLYGON = 0
     ETHEREUM = 1
     NO_CHAIN = 2

@@ -4,7 +4,17 @@ import bloock._bridge.proto.identity_entities_v2_pb2 as proto
 
 
 class CredentialStatus:
+    """
+    Represents the status information for a credential, including its ID, revocation nonce, and type.
+    """
     def __init__(self, id: str, revocation_nonce: int, type: str) -> None:
+        """
+        Constructs an CredentialStatus object with the specified parameters.
+        :type type: object
+        :type revocation_nonce: object
+        :type id: object
+        :rtype: object
+        """
         self.id = id
         self.revocation_nonce = revocation_nonce
         self.type = type

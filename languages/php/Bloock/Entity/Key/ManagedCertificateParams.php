@@ -2,15 +2,31 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents parameters for creating a managed certificate.
+ */
 class ManagedCertificateParams
 {
+    /**
+     * Is the type of the key.
+     * @var string
+     */
     public string $keyType;
+    /**
+     * Represents the subject details of the certificate.
+     * @var SubjectCertficateParams
+     */
     public SubjectCertificateParams $subjectParams;
+    /**
+     * Is the number of months until the certificate expiration.
+     * @var int
+     */
     public int $expiration;
 
     /**
+     * Constructs a ManagedCertificateParams object with the specified parameters.
      * @param string $keyType
-     * @param SubjectCertficateParams $params
+     * @param SubjectCertificateParams $params
      * @param int $expiration
      */
     public function __construct(string $keyType, SubjectCertificateParams $params, int $expiration)
@@ -40,11 +56,15 @@ class ManagedCertificateParams
     }
 }
 
+/**
+ * Represents the parameters for importing a certificate.
+ */
 class ImportCertificateParams
 {
     public ?string $password;
 
     /**
+     * Constructs a new ImportCertificateParams object with the specified or not password.
      * @param ?string $keyType
      */
     public function __construct(string $password = null)

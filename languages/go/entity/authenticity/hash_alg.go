@@ -2,13 +2,20 @@ package authenticity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// HashAlg represents different hash algorithms.
 type HashAlg int32
 
+// Constants representing specific hash algorithms.
 const (
+	// Sha256 represents the SHA-256 hash algorithm.
 	Sha256       HashAlg = iota
+	// Keccak256 represents the Keccak-256 hash algorithm.
 	Keccak256    HashAlg = iota
+	// Poseidon represents the Poseidon hash algorithm.
 	Poseidon     HashAlg = iota
+	// None represents no hash algorithm.
 	None         HashAlg = iota
+	// Unrecognized represents an unrecognized hash algorithm.
 	Unrecognized HashAlg = -1
 )
 

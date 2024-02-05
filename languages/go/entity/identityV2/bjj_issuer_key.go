@@ -2,10 +2,12 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// BjjIdentityKey represents an identity BJJ key used.
 type BjjIdentityKey struct {
 	Args IssuerKeyArgs
 }
 
+// NewBjjIdentityKey creates a new BjjIdentityKey instance with the provided issuer key arguments.
 func NewBjjIdentityKey(args IssuerKeyArgs) BjjIdentityKey {
 	return BjjIdentityKey{
 		Args: args,

@@ -2,6 +2,9 @@ package com.bloock.sdk.entity.key;
 
 import com.bloock.sdk.bridge.proto.KeysEntities;
 
+/**
+ * Represents the type of certificate.
+ */
 public enum CertificateType {
   PEM,
   PFX,

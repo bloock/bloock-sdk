@@ -6,12 +6,17 @@ use Bloock\Entity\Key\LocalKey;
 use Bloock\Entity\Key\ManagedKey;
 use Exception;
 
+/**
+ * Represents arguments for configuring an issuer key.
+ */
 class IdentityKeyArgs
 {
     public ?LocalKey $localKey = null;
     public ?ManagedKey $managedKey = null;
 
     /**
+     * Constructs an IdentityKeyArgs object with a local or managed key.
+     * @param $key
      * @throws Exception
      */
     public function __construct($key)

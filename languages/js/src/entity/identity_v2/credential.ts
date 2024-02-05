@@ -9,6 +9,9 @@ import { CredentialProof } from "./credential_proof";
 import { CredentialSchema } from "./credential_schema";
 import { CredentialStatus } from "./credential_status";
 
+/**
+ * Represents a verifiable credential with its associated information. [Verifiable Credentials Data Model v2.0](https://www.w3.org/TR/vc-data-model-2.0/).
+ */
 export class Credential {
   context: string[];
   id: string;
@@ -21,6 +24,19 @@ export class Credential {
   credentialSchema: CredentialSchema;
   proof: CredentialProof;
 
+  /**
+   * Creates a new Credential instance with the provided details.
+   * @param context 
+   * @param id 
+   * @param type 
+   * @param issuanceDate 
+   * @param expiration 
+   * @param credentialSubject 
+   * @param credentialStatus 
+   * @param issuer 
+   * @param credentialSchema 
+   * @param proof 
+   */
   constructor(
     context: string[],
     id: string,
@@ -75,6 +91,10 @@ export class Credential {
     );
   }
 
+  /**
+   * Converts the Credential instance to its JSON string representation.
+   * @returns 
+   */
   public toJson(): Promise<string> {
     const bridge = new BloockBridge();
 
@@ -94,6 +114,11 @@ export class Credential {
       });
   }
 
+  /**
+   * Creates a Credential instance from a JSON string representation.
+   * @param json 
+   * @returns 
+   */
   static fromJson(json: string): Promise<Credential> {
     const bridge = new BloockBridge();
 

@@ -1,6 +1,9 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 import { AttributeDescriptor } from "./attribute_descriptor";
 
+/**
+ * Represents a descriptor for a boolean attribute.
+ */
 export class BooleanAttributeDescriptor extends AttributeDescriptor {
   public toProto(): identityEntitiesProto.BooleanAttributeDefinitionV2 {
     return identityEntitiesProto.BooleanAttributeDefinitionV2.fromPartial({

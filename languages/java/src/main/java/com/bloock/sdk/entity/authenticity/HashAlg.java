@@ -2,11 +2,29 @@ package com.bloock.sdk.entity.authenticity;
 
 import com.bloock.sdk.bridge.proto.AuthenticityEntities;
 
+/**
+ * Represents different hash algorithms.
+ */
 public enum HashAlg {
+  /**
+   * Represents the SHA-256 hash algorithm.
+   */
   Sha256,
+  /**
+   * Represents the Keccak-256 hash algorithm.
+   */
   Keccak256,
+  /**
+   * Represents the Poseidon hash algorithm.
+   */
   Poseidon,
+  /**
+   * Represents no hash algorithm.
+   */
   None,
+  /**
+   * Represents an unrecognized hash algorithm.
+   */
   UNRECOGNIZED;
 
   public static HashAlg fromProto(AuthenticityEntities.HashAlg alg) {

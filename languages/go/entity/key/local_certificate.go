@@ -2,6 +2,7 @@ package key
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// LocalCertificate represents a local certificate along with its password.
 type LocalCertificate struct {
 	Pkcs12   []byte
 	Password string

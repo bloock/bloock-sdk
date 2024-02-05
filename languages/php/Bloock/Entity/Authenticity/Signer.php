@@ -10,6 +10,9 @@ use Bloock\Entity\Key\ManagedCertificate;
 use Bloock\Entity\Authenticity\HashAlg;
 use Bloock\Entity\Key\AccessControl;
 
+/**
+ * Represents a signer with various key types and additional configurations.
+ */
 class Signer
 {
     public ?LocalKey $localKey = null;
@@ -21,6 +24,10 @@ class Signer
     public ?AccessControl $accessControl = null;
 
     /**
+     * Creates a Signer instance with a local key, managed key, local certificate or managed certificate.
+     * @param $key
+     * @param string|null $hashAlg
+     * @param AccessControl|null $accessControl
      * @throws Exception
      */
     public function __construct($key, ?string $hashAlg = null, ?AccessControl $accessControl = null)

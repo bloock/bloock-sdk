@@ -2,6 +2,7 @@ package key
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// AccessControl represents access control information, including Time-based One-Time Password (TOTP) and secret-based access.
 type AccessControl struct {
 	AccessControlTotp   *AccessControlTotp
 	AccessControlSecret *AccessControlSecret

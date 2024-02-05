@@ -13,11 +13,15 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
+// RecordClient provides functionality for creating records using various data sources and to interact with the [Bloock Record service].
+//
+// [Bloock Record service]: https://bloock.com
 type RecordClient struct {
 	bridgeClient bridge.BloockBridge
 	configData   *proto.ConfigData
 }
 
+// NewRecordClient creates a new RecordClient with default configuration.
 func NewRecordClient() RecordClient {
 	return RecordClient{
 		bridgeClient: bridge.NewBloockBridge(),
@@ -25,6 +29,7 @@ func NewRecordClient() RecordClient {
 	}
 }
 
+// NewRecordClientWithConfig creates a new RecordClient with the provided configuration.
 func NewRecordClientWithConfig(configData *proto.ConfigData) RecordClient {
 	return RecordClient{
 		bridgeClient: bridge.NewBloockBridge(),
@@ -32,34 +37,42 @@ func NewRecordClientWithConfig(configData *proto.ConfigData) RecordClient {
 	}
 }
 
+// FromRecord creates a RecordBuilder from an existing record.
 func (c RecordClient) FromRecord(record record.Record) RecordBuilder {
 	return newRecordBuilder(record.ToProto(), proto.RecordTypes_RECORD, c.configData)
 }
 
+// FromLoader creates a RecordBuilder from a data loader.
 func (c RecordClient) FromLoader(loader availability.Loader) RecordBuilder {
 	return newRecordBuilder(loader.ToProto(), proto.RecordTypes_LOADER, c.configData)
 }
 
+// FromString creates a RecordBuilder from a string payload.
 func (c RecordClient) FromString(str string) RecordBuilder {
 	return newRecordBuilder(str, proto.RecordTypes_STRING, c.configData)
 }
 
+// FromHex creates a RecordBuilder from a hexadecimal string payload.
 func (c RecordClient) FromHex(hex string) RecordBuilder {
 	return newRecordBuilder(hex, proto.RecordTypes_HEX, c.configData)
 }
 
+// FromJSON creates a RecordBuilder from a JSON string payload.
 func (c RecordClient) FromJSON(json string) RecordBuilder {
 	return newRecordBuilder(json, proto.RecordTypes_JSON, c.configData)
 }
 
+// FromFile creates a RecordBuilder from a byte slice representing a file.
 func (c RecordClient) FromFile(file_bytes []byte) RecordBuilder {
 	return newRecordBuilder(file_bytes, proto.RecordTypes_FILE, c.configData)
 }
 
+// FromBytes creates a RecordBuilder from a byte slice payload.
 func (c RecordClient) FromBytes(bytes []byte) RecordBuilder {
 	return newRecordBuilder(bytes, proto.RecordTypes_BYTES, c.configData)
 }
 
+// RecordBuilder assists in constructing records with various configurations.
 type RecordBuilder struct {
 	payload     interface{}
 	payloadType proto.RecordTypes
@@ -77,21 +90,25 @@ func newRecordBuilder(payload interface{}, payloadType proto.RecordTypes, config
 	}
 }
 
+// WithSigner sets the signer for the RecordBuilder.
 func (b RecordBuilder) WithSigner(signer authenticity.Signer) RecordBuilder {
 	b.signer = signer.ToProto()
 	return b
 }
 
+// WithEncrypter sets the encrypter for the RecordBuilder.
 func (b RecordBuilder) WithEncrypter(encrypter encryption.Encrypter) RecordBuilder {
 	b.encrypter = encrypter.ToProto()
 	return b
 }
 
+// WithDecrypter sets the decrypter for the RecordBuilder.
 func (b RecordBuilder) WithDecrypter(decrypter encryption.Encrypter) RecordBuilder {
 	b.decrypter = decrypter.ToProto()
 	return b
 }
 
+// Build constructs a record based on the RecordBuilder's configuration.
 func (b RecordBuilder) Build() (record.Record, error) {
 	bridgeClient := bridge.NewBloockBridge()
 
@@ -169,6 +186,8 @@ func (b RecordBuilder) Build() (record.Record, error) {
 	return record.NewRecordFromProto(res.Record, b.configData), nil
 }
 
+// GetDetails retrieves details about other Bloock services (Integrity, Authenticity, Encryption, Availability) 
+// configured in the RecordBuilder.
 func (b RecordBuilder) GetDetails() (record.RecordDetails, error) {
 	bridgeClient := bridge.NewBloockBridge()
 

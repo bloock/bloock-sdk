@@ -4,6 +4,9 @@ namespace Bloock\Entity\IdentityV2;
 
 use Bloock\DateTimeAttributeDefinitionV2;
 
+/**
+ * Represents a descriptor for an attribute with a datetime value.
+ */
 class DatetimeAttributeDescriptor extends AttributeDescriptor
 {
     public static function fromProto(DateTimeAttributeDefinitionV2 $res): DatetimeAttributeDescriptor

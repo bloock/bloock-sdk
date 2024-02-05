@@ -2,12 +2,30 @@
 
 namespace Bloock\Entity\Authenticity;
 
+/**
+ * Represents different hash algorithms.
+ */
 class HashAlg
 {
+    /**
+     * Represents the SHA-256 hash algorithm.
+     */
     const SHA_256 = "SHA_256";
+    /**
+     * Represents the Keccak-256 hash algorithm.
+     */
     const KECCAK_256 = "KECCAK_256";
+    /**
+     * Represents the Poseidon hash algorithm.
+     */
     const POSEIDON = "POSEIDON";
+    /**
+     * Represents no hash algorithm.
+     */
     const NONE = "NONE";
+    /**
+     * Represents an unrecognized hash algorithm.
+     */
     const UNRECOGNIZED = "UNRECOGNIZED";
 
     public static function fromProto(int $alg): string

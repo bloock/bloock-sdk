@@ -1,7 +1,16 @@
 import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
 
+/**
+ * Represents the protection level of a cryptographic key.
+ */
 export enum KeyProtectionLevel {
+  /**
+   * Indicates that the key is protected by software.
+   */
   SOFTWARE,
+  /**
+   * Indicates that the key is protected by a Hardware Security Module (HSM).
+   */
   HSM
 }
 

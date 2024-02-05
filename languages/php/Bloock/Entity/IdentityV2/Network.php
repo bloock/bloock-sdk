@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents an enumeration of network identifiers.
+ */
 class Network
 {
     const MAIN = "MAIN";

@@ -8,11 +8,20 @@ import {
 import { ConfigData } from "../../bridge/proto/config";
 import { Proof } from "../integrity";
 
+/**
+ * Represents a record with payload, hash, and configuration data.
+ */
 export class Record {
   payload: Uint8Array;
   hash: string;
   configData: ConfigData;
 
+  /**
+   * Constructs a Record object with the specified parameters.
+   * @param payload 
+   * @param hash 
+   * @param configData 
+   */
   constructor(payload: Uint8Array, hash: string, configData: ConfigData) {
     this.payload = payload;
     this.hash = hash;
@@ -31,6 +40,10 @@ export class Record {
     });
   }
 
+  /**
+   * Retrieves the hash of the record.
+   * @returns 
+   */
   async getHash(): Promise<string> {
     const bridge = new BloockBridge();
     return bridge
@@ -49,6 +62,10 @@ export class Record {
       });
   }
 
+  /**
+   * Retrieves the payload of the record.
+   * @returns 
+   */
   async getPayload(): Promise<Uint8Array> {
     const bridge = new BloockBridge();
     return bridge
@@ -67,10 +84,19 @@ export class Record {
       });
   }
 
+  /**
+   * Returns the payload of the record.
+   * @returns 
+   */
   public retrieve(): Uint8Array {
     return this.payload;
   }
 
+  /**
+   * Sets the proof for a record.
+   * @param proof 
+   * @returns 
+   */
   async setProof(proof: Proof) {
     const bridge = new BloockBridge();
 

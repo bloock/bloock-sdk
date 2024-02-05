@@ -2,6 +2,7 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// CredentialProof represents the proof associated with a credential, including signature and sparse merkle tree proof.
 type CredentialProof struct {
 	SignatureProof string
 	SparseMtProof  string

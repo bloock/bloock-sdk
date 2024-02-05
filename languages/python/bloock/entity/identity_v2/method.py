@@ -5,6 +5,9 @@ from bloock._bridge.proto.identity_entities_v2_pb2 import Method as MethodProto
 
 
 class Method(Enum):
+    """
+    Represents an enumeration of methods used in the DID.
+    """
     IDEN3 = 0
     POLYGON_ID = 1
 

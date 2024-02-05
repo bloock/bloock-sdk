@@ -2,11 +2,13 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// DecimalEnumAttributeDescriptor represents a descriptor for an attribute with a decimal enum value.
 type DecimalEnumAttributeDescriptor struct {
 	AttributeDescriptor
 	Enum []float64
 }
 
+// NewDecimalEnumAttributeDescriptor creates a new DecimalEnumAttributeDescriptor instance with the provided details.
 func NewDecimalEnumAttributeDescriptor(name string, id string, description string, required bool, enum []float64) DecimalEnumAttributeDescriptor {
 	a := AttributeDescriptor{
 		DisplayName: name,

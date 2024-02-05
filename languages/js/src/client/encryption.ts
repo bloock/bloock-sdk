@@ -12,17 +12,24 @@ import { EncryptionAlg, Encrypter } from "../entity/encryption";
 import { GenerateLocalKeyRequest } from "../bridge/proto/keys";
 import { KeyType } from "../bridge/proto/keys_entities";
 
+/**
+ * Represents a client for interacting with the [Bloock Encryption service](https://dashboard.bloock.com/login).
+ */
 export class EncryptionClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
+  /**
+   * Creates a new instance of the EncryptionClient with default configuration.
+   * @param configData 
+   */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
     this.configData = NewConfigData(configData);
   }
 
   /**
-   * It generates a public and a private key for RSA encryption
+   * GenerateRsaKeyPair generates an RSA key pair for encryption.
    * @returns {Promise<KeyPair>} An object containing both the public and the private key
    * @deprecated Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
    */
@@ -43,6 +50,12 @@ export class EncryptionClient {
       });
   }
 
+  /**
+   * Encrypts a Bloock record using the specified encrypter.
+   * @param record 
+   * @param encrypter 
+   * @returns 
+   */
   async encrypt(record: Record, encrypter: Encrypter): Promise<Record> {
     return this.bridge
       .getEncryption()
@@ -61,6 +74,12 @@ export class EncryptionClient {
       });
   }
 
+  /**
+   * Decrypts a Bloock record using the specified decrypter.
+   * @param record 
+   * @param decrypter 
+   * @returns 
+   */
   async decrypt(record: Record, decrypter: Encrypter): Promise<Record> {
     return this.bridge
       .getEncryption()
@@ -79,6 +98,11 @@ export class EncryptionClient {
       });
   }
 
+  /**
+   * Gets the encryption algorithm used for a Bloock record.
+   * @param record 
+   * @returns 
+   */
   async getEncryptionAlg(record: Record): Promise<EncryptionAlg> {
     return this.bridge
       .getEncryption()

@@ -2,6 +2,7 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// CredentialStatus represents the status information for a credential, including its ID, revocation nonce, and type.
 type CredentialStatus struct {
 	Id              string
 	RevocationNonce int64

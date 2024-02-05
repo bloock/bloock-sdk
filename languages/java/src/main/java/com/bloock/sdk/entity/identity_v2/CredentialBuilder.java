@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Helps construct credentials by specifying various attributes.
+ */
 public class CredentialBuilder {
   private final String schemaId;
   private final String issuerDid;
@@ -27,6 +30,15 @@ public class CredentialBuilder {
   private final List<IdentityEntitiesV2.IntegerAttributeV2> integerAttributes;
   private final List<IdentityEntitiesV2.DecimalAttributeV2> decimalAttributes;
 
+  /**
+   * Creates a new CredentialBuilder instance with the specified parameters.
+   * @param schemaId
+   * @param issuerDid
+   * @param holderKey
+   * @param expiration
+   * @param version
+   * @param configData
+   */
   public CredentialBuilder(
       String schemaId,
       String issuerDid,
@@ -50,41 +62,87 @@ public class CredentialBuilder {
     this.decimalAttributes = new ArrayList<>();
   }
 
+  /**
+   * Adds a string attribute to the CredentialBuilder.
+   * @param key
+   * @param value
+   * @return
+   */
   public CredentialBuilder withStringAttribute(String key, String value) {
     this.stringAttributes.add(new StringAttribute(key, value).toProto());
     return this;
   }
 
+  /**
+   * Adds an integer attribute to the CredentialBuilder.
+   * @param key
+   * @param value
+   * @return
+   */
   public CredentialBuilder withIntegerAttribute(String key, Long value) {
     this.integerAttributes.add(new IntegerAttribute(key, value).toProto());
     return this;
   }
 
+  /**
+   * Adds a decimal attribute to the CredentialBuilder.
+   * @param key
+   * @param value
+   * @return
+   */
   public CredentialBuilder withDecimalAttribute(String key, double value) {
     this.decimalAttributes.add(new DecimalAttribute(key, value).toProto());
     return this;
   }
 
+  /**
+   * Adds a boolean attribute to the CredentialBuilder.
+   * @param key
+   * @param value
+   * @return
+   */
   public CredentialBuilder withBooleanAttribute(String key, boolean value) {
     this.booleanAttributes.add(new BooleanAttribute(key, value).toProto());
     return this;
   }
 
+  /**
+   * Adds a date attribute to the CredentialBuilder.
+   * @param key
+   * @param value
+   * @return
+   */
   public CredentialBuilder withDateAttribute(String key, LocalDate value) {
     this.dateAttributes.add(new DateAttribute(key, value).toProto());
     return this;
   }
 
+  /**
+   * Adds a datetime attribute to the CredentialBuilder.
+   * @param key
+   * @param value
+   * @return
+   */
   public CredentialBuilder withDatetimeAttribute(String key, LocalDateTime value) {
     this.datetimeAttributes.add(new DatetimeAttribute(key, value).toProto());
     return this;
   }
 
+  /**
+   * Sets the signer for the CredentialBuilder.
+   * @param signer
+   * @return
+   */
   public CredentialBuilder withSigner(com.bloock.sdk.entity.authenticity.Signer signer) {
     this.signer = signer.toProto();
     return this;
   }
 
+  /**
+   * Creates and returns a Credential using the specified attributes.
+   * @return
+   * @throws Exception
+   */
   public CredentialReceipt build() throws Exception {
     Bridge bridge = new Bridge();
 

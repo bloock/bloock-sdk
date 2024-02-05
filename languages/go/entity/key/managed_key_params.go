@@ -2,10 +2,15 @@ package key
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// ManagedKeyParams represents the parameters for creating a managed key.
 type ManagedKeyParams struct {
+	// Name is the name of the managed key.
 	Name       string
+	// Protection is the protection level for the key.
 	Protection KeyProtectionLevel
+	// KeyType is the type of the key.
 	KeyType    KeyType
+	// Expiration is the timestamp indicating when the key expires.
 	Expiration int64
 }
 

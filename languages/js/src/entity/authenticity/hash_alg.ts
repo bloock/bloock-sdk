@@ -1,10 +1,28 @@
 import * as proto from "../../bridge/proto/authenticity_entities";
 
+/**
+ * Represents different hash algorithms.
+ */
 export enum HashAlg {
+  /**
+   * Represents an unrecognized hash algorithm.
+   */
   UNRECOGNIZED = -1,
+  /**
+   * Represents the SHA-256 hash algorithm.
+   */
   Sha256 = 0,
+  /**
+   * Represents the Keccak-256 hash algorithm.
+   */
   Keccak256 = 1,
+  /**
+   * Represents the Poseidon hash algorithm.
+   */
   Poseidon = 2,
+  /**
+   * Represents no hash algorithm.
+   */
   None = 3
 }
 

@@ -1,6 +1,9 @@
 import * as proto from "../../bridge/proto/integrity_entities";
 import { ProofAnchor } from "./proof_anchor";
 
+/**
+ * Represents a proof, including leaves, nodes, depth, bitmap, and anchor information.
+ */
 export class Proof {
   leaves: string[];
   nodes: string[];
@@ -8,6 +11,14 @@ export class Proof {
   bitmap: string;
   anchor: ProofAnchor;
 
+  /**
+   * Constructs a Proof object with the specified parameters.
+   * @param leaves 
+   * @param nodes 
+   * @param depth 
+   * @param bitmap 
+   * @param anchor 
+   */
   constructor(
     leaves: string[],
     nodes: string[],

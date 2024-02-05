@@ -3,9 +3,20 @@ package com.bloock.sdk.entity.identity_v2;
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 import java.util.List;
 
+/**
+ * Represents a descriptor for an attribute with an integer enum value.
+ */
 public class IntegerEnumAttributeDescriptor extends AttributeDescriptor {
   private List<Long> enumeration;
 
+  /**
+   * Constructs an IntegerEnumAttributeDescriptor object with the specified parameters.
+   * @param displayName
+   * @param technicalName
+   * @param description
+   * @param required
+   * @param enumeration
+   */
   public IntegerEnumAttributeDescriptor(
       String displayName,
       String technicalName,

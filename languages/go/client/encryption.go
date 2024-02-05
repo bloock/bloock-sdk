@@ -12,11 +12,15 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
+// EncryptionClient represents a client for interacting with the [Bloock Encryption service].
+//
+// [Bloock Encryption service]: https://bloock.com
 type EncryptionClient struct {
 	bridgeClient bridge.BloockBridge
 	configData   *proto.ConfigData
 }
 
+// NewEncryptionClient creates a new instance of the EncryptionClient with default configuration.
 func NewEncryptionClient() EncryptionClient {
 	return EncryptionClient{
 		bridgeClient: bridge.NewBloockBridge(),
@@ -24,6 +28,7 @@ func NewEncryptionClient() EncryptionClient {
 	}
 }
 
+// NewEncryptionClientWithConfig creates a new instance of the EncryptionClient with the provided configuration.
 func NewEncryptionClientWithConfig(configData *proto.ConfigData) EncryptionClient {
 	return EncryptionClient{
 		bridgeClient: bridge.NewBloockBridge(),
@@ -31,6 +36,7 @@ func NewEncryptionClientWithConfig(configData *proto.ConfigData) EncryptionClien
 	}
 }
 
+// GenerateRsaKeyPair generates an RSA key pair for encryption.
 // Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
 func (c *EncryptionClient) GenerateRsaKeyPair() (key.KeyPair, error) {
 	res, err := c.bridgeClient.Key().GenerateLocalKey(context.Background(), &proto.GenerateLocalKeyRequest{
@@ -49,6 +55,7 @@ func (c *EncryptionClient) GenerateRsaKeyPair() (key.KeyPair, error) {
 	return key.NewRsaKeyPairFromProto(res), nil
 }
 
+// Encrypt encrypts a Bloock record using the specified encrypter.
 func (c *EncryptionClient) Encrypt(r record.Record, encrypter encryption.Encrypter) (record.Record, error) {
 	res, err := c.bridgeClient.Encryption().Encrypt(context.Background(), &proto.EncryptRequest{
 		ConfigData: c.configData,
@@ -67,6 +74,7 @@ func (c *EncryptionClient) Encrypt(r record.Record, encrypter encryption.Encrypt
 	return record.NewRecordFromProto(res.Record, c.configData), nil
 }
 
+// Decrypt decrypts a Bloock record using the specified decrypter.
 func (c *EncryptionClient) Decrypt(r record.Record, decrypter encryption.Encrypter) (record.Record, error) {
 	res, err := c.bridgeClient.Encryption().Decrypt(context.Background(), &proto.DecryptRequest{
 		ConfigData: c.configData,
@@ -85,6 +93,7 @@ func (c *EncryptionClient) Decrypt(r record.Record, decrypter encryption.Encrypt
 	return record.NewRecordFromProto(res.Record, c.configData), nil
 }
 
+// GetEncryptionAlg retrieves the encryption algorithm used for a Bloock record.
 func (c *EncryptionClient) GetEncryptionAlg(r record.Record) (encryption.EncryptionAlg, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Encryption().GetEncryptionAlg(context.Background(), &proto.EncryptionAlgRequest{ConfigData: c.configData, Record: r.ToProto()})

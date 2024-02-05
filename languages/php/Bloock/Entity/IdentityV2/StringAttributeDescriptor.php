@@ -4,6 +4,9 @@ namespace Bloock\Entity\IdentityV2;
 
 use Bloock\StringAttributeDefinitionV2;
 
+/**
+ * Represents a descriptor for an attribute with a string value.
+ */
 class StringAttributeDescriptor extends AttributeDescriptor
 {
     public static function fromProto(StringAttributeDefinitionV2 $res): StringAttributeDescriptor

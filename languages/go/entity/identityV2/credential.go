@@ -9,6 +9,9 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
+// Credential represents a verifiable credential with its associated information. [Verifiable Credentials Data Model v2.0].
+//
+// [Verifiable Credentials Data Model v2.0]: https://www.w3.org/TR/vc-data-model-2.0/
 type Credential struct {
 	Context           []string
 	Id                string
@@ -55,6 +58,7 @@ func (c Credential) ToProto() *proto.CredentialV2 {
 	}
 }
 
+// NewCredentialFromJson creates a Credential instance from a JSON string representation.
 func NewCredentialFromJson(json string) (Credential, error) {
 	bridge := bridge.NewBloockBridge()
 	res, err := bridge.IdentityV2().CredentialFromJson(context.Background(), &proto.CredentialFromJsonRequestV2{
@@ -73,6 +77,7 @@ func NewCredentialFromJson(json string) (Credential, error) {
 	return NewCredentialFromProto(res.GetCredential()), nil
 }
 
+// ToJson converts the Credential instance to its JSON string representation.
 func (c Credential) ToJson() (string, error) {
 	bridge := bridge.NewBloockBridge()
 	res, err := bridge.IdentityV2().CredentialToJson(context.Background(), &proto.CredentialToJsonRequestV2{

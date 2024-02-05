@@ -1,6 +1,9 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 import { AttributeDescriptor } from "./attribute_descriptor";
 
+/**
+ * Represents a descriptor for a date attribute, including its display name, ID, description, and required status.
+ */
 export class DateAttributeDescriptor extends AttributeDescriptor {
   public toProto(): identityEntitiesProto.DateAttributeDefinitionV2 {
     return identityEntitiesProto.DateAttributeDefinitionV2.fromPartial({

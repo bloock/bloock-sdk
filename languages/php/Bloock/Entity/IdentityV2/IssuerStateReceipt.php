@@ -2,11 +2,15 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents a receipt for the issuer's state.
+ */
 class IssuerStateReceipt
 {
     private string $txHash;
 
     /**
+     * Constructs an IssuerStateReceipt object with the specified parameters.
      * @param string $txHash
      */
     public function __construct(string $txHash)
@@ -20,6 +24,7 @@ class IssuerStateReceipt
     }
 
     /**
+     * Gets the transaction hash of the issuer state receipt.
      * @return string
      */
     public function getTxHash(): string

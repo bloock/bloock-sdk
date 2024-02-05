@@ -5,6 +5,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// Encrypter represents an encryption configuration with various key types and access control.
 type Encrypter struct {
 	LocalKey           *key.LocalKey
 	ManagedKey         *key.ManagedKey
@@ -13,12 +14,14 @@ type Encrypter struct {
 	AccessControl      *key.AccessControl
 }
 
+// NewEncrypterWithLocalKey creates a new Encrypter instance with a local encryption key.
 func NewEncrypterWithLocalKey(key key.LocalKey) Encrypter {
 	return Encrypter{
 		LocalKey: &key,
 	}
 }
 
+// NewEncrypterWithManagedKey creates a new Encrypter instance with a managed encryption key and access control.
 func NewEncrypterWithManagedKey(key key.ManagedKey, accessControl *key.AccessControl) Encrypter {
 	return Encrypter{
 		ManagedKey:    &key,
@@ -26,12 +29,14 @@ func NewEncrypterWithManagedKey(key key.ManagedKey, accessControl *key.AccessCon
 	}
 }
 
+// NewEncrypterWithLocalCertificate creates a new Encrypter instance with a local certificate for encryption.
 func NewEncrypterWithLocalCertificate(key key.LocalCertificate) Encrypter {
 	return Encrypter{
 		LocalCertificate: &key,
 	}
 }
 
+// NewEncrypterWithManagedCertificate creates a new Encrypter instance with a managed certificate for encryption and access control.
 func NewEncrypterWithManagedCertificate(key key.ManagedCertificate, accessControl *key.AccessControl) Encrypter {
 	return Encrypter{
 		ManagedCertificate: &key,

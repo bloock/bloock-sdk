@@ -2,22 +2,49 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents a managed key.
+ */
 class ManagedKey
 {
+    /**
+     * Is the unique identifier of the managed key (ex: 46c49ee7-ef44-472c-a873-ce81a2d5d764).
+     * @var string
+     */
     public string $id;
+    /**
+     * Is the name of the managed key.
+     * @var string|null
+     */
     public ?string $name;
+    /**
+     * Is the protection level for the key.
+     * @var string
+     */
     public string $protection;
+    /**
+     * Is the type of the key.
+     * @var string
+     */
     public string $keyType;
+    /**
+     * Is the timestamp indicating when the key expires.
+     * @var int|null
+     */
     public ?int $expiration;
-
+    /**
+     * Is the actual public key.
+     * @var string
+     */
     public string $key;
 
     /**
+     * Constructs a ManagedKey object with the specified parameters.
      * @param string $id
-     * @param ?string $name
+     * @param string|null $name
      * @param string $protection
      * @param string $keyType
-     * @param ?int $expiration
+     * @param int|null $expiration
      * @param string $key
      */
     public function __construct(string $id, ?string $name, string $protection, string $keyType, ?int $expiration, string $key)

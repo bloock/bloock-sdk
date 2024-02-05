@@ -2,7 +2,15 @@ package com.bloock.sdk.entity.identity_v2;
 
 import com.bloock.sdk.bridge.proto.IdentityEntitiesV2;
 
+/**
+ * Represents an attribute with a boolean value.
+ */
 public class BooleanAttribute extends Attribute<Boolean> {
+  /**
+   * Creates a new BooleanAttribute instance with the provided key and value.
+   * @param id
+   * @param value
+   */
   public BooleanAttribute(String id, boolean value) {
     super(id, value);
   }

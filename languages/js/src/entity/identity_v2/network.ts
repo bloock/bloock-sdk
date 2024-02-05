@@ -1,5 +1,8 @@
 import { NetworkId as NetworkProto } from "../../bridge/proto/identity_entities_v2";
 
+/**
+ * Represents an enumeration of network identifiers.
+ */
 export enum NetworkId {
   UNRECOGNIZED = -1,
   MAIN = 0,

@@ -2,15 +2,44 @@ package com.bloock.sdk.entity.key;
 
 import com.bloock.sdk.bridge.proto.KeysEntities;
 
+/**
+ * Represents parameters for generating a subject certificate.
+ */
 public class SubjectCertificateParams {
+  /**
+   * Is the common name (CN) for the certificate. Required.
+   */
   String commonName;
-
+  /**
+   * Is the organization (O) for the certificate. (Optional)
+   */
   String organization;
+  /**
+   * Is the organizational unit (OU) for the certificate. (Optional)
+   */
   String organizationUnit;
+  /**
+   * Is the location (L) for the certificate. (Optional)
+   */
   String location;
+  /**
+   * Is the state or province (ST) for the certificate. (Optional)
+   */
   String state;
+  /**
+   * Is the country (C) for the certificate. (Optional)
+   */
   String country;
 
+  /**
+   * Constructs a SubjectCertificateParams object with the specified parameters.
+   * @param commonName
+   * @param organization
+   * @param organizationUnit
+   * @param location
+   * @param state
+   * @param country
+   */
   public SubjectCertificateParams(
       String commonName,
       String organization,
@@ -56,26 +85,50 @@ public class SubjectCertificateParams {
     return params.build();
   }
 
+  /**
+   * Gets the common name attribute of the subject certificate.
+   * @return
+   */
   public String getCommonName() {
     return commonName;
   }
 
+  /**
+   * Gets the organization attribute of the subject certificate.
+   * @return
+   */
   public String getOrganization() {
     return organization;
   }
 
+  /**
+   * Gets the organization unit attribute of the subject certificate.
+   * @return
+   */
   public String getOrganizationUnit() {
     return organizationUnit;
   }
 
+  /**
+   * Gets the location attribute of the subject certificate.
+   * @return
+   */
   public String getLocation() {
     return location;
   }
 
+  /**
+   * Gets the state attribute of the subject certificate.
+   * @return
+   */
   public String getState() {
     return state;
   }
 
+  /**
+   * Gets the country attribute of the subject certificate.
+   * @return
+   */
   public String getCountry() {
     return country;
   }

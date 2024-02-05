@@ -31,11 +31,18 @@ use Bloock\SetupSecretAccessControlRequest;
 use Bloock\SetupTotpAccessControlRequest;
 use Exception;
 
+/**
+ * Provides functionality to interact with the [Bloock Keys service](https://dashboard.bloock.com/login).
+ */
 class KeyClient
 {
     private $bridge;
     private $config;
 
+    /**
+     * Creates a new KeyClient with the given configuration.
+     * @param ConfigData|null $config
+     */
     public function __construct(ConfigData $config = null)
     {
         $this->bridge = new Bridge();
@@ -46,6 +53,12 @@ class KeyClient
         }
     }
 
+    /**
+     * Generates a new local key of the specified type.
+     * @param string $keyType
+     * @return LocalKey
+     * @throws Exception
+     */
     public function newLocalKey(string $keyType): LocalKey
     {
         $req = new GenerateLocalKeyRequest();
@@ -60,6 +73,13 @@ class KeyClient
         return LocalKey::fromProto($res->getLocalKey());
     }
 
+    /**
+     * Loads a local key of the specified type from a public key string.
+     * @param string $keyType
+     * @param string $key
+     * @return LocalKey
+     * @throws Exception
+     */
     public function loadLocalKey(string $keyType, string $key): LocalKey
     {
         $req = new LoadLocalKeyRequest();
@@ -76,6 +96,12 @@ class KeyClient
         return LocalKey::fromProto($res->getLocalKey());
     }
 
+    /**
+     * Generates a new managed key with the specified parameters.
+     * @param ManagedKeyParams $params
+     * @return ManagedKey
+     * @throws Exception
+     */
     public function newManagedKey(ManagedKeyParams $params): ManagedKey
     {
         $req = new GenerateManagedKeyRequest();
@@ -90,6 +116,12 @@ class KeyClient
         return ManagedKey::fromProto($res->getManagedKey());
     }
 
+    /**
+     * Loads a managed key by its ID (ex: 51d22546-68f1-4340-b94b-2a80e60b8933).
+     * @param string $id
+     * @return ManagedKey
+     * @throws Exception
+     */
     public function loadManagedKey(string $id): ManagedKey
     {
         $req = new LoadManagedKeyRequest();
@@ -104,6 +136,12 @@ class KeyClient
         return ManagedKey::fromProto($res->getManagedKey());
     }
 
+    /**
+     * Generates a new local certificate with the specified parameters.
+     * @param LocalCertificateArgs $params
+     * @return LocalCertificate
+     * @throws Exception
+     */
     public function newLocalCertificate(LocalCertificateArgs $params): LocalCertificate
     {
         $req = new GenerateLocalCertificateRequest();
@@ -118,6 +156,13 @@ class KeyClient
         return LocalCertificate::fromProto($res->getLocalCertificate());
     }
 
+    /**
+     * Loads a local certificate from a PKCS12 file.
+     * @param array $pkcs12
+     * @param string $password
+     * @return LocalCertificate
+     * @throws Exception
+     */
     public function loadLocalCertificate(array $pkcs12, string $password): LocalCertificate
     {
         $req = new LoadLocalCertificateRequest();
@@ -132,6 +177,12 @@ class KeyClient
         return LocalCertificate::fromProto($res->getLocalCertificate());
     }
 
+    /**
+     * Generates a new managed certificate with the specified parameters.
+     * @param ManagedCertificateParams $params
+     * @return ManagedCertificate
+     * @throws Exception
+     */
     public function newManagedCertificate(ManagedCertificateParams $params): ManagedCertificate
     {
         $req = new GenerateManagedCertificateRequest();
@@ -146,6 +197,12 @@ class KeyClient
         return ManagedCertificate::fromProto($res->getManagedCertificate());
     }
 
+    /**
+     * Loads a managed certificate by its ID (ex: ceef5b02-af17-43d8-ae7b-31d9bdf8027f).
+     * @param string $id
+     * @return ManagedCertificate
+     * @throws Exception
+     */
     public function loadManagedCertificate(string $id): ManagedCertificate
     {
         $req = new LoadManagedCertificateRequest();
@@ -160,6 +217,14 @@ class KeyClient
         return ManagedCertificate::fromProto($res->getManagedCertificate());
     }
 
+    /**
+     * Imports a managed certificate with the specified parameters, supported types: .pem, .pfx.
+     * @param string $certificateType
+     * @param array $certificate
+     * @param ImportCertificateParams $params
+     * @return ManagedCertificate
+     * @throws Exception
+     */
     public function importManagedCertificate(string $certificateType, array $certificate, ImportCertificateParams $params): ManagedCertificate
     {
         $req = new ImportManagedCertificateRequest();
@@ -181,6 +246,12 @@ class KeyClient
         return ManagedCertificate::fromProto($res->getManagedCertificate());
     }
 
+    /**
+     * Sets up TOTP-based access control for the given managed key or managed certificate.
+     * @param Managed $key
+     * @return TotpAccessControlReceipt
+     * @throws Exception
+     */
     public function setupTotpAccessControl(Managed $key): TotpAccessControlReceipt
     {
         $req = new SetupTotpAccessControlRequest();
@@ -203,6 +274,13 @@ class KeyClient
         return new TotpAccessControlReceipt($res->getSecret(), $res->getSecretQr(), $res->getRecoveryCodes());
     }
 
+    /**
+     * Recovers TOTP-based access control for the given managed key or managed certificate using a recovery code.
+     * @param Managed $key
+     * @param string $code
+     * @return TotpAccessControlReceipt
+     * @throws Exception
+     */
     public function recoverTotpAccessControl(Managed $key, string $code): TotpAccessControlReceipt
     {
         $req = new RecoverTotpAccessControlRequest();
@@ -226,6 +304,14 @@ class KeyClient
         return new TotpAccessControlReceipt($res->getSecret(), $res->getSecretQr(), $res->getRecoveryCodes());
     }
 
+    /**
+     * Sets up secret-based access control for the given managed key or managed certificate.
+     * @param Managed $key
+     * @param string $secret
+     * @param string $email
+     * @return void
+     * @throws Exception
+     */
     public function setupSecretAccessControl(Managed $key, string $secret, string $email)
     {
         $req = new SetupSecretAccessControlRequest();

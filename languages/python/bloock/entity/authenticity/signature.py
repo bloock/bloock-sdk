@@ -5,14 +5,41 @@ from bloock.entity.authenticity.signature_alg import SignatureAlg
 
 
 class Signature:
+    """
+    Represents a cryptographic signature along with additional metadata.
+    """
     def __init__(
             self, signature: str, alg: str, kid: str, message_hash: str, subject: str
     ) -> None:
+        """
+        Constructs a Signature object with the specified parameters.
+        :type subject: object
+        :type message_hash: object
+        :type kid: object
+        :type alg: object
+        :type signature: object
+        :rtype: object
+        """
         self.signature = signature
+        """
+        Is the cryptographic signature.
+        """
         self.alg = alg
+        """
+        Is the algorithm used for the signature.
+        """
         self.kid = kid
+        """
+        Is the key identifier associated with the signature. (public key or key ID).
+        """
         self.message_hash = message_hash
+        """
+        Is the hash of the message that was signed.
+        """
         self.subject = subject
+        """
+        Is an optional field representing the subject of the signature.
+        """
 
     @staticmethod
     def from_proto(signature: proto.Signature) -> Signature:

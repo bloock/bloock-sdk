@@ -6,6 +6,9 @@ from bloock.entity.key.subject_certificate_params import SubjectCertificateParam
 
 
 class LocalCertificateParams:
+    """
+    Represents the parameters for generating a local certificate.
+    """
     def __init__(
             self,
             key_type: KeyType,
@@ -13,6 +16,14 @@ class LocalCertificateParams:
             password: str,
             expiration: int = 0,
     ) -> None:
+        """
+        Constructs an LocalCertificateParams object with the specified parameters.
+        :type expiration: object
+        :type password: object
+        :type subject: object
+        :type key_type: object
+        :rtype: object
+        """
         self.key_type = key_type
         self.subject = subject
         self.password= password

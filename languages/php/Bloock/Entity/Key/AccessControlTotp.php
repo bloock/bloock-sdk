@@ -2,12 +2,16 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents a Time-based One-Time Password ([TOTP](https://datatracker.ietf.org/doc/html/rfc6238)) code used for access control.
+ */
 class AccessControlTotp
 {
     public string $code;
 
     /**
-     * @throws Exception
+     * Constructs an AccessControlTotp object with the specified parameters.
+     * @param string $code
      */
     public function __construct(string $code)
     {

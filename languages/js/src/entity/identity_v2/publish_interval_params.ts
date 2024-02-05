@@ -1,9 +1,24 @@
 import { PublishInterval } from "../../bridge/proto/identity_entities_v2";
 
+/**
+ * Represents different publish intervals.
+ */
 export enum PublishIntervalParams {
+  /**
+   * Represents a 1-minute publish interval.
+   */
   Interval1,
+  /**
+   * Represents a 5-minute publish interval.
+   */
   Interval5,
+  /**
+   * Represents a 15-minute publish interval.
+   */
   Interval15,
+  /**
+   * Represents a 60-minute publish interval.
+   */
   Interval60
 }
 

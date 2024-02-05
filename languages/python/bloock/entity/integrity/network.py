@@ -6,6 +6,9 @@ from bloock._bridge.proto.config_pb2 import Network as NetworkProto
 
 
 class Network(Enum):
+    """
+    Represents a network.
+    """
     ETHEREUM_MAINNET = 0
     ETHEREUM_GOERLI = 1
     GNOSIS_CHAIN = 2

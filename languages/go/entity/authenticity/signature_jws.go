@@ -4,6 +4,9 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// SignatureJws represents a JSON Web Signature (JWS). [RFC 7515].
+//
+// [RFC 7515]: https://datatracker.ietf.org/doc/html/rfc7515
 type SignatureJws struct {
 	Signature   string
 	Protected   string
@@ -23,6 +26,7 @@ func NewSignatureJwsFromProto(s *proto.SignatureJWS) SignatureJws {
 	}
 }
 
+// GetAlg returns the SignatureAlg based on the algorithm specified in the header.
 func (s *SignatureJws) GetAlg() SignatureAlg {
 	if alg, ok := SignatureAlgFromProto[s.Header.Alg]; ok {
 		return alg

@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Integrity;
 
+/**
+ * Represents a network.
+ */
 class Network
 {
     const ETHEREUM_MAINNET = "ETHEREUM_MAINNET";

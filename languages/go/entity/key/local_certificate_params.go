@@ -2,6 +2,7 @@ package key
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// LocalCertificateParams represents the parameters for generating a local certificate.
 type LocalCertificateParams struct {
 	KeyType          KeyType
 	Password         string

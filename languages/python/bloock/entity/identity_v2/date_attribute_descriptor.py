@@ -5,6 +5,9 @@ from bloock.entity.identity_v2.attribute_descriptor import AttributeDescriptor
 
 
 class DateAttributeDescriptor(AttributeDescriptor):
+    """
+    Represents a descriptor for a date attribute, including its display name, ID, description, and required status.
+    """
     @staticmethod
     def from_proto(a: proto.DateAttributeDefinitionV2) -> DateAttributeDescriptor:
         return DateAttributeDescriptor(

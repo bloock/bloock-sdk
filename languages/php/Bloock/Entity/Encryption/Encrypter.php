@@ -9,6 +9,9 @@ use Bloock\Entity\Key\ManagedKey;
 use Bloock\Entity\Key\LocalCertificate;
 use Bloock\Entity\Key\ManagedCertificate;
 
+/**
+ * Represents an encryption configuration with various key types and access control.
+ */
 class Encrypter
 {
     public ?LocalKey $localKey = null;
@@ -18,6 +21,9 @@ class Encrypter
     public ?AccessControl $accessControl = null;
 
     /**
+     * Creates a new Encrypter instance with a local key, managed key, local certificate or managed certifiate.
+     * @param $key
+     * @param AccessControl|null $accessControl
      * @throws Exception
      */
     public function __construct($key, ?AccessControl $accessControl = null)

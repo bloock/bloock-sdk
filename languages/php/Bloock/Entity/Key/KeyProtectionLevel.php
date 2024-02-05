@@ -2,9 +2,18 @@
 
 namespace Bloock\Entity\Key;
 
+/**
+ * Represents the protection level of a cryptographic key.
+ */
 class KeyProtectionLevel
 {
+    /**
+     * Indicates that the key is protected by software.
+     */
     const SOFTWARE = "SOFTWARE";
+    /**
+     * Indicates that the key is protected by a Hardware Security Module (HSM).
+     */
     const HSM = "HSM";
     const UNRECOGNIZED = "UNRECOGNIZED";
 

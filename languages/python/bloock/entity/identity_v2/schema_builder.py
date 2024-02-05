@@ -19,7 +19,19 @@ from bloock.entity.identity_v2.decimal_enum_attribute_descriptor import DecimalE
 
 
 class SchemaBuilder:
+    """
+    Is a builder pattern for constructing schema instances.
+    """
     def __init__(self, display_name: str, schema_type: str, version: str, description: str, config_data: ConfigData) -> None:
+        """
+        Creates a new instance of SchemaBuilder with initial values.
+        :type config_data: object
+        :type description: object
+        :type version: object
+        :type schema_type: object
+        :type display_name: object
+        :rtype: object
+        """
         self.display_name = display_name
         self.schema_type = schema_type
         self.version = version
@@ -37,51 +49,130 @@ class SchemaBuilder:
         self.decimal_enum_attributes = []
 
     def add_string_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
+        """
+        Adds a string attribute descriptor to the schema builder.
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.string_attributes.append(
             StringAttributeDescriptor(name, technical_name, description, required))
         return self
 
     def add_integer_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
+        """
+        Adds an integer attribute descriptor to the schema builder.
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.integer_attributes.append(IntegerAttributeDescriptor(
             name, technical_name, description, required))
         return self
 
     def add_decimal_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
+        """
+        Adds a decimal attribute descriptor to the schema builder.
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.decimal_attributes.append(DecimalAttributeDescriptor(
             name, technical_name, description, required))
         return self
 
     def add_boolean_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
+        """
+        Adds a boolean attribute descriptor to the schema builder.
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.boolean_attributes.append(BooleanAttributeDescriptor(
             name, technical_name, description, required))
         return self
 
     def add_date_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
+        """
+        Adds a date attribute descriptor to the schema builder.
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.date_attributes.append(DateAttributeDescriptor(
             name, technical_name, description, required))
         return self
 
     def add_string_enum_attribute(self, name: str, technical_name: str, description: str, required: bool, enumeration: List[str]) -> SchemaBuilder:
+        """
+        Adds a string enum attribute descriptor to the schema builder.
+        :type enumeration: object
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.string_enum_attributes.append(StringEnumAttributeDescriptor(
             name, technical_name, description, required, enumeration))
         return self
 
     def add_integer_enum_attribute(self, name: str, technical_name: str, description: str, required: bool, enumeration: List[int]) -> SchemaBuilder:
+        """
+        Adds an integer enum attribute descriptor to the schema builder.
+        :type enumeration: object
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.integer_enum_attributes.append(IntegerEnumAttributeDescriptor(
             name, technical_name, description, required, enumeration))
         return self
 
     def add_decimal_enum_attribute(self, name: str, technical_name: str, description: str, required: bool, enumeration: List[float]) -> SchemaBuilder:
+        """
+        Adds a decimal enum attribute descriptor to the schema builder.
+        :type enumeration: object
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.decimal_enum_attributes.append(DecimalEnumAttributeDescriptor(
             name, technical_name, description, required, enumeration))
         return self
 
     def add_datetime_attribute(self, name: str, technical_name: str, description: str, required: bool) -> SchemaBuilder:
+        """
+        Adds a datetime attribute descriptor to the schema builder.
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type name: object
+        :rtype: object
+        """
         self.datetime_attributes.append(DatetimeAttributeDescriptor(
             name, technical_name, description, required))
         return self
 
     def build(self) -> Schema:
+        """
+        Creates a schema using the configured attributes.
+        :rtype: object
+        """
         bridge = BloockBridge()
 
         string_attributes = []

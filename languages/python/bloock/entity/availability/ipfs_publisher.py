@@ -4,7 +4,14 @@ from bloock.entity.availability.publisher_args import PublisherArgs
 
 
 class IpfsPublisher(Publisher):
+    """
+    Represents a publisher for IPFS data availability.
+    """
     def __init__(self) -> None:
+        """
+        Constructs a IpfsPublisher object with the specified parameters.
+        :rtype: object
+        """
         super().__init__(type=proto.IPFS, args=PublisherArgs())
 
     def to_proto(self) -> proto.Publisher:

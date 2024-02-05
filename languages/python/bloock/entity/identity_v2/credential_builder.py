@@ -17,7 +17,20 @@ from bloock.entity.identity_v2.credential_receipt import CredentialReceipt
 
 
 class CredentialBuilder:
+    """
+    Helps construct credentials by specifying various attributes.
+    """
     def __init__(self, schema_id: str, issuer_did: str, holder_did: str, expiration: int, version: int, config_data: ConfigData) -> None:
+        """
+        Creates a new CredentialBuilder instance with the specified parameters.
+        :type config_data: object
+        :type version: object
+        :type expiration: object
+        :type holder_did: object
+        :type issuer_did: object
+        :type schema_id: object
+        :rtype: object
+        """
         self.schema_id = schema_id
         self.issuer_did = issuer_did
         self.holder_did = holder_did
@@ -34,36 +47,81 @@ class CredentialBuilder:
         self.datetime_attributes = []
 
     def with_string_attribute(self, key: str, value: str) -> CredentialBuilder:
+        """
+        Adds a string attribute to the CredentialBuilder.
+        :type value: object
+        :type key: object
+        :rtype: object
+        """
         self.string_attributes.append(StringAttribute(key, value))
         return self
 
     def with_integer_attribute(self, key: str, value: int) -> CredentialBuilder:
+        """
+        Adds an integer attribute to the CredentialBuilder.
+        :type value: object
+        :type key: object
+        :rtype: object
+        """
         self.integer_attributes.append(IntegerAttribute(key, value))
         return self
 
     def with_decimal_attribute(self, key: str, value: float) -> CredentialBuilder:
+        """
+        Adds a decimal attribute to the CredentialBuilder.
+        :type value: object
+        :type key: object
+        :rtype: object
+        """
         self.decimal_attributes.append(DecimalAttribute(key, value))
         return self
 
     def with_boolean_attribute(self, key: str, value: bool) -> CredentialBuilder:
+        """
+        Adds a boolean attribute to the CredentialBuilder.
+        :type value: object
+        :type key: object
+        :rtype: object
+        """
         self.boolean_attributes.append(BooleanAttribute(key, value))
         return self
 
     def with_date_attribute(self, key: str, value: datetime.date) -> CredentialBuilder:
+        """
+        Adds a date attribute to the CredentialBuilder.
+        :type value: object
+        :type key: object
+        :rtype: object
+        """
         formatted_date = value.strftime("%Y-%m-%d")
         self.date_attributes.append(DateAttribute(key, formatted_date))
         return self
 
     def with_datetime_attribute(self, key: str, value: datetime.datetime) -> CredentialBuilder:
+        """
+        Adds a datetime attribute to the CredentialBuilder.
+        :type value: object
+        :type key: object
+        :rtype: object
+        """
         rfc3339_string = value.strftime("%Y-%m-%dT%H:%M:%SZ")
         self.datetime_attributes.append(DatetimeAttribute(key, rfc3339_string))
         return self
 
     def with_signer(self, signer: Signer) -> CredentialBuilder:
+        """
+        Sets the signer for the CredentialBuilder.
+        :type signer: object
+        :rtype: object
+        """
         self.signer = signer.to_proto()
         return self
 
     def build(self) -> CredentialReceipt:
+        """
+        Creates and returns a Credential using the specified attributes.
+        :rtype: object
+        """
         bridge = BloockBridge()
 
         string_attributes = []

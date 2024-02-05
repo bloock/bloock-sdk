@@ -4,7 +4,18 @@ import bloock._bridge.proto.integrity_entities_pb2 as proto
 
 
 class AnchorNetwork:
+    """
+    Represents information about an anchor network.
+    """
     def __init__(self, name: str, state: str, tx_hash: str, root: str | None) -> None:
+        """
+        Constructs an AnchorNetwork object with the specified parameters.
+        :type root: object
+        :type tx_hash: object
+        :type state: object
+        :type name: object
+        :rtype: object
+        """
         self.name = name
         self.state = state
         self.tx_hash = tx_hash

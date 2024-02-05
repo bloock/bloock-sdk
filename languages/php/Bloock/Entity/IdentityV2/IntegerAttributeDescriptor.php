@@ -4,6 +4,9 @@ namespace Bloock\Entity\IdentityV2;
 
 use Bloock\IntegerAttributeDefinitionV2;
 
+/**
+ * Represents a descriptor for an attribute with an integer value.
+ */
 class IntegerAttributeDescriptor extends AttributeDescriptor
 {
     public static function fromProto(IntegerAttributeDefinitionV2 $res): IntegerAttributeDescriptor

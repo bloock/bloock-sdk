@@ -2,6 +2,7 @@ package integrity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// Network represents a network.
 type Network = proto.Network
 
 func NetworkToProto(network Network) *proto.Network {
@@ -11,6 +12,7 @@ func NetworkToProto(network Network) *proto.Network {
 	return &network
 }
 
+// networks represents a set of predefined networks.
 type networks struct {
 	BloockChain     Network
 	EthereumGnosis  Network
@@ -19,6 +21,7 @@ type networks struct {
 	EthereumPolygon Network
 }
 
+// ListOfNetworks returns a networks instance with predefined network values.
 func ListOfNetworks() networks {
 	return networks{
 		BloockChain:     proto.Network_BLOOCK_CHAIN,
@@ -29,18 +32,22 @@ func ListOfNetworks() networks {
 	}
 }
 
+// AnchorParams represents parameters for anchor-related operations.
 type AnchorParams struct {
 	Timeout int64
 }
 
+// NewAnchorParams creates a new AnchorParams instance with default values.
 func NewAnchorParams() AnchorParams {
 	return AnchorParams{}
 }
 
+// NetworkParams represents parameters for network-related operations.
 type NetworkParams struct {
 	Network Network
 }
 
+// NewNetworkParams creates a new NetworkParams instance with default values.
 func NewNetworkParams() NetworkParams {
 	return NetworkParams{
 		Network: -1,

@@ -4,6 +4,9 @@ namespace Bloock\Entity\IdentityV2;
 
 use Bloock\DateAttributeDefinitionV2;
 
+/**
+ * Represents a descriptor for a date attribute, including its display name, ID, description, and required status.
+ */
 class DateAttributeDescriptor extends AttributeDescriptor
 {
     public static function fromProto(DateAttributeDefinitionV2 $res): DateAttributeDescriptor

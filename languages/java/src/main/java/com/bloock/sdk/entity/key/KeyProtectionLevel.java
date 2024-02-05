@@ -2,8 +2,17 @@ package com.bloock.sdk.entity.key;
 
 import com.bloock.sdk.bridge.proto.KeysEntities;
 
+/**
+ * Represents the protection level of a cryptographic key.
+ */
 public enum KeyProtectionLevel {
+  /**
+   * Indicates that the key is protected by software.
+   */
   SOFTWARE,
+  /**
+   * Indicates that the key is protected by a Hardware Security Module (HSM).
+   */
   HSM,
   UNRECOGNIZED;
 

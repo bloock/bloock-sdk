@@ -2,10 +2,12 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// StringAttributeDescriptor represents a descriptor for an attribute with a string value.
 type StringAttributeDescriptor struct {
 	AttributeDescriptor
 }
 
+// NewStringAttributeDescriptor creates a new StringAttributeDescriptor instance with the provided details.
 func NewStringAttributeDescriptor(name string, id string, description string, required bool) StringAttributeDescriptor {
 	a := AttributeDescriptor{
 		DisplayName: name,

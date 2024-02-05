@@ -2,11 +2,19 @@
 
 namespace Bloock\Entity\Record;
 
+/**
+ * Represents details related to the availability of a record, including content type and size.
+ */
 class AvailabilityDetails
 {
     private ?string $type;
     private int $size;
 
+    /**
+     * Constructs a AvailabilityDetails object with the specified parameters.
+     * @param string|null $type
+     * @param int $size
+     */
     public function __construct(?string $type, int $size)
     {
         $this->type = $type;
@@ -14,7 +22,8 @@ class AvailabilityDetails
     }
 
     /**
-     * @return string
+     * Gets the content type of record file.
+     * @return string|null
      */
     public function getType(): ?string
     {
@@ -22,6 +31,7 @@ class AvailabilityDetails
     }
 
     /**
+     * Gets the byte size of the record file.
      * @return int
      */
     public function getSize(): int

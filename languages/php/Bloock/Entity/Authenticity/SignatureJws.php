@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Authenticity;
 
+/**
+ * Represents a JSON Web Signature (JWS). [RFC 7515](https://datatracker.ietf.org/doc/html/rfc7515).
+ */
 class SignatureJws
 {
     private string $signature;
@@ -9,6 +12,13 @@ class SignatureJws
     private SignatureHeaderJws $header;
     private string $messageHash;
 
+    /**
+     * Constructs a SignatureJws object with the specified parameters.
+     * @param string $signature
+     * @param string $protected
+     * @param SignatureHeaderJws $signatureHeader
+     * @param string $messageHash
+     */
     public function __construct(string $signature, string $protected, SignatureHeaderJws $signatureHeader, string $messageHash)
     {
         $this->signature = $signature;
@@ -23,6 +33,7 @@ class SignatureJws
     }
 
     /**
+     * Gets the cryptographic signature.
      * @return string
      */
     public function getSignature(): string
@@ -30,12 +41,18 @@ class SignatureJws
         return $this->signature;
     }
 
+    /**
+     * Sets the cryptographic signature.
+     * @param string $signature
+     * @return void
+     */
     public function setSignature(string $signature): void
     {
         $this->signature = $signature;
     }
 
     /**
+     * Gets the "protected" header parameter of the JWS.
      * @return string
      */
     public function getProtected(): string
@@ -44,6 +61,7 @@ class SignatureJws
     }
 
     /**
+     * Gets the header containing algorithm and key identifier metadata for the JWS.
      * @return SignatureHeaderJws
      */
     public function getHeader(): SignatureHeaderJws
@@ -52,6 +70,7 @@ class SignatureJws
     }
 
     /**
+     * Gets the signature message hash.
      * @return string
      */
     public function getMessageHash(): string
@@ -59,6 +78,11 @@ class SignatureJws
         return $this->messageHash;
     }
 
+    /**
+     * Sets the hash of the message that was signed.
+     * @param string $messageHash
+     * @return void
+     */
     public function setMessageHash(string $messageHash): void
     {
         $this->messageHash = $messageHash;
@@ -74,6 +98,10 @@ class SignatureJws
         return $p;
     }
 
+    /**
+     * Gets the algorithm used for the JWS signature.
+     * @return string
+     */
     public function getAlg(): string
     {
         return SignatureAlg::fromString($this->header->getAlg());

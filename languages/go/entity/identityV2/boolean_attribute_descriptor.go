@@ -2,10 +2,12 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// BooleanAttributeDescriptor represents a descriptor for a boolean attribute.
 type BooleanAttributeDescriptor struct {
 	AttributeDescriptor
 }
 
+// NewBooleanAttributeDescriptor creates a new BooleanAttributeDescriptor instance with the provided details.
 func NewBooleanAttributeDescriptor(name string, id string, description string, required bool) BooleanAttributeDescriptor {
 	a := AttributeDescriptor{
 		DisplayName: name,

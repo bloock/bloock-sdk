@@ -6,15 +6,34 @@ from bloock.entity.key.subject_certificate_params import SubjectCertificateParam
 
 
 class ManagedCertificateParams:
+    """
+    Represents parameters for creating a managed certificate.
+    """
     def __init__(
             self,
             key_type: KeyType,
             subject: SubjectCertificateParams,
             expiration: int = 0,
     ) -> None:
+        """
+        Constructs a ManagedCertificateParams object with the specified parameters.
+        :type expiration: object
+        :type subject: object
+        :type key_type: object
+        :rtype: object
+        """
         self.key_type = key_type
+        """
+        Is the type of the key.
+        """
         self.subject = subject
+        """
+        Represents the subject details of the certificate.
+        """
         self.expiration = expiration
+        """
+        Is the number of months until the certificate expiration.
+        """
 
     @staticmethod
     def from_proto(key: proto.ManagedCertificateParams) -> ManagedCertificateParams:

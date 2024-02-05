@@ -2,6 +2,7 @@ package integrity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// ProofAnchor represents a proof anchor.
 type ProofAnchor struct {
 	AnchorID int64
 	Networks []AnchorNetwork

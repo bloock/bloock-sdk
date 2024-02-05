@@ -27,15 +27,27 @@ import {
 } from "../entity/key/managed_certificate_params";
 import { TotpAccessControlReceipt } from "../entity/key/totp_access_control_receipt";
 
+/**
+ * Provides functionality to interact with the [Bloock Keys service](https://dashboard.bloock.com/login).
+ */
 export class KeyClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
+  /**
+   * Creates a new KeyClient with default configuration.
+   * @param configData 
+   */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
     this.configData = NewConfigData(configData);
   }
 
+  /**
+   * Generates a new local key of the specified type.
+   * @param keyType 
+   * @returns 
+   */
   async newLocalKey(keyType: KeyType): Promise<LocalKey> {
     const request = GenerateLocalKeyRequest.fromPartial({
       configData: this.configData,
@@ -52,6 +64,12 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Loads a local key of the specified type from a public key string.
+   * @param keyType 
+   * @param key 
+   * @returns 
+   */
   async loadLocalKey(keyType: KeyType, key: string): Promise<LocalKey> {
     const request = LoadLocalKeyRequest.fromPartial({
       configData: this.configData,
@@ -69,6 +87,11 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Generates a new managed key with the specified parameters.
+   * @param params 
+   * @returns 
+   */
   async newManagedKey(params: ManagedKeyParams): Promise<ManagedKey> {
     const request = GenerateManagedKeyRequest.fromPartial({
       configData: this.configData,
@@ -86,6 +109,11 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Loads a managed key by its ID (ex: 51d22546-68f1-4340-b94b-2a80e60b8933).
+   * @param id 
+   * @returns 
+   */
   async loadManagedKey(id: string): Promise<ManagedKey> {
     const request = LoadManagedKeyRequest.fromPartial({
       configData: this.configData,
@@ -103,6 +131,11 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Generates a new local certificate with the specified parameters.
+   * @param params 
+   * @returns 
+   */
   async newLocalCertificate(
     params: LocalCertificateParams
   ): Promise<LocalCertificate> {
@@ -122,6 +155,12 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Loads a local certificate from a PKCS12 file.
+   * @param pkcs12 
+   * @param password 
+   * @returns 
+   */
   async loadLocalCertificate(
     pkcs12: Uint8Array,
     password: string
@@ -143,6 +182,11 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Generates a new managed certificate with the specified parameters.
+   * @param params 
+   * @returns 
+   */
   async newManagedCertificate(
     params: ManagedCertificateParams
   ): Promise<ManagedCertificate> {
@@ -162,6 +206,11 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Loads a managed certificate by its ID (ex: ceef5b02-af17-43d8-ae7b-31d9bdf8027f).
+   * @param id 
+   * @returns 
+   */
   async loadManagedCertificate(id: string): Promise<ManagedCertificate> {
     const request = LoadManagedCertificateRequest.fromPartial({
       configData: this.configData,
@@ -179,6 +228,13 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Imports a managed certificate with the specified parameters, supported types: .pem, .pfx.
+   * @param type 
+   * @param certificate 
+   * @param params 
+   * @returns 
+   */
   async importManagedCertificate(
     type: CertificateType,
     certificate: Uint8Array,
@@ -202,6 +258,11 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Sets up TOTP-based access control for the given managed key or managed certificate.
+   * @param key 
+   * @returns 
+   */
   async setupTotpAccessControl(key: Managed): Promise<TotpAccessControlReceipt> {
     const request = SetupTotpAccessControlRequest.fromPartial({
       configData: this.configData,
@@ -224,6 +285,12 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Recovers TOTP-based access control for the given managed key or managed certificate using a recovery code.
+   * @param key 
+   * @param code 
+   * @returns 
+   */
   async recoverTotpAccessControl(
     key: Managed,
     code: string
@@ -250,6 +317,13 @@ export class KeyClient {
       });
   }
 
+  /**
+   * Sets up secret-based access control for the given managed key or managed certificate.
+   * @param key 
+   * @param secret 
+   * @param email 
+   * @returns 
+   */
   async setupSecretAccessControl(key: Managed, secret: string, email: string) {
     const request = SetupSecretAccessControlRequest.fromPartial({
       configData: this.configData,

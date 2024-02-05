@@ -2,12 +2,22 @@ package com.bloock.sdk.entity.record;
 
 import com.bloock.sdk.bridge.proto.RecordEntities;
 
+/**
+ * Represents all details related to a record, including integrity, authenticity, encryption, and availability details.
+ */
 public class RecordDetails {
   IntegrityDetails integrity;
   AuthenticityDetails authenticity;
   EncryptionDetails encryption;
   AvailabilityDetails availability;
 
+  /**
+   * Constructs a RecordDetails object with the specified parameters.
+   * @param integrity
+   * @param authenticity
+   * @param encryption
+   * @param availability
+   */
   RecordDetails(
       IntegrityDetails integrity,
       AuthenticityDetails authenticity,
@@ -19,18 +29,34 @@ public class RecordDetails {
     this.availability = availability;
   }
 
+  /**
+   * Gets the integrity details of the record.
+   * @return
+   */
   public IntegrityDetails getIntegrity() {
     return integrity;
   }
 
+  /**
+   * Gets the authenticity details of the record.
+   * @return
+   */
   public AuthenticityDetails getAuthenticity() {
     return authenticity;
   }
 
+  /**
+   * Gets the encryption details of the record.
+   * @return
+   */
   public EncryptionDetails getEncryption() {
     return encryption;
   }
 
+  /**
+   * Gets the availability details of the record.
+   * @return
+   */
   public AvailabilityDetails getAvailability() {
     return availability;
   }

@@ -2,6 +2,7 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// CredentialReceipt represents a receipt for a credential, including the credential itself, its ID, and type.
 type CredentialReceipt struct {
 	Credential     Credential
 	CredentialId   string

@@ -1,11 +1,21 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 
+/**
+ * Represents a schema with its attributes.
+ */
 export class Schema {
   cid: string;
   cidJsonLd: string;
   schemaType: string;
   json: string;
 
+  /**
+   * Constructs a Schema object with the specified parameters.
+   * @param cid 
+   * @param cidJsonLd 
+   * @param schemaType 
+   * @param json 
+   */
   constructor(
     cid: string,
     cidJsonLd: string,

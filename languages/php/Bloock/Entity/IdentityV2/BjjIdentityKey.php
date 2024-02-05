@@ -2,10 +2,17 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents an identity BJJ key used.
+ */
 class BjjIdentityKey implements IdentityKey
 {
     public IdentityKeyArgs $args;
 
+    /**
+     * Creates a new BjjIdentityKey instance with the provided issuer key arguments.
+     * @param IdentityKeyArgs $args
+     */
     public function __construct(IdentityKeyArgs $args)
     {
         $this->args = $args;

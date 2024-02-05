@@ -1,3 +1,4 @@
+// Package client provides a client for interacting with the Bloock SDK.
 package client
 
 import (
@@ -5,6 +6,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
+// BloockClient represents a client for interacting with the Bloock SDK.
 type BloockClient struct {
 	configData *proto.ConfigData
 
@@ -19,6 +21,7 @@ type BloockClient struct {
 	WebhookClient        WebhookClient
 }
 
+// NewBloockClient creates a new instance of the Bloock SDK client with the specified configuration.
 func NewBloockClient(apiKey string, identityApiHost *string, forceEnv *string) BloockClient {
 	configData := config.NewConfigDataDefault()
 	configData.Config.ApiKey = apiKey

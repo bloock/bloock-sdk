@@ -4,6 +4,9 @@ namespace Bloock\Entity\IdentityV2;
 
 use Bloock\BooleanAttributeDefinitionV2;
 
+/**
+ * Represents a descriptor for a boolean attribute.
+ */
 class BooleanAttributeDescriptor extends AttributeDescriptor
 {
     public static function fromProto(BooleanAttributeDefinitionV2 $res): BooleanAttributeDescriptor

@@ -2,6 +2,9 @@ package com.bloock.sdk.entity.integrity;
 
 import com.bloock.sdk.bridge.proto.Config;
 
+/**
+ * Represents a network.
+ */
 public enum Network {
   ETHEREUM_MAINNET,
   ETHEREUM_GOERLI,

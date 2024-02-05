@@ -3,6 +3,9 @@ import {
   NetworkConfig as NetworkConfigProto
 } from "./bridge/proto/config";
 
+/**
+ * Provides a centralized configuration for the Bloock SDK library. For information about Bloock SDK in Go, see https://bloock.com.
+ */
 export class Bloock {
   private static instance: Bloock;
   private apiKey?: string;
@@ -14,12 +17,19 @@ export class Bloock {
     [key: number]: NetworkConfigProto;
   };
 
+  /**
+   * Creates a new instance of Bloock instance.
+   */
   private constructor() {
     this.apiKey = "";
     this.apiHost = "";
     this.networksConfig = {};
   }
 
+  /**
+   * Is a string variable representing the API key used for authentication with the Bloock SDK, create [here](https://dashboard.bloock.com/login).
+   * @returns 
+   */
   public static getApiKey(): string | undefined {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -27,6 +37,10 @@ export class Bloock {
     return Bloock.instance.apiKey;
   }
 
+  /**
+   * Sets the API key used for authentication with the Bloock SDK.
+   * @param apiKey 
+   */
   public static setApiKey(apiKey: string) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -34,6 +48,10 @@ export class Bloock {
     Bloock.instance.apiKey = apiKey;
   }
 
+  /**
+   * Is a string variable used to force a specific environment configuration, it allows developers to set a predefined environment for the Bloock SDK.
+   * @returns 
+   */
   public static getForceEnv(): string | undefined {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -41,6 +59,10 @@ export class Bloock {
     return Bloock.instance.forceEnv;
   }
 
+  /**
+   * Sets the environment used for the Bloock SDK.
+   * @param forceEnv 
+   */
   public static setForceEnv(forceEnv: string) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -48,6 +70,10 @@ export class Bloock {
     Bloock.instance.forceEnv = forceEnv;
   }
 
+  /**
+   * Is a string variable representing the host URL used for Identity Managed API, required to be set for identity-related features of the Bloock SDK.
+   * @returns 
+   */
   public static getIdentityApiHost(): string | undefined {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -55,6 +81,10 @@ export class Bloock {
     return Bloock.instance.identityApiHost;
   }
 
+  /**
+   * Sets the host URL used for Identity Managed API.
+   * @param identityApiHost 
+   */
   public static setIdentityApiHost(identityApiHost: string) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -62,6 +92,10 @@ export class Bloock {
     Bloock.instance.identityApiHost = identityApiHost;
   }
 
+  /**
+   * Is a string variable representing the host URL used for API communication with the Bloock SDK.
+   * @returns 
+   */
   public static getApiHost(): string | undefined {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -69,6 +103,10 @@ export class Bloock {
     return Bloock.instance.apiHost;
   }
 
+  /**
+   * Sets the host used for API communication with the Bloock SDK.
+   * @param host 
+   */
   public static setApiHost(host: string) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -76,6 +114,10 @@ export class Bloock {
     Bloock.instance.apiHost = host;
   }
 
+  /**
+   * Is a boolean variable that, when set to true, disables the analytics feature in the Bloock SDK.
+   * @returns 
+   */
   public static getDisableAnalytics(): boolean {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -83,6 +125,10 @@ export class Bloock {
     return Bloock.instance.disableAnalytics;
   }
 
+  /**
+   * Sets the boolean variable that disables the analytics feature in the Bloock SDK.
+   * @param disableAnalytics 
+   */
   public static setDisableAnalytics(disableAnalytics: boolean) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -90,6 +136,10 @@ export class Bloock {
     Bloock.instance.disableAnalytics = disableAnalytics;
   }
 
+  /**
+   * Is a variable that holds network configurations associated with specific network IDs in the Bloock SDK.
+   * @returns 
+   */
   public static getNetworkConfiguration():
     | { [key: number]: NetworkConfigProto }
     | undefined {
@@ -99,6 +149,11 @@ export class Bloock {
     return Bloock.instance.networksConfig;
   }
 
+  /**
+   * Sets the HTTP provider for the specified network in the Bloock SDK configuration.
+   * @param network 
+   * @param provider 
+   */
   public static setProvider(network: Network, provider: string) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();
@@ -117,6 +172,11 @@ export class Bloock {
     }
   }
 
+  /**
+   * Sets the contract address for the specified network in the Bloock SDK configuration.
+   * @param network 
+   * @param contractAddress 
+   */
   public static setContractAddress(network: Network, contractAddress: string) {
     if (!Bloock.instance) {
       Bloock.instance = new Bloock();

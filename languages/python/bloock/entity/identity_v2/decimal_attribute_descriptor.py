@@ -5,6 +5,9 @@ from bloock.entity.identity_v2.attribute_descriptor import AttributeDescriptor
 
 
 class DecimalAttributeDescriptor(AttributeDescriptor):
+    """
+    Represents a descriptor for an attribute with a decimal value.
+    """
     @staticmethod
     def from_proto(a: proto.DecimalAttributeDefinitionV2) -> DecimalAttributeDescriptor:
         return DecimalAttributeDescriptor(

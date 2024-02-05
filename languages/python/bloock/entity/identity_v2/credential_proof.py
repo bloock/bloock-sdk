@@ -4,7 +4,16 @@ import bloock._bridge.proto.identity_entities_v2_pb2 as proto
 
 
 class CredentialProof:
+    """
+    Represents the proof associated with a credential, including signature and sparse merkle tree proof.
+    """
     def __init__(self, signature_proof: str, sparse_mt_proof: str | None) -> None:
+        """
+        Constructs an CredentialProof object with the specified parameters.
+        :type sparse_mt_proof: object
+        :type signature_proof: object
+        :rtype: object
+        """
         self.signature_proof = signature_proof
         self.sparse_mt_proof = sparse_mt_proof
 

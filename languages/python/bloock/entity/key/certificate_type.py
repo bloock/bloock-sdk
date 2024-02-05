@@ -6,6 +6,9 @@ import bloock._bridge.proto.keys_entities_pb2 as proto
 
 
 class CertificateType(Enum):
+    """
+    Represents the type of certificate.
+    """
     PEM = 0
     PFX = 1
     UNRECOGNIZED = -1

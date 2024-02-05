@@ -2,12 +2,16 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents the proof associated with a credential, including signature and sparse merkle tree proof.
+ */
 class CredentialProof
 {
     private string $signatureProof;
     private string $sparseMtProof;
 
     /**
+     * Constructs an CredentialProof object with the specified parameters.
      * @param string $signatureProof
      * @param string $sparseMtProof
      */
@@ -23,6 +27,7 @@ class CredentialProof
     }
 
     /**
+     * Retrieve signature proof with string format
      * @return string
      */
     public function getSignatureProof(): string
@@ -31,6 +36,7 @@ class CredentialProof
     }
 
     /**
+     * Retrieve sparse merkle tree proof with string format
      * @return string
      */
     public function getSparseMtProof(): string

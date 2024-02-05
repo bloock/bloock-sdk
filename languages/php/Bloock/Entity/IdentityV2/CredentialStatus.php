@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\IdentityV2;
 
+/**
+ * Represents the status information for a credential, including its ID, revocation nonce, and type.
+ */
 class CredentialStatus
 {
     private string $id;
@@ -9,6 +12,7 @@ class CredentialStatus
     private string $type;
 
     /**
+     * Constructs an CredentialStatus object with the specified parameters.
      * @param string $id
      * @param int $revocationNonce
      * @param string $type
@@ -26,6 +30,7 @@ class CredentialStatus
     }
 
     /**
+     * Gets the ID associated with the credential.
      * @return string
      */
     public function getId(): string
@@ -34,6 +39,7 @@ class CredentialStatus
     }
 
     /**
+     * Gets the revocation nonce associated with the credential.
      * @return int
      */
     public function getRevocationNonce(): int
@@ -42,6 +48,7 @@ class CredentialStatus
     }
 
     /**
+     * Gets the type of the credential.
      * @return string
      */
     public function getType(): string

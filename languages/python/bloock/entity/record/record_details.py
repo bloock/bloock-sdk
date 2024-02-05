@@ -10,7 +10,16 @@ from bloock.entity.encryption.encryption_alg import EncryptionAlg
 
 
 class IntegrityDetails:
+    """
+    Represents details related to the integrity of a record, including hash and proof.
+    """
     def __init__(self, hash: str, proof: Proof | None) -> None:
+        """
+        Constructs a IntegrityDetails object with the specified parameters.
+        :type proof: object
+        :type hash: object
+        :rtype: object
+        """
         self.hash = hash
         self.proof = proof
 
@@ -28,7 +37,15 @@ class IntegrityDetails:
         )
     
 class AuthenticityDetails:
+    """
+    Represents details related to the authenticity of a record, including signatures.
+    """
     def __init__(self, signatures: List[Signature]) -> None:
+        """
+        Constructs a AuthenticityDetails object with the specified parameters.
+        :type signatures: object
+        :rtype: object
+        """
         self.signatures = signatures
 
     @staticmethod
@@ -39,7 +56,17 @@ class AuthenticityDetails:
         return proto.AuthenticityDetails(signatures=list(map(lambda x: x.to_proto(), self.signatures)))
     
 class EncryptionDetails:
+    """
+    Represents details related to the encryption of a record, including algorithm, key, and subject.
+    """
     def __init__(self, alg: str | None, key: str | None, subject: str | None) -> None:
+        """
+        Constructs a EncryptionDetails object with the specified parameters.
+        :type subject: object
+        :type key: object
+        :type alg: object
+        :rtype: object
+        """
         self.alg = alg
         self.key = key
         self.subject = subject
@@ -66,7 +93,16 @@ class EncryptionDetails:
         )
     
 class AvailabilityDetails:
+    """
+    Represents details related to the availability of a record, including content type and size.
+    """
     def __init__(self, type: str | None, size: int) -> None:
+        """
+        Constructs a AvailabilityDetails object with the specified parameters.
+        :type size: object
+        :type type: object
+        :rtype: object
+        """
         self.type = type
         self.size = size
 

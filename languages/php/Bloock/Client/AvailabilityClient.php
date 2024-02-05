@@ -12,11 +12,18 @@ use Bloock\PublishRequest;
 use Bloock\RetrieveRequest;
 use Exception;
 
+/**
+ * Represents a client for interacting with the [Bloock Availability service](https://dashboard.bloock.com/login).
+ */
 class AvailabilityClient
 {
     private $bridge;
     private $config;
 
+    /**
+     * Creates a new instance of the AvailabilityClient with the provided configuration.
+     * @param ConfigData|null $config
+     */
     public function __construct(ConfigData $config = null)
     {
         $this->bridge = new Bridge();
@@ -28,6 +35,13 @@ class AvailabilityClient
 
     }
 
+    /**
+     * Publishes a Bloock record to the Availability service using the specified publisher.
+     * @param Record $record
+     * @param Publisher $publisher
+     * @return string
+     * @throws Exception
+     */
     public function publish(Record $record, Publisher $publisher): string
     {
         $req = new PublishRequest();
@@ -42,6 +56,12 @@ class AvailabilityClient
         return $res->getId();
     }
 
+    /**
+     * Gets a Bloock record from the Availability service using the specified loader.
+     * @param Loader $loader
+     * @return Record
+     * @throws Exception
+     */
     public function retrieve(Loader $loader): Record
     {
         $req = new RetrieveRequest();

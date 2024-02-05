@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Integrity;
 
+/**
+ * Represents a receipt for a record, including anchor ID, client, record, and status information.
+ */
 class RecordReceipt
 {
     private int $anchor;
@@ -9,6 +12,13 @@ class RecordReceipt
     private string $record;
     private string $status;
 
+    /**
+     * Constructs a RecordReceipt object with the specified parameters.
+     * @param int $anchor
+     * @param string $client
+     * @param string $record
+     * @param string $status
+     */
     public function __construct(int $anchor, string $client, string $record, string $status)
     {
         $this->anchor = $anchor;
@@ -23,6 +33,7 @@ class RecordReceipt
     }
 
     /**
+     * Gets the anchor of the record receipt.
      * @return int
      */
     public function getAnchor(): int
@@ -31,6 +42,7 @@ class RecordReceipt
     }
 
     /**
+     * Gets the client of the record receipt.
      * @return string
      */
     public function getClient(): string
@@ -39,6 +51,7 @@ class RecordReceipt
     }
 
     /**
+     * Gets the record of the record receipt.
      * @return string
      */
     public function getRecord(): string
@@ -47,6 +60,7 @@ class RecordReceipt
     }
 
     /**
+     * Gets the status of the record receipt.
      * @return string
      */
     public function getStatus(): string

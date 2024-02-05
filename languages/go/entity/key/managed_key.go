@@ -2,12 +2,19 @@ package key
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// ManagedKey represents a managed key.
 type ManagedKey struct {
+	// ID is the unique identifier of the managed key (ex: 46c49ee7-ef44-472c-a873-ce81a2d5d764).
 	ID         string
+	// Name is the name of the managed key.
 	Name       string
+	// Protection is the protection level for the key.
 	Protection KeyProtectionLevel
+	// KeyType is the type of the key.
 	KeyType    KeyType
+	// Expiration is the timestamp indicating when the key expires.
 	Expiration int64
+	// Key is the actual public key.
 	Key        string
 }
 

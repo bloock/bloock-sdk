@@ -1,6 +1,9 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 import { AttributeDescriptor } from "./attribute_descriptor";
 
+/**
+ * Represents a descriptor for an attribute with a string value.
+ */
 export class StringAttributeDescriptor extends AttributeDescriptor {
   constructor(
     displayName: string,

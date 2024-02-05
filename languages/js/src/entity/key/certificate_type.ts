@@ -1,5 +1,8 @@
 import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
 
+/**
+ * Represents the type of certificate.
+ */
 export enum CertificateType {
   PEM,
   PFX

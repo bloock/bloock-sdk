@@ -1,9 +1,20 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 import { AttributeDescriptor } from "./attribute_descriptor";
 
+/**
+ * Represents a descriptor for an attribute with a string enum value.
+ */
 export class StringEnumAttributeDescriptor extends AttributeDescriptor {
   enumeration: string[];
 
+  /**
+   * Constructs an StringEnumAttributeDescriptor object with the specified parameters.
+   * @param displayName 
+   * @param technicalName 
+   * @param description 
+   * @param required 
+   * @param enumeration 
+   */
   constructor(
     displayName: string,
     technicalName: string,

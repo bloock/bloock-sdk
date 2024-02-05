@@ -2,10 +2,18 @@ import * as proto from "../../bridge/proto/record_entities";
 import { Proof } from "../integrity";
 import { Signature } from "../authenticity";
 
+/**
+ * Represents details related to the integrity of a record, including hash and proof.
+ */
 export class IntegrityDetails {
   hash: string;
   proof?: Proof;
 
+  /**
+   * Constructs a IntegrityDetails object with the specified parameters.
+   * @param hash 
+   * @param proof 
+   */
   constructor(hash: string, proof?: Proof) {
     this.hash = hash;
     this.proof = proof;
@@ -26,9 +34,16 @@ export class IntegrityDetails {
   }
 }
 
+/**
+ * Represents details related to the authenticity of a record, including signatures.
+ */
 export class AuthenticityDetails {
   signatures: Signature[];
 
+  /**
+   * Constructs a AuthenticityDetails object with the specified parameters.
+   * @param signatures 
+   */
   constructor(signatures: Signature[]) {
     this.signatures = signatures;
   }
@@ -46,11 +61,20 @@ export class AuthenticityDetails {
   }
 }
 
+/**
+ * Represents details related to the encryption of a record, including algorithm, key, and subject.
+ */
 export class EncryptionDetails {
   alg?: string;
   key?: string;
   subject?: string;
 
+  /**
+   * Constructs a EncryptionDetails object with the specified parameters.
+   * @param alg 
+   * @param key 
+   * @param subject 
+   */
   constructor(alg?: string, key?: string, subject?: string) {
     this.alg = alg;
     this.key = key;
@@ -70,10 +94,18 @@ export class EncryptionDetails {
   }
 }
 
+/**
+ * Represents details related to the availability of a record, including content type and size.
+ */
 export class AvailabilityDetails {
   contentType?: string;
   size: number;
 
+  /**
+   * Constructs a AvailabilityDetails object with the specified parameters.
+   * @param size 
+   * @param contentType 
+   */
   constructor(size: number, contentType?: string) {
     this.size = size;
     this.contentType = contentType;
@@ -91,12 +123,22 @@ export class AvailabilityDetails {
   }
 }
 
+/**
+ * Represents all details related to a record, including integrity, authenticity, encryption, and availability details.
+ */
 export class RecordDetails {
   integrity?: IntegrityDetails;
   authenticity?: AuthenticityDetails;
   encryption?: EncryptionDetails;
   availability?: AvailabilityDetails;
 
+  /**
+   * Constructs a RecordDetails object with the specified parameters.
+   * @param integrity 
+   * @param authenticity 
+   * @param encryption 
+   * @param availability 
+   */
   constructor(
     integrity?: IntegrityDetails,
     authenticity?: AuthenticityDetails,

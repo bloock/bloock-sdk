@@ -6,6 +6,9 @@ from bloock.entity.key.key_type import KeyType
 
 
 class ManagedKey:
+    """
+    Represents a managed key.
+    """
     def __init__(
             self,
             id: str,
@@ -15,6 +18,16 @@ class ManagedKey:
             expiration: int,
             key: str,
     ) -> None:
+        """
+        Constructs a ManagedKey object with the specified parameters.
+        :type key: object
+        :type key_type: object
+        :type expiration: object
+        :type protection: object
+        :type name: object
+        :type id: object
+        :rtype: object
+        """
         self.id = id
         self.name = name
         self.protection = protection

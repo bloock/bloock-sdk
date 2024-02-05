@@ -2,12 +2,22 @@ import * as proto from "../../bridge/proto/identity_entities";
 import { SignatureAlg } from "./signature_alg";
 import { SignatureHeaderJws } from "./signature_header_jws";
 
+/**
+ * Represents a JSON Web Signature (JWS). [RFC 7515](https://datatracker.ietf.org/doc/html/rfc7515).
+ */
 export class SignatureJws {
   signature: string;
   protected: string;
   header: SignatureHeaderJws;
   messageHash: string;
 
+  /**
+   * Constructs a SignatureJws object with the specified parameters.
+   * @param messageHash 
+   * @param signature 
+   * @param prot 
+   * @param header 
+   */
   constructor(
     messageHash: string,
     signature: string,

@@ -2,6 +2,7 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// CredentialSchema represents the schema information for a credential, including its ID and type.
 type CredentialSchema struct {
 	Id   string
 	Type string

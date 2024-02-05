@@ -9,6 +9,7 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// Record represents a record with payload, hash, and configuration data.
 type Record struct {
 	Payload    []byte
 	hash       string
@@ -35,6 +36,7 @@ func (r *Record) ToProto() *proto.Record {
 	}
 }
 
+// GetHash retrieves the hash of the record.
 func (r *Record) GetHash() (string, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().GetHash(context.Background(), &proto.GetHashRequest{ConfigData: r.configData, Record: r.ToProto()})
@@ -50,6 +52,7 @@ func (r *Record) GetHash() (string, error) {
 	return res.Hash, nil
 }
 
+// GetPayload retrieves the payload of the record.
 func (r *Record) GetPayload() ([]byte, error) {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().GetPayload(context.Background(), &proto.GetPayloadRequest{ConfigData: r.configData, Record: r.ToProto()})
@@ -65,10 +68,12 @@ func (r *Record) GetPayload() ([]byte, error) {
 	return res.Payload, nil
 }
 
+// Retrieve returns the payload of the record.
 func (r *Record) Retrieve() []byte {
 	return r.Payload
 }
 
+// SetProof sets the proof for a record.
 func (r *Record) SetProof(proof integrity.Proof) error {
 	bridgeClient := bridge.NewBloockBridge()
 	res, err := bridgeClient.Record().SetProof(context.Background(), &proto.SetProofRequest{

@@ -4,12 +4,21 @@ namespace Bloock\Entity\Record;
 
 use Bloock\Entity\Encryption\EncryptionAlg;
 
+/**
+ * Represents details related to the encryption of a record, including algorithm, key, and subject.
+ */
 class EncryptionDetails
 {
     private ?string $alg;
     private ?string $key;
     private ?string $subject;
 
+    /**
+     * Constructs a EncryptionDetails object with the specified parameters.
+     * @param string|null $alg
+     * @param string|null $key
+     * @param string|null $subject
+     */
     public function __construct(?string $alg, ?string $key, ?string $subject)
     {
         $this->alg = $alg;
@@ -18,7 +27,8 @@ class EncryptionDetails
     }
 
     /**
-     * @return string
+     * Gets the algorithm of the encryption.
+     * @return string|null
      */
     public function getAlg(): ?string
     {
@@ -26,7 +36,8 @@ class EncryptionDetails
     }
 
     /**
-     * @return string
+     * Gets the public key of the encryption.
+     * @return string|null
      */
     public function getKey(): ?string
     {
@@ -34,7 +45,8 @@ class EncryptionDetails
     }
 
     /**
-     * @return string
+     * Gets the subject of the subject.
+     * @return string|null
      */
     public function getSubject(): ?string
     {

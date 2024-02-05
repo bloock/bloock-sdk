@@ -2,6 +2,7 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// Method represents an enumeration of methods used in the DID.
 type Method = proto.Method
 
 func MethodToProto(method Method) *proto.Method {
@@ -11,11 +12,15 @@ func MethodToProto(method Method) *proto.Method {
 	return &method
 }
 
+// methods represents a set of predefined methods.
 type methods struct {
 	Iden3     Method
 	PolygonId Method
 }
 
+// ListOfMethods returns an instance of the methods available for [DID] types.
+//
+// [DID]: https://www.w3.org/TR/did-core/
 func ListOfMethods() methods {
 	return methods{
 		Iden3:     proto.Method_IDEN3,
@@ -23,6 +28,7 @@ func ListOfMethods() methods {
 	}
 }
 
+// Blockchain represents an enumeration of blockchains used in the DID.
 type Blockchain = proto.Blockchain
 
 func BlockchainToProto(blockchain Blockchain) *proto.Blockchain {
@@ -32,6 +38,7 @@ func BlockchainToProto(blockchain Blockchain) *proto.Blockchain {
 	return &blockchain
 }
 
+// blockchains represents a set of predefined blockchains.
 type blockchains struct {
 	Ethereum     Blockchain
 	Polygon      Blockchain
@@ -39,6 +46,7 @@ type blockchains struct {
 	NoChain      Blockchain
 }
 
+// ListOfBlockchains returns an instance of the blockchains available for DID types.
 func ListOfBlockchains() blockchains {
 	return blockchains{
 		Ethereum:     proto.Blockchain_ETHEREUM,
@@ -48,6 +56,7 @@ func ListOfBlockchains() blockchains {
 	}
 }
 
+// NetworkId represents an enumeration of network identifiers.
 type NetworkId = proto.NetworkId
 
 func NetworkIdToProto(networkId NetworkId) *proto.NetworkId {
@@ -57,6 +66,7 @@ func NetworkIdToProto(networkId NetworkId) *proto.NetworkId {
 	return &networkId
 }
 
+// networkIds represents a set of predefined network identifiers.
 type networkIds struct {
 	Main           NetworkId
 	Mumbai         NetworkId
@@ -65,6 +75,7 @@ type networkIds struct {
 	NoNetwork      NetworkId
 }
 
+// ListOfNetworkIds returns an instance of the networkIds available for DID types.
 func ListOfNetworkIds() networkIds {
 	return networkIds{
 		Main:           proto.NetworkId_MAIN,
@@ -75,12 +86,14 @@ func ListOfNetworkIds() networkIds {
 	}
 }
 
+// DidParams represents parameters used for generating DIDs.
 type DidParams struct {
 	Method     Method
 	Blockchain Blockchain
 	NetworkId  NetworkId
 }
 
+// NewDidParams returns a new instance of DidParams with default values.
 func NewDidParams() DidParams {
 	return DidParams{
 		Method:     -1,

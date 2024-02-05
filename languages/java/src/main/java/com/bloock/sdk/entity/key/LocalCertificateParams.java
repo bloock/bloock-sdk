@@ -2,12 +2,22 @@ package com.bloock.sdk.entity.key;
 
 import com.bloock.sdk.bridge.proto.KeysEntities;
 
+/**
+ * Represents the parameters for generating a local certificate.
+ */
 public class LocalCertificateParams {
   KeyType keyType;
   SubjectCertificateParams subject;
   String password;
   int expiration;
 
+  /**
+   * Constructs an LocalCertificateParams object with the specified parameters.
+   * @param keyType
+   * @param subject
+   * @param password
+   * @param expirationMonths
+   */
   public LocalCertificateParams(
       KeyType keyType, SubjectCertificateParams subject, String password, int expirationMonths) {
     this.keyType = keyType;

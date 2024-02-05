@@ -19,6 +19,9 @@ use Bloock\RecordBuilderFromStringRequest;
 use Bloock\RecordTypes;
 use Exception;
 
+/**
+ * Assists in constructing records with various configurations.
+ */
 class RecordBuilder
 {
     private $payload;
@@ -28,6 +31,12 @@ class RecordBuilder
     private ?\Bloock\Encrypter $encrypter = null;
     private ?\Bloock\Encrypter $decrypter = null;
 
+    /**
+     * Creates a new RecordBuilder with default configuration.
+     * @param $payload
+     * @param int $recordTypes
+     * @param ConfigData $configData
+     */
     public function __construct($payload, int $recordTypes, ConfigData $configData)
     {
         $this->payload = $payload;
@@ -35,24 +44,44 @@ class RecordBuilder
         $this->configData = $configData;
     }
 
+    /**
+     * Sets the signer for the RecordBuilder.
+     * @param Signer $signer
+     * @return $this
+     */
     public function withSigner(Signer $signer): RecordBuilder
     {
         $this->signer = $signer->toProto();
         return $this;
     }
 
+    /**
+     * Sets the encrypter for the RecordBuilder.
+     * @param Encrypter $encrypter
+     * @return $this
+     */
     public function withEncrypter(Encrypter $encrypter): RecordBuilder
     {
         $this->encrypter = $encrypter->toProto();
         return $this;
     }
 
+    /**
+     * Sets the decrypter for the RecordBuilder.
+     * @param Encrypter $decrypter
+     * @return $this
+     */
     public function withDecrypter(Encrypter $decrypter): RecordBuilder
     {
         $this->decrypter = $decrypter->toProto();
         return $this;
     }
 
+    /**
+     * Constructs a record based on the RecordBuilder's configuration.
+     * @return Record
+     * @throws Exception
+     */
     public function build(): Record
     {
         $bridge = new Bridge();
@@ -196,6 +225,11 @@ class RecordBuilder
         return Record::fromProto($res->getRecord(), $this->configData);
     }
 
+    /**
+     * Gets details about other Bloock services (Integrity, Authenticity, Encryption, Availability) configured in the RecordBuilder.
+     * @return RecordDetails
+     * @throws Exception
+     */
     public function getDetails(): RecordDetails
     {
         $bridge = new Bridge();

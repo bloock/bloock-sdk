@@ -2,6 +2,7 @@ package integrity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// Proof represents a proof, including leaves, nodes, depth, bitmap, and anchor information.
 type Proof struct {
 	Leaves []string
 	Nodes  []string

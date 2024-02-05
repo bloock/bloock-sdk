@@ -6,9 +6,20 @@ from bloock.entity.authenticity.signature_header_jws import SignatureHeaderJws
 
 
 class SignatureJws:
+    """
+    Represents a JSON Web Signature (JWS). [RFC 7515](https://datatracker.ietf.org/doc/html/rfc7515).
+    """
     def __init__(
             self, message_hash: str, signature: str, protected: str, header: SignatureHeaderJws
     ) -> None:
+        """
+        Constructs a SignatureJws object with the specified parameters.
+        :type header: object
+        :type protected: object
+        :type signature: object
+        :type message_hash: object
+        :rtype: object
+        """
         self.signature = signature
         self.protected = protected
         self.header = header
@@ -32,4 +43,8 @@ class SignatureJws:
         )
 
     def get_alg(self) -> SignatureAlg:
+        """
+        Gets the algorithm used for the JWS signature.
+        :rtype: object
+        """
         return SignatureAlg.from_str(self.header.alg)

@@ -1,6 +1,9 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities_v2";
 import { Attribute } from "./attribute";
 
+/**
+ * Represents an attribute with a datetime value.
+ */
 export class DateTimeAttribute extends Attribute<Date> {
   public toProto(): identityEntitiesProto.DateTimeAttributeV2 {
     return identityEntitiesProto.DateTimeAttributeV2.fromPartial({

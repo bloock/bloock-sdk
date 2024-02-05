@@ -2,11 +2,13 @@ package identityV2
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// StringEnumAttributeDescriptor represents a descriptor for an attribute with a string enum value.
 type StringEnumAttributeDescriptor struct {
 	AttributeDescriptor
 	Enum []string
 }
 
+// NewStringEnumAttributeDescriptor creates a new StringEnumAttributeDescriptor instance with the provided details.
 func NewStringEnumAttributeDescriptor(name string, id string, description string, required bool, enum []string) StringEnumAttributeDescriptor {
 	a := AttributeDescriptor{
 		DisplayName: name,
