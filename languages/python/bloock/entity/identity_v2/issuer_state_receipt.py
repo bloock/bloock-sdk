@@ -3,7 +3,15 @@ from __future__ import annotations
 import bloock._bridge.proto.identity_entities_v2_pb2 as proto
 
 class IssuerStateReceipt:
+    """
+    Represents a receipt for the issuer's state.
+    """
     def __init__(self, txHash: str) -> None:
+        """
+        Constructs an IssuerStateReceipt object with the specified parameters.
+        :type txHash: object
+        :rtype: object
+        """
         self.txHash = txHash
 
     @staticmethod

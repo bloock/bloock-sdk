@@ -6,8 +6,17 @@ import bloock._bridge.proto.keys_entities_pb2 as proto
 
 
 class KeyProtectionLevel(Enum):
+    """
+    Represents the protection level of a cryptographic key.
+    """
     SOFTWARE = 0
+    """
+    Indicates that the key is protected by software.
+    """
     HSM = 1
+    """
+    Indicates that the key is protected by a Hardware Security Module (HSM).
+    """
     UNRECOGNIZED = -1
 
     def __int__(self):

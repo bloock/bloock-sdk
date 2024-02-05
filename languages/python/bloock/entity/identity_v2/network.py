@@ -5,6 +5,9 @@ from bloock._bridge.proto.identity_entities_v2_pb2 import NetworkId as NetworkPr
 
 
 class Network(Enum):
+    """
+    Represents an enumeration of network identifiers.
+    """
     MAIN = 0
     MUMBAI = 1
     GOERLI = 2

@@ -15,13 +15,26 @@ from bloock.entity.record.record_details import RecordDetails
 
 
 class RecordClient:
+    """
+    Provides functionality for creating records using various data sources and to interact with the [Bloock Record service](https://dashboard.bloock.com/login).
+    """
     def __init__(self, config_data=None) -> None:
+        """
+        Creates a new RecordClient with the provided configuration.
+        :type config_data: object
+        :rtype: object
+        """
         self.bridge_client = bridge.BloockBridge()
         if config_data is None:
             config_data = Config.default()
         self.config_data = config_data
 
     def from_record(self, record: Record) -> RecordBuilder:
+        """
+        Creates a RecordBuilder from an existing record.
+        :type record: object
+        :rtype: object
+        """
         return RecordBuilder(
             payload=record.to_proto(),
             payload_type=RecordTypes.RECORD,
@@ -29,6 +42,11 @@ class RecordClient:
         )
 
     def from_loader(self, loader: Loader) -> RecordBuilder:
+        """
+        Creates a RecordBuilder from a data loader.
+        :type loader: object
+        :rtype: object
+        """
         return RecordBuilder(
             payload=loader.to_proto(),
             payload_type=RecordTypes.LOADER,
@@ -36,6 +54,11 @@ class RecordClient:
         )
 
     def from_string(self, string: str) -> RecordBuilder:
+        """
+        Creates a RecordBuilder from a string payload.
+        :type string: object
+        :rtype: object
+        """
         return RecordBuilder(
             payload=string,
             payload_type=RecordTypes.STRING,
@@ -43,6 +66,11 @@ class RecordClient:
         )
 
     def from_hex(self, hex: str) -> RecordBuilder:
+        """
+        Creates a RecordBuilder from a hexadecimal string payload.
+        :type hex: object
+        :rtype: object
+        """
         return RecordBuilder(
             payload=hex,
             payload_type=RecordTypes.HEX,
@@ -50,6 +78,11 @@ class RecordClient:
         )
 
     def from_json(self, json: str) -> RecordBuilder:
+        """
+        Creates a RecordBuilder from a JSON string payload.
+        :type json: object
+        :rtype: object
+        """
         return RecordBuilder(
             payload=json,
             payload_type=RecordTypes.JSON,
@@ -57,6 +90,11 @@ class RecordClient:
         )
 
     def from_file(self, file: bytes) -> RecordBuilder:
+        """
+        Creates a RecordBuilder from a byte slice representing a file.
+        :type file: object
+        :rtype: object
+        """
         return RecordBuilder(
             payload=file,
             payload_type=RecordTypes.FILE,
@@ -64,6 +102,11 @@ class RecordClient:
         )
 
     def from_bytes(self, b: bytes) -> RecordBuilder:
+        """
+        Creates a RecordBuilder from a byte slice payload.
+        :type b: object
+        :rtype: object
+        """
         return RecordBuilder(
             payload=b,
             payload_type=RecordTypes.BYTES,
@@ -72,6 +115,9 @@ class RecordClient:
 
 
 class RecordBuilder:
+    """
+    Assists in constructing records with various configurations.
+    """
     def __init__(
             self,
             payload,
@@ -81,6 +127,16 @@ class RecordBuilder:
             encrypter: encryption_entities.Encrypter | None = None,
             decrypter: encryption_entities.Decrypter | None = None,
     ) -> None:
+        """
+        Creates a new RecordBuilder with default configuration.
+        :type decrypter: object
+        :type encrypter: object
+        :type signer: object
+        :type config_data: object
+        :type payload_type: object
+        :type payload: object
+        :rtype: object
+        """
         self.payload = payload
         self.payload_type = payload_type
         self.config_data = config_data
@@ -89,18 +145,37 @@ class RecordBuilder:
         self.decrypter = decrypter
 
     def with_signer(self, signer: Signer) -> RecordBuilder:
+        """
+        Sets the signer for the RecordBuilder.
+        :type signer: object
+        :rtype: object
+        """
         self.signer = signer.to_proto()
         return self
 
     def with_encrypter(self, encrypter: Encrypter) -> RecordBuilder:
+        """
+        Sets the encrypter for the RecordBuilder.
+        :type encrypter: object
+        :rtype: object
+        """
         self.encrypter = encrypter.to_proto()
         return self
 
     def with_decrypter(self, decrypter: Encrypter) -> RecordBuilder:
+        """
+        Sets the decrypter for the RecordBuilder.
+        :type decrypter: object
+        :rtype: object
+        """
         self.decrypter = decrypter.to_proto()
         return self
 
     def build(self) -> Record:
+        """
+        Constructs a record based on the RecordBuilder's configuration.
+        :rtype: object
+        """
         client = bridge.BloockBridge()
 
         res = proto.RecordBuilderResponse()
@@ -180,8 +255,12 @@ class RecordBuilder:
             raise Exception(res.error.message)
 
         return Record.from_proto(res.record, self.config_data)
-    
+
     def get_details(self) -> RecordDetails:
+        """
+        Gets details about other Bloock services (Integrity, Authenticity, Encryption, Availability) configured in the RecordBuilder.
+        :rtype: object
+        """
         client = bridge.BloockBridge()
         
         res: proto.GetDetailsResponse = client.record().GetDetails(

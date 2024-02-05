@@ -6,10 +6,25 @@ import bloock._bridge.proto.identity_entities_v2_pb2 as proto
 
 
 class PublishIntervalParams(Enum):
+    """
+    Represents different publish intervals.
+    """
     Interval1 = 1
+    """
+    Represents a 1-minute publish interval.
+    """
     Interval5 = 2
+    """
+    Represents a 5-minute publish interval.
+    """
     Interval15 = 3
+    """
+    Represents a 15-minute publish interval.
+    """
     Interval60 = 4
+    """
+    Represents a 60-minute publish interval.
+    """
 
     def __int__(self):
         return self.value

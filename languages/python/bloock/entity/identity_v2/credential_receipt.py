@@ -5,7 +5,17 @@ from bloock.entity.identity_v2.credential import Credential
 
 
 class CredentialReceipt:
+    """
+    Represents a receipt for a credential, including the credential itself, its ID, and type.
+    """
     def __init__(self, credential: Credential, credential_id: str, credential_type: str) -> None:
+        """
+        Constructs an CredentialReceipt object with the specified parameters.
+        :type credential_type: object
+        :type credential_id: object
+        :type credential: object
+        :rtype: object
+        """
         self.credential = credential
         self.credential_id = credential_id
         self.credential_type = credential_type

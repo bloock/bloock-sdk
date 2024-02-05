@@ -4,7 +4,16 @@ import bloock._bridge.proto.identity_entities_v2_pb2 as proto
 
 
 class VerificationReceipt:
+    """
+    Represents a receipt for a verification session.
+    """
     def __init__(self, session_id: int, verification_request: str) -> None:
+        """
+        Constructs a VerificationReceipt object with the specified parameters.
+        :type verification_request: object
+        :type session_id: object
+        :rtype: object
+        """
         self.session_id = session_id
         self.verification_request = verification_request
 

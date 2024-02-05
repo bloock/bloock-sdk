@@ -7,9 +7,20 @@ from bloock.entity.integrity.anchor_network import AnchorNetwork
 
 
 class ProofAnchor:
+    """
+    Represents a proof anchor.
+    """
     def __init__(
             self, anchor_id: int, networks: List[AnchorNetwork], root: str, status: str
     ) -> None:
+        """
+        Constructs a ProofAnchor object with the specified parameters.
+        :type status: object
+        :type root: object
+        :type networks: object
+        :type anchor_id: object
+        :rtype: object
+        """
         self.anchor_id = anchor_id
         self.networks = networks
         self.root = root

@@ -4,11 +4,29 @@ from enum import Enum
 import bloock._bridge.proto.authenticity_entities_pb2 as proto
 
 class HashAlg(Enum):
+    """
+    Represents different hash algorithms.
+    """
     SHA_256 = 0
+    """
+    Represents the SHA-256 hash algorithm.
+    """
     KECCAK_256 = 1
+    """
+    Represents the Keccak-256 hash algorithm.
+    """
     POSEIDON = 2
+    """
+    Represents the Poseidon hash algorithm.
+    """
     NONE = 3
+    """
+    Represents no hash algorithm.
+    """
     UNRECOGNIZED = -1
+    """
+    Represents an unrecognized hash algorithm.
+    """
 
     def __int__(self):
         return self.value

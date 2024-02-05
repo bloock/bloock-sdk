@@ -5,6 +5,9 @@ from bloock.entity.identity_v2.attribute_descriptor import AttributeDescriptor
 
 
 class DatetimeAttributeDescriptor(AttributeDescriptor):
+    """
+    Represents a descriptor for an attribute with a datetime value.
+    """
     @staticmethod
     def from_proto(a: proto.DateTimeAttributeDefinitionV2) -> DatetimeAttributeDescriptor:
         return DatetimeAttributeDescriptor(

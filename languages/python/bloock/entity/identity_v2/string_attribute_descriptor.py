@@ -5,6 +5,9 @@ from bloock.entity.identity_v2.attribute_descriptor import AttributeDescriptor
 
 
 class StringAttributeDescriptor(AttributeDescriptor):
+    """
+    Represents a descriptor for an attribute with a string value.
+    """
     @staticmethod
     def from_proto(a: proto.StringAttributeDefinitionV2) -> StringAttributeDescriptor:
         return StringAttributeDescriptor(

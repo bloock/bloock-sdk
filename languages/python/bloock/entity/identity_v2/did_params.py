@@ -5,8 +5,17 @@ from bloock.entity.identity_v2.network import Network
 
 
 class DidParams:
-
+    """
+    Represents parameters used for generating DIDs.
+    """
     def __init__(self, method: Method, blockchain: Blockchain, network: Network) -> None:
+        """
+        Constructs a DidParams object with the specified parameters.
+        :type network: object
+        :type blockchain: object
+        :type method: object
+        :rtype: object
+        """
         self.method = method
         self.blockchain = blockchain
         self.network = network

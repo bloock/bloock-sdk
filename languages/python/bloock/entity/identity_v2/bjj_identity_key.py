@@ -4,8 +4,15 @@ from bloock.entity.identity_v2.identity_key import IdentityKey
 
 
 class BjjIdentityKey(IdentityKey):
-
+    """
+    Represents an identity BJJ key used.
+    """
     def __init__(self, args: IdentityKeyArgs) -> None:
+        """
+        Creates a new BjjIdentityKey instance with the provided issuer key arguments.
+        :type args: object
+        :rtype: object
+        """
         self.args = args
 
     def to_proto(self) -> proto.IdentityKey:

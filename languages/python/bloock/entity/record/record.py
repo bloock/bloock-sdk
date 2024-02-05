@@ -21,7 +21,17 @@ class RecordHeader:
 
 
 class Record:
+    """
+    Represents a record with payload, hash, and configuration data.
+    """
     def __init__(self, payload: bytes, hash: str, config_data: ConfigData) -> None:
+        """
+        Constructs a Record object with the specified parameters.
+        :type config_data: object
+        :type hash: object
+        :type payload: object
+        :rtype: object
+        """
         self.payload = payload
         self.hash = hash
         self.config_data = config_data
@@ -36,6 +46,10 @@ class Record:
         )
 
     def get_hash(self) -> str:
+        """
+        Retrieves the hash of the record.
+        :rtype: object
+        """
         client = bridge.BloockBridge()
         req = GetHashRequest(config_data=self.config_data, record=self.to_proto())
         res = client.record().GetHash(req)
@@ -44,6 +58,10 @@ class Record:
         return res.hash
     
     def get_payload(self) -> bytes:
+        """
+        Retrieves the payload of the record.
+        :rtype: object
+        """
         client = bridge.BloockBridge()
         req = GetPayloadRequest(config_data=self.config_data, record=self.to_proto())
         res: GetPayloadResponse = client.record().GetPayload(req)
@@ -52,9 +70,18 @@ class Record:
         return res.payload
 
     def retrieve(self) -> bytes:
+        """
+        Returns the payload of the record.
+        :rtype: object
+        """
         return self.payload
 
     def set_proof(self, proof: Proof):
+        """
+        Sets the proof for a record.
+        :type proof: object
+        :rtype: object
+        """
         client = bridge.BloockBridge()
         req = SetProofRequest(
             config_data=self.config_data,

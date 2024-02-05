@@ -5,6 +5,9 @@ from bloock.entity.identity_v2.attribute import Attribute
 
 
 class BooleanAttribute(Attribute):
+    """
+    Represents an attribute with a boolean value.
+    """
     @staticmethod
     def from_proto(a: proto.BooleanAttributeV2) -> BooleanAttribute:
         return BooleanAttribute(

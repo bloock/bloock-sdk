@@ -5,6 +5,9 @@ from bloock.entity.identity_v2.attribute_descriptor import AttributeDescriptor
 
 
 class IntegerAttributeDescriptor(AttributeDescriptor):
+    """
+    Represents a descriptor for an attribute with an integer value.
+    """
     @staticmethod
     def from_proto(a: proto.IntegerAttributeDefinitionV2) -> IntegerAttributeDescriptor:
         return IntegerAttributeDescriptor(

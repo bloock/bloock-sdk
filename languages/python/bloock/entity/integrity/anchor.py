@@ -7,6 +7,9 @@ from bloock.entity.integrity.anchor_network import AnchorNetwork
 
 
 class Anchor:
+    """
+    Represents information about an anchor.
+    """
     def __init__(
             self,
             id: int,
@@ -15,6 +18,15 @@ class Anchor:
             root: str,
             status: str,
     ) -> None:
+        """
+        Constructs an Anchor object with the specified parameters.
+        :type status: object
+        :type root: object
+        :type networks: object
+        :type block_roots: object
+        :type id: object
+        :rtype: object
+        """
         self.id = id
         self.block_roots = block_roots
         self.networks = networks

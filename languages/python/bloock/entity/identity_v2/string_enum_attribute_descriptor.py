@@ -6,8 +6,19 @@ from bloock.entity.identity_v2.attribute_descriptor import AttributeDescriptor
 
 
 class StringEnumAttributeDescriptor(AttributeDescriptor):
-
+    """
+    Represents a descriptor for an attribute with a string enum value.
+    """
     def __init__(self, display_name: str, technical_name: str, description: str, required: bool, enumeration: List[str]) -> None:
+        """
+        Constructs an StringEnumAttributeDescriptor object with the specified parameters.
+        :type enumeration: object
+        :type required: object
+        :type description: object
+        :type technical_name: object
+        :type display_name: object
+        :rtype: object
+        """
         super().__init__(display_name, technical_name, description, required)
         self.enumeration = enumeration
 

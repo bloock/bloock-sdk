@@ -7,6 +7,9 @@ from bloock.entity.integrity.proof_anchor import ProofAnchor
 
 
 class Proof:
+    """
+    Represents a proof, including leaves, nodes, depth, bitmap, and anchor information.
+    """
     def __init__(
             self,
             leaves: List[str],
@@ -15,6 +18,15 @@ class Proof:
             bitmap: str,
             anchor: ProofAnchor,
     ) -> None:
+        """
+        Constructs a Proof object with the specified parameters.
+        :type anchor: object
+        :type bitmap: object
+        :type depth: object
+        :type nodes: object
+        :type leaves: object
+        :rtype: object
+        """
         self.leaves = leaves
         self.nodes = nodes
         self.depth = depth

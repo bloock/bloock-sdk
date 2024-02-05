@@ -8,6 +8,9 @@ from bloock.entity.authenticity.hash_alg import HashAlg
 
 
 class Signer:
+    """
+    Represents a signer with various key types and additional configurations.
+    """
     local_key = None
     managed_key = None
     managed_certificate = None
@@ -17,6 +20,13 @@ class Signer:
     access_control = None
 
     def __init__(self, key, hash_alg = None, access_control = None) -> None:
+        """
+        Creates a Signer instance with a local key, managed key, local certificate or managed certificate.
+        :type access_control: object
+        :type hash_alg: object
+        :type key: object
+        :rtype: object
+        """
         if isinstance(key, LocalKey):
             self.local_key = key
         elif isinstance(key, ManagedKey):

@@ -4,11 +4,20 @@ import bloock._bridge.proto.keys_entities_pb2 as proto
 
 
 class LocalCertificate:
+    """
+    Represents a local certificate along with its password.
+    """
     def __init__(
             self,
             pkcs12: bytes,
             password: str,
     ) -> None:
+        """
+        Constructs a LocalCertificate object with the specified parameters.
+        :type password: object
+        :type pkcs12: object
+        :rtype: object
+        """
         self.pkcs12 = pkcs12
         self.password = password
 

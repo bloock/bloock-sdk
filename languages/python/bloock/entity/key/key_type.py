@@ -6,13 +6,37 @@ import bloock._bridge.proto.keys_entities_pb2 as proto
 
 
 class KeyType(Enum):
+    """
+    Represents the type of cryptographic key.
+    """
     EcP256k = 0
+    """
+    Represents the elliptic curve key type P-256k.
+    """
     Rsa2048 = 1
+    """
+    Represents the RSA key type with a 2048-bit modulus.
+    """
     Rsa3072 = 2
+    """
+    Represents the RSA key type with a 3072-bit modulus.
+    """
     Rsa4096 = 3
+    """
+    Represents the RSA key type with a 4096-bit modulus.
+    """
     Aes128 = 4
+    """
+    Represents the AES key type with a 128-bit key length.
+    """
     Aes256 = 5
+    """
+    Represents the AES key type with a 256-bit key length.
+    """
     Bjj = 6
+    """
+    Represents the Baby JubJub key type, elliptic curve defined over the large prime subgroup of BN128.
+    """
     UNRECOGNIZED = -1
 
     def __int__(self):

@@ -5,6 +5,9 @@ from bloock.entity.identity_v2.attribute_descriptor import AttributeDescriptor
 
 
 class BooleanAttributeDescriptor(AttributeDescriptor):
+    """
+    Represents a descriptor for a boolean attribute.
+    """
     @staticmethod
     def from_proto(a: proto.BooleanAttributeDefinitionV2) -> BooleanAttributeDescriptor:
         return BooleanAttributeDescriptor(

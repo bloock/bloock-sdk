@@ -13,9 +13,26 @@ from bloock.entity.identity_v2.credential_status import CredentialStatus
 
 
 class Credential:
+    """
+    Represents a verifiable credential with its associated information. [Verifiable Credentials Data Model v2.0](https://www.w3.org/TR/vc-data-model-2.0/).
+    """
     def __init__(self, context: List[str], id: str, type: List[str], issuance_date: str, expiration: str, credential_subject: str,
                  credential_status: CredentialStatus, issuer: str, credential_schema: CredentialSchema,
                  proof: CredentialProof) -> None:
+        """
+        Creates a new Credential instance with the provided details.
+        :type proof: object
+        :type credential_schema: object
+        :type issuer: object
+        :type credential_status: object
+        :type credential_subject: object
+        :type expiration: object
+        :type issuance_date: object
+        :type type: object
+        :type id: object
+        :type context: object
+        :rtype: object
+        """
         self.context = context
         self.id = id
         self.type = type
@@ -58,6 +75,11 @@ class Credential:
 
     @staticmethod
     def from_json(json: str) -> proto.CredentialV2:
+        """
+        Creates a Credential instance from a JSON string representation.
+        :type json: object
+        :rtype: object
+        """
         bridge = BloockBridge()
 
         req = CredentialFromJsonRequestV2(
@@ -72,6 +94,10 @@ class Credential:
         return Credential.from_proto(res.credential)
 
     def to_json(self) -> str:
+        """
+        Converts the Credential instance to its JSON string representation.
+        :rtype: object
+        """
         bridge = BloockBridge()
 
         req = CredentialToJsonRequestV2(

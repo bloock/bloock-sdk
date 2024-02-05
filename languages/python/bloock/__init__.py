@@ -15,6 +15,12 @@ network_config: Dict[int, NetworkConfig] = {}
 
 
 def set_provider(network: Network, provider: str):
+    """
+    Sets the HTTP provider for the specified network in the Bloock SDK configuration.
+    :type network: object
+    :type provider: object
+    :rtype: object
+    """
     if int(network) in bloock.network_config:
         bloock.network_config[int(network)].HttpProvider = provider
     else:
@@ -23,6 +29,12 @@ def set_provider(network: Network, provider: str):
 
 
 def set_contract_address(network: Network, contract_address: str):
+    """
+    Sets the contract address for the specified network in the Bloock SDK configuration.
+    :type contract_address: object
+    :type network: object
+    :rtype: object
+    """
     if int(network) in bloock.network_config:
         bloock.network_config[int(network)].ContractAddress = contract_address
     else:

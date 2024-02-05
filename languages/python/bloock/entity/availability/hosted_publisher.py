@@ -4,7 +4,14 @@ from bloock.entity.availability.publisher_args import PublisherArgs
 
 
 class HostedPublisher(Publisher):
+    """
+    Represents a publisher for hosted data availability.
+    """
     def __init__(self) -> None:
+        """
+        Constructs a HostedPublisher object with the specified parameters.
+        :rtype: object
+        """
         super().__init__(type=proto.HOSTED, args=PublisherArgs())
 
     def to_proto(self) -> proto.Publisher:

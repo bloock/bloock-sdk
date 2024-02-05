@@ -4,6 +4,9 @@ import bloock._bridge.proto.keys_entities_pb2 as proto
 
 
 class SubjectCertificateParams:
+    """
+    Represents parameters for generating a subject certificate.
+    """
     def __init__(
             self,
             common_name: str,
@@ -13,12 +16,40 @@ class SubjectCertificateParams:
             state: str = None,
             country: str = None,
     ) -> None:
+        """
+        Constructs a SubjectCertificateParams object with the specified parameters.
+        :type country: object
+        :type state: object
+        :type location: object
+        :type organization_unit: object
+        :type organization: object
+        :type common_name: object
+        :rtype: object
+        """
         self.common_name = common_name
+        """
+        Is the common name (CN) for the certificate. Required.
+        """
         self.organization = organization
+        """
+        Is the organization (O) for the certificate. (Optional)
+        """
         self.organization_unit = organization_unit
+        """
+        Is the organizational unit (OU) for the certificate. (Optional)
+        """
         self.location = location
+        """
+        Is the location (L) for the certificate. (Optional)
+        """
         self.state = state
+        """
+        Is the state or province (ST) for the certificate. (Optional)
+        """
         self.country = country
+        """
+        Is the country (C) for the certificate. (Optional)
+        """
 
     @staticmethod
     def from_proto(key: proto.CertificateSubject) -> SubjectCertificateParams:
