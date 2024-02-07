@@ -24,6 +24,7 @@ runs:
       shell: bash
       run: zip -r ${{ inputs.artifact }}.zip ${{ inputs.artifact }}/
     - name: Compress docs
+      if: startsWith(inputs.artifact, 'bloock_lib')
       shell: bash
       run: zip -r ${{ inputs.artifact }}-docs.zip ${{ inputs.artifact }}/docs
     - name: Upload

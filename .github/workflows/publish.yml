@@ -18,6 +18,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: "v${{ github.event.inputs.version }}"
 
+  publish_docs:
+    needs: [mark-latest]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: bloock/bloock-docs
+          event-type: update_sdk_references
+          client-payload: '{"version": "${{ github.event.inputs.version }}"}'
+
   publish_go:
     needs: [mark-latest]
     uses: ./.github/workflows/publish_go.yml
@@ -61,17 +73,3 @@ jobs:
       version: ${{ github.event.inputs.version }}
     secrets:
       repo_api_token: ${{ secrets.REPO_API_TOKEN }}
-
-  # run_quickstarts:
-  #   needs: [publish_go, publish_python, publish_js, publish_java]
-  #   name: Run quickstarts.
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Repository Dispatch
-  #       uses: peter-evans/repository-dispatch@v1
-  #       with:
-  #         token: ${{ secrets.REPO_API_TOKEN }}
-  #         repository: bloock/bloock-sdk-quickstart
-  #         event-type: run_quickstarts
-  #         client-payload: '{"version": "${{ github.event.inputs.version }}"}'
-
