@@ -29,3 +29,5 @@ lint:
 clean:
 	yarn run clean
 
+docs:
+	yarn run docs

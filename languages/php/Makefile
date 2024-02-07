@@ -1,4 +1,4 @@
-.PHONY: test
+.PHONY: test docs
 
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
@@ -44,3 +44,5 @@ fmt:
 
 lint: fmt
 
+docs:
+	docker run --rm -v ".:/data" "phpdoc/phpdoc:3" --directory=/data/Bloock --ignore "**/Bridge" --ignore "**/Ffi" --target=docs --template='vendor/saggre/phpdocumentor-markdown/themes/markdown'

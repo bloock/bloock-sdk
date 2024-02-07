@@ -36,3 +36,6 @@ lint: fmt
 clean:
 	./gradlew clean
 
+docs:
+	./gradlew dokkaHtml
+	

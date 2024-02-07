@@ -51,13 +51,17 @@ jobs:
           CIBW_ARCHS_MACOS: x86_64 universal2
           CIBW_ARCHS_LINUX: auto
         working-directory: languages/${{ inputs.lang }}
+      - name: Build docs
+        run: make docs
+        working-directory: languages/${{ inputs.lang }}
       - name: Cleanup
         shell: bash
         run: |
           rm -rf languages/${{ inputs.lang }}/node_modules
           cp LICENSE languages/${{ inputs.lang }}/LICENSE
           cp README.md languages/${{ inputs.lang }}/README.md
-      - uses: actions/upload-artifact@v2
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
         with:
           name: bloock_lib_${{ inputs.lang }}
           path: languages/${{ inputs.lang }}

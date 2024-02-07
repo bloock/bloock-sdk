@@ -1,4 +1,4 @@
-.PHONY: test
+.PHONY: test docs
 
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
@@ -48,3 +48,9 @@ lint:
 
 clean:
 	go clean
+
+docs:
+	gomarkdoc --exclude-dirs ./vendor/... --exclude-dirs ./internal/... --output 'docs/{{.Dir}}/{{.ImportPath}}.md' ./...
+	@mv ./docs/.md ./docs/Bloock.md
+	@echo "Replacing pattern in .md files..."
+	@find ./docs -name node_modules -prune -o -name "*.md" -exec perl -pi'' -e 's{\[(.*?)\]\(<(.*?)>\)}{[$$1]($$2)}g' {} \;

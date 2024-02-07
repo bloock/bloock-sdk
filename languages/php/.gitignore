@@ -2,3 +2,5 @@
 Bloock/Ffi/native/*
 vendor/
 .phpunit.result.cache
+docs
+.phpdoc

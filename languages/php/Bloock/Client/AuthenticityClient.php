@@ -12,7 +12,6 @@ use Bloock\Entity\Record\Record;
 use Bloock\GenerateLocalKeyRequest;
 use Bloock\GetSignaturesRequest;
 use Bloock\KeyType;
-use Bloock\SignatureCommonNameRequest;
 use Bloock\SignRequest;
 use Bloock\VerifyRequest;
 use Exception;

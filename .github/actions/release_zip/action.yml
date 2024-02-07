@@ -23,6 +23,9 @@ runs:
     - name: Compress
       shell: bash
       run: zip -r ${{ inputs.artifact }}.zip ${{ inputs.artifact }}/
+    - name: Compress docs
+      shell: bash
+      run: zip -r ${{ inputs.artifact }}-docs.zip ${{ inputs.artifact }}/docs
     - name: Upload
       uses: actions/upload-release-asset@v1
       env:
@@ -31,4 +34,13 @@ runs:
         upload_url: ${{ inputs.release_url }}
         asset_path: ./${{ inputs.artifact }}.zip
         asset_name: ${{ inputs.artifact }}-${{ inputs.version }}.zip
+        asset_content_type: application/zip
+    - name: Upload docs
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+      with:
+        upload_url: ${{ inputs.release_url }}
+        asset_path: ./${{ inputs.artifact }}-docs.zip
+        asset_name: ${{ inputs.artifact }}-docs-${{ inputs.version }}.zip
         asset_content_type: application/zip

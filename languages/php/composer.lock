@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f7d1722569a350ac1755bfed94057b73",
+    "content-hash": "a1236a6979b5e53cfc27095c675c72aa",
     "packages": [
         {
             "name": "christian-riesen/base32",
@@ -874,6 +874,56 @@
                 }
             ],
             "time": "2024-01-19T07:03:14+00:00"
+        },
+        {
+            "name": "saggre/phpdocumentor-markdown",
+            "version": "0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Saggre/phpDocumentor-markdown.git",
+                "reference": "f9bb90abde2c7c7c740265ae5e3bab5cfa2d9ed4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Saggre/phpDocumentor-markdown/zipball/f9bb90abde2c7c7c740265ae5e3bab5cfa2d9ed4",
+                "reference": "f9bb90abde2c7c7c740265ae5e3bab5cfa2d9ed4",
+                "shasum": ""
+            },
+            "require-dev": {
+                "php": ">=7.4",
+                "phpunit/phpunit": "^9.5",
+                "twig/twig": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpDocumentorMarkdown\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Saggre",
+                    "email": "sakri.koskimies@hotmail.com"
+                }
+            ],
+            "description": "Markdown template for phpDocumentor3",
+            "keywords": [
+                "documentation",
+                "github",
+                "gitlab",
+                "markdown",
+                "phpDocumentor",
+                "phpdoc"
+            ],
+            "support": {
+                "issues": "https://github.com/Saggre/phpDocumentor-markdown/issues",
+                "source": "https://github.com/Saggre/phpDocumentor-markdown/tree/0.1.4"
+            },
+            "time": "2023-11-24T13:50:50+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -1900,5 +1950,5 @@
         "ext-ffi": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

@@ -14,6 +14,10 @@ runs:
       uses: actions/setup-go@v3
       with:
         go-version: ${{ inputs.version }}
+    - name: Install dependencies
+      shell: bash
+      run: |
+        go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest 
     - name: Download binaries
       uses: actions/download-artifact@v1
       with:

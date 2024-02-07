@@ -17,6 +17,10 @@ runs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ inputs.version }}
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install pydoc-markdown
     - name: Download binaries
       uses: actions/download-artifact@v1
       with:

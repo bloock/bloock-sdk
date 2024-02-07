@@ -32,4 +32,9 @@ typecheck:
 lint:
 	flake8 .
 
-.PHONY: proto
+docs:
+	mkdir -p docs
+	pydoc-markdown
+	rm docs/sidebar.json
+
+.PHONY: proto docs
