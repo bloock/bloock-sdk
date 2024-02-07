@@ -2,24 +2,24 @@ name: Create Release
 on:
   push:
     tags:
-    - "v*"
+      - "v*"
     branches:
-    - master
+      - master
 
 jobs:
   version:
     name: Compute and verify the version number
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./.github/actions/check_version
-    - name: Set version env
-      run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_ENV
-    - name: Check github ref matches
-      if: startsWith(github.ref, 'refs/tags/')
-      env:
-        github_ref: ${{ github.ref }}
-      run: grep "${github_ref/refs\/tags\/v/}" VERSION
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check_version
+      - name: Set version env
+        run: echo "bloock_version=$(cat VERSION)" >> $GITHUB_ENV
+      - name: Check github ref matches
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          github_ref: ${{ github.ref }}
+        run: grep "${github_ref/refs\/tags\/v/}" VERSION
 
   build_binaries:
     needs: [version]
@@ -27,53 +27,53 @@ jobs:
     strategy:
       matrix:
         platform:
-        - os: ubuntu-latest
-          target: x86_64-unknown-linux-gnu
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            cargo_command: cross
 
-        - os: ubuntu-latest
-          target: x86_64-unknown-linux-musl
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            cargo_command: cross
 
-        - os: ubuntu-latest
-          target: aarch64-unknown-linux-gnu
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            cargo_command: cross
 
-        - os: ubuntu-latest
-          target: aarch64-unknown-linux-musl
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            cargo_command: cross
 
-        - os: ubuntu-latest
-          target: aarch64-linux-android
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: aarch64-linux-android
+            cargo_command: cross
 
-        - os: ubuntu-latest
-          target: armv7-linux-androideabi
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: armv7-linux-androideabi
+            cargo_command: cross
 
-        - os: ubuntu-latest
-          target: i686-linux-android
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: i686-linux-android
+            cargo_command: cross
 
-        - os: ubuntu-latest
-          target: x86_64-linux-android
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: x86_64-linux-android
+            cargo_command: cross
 
-        - os: windows-latest
-          target: x86_64-pc-windows-gnu
-          cargo_command: cargo
+          - os: windows-latest
+            target: x86_64-pc-windows-gnu
+            cargo_command: cargo
 
-        - os: windows-latest
-          target: x86_64-pc-windows-msvc
-          cargo_command: cargo
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            cargo_command: cargo
 
-        - os: macOS-latest
-          target: x86_64-apple-darwin
-          cargo_command: cargo
+          - os: macOS-latest
+            target: x86_64-apple-darwin
+            cargo_command: cargo
 
-        - os: macOS-latest
-          target: aarch64-apple-darwin
-          cargo_command: cargo
+          - os: macOS-latest
+            target: aarch64-apple-darwin
+            cargo_command: cargo
     with:
       os: ${{ matrix.platform.os }}
       target: ${{ matrix.platform.target }}
@@ -257,7 +257,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        lang-version: ["14", "16", "18"]
+        lang-version: ["16", "18", "20"]
     with:
       os: ${{ matrix.os }}
       lang: js
@@ -266,99 +266,100 @@ jobs:
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [test_rust, compat_js, compat_go, compat_python, compat_java, compat_php]
+    needs:
+      [test_rust, compat_js, compat_go, compat_python, compat_java, compat_php]
     if: startsWith(github.ref, 'refs/tags/')
     outputs:
       version: ${{ steps.version.outputs.version }}
       release_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-    - uses: actions/checkout@v3
-    - name: Set version env
-      id: version
-      env:
-        github_ref: ${{ github.ref }}
-      run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v${{ steps.version.outputs.version }}
-        release_name: bloock ${{ steps.version.outputs.version }}
-        body: |
-          bloock ${{ steps.version.outputs.version }}
-        draft: false
-        prerelease: true
+      - uses: actions/checkout@v3
+      - name: Set version env
+        id: version
+        env:
+          github_ref: ${{ github.ref }}
+        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: bloock ${{ steps.version.outputs.version }}
+          body: |
+            bloock ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: true
 
   release_rust:
     needs: [create_release]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./.github/actions/release_zip
-      with:
-        version: ${{ needs.create_release.outputs.version }}
-        release_url: ${{ needs.create_release.outputs.release_url }}
-        artifact: bloock_core_lib_dynamic
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/release_zip
+        with:
+          version: ${{ needs.create_release.outputs.version }}
+          release_url: ${{ needs.create_release.outputs.release_url }}
+          artifact: bloock_core_lib_dynamic
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_go:
     needs: [create_release]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./.github/actions/release_zip
-      with:
-        version: ${{ needs.create_release.outputs.version }}
-        release_url: ${{ needs.create_release.outputs.release_url }}
-        artifact: bloock_lib_go
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/release_zip
+        with:
+          version: ${{ needs.create_release.outputs.version }}
+          release_url: ${{ needs.create_release.outputs.release_url }}
+          artifact: bloock_lib_go
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_php:
     needs: [create_release]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./.github/actions/release_zip
-      with:
-        version: ${{ needs.create_release.outputs.version }}
-        release_url: ${{ needs.create_release.outputs.release_url }}
-        artifact: bloock_lib_php
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/release_zip
+        with:
+          version: ${{ needs.create_release.outputs.version }}
+          release_url: ${{ needs.create_release.outputs.release_url }}
+          artifact: bloock_lib_php
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_python:
     needs: [create_release]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./.github/actions/release_zip
-      with:
-        version: ${{ needs.create_release.outputs.version }}
-        release_url: ${{ needs.create_release.outputs.release_url }}
-        artifact: bloock_lib_python
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/release_zip
+        with:
+          version: ${{ needs.create_release.outputs.version }}
+          release_url: ${{ needs.create_release.outputs.release_url }}
+          artifact: bloock_lib_python
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_js:
     needs: [create_release]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./.github/actions/release_zip
-      with:
-        version: ${{ needs.create_release.outputs.version }}
-        release_url: ${{ needs.create_release.outputs.release_url }}
-        artifact: bloock_lib_js
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/release_zip
+        with:
+          version: ${{ needs.create_release.outputs.version }}
+          release_url: ${{ needs.create_release.outputs.release_url }}
+          artifact: bloock_lib_js
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release_java:
     needs: [create_release]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./.github/actions/release_zip
-      with:
-        version: ${{ needs.create_release.outputs.version }}
-        release_url: ${{ needs.create_release.outputs.release_url }}
-        artifact: bloock_lib_java
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/release_zip
+        with:
+          version: ${{ needs.create_release.outputs.version }}
+          release_url: ${{ needs.create_release.outputs.release_url }}
+          artifact: bloock_lib_java
+          github_token: ${{ secrets.GITHUB_TOKEN }}
