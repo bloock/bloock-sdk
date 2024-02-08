@@ -91,7 +91,7 @@ impl SimpleHttpClient {
         body: Option<&[u8]>,
         headers: Option<Vec<(String, String)>>,
     ) -> Result<Vec<u8>> {
-        let url = req.clone().url();
+        let copy_req = req.clone();
         if headers.is_some() {
             for header in headers.unwrap() {
                 req = req.set(&header.0, &header.1);
@@ -117,7 +117,7 @@ impl SimpleHttpClient {
         if (200..300).contains(&status) {
             Ok(res_buffer)
         } else {
-            let response = format!("Error: {:?}, Status: {:?}, Url: {:?}.", String::from_utf8(res_buffer), status, url);
+            let response = format!("Error: {:?}, Status: {:?}, Url: {:?}.", String::from_utf8(res_buffer), status, copy_req.url());
             /*let response: ApiError = serde_json::from_slice(&res_buffer)
                 .map_err(|e| HttpError::DeserializeError(e.to_string()))?;*/
             Err(HttpError::HttpClientError(response))
