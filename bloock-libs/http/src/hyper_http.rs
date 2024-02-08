@@ -101,14 +101,19 @@ impl SimpleHttpClient {
         let res = match body {
             Some(b) => req.send_bytes(b),
             None => req.call(),
-        }
-        .map(Some)
-        .unwrap_or_else(|e| e.into_response())
-        .ok_or_else(|| HttpError::RequestError("Error while sending request".to_string()))?;
+        };
 
-        let status = res.status();
+        let resp = match res {
+            Ok(r) => r,
+            Err(e) => {
+                let response = format!("Error: {:?}, Url: {:?}.", e, copy_req.url());
+                return Err(HttpError::HttpClientError(response))
+            },
+        };
 
-        let mut reader = BufReader::new(res.into_reader());
+        let status = resp.status();
+
+        let mut reader = BufReader::new(resp.into_reader());
         let mut res_buffer = Vec::new();
         reader
             .read_to_end(&mut res_buffer)
