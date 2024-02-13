@@ -46,3 +46,4 @@ lint: fmt
 
 docs:
 	docker run --rm -v ".:/data" "phpdoc/phpdoc:3" --directory=/data/Bloock --ignore "**/Bridge" --ignore "**/Ffi" --target=docs --template='vendor/saggre/phpdocumentor-markdown/themes/markdown'
+	find ./docs -type f -name '*.md' -exec sed -i 's/(\(.*Exception\.md\))//g' {} \;
