@@ -11,6 +11,10 @@ jobs:
       include: ${{ steps.set-matrix.outputs.include }}
     steps:
       - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup_python
+        with:
+          version: "3.10"
+          working-directory: languages/python
       - name: Install cibuildwheel
         run: pipx install cibuildwheel==2.11.2
       - id: set-matrix
@@ -34,7 +38,7 @@ jobs:
         shell: bash
         run: |
           cp LICENSE languages/python/LICENSE
-          cp README.md languages/python/README.md
+          cp README.md langu ages/python/README.md
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
