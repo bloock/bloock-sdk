@@ -30,7 +30,7 @@ jobs:
     env:
       CIBW_ARCHS_LINUX: x86_64 aarch64
       CIBW_ARCHS_MACOS: x86_64 arm64
-      CIBW_ARCHS_WINDOWS: x86 AMD64
+      CIBW_ARCHS_WINDOWS: AMD64
   build-wheels:
     name: Build ${{ matrix.only }}
     needs: generate-wheels-matrix
