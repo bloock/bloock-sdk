@@ -1,0 +1,62 @@
+name: Build Lib
+
+on:
+  workflow_call:
+
+jobs:
+  generate-wheels-matrix:
+    name: Generate wheels matrix
+    runs-on: ubuntu-latest
+    outputs:
+      include: ${{ steps.set-matrix.outputs.include }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install cibuildwheel
+        run: pipx install cibuildwheel==2.11.2
+      - id: set-matrix
+        run: |
+          MATRIX=$(
+            {
+              cibuildwheel --print-build-identifiers --platform linux \
+              | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
+              && cibuildwheel --print-build-identifiers --platform macos \
+              | jq -nRc '{"only": inputs, "os": "macos-latest"}' \
+              && cibuildwheel --print-build-identifiers --platform windows \
+              | jq -nRc '{"only": inputs, "os": "windows-latest"}'
+            } | jq -sc
+          )
+          echo "include=$MATRIX" >> $GITHUB_OUTPUT
+    env:
+      CIBW_ARCHS_LINUX: x86_64 aarch64
+      CIBW_ARCHS_MACOS: x86_64 arm64
+      CIBW_ARCHS_WINDOWS: x86 AMD64
+  build-wheels:
+    name: Build ${{ matrix.only }}
+    needs: generate-wheels-matrix
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.generate-wheels-matrix.outputs.include) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup_python
+        with:
+          version: "3.10"
+          working-directory: languages/python
+      - uses: pypa/cibuildwheel@v2.16.5
+        with:
+          package-dir: languages/python
+          only: ${{ matrix.only }}
+      - name: Build docs
+        run: make docs
+        working-directory: languages/python
+      - name: Cleanup
+        shell: bash
+        run: |
+          cp LICENSE languages/python/LICENSE
+          cp README.md languages/python/README.md
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bloock_lib_python
+          path: languages/python

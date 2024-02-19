@@ -20,7 +20,7 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        pip install pydoc-markdown
+        pip install pydoc-markdown pyotp
     - name: Download binaries
       uses: actions/download-artifact@v1
       with:
