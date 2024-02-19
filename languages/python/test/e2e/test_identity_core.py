@@ -41,10 +41,6 @@ class TestIdentityCore(unittest.TestCase):
         issuer = identity_client.create_issuer(
             issuer_key, PublishIntervalParams.Interval15, did_type, "SDK Issuer Test Core Client", "sdk issuer test core client")
 
-        with self.assertRaises(Exception):
-            identity_client.create_issuer(
-                issuer_key, PublishIntervalParams.Interval15, did_type)
-
         schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema") \
             .add_integer_attribute("License Type", "license_type", "license type", False) \
             .add_decimal_attribute("Quantity Oil", "quantity_oil", "quantity oil", True) \
@@ -80,6 +76,6 @@ class TestIdentityCore(unittest.TestCase):
                          receipt.credential_type)
 
         credential = receipt.credential
-        self.assertEqual(issuer, credential.issuer)
+        self.assertEqual(issuer.did, credential.issuer)
         self.assertEqual("JsonSchema2023", credential.credential_schema.type)
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])

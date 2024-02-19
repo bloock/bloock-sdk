@@ -84,7 +84,7 @@ class TestIdentity(unittest.TestCase):
 
         get_not_found_issuer_did = identity_client.import_issuer(
             not_found_issuer_key, did_type)
-        self.assertEqual("", get_not_found_issuer_did)
+        self.assertEqual("", get_not_found_issuer_did.did)
 
         new_did_type = DidType(
             Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI)
@@ -127,7 +127,7 @@ class TestIdentity(unittest.TestCase):
                          receipt.credential_type)
 
         credential = receipt.credential
-        self.assertEqual(issuer, credential.issuer)
+        self.assertEqual(issuer.did, credential.issuer)
         self.assertEqual("JsonSchema2023", credential.credential_schema.type)
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
 
