@@ -18,9 +18,9 @@ class DateTimeAttribute extends \Google\Protobuf\Internal\Message
      */
     protected $id = '';
     /**
-     * Generated from protobuf field <code>int64 value = 2;</code>
+     * Generated from protobuf field <code>string value = 2;</code>
      */
-    protected $value = 0;
+    protected $value = '';
 
     /**
      * Constructor.
@@ -29,7 +29,7 @@ class DateTimeAttribute extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type string $id
-     *     @type int|string $value
+     *     @type string $value
      * }
      */
     public function __construct($data = NULL) {
@@ -60,8 +60,8 @@ class DateTimeAttribute extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 value = 2;</code>
-     * @return int|string
+     * Generated from protobuf field <code>string value = 2;</code>
+     * @return string
      */
     public function getValue()
     {
@@ -69,13 +69,13 @@ class DateTimeAttribute extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 value = 2;</code>
-     * @param int|string $var
+     * Generated from protobuf field <code>string value = 2;</code>
+     * @param string $var
      * @return $this
      */
     public function setValue($var)
     {
-        GPBUtil::checkInt64($var);
+        GPBUtil::checkString($var, True);
         $this->value = $var;
 
         return $this;

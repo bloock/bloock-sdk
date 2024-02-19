@@ -1,29 +1,43 @@
 import { BloockBridge } from "../bridge/bridge";
 import { ConfigData } from "../bridge/proto/config";
 import {
-  CreateIdentityRequest,
-  CredentialOfferRedeemRequest,
-  GetOfferRequest,
-  GetSchemaRequest,
-  LoadIdentityRequest,
+  CreateIssuerRequest,
+  ImportIssuerRequest,
+  GetCredentialProofRequest,
   RevokeCredentialRequest,
-  VerifyCredentialRequest,
-  WaitOfferRequest
+  GetSchemaRequest,
+  ForcePublishIssuerStateRequest,
+  CreateVerificationRequest,
+  WaitVerificationRequest,
+  GetVerificationStatusRequest,
+  CreateHolderRequest
 } from "../bridge/proto/identity";
 import { NewConfigData } from "../config/config";
-import { Credential, CredentialBuilder } from "../entity/identity";
-import { CredentialOffer } from "../entity/identity";
-import { CredentialVerification } from "../entity/identity";
-import { Identity } from "../entity/identity";
-import { Schema } from "../entity/identity";
-import { SchemaBuilder } from "../entity/identity";
+import {
+  Holder,
+  Issuer,
+  IssuerStateReceipt,
+  PublishIntervalParams,
+  Schema,
+  VerificationReceipt
+} from "../entity/identity";
+import { Credential } from "../entity/identity/credential";
+import { CredentialBuilder } from "../entity/identity/credential_builder";
+import { CredentialProof } from "../entity/identity/credential_proof";
+import { DidType } from "../entity/identity/did_type";
+import { SchemaBuilder } from "../entity/identity/schema_builder";
+import { Key } from "../entity";
 
-export class IdentityLegacyClient {
+/**
+ * Represents a client for interacting with the [Bloock Identity service](https://dashboard.bloock.com/login).
+ */
+export class IdentityClient {
   private bridge: BloockBridge;
   private configData: ConfigData;
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Creates a new instance of the IdentityClient with default configuration.
+   * @param configData 
    */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
@@ -31,56 +45,125 @@ export class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Creates a new holder identity.
+   * @param holderKey 
+   * @param didType 
+   * @returns 
    */
-  public createIdentity(): Promise<Identity> {
-    const request = CreateIdentityRequest.fromPartial({
+  public createHolder(
+    holderKey: Key,
+    didType?: DidType
+  ): Promise<Holder> {
+    const request = CreateHolderRequest.fromPartial({
+      key: holderKey.toProto(),
+      didType: didType?.toProto(),
       configData: this.configData
     });
 
     return this.bridge
       .getIdentity()
-      .CreateIdentity(request)
+      .CreateHolder(request)
       .then(res => {
         if (res.error) {
           throw res.error;
         }
-        return Identity.fromProto(res.identity!);
+        return new Holder(res.did, holderKey, didType);
       });
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Creates a new issuer on the Bloock Identity service.
+   * @param issuerKey 
+   * @param publishInterval 
+   * @param issuerParams 
+   * @param name 
+   * @param description 
+   * @param image 
+   * @returns 
    */
-  public loadIdentity(mnemonic: string): Promise<Identity> {
-    const request = LoadIdentityRequest.fromPartial({
-      configData: this.configData,
-      mnemonic: mnemonic
+  public createIssuer(
+    issuerKey: Key,
+    publishInterval: PublishIntervalParams,
+    didType?: DidType,
+    name?: string,
+    description?: string,
+    image?: string
+  ): Promise<Issuer> {
+    const request = CreateIssuerRequest.fromPartial({
+      key: issuerKey.toProto(),
+      didType: didType?.toProto(),
+      name: name,
+      description: description,
+      image: image,
+      publishInterval: PublishIntervalParams.toProto(publishInterval),
+      configData: this.configData
     });
 
     return this.bridge
       .getIdentity()
-      .LoadIdentity(request)
+      .CreateIssuer(request)
       .then(res => {
         if (res.error) {
           throw res.error;
         }
-        return Identity.fromProto(res.identity!);
+        return new Issuer(res.did, issuerKey, didType);
       });
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Gets the issuer based on the issuer key and DID type.
+   * @param issuerKey 
+   * @param didType 
+   * @returns 
    */
-  public buildSchema(
-    displayName: string,
-    technicalName: string
-  ): SchemaBuilder {
-    return new SchemaBuilder(displayName, technicalName, this.configData);
+  public importIssuer(
+    issuerKey: Key,
+    didType?: DidType
+  ): Promise<Issuer> {
+    const request = ImportIssuerRequest.fromPartial({
+      key: issuerKey.toProto(),
+      didType: didType?.toProto(),
+      configData: this.configData
+    });
+
+    return this.bridge
+      .getIdentity()
+      .ImportIssuer(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return new Issuer(res.did, issuerKey, didType);
+      });
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Creates a new schema builder for defining a schema on the Bloock Identity service.
+   * @param displayName 
+   * @param schemaType 
+   * @param version 
+   * @param description 
+   * @returns 
+   */
+  public buildSchema(
+    displayName: string,
+    schemaType: string,
+    version: string,
+    description: string
+  ): SchemaBuilder {
+    return new SchemaBuilder(
+      displayName,
+      schemaType,
+      version,
+      description,
+      this.configData
+    );
+  }
+
+  /**
+   * Gets a schema from the Bloock Identity service based on the schema ID (ex: Qma1t4uzbnB93E4rasNdu5UWMDh5qg3wMkPm68cnEyfnoM).
+   * @param id 
+   * @returns 
    */
   public getSchema(id: string): Promise<Schema> {
     const request = GetSchemaRequest.fromPartial({
@@ -100,108 +183,98 @@ export class IdentityLegacyClient {
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Creates a new credential builder for defining a credential on the Bloock Identity service.
+   * @param issuer 
+   * @param schemaId 
+   * @param holderDid 
+   * @param expiration 
+   * @param version 
+   * @returns 
    */
   public buildCredential(
+    issuer: Issuer,
     schemaId: string,
-    holderKey: string
+    holderDid: string,
+    expiration: number,
+    version: number
   ): CredentialBuilder {
-    return new CredentialBuilder(schemaId, holderKey, this.configData);
+    return new CredentialBuilder(
+      issuer,
+      schemaId,
+      holderDid,
+      expiration,
+      version,
+      this.configData
+    );
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Publishes the state of an issuer on the Bloock Identity service.
+   * @param issuerDid 
+   * @param signer 
+   * @returns 
    */
-  public getOffer(id: string): Promise<CredentialOffer> {
-    const request = GetOfferRequest.fromPartial({
+  public forcePublishIssuerState(
+    issuer: Issuer
+  ): Promise<IssuerStateReceipt> {
+    const req = ForcePublishIssuerStateRequest.fromPartial({
       configData: this.configData,
-      id: id
+      issuerDid: issuer.did.did,
+      key: issuer.key.toProto(),
     });
 
     return this.bridge
       .getIdentity()
-      .GetOffer(request)
+      .ForcePublishIssuerState(req)
       .then(res => {
         if (res.error) {
           throw res.error;
         }
-        return CredentialOffer.fromProto(res.offer!);
+        return IssuerStateReceipt.fromProto(res.stateReceipt!);
       });
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Gets the proof of a credential on the Bloock Identity service.
+   * @param issuerDid 
+   * @param credentialId 
+   * @returns 
    */
-  public waitOffer(offerId: string): Promise<CredentialOffer> {
-    const request = WaitOfferRequest.fromPartial({
-      configData: this.configData,
-      offerId: offerId
+  public getCredentialProof(
+    issuerDid: string,
+    credentialId: string
+  ): Promise<CredentialProof> {
+    const request = GetCredentialProofRequest.fromPartial({
+      issuerDid: issuerDid,
+      credentialId: credentialId,
+      configData: this.configData
     });
 
     return this.bridge
       .getIdentity()
-      .WaitOffer(request)
+      .GetCredentialProof(request)
       .then(res => {
         if (res.error) {
           throw res.error;
         }
-        return CredentialOffer.fromProto(res.offer!);
+        return CredentialProof.fromProto(res.proof!);
       });
   }
 
   /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
+   * Revokes a credential on the Bloock Identity service.
+   * @param credential 
+   * @param signer 
+   * @returns 
    */
-  public redeemOffer(
-    credentialOffer: CredentialOffer,
-    holderPrivateKey: string
-  ): Promise<Credential> {
-    const request = CredentialOfferRedeemRequest.fromPartial({
-      configData: this.configData,
-      credentialOffer: credentialOffer.toProto(),
-      identityPrivateKey: holderPrivateKey
-    });
-
-    return this.bridge
-      .getIdentity()
-      .CredentialOfferRedeem(request)
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return Credential.fromProto(res.credential!);
-      });
-  }
-
-  /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-   */
-  public verifyCredential(
-    credential: Credential
-  ): Promise<CredentialVerification> {
-    const request = VerifyCredentialRequest.fromPartial({
-      configData: this.configData,
-      credential: credential.toProto()
-    });
-
-    return this.bridge
-      .getIdentity()
-      .VerifyCredential(request)
-      .then(res => {
-        if (res.error) {
-          throw res.error;
-        }
-        return CredentialVerification.fromProto(res.result!);
-      });
-  }
-
-  /**
-   * @deprecated Will be deleted in future versions. Use IdentityV2Client function instead.
-   */
-  public revokeCredential(credential: Credential): Promise<boolean> {
+  public revokeCredential(
+    credential: Credential,
+    issuer: Issuer
+  ): Promise<boolean> {
     const request = RevokeCredentialRequest.fromPartial({
       configData: this.configData,
-      credential: credential.toProto()
+      credential: credential.toProto(),
+      key: issuer.key.toProto(),
     });
 
     return this.bridge
@@ -212,6 +285,79 @@ export class IdentityLegacyClient {
           throw res.error;
         }
         return res.result!.success!;
+      });
+  }
+
+  /**
+   * Creates a new verification session on the identity managed API provided.
+   * @param proofRequest 
+   * @returns 
+   */
+  public createVerification(
+    proofRequest: string
+  ): Promise<VerificationReceipt> {
+    const request = CreateVerificationRequest.fromPartial({
+      configData: this.configData,
+      proofRequest: proofRequest
+    });
+
+    return this.bridge
+      .getIdentity()
+      .CreateVerification(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return VerificationReceipt.fromProto(res.result!);
+      });
+  }
+
+  /**
+   * Waits for the completion of a verification session on the identity managed API provided.
+   * @param sessionID 
+   * @param timeout 
+   * @returns 
+   */
+  public waitVerification(
+    sessionID: number,
+    timeout?: number
+  ): Promise<boolean> {
+    const request = WaitVerificationRequest.fromPartial({
+      configData: this.configData,
+      sessionId: sessionID,
+      timeout: timeout !== null ? timeout : 120000
+    });
+
+    return this.bridge
+      .getIdentity()
+      .WaitVerification(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.status;
+      });
+  }
+
+  /**
+   * Gets the status of a verification session on the identity managed API provided.
+   * @param sessionID 
+   * @returns 
+   */
+  public getVerificationStatus(sessionID: number): Promise<boolean> {
+    const request = GetVerificationStatusRequest.fromPartial({
+      configData: this.configData,
+      sessionId: sessionID
+    });
+
+    return this.bridge
+      .getIdentity()
+      .GetVerificationStatus(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.status;
       });
   }
 }

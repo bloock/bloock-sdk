@@ -5,28 +5,27 @@ namespace Bloock\Client;
 use Bloock\Bridge\Bridge;
 use Bloock\Config\Config;
 use Bloock\ConfigData;
-use Bloock\CreateIdentityV2Request;
+use Bloock\CreateHolderRequest;
 use Bloock\CreateIssuerRequest;
 use Bloock\CreateVerificationRequest;
-use Bloock\Entity\Authenticity\Signer;
-use Bloock\GetIssuerListRequest;
-use Bloock\Entity\IdentityV2\Credential;
-use Bloock\Entity\IdentityV2\Schema;
-use Bloock\Entity\IdentityV2\CredentialBuilder;
-use Bloock\Entity\IdentityV2\CredentialProof;
-use Bloock\Entity\IdentityV2\DidParams;
-use Bloock\Entity\IdentityV2\IdentityKey;
-use Bloock\Entity\IdentityV2\IssuerStatePublisher;
-use Bloock\Entity\IdentityV2\IssuerStateReceipt;
-use Bloock\Entity\IdentityV2\SchemaBuilder;
-use Bloock\Entity\IdentityV2\VerificationReceipt;
-use Bloock\Entity\IdentityV2\PublishIntervalParams;
-use Bloock\GetIssuerByKeyRequest;
+use Bloock\Entity\Identity\DidType;
+use Bloock\Entity\Identity\PublishIntervalParams;
+use Bloock\Entity\Identity\Credential;
+use Bloock\Entity\Identity\Schema;
+use Bloock\Entity\Identity\CredentialBuilder;
+use Bloock\Entity\Identity\CredentialProof;
+use Bloock\Entity\Identity\Issuer;
+use Bloock\Entity\Identity\Holder;
+use Bloock\Entity\Identity\IssuerStateReceipt;
+use Bloock\Entity\Identity\SchemaBuilder;
+use Bloock\Entity\Identity\VerificationReceipt;
+use Bloock\Entity\Key\Key;
 use Bloock\GetCredentialProofRequest;
-use Bloock\GetSchemaRequestV2;
+use Bloock\GetSchemaRequest;
 use Bloock\GetVerificationStatusRequest;
-use Bloock\PublishIssuerStateRequest;
-use Bloock\RevokeCredentialRequestV2;
+use Bloock\ImportIssuerRequest;
+use Bloock\ForcePublishIssuerStateRequest;
+use Bloock\RevokeCredentialRequest;
 use Bloock\WaitVerificationRequest;
 use Exception;
 
@@ -53,51 +52,55 @@ class IdentityClient
     }
 
     /**
-     * Creates a new identity.
-     * @param IdentityKey $identityKey
-     * @param DidParams|null $didParams
-     * @return string
+     * Creates a new holder identity.
+     * @param Key $holderKey
+     * @param DidType|null $didType
+     * @return Holder
      * @throws Exception
      */
-    public function createIdentity(IdentityKey $identityKey, DidParams $didParams = null): string
+    public function createHolder(Key $holderKey, DidType $didType = null): Holder
     {
-        $req = new CreateIdentityV2Request();
-        $req->setIssuerKey($identityKey->toProto());
+        $newDidType = new DidType();
+        $req = new CreateHolderRequest();
+        $req->setKey($holderKey->toProto());
         $req->setConfigData($this->config);
 
-        if ($didParams != null) {
-            $req->setDidParams($didParams->toProto());
+        if ($didType != null) {
+            $req->setDidType($didType->toProto());
+            $newDidType = $didType;
         }
 
-        $res = $this->bridge->identityV2->CreateIdentity($req);
+        $res = $this->bridge->identity->CreateHolder($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
         }
 
-        return $res->getDid();
+        return new Holder($res->getDid(), $newDidType, $holderKey);
     }
 
     /**
      * Creates a new issuer on the Bloock Identity service.
-     * @param IdentityKey $issuerKey
+     * @param Key $issuerKey
      * @param int $publishInterval
-     * @param DidParams|null $didParams
+     * @param DidType|null $didType
      * @param string|null $name
      * @param string|null $description
      * @param string|null $image
-     * @return string
+     * @return Issuer
      * @throws Exception
      */
-    public function createIssuer(IdentityKey $issuerKey, int $publishInterval, DidParams $didParams = null, string $name = null, string $description = null, string $image = null): string
+    public function createIssuer(Key $issuerKey, int $publishInterval, DidType $didType = null, string $name = null, string $description = null, string $image = null): Issuer
     {
+        $newDidType = new DidType();
         $req = new CreateIssuerRequest();
-        $req->setIssuerKey($issuerKey->toProto());
+        $req->setKey($issuerKey->toProto());
         $req->setPublishInterval(PublishIntervalParams::toProto($publishInterval));
         $req->setConfigData($this->config);
 
-        if ($didParams != null) {
-            $req->setIssuerParams($didParams->toProto());
+        if ($didType != null) {
+            $req->setDidType($didType->toProto());
+            $newDidType = $didType;
         }
 
         if ($name != null) {
@@ -112,38 +115,40 @@ class IdentityClient
             $req->setImage($image);
         }
 
-        $res = $this->bridge->identityV2->CreateIssuer($req);
+        $res = $this->bridge->identity->CreateIssuer($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
         }
 
-        return $res->getDid();
+        return new Issuer($res->getDid(), $newDidType, $issuerKey);
     }
 
     /**
-     * Gets the DID of an issuer based on the issuer key.
-     * @param IdentityKey $issuerKey
-     * @param DidParams|null $didParams
-     * @return string
+     * Gets the issuer based on the issuer key and DID type.
+     * @param Key $issuerKey
+     * @param DidType|null $didType
+     * @return Issuer
      * @throws Exception
      */
-    public function getIssuerByKey(IdentityKey $issuerKey, DidParams $didParams = null): string
+    public function importIssuer(Key $issuerKey, DidType $didType = null): Issuer
     {
-        $req = new GetIssuerByKeyRequest();
-        $req->setIssuerKey($issuerKey->toProto());
+        $newDidType = new DidType();
+        $req = new ImportIssuerRequest();
+        $req->setKey($issuerKey->toProto());
         $req->setConfigData($this->config);
-        if ($didParams != null) {
-            $req->setIssuerParams($didParams->toProto());
+        if ($didType != null) {
+            $req->setDidType($didType->toProto());
+            $newDidType = $didType;
         }
 
-        $res = $this->bridge->identityV2->GetIssuerByKey($req);
+        $res = $this->bridge->identity->ImportIssuer($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
         }
 
-        return $res->getDid();
+        return new Issuer($res->getDid(), $newDidType, $issuerKey);
     }
 
     /**
@@ -167,10 +172,10 @@ class IdentityClient
      */
     public function getSchema(string $id): Schema
     {
-        $req = new GetSchemaRequestV2();
+        $req = new GetSchemaRequest();
         $req->setConfigData($this->config)->setId($id);
 
-        $res = $this->bridge->identityV2->GetSchema($req);
+        $res = $this->bridge->identity->GetSchema($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
@@ -181,33 +186,32 @@ class IdentityClient
 
     /**
      * Creates a new credential builder for defining a credential on the Bloock Identity service.
+     * @param Issuer $issuer
      * @param string $schemaId
-     * @param string $issuerDid
      * @param string $holderDid
      * @param int $expiration
      * @param int $version
      * @return CredentialBuilder
      */
-    public function buildCredential(string $schemaId, string $issuerDid, string $holderDid, int $expiration, int $version): CredentialBuilder
+    public function buildCredential(Issuer $issuer, string $schemaId, string $holderDid, int $expiration, int $version): CredentialBuilder
     {
-        return new CredentialBuilder($schemaId, $issuerDid, $holderDid, $expiration, $version, $this->config);
+        return new CredentialBuilder($issuer, $schemaId, $holderDid, $expiration, $version, $this->config);
     }
 
     /**
      * Publishes the state of an issuer on the Bloock Identity service.
-     * @param string $issuerDid
-     * @param Signer $signer
+     * @param Issuer $issuer
      * @return IssuerStateReceipt
      * @throws Exception
      */
-    public function publishIssuerState(string $issuerDid, Signer $signer): IssuerStateReceipt
+    public function forcePublishIssuerState(Issuer $issuer): IssuerStateReceipt
     {
-        $req = new PublishIssuerStateRequest();
+        $req = new ForcePublishIssuerStateRequest();
         $req->setConfigData($this->config);
-        $req->setIssuerDid($issuerDid);
-        $req->setSigner($signer->toProto());
+        $req->setIssuerDid($issuer->getDid()->getDid());
+        $req->setKey($issuer->getKey()->toProto());
 
-        $res = $this->bridge->identityV2->PublishIssuerState($req);
+        $res = $this->bridge->identity->ForcePublishIssuerState($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
@@ -230,7 +234,7 @@ class IdentityClient
         $req->setCredentialId($credentialId);
         $req->setConfigData($this->config);
 
-        $res = $this->bridge->identityV2->getCredentialProof($req);
+        $res = $this->bridge->identity->getCredentialProof($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
@@ -242,18 +246,18 @@ class IdentityClient
     /**
      * Revokes a credential on the Bloock Identity service.
      * @param Credential $credential
-     * @param Signer $signer
+     * @param Issuer $issuer
      * @return bool
      * @throws Exception
      */
-    public function revokeCredential(Credential $credential, Signer $signer): bool
+    public function revokeCredential(Credential $credential, Issuer $issuer): bool
     {
-        $req = new RevokeCredentialRequestV2();
+        $req = new RevokeCredentialRequest();
         $req->setConfigData($this->config);
         $req->setCredential($credential->toProto());
-        $req->setSigner($signer->toProto());
+        $req->setKey($issuer->getKey()->toProto());
 
-        $res = $this->bridge->identityV2->RevokeCredential($req);
+        $res = $this->bridge->identity->RevokeCredential($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
@@ -274,7 +278,7 @@ class IdentityClient
         $req->setConfigData($this->config);
         $req->setProofRequest($proofRequest);
 
-        $res = $this->bridge->identityV2->CreateVerification($req);
+        $res = $this->bridge->identity->CreateVerification($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
@@ -297,7 +301,7 @@ class IdentityClient
         $req->setSessionId($sessionID);
         $req->setTimeout($timeout);
 
-        $res = $this->bridge->identityV2->WaitVerification($req);
+        $res = $this->bridge->identity->WaitVerification($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());
@@ -318,7 +322,7 @@ class IdentityClient
         $req->setConfigData($this->config);
         $req->setSessionId($sessionID);
 
-        $res = $this->bridge->identityV2->GetVerificationStatus($req);
+        $res = $this->bridge->identity->GetVerificationStatus($req);
 
         if ($res->getError() != null) {
             throw new Exception($res->getError()->getMessage());

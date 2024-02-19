@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "config.proto";
+import "identity_entities.proto";
+import "shared.proto";
+import "keys_entities.proto";
+
+service IdentityCoreService {
+    rpc CreateCoreCredential(CreateCoreCredentialRequest) returns (CreateCoreCredentialResponse);
+}
+
+message CreateCoreCredentialRequest {
+    ConfigData config_data = 1;
+    string schema_id = 2;
+    string issuer_did = 3;
+    string holder_did = 4;
+    int64 expiration = 5;
+    optional int32 version = 6;
+    Key key = 7;
+    repeated StringAttribute string_attributes = 8;
+    repeated IntegerAttribute integer_attributes = 9;
+    repeated DecimalAttribute decimal_attributes = 10;
+    repeated BooleanAttribute boolean_attributes = 11;
+    repeated DateAttribute date_attributes = 12;
+    repeated DateTimeAttribute datetime_attributes = 13;
+}
+
+message CreateCoreCredentialResponse {
+    CredentialReceipt credential_receipt = 1;
+    optional Error error = 2;
+}

@@ -5,6 +5,9 @@ from bloock.entity.identity.attribute import Attribute
 
 
 class StringAttribute(Attribute):
+    """
+    Represents an attribute with a string value.
+    """
     @staticmethod
     def from_proto(a: proto.StringAttribute) -> StringAttribute:
         return StringAttribute(

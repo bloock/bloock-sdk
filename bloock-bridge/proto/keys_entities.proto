@@ -94,3 +94,8 @@ message AccessControlTotp {
 message AccessControlSecret {
     string secret = 1;
 }
+
+message Key {
+    optional LocalKey local_key = 1;
+    optional ManagedKey managed_key = 2;
+}

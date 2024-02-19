@@ -11,12 +11,13 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from . import identity_entities_pb2 as identity__entities__pb2
-from . import shared_pb2 as shared__pb2
 from . import config_pb2 as config__pb2
+from . import shared_pb2 as shared__pb2
+from . import identity_entities_pb2 as identity__entities__pb2
+from . import keys_entities_pb2 as keys__entities__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0eidentity.proto\x12\x06\x62loock\x1a\x17identity_entities.proto\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\"@\n\x15\x43reateIdentityRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\"i\n\x16\x43reateIdentityResponse\x12\"\n\x08identity\x18\x01 \x01(\x0b\x32\x10.bloock.Identity\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"P\n\x13LoadIdentityRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x10\n\x08mnemonic\x18\x02 \x01(\t\"g\n\x14LoadIdentityResponse\x12\"\n\x08identity\x18\x01 \x01(\x0b\x32\x10.bloock.Identity\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\xa3\x03\n\x12\x42uildSchemaRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x16\n\x0etechnical_name\x18\x03 \x01(\t\x12>\n\x12\x62oolean_attributes\x18\x04 \x03(\x0b\x32\".bloock.BooleanAttributeDefinition\x12\x38\n\x0f\x64\x61te_attributes\x18\x05 \x03(\x0b\x32\x1f.bloock.DateAttributeDefinition\x12@\n\x13\x64\x61tetime_attributes\x18\x06 \x03(\x0b\x32#.bloock.DateTimeAttributeDefinition\x12<\n\x11string_attributes\x18\x07 \x03(\x0b\x32!.bloock.StringAttributeDefinition\x12<\n\x11number_attributes\x18\x08 \x03(\x0b\x32!.bloock.NumberAttributeDefinition\"b\n\x13\x42uildSchemaResponse\x12\x1e\n\x06schema\x18\x01 \x01(\x0b\x32\x0e.bloock.Schema\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"G\n\x10GetSchemaRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\n\n\x02id\x18\x02 \x01(\t\"`\n\x11GetSchemaResponse\x12\x1e\n\x06schema\x18\x01 \x01(\x0b\x32\x0e.bloock.Schema\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\xef\x02\n\x17\x43reateCredentialRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x11\n\tschema_id\x18\x02 \x01(\t\x12\x12\n\nholder_key\x18\x03 \x01(\t\x12\x34\n\x12\x62oolean_attributes\x18\x04 \x03(\x0b\x32\x18.bloock.BooleanAttribute\x12.\n\x0f\x64\x61te_attributes\x18\x05 \x03(\x0b\x32\x15.bloock.DateAttribute\x12\x36\n\x13\x64\x61tetime_attributes\x18\x06 \x03(\x0b\x32\x19.bloock.DateTimeAttribute\x12\x32\n\x11string_attributes\x18\x07 \x03(\x0b\x32\x17.bloock.StringAttribute\x12\x32\n\x11number_attributes\x18\x08 \x03(\x0b\x32\x17.bloock.NumberAttribute\"~\n\x18\x43reateCredentialResponse\x12\x35\n\x12\x63redential_receipt\x18\x01 \x01(\x0b\x32\x19.bloock.CredentialReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"F\n\x0fGetOfferRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\n\n\x02id\x18\x02 \x01(\t\"g\n\x10GetOfferResponse\x12&\n\x05offer\x18\x01 \x01(\x0b\x32\x17.bloock.CredentialOffer\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"^\n\x10WaitOfferRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x10\n\x08offer_id\x18\x02 \x01(\t\x12\x0f\n\x07timeout\x18\x03 \x01(\x03\"w\n\x11WaitOfferResponse\x12+\n\x05offer\x18\x01 \x01(\x0b\x32\x17.bloock.CredentialOfferH\x00\x88\x01\x01\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x01\x88\x01\x01\x42\x08\n\x06_offerB\x08\n\x06_error\"z\n\x1c\x43redentialOfferToJsonRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x31\n\x10\x63redential_offer\x18\x02 \x01(\x0b\x32\x17.bloock.CredentialOffer\"Z\n\x1d\x43redentialOfferToJsonResponse\x12\x0c\n\x04json\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"W\n\x1e\x43redentialOfferFromJsonRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0c\n\x04json\x18\x02 \x01(\t\"\x81\x01\n\x1f\x43redentialOfferFromJsonResponse\x12\x31\n\x10\x63redential_offer\x18\x01 \x01(\x0b\x32\x17.bloock.CredentialOffer\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x98\x01\n\x1c\x43redentialOfferRedeemRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x31\n\x10\x63redential_offer\x18\x02 \x01(\x0b\x32\x17.bloock.CredentialOffer\x12\x1c\n\x14identity_private_key\x18\x03 \x01(\t\"t\n\x1d\x43redentialOfferRedeemResponse\x12&\n\ncredential\x18\x01 \x01(\x0b\x32\x12.bloock.Credential\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"j\n\x17\x43redentialToJsonRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12&\n\ncredential\x18\x02 \x01(\x0b\x32\x12.bloock.Credential\"U\n\x18\x43redentialToJsonResponse\x12\x0c\n\x04json\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"R\n\x19\x43redentialFromJsonRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0c\n\x04json\x18\x02 \x01(\t\"q\n\x1a\x43redentialFromJsonResponse\x12&\n\ncredential\x18\x01 \x01(\x0b\x32\x12.bloock.Credential\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"j\n\x17VerifyCredentialRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12&\n\ncredential\x18\x02 \x01(\x0b\x32\x12.bloock.Credential\"w\n\x18VerifyCredentialResponse\x12.\n\x06result\x18\x01 \x01(\x0b\x32\x1e.bloock.CredentialVerification\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"j\n\x17RevokeCredentialRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12&\n\ncredential\x18\x02 \x01(\x0b\x32\x12.bloock.Credential\"u\n\x18RevokeCredentialResponse\x12,\n\x06result\x18\x01 \x01(\x0b\x32\x1c.bloock.CredentialRevocation\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xa9\t\n\x0fIdentityService\x12O\n\x0e\x43reateIdentity\x12\x1d.bloock.CreateIdentityRequest\x1a\x1e.bloock.CreateIdentityResponse\x12I\n\x0cLoadIdentity\x12\x1b.bloock.LoadIdentityRequest\x1a\x1c.bloock.LoadIdentityResponse\x12\x46\n\x0b\x42uildSchema\x12\x1a.bloock.BuildSchemaRequest\x1a\x1b.bloock.BuildSchemaResponse\x12@\n\tGetSchema\x12\x18.bloock.GetSchemaRequest\x1a\x19.bloock.GetSchemaResponse\x12U\n\x10\x43reateCredential\x12\x1f.bloock.CreateCredentialRequest\x1a .bloock.CreateCredentialResponse\x12=\n\x08GetOffer\x12\x17.bloock.GetOfferRequest\x1a\x18.bloock.GetOfferResponse\x12@\n\tWaitOffer\x12\x18.bloock.WaitOfferRequest\x1a\x19.bloock.WaitOfferResponse\x12\x64\n\x15\x43redentialOfferToJson\x12$.bloock.CredentialOfferToJsonRequest\x1a%.bloock.CredentialOfferToJsonResponse\x12j\n\x17\x43redentialOfferFromJson\x12&.bloock.CredentialOfferFromJsonRequest\x1a\'.bloock.CredentialOfferFromJsonResponse\x12\x64\n\x15\x43redentialOfferRedeem\x12$.bloock.CredentialOfferRedeemRequest\x1a%.bloock.CredentialOfferRedeemResponse\x12U\n\x10\x43redentialToJson\x12\x1f.bloock.CredentialToJsonRequest\x1a .bloock.CredentialToJsonResponse\x12[\n\x12\x43redentialFromJson\x12!.bloock.CredentialFromJsonRequest\x1a\".bloock.CredentialFromJsonResponse\x12U\n\x10VerifyCredential\x12\x1f.bloock.VerifyCredentialRequest\x1a .bloock.VerifyCredentialResponse\x12U\n\x10RevokeCredential\x12\x1f.bloock.RevokeCredentialRequest\x1a .bloock.RevokeCredentialResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0eidentity.proto\x12\x06\x62loock\x1a\x0c\x63onfig.proto\x1a\x0cshared.proto\x1a\x17identity_entities.proto\x1a\x13keys_entities.proto\"G\n\x10GetSchemaRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\n\n\x02id\x18\x02 \x01(\t\"`\n\x11GetSchemaResponse\x12\x1e\n\x06schema\x18\x01 \x01(\x0b\x32\x0e.bloock.Schema\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"P\n\x14ImportIssuerResponse\x12\x0b\n\x03\x64id\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"o\n\x19GetCredentialProofRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x12\n\nissuer_did\x18\x02 \x01(\t\x12\x15\n\rcredential_id\x18\x03 \x01(\t\"q\n\x1aGetCredentialProofResponse\x12&\n\x05proof\x18\x01 \x01(\x0b\x32\x17.bloock.CredentialProof\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"j\n\x17\x43redentialToJsonRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12&\n\ncredential\x18\x02 \x01(\x0b\x32\x12.bloock.Credential\"U\n\x18\x43redentialToJsonResponse\x12\x0c\n\x04json\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"R\n\x19\x43redentialFromJsonRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0c\n\x04json\x18\x02 \x01(\t\"q\n\x1a\x43redentialFromJsonResponse\x12&\n\ncredential\x18\x01 \x01(\x0b\x32\x12.bloock.Credential\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x8b\x04\n\x17\x43reateCredentialRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x11\n\tschema_id\x18\x02 \x01(\t\x12\x12\n\nissuer_did\x18\x03 \x01(\t\x12\x12\n\nholder_did\x18\x04 \x01(\t\x12\x12\n\nexpiration\x18\x05 \x01(\x03\x12\x14\n\x07version\x18\x06 \x01(\x05H\x00\x88\x01\x01\x12\x18\n\x03key\x18\x07 \x01(\x0b\x32\x0b.bloock.Key\x12\x32\n\x11string_attributes\x18\x08 \x03(\x0b\x32\x17.bloock.StringAttribute\x12\x34\n\x12integer_attributes\x18\t \x03(\x0b\x32\x18.bloock.IntegerAttribute\x12\x34\n\x12\x64\x65\x63imal_attributes\x18\n \x03(\x0b\x32\x18.bloock.DecimalAttribute\x12\x34\n\x12\x62oolean_attributes\x18\x0b \x03(\x0b\x32\x18.bloock.BooleanAttribute\x12.\n\x0f\x64\x61te_attributes\x18\x0c \x03(\x0b\x32\x15.bloock.DateAttribute\x12\x36\n\x13\x64\x61tetime_attributes\x18\r \x03(\x0b\x32\x19.bloock.DateTimeAttributeB\n\n\x08_version\"\xe1\x05\n\x12\x42uildSchemaRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x13\n\x0bschema_type\x18\x03 \x01(\t\x12\x0f\n\x07version\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12<\n\x11string_attributes\x18\x06 \x03(\x0b\x32!.bloock.StringAttributeDefinition\x12>\n\x12integer_attributes\x18\x07 \x03(\x0b\x32\".bloock.IntegerAttributeDefinition\x12>\n\x12\x64\x65\x63imal_attributes\x18\x08 \x03(\x0b\x32\".bloock.DecimalAttributeDefinition\x12>\n\x12\x62oolean_attributes\x18\t \x03(\x0b\x32\".bloock.BooleanAttributeDefinition\x12\x38\n\x0f\x64\x61te_attributes\x18\n \x03(\x0b\x32\x1f.bloock.DateAttributeDefinition\x12@\n\x13\x64\x61tetime_attributes\x18\x0b \x03(\x0b\x32#.bloock.DateTimeAttributeDefinition\x12\x45\n\x16string_enum_attributes\x18\x0c \x03(\x0b\x32%.bloock.StringEnumAttributeDefinition\x12G\n\x17integer_enum_attributes\x18\r \x03(\x0b\x32&.bloock.IntegerEnumAttributeDefinition\x12G\n\x17\x64\x65\x63imal_enum_attributes\x18\x0e \x03(\x0b\x32&.bloock.DecimalEnumAttributeDefinition\"\x8d\x01\n\x13\x43reateHolderRequest\x12\x18\n\x03key\x18\x01 \x01(\x0b\x32\x0b.bloock.Key\x12\'\n\x0b\x63onfig_data\x18\x02 \x01(\x0b\x32\x12.bloock.ConfigData\x12&\n\x08\x64id_type\x18\x03 \x01(\x0b\x32\x0f.bloock.DidTypeH\x00\x88\x01\x01\x42\x0b\n\t_did_type\"\xa4\x02\n\x13\x43reateIssuerRequest\x12\x18\n\x03key\x18\x01 \x01(\x0b\x32\x0b.bloock.Key\x12\'\n\x0b\x63onfig_data\x18\x02 \x01(\x0b\x32\x12.bloock.ConfigData\x12&\n\x08\x64id_type\x18\x03 \x01(\x0b\x32\x0f.bloock.DidTypeH\x00\x88\x01\x01\x12\x11\n\x04name\x18\x04 \x01(\tH\x01\x88\x01\x01\x12\x18\n\x0b\x64\x65scription\x18\x05 \x01(\tH\x02\x88\x01\x01\x12\x12\n\x05image\x18\x06 \x01(\tH\x03\x88\x01\x01\x12\x31\n\x10publish_interval\x18\x07 \x01(\x0e\x32\x17.bloock.PublishIntervalB\x0b\n\t_did_typeB\x07\n\x05_nameB\x0e\n\x0c_descriptionB\x08\n\x06_image\"\x8d\x01\n\x13ImportIssuerRequest\x12\x18\n\x03key\x18\x01 \x01(\x0b\x32\x0b.bloock.Key\x12\'\n\x0b\x63onfig_data\x18\x02 \x01(\x0b\x32\x12.bloock.ConfigData\x12&\n\x08\x64id_type\x18\x03 \x01(\x0b\x32\x0f.bloock.DidTypeH\x00\x88\x01\x01\x42\x0b\n\t_did_type\"w\n\x1e\x46orcePublishIssuerStateRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x12\n\nissuer_did\x18\x02 \x01(\t\x12\x18\n\x03key\x18\x03 \x01(\x0b\x32\x0b.bloock.Key\"~\n\x18\x43reateCredentialResponse\x12\x35\n\x12\x63redential_receipt\x18\x01 \x01(\x0b\x32\x19.bloock.CredentialReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"P\n\x14\x43reateHolderResponse\x12\x0b\n\x03\x64id\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"P\n\x14\x43reateIssuerResponse\x12\x0b\n\x03\x64id\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"b\n\x13\x42uildSchemaResponse\x12\x1e\n\x06schema\x18\x01 \x01(\x0b\x32\x0e.bloock.Schema\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x81\x01\n\x1f\x46orcePublishIssuerStateResponse\x12\x31\n\rstate_receipt\x18\x01 \x01(\x0b\x32\x1a.bloock.IssuerStateReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x84\x01\n\x17RevokeCredentialRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12&\n\ncredential\x18\x02 \x01(\x0b\x32\x12.bloock.Credential\x12\x18\n\x03key\x18\x03 \x01(\x0b\x32\x0b.bloock.Key\"u\n\x18RevokeCredentialResponse\x12,\n\x06result\x18\x01 \x01(\x0b\x32\x1c.bloock.CredentialRevocation\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"[\n\x19\x43reateVerificationRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x15\n\rproof_request\x18\x02 \x01(\t\"v\n\x1a\x43reateVerificationResponse\x12+\n\x06result\x18\x01 \x01(\x0b\x32\x1b.bloock.VerificationReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"g\n\x17WaitVerificationRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x12\n\nsession_id\x18\x02 \x01(\x03\x12\x0f\n\x07timeout\x18\x03 \x01(\x03\"W\n\x18WaitVerificationResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"[\n\x1cGetVerificationStatusRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x12\n\nsession_id\x18\x02 \x01(\x03\"\\\n\x1dGetVerificationStatusResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xc1\t\n\x0fIdentityService\x12I\n\x0c\x43reateHolder\x12\x1b.bloock.CreateHolderRequest\x1a\x1c.bloock.CreateHolderResponse\x12I\n\x0c\x43reateIssuer\x12\x1b.bloock.CreateIssuerRequest\x1a\x1c.bloock.CreateIssuerResponse\x12I\n\x0cImportIssuer\x12\x1b.bloock.ImportIssuerRequest\x1a\x1c.bloock.ImportIssuerResponse\x12\x46\n\x0b\x42uildSchema\x12\x1a.bloock.BuildSchemaRequest\x1a\x1b.bloock.BuildSchemaResponse\x12@\n\tGetSchema\x12\x18.bloock.GetSchemaRequest\x1a\x19.bloock.GetSchemaResponse\x12U\n\x10\x43reateCredential\x12\x1f.bloock.CreateCredentialRequest\x1a .bloock.CreateCredentialResponse\x12[\n\x12GetCredentialProof\x12!.bloock.GetCredentialProofRequest\x1a\".bloock.GetCredentialProofResponse\x12U\n\x10RevokeCredential\x12\x1f.bloock.RevokeCredentialRequest\x1a .bloock.RevokeCredentialResponse\x12U\n\x10\x43redentialToJson\x12\x1f.bloock.CredentialToJsonRequest\x1a .bloock.CredentialToJsonResponse\x12[\n\x12\x43redentialFromJson\x12!.bloock.CredentialFromJsonRequest\x1a\".bloock.CredentialFromJsonResponse\x12j\n\x17\x46orcePublishIssuerState\x12&.bloock.ForcePublishIssuerStateRequest\x1a\'.bloock.ForcePublishIssuerStateResponse\x12[\n\x12\x43reateVerification\x12!.bloock.CreateVerificationRequest\x1a\".bloock.CreateVerificationResponse\x12U\n\x10WaitVerification\x12\x1f.bloock.WaitVerificationRequest\x1a .bloock.WaitVerificationResponse\x12\x64\n\x15GetVerificationStatus\x12$.bloock.GetVerificationStatusRequest\x1a%.bloock.GetVerificationStatusResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'identity_pb2', globals())
@@ -24,62 +25,62 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
-  _CREATEIDENTITYREQUEST._serialized_start=79
-  _CREATEIDENTITYREQUEST._serialized_end=143
-  _CREATEIDENTITYRESPONSE._serialized_start=145
-  _CREATEIDENTITYRESPONSE._serialized_end=250
-  _LOADIDENTITYREQUEST._serialized_start=252
-  _LOADIDENTITYREQUEST._serialized_end=332
-  _LOADIDENTITYRESPONSE._serialized_start=334
-  _LOADIDENTITYRESPONSE._serialized_end=437
-  _BUILDSCHEMAREQUEST._serialized_start=440
-  _BUILDSCHEMAREQUEST._serialized_end=859
-  _BUILDSCHEMARESPONSE._serialized_start=861
-  _BUILDSCHEMARESPONSE._serialized_end=959
-  _GETSCHEMAREQUEST._serialized_start=961
-  _GETSCHEMAREQUEST._serialized_end=1032
-  _GETSCHEMARESPONSE._serialized_start=1034
-  _GETSCHEMARESPONSE._serialized_end=1130
-  _CREATECREDENTIALREQUEST._serialized_start=1133
-  _CREATECREDENTIALREQUEST._serialized_end=1500
-  _CREATECREDENTIALRESPONSE._serialized_start=1502
-  _CREATECREDENTIALRESPONSE._serialized_end=1628
-  _GETOFFERREQUEST._serialized_start=1630
-  _GETOFFERREQUEST._serialized_end=1700
-  _GETOFFERRESPONSE._serialized_start=1702
-  _GETOFFERRESPONSE._serialized_end=1805
-  _WAITOFFERREQUEST._serialized_start=1807
-  _WAITOFFERREQUEST._serialized_end=1901
-  _WAITOFFERRESPONSE._serialized_start=1903
-  _WAITOFFERRESPONSE._serialized_end=2022
-  _CREDENTIALOFFERTOJSONREQUEST._serialized_start=2024
-  _CREDENTIALOFFERTOJSONREQUEST._serialized_end=2146
-  _CREDENTIALOFFERTOJSONRESPONSE._serialized_start=2148
-  _CREDENTIALOFFERTOJSONRESPONSE._serialized_end=2238
-  _CREDENTIALOFFERFROMJSONREQUEST._serialized_start=2240
-  _CREDENTIALOFFERFROMJSONREQUEST._serialized_end=2327
-  _CREDENTIALOFFERFROMJSONRESPONSE._serialized_start=2330
-  _CREDENTIALOFFERFROMJSONRESPONSE._serialized_end=2459
-  _CREDENTIALOFFERREDEEMREQUEST._serialized_start=2462
-  _CREDENTIALOFFERREDEEMREQUEST._serialized_end=2614
-  _CREDENTIALOFFERREDEEMRESPONSE._serialized_start=2616
-  _CREDENTIALOFFERREDEEMRESPONSE._serialized_end=2732
-  _CREDENTIALTOJSONREQUEST._serialized_start=2734
-  _CREDENTIALTOJSONREQUEST._serialized_end=2840
-  _CREDENTIALTOJSONRESPONSE._serialized_start=2842
-  _CREDENTIALTOJSONRESPONSE._serialized_end=2927
-  _CREDENTIALFROMJSONREQUEST._serialized_start=2929
-  _CREDENTIALFROMJSONREQUEST._serialized_end=3011
-  _CREDENTIALFROMJSONRESPONSE._serialized_start=3013
-  _CREDENTIALFROMJSONRESPONSE._serialized_end=3126
-  _VERIFYCREDENTIALREQUEST._serialized_start=3128
-  _VERIFYCREDENTIALREQUEST._serialized_end=3234
-  _VERIFYCREDENTIALRESPONSE._serialized_start=3236
-  _VERIFYCREDENTIALRESPONSE._serialized_end=3355
-  _REVOKECREDENTIALREQUEST._serialized_start=3357
-  _REVOKECREDENTIALREQUEST._serialized_end=3463
-  _REVOKECREDENTIALRESPONSE._serialized_start=3465
-  _REVOKECREDENTIALRESPONSE._serialized_end=3582
-  _IDENTITYSERVICE._serialized_start=3585
-  _IDENTITYSERVICE._serialized_end=4778
+  _GETSCHEMAREQUEST._serialized_start=100
+  _GETSCHEMAREQUEST._serialized_end=171
+  _GETSCHEMARESPONSE._serialized_start=173
+  _GETSCHEMARESPONSE._serialized_end=269
+  _IMPORTISSUERRESPONSE._serialized_start=271
+  _IMPORTISSUERRESPONSE._serialized_end=351
+  _GETCREDENTIALPROOFREQUEST._serialized_start=353
+  _GETCREDENTIALPROOFREQUEST._serialized_end=464
+  _GETCREDENTIALPROOFRESPONSE._serialized_start=466
+  _GETCREDENTIALPROOFRESPONSE._serialized_end=579
+  _CREDENTIALTOJSONREQUEST._serialized_start=581
+  _CREDENTIALTOJSONREQUEST._serialized_end=687
+  _CREDENTIALTOJSONRESPONSE._serialized_start=689
+  _CREDENTIALTOJSONRESPONSE._serialized_end=774
+  _CREDENTIALFROMJSONREQUEST._serialized_start=776
+  _CREDENTIALFROMJSONREQUEST._serialized_end=858
+  _CREDENTIALFROMJSONRESPONSE._serialized_start=860
+  _CREDENTIALFROMJSONRESPONSE._serialized_end=973
+  _CREATECREDENTIALREQUEST._serialized_start=976
+  _CREATECREDENTIALREQUEST._serialized_end=1499
+  _BUILDSCHEMAREQUEST._serialized_start=1502
+  _BUILDSCHEMAREQUEST._serialized_end=2239
+  _CREATEHOLDERREQUEST._serialized_start=2242
+  _CREATEHOLDERREQUEST._serialized_end=2383
+  _CREATEISSUERREQUEST._serialized_start=2386
+  _CREATEISSUERREQUEST._serialized_end=2678
+  _IMPORTISSUERREQUEST._serialized_start=2681
+  _IMPORTISSUERREQUEST._serialized_end=2822
+  _FORCEPUBLISHISSUERSTATEREQUEST._serialized_start=2824
+  _FORCEPUBLISHISSUERSTATEREQUEST._serialized_end=2943
+  _CREATECREDENTIALRESPONSE._serialized_start=2945
+  _CREATECREDENTIALRESPONSE._serialized_end=3071
+  _CREATEHOLDERRESPONSE._serialized_start=3073
+  _CREATEHOLDERRESPONSE._serialized_end=3153
+  _CREATEISSUERRESPONSE._serialized_start=3155
+  _CREATEISSUERRESPONSE._serialized_end=3235
+  _BUILDSCHEMARESPONSE._serialized_start=3237
+  _BUILDSCHEMARESPONSE._serialized_end=3335
+  _FORCEPUBLISHISSUERSTATERESPONSE._serialized_start=3338
+  _FORCEPUBLISHISSUERSTATERESPONSE._serialized_end=3467
+  _REVOKECREDENTIALREQUEST._serialized_start=3470
+  _REVOKECREDENTIALREQUEST._serialized_end=3602
+  _REVOKECREDENTIALRESPONSE._serialized_start=3604
+  _REVOKECREDENTIALRESPONSE._serialized_end=3721
+  _CREATEVERIFICATIONREQUEST._serialized_start=3723
+  _CREATEVERIFICATIONREQUEST._serialized_end=3814
+  _CREATEVERIFICATIONRESPONSE._serialized_start=3816
+  _CREATEVERIFICATIONRESPONSE._serialized_end=3934
+  _WAITVERIFICATIONREQUEST._serialized_start=3936
+  _WAITVERIFICATIONREQUEST._serialized_end=4039
+  _WAITVERIFICATIONRESPONSE._serialized_start=4041
+  _WAITVERIFICATIONRESPONSE._serialized_end=4128
+  _GETVERIFICATIONSTATUSREQUEST._serialized_start=4130
+  _GETVERIFICATIONSTATUSREQUEST._serialized_end=4221
+  _GETVERIFICATIONSTATUSRESPONSE._serialized_start=4223
+  _GETVERIFICATIONSTATUSRESPONSE._serialized_end=4315
+  _IDENTITYSERVICE._serialized_start=4318
+  _IDENTITYSERVICE._serialized_end=5535
 # @@protoc_insertion_point(module_scope)

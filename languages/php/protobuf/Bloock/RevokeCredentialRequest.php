@@ -21,6 +21,10 @@ class RevokeCredentialRequest extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>.bloock.Credential credential = 2;</code>
      */
     protected $credential = null;
+    /**
+     * Generated from protobuf field <code>.bloock.Key key = 3;</code>
+     */
+    protected $key = null;
 
     /**
      * Constructor.
@@ -30,6 +34,7 @@ class RevokeCredentialRequest extends \Google\Protobuf\Internal\Message
      *
      *     @type \Bloock\ConfigData $config_data
      *     @type \Bloock\Credential $credential
+     *     @type \Bloock\Key $key
      * }
      */
     public function __construct($data = NULL) {
@@ -97,6 +102,38 @@ class RevokeCredentialRequest extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkMessage($var, \Bloock\Credential::class);
         $this->credential = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.Key key = 3;</code>
+     * @return \Bloock\Key|null
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    public function hasKey()
+    {
+        return isset($this->key);
+    }
+
+    public function clearKey()
+    {
+        unset($this->key);
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.Key key = 3;</code>
+     * @param \Bloock\Key $var
+     * @return $this
+     */
+    public function setKey($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\Key::class);
+        $this->key = $var;
 
         return $this;
     }

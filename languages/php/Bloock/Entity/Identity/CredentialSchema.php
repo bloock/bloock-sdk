@@ -2,12 +2,16 @@
 
 namespace Bloock\Entity\Identity;
 
+/**
+ * Represents the schema information for a credential, including its ID and type.
+ */
 class CredentialSchema
 {
     private string $id;
     private string $type;
 
     /**
+     * Constructs an CredentialSchema object with the specified parameters.
      * @param string $id
      * @param string $type
      */
@@ -23,6 +27,7 @@ class CredentialSchema
     }
 
     /**
+     * Gets the id of the credential.
      * @return string
      */
     public function getId(): string
@@ -31,6 +36,7 @@ class CredentialSchema
     }
 
     /**
+     * Gets the type of the credential.
      * @return string
      */
     public function getType(): string

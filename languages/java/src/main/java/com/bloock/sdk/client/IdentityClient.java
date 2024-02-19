@@ -2,12 +2,12 @@ package com.bloock.sdk.client;
 
 import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.Config.ConfigData;
-import com.bloock.sdk.bridge.proto.IdentityV2;
+import com.bloock.sdk.bridge.proto.Identity;
 import com.bloock.sdk.bridge.proto.Shared;
 import com.bloock.sdk.bridge.proto.Shared.Error;
 import com.bloock.sdk.config.Config;
-import com.bloock.sdk.entity.authenticity.Signer;
-import com.bloock.sdk.entity.identity_v2.*;
+import com.bloock.sdk.entity.identity.*;
+import com.bloock.sdk.entity.key.Key;
 
 /**
  * Represents a client for interacting with the <a href="https://dashboard.bloock.com/login">Bloock Identity service</a>.
@@ -34,28 +34,28 @@ public class IdentityClient {
   }
 
   /**
-   * Creates a new identity.
+   * Creates a new holder identity.
    * @param issuerKey
    * @param didParams
    * @return
    * @throws Exception
    */
-  public String createIdentity(IdentityKey issuerKey, DidParams didParams) throws Exception {
-    IdentityV2.CreateIdentityV2Request.Builder builder =
-        IdentityV2.CreateIdentityV2Request.newBuilder()
-            .setIssuerKey(issuerKey.toProto())
-            .setDidParams(didParams.toProto())
+  public Holder createHolder(Key holderKey, DidType didType) throws Exception {
+    Identity.CreateHolderRequest.Builder builder =
+        Identity.CreateHolderRequest.newBuilder()
+            .setKey(holderKey.toProto())
+            .setDidType(didType.toProto())
             .setConfigData(this.configData);
 
-    IdentityV2.CreateIdentityV2Request request = builder.build();
+    Identity.CreateHolderRequest request = builder.build();
 
-    IdentityV2.CreateIdentityV2Response response = bridge.getIdentityV2().createIdentity(request);
+    Identity.CreateHolderResponse response = bridge.getIdentity().createHolder(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 
-    return response.getDid();
+    return new Holder(response.getDid(), didType, holderKey);
   }
 
   /**
@@ -68,14 +68,14 @@ public class IdentityClient {
    * @return
    * @throws Exception
    */
-  public String createIssuer(
-      IdentityKey issuerKey,
+  public Issuer createIssuer(
+      Key issuerKey,
       PublishIntervalParams publishInterval,
       String name,
       String description,
       String image)
       throws Exception {
-    return createIssuer(issuerKey, publishInterval, new DidParams(), name, description, image);
+    return createIssuer(issuerKey, publishInterval, new DidType(), name, description, image);
   }
 
   /**
@@ -89,18 +89,18 @@ public class IdentityClient {
    * @return
    * @throws Exception
    */
-  public String createIssuer(
-      IdentityKey issuerKey,
+  public Issuer createIssuer(
+      Key issuerKey,
       PublishIntervalParams publishInterval,
-      DidParams issuerParams,
+      DidType didType,
       String name,
       String description,
       String image)
       throws Exception {
-    IdentityV2.CreateIssuerRequest.Builder builder =
-        IdentityV2.CreateIssuerRequest.newBuilder()
-            .setIssuerKey(issuerKey.toProto())
-            .setIssuerParams(issuerParams.toProto())
+    Identity.CreateIssuerRequest.Builder builder =
+        Identity.CreateIssuerRequest.newBuilder()
+            .setKey(issuerKey.toProto())
+            .setDidType(didType.toProto())
             .setPublishInterval(publishInterval.toProto())
             .setConfigData(this.configData);
 
@@ -116,49 +116,49 @@ public class IdentityClient {
       builder.setImage(image);
     }
 
-    IdentityV2.CreateIssuerRequest request = builder.build();
+    Identity.CreateIssuerRequest request = builder.build();
 
-    IdentityV2.CreateIssuerResponse response = bridge.getIdentityV2().createIssuer(request);
+    Identity.CreateIssuerResponse response = bridge.getIdentity().createIssuer(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 
-    return response.getDid();
+    return new Issuer(response.getDid(), didType, issuerKey);
   }
 
   /**
-   * Gets the DID of an issuer based on the issuer key.
+   * Gets the issuer based on the issuer key and DID type.
    * @param issuerKey
    * @return
    * @throws Exception
    */
-  public String getIssuerByKey(IdentityKey issuerKey) throws Exception {
-    return getIssuerByKey(issuerKey, new DidParams());
+  public Issuer importIssuer(Key issuerKey) throws Exception {
+    return importIssuer(issuerKey, new DidType());
   }
 
   /**
-   * Gets the DID of an issuer based on the issuer key and DID parameters.
+   * Gets the issuer based on the issuer key and DID type.
    * @param issuerKey
    * @param issuerParams
    * @return
    * @throws Exception
    */
-  public String getIssuerByKey(IdentityKey issuerKey, DidParams issuerParams) throws Exception {
-    IdentityV2.GetIssuerByKeyRequest request =
-        IdentityV2.GetIssuerByKeyRequest.newBuilder()
-            .setIssuerKey(issuerKey.toProto())
-            .setIssuerParams(issuerParams.toProto())
+  public Issuer importIssuer(Key issuerKey, DidType didType) throws Exception {
+    Identity.ImportIssuerRequest request =
+        Identity.ImportIssuerRequest.newBuilder()
+            .setKey(issuerKey.toProto())
+            .setDidType(didType.toProto())
             .setConfigData(this.configData)
             .build();
 
-    IdentityV2.GetIssuerByKeyResponse response = bridge.getIdentityV2().getIssuerByKey(request);
+    Identity.ImportIssuerResponse response = bridge.getIdentity().importIssuer(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 
-    return response.getDid();
+    return new Issuer(response.getDid(), didType, issuerKey);
   }
 
   /**
@@ -182,10 +182,10 @@ public class IdentityClient {
    * @throws Exception
    */
   public Schema getSchema(String id) throws Exception {
-    IdentityV2.GetSchemaRequestV2 request =
-        IdentityV2.GetSchemaRequestV2.newBuilder().setConfigData(this.configData).setId(id).build();
+    Identity.GetSchemaRequest request =
+        Identity.GetSchemaRequest.newBuilder().setConfigData(this.configData).setId(id).build();
 
-    IdentityV2.GetSchemaResponseV2 response = bridge.getIdentityV2().getSchema(request);
+    Identity.GetSchemaResponse response = bridge.getIdentity().getSchema(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
@@ -205,10 +205,10 @@ public class IdentityClient {
    * @throws Exception
    */
   public CredentialBuilder buildCredential(
-      String schemaId, String issuerDid, String holderDid, Long expiration, int version)
+      Issuer issuer, String schemaId, String holderDid, Long expiration, int version)
       throws Exception {
     return new CredentialBuilder(
-        schemaId, issuerDid, holderDid, expiration, version, this.configData);
+        issuer, schemaId, holderDid, expiration, version, this.configData);
   }
 
   /**
@@ -218,15 +218,15 @@ public class IdentityClient {
    * @return
    * @throws Exception
    */
-  public IssuerStateReceipt publishIssuerState(String issuerDid, Signer signer) throws Exception {
-    IdentityV2.PublishIssuerStateRequest req =
-        IdentityV2.PublishIssuerStateRequest.newBuilder()
+  public IssuerStateReceipt forcePublishIssuerState(Issuer issuer) throws Exception {
+    Identity.ForcePublishIssuerStateRequest req =
+        Identity.ForcePublishIssuerStateRequest.newBuilder()
             .setConfigData(this.configData)
-            .setIssuerDid(issuerDid)
-            .setSigner(signer.toProto())
+            .setIssuerDid(issuer.getDid().getDid())
+            .setKey(issuer.getKey().toProto())
             .build();
 
-    IdentityV2.PublishIssuerStateResponse response = bridge.getIdentityV2().publishIssuerState(req);
+    Identity.ForcePublishIssuerStateResponse response = bridge.getIdentity().forcePublishIssuerState(req);
 
     if (response.getError() != Shared.Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
@@ -244,15 +244,15 @@ public class IdentityClient {
    */
   public CredentialProof getCredentialProof(String issuerDid, String credentialId)
       throws Exception {
-    IdentityV2.GetCredentialProofRequest request =
-        IdentityV2.GetCredentialProofRequest.newBuilder()
+    Identity.GetCredentialProofRequest request =
+        Identity.GetCredentialProofRequest.newBuilder()
             .setCredentialId(credentialId)
             .setIssuerDid(issuerDid)
             .setConfigData(this.configData)
             .build();
 
-    IdentityV2.GetCredentialProofResponse response =
-        bridge.getIdentityV2().getCredentialProof(request);
+    Identity.GetCredentialProofResponse response =
+        bridge.getIdentity().getCredentialProof(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
@@ -268,16 +268,16 @@ public class IdentityClient {
    * @return
    * @throws Exception
    */
-  public boolean revokeCredential(Credential credential, Signer signer) throws Exception {
-    IdentityV2.RevokeCredentialRequestV2 request =
-        IdentityV2.RevokeCredentialRequestV2.newBuilder()
+  public boolean revokeCredential(Credential credential, Issuer issuer) throws Exception {
+    Identity.RevokeCredentialRequest request =
+        Identity.RevokeCredentialRequest.newBuilder()
             .setConfigData(this.configData)
             .setCredential(credential.toProto())
-            .setSigner(signer.toProto())
+            .setKey(issuer.getKey().toProto())
             .build();
 
-    IdentityV2.RevokeCredentialResponseV2 response =
-        bridge.getIdentityV2().revokeCredential(request);
+    Identity.RevokeCredentialResponse response =
+        bridge.getIdentity().revokeCredential(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
@@ -293,14 +293,14 @@ public class IdentityClient {
    * @throws Exception
    */
   public VerificationReceipt createVerification(String proofRequest) throws Exception {
-    IdentityV2.CreateVerificationRequest request =
-        IdentityV2.CreateVerificationRequest.newBuilder()
+    Identity.CreateVerificationRequest request =
+        Identity.CreateVerificationRequest.newBuilder()
             .setConfigData(this.configData)
             .setProofRequest(proofRequest)
             .build();
 
-    IdentityV2.CreateVerificationResponse response =
-        bridge.getIdentityV2().createVerification(request);
+    Identity.CreateVerificationResponse response =
+        bridge.getIdentity().createVerification(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
@@ -317,14 +317,14 @@ public class IdentityClient {
    * @throws Exception
    */
   public boolean waitVerification(long sessionID, long timeout) throws Exception {
-    IdentityV2.WaitVerificationRequest request =
-        IdentityV2.WaitVerificationRequest.newBuilder()
+    Identity.WaitVerificationRequest request =
+        Identity.WaitVerificationRequest.newBuilder()
             .setConfigData(this.configData)
             .setSessionId(sessionID)
             .setTimeout(timeout)
             .build();
 
-    IdentityV2.WaitVerificationResponse response = bridge.getIdentityV2().waitVerification(request);
+    Identity.WaitVerificationResponse response = bridge.getIdentity().waitVerification(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
@@ -340,14 +340,14 @@ public class IdentityClient {
    * @throws Exception
    */
   public boolean getVerificationStatus(long sessionID) throws Exception {
-    IdentityV2.GetVerificationStatusRequest request =
-        IdentityV2.GetVerificationStatusRequest.newBuilder()
+    Identity.GetVerificationStatusRequest request =
+        Identity.GetVerificationStatusRequest.newBuilder()
             .setConfigData(this.configData)
             .setSessionId(sessionID)
             .build();
 
-    IdentityV2.GetVerificationStatusResponse response =
-        bridge.getIdentityV2().getVerificationStatus(request);
+    Identity.GetVerificationStatusResponse response =
+        bridge.getIdentity().getVerificationStatus(request);
 
     if (response.getError() != Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());

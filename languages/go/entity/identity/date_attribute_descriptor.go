@@ -2,15 +2,18 @@ package identity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// DateAttributeDescriptor represents a descriptor for a date attribute, including its display name, ID, description, and required status.
 type DateAttributeDescriptor struct {
 	AttributeDescriptor
 }
 
-func NewDateAttributeDescriptor(name string, technicalName string, description string) DateAttributeDescriptor {
+// NewDateAttributeDescriptor creates a new DateAttributeDescriptor instance with the provided details.
+func NewDateAttributeDescriptor(name string, id string, description string, required bool) DateAttributeDescriptor {
 	a := AttributeDescriptor{
-		DisplayName:   name,
-		TechnicalName: technicalName,
-		Description:   description,
+		DisplayName: name,
+		Id:          id,
+		Description: description,
+		Required:    required,
 	}
 	return DateAttributeDescriptor{
 		AttributeDescriptor: a,
@@ -22,9 +25,10 @@ func NewDateAttributeDescriptorFromProto(s *proto.DateAttributeDefinition) DateA
 		return DateAttributeDescriptor{}
 	}
 	a := AttributeDescriptor{
-		DisplayName:   s.GetId(),
-		TechnicalName: s.Id,
-		Description:   s.Description,
+		DisplayName: s.GetId(),
+		Id:          s.Id,
+		Description: s.Description,
+		Required:    s.Required,
 	}
 	return DateAttributeDescriptor{
 		AttributeDescriptor: a,
@@ -34,7 +38,8 @@ func NewDateAttributeDescriptorFromProto(s *proto.DateAttributeDefinition) DateA
 func (s DateAttributeDescriptor) ToProto() *proto.DateAttributeDefinition {
 	return &proto.DateAttributeDefinition{
 		DisplayName: s.DisplayName,
-		Id:          s.TechnicalName,
+		Id:          s.Id,
 		Description: s.Description,
+		Required:    s.Required,
 	}
 }

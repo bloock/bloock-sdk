@@ -2,50 +2,60 @@
 
 namespace Bloock\Entity\Identity;
 
-use Bloock\Entity\Authenticity\SignatureJws;
-use Bloock\Entity\Integrity\Proof;
-
+/**
+ * Represents the proof associated with a credential, including signature and sparse merkle tree proof.
+ */
 class CredentialProof
 {
-    private Proof $bloockProof;
-    private SignatureJws $signatureProof;
+    private string $signatureProof;
+    private string $sparseMtProof;
 
     /**
-     * @param Proof $bloockProof
-     * @param SignatureJws $signatureProof
+     * Constructs an CredentialProof object with the specified parameters.
+     * @param string $signatureProof
+     * @param string $sparseMtProof
      */
-    public function __construct(Proof $bloockProof, SignatureJws $signatureProof)
+    public function __construct(string $signatureProof, string $sparseMtProof)
     {
-        $this->bloockProof = $bloockProof;
         $this->signatureProof = $signatureProof;
+        $this->sparseMtProof = $sparseMtProof;
     }
 
     public static function fromProto(\Bloock\CredentialProof $res): CredentialProof
     {
-        return new CredentialProof(Proof::fromProto($res->getBloockProof()), SignatureJws::fromProto($res->getSignatureProof()));
+        return new CredentialProof($res->getSignatureProof(), $res->getSparseMtProof());
     }
 
     /**
-     * @return Proof
+     * Retrieve signature proof with string format
+     * @return string
      */
-    public function getBloockProof(): Proof
-    {
-        return $this->bloockProof;
-    }
-
-    /**
-     * @return SignatureJws
-     */
-    public function getSignatureProof(): SignatureJws
+    public function getSignatureProof(): string
     {
         return $this->signatureProof;
+    }
+
+    /**
+     * Retrieve sparse merkle tree proof with string format
+     * @return string
+     */
+    public function getSparseMtProof(): string
+    {
+        return $this->sparseMtProof;
     }
 
     public function toProto(): \Bloock\CredentialProof
     {
         $p = new \Bloock\CredentialProof();
-        $p->setBloockProof($this->bloockProof->toProto());
-        $p->setSignatureProof($this->signatureProof->toProto());
+
+        if ($this->signatureProof != null) {
+            $p->setSignatureProof($this->signatureProof);
+        }
+
+        if ($this->sparseMtProof != null) {
+            $p->setSparseMtProof($this->sparseMtProof);
+        }
+    
         return $p;
     }
 }

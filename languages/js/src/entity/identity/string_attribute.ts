@@ -1,6 +1,9 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
 import { Attribute } from "./attribute";
 
+/**
+ * Represents an attribute with a string value.
+ */
 export class StringAttribute extends Attribute<string> {
   public toProto(): identityEntitiesProto.StringAttribute {
     return identityEntitiesProto.StringAttribute.fromPartial({
@@ -9,7 +12,9 @@ export class StringAttribute extends Attribute<string> {
     });
   }
 
-  static fromProto(r: identityEntitiesProto.StringAttribute): StringAttribute {
+  static fromProto(
+    r: identityEntitiesProto.StringAttribute
+  ): StringAttribute {
     return new StringAttribute(r.id, r.value);
   }
 }

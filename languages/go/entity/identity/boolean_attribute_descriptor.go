@@ -2,15 +2,18 @@ package identity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// BooleanAttributeDescriptor represents a descriptor for a boolean attribute.
 type BooleanAttributeDescriptor struct {
 	AttributeDescriptor
 }
 
-func NewBooleanAttributeDescriptor(name string, technicalName string, description string) BooleanAttributeDescriptor {
+// NewBooleanAttributeDescriptor creates a new BooleanAttributeDescriptor instance with the provided details.
+func NewBooleanAttributeDescriptor(name string, id string, description string, required bool) BooleanAttributeDescriptor {
 	a := AttributeDescriptor{
-		DisplayName:   name,
-		TechnicalName: technicalName,
-		Description:   description,
+		DisplayName: name,
+		Id:          id,
+		Description: description,
+		Required:    required,
 	}
 	return BooleanAttributeDescriptor{
 		AttributeDescriptor: a,
@@ -22,9 +25,10 @@ func NewBooleanAttributeDescriptorFromProto(s *proto.BooleanAttributeDefinition)
 		return BooleanAttributeDescriptor{}
 	}
 	a := AttributeDescriptor{
-		DisplayName:   s.GetId(),
-		TechnicalName: s.Id,
-		Description:   s.Description,
+		DisplayName: s.GetId(),
+		Id:          s.Id,
+		Description: s.Description,
+		Required:    s.Required,
 	}
 	return BooleanAttributeDescriptor{
 		AttributeDescriptor: a,
@@ -34,7 +38,8 @@ func NewBooleanAttributeDescriptorFromProto(s *proto.BooleanAttributeDefinition)
 func (s BooleanAttributeDescriptor) ToProto() *proto.BooleanAttributeDefinition {
 	return &proto.BooleanAttributeDefinition{
 		DisplayName: s.DisplayName,
-		Id:          s.TechnicalName,
+		Id:          s.Id,
 		Description: s.Description,
+		Required:    s.Required,
 	}
 }

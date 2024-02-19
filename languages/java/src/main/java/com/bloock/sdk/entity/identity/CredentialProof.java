@@ -1,35 +1,55 @@
 package com.bloock.sdk.entity.identity;
 
 import com.bloock.sdk.bridge.proto.IdentityEntities;
-import com.bloock.sdk.entity.authenticity.SignatureJws;
-import com.bloock.sdk.entity.integrity.Proof;
 
+/**
+ * Represents the proof associated with a credential, including signature and sparse merkle tree proof.
+ */
 public class CredentialProof {
-  private final Proof bloockProof;
-  private final SignatureJws signatureProof;
+  private final String signatureProof;
+  private final String sparseMtProof;
 
-  public CredentialProof(Proof bloockProof, SignatureJws signatureProof) {
-    this.bloockProof = bloockProof;
+  /**
+   * Constructs an CredentialProof object with the specified parameters.
+   * @param signatureProof
+   * @param sparseMtProof
+   */
+  public CredentialProof(String signatureProof, String sparseMtProof) {
     this.signatureProof = signatureProof;
+    this.sparseMtProof = sparseMtProof;
   }
 
   public static CredentialProof fromProto(IdentityEntities.CredentialProof res) {
-    return new CredentialProof(
-        Proof.fromProto(res.getBloockProof()), SignatureJws.fromProto(res.getSignatureProof()));
+    return new CredentialProof(res.getSignatureProof(), res.getSparseMtProof());
   }
 
   public IdentityEntities.CredentialProof toProto() {
-    return IdentityEntities.CredentialProof.newBuilder()
-        .setBloockProof(this.bloockProof.toProto())
-        .setSignatureProof(this.signatureProof.toProto())
-        .build();
+    IdentityEntities.CredentialProof.Builder builder =
+        IdentityEntities.CredentialProof.newBuilder();
+    if (!this.signatureProof.isEmpty()) {
+      builder.setSignatureProof(this.signatureProof);
+    }
+
+    if (!this.sparseMtProof.isEmpty()) {
+      builder.setSparseMtProof(this.sparseMtProof);
+    }
+
+    return builder.build();
   }
 
-  public Proof getBloockProof() {
-    return bloockProof;
-  }
-
-  public SignatureJws getSignatureProof() {
+  /**
+   * Retrieve signature proof with string format
+   * @return
+   */
+  public String getSignatureProof() {
     return signatureProof;
+  }
+
+  /**
+   * Retrieve sparse merkle tree proof with string format
+   * @return
+   */
+  public String getSparseMtProof() {
+    return sparseMtProof;
   }
 }

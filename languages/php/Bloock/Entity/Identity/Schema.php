@@ -2,43 +2,75 @@
 
 namespace Bloock\Entity\Identity;
 
+/**
+ * Represents a schema with its attributes.
+ */
 class Schema
 {
-    private string $id;
+    private string $cid;
+    private string $cidJsonLd;
+    private string $schemaType;
     private string $json;
 
     /**
-     * @param string $id
+     * Constructs a Schema object with the specified parameters.
+     * @param string $cid
+     * @param string $cidJsonLd
+     * @param string $schemaType
      * @param string $json
      */
-    public function __construct(string $id, string $json)
+    public function __construct(string $cid, string $cidJsonLd, string $schemaType, string $json)
     {
-        $this->id = $id;
+        $this->cid = $cid;
+        $this->cidJsonLd = $cidJsonLd;
+        $this->schemaType = $schemaType;
         $this->json = $json;
     }
 
     public static function fromProto(\Bloock\Schema $res): Schema
     {
-        return new Schema($res->getId(), $res->getJsonLd());
+        return new Schema($res->getCid(), $res->getCidJsonLd(), $res->getSchemaType(), $res->getJson());
     }
 
     /**
+     * Gets the cid of the schema.
      * @return string
      */
-    public function getId(): string
+    public function getCid(): string
     {
-        return $this->id;
+        return $this->cid;
+    }
+
+    /**
+     * Gets de cid json-ld of the schema.
+     * @return string
+     */
+    public function getCidJsonLd(): string
+    {
+        return $this->cidJsonLd;
+    }
+
+    /**
+     * Gets the schema type of the schema.
+     * @return string
+     */
+    public function getSchemaType(): string
+    {
+        return $this->schemaType;
     }
 
     public function toProto(): \Bloock\Schema
     {
         $p = new \Bloock\Schema();
-        $p->setId($this->id);
-        $p->setJsonLd($this->json);
+        $p->setCid($this->cid);
+        $p->setCidJsonLd($this->cidJsonLd);
+        $p->setSchemaType($this->schemaType);
+        $p->setJson($this->json);
         return $p;
     }
 
     /**
+     * Gets the json representation of the schema.
      * @return string
      */
     public function getJson(): string

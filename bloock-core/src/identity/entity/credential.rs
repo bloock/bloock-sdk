@@ -1,13 +1,7 @@
-use bloock_signer::format::jws::JwsSignature;
-use serde::{
-    ser::{Error, SerializeTuple},
-    Deserialize, Serialize,
-};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::{identity::IdentityError, integrity::entity::proof::Proof};
-
-use super::dto::redeem_credential_response::RedeemCredentialResponse;
+use super::proof::CredentialProof;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Credential {
@@ -17,6 +11,8 @@ pub struct Credential {
     pub r#type: Vec<String>,
     #[serde(rename = "issuanceDate")]
     pub issuance_date: String,
+    #[serde(rename = "expirationDate")]
+    pub expiration_date: String,
     #[serde(rename = "credentialSubject")]
     pub credential_subject: Value,
     #[serde(rename = "credentialStatus")]
@@ -24,7 +20,6 @@ pub struct Credential {
     pub issuer: String,
     #[serde(rename = "credentialSchema")]
     pub credential_schema: CredentialSchema,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub proof: Option<CredentialProof>,
 }
 
@@ -40,67 +35,6 @@ pub struct CredentialStatus {
 pub struct CredentialSchema {
     pub id: String,
     pub r#type: String,
-}
-
-#[derive(Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct CredentialProof(pub JwsSignature, pub Proof);
-
-impl Serialize for CredentialProof {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut signature = serde_json::to_value(self.0.clone())
-            .map_err(|_| Error::custom("error serializing signature"))?;
-        let signature_map = signature
-            .as_object_mut()
-            .ok_or_else(|| Error::custom("error serializing signature"))?;
-        signature_map.insert(
-            "type".to_string(),
-            Value::String("BloockSignatureProof".to_string()),
-        );
-
-        let mut proof = serde_json::to_value(self.1.clone())
-            .map_err(|_| Error::custom("error serializing bloock proof"))?;
-        let proof_map = proof
-            .as_object_mut()
-            .ok_or_else(|| Error::custom("error serializing bloock proof"))?;
-        proof_map.insert(
-            "type".to_string(),
-            Value::String("BloockIntegrityProof".to_string()),
-        );
-
-        let mut state = serializer.serialize_tuple(2)?;
-        state.serialize_element(&signature_map)?;
-        state.serialize_element(&proof_map)?;
-
-        state.end()
-    }
-}
-
-impl TryFrom<RedeemCredentialResponse> for Credential {
-    type Error = IdentityError;
-
-    fn try_from(value: RedeemCredentialResponse) -> Result<Self, Self::Error> {
-        Ok(Credential {
-            context: value.body.context,
-            id: value.body.id,
-            r#type: value.body.r#type,
-            issuance_date: value.body.issuance_date,
-            credential_subject: value.body.credential_subject,
-            credential_status: CredentialStatus {
-                id: value.body.credential_status.id,
-                revocation_nonce: value.body.credential_status.revocation_nonce,
-                r#type: value.body.credential_status.r#type,
-            },
-            issuer: value.body.issuer,
-            credential_schema: CredentialSchema {
-                id: value.body.credential_schema.id,
-                r#type: value.body.credential_schema.r#type,
-            },
-            proof: Some(CredentialProof(value.body.proof.0, value.body.proof.1)),
-        })
-    }
 }
 
 #[cfg(test)]

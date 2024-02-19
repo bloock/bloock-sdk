@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Identity;
 
+/**
+ * Represents an attribute with a date value, including its key and formatted value.
+ */
 class DateAttribute extends Attribute
 {
     public static function fromProto(\Bloock\DateAttribute $res): DateAttribute

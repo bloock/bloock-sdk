@@ -14,13 +14,13 @@ use Google\Protobuf\Internal\GPBUtil;
 class CredentialProof extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>.bloock.Proof bloock_proof = 1;</code>
+     * Generated from protobuf field <code>string signature_proof = 1;</code>
      */
-    protected $bloock_proof = null;
+    protected $signature_proof = '';
     /**
-     * Generated from protobuf field <code>.bloock.SignatureJWS signature_proof = 2;</code>
+     * Generated from protobuf field <code>optional string sparse_mt_proof = 2;</code>
      */
-    protected $signature_proof = null;
+    protected $sparse_mt_proof = null;
 
     /**
      * Constructor.
@@ -28,8 +28,8 @@ class CredentialProof extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type \Bloock\Proof $bloock_proof
-     *     @type \Bloock\SignatureJWS $signature_proof
+     *     @type string $signature_proof
+     *     @type string $sparse_mt_proof
      * }
      */
     public function __construct($data = NULL) {
@@ -38,65 +38,55 @@ class CredentialProof extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.Proof bloock_proof = 1;</code>
-     * @return \Bloock\Proof|null
-     */
-    public function getBloockProof()
-    {
-        return $this->bloock_proof;
-    }
-
-    public function hasBloockProof()
-    {
-        return isset($this->bloock_proof);
-    }
-
-    public function clearBloockProof()
-    {
-        unset($this->bloock_proof);
-    }
-
-    /**
-     * Generated from protobuf field <code>.bloock.Proof bloock_proof = 1;</code>
-     * @param \Bloock\Proof $var
-     * @return $this
-     */
-    public function setBloockProof($var)
-    {
-        GPBUtil::checkMessage($var, \Bloock\Proof::class);
-        $this->bloock_proof = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>.bloock.SignatureJWS signature_proof = 2;</code>
-     * @return \Bloock\SignatureJWS|null
+     * Generated from protobuf field <code>string signature_proof = 1;</code>
+     * @return string
      */
     public function getSignatureProof()
     {
         return $this->signature_proof;
     }
 
-    public function hasSignatureProof()
-    {
-        return isset($this->signature_proof);
-    }
-
-    public function clearSignatureProof()
-    {
-        unset($this->signature_proof);
-    }
-
     /**
-     * Generated from protobuf field <code>.bloock.SignatureJWS signature_proof = 2;</code>
-     * @param \Bloock\SignatureJWS $var
+     * Generated from protobuf field <code>string signature_proof = 1;</code>
+     * @param string $var
      * @return $this
      */
     public function setSignatureProof($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\SignatureJWS::class);
+        GPBUtil::checkString($var, True);
         $this->signature_proof = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string sparse_mt_proof = 2;</code>
+     * @return string
+     */
+    public function getSparseMtProof()
+    {
+        return isset($this->sparse_mt_proof) ? $this->sparse_mt_proof : '';
+    }
+
+    public function hasSparseMtProof()
+    {
+        return isset($this->sparse_mt_proof);
+    }
+
+    public function clearSparseMtProof()
+    {
+        unset($this->sparse_mt_proof);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string sparse_mt_proof = 2;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setSparseMtProof($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->sparse_mt_proof = $var;
 
         return $this;
     }

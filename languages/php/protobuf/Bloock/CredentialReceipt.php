@@ -14,13 +14,17 @@ use Google\Protobuf\Internal\GPBUtil;
 class CredentialReceipt extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>string id = 1;</code>
+     * Generated from protobuf field <code>.bloock.Credential credential = 1;</code>
      */
-    protected $id = '';
+    protected $credential = null;
     /**
-     * Generated from protobuf field <code>int64 anchor_id = 2;</code>
+     * Generated from protobuf field <code>string credential_id = 2;</code>
      */
-    protected $anchor_id = 0;
+    protected $credential_id = '';
+    /**
+     * Generated from protobuf field <code>string credential_type = 3;</code>
+     */
+    protected $credential_type = '';
 
     /**
      * Constructor.
@@ -28,8 +32,9 @@ class CredentialReceipt extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type string $id
-     *     @type int|string $anchor_id
+     *     @type \Bloock\Credential $credential
+     *     @type string $credential_id
+     *     @type string $credential_type
      * }
      */
     public function __construct($data = NULL) {
@@ -38,45 +43,77 @@ class CredentialReceipt extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string id = 1;</code>
-     * @return string
+     * Generated from protobuf field <code>.bloock.Credential credential = 1;</code>
+     * @return \Bloock\Credential|null
      */
-    public function getId()
+    public function getCredential()
     {
-        return $this->id;
+        return $this->credential;
+    }
+
+    public function hasCredential()
+    {
+        return isset($this->credential);
+    }
+
+    public function clearCredential()
+    {
+        unset($this->credential);
     }
 
     /**
-     * Generated from protobuf field <code>string id = 1;</code>
-     * @param string $var
+     * Generated from protobuf field <code>.bloock.Credential credential = 1;</code>
+     * @param \Bloock\Credential $var
      * @return $this
      */
-    public function setId($var)
+    public function setCredential($var)
     {
-        GPBUtil::checkString($var, True);
-        $this->id = $var;
+        GPBUtil::checkMessage($var, \Bloock\Credential::class);
+        $this->credential = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>int64 anchor_id = 2;</code>
-     * @return int|string
+     * Generated from protobuf field <code>string credential_id = 2;</code>
+     * @return string
      */
-    public function getAnchorId()
+    public function getCredentialId()
     {
-        return $this->anchor_id;
+        return $this->credential_id;
     }
 
     /**
-     * Generated from protobuf field <code>int64 anchor_id = 2;</code>
-     * @param int|string $var
+     * Generated from protobuf field <code>string credential_id = 2;</code>
+     * @param string $var
      * @return $this
      */
-    public function setAnchorId($var)
+    public function setCredentialId($var)
     {
-        GPBUtil::checkInt64($var);
-        $this->anchor_id = $var;
+        GPBUtil::checkString($var, True);
+        $this->credential_id = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string credential_type = 3;</code>
+     * @return string
+     */
+    public function getCredentialType()
+    {
+        return $this->credential_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>string credential_type = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setCredentialType($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->credential_type = $var;
 
         return $this;
     }

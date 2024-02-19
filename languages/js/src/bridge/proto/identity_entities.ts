@@ -1,94 +1,173 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Proof } from "./integrity_entities";
 
-export interface Identity {
-  mnemonic: string;
-  key: string;
-  privateKey: string;
+export enum Method {
+  IDEN3 = 0,
+  POLYGON_ID = 1,
+  UNRECOGNIZED = -1,
 }
 
-export interface BooleanAttributeDefinition {
-  displayName: string;
-  id: string;
-  description: string;
+export function methodFromJSON(object: any): Method {
+  switch (object) {
+    case 0:
+    case "IDEN3":
+      return Method.IDEN3;
+    case 1:
+    case "POLYGON_ID":
+      return Method.POLYGON_ID;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Method.UNRECOGNIZED;
+  }
 }
 
-export interface DateAttributeDefinition {
-  displayName: string;
-  id: string;
-  description: string;
+export function methodToJSON(object: Method): string {
+  switch (object) {
+    case Method.IDEN3:
+      return "IDEN3";
+    case Method.POLYGON_ID:
+      return "POLYGON_ID";
+    case Method.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
 }
 
-export interface DateTimeAttributeDefinition {
-  displayName: string;
-  id: string;
-  description: string;
+export enum Blockchain {
+  ETHEREUM = 0,
+  POLYGON = 1,
+  UNKNOWN_CHAIN = 2,
+  NO_CHAIN = 3,
+  UNRECOGNIZED = -1,
 }
 
-export interface StringAttributeDefinition {
-  displayName: string;
-  id: string;
-  description: string;
+export function blockchainFromJSON(object: any): Blockchain {
+  switch (object) {
+    case 0:
+    case "ETHEREUM":
+      return Blockchain.ETHEREUM;
+    case 1:
+    case "POLYGON":
+      return Blockchain.POLYGON;
+    case 2:
+    case "UNKNOWN_CHAIN":
+      return Blockchain.UNKNOWN_CHAIN;
+    case 3:
+    case "NO_CHAIN":
+      return Blockchain.NO_CHAIN;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Blockchain.UNRECOGNIZED;
+  }
 }
 
-export interface NumberAttributeDefinition {
-  displayName: string;
-  id: string;
-  description: string;
+export function blockchainToJSON(object: Blockchain): string {
+  switch (object) {
+    case Blockchain.ETHEREUM:
+      return "ETHEREUM";
+    case Blockchain.POLYGON:
+      return "POLYGON";
+    case Blockchain.UNKNOWN_CHAIN:
+      return "UNKNOWN_CHAIN";
+    case Blockchain.NO_CHAIN:
+      return "NO_CHAIN";
+    case Blockchain.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
 }
 
-export interface BooleanAttribute {
-  id: string;
-  value: boolean;
+export enum NetworkId {
+  MAIN = 0,
+  MUMBAI = 1,
+  GOERLI = 2,
+  UNKNOWN_NETWORK = 3,
+  NO_NETWORK = 4,
+  UNRECOGNIZED = -1,
 }
 
-export interface DateAttribute {
-  id: string;
-  value: number;
+export function networkIdFromJSON(object: any): NetworkId {
+  switch (object) {
+    case 0:
+    case "MAIN":
+      return NetworkId.MAIN;
+    case 1:
+    case "MUMBAI":
+      return NetworkId.MUMBAI;
+    case 2:
+    case "GOERLI":
+      return NetworkId.GOERLI;
+    case 3:
+    case "UNKNOWN_NETWORK":
+      return NetworkId.UNKNOWN_NETWORK;
+    case 4:
+    case "NO_NETWORK":
+      return NetworkId.NO_NETWORK;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return NetworkId.UNRECOGNIZED;
+  }
 }
 
-export interface DateTimeAttribute {
-  id: string;
-  value: number;
+export function networkIdToJSON(object: NetworkId): string {
+  switch (object) {
+    case NetworkId.MAIN:
+      return "MAIN";
+    case NetworkId.MUMBAI:
+      return "MUMBAI";
+    case NetworkId.GOERLI:
+      return "GOERLI";
+    case NetworkId.UNKNOWN_NETWORK:
+      return "UNKNOWN_NETWORK";
+    case NetworkId.NO_NETWORK:
+      return "NO_NETWORK";
+    case NetworkId.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
 }
 
-export interface StringAttribute {
-  id: string;
-  value: string;
+export enum PublishInterval {
+  INTERVAL_5 = 0,
+  INTERVAL_15 = 1,
+  INTERVAL_60 = 2,
+  UNRECOGNIZED = -1,
 }
 
-export interface NumberAttribute {
-  id: string;
-  value: number;
+export function publishIntervalFromJSON(object: any): PublishInterval {
+  switch (object) {
+    case 0:
+    case "INTERVAL_5":
+      return PublishInterval.INTERVAL_5;
+    case 1:
+    case "INTERVAL_15":
+      return PublishInterval.INTERVAL_15;
+    case 2:
+    case "INTERVAL_60":
+      return PublishInterval.INTERVAL_60;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return PublishInterval.UNRECOGNIZED;
+  }
 }
 
-export interface Schema {
-  id: string;
-  jsonLd: string;
-}
-
-export interface CredentialOffer {
-  thid: string;
-  body?: CredentialOfferBody | undefined;
-  From: string;
-  To: string;
-}
-
-export interface CredentialOfferBody {
-  url: string;
-  credentials: CredentialOfferBodyCredentials[];
-}
-
-export interface CredentialOfferBodyCredentials {
-  id: string;
-  description: string;
-}
-
-export interface CredentialReceipt {
-  id: string;
-  anchorId: number;
+export function publishIntervalToJSON(object: PublishInterval): string {
+  switch (object) {
+    case PublishInterval.INTERVAL_5:
+      return "INTERVAL_5";
+    case PublishInterval.INTERVAL_15:
+      return "INTERVAL_15";
+    case PublishInterval.INTERVAL_60:
+      return "INTERVAL_60";
+    case PublishInterval.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
 }
 
 export interface Credential {
@@ -96,11 +175,17 @@ export interface Credential {
   id: string;
   type: string[];
   issuanceDate: string;
+  expiration: string;
   credentialSubject: string;
   credentialStatus?: CredentialStatus | undefined;
   issuer: string;
   credentialSchema?: CredentialSchema | undefined;
   proof?: CredentialProof | undefined;
+}
+
+export interface CredentialProof {
+  signatureProof: string;
+  sparseMtProof?: string | undefined;
 }
 
 export interface CredentialStatus {
@@ -114,19 +199,132 @@ export interface CredentialSchema {
   type: string;
 }
 
-export interface CredentialProof {
-  bloockProof?: Proof | undefined;
-  signatureProof?: SignatureJWS | undefined;
+export interface StringAttribute {
+  id: string;
+  value: string;
 }
 
-export interface CredentialVerification {
-  timestamp: number;
-  issuer: string;
-  revocation: number;
+export interface IntegerAttribute {
+  id: string;
+  value: number;
+}
+
+export interface DecimalAttribute {
+  id: string;
+  value: number;
+}
+
+export interface BooleanAttribute {
+  id: string;
+  value: boolean;
+}
+
+export interface DateAttribute {
+  id: string;
+  value: string;
+}
+
+export interface DateTimeAttribute {
+  id: string;
+  value: string;
+}
+
+export interface StringAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+}
+
+export interface IntegerAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+}
+
+export interface DecimalAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+}
+
+export interface BooleanAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+}
+
+export interface DateAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+}
+
+export interface DateTimeAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+}
+
+export interface StringEnumAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+  enum: string[];
+}
+
+export interface IntegerEnumAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+  enum: number[];
+}
+
+export interface DecimalEnumAttributeDefinition {
+  displayName: string;
+  id: string;
+  description: string;
+  required: boolean;
+  enum: number[];
+}
+
+export interface CredentialReceipt {
+  credential?: Credential | undefined;
+  credentialId: string;
+  credentialType: string;
+}
+
+export interface IssuerStateReceipt {
+  txHash: string;
+}
+
+export interface Schema {
+  cid: string;
+  cidJsonLd: string;
+  schemaType: string;
+  json: string;
 }
 
 export interface CredentialRevocation {
   success: boolean;
+}
+
+export interface VerificationReceipt {
+  verificationRequest: string;
+  sessionId: number;
+}
+
+export interface DidType {
+  method: Method;
+  blockchain: Blockchain;
+  networkId: NetworkId;
 }
 
 export interface SignatureJWS {
@@ -143,1322 +341,13 @@ export interface SignatureHeaderJWS {
   hashAlg?: string | undefined;
 }
 
-function createBaseIdentity(): Identity {
-  return { mnemonic: "", key: "", privateKey: "" };
-}
-
-export const Identity = {
-  encode(message: Identity, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.mnemonic !== "") {
-      writer.uint32(10).string(message.mnemonic);
-    }
-    if (message.key !== "") {
-      writer.uint32(18).string(message.key);
-    }
-    if (message.privateKey !== "") {
-      writer.uint32(26).string(message.privateKey);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Identity {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseIdentity();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.mnemonic = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.key = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.privateKey = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Identity {
-    return {
-      mnemonic: isSet(object.mnemonic) ? globalThis.String(object.mnemonic) : "",
-      key: isSet(object.key) ? globalThis.String(object.key) : "",
-      privateKey: isSet(object.privateKey) ? globalThis.String(object.privateKey) : "",
-    };
-  },
-
-  toJSON(message: Identity): unknown {
-    const obj: any = {};
-    if (message.mnemonic !== "") {
-      obj.mnemonic = message.mnemonic;
-    }
-    if (message.key !== "") {
-      obj.key = message.key;
-    }
-    if (message.privateKey !== "") {
-      obj.privateKey = message.privateKey;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Identity>, I>>(base?: I): Identity {
-    return Identity.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Identity>, I>>(object: I): Identity {
-    const message = createBaseIdentity();
-    message.mnemonic = object.mnemonic ?? "";
-    message.key = object.key ?? "";
-    message.privateKey = object.privateKey ?? "";
-    return message;
-  },
-};
-
-function createBaseBooleanAttributeDefinition(): BooleanAttributeDefinition {
-  return { displayName: "", id: "", description: "" };
-}
-
-export const BooleanAttributeDefinition = {
-  encode(message: BooleanAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.displayName !== "") {
-      writer.uint32(10).string(message.displayName);
-    }
-    if (message.id !== "") {
-      writer.uint32(18).string(message.id);
-    }
-    if (message.description !== "") {
-      writer.uint32(26).string(message.description);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): BooleanAttributeDefinition {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseBooleanAttributeDefinition();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.displayName = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.description = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): BooleanAttributeDefinition {
-    return {
-      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      description: isSet(object.description) ? globalThis.String(object.description) : "",
-    };
-  },
-
-  toJSON(message: BooleanAttributeDefinition): unknown {
-    const obj: any = {};
-    if (message.displayName !== "") {
-      obj.displayName = message.displayName;
-    }
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.description !== "") {
-      obj.description = message.description;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<BooleanAttributeDefinition>, I>>(base?: I): BooleanAttributeDefinition {
-    return BooleanAttributeDefinition.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<BooleanAttributeDefinition>, I>>(object: I): BooleanAttributeDefinition {
-    const message = createBaseBooleanAttributeDefinition();
-    message.displayName = object.displayName ?? "";
-    message.id = object.id ?? "";
-    message.description = object.description ?? "";
-    return message;
-  },
-};
-
-function createBaseDateAttributeDefinition(): DateAttributeDefinition {
-  return { displayName: "", id: "", description: "" };
-}
-
-export const DateAttributeDefinition = {
-  encode(message: DateAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.displayName !== "") {
-      writer.uint32(10).string(message.displayName);
-    }
-    if (message.id !== "") {
-      writer.uint32(18).string(message.id);
-    }
-    if (message.description !== "") {
-      writer.uint32(26).string(message.description);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): DateAttributeDefinition {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDateAttributeDefinition();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.displayName = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.description = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DateAttributeDefinition {
-    return {
-      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      description: isSet(object.description) ? globalThis.String(object.description) : "",
-    };
-  },
-
-  toJSON(message: DateAttributeDefinition): unknown {
-    const obj: any = {};
-    if (message.displayName !== "") {
-      obj.displayName = message.displayName;
-    }
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.description !== "") {
-      obj.description = message.description;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DateAttributeDefinition>, I>>(base?: I): DateAttributeDefinition {
-    return DateAttributeDefinition.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DateAttributeDefinition>, I>>(object: I): DateAttributeDefinition {
-    const message = createBaseDateAttributeDefinition();
-    message.displayName = object.displayName ?? "";
-    message.id = object.id ?? "";
-    message.description = object.description ?? "";
-    return message;
-  },
-};
-
-function createBaseDateTimeAttributeDefinition(): DateTimeAttributeDefinition {
-  return { displayName: "", id: "", description: "" };
-}
-
-export const DateTimeAttributeDefinition = {
-  encode(message: DateTimeAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.displayName !== "") {
-      writer.uint32(10).string(message.displayName);
-    }
-    if (message.id !== "") {
-      writer.uint32(18).string(message.id);
-    }
-    if (message.description !== "") {
-      writer.uint32(26).string(message.description);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): DateTimeAttributeDefinition {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDateTimeAttributeDefinition();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.displayName = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.description = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DateTimeAttributeDefinition {
-    return {
-      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      description: isSet(object.description) ? globalThis.String(object.description) : "",
-    };
-  },
-
-  toJSON(message: DateTimeAttributeDefinition): unknown {
-    const obj: any = {};
-    if (message.displayName !== "") {
-      obj.displayName = message.displayName;
-    }
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.description !== "") {
-      obj.description = message.description;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DateTimeAttributeDefinition>, I>>(base?: I): DateTimeAttributeDefinition {
-    return DateTimeAttributeDefinition.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DateTimeAttributeDefinition>, I>>(object: I): DateTimeAttributeDefinition {
-    const message = createBaseDateTimeAttributeDefinition();
-    message.displayName = object.displayName ?? "";
-    message.id = object.id ?? "";
-    message.description = object.description ?? "";
-    return message;
-  },
-};
-
-function createBaseStringAttributeDefinition(): StringAttributeDefinition {
-  return { displayName: "", id: "", description: "" };
-}
-
-export const StringAttributeDefinition = {
-  encode(message: StringAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.displayName !== "") {
-      writer.uint32(10).string(message.displayName);
-    }
-    if (message.id !== "") {
-      writer.uint32(18).string(message.id);
-    }
-    if (message.description !== "") {
-      writer.uint32(26).string(message.description);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): StringAttributeDefinition {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStringAttributeDefinition();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.displayName = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.description = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): StringAttributeDefinition {
-    return {
-      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      description: isSet(object.description) ? globalThis.String(object.description) : "",
-    };
-  },
-
-  toJSON(message: StringAttributeDefinition): unknown {
-    const obj: any = {};
-    if (message.displayName !== "") {
-      obj.displayName = message.displayName;
-    }
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.description !== "") {
-      obj.description = message.description;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<StringAttributeDefinition>, I>>(base?: I): StringAttributeDefinition {
-    return StringAttributeDefinition.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<StringAttributeDefinition>, I>>(object: I): StringAttributeDefinition {
-    const message = createBaseStringAttributeDefinition();
-    message.displayName = object.displayName ?? "";
-    message.id = object.id ?? "";
-    message.description = object.description ?? "";
-    return message;
-  },
-};
-
-function createBaseNumberAttributeDefinition(): NumberAttributeDefinition {
-  return { displayName: "", id: "", description: "" };
-}
-
-export const NumberAttributeDefinition = {
-  encode(message: NumberAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.displayName !== "") {
-      writer.uint32(10).string(message.displayName);
-    }
-    if (message.id !== "") {
-      writer.uint32(18).string(message.id);
-    }
-    if (message.description !== "") {
-      writer.uint32(26).string(message.description);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): NumberAttributeDefinition {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNumberAttributeDefinition();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.displayName = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.description = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): NumberAttributeDefinition {
-    return {
-      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      description: isSet(object.description) ? globalThis.String(object.description) : "",
-    };
-  },
-
-  toJSON(message: NumberAttributeDefinition): unknown {
-    const obj: any = {};
-    if (message.displayName !== "") {
-      obj.displayName = message.displayName;
-    }
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.description !== "") {
-      obj.description = message.description;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<NumberAttributeDefinition>, I>>(base?: I): NumberAttributeDefinition {
-    return NumberAttributeDefinition.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<NumberAttributeDefinition>, I>>(object: I): NumberAttributeDefinition {
-    const message = createBaseNumberAttributeDefinition();
-    message.displayName = object.displayName ?? "";
-    message.id = object.id ?? "";
-    message.description = object.description ?? "";
-    return message;
-  },
-};
-
-function createBaseBooleanAttribute(): BooleanAttribute {
-  return { id: "", value: false };
-}
-
-export const BooleanAttribute = {
-  encode(message: BooleanAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.value === true) {
-      writer.uint32(16).bool(message.value);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): BooleanAttribute {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseBooleanAttribute();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.value = reader.bool();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): BooleanAttribute {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      value: isSet(object.value) ? globalThis.Boolean(object.value) : false,
-    };
-  },
-
-  toJSON(message: BooleanAttribute): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.value === true) {
-      obj.value = message.value;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<BooleanAttribute>, I>>(base?: I): BooleanAttribute {
-    return BooleanAttribute.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<BooleanAttribute>, I>>(object: I): BooleanAttribute {
-    const message = createBaseBooleanAttribute();
-    message.id = object.id ?? "";
-    message.value = object.value ?? false;
-    return message;
-  },
-};
-
-function createBaseDateAttribute(): DateAttribute {
-  return { id: "", value: 0 };
-}
-
-export const DateAttribute = {
-  encode(message: DateAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.value !== 0) {
-      writer.uint32(16).int64(message.value);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): DateAttribute {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDateAttribute();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.value = longToNumber(reader.int64() as Long);
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DateAttribute {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      value: isSet(object.value) ? globalThis.Number(object.value) : 0,
-    };
-  },
-
-  toJSON(message: DateAttribute): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.value !== 0) {
-      obj.value = Math.round(message.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DateAttribute>, I>>(base?: I): DateAttribute {
-    return DateAttribute.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DateAttribute>, I>>(object: I): DateAttribute {
-    const message = createBaseDateAttribute();
-    message.id = object.id ?? "";
-    message.value = object.value ?? 0;
-    return message;
-  },
-};
-
-function createBaseDateTimeAttribute(): DateTimeAttribute {
-  return { id: "", value: 0 };
-}
-
-export const DateTimeAttribute = {
-  encode(message: DateTimeAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.value !== 0) {
-      writer.uint32(16).int64(message.value);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): DateTimeAttribute {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDateTimeAttribute();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.value = longToNumber(reader.int64() as Long);
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DateTimeAttribute {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      value: isSet(object.value) ? globalThis.Number(object.value) : 0,
-    };
-  },
-
-  toJSON(message: DateTimeAttribute): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.value !== 0) {
-      obj.value = Math.round(message.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DateTimeAttribute>, I>>(base?: I): DateTimeAttribute {
-    return DateTimeAttribute.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DateTimeAttribute>, I>>(object: I): DateTimeAttribute {
-    const message = createBaseDateTimeAttribute();
-    message.id = object.id ?? "";
-    message.value = object.value ?? 0;
-    return message;
-  },
-};
-
-function createBaseStringAttribute(): StringAttribute {
-  return { id: "", value: "" };
-}
-
-export const StringAttribute = {
-  encode(message: StringAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.value !== "") {
-      writer.uint32(18).string(message.value);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): StringAttribute {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStringAttribute();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.value = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): StringAttribute {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      value: isSet(object.value) ? globalThis.String(object.value) : "",
-    };
-  },
-
-  toJSON(message: StringAttribute): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.value !== "") {
-      obj.value = message.value;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<StringAttribute>, I>>(base?: I): StringAttribute {
-    return StringAttribute.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<StringAttribute>, I>>(object: I): StringAttribute {
-    const message = createBaseStringAttribute();
-    message.id = object.id ?? "";
-    message.value = object.value ?? "";
-    return message;
-  },
-};
-
-function createBaseNumberAttribute(): NumberAttribute {
-  return { id: "", value: 0 };
-}
-
-export const NumberAttribute = {
-  encode(message: NumberAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.value !== 0) {
-      writer.uint32(16).int64(message.value);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): NumberAttribute {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNumberAttribute();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.value = longToNumber(reader.int64() as Long);
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): NumberAttribute {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      value: isSet(object.value) ? globalThis.Number(object.value) : 0,
-    };
-  },
-
-  toJSON(message: NumberAttribute): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.value !== 0) {
-      obj.value = Math.round(message.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<NumberAttribute>, I>>(base?: I): NumberAttribute {
-    return NumberAttribute.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<NumberAttribute>, I>>(object: I): NumberAttribute {
-    const message = createBaseNumberAttribute();
-    message.id = object.id ?? "";
-    message.value = object.value ?? 0;
-    return message;
-  },
-};
-
-function createBaseSchema(): Schema {
-  return { id: "", jsonLd: "" };
-}
-
-export const Schema = {
-  encode(message: Schema, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.jsonLd !== "") {
-      writer.uint32(18).string(message.jsonLd);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Schema {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSchema();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.jsonLd = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Schema {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      jsonLd: isSet(object.jsonLd) ? globalThis.String(object.jsonLd) : "",
-    };
-  },
-
-  toJSON(message: Schema): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.jsonLd !== "") {
-      obj.jsonLd = message.jsonLd;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Schema>, I>>(base?: I): Schema {
-    return Schema.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Schema>, I>>(object: I): Schema {
-    const message = createBaseSchema();
-    message.id = object.id ?? "";
-    message.jsonLd = object.jsonLd ?? "";
-    return message;
-  },
-};
-
-function createBaseCredentialOffer(): CredentialOffer {
-  return { thid: "", body: undefined, From: "", To: "" };
-}
-
-export const CredentialOffer = {
-  encode(message: CredentialOffer, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.thid !== "") {
-      writer.uint32(10).string(message.thid);
-    }
-    if (message.body !== undefined) {
-      CredentialOfferBody.encode(message.body, writer.uint32(18).fork()).ldelim();
-    }
-    if (message.From !== "") {
-      writer.uint32(26).string(message.From);
-    }
-    if (message.To !== "") {
-      writer.uint32(34).string(message.To);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOffer {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCredentialOffer();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.thid = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.body = CredentialOfferBody.decode(reader, reader.uint32());
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.From = reader.string();
-          continue;
-        case 4:
-          if (tag !== 34) {
-            break;
-          }
-
-          message.To = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): CredentialOffer {
-    return {
-      thid: isSet(object.thid) ? globalThis.String(object.thid) : "",
-      body: isSet(object.body) ? CredentialOfferBody.fromJSON(object.body) : undefined,
-      From: isSet(object.From) ? globalThis.String(object.From) : "",
-      To: isSet(object.To) ? globalThis.String(object.To) : "",
-    };
-  },
-
-  toJSON(message: CredentialOffer): unknown {
-    const obj: any = {};
-    if (message.thid !== "") {
-      obj.thid = message.thid;
-    }
-    if (message.body !== undefined) {
-      obj.body = CredentialOfferBody.toJSON(message.body);
-    }
-    if (message.From !== "") {
-      obj.From = message.From;
-    }
-    if (message.To !== "") {
-      obj.To = message.To;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<CredentialOffer>, I>>(base?: I): CredentialOffer {
-    return CredentialOffer.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CredentialOffer>, I>>(object: I): CredentialOffer {
-    const message = createBaseCredentialOffer();
-    message.thid = object.thid ?? "";
-    message.body = (object.body !== undefined && object.body !== null)
-      ? CredentialOfferBody.fromPartial(object.body)
-      : undefined;
-    message.From = object.From ?? "";
-    message.To = object.To ?? "";
-    return message;
-  },
-};
-
-function createBaseCredentialOfferBody(): CredentialOfferBody {
-  return { url: "", credentials: [] };
-}
-
-export const CredentialOfferBody = {
-  encode(message: CredentialOfferBody, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.url !== "") {
-      writer.uint32(10).string(message.url);
-    }
-    for (const v of message.credentials) {
-      CredentialOfferBodyCredentials.encode(v!, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOfferBody {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCredentialOfferBody();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.url = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.credentials.push(CredentialOfferBodyCredentials.decode(reader, reader.uint32()));
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): CredentialOfferBody {
-    return {
-      url: isSet(object.url) ? globalThis.String(object.url) : "",
-      credentials: globalThis.Array.isArray(object?.credentials)
-        ? object.credentials.map((e: any) => CredentialOfferBodyCredentials.fromJSON(e))
-        : [],
-    };
-  },
-
-  toJSON(message: CredentialOfferBody): unknown {
-    const obj: any = {};
-    if (message.url !== "") {
-      obj.url = message.url;
-    }
-    if (message.credentials?.length) {
-      obj.credentials = message.credentials.map((e) => CredentialOfferBodyCredentials.toJSON(e));
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<CredentialOfferBody>, I>>(base?: I): CredentialOfferBody {
-    return CredentialOfferBody.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CredentialOfferBody>, I>>(object: I): CredentialOfferBody {
-    const message = createBaseCredentialOfferBody();
-    message.url = object.url ?? "";
-    message.credentials = object.credentials?.map((e) => CredentialOfferBodyCredentials.fromPartial(e)) || [];
-    return message;
-  },
-};
-
-function createBaseCredentialOfferBodyCredentials(): CredentialOfferBodyCredentials {
-  return { id: "", description: "" };
-}
-
-export const CredentialOfferBodyCredentials = {
-  encode(message: CredentialOfferBodyCredentials, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.description !== "") {
-      writer.uint32(18).string(message.description);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialOfferBodyCredentials {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCredentialOfferBodyCredentials();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.description = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): CredentialOfferBodyCredentials {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      description: isSet(object.description) ? globalThis.String(object.description) : "",
-    };
-  },
-
-  toJSON(message: CredentialOfferBodyCredentials): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.description !== "") {
-      obj.description = message.description;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<CredentialOfferBodyCredentials>, I>>(base?: I): CredentialOfferBodyCredentials {
-    return CredentialOfferBodyCredentials.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CredentialOfferBodyCredentials>, I>>(
-    object: I,
-  ): CredentialOfferBodyCredentials {
-    const message = createBaseCredentialOfferBodyCredentials();
-    message.id = object.id ?? "";
-    message.description = object.description ?? "";
-    return message;
-  },
-};
-
-function createBaseCredentialReceipt(): CredentialReceipt {
-  return { id: "", anchorId: 0 };
-}
-
-export const CredentialReceipt = {
-  encode(message: CredentialReceipt, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.anchorId !== 0) {
-      writer.uint32(16).int64(message.anchorId);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialReceipt {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCredentialReceipt();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.anchorId = longToNumber(reader.int64() as Long);
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): CredentialReceipt {
-    return {
-      id: isSet(object.id) ? globalThis.String(object.id) : "",
-      anchorId: isSet(object.anchorId) ? globalThis.Number(object.anchorId) : 0,
-    };
-  },
-
-  toJSON(message: CredentialReceipt): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.anchorId !== 0) {
-      obj.anchorId = Math.round(message.anchorId);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<CredentialReceipt>, I>>(base?: I): CredentialReceipt {
-    return CredentialReceipt.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CredentialReceipt>, I>>(object: I): CredentialReceipt {
-    const message = createBaseCredentialReceipt();
-    message.id = object.id ?? "";
-    message.anchorId = object.anchorId ?? 0;
-    return message;
-  },
-};
-
 function createBaseCredential(): Credential {
   return {
     context: [],
     id: "",
     type: [],
     issuanceDate: "",
+    expiration: "",
     credentialSubject: "",
     credentialStatus: undefined,
     issuer: "",
@@ -1481,20 +370,23 @@ export const Credential = {
     if (message.issuanceDate !== "") {
       writer.uint32(34).string(message.issuanceDate);
     }
+    if (message.expiration !== "") {
+      writer.uint32(42).string(message.expiration);
+    }
     if (message.credentialSubject !== "") {
-      writer.uint32(42).string(message.credentialSubject);
+      writer.uint32(50).string(message.credentialSubject);
     }
     if (message.credentialStatus !== undefined) {
-      CredentialStatus.encode(message.credentialStatus, writer.uint32(50).fork()).ldelim();
+      CredentialStatus.encode(message.credentialStatus, writer.uint32(58).fork()).ldelim();
     }
     if (message.issuer !== "") {
-      writer.uint32(58).string(message.issuer);
+      writer.uint32(66).string(message.issuer);
     }
     if (message.credentialSchema !== undefined) {
-      CredentialSchema.encode(message.credentialSchema, writer.uint32(66).fork()).ldelim();
+      CredentialSchema.encode(message.credentialSchema, writer.uint32(74).fork()).ldelim();
     }
     if (message.proof !== undefined) {
-      CredentialProof.encode(message.proof, writer.uint32(74).fork()).ldelim();
+      CredentialProof.encode(message.proof, writer.uint32(82).fork()).ldelim();
     }
     return writer;
   },
@@ -1539,31 +431,38 @@ export const Credential = {
             break;
           }
 
-          message.credentialSubject = reader.string();
+          message.expiration = reader.string();
           continue;
         case 6:
           if (tag !== 50) {
             break;
           }
 
-          message.credentialStatus = CredentialStatus.decode(reader, reader.uint32());
+          message.credentialSubject = reader.string();
           continue;
         case 7:
           if (tag !== 58) {
             break;
           }
 
-          message.issuer = reader.string();
+          message.credentialStatus = CredentialStatus.decode(reader, reader.uint32());
           continue;
         case 8:
           if (tag !== 66) {
             break;
           }
 
-          message.credentialSchema = CredentialSchema.decode(reader, reader.uint32());
+          message.issuer = reader.string();
           continue;
         case 9:
           if (tag !== 74) {
+            break;
+          }
+
+          message.credentialSchema = CredentialSchema.decode(reader, reader.uint32());
+          continue;
+        case 10:
+          if (tag !== 82) {
             break;
           }
 
@@ -1584,6 +483,7 @@ export const Credential = {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       type: globalThis.Array.isArray(object?.type) ? object.type.map((e: any) => globalThis.String(e)) : [],
       issuanceDate: isSet(object.issuanceDate) ? globalThis.String(object.issuanceDate) : "",
+      expiration: isSet(object.expiration) ? globalThis.String(object.expiration) : "",
       credentialSubject: isSet(object.credentialSubject) ? globalThis.String(object.credentialSubject) : "",
       credentialStatus: isSet(object.credentialStatus) ? CredentialStatus.fromJSON(object.credentialStatus) : undefined,
       issuer: isSet(object.issuer) ? globalThis.String(object.issuer) : "",
@@ -1605,6 +505,9 @@ export const Credential = {
     }
     if (message.issuanceDate !== "") {
       obj.issuanceDate = message.issuanceDate;
+    }
+    if (message.expiration !== "") {
+      obj.expiration = message.expiration;
     }
     if (message.credentialSubject !== "") {
       obj.credentialSubject = message.credentialSubject;
@@ -1633,6 +536,7 @@ export const Credential = {
     message.id = object.id ?? "";
     message.type = object.type?.map((e) => e) || [];
     message.issuanceDate = object.issuanceDate ?? "";
+    message.expiration = object.expiration ?? "";
     message.credentialSubject = object.credentialSubject ?? "";
     message.credentialStatus = (object.credentialStatus !== undefined && object.credentialStatus !== null)
       ? CredentialStatus.fromPartial(object.credentialStatus)
@@ -1644,6 +548,80 @@ export const Credential = {
     message.proof = (object.proof !== undefined && object.proof !== null)
       ? CredentialProof.fromPartial(object.proof)
       : undefined;
+    return message;
+  },
+};
+
+function createBaseCredentialProof(): CredentialProof {
+  return { signatureProof: "", sparseMtProof: undefined };
+}
+
+export const CredentialProof = {
+  encode(message: CredentialProof, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.signatureProof !== "") {
+      writer.uint32(10).string(message.signatureProof);
+    }
+    if (message.sparseMtProof !== undefined) {
+      writer.uint32(18).string(message.sparseMtProof);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialProof {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCredentialProof();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.signatureProof = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.sparseMtProof = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CredentialProof {
+    return {
+      signatureProof: isSet(object.signatureProof) ? globalThis.String(object.signatureProof) : "",
+      sparseMtProof: isSet(object.sparseMtProof) ? globalThis.String(object.sparseMtProof) : undefined,
+    };
+  },
+
+  toJSON(message: CredentialProof): unknown {
+    const obj: any = {};
+    if (message.signatureProof !== "") {
+      obj.signatureProof = message.signatureProof;
+    }
+    if (message.sparseMtProof !== undefined) {
+      obj.sparseMtProof = message.sparseMtProof;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CredentialProof>, I>>(base?: I): CredentialProof {
+    return CredentialProof.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CredentialProof>, I>>(object: I): CredentialProof {
+    const message = createBaseCredentialProof();
+    message.signatureProof = object.signatureProof ?? "";
+    message.sparseMtProof = object.sparseMtProof ?? undefined;
     return message;
   },
 };
@@ -1811,25 +789,25 @@ export const CredentialSchema = {
   },
 };
 
-function createBaseCredentialProof(): CredentialProof {
-  return { bloockProof: undefined, signatureProof: undefined };
+function createBaseStringAttribute(): StringAttribute {
+  return { id: "", value: "" };
 }
 
-export const CredentialProof = {
-  encode(message: CredentialProof, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.bloockProof !== undefined) {
-      Proof.encode(message.bloockProof, writer.uint32(10).fork()).ldelim();
+export const StringAttribute = {
+  encode(message: StringAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
-    if (message.signatureProof !== undefined) {
-      SignatureJWS.encode(message.signatureProof, writer.uint32(18).fork()).ldelim();
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialProof {
+  decode(input: _m0.Reader | Uint8Array, length?: number): StringAttribute {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCredentialProof();
+    const message = createBaseStringAttribute();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1838,14 +816,14 @@ export const CredentialProof = {
             break;
           }
 
-          message.bloockProof = Proof.decode(reader, reader.uint32());
+          message.id = reader.string();
           continue;
         case 2:
           if (tag !== 18) {
             break;
           }
 
-          message.signatureProof = SignatureJWS.decode(reader, reader.uint32());
+          message.value = reader.string();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -1856,84 +834,70 @@ export const CredentialProof = {
     return message;
   },
 
-  fromJSON(object: any): CredentialProof {
+  fromJSON(object: any): StringAttribute {
     return {
-      bloockProof: isSet(object.bloockProof) ? Proof.fromJSON(object.bloockProof) : undefined,
-      signatureProof: isSet(object.signatureProof) ? SignatureJWS.fromJSON(object.signatureProof) : undefined,
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
     };
   },
 
-  toJSON(message: CredentialProof): unknown {
+  toJSON(message: StringAttribute): unknown {
     const obj: any = {};
-    if (message.bloockProof !== undefined) {
-      obj.bloockProof = Proof.toJSON(message.bloockProof);
+    if (message.id !== "") {
+      obj.id = message.id;
     }
-    if (message.signatureProof !== undefined) {
-      obj.signatureProof = SignatureJWS.toJSON(message.signatureProof);
+    if (message.value !== "") {
+      obj.value = message.value;
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<CredentialProof>, I>>(base?: I): CredentialProof {
-    return CredentialProof.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<StringAttribute>, I>>(base?: I): StringAttribute {
+    return StringAttribute.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<CredentialProof>, I>>(object: I): CredentialProof {
-    const message = createBaseCredentialProof();
-    message.bloockProof = (object.bloockProof !== undefined && object.bloockProof !== null)
-      ? Proof.fromPartial(object.bloockProof)
-      : undefined;
-    message.signatureProof = (object.signatureProof !== undefined && object.signatureProof !== null)
-      ? SignatureJWS.fromPartial(object.signatureProof)
-      : undefined;
+  fromPartial<I extends Exact<DeepPartial<StringAttribute>, I>>(object: I): StringAttribute {
+    const message = createBaseStringAttribute();
+    message.id = object.id ?? "";
+    message.value = object.value ?? "";
     return message;
   },
 };
 
-function createBaseCredentialVerification(): CredentialVerification {
-  return { timestamp: 0, issuer: "", revocation: 0 };
+function createBaseIntegerAttribute(): IntegerAttribute {
+  return { id: "", value: 0 };
 }
 
-export const CredentialVerification = {
-  encode(message: CredentialVerification, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.timestamp !== 0) {
-      writer.uint32(8).uint64(message.timestamp);
+export const IntegerAttribute = {
+  encode(message: IntegerAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
-    if (message.issuer !== "") {
-      writer.uint32(18).string(message.issuer);
-    }
-    if (message.revocation !== 0) {
-      writer.uint32(24).uint64(message.revocation);
+    if (message.value !== 0) {
+      writer.uint32(16).int64(message.value);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialVerification {
+  decode(input: _m0.Reader | Uint8Array, length?: number): IntegerAttribute {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCredentialVerification();
+    const message = createBaseIntegerAttribute();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if (tag !== 8) {
+          if (tag !== 10) {
             break;
           }
 
-          message.timestamp = longToNumber(reader.uint64() as Long);
+          message.id = reader.string();
           continue;
         case 2:
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.issuer = reader.string();
-          continue;
-        case 3:
-          if (tag !== 24) {
-            break;
-          }
-
-          message.revocation = longToNumber(reader.uint64() as Long);
+          message.value = longToNumber(reader.int64() as Long);
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -1944,36 +908,1590 @@ export const CredentialVerification = {
     return message;
   },
 
-  fromJSON(object: any): CredentialVerification {
+  fromJSON(object: any): IntegerAttribute {
     return {
-      timestamp: isSet(object.timestamp) ? globalThis.Number(object.timestamp) : 0,
-      issuer: isSet(object.issuer) ? globalThis.String(object.issuer) : "",
-      revocation: isSet(object.revocation) ? globalThis.Number(object.revocation) : 0,
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.Number(object.value) : 0,
     };
   },
 
-  toJSON(message: CredentialVerification): unknown {
+  toJSON(message: IntegerAttribute): unknown {
     const obj: any = {};
-    if (message.timestamp !== 0) {
-      obj.timestamp = Math.round(message.timestamp);
+    if (message.id !== "") {
+      obj.id = message.id;
     }
-    if (message.issuer !== "") {
-      obj.issuer = message.issuer;
-    }
-    if (message.revocation !== 0) {
-      obj.revocation = Math.round(message.revocation);
+    if (message.value !== 0) {
+      obj.value = Math.round(message.value);
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<CredentialVerification>, I>>(base?: I): CredentialVerification {
-    return CredentialVerification.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<IntegerAttribute>, I>>(base?: I): IntegerAttribute {
+    return IntegerAttribute.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<CredentialVerification>, I>>(object: I): CredentialVerification {
-    const message = createBaseCredentialVerification();
-    message.timestamp = object.timestamp ?? 0;
-    message.issuer = object.issuer ?? "";
-    message.revocation = object.revocation ?? 0;
+  fromPartial<I extends Exact<DeepPartial<IntegerAttribute>, I>>(object: I): IntegerAttribute {
+    const message = createBaseIntegerAttribute();
+    message.id = object.id ?? "";
+    message.value = object.value ?? 0;
+    return message;
+  },
+};
+
+function createBaseDecimalAttribute(): DecimalAttribute {
+  return { id: "", value: 0 };
+}
+
+export const DecimalAttribute = {
+  encode(message: DecimalAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.value !== 0) {
+      writer.uint32(17).double(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DecimalAttribute {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDecimalAttribute();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 2:
+          if (tag !== 17) {
+            break;
+          }
+
+          message.value = reader.double();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DecimalAttribute {
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.Number(object.value) : 0,
+    };
+  },
+
+  toJSON(message: DecimalAttribute): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== 0) {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DecimalAttribute>, I>>(base?: I): DecimalAttribute {
+    return DecimalAttribute.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DecimalAttribute>, I>>(object: I): DecimalAttribute {
+    const message = createBaseDecimalAttribute();
+    message.id = object.id ?? "";
+    message.value = object.value ?? 0;
+    return message;
+  },
+};
+
+function createBaseBooleanAttribute(): BooleanAttribute {
+  return { id: "", value: false };
+}
+
+export const BooleanAttribute = {
+  encode(message: BooleanAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.value === true) {
+      writer.uint32(16).bool(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): BooleanAttribute {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBooleanAttribute();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.value = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BooleanAttribute {
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.Boolean(object.value) : false,
+    };
+  },
+
+  toJSON(message: BooleanAttribute): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value === true) {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BooleanAttribute>, I>>(base?: I): BooleanAttribute {
+    return BooleanAttribute.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<BooleanAttribute>, I>>(object: I): BooleanAttribute {
+    const message = createBaseBooleanAttribute();
+    message.id = object.id ?? "";
+    message.value = object.value ?? false;
+    return message;
+  },
+};
+
+function createBaseDateAttribute(): DateAttribute {
+  return { id: "", value: "" };
+}
+
+export const DateAttribute = {
+  encode(message: DateAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DateAttribute {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDateAttribute();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DateAttribute {
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
+  },
+
+  toJSON(message: DateAttribute): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DateAttribute>, I>>(base?: I): DateAttribute {
+    return DateAttribute.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DateAttribute>, I>>(object: I): DateAttribute {
+    const message = createBaseDateAttribute();
+    message.id = object.id ?? "";
+    message.value = object.value ?? "";
+    return message;
+  },
+};
+
+function createBaseDateTimeAttribute(): DateTimeAttribute {
+  return { id: "", value: "" };
+}
+
+export const DateTimeAttribute = {
+  encode(message: DateTimeAttribute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DateTimeAttribute {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDateTimeAttribute();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DateTimeAttribute {
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+    };
+  },
+
+  toJSON(message: DateTimeAttribute): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DateTimeAttribute>, I>>(base?: I): DateTimeAttribute {
+    return DateTimeAttribute.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DateTimeAttribute>, I>>(object: I): DateTimeAttribute {
+    const message = createBaseDateTimeAttribute();
+    message.id = object.id ?? "";
+    message.value = object.value ?? "";
+    return message;
+  },
+};
+
+function createBaseStringAttributeDefinition(): StringAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false };
+}
+
+export const StringAttributeDefinition = {
+  encode(message: StringAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): StringAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseStringAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): StringAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+    };
+  },
+
+  toJSON(message: StringAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<StringAttributeDefinition>, I>>(base?: I): StringAttributeDefinition {
+    return StringAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<StringAttributeDefinition>, I>>(object: I): StringAttributeDefinition {
+    const message = createBaseStringAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    return message;
+  },
+};
+
+function createBaseIntegerAttributeDefinition(): IntegerAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false };
+}
+
+export const IntegerAttributeDefinition = {
+  encode(message: IntegerAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): IntegerAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseIntegerAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): IntegerAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+    };
+  },
+
+  toJSON(message: IntegerAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<IntegerAttributeDefinition>, I>>(base?: I): IntegerAttributeDefinition {
+    return IntegerAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<IntegerAttributeDefinition>, I>>(object: I): IntegerAttributeDefinition {
+    const message = createBaseIntegerAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    return message;
+  },
+};
+
+function createBaseDecimalAttributeDefinition(): DecimalAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false };
+}
+
+export const DecimalAttributeDefinition = {
+  encode(message: DecimalAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DecimalAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDecimalAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DecimalAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+    };
+  },
+
+  toJSON(message: DecimalAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DecimalAttributeDefinition>, I>>(base?: I): DecimalAttributeDefinition {
+    return DecimalAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DecimalAttributeDefinition>, I>>(object: I): DecimalAttributeDefinition {
+    const message = createBaseDecimalAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    return message;
+  },
+};
+
+function createBaseBooleanAttributeDefinition(): BooleanAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false };
+}
+
+export const BooleanAttributeDefinition = {
+  encode(message: BooleanAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): BooleanAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBooleanAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BooleanAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+    };
+  },
+
+  toJSON(message: BooleanAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BooleanAttributeDefinition>, I>>(base?: I): BooleanAttributeDefinition {
+    return BooleanAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<BooleanAttributeDefinition>, I>>(object: I): BooleanAttributeDefinition {
+    const message = createBaseBooleanAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    return message;
+  },
+};
+
+function createBaseDateAttributeDefinition(): DateAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false };
+}
+
+export const DateAttributeDefinition = {
+  encode(message: DateAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DateAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDateAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DateAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+    };
+  },
+
+  toJSON(message: DateAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DateAttributeDefinition>, I>>(base?: I): DateAttributeDefinition {
+    return DateAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DateAttributeDefinition>, I>>(object: I): DateAttributeDefinition {
+    const message = createBaseDateAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    return message;
+  },
+};
+
+function createBaseDateTimeAttributeDefinition(): DateTimeAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false };
+}
+
+export const DateTimeAttributeDefinition = {
+  encode(message: DateTimeAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DateTimeAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDateTimeAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DateTimeAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+    };
+  },
+
+  toJSON(message: DateTimeAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DateTimeAttributeDefinition>, I>>(base?: I): DateTimeAttributeDefinition {
+    return DateTimeAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DateTimeAttributeDefinition>, I>>(object: I): DateTimeAttributeDefinition {
+    const message = createBaseDateTimeAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    return message;
+  },
+};
+
+function createBaseStringEnumAttributeDefinition(): StringEnumAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false, enum: [] };
+}
+
+export const StringEnumAttributeDefinition = {
+  encode(message: StringEnumAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    for (const v of message.enum) {
+      writer.uint32(42).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): StringEnumAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseStringEnumAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.enum.push(reader.string());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): StringEnumAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+      enum: globalThis.Array.isArray(object?.enum) ? object.enum.map((e: any) => globalThis.String(e)) : [],
+    };
+  },
+
+  toJSON(message: StringEnumAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    if (message.enum?.length) {
+      obj.enum = message.enum;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<StringEnumAttributeDefinition>, I>>(base?: I): StringEnumAttributeDefinition {
+    return StringEnumAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<StringEnumAttributeDefinition>, I>>(
+    object: I,
+  ): StringEnumAttributeDefinition {
+    const message = createBaseStringEnumAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    message.enum = object.enum?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseIntegerEnumAttributeDefinition(): IntegerEnumAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false, enum: [] };
+}
+
+export const IntegerEnumAttributeDefinition = {
+  encode(message: IntegerEnumAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    writer.uint32(42).fork();
+    for (const v of message.enum) {
+      writer.int64(v);
+    }
+    writer.ldelim();
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): IntegerEnumAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseIntegerEnumAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+        case 5:
+          if (tag === 40) {
+            message.enum.push(longToNumber(reader.int64() as Long));
+
+            continue;
+          }
+
+          if (tag === 42) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.enum.push(longToNumber(reader.int64() as Long));
+            }
+
+            continue;
+          }
+
+          break;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): IntegerEnumAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+      enum: globalThis.Array.isArray(object?.enum) ? object.enum.map((e: any) => globalThis.Number(e)) : [],
+    };
+  },
+
+  toJSON(message: IntegerEnumAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    if (message.enum?.length) {
+      obj.enum = message.enum.map((e) => Math.round(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<IntegerEnumAttributeDefinition>, I>>(base?: I): IntegerEnumAttributeDefinition {
+    return IntegerEnumAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<IntegerEnumAttributeDefinition>, I>>(
+    object: I,
+  ): IntegerEnumAttributeDefinition {
+    const message = createBaseIntegerEnumAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    message.enum = object.enum?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseDecimalEnumAttributeDefinition(): DecimalEnumAttributeDefinition {
+  return { displayName: "", id: "", description: "", required: false, enum: [] };
+}
+
+export const DecimalEnumAttributeDefinition = {
+  encode(message: DecimalEnumAttributeDefinition, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.displayName !== "") {
+      writer.uint32(10).string(message.displayName);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.required === true) {
+      writer.uint32(32).bool(message.required);
+    }
+    writer.uint32(42).fork();
+    for (const v of message.enum) {
+      writer.double(v);
+    }
+    writer.ldelim();
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DecimalEnumAttributeDefinition {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDecimalEnumAttributeDefinition();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.description = reader.string();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.required = reader.bool();
+          continue;
+        case 5:
+          if (tag === 41) {
+            message.enum.push(reader.double());
+
+            continue;
+          }
+
+          if (tag === 42) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.enum.push(reader.double());
+            }
+
+            continue;
+          }
+
+          break;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DecimalEnumAttributeDefinition {
+    return {
+      displayName: isSet(object.displayName) ? globalThis.String(object.displayName) : "",
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      description: isSet(object.description) ? globalThis.String(object.description) : "",
+      required: isSet(object.required) ? globalThis.Boolean(object.required) : false,
+      enum: globalThis.Array.isArray(object?.enum) ? object.enum.map((e: any) => globalThis.Number(e)) : [],
+    };
+  },
+
+  toJSON(message: DecimalEnumAttributeDefinition): unknown {
+    const obj: any = {};
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.description !== "") {
+      obj.description = message.description;
+    }
+    if (message.required === true) {
+      obj.required = message.required;
+    }
+    if (message.enum?.length) {
+      obj.enum = message.enum;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DecimalEnumAttributeDefinition>, I>>(base?: I): DecimalEnumAttributeDefinition {
+    return DecimalEnumAttributeDefinition.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DecimalEnumAttributeDefinition>, I>>(
+    object: I,
+  ): DecimalEnumAttributeDefinition {
+    const message = createBaseDecimalEnumAttributeDefinition();
+    message.displayName = object.displayName ?? "";
+    message.id = object.id ?? "";
+    message.description = object.description ?? "";
+    message.required = object.required ?? false;
+    message.enum = object.enum?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseCredentialReceipt(): CredentialReceipt {
+  return { credential: undefined, credentialId: "", credentialType: "" };
+}
+
+export const CredentialReceipt = {
+  encode(message: CredentialReceipt, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.credential !== undefined) {
+      Credential.encode(message.credential, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.credentialId !== "") {
+      writer.uint32(18).string(message.credentialId);
+    }
+    if (message.credentialType !== "") {
+      writer.uint32(26).string(message.credentialType);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): CredentialReceipt {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCredentialReceipt();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.credential = Credential.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.credentialId = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.credentialType = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CredentialReceipt {
+    return {
+      credential: isSet(object.credential) ? Credential.fromJSON(object.credential) : undefined,
+      credentialId: isSet(object.credentialId) ? globalThis.String(object.credentialId) : "",
+      credentialType: isSet(object.credentialType) ? globalThis.String(object.credentialType) : "",
+    };
+  },
+
+  toJSON(message: CredentialReceipt): unknown {
+    const obj: any = {};
+    if (message.credential !== undefined) {
+      obj.credential = Credential.toJSON(message.credential);
+    }
+    if (message.credentialId !== "") {
+      obj.credentialId = message.credentialId;
+    }
+    if (message.credentialType !== "") {
+      obj.credentialType = message.credentialType;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CredentialReceipt>, I>>(base?: I): CredentialReceipt {
+    return CredentialReceipt.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CredentialReceipt>, I>>(object: I): CredentialReceipt {
+    const message = createBaseCredentialReceipt();
+    message.credential = (object.credential !== undefined && object.credential !== null)
+      ? Credential.fromPartial(object.credential)
+      : undefined;
+    message.credentialId = object.credentialId ?? "";
+    message.credentialType = object.credentialType ?? "";
+    return message;
+  },
+};
+
+function createBaseIssuerStateReceipt(): IssuerStateReceipt {
+  return { txHash: "" };
+}
+
+export const IssuerStateReceipt = {
+  encode(message: IssuerStateReceipt, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.txHash !== "") {
+      writer.uint32(10).string(message.txHash);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): IssuerStateReceipt {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseIssuerStateReceipt();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.txHash = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): IssuerStateReceipt {
+    return { txHash: isSet(object.txHash) ? globalThis.String(object.txHash) : "" };
+  },
+
+  toJSON(message: IssuerStateReceipt): unknown {
+    const obj: any = {};
+    if (message.txHash !== "") {
+      obj.txHash = message.txHash;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<IssuerStateReceipt>, I>>(base?: I): IssuerStateReceipt {
+    return IssuerStateReceipt.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<IssuerStateReceipt>, I>>(object: I): IssuerStateReceipt {
+    const message = createBaseIssuerStateReceipt();
+    message.txHash = object.txHash ?? "";
+    return message;
+  },
+};
+
+function createBaseSchema(): Schema {
+  return { cid: "", cidJsonLd: "", schemaType: "", json: "" };
+}
+
+export const Schema = {
+  encode(message: Schema, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.cid !== "") {
+      writer.uint32(10).string(message.cid);
+    }
+    if (message.cidJsonLd !== "") {
+      writer.uint32(18).string(message.cidJsonLd);
+    }
+    if (message.schemaType !== "") {
+      writer.uint32(26).string(message.schemaType);
+    }
+    if (message.json !== "") {
+      writer.uint32(34).string(message.json);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Schema {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSchema();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.cid = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.cidJsonLd = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.schemaType = reader.string();
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.json = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Schema {
+    return {
+      cid: isSet(object.cid) ? globalThis.String(object.cid) : "",
+      cidJsonLd: isSet(object.cidJsonLd) ? globalThis.String(object.cidJsonLd) : "",
+      schemaType: isSet(object.schemaType) ? globalThis.String(object.schemaType) : "",
+      json: isSet(object.json) ? globalThis.String(object.json) : "",
+    };
+  },
+
+  toJSON(message: Schema): unknown {
+    const obj: any = {};
+    if (message.cid !== "") {
+      obj.cid = message.cid;
+    }
+    if (message.cidJsonLd !== "") {
+      obj.cidJsonLd = message.cidJsonLd;
+    }
+    if (message.schemaType !== "") {
+      obj.schemaType = message.schemaType;
+    }
+    if (message.json !== "") {
+      obj.json = message.json;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Schema>, I>>(base?: I): Schema {
+    return Schema.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Schema>, I>>(object: I): Schema {
+    const message = createBaseSchema();
+    message.cid = object.cid ?? "";
+    message.cidJsonLd = object.cidJsonLd ?? "";
+    message.schemaType = object.schemaType ?? "";
+    message.json = object.json ?? "";
     return message;
   },
 };
@@ -2031,6 +2549,169 @@ export const CredentialRevocation = {
   fromPartial<I extends Exact<DeepPartial<CredentialRevocation>, I>>(object: I): CredentialRevocation {
     const message = createBaseCredentialRevocation();
     message.success = object.success ?? false;
+    return message;
+  },
+};
+
+function createBaseVerificationReceipt(): VerificationReceipt {
+  return { verificationRequest: "", sessionId: 0 };
+}
+
+export const VerificationReceipt = {
+  encode(message: VerificationReceipt, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.verificationRequest !== "") {
+      writer.uint32(10).string(message.verificationRequest);
+    }
+    if (message.sessionId !== 0) {
+      writer.uint32(16).int64(message.sessionId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): VerificationReceipt {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseVerificationReceipt();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.verificationRequest = reader.string();
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.sessionId = longToNumber(reader.int64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): VerificationReceipt {
+    return {
+      verificationRequest: isSet(object.verificationRequest) ? globalThis.String(object.verificationRequest) : "",
+      sessionId: isSet(object.sessionId) ? globalThis.Number(object.sessionId) : 0,
+    };
+  },
+
+  toJSON(message: VerificationReceipt): unknown {
+    const obj: any = {};
+    if (message.verificationRequest !== "") {
+      obj.verificationRequest = message.verificationRequest;
+    }
+    if (message.sessionId !== 0) {
+      obj.sessionId = Math.round(message.sessionId);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<VerificationReceipt>, I>>(base?: I): VerificationReceipt {
+    return VerificationReceipt.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<VerificationReceipt>, I>>(object: I): VerificationReceipt {
+    const message = createBaseVerificationReceipt();
+    message.verificationRequest = object.verificationRequest ?? "";
+    message.sessionId = object.sessionId ?? 0;
+    return message;
+  },
+};
+
+function createBaseDidType(): DidType {
+  return { method: 0, blockchain: 0, networkId: 0 };
+}
+
+export const DidType = {
+  encode(message: DidType, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.method !== 0) {
+      writer.uint32(8).int32(message.method);
+    }
+    if (message.blockchain !== 0) {
+      writer.uint32(16).int32(message.blockchain);
+    }
+    if (message.networkId !== 0) {
+      writer.uint32(24).int32(message.networkId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DidType {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDidType();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.method = reader.int32() as any;
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.blockchain = reader.int32() as any;
+          continue;
+        case 3:
+          if (tag !== 24) {
+            break;
+          }
+
+          message.networkId = reader.int32() as any;
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DidType {
+    return {
+      method: isSet(object.method) ? methodFromJSON(object.method) : 0,
+      blockchain: isSet(object.blockchain) ? blockchainFromJSON(object.blockchain) : 0,
+      networkId: isSet(object.networkId) ? networkIdFromJSON(object.networkId) : 0,
+    };
+  },
+
+  toJSON(message: DidType): unknown {
+    const obj: any = {};
+    if (message.method !== 0) {
+      obj.method = methodToJSON(message.method);
+    }
+    if (message.blockchain !== 0) {
+      obj.blockchain = blockchainToJSON(message.blockchain);
+    }
+    if (message.networkId !== 0) {
+      obj.networkId = networkIdToJSON(message.networkId);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DidType>, I>>(base?: I): DidType {
+    return DidType.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DidType>, I>>(object: I): DidType {
+    const message = createBaseDidType();
+    message.method = object.method ?? 0;
+    message.blockchain = object.blockchain ?? 0;
+    message.networkId = object.networkId ?? 0;
     return message;
   },
 };

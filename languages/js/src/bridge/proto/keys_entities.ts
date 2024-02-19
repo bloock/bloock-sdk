@@ -201,6 +201,11 @@ export interface AccessControlSecret {
   secret: string;
 }
 
+export interface Key {
+  localKey?: LocalKey | undefined;
+  managedKey?: ManagedKey | undefined;
+}
+
 function createBaseLocalKey(): LocalKey {
   return { key: "", keyType: 0, privateKey: undefined };
 }
@@ -1251,6 +1256,84 @@ export const AccessControlSecret = {
   fromPartial<I extends Exact<DeepPartial<AccessControlSecret>, I>>(object: I): AccessControlSecret {
     const message = createBaseAccessControlSecret();
     message.secret = object.secret ?? "";
+    return message;
+  },
+};
+
+function createBaseKey(): Key {
+  return { localKey: undefined, managedKey: undefined };
+}
+
+export const Key = {
+  encode(message: Key, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.localKey !== undefined) {
+      LocalKey.encode(message.localKey, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.managedKey !== undefined) {
+      ManagedKey.encode(message.managedKey, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Key {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKey();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.localKey = LocalKey.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.managedKey = ManagedKey.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Key {
+    return {
+      localKey: isSet(object.localKey) ? LocalKey.fromJSON(object.localKey) : undefined,
+      managedKey: isSet(object.managedKey) ? ManagedKey.fromJSON(object.managedKey) : undefined,
+    };
+  },
+
+  toJSON(message: Key): unknown {
+    const obj: any = {};
+    if (message.localKey !== undefined) {
+      obj.localKey = LocalKey.toJSON(message.localKey);
+    }
+    if (message.managedKey !== undefined) {
+      obj.managedKey = ManagedKey.toJSON(message.managedKey);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Key>, I>>(base?: I): Key {
+    return Key.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Key>, I>>(object: I): Key {
+    const message = createBaseKey();
+    message.localKey = (object.localKey !== undefined && object.localKey !== null)
+      ? LocalKey.fromPartial(object.localKey)
+      : undefined;
+    message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
+      ? ManagedKey.fromPartial(object.managedKey)
+      : undefined;
     return message;
   },
 };

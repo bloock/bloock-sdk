@@ -2,15 +2,18 @@ package identity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// StringAttributeDescriptor represents a descriptor for an attribute with a string value.
 type StringAttributeDescriptor struct {
 	AttributeDescriptor
 }
 
-func NewStringAttributeDescriptor(name string, technicalName string, description string) StringAttributeDescriptor {
+// NewStringAttributeDescriptor creates a new StringAttributeDescriptor instance with the provided details.
+func NewStringAttributeDescriptor(name string, id string, description string, required bool) StringAttributeDescriptor {
 	a := AttributeDescriptor{
-		DisplayName:   name,
-		TechnicalName: technicalName,
-		Description:   description,
+		DisplayName: name,
+		Id:          id,
+		Description: description,
+		Required:    required,
 	}
 	return StringAttributeDescriptor{
 		AttributeDescriptor: a,
@@ -22,9 +25,10 @@ func NewStringAttributeDescriptorFromProto(s *proto.StringAttributeDefinition) S
 		return StringAttributeDescriptor{}
 	}
 	a := AttributeDescriptor{
-		DisplayName:   s.GetId(),
-		TechnicalName: s.Id,
-		Description:   s.Description,
+		DisplayName: s.GetId(),
+		Id:          s.Id,
+		Description: s.Description,
+		Required:    s.Required,
 	}
 	return StringAttributeDescriptor{
 		AttributeDescriptor: a,
@@ -34,7 +38,8 @@ func NewStringAttributeDescriptorFromProto(s *proto.StringAttributeDefinition) S
 func (s StringAttributeDescriptor) ToProto() *proto.StringAttributeDefinition {
 	return &proto.StringAttributeDefinition{
 		DisplayName: s.DisplayName,
-		Id:          s.TechnicalName,
+		Id:          s.Id,
 		Description: s.Description,
+		Required:    s.Required,
 	}
 }

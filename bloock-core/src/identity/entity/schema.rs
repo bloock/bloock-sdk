@@ -1,28 +1,15 @@
-use serde::{Serialize, Deserialize};
-
 pub struct Schema {
     pub cid: String,
+    pub cid_json_ld: String,
+    pub schema_type: String,
     pub json: String,
 }
 
 pub struct Attribute {
+    pub title: String,
     pub name: String,
     pub r#type: String,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct SchemaFields {
-    #[serde(rename(deserialize = "$metadata"))]
-    pub metadata: SchemaMetadata,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct SchemaMetadata {
-    pub uris: SchemaUris,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct SchemaUris {
-    #[serde(rename(deserialize = "jsonLdContext"))]
-    pub json_ld_context: String,
+    pub description: String,
+    pub required: bool,
+    pub r#enum: Option<Vec<String>>
 }

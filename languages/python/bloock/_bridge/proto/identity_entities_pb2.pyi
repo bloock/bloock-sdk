@@ -6,332 +6,89 @@ import builtins
 import collections.abc
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
+import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
-import integrity_entities_pb2
 import sys
 import typing
 
-if sys.version_info >= (3, 8):
+if sys.version_info >= (3, 10):
     import typing as typing_extensions
 else:
     import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
-class Identity(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+class _Method:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
 
-    MNEMONIC_FIELD_NUMBER: builtins.int
-    KEY_FIELD_NUMBER: builtins.int
-    PRIVATE_KEY_FIELD_NUMBER: builtins.int
-    mnemonic: builtins.str
-    key: builtins.str
-    private_key: builtins.str
-    def __init__(
-        self,
-        *,
-        mnemonic: builtins.str = ...,
-        key: builtins.str = ...,
-        private_key: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["key", b"key", "mnemonic", b"mnemonic", "private_key", b"private_key"]) -> None: ...
+class _MethodEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Method.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    IDEN3: _Method.ValueType  # 0
+    POLYGON_ID: _Method.ValueType  # 1
 
-global___Identity = Identity
+class Method(_Method, metaclass=_MethodEnumTypeWrapper): ...
 
-@typing_extensions.final
-class BooleanAttributeDefinition(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+IDEN3: Method.ValueType  # 0
+POLYGON_ID: Method.ValueType  # 1
+global___Method = Method
 
-    DISPLAY_NAME_FIELD_NUMBER: builtins.int
-    ID_FIELD_NUMBER: builtins.int
-    DESCRIPTION_FIELD_NUMBER: builtins.int
-    display_name: builtins.str
-    id: builtins.str
-    description: builtins.str
-    def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+class _Blockchain:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
 
-global___BooleanAttributeDefinition = BooleanAttributeDefinition
+class _BlockchainEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Blockchain.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    ETHEREUM: _Blockchain.ValueType  # 0
+    POLYGON: _Blockchain.ValueType  # 1
+    UNKNOWN_CHAIN: _Blockchain.ValueType  # 2
+    NO_CHAIN: _Blockchain.ValueType  # 3
 
-@typing_extensions.final
-class DateAttributeDefinition(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+class Blockchain(_Blockchain, metaclass=_BlockchainEnumTypeWrapper): ...
 
-    DISPLAY_NAME_FIELD_NUMBER: builtins.int
-    ID_FIELD_NUMBER: builtins.int
-    DESCRIPTION_FIELD_NUMBER: builtins.int
-    display_name: builtins.str
-    id: builtins.str
-    description: builtins.str
-    def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+ETHEREUM: Blockchain.ValueType  # 0
+POLYGON: Blockchain.ValueType  # 1
+UNKNOWN_CHAIN: Blockchain.ValueType  # 2
+NO_CHAIN: Blockchain.ValueType  # 3
+global___Blockchain = Blockchain
 
-global___DateAttributeDefinition = DateAttributeDefinition
+class _NetworkId:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
 
-@typing_extensions.final
-class DateTimeAttributeDefinition(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+class _NetworkIdEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_NetworkId.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    MAIN: _NetworkId.ValueType  # 0
+    MUMBAI: _NetworkId.ValueType  # 1
+    GOERLI: _NetworkId.ValueType  # 2
+    UNKNOWN_NETWORK: _NetworkId.ValueType  # 3
+    NO_NETWORK: _NetworkId.ValueType  # 4
 
-    DISPLAY_NAME_FIELD_NUMBER: builtins.int
-    ID_FIELD_NUMBER: builtins.int
-    DESCRIPTION_FIELD_NUMBER: builtins.int
-    display_name: builtins.str
-    id: builtins.str
-    description: builtins.str
-    def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+class NetworkId(_NetworkId, metaclass=_NetworkIdEnumTypeWrapper): ...
 
-global___DateTimeAttributeDefinition = DateTimeAttributeDefinition
+MAIN: NetworkId.ValueType  # 0
+MUMBAI: NetworkId.ValueType  # 1
+GOERLI: NetworkId.ValueType  # 2
+UNKNOWN_NETWORK: NetworkId.ValueType  # 3
+NO_NETWORK: NetworkId.ValueType  # 4
+global___NetworkId = NetworkId
 
-@typing_extensions.final
-class StringAttributeDefinition(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+class _PublishInterval:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
 
-    DISPLAY_NAME_FIELD_NUMBER: builtins.int
-    ID_FIELD_NUMBER: builtins.int
-    DESCRIPTION_FIELD_NUMBER: builtins.int
-    display_name: builtins.str
-    id: builtins.str
-    description: builtins.str
-    def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
+class _PublishIntervalEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_PublishInterval.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    INTERVAL_5: _PublishInterval.ValueType  # 0
+    INTERVAL_15: _PublishInterval.ValueType  # 1
+    INTERVAL_60: _PublishInterval.ValueType  # 2
 
-global___StringAttributeDefinition = StringAttributeDefinition
+class PublishInterval(_PublishInterval, metaclass=_PublishIntervalEnumTypeWrapper): ...
 
-@typing_extensions.final
-class NumberAttributeDefinition(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    DISPLAY_NAME_FIELD_NUMBER: builtins.int
-    ID_FIELD_NUMBER: builtins.int
-    DESCRIPTION_FIELD_NUMBER: builtins.int
-    display_name: builtins.str
-    id: builtins.str
-    description: builtins.str
-    def __init__(
-        self,
-        *,
-        display_name: builtins.str = ...,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id"]) -> None: ...
-
-global___NumberAttributeDefinition = NumberAttributeDefinition
-
-@typing_extensions.final
-class BooleanAttribute(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    VALUE_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    value: builtins.bool
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.bool = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
-
-global___BooleanAttribute = BooleanAttribute
-
-@typing_extensions.final
-class DateAttribute(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    VALUE_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    value: builtins.int
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.int = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
-
-global___DateAttribute = DateAttribute
-
-@typing_extensions.final
-class DateTimeAttribute(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    VALUE_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    value: builtins.int
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.int = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
-
-global___DateTimeAttribute = DateTimeAttribute
-
-@typing_extensions.final
-class StringAttribute(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    VALUE_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    value: builtins.str
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
-
-global___StringAttribute = StringAttribute
-
-@typing_extensions.final
-class NumberAttribute(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    VALUE_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    value: builtins.int
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        value: builtins.int = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
-
-global___NumberAttribute = NumberAttribute
-
-@typing_extensions.final
-class Schema(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    JSON_LD_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    json_ld: builtins.str
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        json_ld: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "json_ld", b"json_ld"]) -> None: ...
-
-global___Schema = Schema
-
-@typing_extensions.final
-class CredentialOffer(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    THID_FIELD_NUMBER: builtins.int
-    BODY_FIELD_NUMBER: builtins.int
-    _FROM_FIELD_NUMBER: builtins.int
-    _TO_FIELD_NUMBER: builtins.int
-    thid: builtins.str
-    @property
-    def body(self) -> global___CredentialOfferBody: ...
-    _from: builtins.str
-    _to: builtins.str
-    def __init__(
-        self,
-        *,
-        thid: builtins.str = ...,
-        body: global___CredentialOfferBody | None = ...,
-        _from: builtins.str = ...,
-        _to: builtins.str = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["body", b"body"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_from", b"_from", "_to", b"_to", "body", b"body", "thid", b"thid"]) -> None: ...
-
-global___CredentialOffer = CredentialOffer
-
-@typing_extensions.final
-class CredentialOfferBody(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    URL_FIELD_NUMBER: builtins.int
-    CREDENTIALS_FIELD_NUMBER: builtins.int
-    url: builtins.str
-    @property
-    def credentials(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___CredentialOfferBodyCredentials]: ...
-    def __init__(
-        self,
-        *,
-        url: builtins.str = ...,
-        credentials: collections.abc.Iterable[global___CredentialOfferBodyCredentials] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["credentials", b"credentials", "url", b"url"]) -> None: ...
-
-global___CredentialOfferBody = CredentialOfferBody
-
-@typing_extensions.final
-class CredentialOfferBodyCredentials(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    DESCRIPTION_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    description: builtins.str
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        description: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "id", b"id"]) -> None: ...
-
-global___CredentialOfferBodyCredentials = CredentialOfferBodyCredentials
-
-@typing_extensions.final
-class CredentialReceipt(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    ID_FIELD_NUMBER: builtins.int
-    ANCHOR_ID_FIELD_NUMBER: builtins.int
-    id: builtins.str
-    anchor_id: builtins.int
-    def __init__(
-        self,
-        *,
-        id: builtins.str = ...,
-        anchor_id: builtins.int = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["anchor_id", b"anchor_id", "id", b"id"]) -> None: ...
-
-global___CredentialReceipt = CredentialReceipt
+INTERVAL_5: PublishInterval.ValueType  # 0
+INTERVAL_15: PublishInterval.ValueType  # 1
+INTERVAL_60: PublishInterval.ValueType  # 2
+global___PublishInterval = PublishInterval
 
 @typing_extensions.final
 class Credential(google.protobuf.message.Message):
@@ -341,6 +98,7 @@ class Credential(google.protobuf.message.Message):
     ID_FIELD_NUMBER: builtins.int
     TYPE_FIELD_NUMBER: builtins.int
     ISSUANCE_DATE_FIELD_NUMBER: builtins.int
+    EXPIRATION_FIELD_NUMBER: builtins.int
     CREDENTIAL_SUBJECT_FIELD_NUMBER: builtins.int
     CREDENTIAL_STATUS_FIELD_NUMBER: builtins.int
     ISSUER_FIELD_NUMBER: builtins.int
@@ -352,6 +110,7 @@ class Credential(google.protobuf.message.Message):
     @property
     def type(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     issuance_date: builtins.str
+    expiration: builtins.str
     credential_subject: builtins.str
     @property
     def credential_status(self) -> global___CredentialStatus: ...
@@ -367,6 +126,7 @@ class Credential(google.protobuf.message.Message):
         id: builtins.str = ...,
         type: collections.abc.Iterable[builtins.str] | None = ...,
         issuance_date: builtins.str = ...,
+        expiration: builtins.str = ...,
         credential_subject: builtins.str = ...,
         credential_status: global___CredentialStatus | None = ...,
         issuer: builtins.str = ...,
@@ -374,9 +134,29 @@ class Credential(google.protobuf.message.Message):
         proof: global___CredentialProof | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["credential_schema", b"credential_schema", "credential_status", b"credential_status", "proof", b"proof"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["context", b"context", "credential_schema", b"credential_schema", "credential_status", b"credential_status", "credential_subject", b"credential_subject", "id", b"id", "issuance_date", b"issuance_date", "issuer", b"issuer", "proof", b"proof", "type", b"type"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["context", b"context", "credential_schema", b"credential_schema", "credential_status", b"credential_status", "credential_subject", b"credential_subject", "expiration", b"expiration", "id", b"id", "issuance_date", b"issuance_date", "issuer", b"issuer", "proof", b"proof", "type", b"type"]) -> None: ...
 
 global___Credential = Credential
+
+@typing_extensions.final
+class CredentialProof(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SIGNATURE_PROOF_FIELD_NUMBER: builtins.int
+    SPARSE_MT_PROOF_FIELD_NUMBER: builtins.int
+    signature_proof: builtins.str
+    sparse_mt_proof: builtins.str
+    def __init__(
+        self,
+        *,
+        signature_proof: builtins.str = ...,
+        sparse_mt_proof: builtins.str | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_sparse_mt_proof", b"_sparse_mt_proof", "sparse_mt_proof", b"sparse_mt_proof"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_sparse_mt_proof", b"_sparse_mt_proof", "signature_proof", b"signature_proof", "sparse_mt_proof", b"sparse_mt_proof"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_sparse_mt_proof", b"_sparse_mt_proof"]) -> typing_extensions.Literal["sparse_mt_proof"] | None: ...
+
+global___CredentialProof = CredentialProof
 
 @typing_extensions.final
 class CredentialStatus(google.protobuf.message.Message):
@@ -418,46 +198,402 @@ class CredentialSchema(google.protobuf.message.Message):
 global___CredentialSchema = CredentialSchema
 
 @typing_extensions.final
-class CredentialProof(google.protobuf.message.Message):
+class StringAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    BLOOCK_PROOF_FIELD_NUMBER: builtins.int
-    SIGNATURE_PROOF_FIELD_NUMBER: builtins.int
-    @property
-    def bloock_proof(self) -> integrity_entities_pb2.Proof: ...
-    @property
-    def signature_proof(self) -> global___SignatureJWS: ...
+    ID_FIELD_NUMBER: builtins.int
+    VALUE_FIELD_NUMBER: builtins.int
+    id: builtins.str
+    value: builtins.str
     def __init__(
         self,
         *,
-        bloock_proof: integrity_entities_pb2.Proof | None = ...,
-        signature_proof: global___SignatureJWS | None = ...,
+        id: builtins.str = ...,
+        value: builtins.str = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["bloock_proof", b"bloock_proof", "signature_proof", b"signature_proof"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["bloock_proof", b"bloock_proof", "signature_proof", b"signature_proof"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
 
-global___CredentialProof = CredentialProof
+global___StringAttribute = StringAttribute
 
 @typing_extensions.final
-class CredentialVerification(google.protobuf.message.Message):
+class IntegerAttribute(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    TIMESTAMP_FIELD_NUMBER: builtins.int
-    ISSUER_FIELD_NUMBER: builtins.int
-    REVOCATION_FIELD_NUMBER: builtins.int
-    timestamp: builtins.int
-    issuer: builtins.str
-    revocation: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    VALUE_FIELD_NUMBER: builtins.int
+    id: builtins.str
+    value: builtins.int
     def __init__(
         self,
         *,
-        timestamp: builtins.int = ...,
-        issuer: builtins.str = ...,
-        revocation: builtins.int = ...,
+        id: builtins.str = ...,
+        value: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["issuer", b"issuer", "revocation", b"revocation", "timestamp", b"timestamp"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
 
-global___CredentialVerification = CredentialVerification
+global___IntegerAttribute = IntegerAttribute
+
+@typing_extensions.final
+class DecimalAttribute(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ID_FIELD_NUMBER: builtins.int
+    VALUE_FIELD_NUMBER: builtins.int
+    id: builtins.str
+    value: builtins.float
+    def __init__(
+        self,
+        *,
+        id: builtins.str = ...,
+        value: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
+
+global___DecimalAttribute = DecimalAttribute
+
+@typing_extensions.final
+class BooleanAttribute(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ID_FIELD_NUMBER: builtins.int
+    VALUE_FIELD_NUMBER: builtins.int
+    id: builtins.str
+    value: builtins.bool
+    def __init__(
+        self,
+        *,
+        id: builtins.str = ...,
+        value: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
+
+global___BooleanAttribute = BooleanAttribute
+
+@typing_extensions.final
+class DateAttribute(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ID_FIELD_NUMBER: builtins.int
+    VALUE_FIELD_NUMBER: builtins.int
+    id: builtins.str
+    value: builtins.str
+    def __init__(
+        self,
+        *,
+        id: builtins.str = ...,
+        value: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
+
+global___DateAttribute = DateAttribute
+
+@typing_extensions.final
+class DateTimeAttribute(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ID_FIELD_NUMBER: builtins.int
+    VALUE_FIELD_NUMBER: builtins.int
+    id: builtins.str
+    value: builtins.str
+    def __init__(
+        self,
+        *,
+        id: builtins.str = ...,
+        value: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id", b"id", "value", b"value"]) -> None: ...
+
+global___DateTimeAttribute = DateTimeAttribute
+
+@typing_extensions.final
+class StringAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id", "required", b"required"]) -> None: ...
+
+global___StringAttributeDefinition = StringAttributeDefinition
+
+@typing_extensions.final
+class IntegerAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id", "required", b"required"]) -> None: ...
+
+global___IntegerAttributeDefinition = IntegerAttributeDefinition
+
+@typing_extensions.final
+class DecimalAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id", "required", b"required"]) -> None: ...
+
+global___DecimalAttributeDefinition = DecimalAttributeDefinition
+
+@typing_extensions.final
+class BooleanAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id", "required", b"required"]) -> None: ...
+
+global___BooleanAttributeDefinition = BooleanAttributeDefinition
+
+@typing_extensions.final
+class DateAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id", "required", b"required"]) -> None: ...
+
+global___DateAttributeDefinition = DateAttributeDefinition
+
+@typing_extensions.final
+class DateTimeAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "id", b"id", "required", b"required"]) -> None: ...
+
+global___DateTimeAttributeDefinition = DateTimeAttributeDefinition
+
+@typing_extensions.final
+class StringEnumAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    ENUM_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    @property
+    def enum(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+        enum: collections.abc.Iterable[builtins.str] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "enum", b"enum", "id", b"id", "required", b"required"]) -> None: ...
+
+global___StringEnumAttributeDefinition = StringEnumAttributeDefinition
+
+@typing_extensions.final
+class IntegerEnumAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    ENUM_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    @property
+    def enum(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]: ...
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+        enum: collections.abc.Iterable[builtins.int] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "enum", b"enum", "id", b"id", "required", b"required"]) -> None: ...
+
+global___IntegerEnumAttributeDefinition = IntegerEnumAttributeDefinition
+
+@typing_extensions.final
+class DecimalEnumAttributeDefinition(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    ID_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    REQUIRED_FIELD_NUMBER: builtins.int
+    ENUM_FIELD_NUMBER: builtins.int
+    display_name: builtins.str
+    id: builtins.str
+    description: builtins.str
+    required: builtins.bool
+    @property
+    def enum(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
+    def __init__(
+        self,
+        *,
+        display_name: builtins.str = ...,
+        id: builtins.str = ...,
+        description: builtins.str = ...,
+        required: builtins.bool = ...,
+        enum: collections.abc.Iterable[builtins.float] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["description", b"description", "display_name", b"display_name", "enum", b"enum", "id", b"id", "required", b"required"]) -> None: ...
+
+global___DecimalEnumAttributeDefinition = DecimalEnumAttributeDefinition
+
+@typing_extensions.final
+class CredentialReceipt(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CREDENTIAL_FIELD_NUMBER: builtins.int
+    CREDENTIAL_ID_FIELD_NUMBER: builtins.int
+    CREDENTIAL_TYPE_FIELD_NUMBER: builtins.int
+    @property
+    def credential(self) -> global___Credential: ...
+    credential_id: builtins.str
+    credential_type: builtins.str
+    def __init__(
+        self,
+        *,
+        credential: global___Credential | None = ...,
+        credential_id: builtins.str = ...,
+        credential_type: builtins.str = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["credential", b"credential"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["credential", b"credential", "credential_id", b"credential_id", "credential_type", b"credential_type"]) -> None: ...
+
+global___CredentialReceipt = CredentialReceipt
+
+@typing_extensions.final
+class IssuerStateReceipt(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    TX_HASH_FIELD_NUMBER: builtins.int
+    tx_hash: builtins.str
+    def __init__(
+        self,
+        *,
+        tx_hash: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["tx_hash", b"tx_hash"]) -> None: ...
+
+global___IssuerStateReceipt = IssuerStateReceipt
+
+@typing_extensions.final
+class Schema(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CID_FIELD_NUMBER: builtins.int
+    CID_JSON_LD_FIELD_NUMBER: builtins.int
+    SCHEMA_TYPE_FIELD_NUMBER: builtins.int
+    JSON_FIELD_NUMBER: builtins.int
+    cid: builtins.str
+    cid_json_ld: builtins.str
+    schema_type: builtins.str
+    json: builtins.str
+    def __init__(
+        self,
+        *,
+        cid: builtins.str = ...,
+        cid_json_ld: builtins.str = ...,
+        schema_type: builtins.str = ...,
+        json: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["cid", b"cid", "cid_json_ld", b"cid_json_ld", "json", b"json", "schema_type", b"schema_type"]) -> None: ...
+
+global___Schema = Schema
 
 @typing_extensions.final
 class CredentialRevocation(google.protobuf.message.Message):
@@ -473,6 +609,45 @@ class CredentialRevocation(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["success", b"success"]) -> None: ...
 
 global___CredentialRevocation = CredentialRevocation
+
+@typing_extensions.final
+class VerificationReceipt(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    VERIFICATION_REQUEST_FIELD_NUMBER: builtins.int
+    SESSION_ID_FIELD_NUMBER: builtins.int
+    verification_request: builtins.str
+    session_id: builtins.int
+    def __init__(
+        self,
+        *,
+        verification_request: builtins.str = ...,
+        session_id: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["session_id", b"session_id", "verification_request", b"verification_request"]) -> None: ...
+
+global___VerificationReceipt = VerificationReceipt
+
+@typing_extensions.final
+class DidType(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    METHOD_FIELD_NUMBER: builtins.int
+    BLOCKCHAIN_FIELD_NUMBER: builtins.int
+    NETWORK_ID_FIELD_NUMBER: builtins.int
+    method: global___Method.ValueType
+    blockchain: global___Blockchain.ValueType
+    network_id: global___NetworkId.ValueType
+    def __init__(
+        self,
+        *,
+        method: global___Method.ValueType = ...,
+        blockchain: global___Blockchain.ValueType = ...,
+        network_id: global___NetworkId.ValueType = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["blockchain", b"blockchain", "method", b"method", "network_id", b"network_id"]) -> None: ...
+
+global___DidType = DidType
 
 @typing_extensions.final
 class SignatureJWS(google.protobuf.message.Message):

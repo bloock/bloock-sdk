@@ -1,10 +1,11 @@
-use crate::items::BuildSchemaResponseV2;
-use crate::items::CreateCredentialResponseV2;
-use crate::items::CreateIdentityV2Response;
+use crate::items::BuildSchemaResponse;
+use crate::items::CreateCoreCredentialResponse;
+use crate::items::CreateCredentialResponse;
+use crate::items::CreateHolderResponse;
 use crate::items::CreateIssuerResponse;
 use crate::items::CreateVerificationResponse;
-use crate::items::CredentialFromJsonResponseV2;
-use crate::items::CredentialToJsonResponseV2;
+use crate::items::CredentialFromJsonResponse;
+use crate::items::CredentialToJsonResponse;
 use crate::items::DecryptResponse;
 use crate::items::EncryptResponse;
 use crate::items::EncryptionAlgResponse;
@@ -16,11 +17,10 @@ use crate::items::GetAnchorResponse;
 use crate::items::GetCredentialProofResponse;
 use crate::items::GetDetailsResponse;
 use crate::items::GetHashResponse;
-use crate::items::GetIssuerByKeyResponse;
-use crate::items::GetOfferResponse;
+use crate::items::ImportIssuerResponse;
 use crate::items::GetPayloadResponse;
 use crate::items::GetProofResponse;
-use crate::items::GetSchemaResponseV2;
+use crate::items::GetSchemaResponse;
 use crate::items::GetSignaturesResponse;
 use crate::items::GetVerificationStatusResponse;
 use crate::items::ImportManagedCertificateResponse;
@@ -28,12 +28,12 @@ use crate::items::LoadLocalCertificateResponse;
 use crate::items::LoadLocalKeyResponse;
 use crate::items::LoadManagedCertificateResponse;
 use crate::items::LoadManagedKeyResponse;
-use crate::items::PublishIssuerStateResponse;
+use crate::items::ForcePublishIssuerStateResponse;
 use crate::items::PublishResponse;
 use crate::items::RecordBuilderResponse;
 use crate::items::RecoverTotpAccessControlResponse;
 use crate::items::RetrieveResponse;
-use crate::items::RevokeCredentialResponseV2;
+use crate::items::RevokeCredentialResponse;
 use crate::items::SendRecordsResponse;
 use crate::items::SetProofResponse;
 use crate::items::SetupSecretAccessControlResponse;
@@ -45,14 +45,7 @@ use crate::items::VerifyRecordsResponse;
 use crate::items::VerifyResponse;
 use crate::items::VerifyWebhookSignatureResponse;
 use crate::items::WaitAnchorResponse;
-use crate::items::WaitOfferResponse;
 use crate::items::WaitVerificationResponse;
-use crate::items::{
-    BuildSchemaResponse, CreateCredentialResponse, CreateIdentityResponse,
-    CredentialFromJsonResponse, CredentialOfferFromJsonResponse, CredentialOfferRedeemResponse,
-    CredentialOfferToJsonResponse, CredentialToJsonResponse, GetSchemaResponse,
-    LoadIdentityResponse, RevokeCredentialResponse, VerifyCredentialResponse,
-};
 use crate::server::BridgeError;
 use async_trait::async_trait;
 use bloock_core::config::config_data::ConfigData;
@@ -87,37 +80,24 @@ pub enum ResponseType {
     SetupTotpAccessControlResponse(SetupTotpAccessControlResponse),
     RecoverTotpAccessControlResponse(RecoverTotpAccessControlResponse),
     SetupSecretAccessControlResponse(SetupSecretAccessControlResponse),
-    CreateIdentityResponse(CreateIdentityResponse),
-    LoadIdentityResponse(LoadIdentityResponse),
-    BuildSchemaResponse(BuildSchemaResponse),
-    GetSchemaResponse(GetSchemaResponse),
-    WaitOfferResponse(WaitOfferResponse),
+    VerifyWebhookSignatureResponse(VerifyWebhookSignatureResponse),
+    CreateCoreCredentialResponse(CreateCoreCredentialResponse),
     CreateCredentialResponse(CreateCredentialResponse),
-    GetOfferResponse(GetOfferResponse),
-    CredentialOfferToJsonResponse(CredentialOfferToJsonResponse),
-    CredentialOfferFromJsonResponse(CredentialOfferFromJsonResponse),
-    CredentialOfferRedeemResponse(CredentialOfferRedeemResponse),
+    CreateHolderResponse(CreateHolderResponse),
+    CreateIssuerResponse(CreateIssuerResponse),
+    BuildSchemaResponse(BuildSchemaResponse),
+    ForcePublishIssuerStateResponse(ForcePublishIssuerStateResponse),
+    RevokeCredentialResponse(RevokeCredentialResponse),
     CredentialToJsonResponse(CredentialToJsonResponse),
     CredentialFromJsonResponse(CredentialFromJsonResponse),
-    VerifyCredentialResponse(VerifyCredentialResponse),
-    RevokeCredentialResponse(RevokeCredentialResponse),
-    VerifyWebhookSignatureResponse(VerifyWebhookSignatureResponse),
-    CreateCredentialResponseV2(CreateCredentialResponseV2),
-    CreateIdentityV2Response(CreateIdentityV2Response),
-    CreateIssuerResponse(CreateIssuerResponse),
-    BuildSchemaResponseV2(BuildSchemaResponseV2),
-    PublishIssuerStateResponse(PublishIssuerStateResponse),
-    RevokeCredentialResponseV2(RevokeCredentialResponseV2),
-    CredentialToJsonResponseV2(CredentialToJsonResponseV2),
-    CredentialFromJsonResponseV2(CredentialFromJsonResponseV2),
     GetCredentialProofResponse(GetCredentialProofResponse),
-    GetIssuerByKeyResponse(GetIssuerByKeyResponse),
+    ImportIssuerResponse(ImportIssuerResponse),
     GenerateLocalCertificateResponse(GenerateLocalCertificateResponse),
     GenerateManagedCertificateResponse(GenerateManagedCertificateResponse),
     LoadLocalCertificateResponse(LoadLocalCertificateResponse),
     LoadManagedCertificateResponse(LoadManagedCertificateResponse),
     ImportManagedCertificateResponse(ImportManagedCertificateResponse),
-    GetSchemaResponseV2(GetSchemaResponseV2),
+    GetSchemaResponse(GetSchemaResponse),
     CreateVerificationResponse(CreateVerificationResponse),
     WaitVerificationResponse(WaitVerificationResponse),
     GetVerificationStatusResponse(GetVerificationStatusResponse),
@@ -157,36 +137,23 @@ impl ResponseType {
             ResponseType::RecoverTotpAccessControlResponse(r) => r.encode(&mut result_vec),
             ResponseType::SetupSecretAccessControlResponse(r) => r.encode(&mut result_vec),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encode(&mut result_vec),
-            ResponseType::CreateIdentityResponse(r) => r.encode(&mut result_vec),
-            ResponseType::LoadIdentityResponse(r) => r.encode(&mut result_vec),
-            ResponseType::BuildSchemaResponse(r) => r.encode(&mut result_vec),
-            ResponseType::GetSchemaResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateCoreCredentialResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateCredentialResponse(r) => r.encode(&mut result_vec),
-            ResponseType::GetOfferResponse(r) => r.encode(&mut result_vec),
-            ResponseType::WaitOfferResponse(r) => r.encode(&mut result_vec),
-            ResponseType::CredentialOfferToJsonResponse(r) => r.encode(&mut result_vec),
-            ResponseType::CredentialOfferFromJsonResponse(r) => r.encode(&mut result_vec),
-            ResponseType::CredentialOfferRedeemResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateHolderResponse(r) => r.encode(&mut result_vec),
+            ResponseType::CreateIssuerResponse(r) => r.encode(&mut result_vec),
+            ResponseType::BuildSchemaResponse(r) => r.encode(&mut result_vec),
+            ResponseType::ForcePublishIssuerStateResponse(r) => r.encode(&mut result_vec),
+            ResponseType::RevokeCredentialResponse(r) => r.encode(&mut result_vec),
             ResponseType::CredentialToJsonResponse(r) => r.encode(&mut result_vec),
             ResponseType::CredentialFromJsonResponse(r) => r.encode(&mut result_vec),
-            ResponseType::VerifyCredentialResponse(r) => r.encode(&mut result_vec),
-            ResponseType::RevokeCredentialResponse(r) => r.encode(&mut result_vec),
-            ResponseType::CreateCredentialResponseV2(r) => r.encode(&mut result_vec),
-            ResponseType::CreateIdentityV2Response(r) => r.encode(&mut result_vec),
-            ResponseType::CreateIssuerResponse(r) => r.encode(&mut result_vec),
-            ResponseType::BuildSchemaResponseV2(r) => r.encode(&mut result_vec),
-            ResponseType::PublishIssuerStateResponse(r) => r.encode(&mut result_vec),
-            ResponseType::RevokeCredentialResponseV2(r) => r.encode(&mut result_vec),
-            ResponseType::CredentialToJsonResponseV2(r) => r.encode(&mut result_vec),
-            ResponseType::CredentialFromJsonResponseV2(r) => r.encode(&mut result_vec),
             ResponseType::GetCredentialProofResponse(r) => r.encode(&mut result_vec),
-            ResponseType::GetIssuerByKeyResponse(r) => r.encode(&mut result_vec),
+            ResponseType::ImportIssuerResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateLocalCertificateResponse(r) => r.encode(&mut result_vec),
             ResponseType::GenerateManagedCertificateResponse(r) => r.encode(&mut result_vec),
             ResponseType::LoadLocalCertificateResponse(r) => r.encode(&mut result_vec),
             ResponseType::LoadManagedCertificateResponse(r) => r.encode(&mut result_vec),
             ResponseType::ImportManagedCertificateResponse(r) => r.encode(&mut result_vec),
-            ResponseType::GetSchemaResponseV2(r) => r.encode(&mut result_vec),
+            ResponseType::GetSchemaResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateVerificationResponse(r) => r.encode(&mut result_vec),
             ResponseType::WaitVerificationResponse(r) => r.encode(&mut result_vec),
             ResponseType::GetVerificationStatusResponse(r) => r.encode(&mut result_vec),
@@ -226,36 +193,23 @@ impl ResponseType {
             ResponseType::RecoverTotpAccessControlResponse(r) => r.encoded_len(),
             ResponseType::SetupSecretAccessControlResponse(r) => r.encoded_len(),
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encoded_len(),
-            ResponseType::CreateIdentityResponse(r) => r.encoded_len(),
-            ResponseType::LoadIdentityResponse(r) => r.encoded_len(),
-            ResponseType::BuildSchemaResponse(r) => r.encoded_len(),
-            ResponseType::GetSchemaResponse(r) => r.encoded_len(),
+            ResponseType::CreateCoreCredentialResponse(r) => r.encoded_len(),
             ResponseType::CreateCredentialResponse(r) => r.encoded_len(),
-            ResponseType::GetOfferResponse(r) => r.encoded_len(),
-            ResponseType::WaitOfferResponse(r) => r.encoded_len(),
-            ResponseType::CredentialOfferToJsonResponse(r) => r.encoded_len(),
-            ResponseType::CredentialOfferFromJsonResponse(r) => r.encoded_len(),
-            ResponseType::CredentialOfferRedeemResponse(r) => r.encoded_len(),
+            ResponseType::CreateHolderResponse(r) => r.encoded_len(),
+            ResponseType::CreateIssuerResponse(r) => r.encoded_len(),
+            ResponseType::BuildSchemaResponse(r) => r.encoded_len(),
+            ResponseType::ForcePublishIssuerStateResponse(r) => r.encoded_len(),
+            ResponseType::RevokeCredentialResponse(r) => r.encoded_len(),
             ResponseType::CredentialToJsonResponse(r) => r.encoded_len(),
             ResponseType::CredentialFromJsonResponse(r) => r.encoded_len(),
-            ResponseType::VerifyCredentialResponse(r) => r.encoded_len(),
-            ResponseType::RevokeCredentialResponse(r) => r.encoded_len(),
-            ResponseType::CreateCredentialResponseV2(r) => r.encoded_len(),
-            ResponseType::CreateIdentityV2Response(r) => r.encoded_len(),
-            ResponseType::CreateIssuerResponse(r) => r.encoded_len(),
-            ResponseType::BuildSchemaResponseV2(r) => r.encoded_len(),
-            ResponseType::PublishIssuerStateResponse(r) => r.encoded_len(),
-            ResponseType::RevokeCredentialResponseV2(r) => r.encoded_len(),
-            ResponseType::CredentialToJsonResponseV2(r) => r.encoded_len(),
-            ResponseType::CredentialFromJsonResponseV2(r) => r.encoded_len(),
             ResponseType::GetCredentialProofResponse(r) => r.encoded_len(),
-            ResponseType::GetIssuerByKeyResponse(r) => r.encoded_len(),
+            ResponseType::ImportIssuerResponse(r) => r.encoded_len(),
             ResponseType::GenerateLocalCertificateResponse(r) => r.encoded_len(),
             ResponseType::GenerateManagedCertificateResponse(r) => r.encoded_len(),
             ResponseType::LoadLocalCertificateResponse(r) => r.encoded_len(),
             ResponseType::LoadManagedCertificateResponse(r) => r.encoded_len(),
             ResponseType::ImportManagedCertificateResponse(r) => r.encoded_len(),
-            ResponseType::GetSchemaResponseV2(r) => r.encoded_len(),
+            ResponseType::GetSchemaResponse(r) => r.encoded_len(),
             ResponseType::CreateVerificationResponse(r) => r.encoded_len(),
             ResponseType::WaitVerificationResponse(r) => r.encoded_len(),
             ResponseType::GetVerificationStatusResponse(r) => r.encoded_len(),

@@ -25,6 +25,10 @@ class BooleanAttributeDefinition extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string description = 3;</code>
      */
     protected $description = '';
+    /**
+     * Generated from protobuf field <code>bool required = 4;</code>
+     */
+    protected $required = false;
 
     /**
      * Constructor.
@@ -35,6 +39,7 @@ class BooleanAttributeDefinition extends \Google\Protobuf\Internal\Message
      *     @type string $display_name
      *     @type string $id
      *     @type string $description
+     *     @type bool $required
      * }
      */
     public function __construct($data = NULL) {
@@ -104,6 +109,28 @@ class BooleanAttributeDefinition extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->description = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>bool required = 4;</code>
+     * @return bool
+     */
+    public function getRequired()
+    {
+        return $this->required;
+    }
+
+    /**
+     * Generated from protobuf field <code>bool required = 4;</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setRequired($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->required = $var;
 
         return $this;
     }

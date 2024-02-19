@@ -3,118 +3,262 @@
 package client
 
 import (
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"os"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/identity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestIdentity(t *testing.T) {
-	InitSdk()
+	credentialJson := "{\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://schema.iden3.io/core/jsonld/iden3proofs.jsonld\",\"https://api.bloock.dev/hosting/v1/ipfs/QmYMYpSQsFbqXgSRK8KFDGMopD2CUke5yd4m7XFuVAZTat\"],\"id\":\"https://clientHost.com/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/2ff36890-2fc1-4bba-b489-bdd7685e9555\",\"type\":[\"VerifiableCredential\",\"DrivingLicense\"],\"issuanceDate\":\"2023-08-21T10:21:42.402140Z\",\"expirationDate\":\"2099-08-08T06:02:22Z\",\"credentialSubject\":{\"birth_date\":921950325,\"country\":\"Spain\",\"first_surname\":\"Tomas\",\"id\":\"did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr\",\"license_type\":1,\"name\":\"Eduard\",\"nif\":\"54688188M\",\"second_surname\":\"Escoruela\",\"type\":\"DrivingLicense\"},\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identity/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/3553270275\",\"revocationNonce\":3553270275,\"type\":\"SparseMerkleTreeProof\"},\"issuer\":\"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6\",\"credentialSchema\":{\"id\":\"https://api.bloock.dev/hosting/v1/ipfs/QmWkPu699EF334ixBGEK7rDDurQfu2SYBXU39bSozu1i5h\",\"type\":\"JsonSchema2023\"},\"proof\":[{\"coreClaim\":\"e055485e9b8410b3cd71cb3ba3a0b7652a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b0056d1a9bf4e9d10b44fdd5b0f6b740b21dcd6675e770bf882249b8083471858190000000000000000000000000000000000000000000000000000000000000000039acad300000000ee30c6f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"issuerData\":{\"authCoreClaim\":\"cca3371a6cb1b715004407e325bd993c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fbd3b6b8c8e24e08bb982c7d4990e594747e5c24d98ac4ec969e50e437c1eb08407c9e5acc278a1641c82488f7518432a5937973d4ddfe551e32f9f7ba4c4a2e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identity/v1/did%3Apolygonid%3Apolygon%3Amumbai%3A2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/0\",\"revocationNonce\":0,\"type\":\"SparseMerkleTreeProof\"},\"id\":\"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6\",\"mtp\":{\"existence\":true,\"siblings\":[]},\"state\":{\"claimsTreeRoot\":\"0da5ac49846ae0074b986e5eef7c84011529e9902a0ffc6e9973b5cd0d217709\",\"value\":\"778582fc18b636314cc027a7772c1429028d44cdd17234f06e6d2d59bedee31d\"}},\"signature\":\"7bf882354b7cedd4b7ee74590cd3b091fef7545cb4ae8cd35c72b106ff858a0a3b1272ab7748cf7187d2383acda44bdae4bce1a7f9dccc11921fb0f19a70ee03\",\"type\":\"BJJSignature2021\"}]}"
+	DrivingLicenseSchemaType := "DrivingLicense"
+	KYCAgeSchemaType := "KYCAgeCredential"
+	holderDid := "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr"
+	expiration := int64(4089852142)
 
-	credentialOfferJson := "{\"thid\":\"aff91293-faec-4ffb-b0a0-c9be5e17fcaf\",\"body\":{\"url\":\"https//api.bloock.com/identity/v1/claims/792f62fb-7b26-4dd6-a440-f0e6f4ad402a/redeem\",\"credentials\":[{\"id\":\"792f62fb-7b26-4dd6-a440-f0e6f4ad402a\",\"description\":\"TestSchema\"}]},\"from\":\"did:iden3:eth:main:zxHh4f4NFe6a6D1NhUNEUrMw1nb36YNMHgiboNNz7\",\"to\":\"did:iden3:eth:main:zxJDvyiWDaLXiFEUBCKbPBQBxznbb2LgqwG9vXTp2\"}"
-	credentialJson := "{\"id\":\"https://api.bloock.com/identity/v1/claims/0f08f63c-0e31-4bb6-8fc3-28893bdeb7aa\",\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/iden3credential-v2.json-ld\"],\"type\":[\"VerifiableCredential\",\"TestSchema\"],\"issuanceDate\":\"2023-03-22T12:32:33.239583166Z\",\"credentialSubject\":{\"BoolAttr\":0,\"id\":\"did:polygonid:polygon:mumbai:2qHCSnJzmiB9mP5L86h51d6i3FhEgcYg9AmUcUg8jg\",\"type\":\"TestSchema\"},\"credentialStatus\":{\"id\":\"https://api.bloock.com/identity/v1/did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ/claims/revocation/status/1500049182\",\"revocationNonce\":1500049182,\"type\":\"BloockRevocationProof\"},\"issuer\":\"did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ\",\"credentialSchema\":{\"id\":\"https://api.bloock.com/hosting/v1/ipfs/Qmcj962wRkypdbAopKLvcedSkBf33ctJaGJ8PkXiUTMm79\",\"type\":\"JsonSchemaValidator2018\"},\"proof\":[{\"header\":{\"alg\":\"ES256K_M\",\"kid\":\"230303a5-8aef-4e92-bc7c-e06f5c488784\"},\"message_hash\":\"7de2019ac52a160191f748bed783b3582d66cb025b963330c63397aa17503d97\",\"protected\":\"e30\",\"signature\":\"ISAqQwDBMaSSkmAYbifS-uC0UzfAtnA7fzz51G4KQov6JJZwMHOKKZoRblOzvcF2D_W_Bf8ukCZJOBXBMc0_5g==\",\"type\":\"BloockSignatureProof\"},{\"anchor\":{\"anchor_id\":296849,\"networks\":[{\"name\":\"bloock_chain\",\"state\":\"Confirmed\",\"tx_hash\":\"0x5ce3e8e3b4b8735f295dbd8a2e6d98077474177c6f0578f1096dabc60617d6bb\"}],\"root\":\"aa39de63e0fc71aaaa9253086116b24b8a964cd9ba2ab58e33ef2554c0c095c2\",\"status\":\"Success\"},\"bitmap\":\"ffefc0\",\"depth\":\"000100020004000600080009000b000c000d000e001100110010000f000a000700050003\",\"leaves\":[\"b8654cc90adb6ad348287a4017e335c2785be2ef93f16f940b86605fc36d5c97\"],\"nodes\":[\"f566fe90b22641e6c4c89b5a39ea3bd4400303bf7ffa12016325b81cc0984825\",\"408f4da6b4e5b09c26a58f066beb6d81588bc3afddc4b39288e6e80cfe58b45a\",\"79be2e105bfe45b3b91f6749fd66dd920a25dfb0c089a27b98705a012c08e6e6\",\"e270112ede50dfca26404a9a7812df5a777322dedb7421c80abb3061c60a1b35\",\"22eba74324f088f18425cc9e93c2b3a21bced8d5a6cfade4b874abba361ff920\",\"b72dfb3f491e53c4816e83fd607fdaf7c79f64fe563d3f55b16af8241fbe22a6\",\"1688d687f3507abcbf9ebfd286bc2eba0e69f6af585cf2461650d74713c0d670\",\"efc548462843bbb9ddef0965a0c646eeb71c78fd662babb2635722d02a97985b\",\"287a57e146ff9d469ae5b39f11343b3c9e55fdbdc7f4edd9f4ca8fba4bd268c7\",\"94644790f7cd155d3b58c60c3f021f30666e5cfeb683ab12d27fec78aa418397\",\"515ecaf2713b13b8ba615674b4a94694d30d33ce133addd8331af5e56032f4bd\",\"717127712b837d4747d78db3dc55c1e9ded34ff6c124db409c11a72f6c1b2d7d\",\"f6b8d2fdb44c2b0a0e12b5ec232a4097c3bc45db51d89af26e0432b84fe07aca\",\"a00deee4b96eacdd9ff30e4691d805221deb8284e6856c856611766cfa54721f\",\"7b1c1939a58bd75e0dda34d3de7fcaa2143f0b65ffc27645c6a513b819e70601\",\"fc749d3a915ce5429560c8bc4f73d47bcc9cadec8ef3e9779c0462447ae50475\",\"296a21e0117f26be026eb608be5b54f1e305ac241b248ef4e045ec9467f47047\"],\"type\":\"BloockIntegrityProof\"}]}"
-
-	t.Run("create and load identity", func(t *testing.T) {
-		identityClient := NewIdentityLegacyClient()
-		created, err := identityClient.CreateIdentity()
-		assert.NoError(t, err)
-
-		loaded, err := identityClient.LoadIdentity(created.Mnemonic)
-		assert.NoError(t, err)
-
-		assert.Equal(t, created.Key, loaded.Key)
-		assert.Equal(t, created.PrivateKey, loaded.PrivateKey)
-		assert.Equal(t, created.Mnemonic, loaded.Mnemonic)
-	})
-
-	t.Run("credential offer to/from json", func(t *testing.T) {
-		offer, err := identity.NewCredentialOfferFromJson(credentialOfferJson)
-		assert.NoError(t, err)
-
-		offerJson, err := offer.ToJson()
-		assert.NoError(t, err)
-
-		newOffer, err := identity.NewCredentialOfferFromJson(offerJson)
-		assert.NoError(t, err)
-
-		newOfferJson, err := newOffer.ToJson()
-		assert.NoError(t, err)
-
-		assert.Equal(t, offerJson, newOfferJson)
-	})
+	InitDevSdk()
 
 	t.Run("credential to/from json", func(t *testing.T) {
 		credential, err := identity.NewCredentialFromJson(credentialJson)
 		assert.NoError(t, err)
 
-		credentialJson, err := credential.ToJson()
+		credJson, err := credential.ToJson()
 		assert.NoError(t, err)
 
-		newCredential, err := identity.NewCredentialFromJson(credentialJson)
+		newCredential, err := identity.NewCredentialFromJson(credJson)
 		assert.NoError(t, err)
 
 		newCredentialJson, err := newCredential.ToJson()
 		assert.NoError(t, err)
 
-		assert.Equal(t, credentialJson, newCredentialJson)
+		assert.Equal(t, credJson, newCredentialJson)
 	})
 
-	/*t.Run("identity end to end", func(t *testing.T) {
+	t.Run("create holder identity", func(t *testing.T) {
+		keyClient := NewKeyClient()
 		identityClient := NewIdentityClient()
 
-		holder, err := identityClient.CreateIdentity()
+		managedKey, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			KeyType:    key.Bjj,
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+		})
 		assert.NoError(t, err)
 
-		schema, err := identityClient.BuildSchema("Test Schema", "test_schema").
-			AddBooleanAttribute("Boolean Attribute", "bool_attr", "").
-			AddStringAttribute("String Attribute", "string_attr", "").
-			AddDateAttribute("Date Attribute", "date_attr", "").
-			AddDatetimeAttribute("Datetime Attribute", "datetime_attr", "").
+		holderKey := key.Key{ManagedKey: &managedKey}
+
+		holder, err := identityClient.CreateHolder(holderKey, identity.NewDidType())
+		assert.NoError(t, err)
+
+		assert.NotEmpty(t, holder.Did.Did)
+		assert.NotEmpty(t, holder.Did.DidType)
+		assert.NotEmpty(t, holder.Key)
+	})
+
+	t.Run("identity end to end with managed key", func(t *testing.T) {
+		identityClient := NewIdentityClient()
+		keyClient := NewKeyClient()
+
+		managedKey, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			KeyType:    key.Bjj,
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+		})
+		assert.NoError(t, err)
+
+		notFoundManagedKey, err := keyClient.NewManagedKey(key.ManagedKeyParams{
+			KeyType:    key.Bjj,
+			Protection: key.KEY_PROTECTION_SOFTWARE,
+		})
+		assert.NoError(t, err)
+
+		issuerKey := key.Key{ManagedKey: &managedKey}
+		notFoundIssuerKey := key.Key{ManagedKey: &notFoundManagedKey}
+
+		profileImage, err := os.ReadFile("./../test/test_utils/profile_image.png")
+		assert.NoError(t, err)
+		encodedImage := base64.URLEncoding.EncodeToString(profileImage)
+
+		didType := identity.NewDidType()
+		didType.Method = identity.ListOfMethods().PolygonId
+		didType.Blockchain = identity.ListOfBlockchains().Polygon
+		didType.NetworkId = identity.ListOfNetworkIds().Mumbai
+		issuer, err := identityClient.CreateIssuer(issuerKey, identity.Interval5, didType, "Bloock Test", "bloock description test", encodedImage)
+		assert.NoError(t, err)
+		assert.True(t, strings.Contains(issuer.Did.Did, "polygonid"))
+
+		_, err = identityClient.CreateIssuer(issuerKey, identity.Interval5, didType, "", "", "")
+		assert.Error(t, err)
+
+		importedIssuer, err := identityClient.ImportIssuer(issuerKey, didType)
+		assert.NoError(t, err)
+		assert.Equal(t, issuer, importedIssuer)
+
+		getIssuerDid, err := identityClient.ImportIssuer(notFoundIssuerKey, didType)
+		assert.NoError(t, err)
+		assert.Equal(t, "", getIssuerDid.Did.Did)
+
+		schema, err := identityClient.BuildSchema("Driving License", DrivingLicenseSchemaType, "1.0", "driving license schema").
+			AddIntegerAttribute("License Type", "license_type", "license type", false).
+			AddDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true).
+			AddStringAttribute("Nif", "nif", "nif", true).
+			AddBooleanAttribute("Is Spanish", "is_spanish", "is spanish", true).
+			AddDateAttribute("Birth Date", "birth_date", "birth date", true).
+			AddDatetimeAttribute("Local Hour", "local_hour", "local hour", true).
+			AddStringEnumAttribute("Car Type", "car_type", "car type", true, []string{"big", "medium", "small"}).
+			AddIntegerEnumAttribute("Car Points", "car_points", "car points", true, []int64{1, 5, 10}).
+			AddDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, []float64{1.10, 1.20, 1.30}).
 			Build()
 		assert.NoError(t, err)
+		assert.NotNil(t, schema.Cid)
 
-		receipt, err := identityClient.BuildCredential(schema.Id, holder.Key).
-			WithBooleanAttribute("bool_attr", true).
-			WithStringAttribute("string_attr", "string test").
-			WithDateAttribute("date_attr", 1683209430).
-			WithDatetimeAttribute("datetime_attr", 1683209430).
+		schema, err = identityClient.GetSchema(schema.Cid)
+		assert.NoError(t, err)
+		assert.NotNil(t, schema.CidJsonLd)
+		assert.NotNil(t, schema.Json)
+		assert.NotNil(t, schema.SchemaType)
+
+		res, err := identityClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
+			WithIntegerAttribute("license_type", 1).
+			WithDecimalAttribute("quantity_oil", 2.25555).
+			WithStringAttribute("nif", "54688188M").
+			WithBooleanAttribute("is_spanish", true).
+			WithDateAttribute("birth_date", time.Date(1999, time.March, 20, 0, 0, 0, 0, time.UTC)).
+			WithDatetimeAttribute("local_hour", time.Now()).
+			WithStringAttribute("car_type", "big").
+			WithIntegerAttribute("car_points", 5).
+			WithDecimalAttribute("precision_wheels", 1.10).
 			Build()
 		assert.NoError(t, err)
+		assert.NotNil(t, res.CredentialId)
+		assert.NotNil(t, res.Credential)
+		assert.Equal(t, DrivingLicenseSchemaType, res.CredentialType)
 
-		_, err = identityClient.WaitOffer(receipt.Id)
+		credential := res.Credential
+		assert.Equal(t, issuer.Did.Did, credential.Issuer)
+		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
+		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
+
+		ok, err := identityClient.RevokeCredential(credential, issuer)
+		assert.NoError(t, err)
+		assert.True(t, ok)
+
+		receipt, err := identityClient.ForcePublishIssuerState(issuer)
+		assert.NoError(t, err)
+		assert.NotNil(t, receipt.TxHash)
+
+		receipt, err = identityClient.ForcePublishIssuerState(issuer)
+		assert.Error(t, err)
+
+		proofRequest, err := prepareProofRequest(schema.CidJsonLd)
+		require.NoError(t, err)
+
+		verification, err := identityClient.CreateVerification(proofRequest)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, verification.SessionID)
+		assert.NotEmpty(t, verification.VerificationRequest)
+
+		status, err := identityClient.GetVerificationStatus(verification.SessionID)
+		assert.Error(t, err)
+		assert.False(t, status)
+
+		status, err = identityClient.WaitVerification(verification.SessionID, identity.VerificationParams{Timeout: 5})
+		assert.Error(t, err)
+		assert.False(t, status)
+	})
+
+	t.Run("identity end to end with local key", func(t *testing.T) {
+		identityClient := NewIdentityClient()
+		keyClient := NewKeyClient()
+
+		localKey, err := keyClient.NewLocalKey(key.Bjj)
 		assert.NoError(t, err)
 
-		offer, err := identityClient.GetOffer(receipt.Id)
+		issuerKey := key.Key{LocalKey: &localKey}
+		didType := identity.NewDidType()
+		didType.Method = identity.ListOfMethods().Iden3
+		didType.Blockchain = identity.ListOfBlockchains().Polygon
+		didType.NetworkId = identity.ListOfNetworkIds().Mumbai
+
+		issuer, err := identityClient.CreateIssuer(issuerKey, identity.Interval15, didType, "", "", "")
 		assert.NoError(t, err)
+		assert.True(t, strings.Contains(issuer.Did.Did, "iden3"))
 
-		offerJson, err := offer.ToJson()
+		schema, err := identityClient.BuildSchema("KYC Age Credential", KYCAgeSchemaType, "1.0", "kyc age schema").
+			AddIntegerAttribute("Birth Date", "birth_date", "your bityh date", true).
+			AddStringAttribute("Name", "name", "your name", true).
+			AddIntegerAttribute("Document Type", "document_type", "your document type", false).
+			Build()
 		assert.NoError(t, err)
+		assert.NotNil(t, schema.Cid)
 
-		newOffer, err := identity.NewCredentialOfferFromJson(offerJson)
+		res, err := identityClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
+			WithIntegerAttribute("birth_date", 921950325).
+			WithStringAttribute("name", "Eduard").
+			WithIntegerAttribute("document_type", 1).
+			Build()
 		assert.NoError(t, err)
+		assert.NotNil(t, res.CredentialId)
+		assert.NotNil(t, res.Credential)
 
-		assert.Equal(t, offer, newOffer)
+		credential := res.Credential
 
-		credential, err := identityClient.RedeemOffer(newOffer, holder.PrivateKey)
+		assert.Equal(t, issuer.Did.Did, credential.Issuer)
+		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
+		assert.Equal(t, KYCAgeSchemaType, credential.Type[1])
+
+		proof, err := identityClient.GetCredentialProof(issuer.Did.Did, res.CredentialId)
 		assert.NoError(t, err)
+		assert.NotEmpty(t, proof.SignatureProof)
+	})
+}
 
-		credentialJson, err := credential.ToJson()
-		assert.NoError(t, err)
+type Query struct {
+	AllowedIssuers    []string               `json:"allowedIssuers"`
+	Context           string                 `json:"context"`
+	CredentialSubject map[string]interface{} `json:"credentialSubject"`
+	Type              string                 `json:"type"`
+}
 
-		newCredential, err := identity.NewCredentialFromJson(credentialJson)
-		assert.NoError(t, err)
+type ProofRequest struct {
+	CircuitId string `json:"circuitId"`
+	ID        int    `json:"id"`
+	Query     Query  `json:"query"`
+}
 
-		assert.Equal(t, credential, newCredential)
+func prepareProofRequest(schemaID string) (string, error) {
+	jsonString := `{
+		"circuitId": "credentialAtomicQuerySigV2",
+		"id": 1704207344,
+		"query": {
+		  "allowedIssuers": [
+			"*"
+		  ],
+		  "credentialSubject": {
+			"birth_date": {}
+		  },
+		  "type": "DrivingLicense"
+		}
+	  }`
 
-		verification, err := identityClient.VerifyCredential(credential)
-		assert.NoError(t, err)
-		assert.Greater(t, verification.Timestamp, uint64(0))
-		assert.Equal(t, verification.Revocation, uint64(0))
-		assert.NotEmpty(t, verification.Issuer)
+	var data ProofRequest
+	err := json.Unmarshal([]byte(jsonString), &data)
+	if err != nil {
+		return "", err
+	}
 
-		revocation, err := identityClient.RevokeCredential(credential)
-		assert.NoError(t, err)
-		assert.True(t, revocation)
-	})*/
+	data.Query.Context = fmt.Sprintf("https://api.bloock.dev/hosting/v1/ipfs/%s", schemaID)
+
+	updatedProof, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return "", err
+	}
+
+	return string(updatedProof), nil
 }

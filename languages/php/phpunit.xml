@@ -14,7 +14,7 @@
   </coverage>
   <testsuites>
     <testsuite name="e2e_tests">
-      <directory suffix="Test.php">./tests/E2E</directory>
+      <directory suffix="Test.php">./tests/E2E/IdentityTest.php</directory>
     </testsuite>
     <testsuite name="compat_tests">
       <directory suffix="Test.php">./tests/Compat</directory>

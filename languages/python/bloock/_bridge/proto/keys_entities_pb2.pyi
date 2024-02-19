@@ -342,3 +342,28 @@ class AccessControlSecret(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["secret", b"secret"]) -> None: ...
 
 global___AccessControlSecret = AccessControlSecret
+
+@typing_extensions.final
+class Key(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    LOCAL_KEY_FIELD_NUMBER: builtins.int
+    MANAGED_KEY_FIELD_NUMBER: builtins.int
+    @property
+    def local_key(self) -> global___LocalKey: ...
+    @property
+    def managed_key(self) -> global___ManagedKey: ...
+    def __init__(
+        self,
+        *,
+        local_key: global___LocalKey | None = ...,
+        managed_key: global___ManagedKey | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "local_key", b"local_key", "managed_key", b"managed_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_local_key", b"_local_key", "_managed_key", b"_managed_key", "local_key", b"local_key", "managed_key", b"managed_key"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_local_key", b"_local_key"]) -> typing_extensions.Literal["local_key"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_managed_key", b"_managed_key"]) -> typing_extensions.Literal["managed_key"] | None: ...
+
+global___Key = Key

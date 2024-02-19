@@ -9,12 +9,16 @@ use Bloock\CredentialFromJsonRequest;
 use Bloock\CredentialToJsonRequest;
 use Exception;
 
+/**
+ * Represents a verifiable credential with its associated information. [Verifiable Credentials Data Model v2.0](https://www.w3.org/TR/vc-data-model-2.0/).
+ */
 class Credential
 {
     private RepeatedField $context;
     private string $id;
     private RepeatedField $type;
     private string $issuanceDate;
+    private string $expiration;
     private $credentialSubject;
     private CredentialStatus $credentialStatus;
     private string $issuer;
@@ -22,22 +26,25 @@ class Credential
     private CredentialProof $credentialProof;
 
     /**
+     * Creates a new Credential instance with the provided details.
      * @param RepeatedField $context
      * @param string $id
      * @param RepeatedField $type
      * @param string $issuanceDate
+     * @param string $expiration
      * @param $credentialSubject
      * @param CredentialStatus $credentialStatus
      * @param string $issuer
      * @param CredentialSchema $credentialSchema
      * @param CredentialProof $credentialProof
      */
-    public function __construct(RepeatedField $context, string $id, RepeatedField $type, string $issuanceDate, $credentialSubject, CredentialStatus $credentialStatus, string $issuer, CredentialSchema $credentialSchema, CredentialProof $credentialProof)
+    public function __construct(RepeatedField $context, string $id, RepeatedField $type, string $issuanceDate, string $expiration, $credentialSubject, CredentialStatus $credentialStatus, string $issuer, CredentialSchema $credentialSchema, CredentialProof $credentialProof)
     {
         $this->context = $context;
         $this->id = $id;
         $this->type = $type;
         $this->issuanceDate = $issuanceDate;
+        $this->expiration = $expiration;
         $this->credentialSubject = $credentialSubject;
         $this->credentialStatus = $credentialStatus;
         $this->issuer = $issuer;
@@ -52,6 +59,7 @@ class Credential
             $res->getId(),
             $res->getType(),
             $res->getIssuanceDate(),
+            $res->getExpiration(),
             $res->getCredentialSubject(),
             CredentialStatus::fromProto($res->getCredentialStatus()),
             $res->getIssuer(),
@@ -60,6 +68,12 @@ class Credential
         );
     }
 
+    /**
+     * Creates a Credential instance from a JSON string representation.
+     * @param string $json
+     * @return Credential
+     * @throws Exception
+     */
     public static function fromJson(string $json): Credential
     {
         $bridge = new Bridge();
@@ -77,6 +91,11 @@ class Credential
         return Credential::fromProto($res->getCredential());
     }
 
+    /**
+     * Converts the Credential instance to its JSON string representation.
+     * @return string
+     * @throws Exception
+     */
     public function toJson(): string
     {
         $bridge = new Bridge();
@@ -95,6 +114,7 @@ class Credential
     }
 
     /**
+     * Gets the context associated with the credential.
      * @return RepeatedField
      */
     public function getContext(): RepeatedField
@@ -103,6 +123,7 @@ class Credential
     }
 
     /**
+     * Gets the ID associated with the credential.
      * @return string
      */
     public function getId(): string
@@ -111,6 +132,7 @@ class Credential
     }
 
     /**
+     * Gets the types associated with the credential.
      * @return RepeatedField
      */
     public function getType(): RepeatedField
@@ -119,6 +141,7 @@ class Credential
     }
 
     /**
+     * Gets the issuance date of the credential.
      * @return string
      */
     public function getIssuanceDate(): string
@@ -127,6 +150,16 @@ class Credential
     }
 
     /**
+     * Gets the expiration date of the credential.
+     * @return string
+     */
+    public function getExpiration(): string
+    {
+        return $this->expiration;
+    }
+
+    /**
+     * Gets the subject of the credential.
      * @return mixed
      */
     public function getCredentialSubject()
@@ -135,6 +168,7 @@ class Credential
     }
 
     /**
+     * Gets the status of the credential.
      * @return CredentialStatus
      */
     public function getCredentialStatus(): CredentialStatus
@@ -143,6 +177,7 @@ class Credential
     }
 
     /**
+     * Gets the issuer of the credential.
      * @return string
      */
     public function getIssuer(): string
@@ -151,11 +186,21 @@ class Credential
     }
 
     /**
+     * Gets the schema associated with the credential.
      * @return CredentialSchema
      */
     public function getCredentialSchema(): CredentialSchema
     {
         return $this->credentialSchema;
+    }
+
+    /**
+     * Gets the proof associated with the credential.
+     * @return CredentialProof
+     */
+    public function getCredentialProof(): CredentialProof
+    {
+        return $this->credentialProof;
     }
 
     public function toProto(): \Bloock\Credential
@@ -165,19 +210,12 @@ class Credential
         $p->setId($this->id);
         $p->setType($this->type);
         $p->setIssuanceDate($this->issuanceDate);
+        $p->setExpiration($this->expiration);
         $p->setCredentialSubject($this->credentialSubject);
         $p->setCredentialStatus($this->credentialStatus->toProto());
         $p->setIssuer($this->issuer);
         $p->setCredentialSchema($this->credentialSchema->toProto());
         $p->setProof($this->credentialProof->toProto());
         return $p;
-    }
-
-    /**
-     * @return CredentialProof
-     */
-    public function getCredentialProof(): CredentialProof
-    {
-        return $this->credentialProof;
     }
 }

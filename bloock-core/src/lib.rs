@@ -5,7 +5,7 @@ pub mod encryption;
 pub mod error;
 pub mod event;
 pub mod identity;
-pub mod identity_v2;
+pub mod identity_core;
 pub mod integrity;
 pub mod key;
 pub mod record;

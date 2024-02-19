@@ -25,6 +25,8 @@ pub enum BridgeError {
     KeysError,
     #[error("Identity error")]
     IdentityError,
+    #[error("Identity core error")]
+    IdentityCoreError,
     #[error("Webhook error")]
     WebhookError,
     #[error("Integrity error")]
