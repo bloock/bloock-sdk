@@ -2,15 +2,18 @@ package identity
 
 import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// DatetimeAttributeDescriptor represents a descriptor for an attribute with a datetime value.
 type DatetimeAttributeDescriptor struct {
 	AttributeDescriptor
 }
 
-func NewDatetimeAttributeDescriptor(name string, technicalName string, description string) DatetimeAttributeDescriptor {
+// NewDatetimeAttributeDescriptor creates a new DatetimeAttributeDescriptor instance with the provided details.
+func NewDatetimeAttributeDescriptor(name string, id string, description string, required bool) DatetimeAttributeDescriptor {
 	a := AttributeDescriptor{
-		DisplayName:   name,
-		TechnicalName: technicalName,
-		Description:   description,
+		DisplayName: name,
+		Id:          id,
+		Description: description,
+		Required:    required,
 	}
 	return DatetimeAttributeDescriptor{
 		AttributeDescriptor: a,
@@ -22,9 +25,10 @@ func NewDatetimeAttributeDescriptorFromProto(s *proto.DateTimeAttributeDefinitio
 		return DatetimeAttributeDescriptor{}
 	}
 	a := AttributeDescriptor{
-		DisplayName:   s.GetId(),
-		TechnicalName: s.Id,
-		Description:   s.Description,
+		DisplayName: s.GetId(),
+		Id:          s.Id,
+		Description: s.Description,
+		Required:    s.Required,
 	}
 	return DatetimeAttributeDescriptor{
 		AttributeDescriptor: a,
@@ -34,7 +38,8 @@ func NewDatetimeAttributeDescriptorFromProto(s *proto.DateTimeAttributeDefinitio
 func (s DatetimeAttributeDescriptor) ToProto() *proto.DateTimeAttributeDefinition {
 	return &proto.DateTimeAttributeDefinition{
 		DisplayName: s.DisplayName,
-		Id:          s.TechnicalName,
+		Id:          s.Id,
 		Description: s.Description,
+		Required:    s.Required,
 	}
 }

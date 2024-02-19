@@ -24,7 +24,7 @@ public class Managed {
   }
 
   /**
-   * Gets de managed key object.
+   * Gets the managed key object.
    * @return
    */
   public ManagedKey getManagedKey() {

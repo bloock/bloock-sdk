@@ -1,22 +1,43 @@
 import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
 
+/**
+ * Represents a schema with its attributes.
+ */
 export class Schema {
-  id: string;
-  jsonLd: string;
+  cid: string;
+  cidJsonLd: string;
+  schemaType: string;
+  json: string;
 
-  constructor(id: string, jsonLd: string) {
-    this.id = id;
-    this.jsonLd = jsonLd;
+  /**
+   * Constructs a Schema object with the specified parameters.
+   * @param cid 
+   * @param cidJsonLd 
+   * @param schemaType 
+   * @param json 
+   */
+  constructor(
+    cid: string,
+    cidJsonLd: string,
+    schemaType: string,
+    json: string
+  ) {
+    this.cid = cid;
+    this.cidJsonLd = cidJsonLd;
+    this.schemaType = schemaType;
+    this.json = json;
   }
 
   public toProto(): identityEntitiesProto.Schema {
     return identityEntitiesProto.Schema.fromPartial({
-      id: this.id,
-      jsonLd: this.jsonLd
+      cid: this.cid,
+      cidJsonLd: this.cidJsonLd,
+      schemaType: this.schemaType,
+      json: this.json
     });
   }
 
   static fromProto(r: identityEntitiesProto.Schema): Schema {
-    return new Schema(r.id, r.jsonLd);
+    return new Schema(r.cid, r.cidJsonLd, r.schemaType, r.json);
   }
 }

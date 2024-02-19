@@ -1,14 +1,11 @@
 package identity
 
-import (
-	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
-	"github.com/bloock/bloock-sdk-go/v2/entity/integrity"
-	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
-)
+import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 
+// CredentialProof represents the proof associated with a credential, including signature and sparse merkle tree proof.
 type CredentialProof struct {
-	BloockProof    integrity.Proof
-	SignatureProof authenticity.SignatureJws
+	SignatureProof string
+	SparseMtProof  string
 }
 
 func NewCredentialProofFromProto(s *proto.CredentialProof) CredentialProof {
@@ -16,14 +13,21 @@ func NewCredentialProofFromProto(s *proto.CredentialProof) CredentialProof {
 		return CredentialProof{}
 	}
 	return CredentialProof{
-		BloockProof:    integrity.NewProofFromProto(s.BloockProof),
-		SignatureProof: authenticity.NewSignatureJwsFromProto(s.SignatureProof),
+		SignatureProof: s.GetSignatureProof(),
+		SparseMtProof:  s.GetSparseMtProof(),
 	}
 }
 
 func (c CredentialProof) ToProto() *proto.CredentialProof {
+	var sparseMtProof *string
+
+	if c.SparseMtProof == "" {
+		sparseMtProof = nil
+	} else {
+		sparseMtProof = &c.SparseMtProof
+	}
 	return &proto.CredentialProof{
-		BloockProof:    c.BloockProof.ToProto(),
-		SignatureProof: c.SignatureProof.ToProto(),
+		SignatureProof: c.SignatureProof,
+		SparseMtProof:  sparseMtProof,
 	}
 }

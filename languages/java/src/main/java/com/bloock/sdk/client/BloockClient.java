@@ -13,7 +13,7 @@ public class BloockClient {
   private final IntegrityClient integrityClient;
   private final AuthenticityClient authenticityClient;
   private final EncryptionClient encryptionClient;
-  private final IdentityLegacyClient identityLegacyClient;
+  private final IdentityCoreClient identityCoreClient;
   private final IdentityClient identityClient;
   private final RecordClient recordClient;
   private final WebhookClient webhookClient;
@@ -41,7 +41,7 @@ public class BloockClient {
 
     this.integrityClient = new IntegrityClient(this.configData);
     this.authenticityClient = new AuthenticityClient(this.configData);
-    this.identityLegacyClient = new IdentityLegacyClient(this.configData);
+    this.identityCoreClient = new IdentityCoreClient(this.configData);
     this.identityClient = new IdentityClient(this.configData);
     this.encryptionClient = new EncryptionClient(this.configData);
     this.recordClient = new RecordClient(this.configData);
@@ -89,11 +89,11 @@ public class BloockClient {
   }
 
   /**
-   * Gets identity legacy client instance
+   * Gets identity core client instance
    * @return
    */
-  public IdentityLegacyClient getIdentityLegacyClient() {
-    return this.identityLegacyClient;
+  public IdentityCoreClient getIdentityCoreClient() {
+    return this.identityCoreClient;
   }
 
   /**

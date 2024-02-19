@@ -2,6 +2,9 @@
 
 namespace Bloock\Entity\Identity;
 
+/**
+ * Represents an attribute with a boolean value.
+ */
 class BooleanAttribute extends Attribute
 {
     public static function fromProto(\Bloock\BooleanAttribute $res): BooleanAttribute

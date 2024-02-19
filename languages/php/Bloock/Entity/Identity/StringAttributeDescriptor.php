@@ -4,19 +4,14 @@ namespace Bloock\Entity\Identity;
 
 use Bloock\StringAttributeDefinition;
 
+/**
+ * Represents a descriptor for an attribute with a string value.
+ */
 class StringAttributeDescriptor extends AttributeDescriptor
 {
-    /**
-     * @param array $allowedValues
-     */
-    public function __construct(string $displayName, string $technicalName, ?string $description)
-    {
-        parent::__construct($displayName, $technicalName, $description);
-    }
-
     public static function fromProto(StringAttributeDefinition $res): StringAttributeDescriptor
     {
-        return new StringAttributeDescriptor($res->getDisplayName(), $res->getId(), $res->getDescription());
+        return new StringAttributeDescriptor($res->getDisplayName(), $res->getId(), $res->getDescription(), $res->getRequired());
     }
 
     public function toProto(): StringAttributeDefinition
@@ -25,6 +20,7 @@ class StringAttributeDescriptor extends AttributeDescriptor
         $p->setDisplayName($this->displayName);
         $p->setId($this->technicalName);
         $p->setDescription($this->description);
+        $p->setRequired($this->required);
         return $p;
     }
 }

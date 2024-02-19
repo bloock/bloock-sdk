@@ -1,51 +1,122 @@
 from bloock._bridge import bridge
-from bloock._bridge.proto.identity_pb2 import CreateIdentityRequest, LoadIdentityRequest, GetSchemaRequest, \
-    CredentialOfferRedeemRequest, VerifyCredentialRequest, RevokeCredentialRequest, GetOfferRequest, WaitOfferRequest
-from bloock._bridge.proto.shared_pb2 import Error
 from bloock._config.config import Config
-from bloock.entity.identity.credential import Credential
-from bloock.entity.identity.credential_builder import CredentialBuilder
-from bloock.entity.identity.credential_offer import CredentialOffer
-from bloock.entity.identity.credential_verification import CredentialVerification
-from bloock.entity.identity.identity import Identity
-from bloock.entity.identity.schema import Schema
+from typing import Optional
+from bloock._bridge.proto.shared_pb2 import Error
+from bloock.entity.identity.did_type import DidType
+from bloock._bridge.proto.identity_pb2 import CreateHolderRequest, CreateIssuerRequest, GetSchemaRequest, \
+    ForcePublishIssuerStateRequest, CreateVerificationRequest, WaitVerificationRequest, GetVerificationStatusRequest, ImportIssuerRequest
+from bloock._bridge.proto.identity_pb2 import GetCredentialProofRequest
+from bloock._bridge.proto.identity_pb2 import RevokeCredentialRequest
+from bloock.entity.identity.holder import Holder
+from bloock.entity.identity.issuer import Issuer
+from bloock.entity.identity.issuer_state_receipt import IssuerStateReceipt
+from bloock.entity.identity.publish_interval_params import PublishIntervalParams
 from bloock.entity.identity.schema_builder import SchemaBuilder
+from bloock.entity.identity.credential_builder import CredentialBuilder
+from bloock.entity.identity.credential_proof import CredentialProof
+from bloock.entity.identity.credential import Credential
+from bloock.entity.identity.schema import Schema
+from bloock.entity.identity.verification_receipt import VerificationReceipt
+from bloock.entity.key.key import Key
 
 
-class IdentityLegacyClient:
+class IdentityClient:
+    """
+    Represents a client for interacting with the [Bloock Identity service](https://dashboard.bloock.com/login).
+    """
     def __init__(self, config_data=None) -> None:
+        """
+        Creates a new instance of the IdentityClient with the provided configuration.
+        :type config_data: object
+        :rtype: object
+        """
         self.bridge_client = bridge.BloockBridge()
         if config_data is None:
             config_data = Config.default()
         self.config_data = config_data
 
-    def create_identity(self) -> Identity:
-        res = self.bridge_client.identity().CreateIdentity(
-            CreateIdentityRequest(
+    def create_holder(self, holder_key: Key, did_type: Optional[DidType] = None) -> Holder:
+        """
+        Creates a new holder identity.
+        :type did_type: object
+        :type holder_key: object
+        :rtype: object
+        """
+        res = self.bridge_client.identity().CreateHolder(
+            CreateHolderRequest(
                 config_data=self.config_data,
+                key=holder_key.to_proto(),
+                did_type=did_type.to_proto() if did_type is not None else None,
             )
         )
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Identity.from_proto(res.identity)
+        return Holder(res.did, did_type, holder_key)
 
-    def load_identity(self, mnemonic: str) -> Identity:
-        res = self.bridge_client.identity().LoadIdentity(
-            LoadIdentityRequest(
+    def create_issuer(self, issuer_key: Key, publish_interval: PublishIntervalParams, did_type: Optional[DidType] = None, name: str = None, description: str = None, image: str = None) -> Issuer:
+        """
+        Creates a new issuer on the Bloock Identity service.
+        :type image: object
+        :type description: object
+        :type name: object
+        :type did_type: object
+        :type publish_interval: object
+        :type issuer_key: object
+        :rtype: object
+        """
+        res = self.bridge_client.identity().CreateIssuer(
+            CreateIssuerRequest(
                 config_data=self.config_data,
-                mnemonic=mnemonic
+                key=issuer_key.to_proto(),
+                did_type=did_type.to_proto() if did_type is not None else None,
+                name=name if name is not None else None,
+                description=description if description is not None else None,
+                image=image if image is not None else None,
+                publish_interval=PublishIntervalParams.to_proto(publish_interval),
             )
         )
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Identity.from_proto(res.identity)
+        return Issuer(res.did, did_type, issuer_key)
 
-    def build_schema(self, display_name: str, technical_name: str) -> SchemaBuilder:
-        return SchemaBuilder(display_name, technical_name, self.config_data)
+    def import_issuer(self, issuer_key: Key, did_type: Optional[DidType] = None) -> Issuer:
+        """
+        Retrieves the issuer based on the issuer key and DID type.
+        :type issuer_params: object
+        :type issuer_key: object
+        :rtype: object
+        """
+        res = self.bridge_client.identity().ImportIssuer(
+            ImportIssuerRequest(
+                config_data=self.config_data,
+                key=issuer_key.to_proto(),
+                did_type=did_type.to_proto() if did_type is not None else None,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return Issuer(res.did, did_type, issuer_key)
+
+    def build_schema(self, display_name: str, schema_type: str, version: str, description: str) -> SchemaBuilder:
+        """
+        Creates a new schema builder for defining a schema on the Bloock Identity service.
+        :type description: object
+        :type version: object
+        :type schema_type: object
+        :type display_name: object
+        :rtype: object
+        """
+        return SchemaBuilder(display_name, schema_type, version, description, self.config_data)
 
     def get_schema(self, schema_id: str) -> Schema:
+        """
+        Gets a schema from the Bloock Identity service based on the schema ID (ex: Qma1t4uzbnB93E4rasNdu5UWMDh5qg3wMkPm68cnEyfnoM).
+        :type schema_id: object
+        :rtype: object
+        """
         res = self.bridge_client.identity().GetSchema(
             GetSchemaRequest(
                 config_data=self.config_data,
@@ -57,66 +128,123 @@ class IdentityLegacyClient:
             raise Exception(res.error.message)
         return Schema.from_proto(res.schema)
 
-    def build_credential(self, schema_id: str, holder_key: str) -> CredentialBuilder:
-        return CredentialBuilder(schema_id=schema_id, holder_key=holder_key, config_data=self.config_data)
+    def build_credential(self, issuer: Issuer, display_name: str, holder_did: str, expiration: int, version: int) -> CredentialBuilder:
+        """
+        Creates a new credential builder for defining a credential on the Bloock Identity service.
+        :type issuer: object
+        :type version: object
+        :type expiration: object
+        :type holder_did: object
+        :type display_name: object
+        :rtype: object
+        """
+        return CredentialBuilder(issuer, display_name, holder_did, expiration, version, self.config_data)
 
-    def get_offer(self, id: str) -> CredentialOffer:
-        res = self.bridge_client.identity().GetOffer(
-            GetOfferRequest(
+    def force_publish_issuer_state(self, issuer: Issuer) -> IssuerStateReceipt:
+        """
+        Publishes the state of an issuer on the Bloock Identity service.
+        :type issuer: object
+        :rtype: object
+        """
+        req = ForcePublishIssuerStateRequest(
+            config_data=self.config_data,
+            issuer_did=issuer.did,
+            key=issuer.key.to_proto(),
+        )
+
+        res = self.bridge_client.identity().ForcePublishIssuerState(req)
+        if res.error != Error():
+            raise Exception(res.error.message)
+
+        return IssuerStateReceipt.from_proto(res.state_receipt)
+
+    def get_credential_proof(self, issuer_did: str, credential_id: str) -> CredentialProof:
+        """
+        Gets the proof of a credential on the Bloock Identity service.
+        :type credential_id: object
+        :type issuer_did: object
+        :rtype: object
+        """
+        res = self.bridge_client.identity().GetCredentialProof(
+            GetCredentialProofRequest(
                 config_data=self.config_data,
-                id=id,
+                issuer_did=issuer_did,
+                credential_id=credential_id,
             )
         )
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return CredentialOffer.from_proto(res.offer)
+        return CredentialProof.from_proto(res.proof)
 
-    def wait_offer(self, offer_id: str) -> CredentialOffer:
-        res = self.bridge_client.identity().WaitOffer(
-            WaitOfferRequest(
-                config_data=self.config_data,
-                offer_id=offer_id,
-            )
-        )
-
-        if res.error != Error():
-            raise Exception(res.error.message)
-        return CredentialOffer.from_proto(res.offer)
-
-    def redeem_offer(self, offer: CredentialOffer, holder_private_key: str) -> Credential:
-        res = self.bridge_client.identity().CredentialOfferRedeem(
-            CredentialOfferRedeemRequest(
-                config_data=self.config_data,
-                credential_offer=offer.to_proto(),
-                identity_private_key=holder_private_key
-            )
-        )
-
-        if res.error != Error():
-            raise Exception(res.error.message)
-        return Credential.from_proto(res.credential)
-
-    def verify_credential(self, credential: Credential) -> CredentialVerification:
-        res = self.bridge_client.identity().VerifyCredential(
-            VerifyCredentialRequest(
-                config_data=self.config_data,
-                credential=credential.to_proto()
-            )
-        )
-
-        if res.error != Error():
-            raise Exception(res.error.message)
-        return CredentialVerification.from_proto(res.result)
-
-    def revoke_credential(self, credential: Credential) -> bool:
+    def revoke_credential(self, credential: Credential, issuer: Issuer) -> bool:
+        """
+        Revokes a credential on the Bloock Identity service.
+        :type issuer: object
+        :type credential: object
+        :rtype: object
+        """
         res = self.bridge_client.identity().RevokeCredential(
             RevokeCredentialRequest(
                 config_data=self.config_data,
-                credential=credential.to_proto()
+                credential=credential.to_proto(),
+                key=issuer.key.to_proto()
             )
         )
 
         if res.error != Error():
             raise Exception(res.error.message)
         return res.result.success
+
+    def create_verification(self, proof_request: str) -> VerificationReceipt:
+        """
+        Creates a new verification session on the identity managed API provided.
+        :type proof_request: object
+        :rtype: object
+        """
+        res = self.bridge_client.identity().CreateVerification(
+            CreateVerificationRequest(
+                config_data=self.config_data,
+                proof_request=proof_request,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return VerificationReceipt.from_proto(res.result)
+
+    def wait_verification(self, session_id: int, timeout=120000) -> bool:
+        """
+        Waits for the completion of a verification session on the identity managed API provided.
+        :type timeout: object
+        :type session_id: object
+        :rtype: object
+        """
+        res = self.bridge_client.identity().WaitVerification(
+            WaitVerificationRequest(
+                config_data=self.config_data,
+                session_id=session_id,
+                timeout=timeout,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.status
+
+    def get_verification_status(self, session_id: int) -> bool:
+        """
+        Gets the status of a verification session on the identity managed API provided.
+        :type session_id: object
+        :rtype: object
+        """
+        res = self.bridge_client.identity().GetVerificationStatus(
+            GetVerificationStatusRequest(
+                config_data=self.config_data,
+                session_id=session_id,
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.status

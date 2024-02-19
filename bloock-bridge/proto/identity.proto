@@ -5,66 +5,31 @@ package bloock;
 option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "com.bloock.sdk.bridge.proto";
 
-import "identity_entities.proto";
-import "shared.proto";
 import "config.proto";
+import "shared.proto";
+import "identity_entities.proto";
+import "keys_entities.proto";
 
 service IdentityService {
-    rpc CreateIdentity(CreateIdentityRequest) returns (CreateIdentityResponse);
-    rpc LoadIdentity(LoadIdentityRequest) returns (LoadIdentityResponse);
+    rpc CreateHolder(CreateHolderRequest) returns (CreateHolderResponse);
+    rpc CreateIssuer(CreateIssuerRequest) returns (CreateIssuerResponse);
+    rpc ImportIssuer(ImportIssuerRequest) returns (ImportIssuerResponse);
 
     rpc BuildSchema(BuildSchemaRequest) returns (BuildSchemaResponse);
     rpc GetSchema(GetSchemaRequest) returns (GetSchemaResponse);
 
     rpc CreateCredential(CreateCredentialRequest) returns (CreateCredentialResponse);
-    rpc GetOffer(GetOfferRequest) returns (GetOfferResponse);
-    rpc WaitOffer(WaitOfferRequest) returns (WaitOfferResponse);
-
-    rpc CredentialOfferToJson(CredentialOfferToJsonRequest) returns (CredentialOfferToJsonResponse);
-    rpc CredentialOfferFromJson(CredentialOfferFromJsonRequest) returns (CredentialOfferFromJsonResponse);
-    rpc CredentialOfferRedeem(CredentialOfferRedeemRequest) returns (CredentialOfferRedeemResponse);
+    rpc GetCredentialProof(GetCredentialProofRequest) returns (GetCredentialProofResponse);
+    rpc RevokeCredential(RevokeCredentialRequest) returns (RevokeCredentialResponse);
 
     rpc CredentialToJson(CredentialToJsonRequest) returns (CredentialToJsonResponse);
     rpc CredentialFromJson(CredentialFromJsonRequest) returns (CredentialFromJsonResponse);
 
-    rpc VerifyCredential(VerifyCredentialRequest) returns (VerifyCredentialResponse);
+    rpc ForcePublishIssuerState(ForcePublishIssuerStateRequest) returns (ForcePublishIssuerStateResponse);
 
-    rpc RevokeCredential(RevokeCredentialRequest) returns (RevokeCredentialResponse);
-}
-
-message CreateIdentityRequest {
-    ConfigData config_data = 1;
-}
-
-message CreateIdentityResponse {
-    Identity identity = 1;
-    optional Error error = 2;
-}
-
-message LoadIdentityRequest {
-    ConfigData config_data = 1;
-    string mnemonic = 2;
-}
-
-message LoadIdentityResponse {
-    Identity identity = 1;
-    optional Error error = 2;
-}
-
-message BuildSchemaRequest {
-    ConfigData config_data = 1;
-    string display_name = 2;
-    string technical_name = 3;
-    repeated BooleanAttributeDefinition boolean_attributes = 4;
-    repeated DateAttributeDefinition date_attributes = 5;
-    repeated DateTimeAttributeDefinition datetime_attributes = 6;
-    repeated StringAttributeDefinition string_attributes = 7;
-    repeated NumberAttributeDefinition number_attributes = 8;
-}
-
-message BuildSchemaResponse {
-    Schema schema = 1;
-    optional Error error = 2;
+    rpc CreateVerification(CreateVerificationRequest) returns (CreateVerificationResponse);
+    rpc WaitVerification(WaitVerificationRequest) returns (WaitVerificationResponse);
+    rpc GetVerificationStatus(GetVerificationStatusRequest) returns (GetVerificationStatusResponse);
 }
 
 message GetSchemaRequest {
@@ -77,71 +42,19 @@ message GetSchemaResponse {
     optional Error error = 2;
 }
 
-message CreateCredentialRequest {
-    ConfigData config_data = 1;
-    string schema_id = 2;
-    string holder_key = 3;
-    repeated BooleanAttribute boolean_attributes = 4;
-    repeated DateAttribute date_attributes = 5;
-    repeated DateTimeAttribute datetime_attributes = 6;
-    repeated StringAttribute string_attributes = 7;
-    repeated NumberAttribute number_attributes = 8;
-}
-
-message CreateCredentialResponse {
-    CredentialReceipt credential_receipt = 1;
+message ImportIssuerResponse {
+    string did = 1;
     optional Error error = 2;
 }
 
-message GetOfferRequest {
+message GetCredentialProofRequest {
     ConfigData config_data = 1;
-    string id = 2;
+    string issuer_did = 2;
+    string credential_id = 3;
 }
 
-message GetOfferResponse {
-    CredentialOffer offer = 1;
-    optional Error error = 2;
-}
-
-message WaitOfferRequest {
-    ConfigData config_data = 1;
-    string offer_id = 2;
-    int64 timeout = 3;
-}
-
-message WaitOfferResponse {
-    optional CredentialOffer offer = 1;
-    optional Error error = 2;
-}
-
-message CredentialOfferToJsonRequest {
-    ConfigData config_data = 1;
-    CredentialOffer credential_offer = 2;
-}
-
-message CredentialOfferToJsonResponse {
-    string json = 1;
-    optional Error error = 2;
-}
-
-message CredentialOfferFromJsonRequest {
-    ConfigData config_data = 1;
-    string json = 2;
-}
-
-message CredentialOfferFromJsonResponse {
-    CredentialOffer credential_offer = 1;
-    optional Error error = 2;
-}
-
-message CredentialOfferRedeemRequest {
-    ConfigData config_data = 1;
-    CredentialOffer credential_offer = 2;
-    string identity_private_key = 3;
-}
-
-message CredentialOfferRedeemResponse {
-    Credential credential = 1;
+message GetCredentialProofResponse {
+    CredentialProof proof = 1;
     optional Error error = 2;
 }
 
@@ -165,22 +78,130 @@ message CredentialFromJsonResponse {
     optional Error error = 2;
 }
 
-message VerifyCredentialRequest {
+message CreateCredentialRequest {
     ConfigData config_data = 1;
-    Credential credential = 2;
+    string schema_id = 2;
+    string issuer_did = 3;
+    string holder_did = 4;
+    int64 expiration = 5;
+    optional int32 version = 6;
+    Key key = 7;
+    repeated StringAttribute string_attributes = 8;
+    repeated IntegerAttribute integer_attributes = 9;
+    repeated DecimalAttribute decimal_attributes = 10;
+    repeated BooleanAttribute boolean_attributes = 11;
+    repeated DateAttribute date_attributes = 12;
+    repeated DateTimeAttribute datetime_attributes = 13;
 }
 
-message VerifyCredentialResponse {
-    CredentialVerification result = 1;
+message BuildSchemaRequest {
+    ConfigData config_data = 1;
+    string display_name = 2;
+    string schema_type = 3;
+    string version = 4;
+    string description = 5;
+    repeated StringAttributeDefinition string_attributes = 6;
+    repeated IntegerAttributeDefinition integer_attributes = 7;
+    repeated DecimalAttributeDefinition decimal_attributes = 8;
+    repeated BooleanAttributeDefinition boolean_attributes = 9;
+    repeated DateAttributeDefinition date_attributes = 10;
+    repeated DateTimeAttributeDefinition datetime_attributes = 11;
+    repeated StringEnumAttributeDefinition string_enum_attributes = 12;
+    repeated IntegerEnumAttributeDefinition integer_enum_attributes = 13;
+    repeated DecimalEnumAttributeDefinition decimal_enum_attributes = 14;
+}
+
+message CreateHolderRequest {
+    Key key = 1;
+    ConfigData config_data = 2;
+    optional DidType did_type = 3;
+}
+
+message CreateIssuerRequest {
+    Key key = 1;
+    ConfigData config_data = 2;
+    optional DidType did_type = 3;
+    optional string name = 4;
+    optional string description = 5;
+    optional string image = 6;
+    PublishInterval publish_interval = 7;
+}
+
+message ImportIssuerRequest {
+    Key key = 1;
+    ConfigData config_data = 2;
+    optional DidType did_type = 3;
+}
+
+message ForcePublishIssuerStateRequest {
+    ConfigData config_data = 1;
+    string issuer_did = 2;
+    Key key = 3;
+}
+
+message CreateCredentialResponse {
+    CredentialReceipt credential_receipt = 1;
+    optional Error error = 2;
+}
+
+message CreateHolderResponse {
+    string did = 1;
+    optional Error error = 2;
+}
+
+message CreateIssuerResponse {
+    string did = 1;
+    optional Error error = 2;
+}
+
+message BuildSchemaResponse {
+    Schema schema = 1;
+    optional Error error = 2;
+}
+
+message ForcePublishIssuerStateResponse {
+    IssuerStateReceipt state_receipt = 1;
     optional Error error = 2;
 }
 
 message RevokeCredentialRequest {
     ConfigData config_data = 1;
     Credential credential = 2;
+    Key key = 3;
 }
 
 message RevokeCredentialResponse {
     CredentialRevocation result = 1;
+    optional Error error = 2;
+}
+
+message CreateVerificationRequest {
+    ConfigData config_data = 1;
+    string proof_request = 2;
+}
+
+message CreateVerificationResponse {
+    VerificationReceipt result = 1;
+    optional Error error = 2;
+}
+
+message WaitVerificationRequest {
+    ConfigData config_data = 1;
+    int64 session_id = 2;
+    int64 timeout = 3;
+}
+
+message WaitVerificationResponse {
+    bool status = 1;
+    optional Error error = 2;
+}
+
+message GetVerificationStatusRequest {
+    ConfigData config_data = 1;
+    int64 session_id = 2;
+}
+
+message GetVerificationStatusResponse {
+    bool status = 1;
     optional Error error = 2;
 }

@@ -5,6 +5,9 @@ from bloock.entity.identity.attribute import Attribute
 
 
 class DatetimeAttribute(Attribute):
+    """
+    Represents an attribute with a datetime value.
+    """
     @staticmethod
     def from_proto(a: proto.DateTimeAttribute) -> DatetimeAttribute:
         return DatetimeAttribute(

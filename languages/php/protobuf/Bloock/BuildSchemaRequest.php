@@ -22,29 +22,53 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
      */
     protected $display_name = '';
     /**
-     * Generated from protobuf field <code>string technical_name = 3;</code>
+     * Generated from protobuf field <code>string schema_type = 3;</code>
      */
-    protected $technical_name = '';
+    protected $schema_type = '';
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinition boolean_attributes = 4;</code>
+     * Generated from protobuf field <code>string version = 4;</code>
      */
-    private $boolean_attributes;
+    protected $version = '';
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinition date_attributes = 5;</code>
+     * Generated from protobuf field <code>string description = 5;</code>
      */
-    private $date_attributes;
+    protected $description = '';
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinition datetime_attributes = 6;</code>
-     */
-    private $datetime_attributes;
-    /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 7;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 6;</code>
      */
     private $string_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.NumberAttributeDefinition number_attributes = 8;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinition integer_attributes = 7;</code>
      */
-    private $number_attributes;
+    private $integer_attributes;
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinition decimal_attributes = 8;</code>
+     */
+    private $decimal_attributes;
+    /**
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinition boolean_attributes = 9;</code>
+     */
+    private $boolean_attributes;
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinition date_attributes = 10;</code>
+     */
+    private $date_attributes;
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinition datetime_attributes = 11;</code>
+     */
+    private $datetime_attributes;
+    /**
+     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinition string_enum_attributes = 12;</code>
+     */
+    private $string_enum_attributes;
+    /**
+     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinition integer_enum_attributes = 13;</code>
+     */
+    private $integer_enum_attributes;
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinition decimal_enum_attributes = 14;</code>
+     */
+    private $decimal_enum_attributes;
 
     /**
      * Constructor.
@@ -54,12 +78,18 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
      *
      *     @type \Bloock\ConfigData $config_data
      *     @type string $display_name
-     *     @type string $technical_name
+     *     @type string $schema_type
+     *     @type string $version
+     *     @type string $description
+     *     @type \Bloock\StringAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $string_attributes
+     *     @type \Bloock\IntegerAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $integer_attributes
+     *     @type \Bloock\DecimalAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $decimal_attributes
      *     @type \Bloock\BooleanAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $boolean_attributes
      *     @type \Bloock\DateAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $date_attributes
      *     @type \Bloock\DateTimeAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $datetime_attributes
-     *     @type \Bloock\StringAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $string_attributes
-     *     @type \Bloock\NumberAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $number_attributes
+     *     @type \Bloock\StringEnumAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $string_enum_attributes
+     *     @type \Bloock\IntegerEnumAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $integer_enum_attributes
+     *     @type \Bloock\DecimalEnumAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $decimal_enum_attributes
      * }
      */
     public function __construct($data = NULL) {
@@ -122,95 +152,73 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string technical_name = 3;</code>
+     * Generated from protobuf field <code>string schema_type = 3;</code>
      * @return string
      */
-    public function getTechnicalName()
+    public function getSchemaType()
     {
-        return $this->technical_name;
+        return $this->schema_type;
     }
 
     /**
-     * Generated from protobuf field <code>string technical_name = 3;</code>
+     * Generated from protobuf field <code>string schema_type = 3;</code>
      * @param string $var
      * @return $this
      */
-    public function setTechnicalName($var)
+    public function setSchemaType($var)
     {
         GPBUtil::checkString($var, True);
-        $this->technical_name = $var;
+        $this->schema_type = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinition boolean_attributes = 4;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * Generated from protobuf field <code>string version = 4;</code>
+     * @return string
      */
-    public function getBooleanAttributes()
+    public function getVersion()
     {
-        return $this->boolean_attributes;
+        return $this->version;
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinition boolean_attributes = 4;</code>
-     * @param \Bloock\BooleanAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * Generated from protobuf field <code>string version = 4;</code>
+     * @param string $var
      * @return $this
      */
-    public function setBooleanAttributes($var)
+    public function setVersion($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\BooleanAttributeDefinition::class);
-        $this->boolean_attributes = $arr;
+        GPBUtil::checkString($var, True);
+        $this->version = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinition date_attributes = 5;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * Generated from protobuf field <code>string description = 5;</code>
+     * @return string
      */
-    public function getDateAttributes()
+    public function getDescription()
     {
-        return $this->date_attributes;
+        return $this->description;
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinition date_attributes = 5;</code>
-     * @param \Bloock\DateAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * Generated from protobuf field <code>string description = 5;</code>
+     * @param string $var
      * @return $this
      */
-    public function setDateAttributes($var)
+    public function setDescription($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\DateAttributeDefinition::class);
-        $this->date_attributes = $arr;
+        GPBUtil::checkString($var, True);
+        $this->description = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinition datetime_attributes = 6;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
-     */
-    public function getDatetimeAttributes()
-    {
-        return $this->datetime_attributes;
-    }
-
-    /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinition datetime_attributes = 6;</code>
-     * @param \Bloock\DateTimeAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
-     * @return $this
-     */
-    public function setDatetimeAttributes($var)
-    {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\DateTimeAttributeDefinition::class);
-        $this->datetime_attributes = $arr;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 7;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 6;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getStringAttributes()
@@ -219,7 +227,7 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 7;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttributeDefinition string_attributes = 6;</code>
      * @param \Bloock\StringAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -232,23 +240,177 @@ class BuildSchemaRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.NumberAttributeDefinition number_attributes = 8;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinition integer_attributes = 7;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
-    public function getNumberAttributes()
+    public function getIntegerAttributes()
     {
-        return $this->number_attributes;
+        return $this->integer_attributes;
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.NumberAttributeDefinition number_attributes = 8;</code>
-     * @param \Bloock\NumberAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttributeDefinition integer_attributes = 7;</code>
+     * @param \Bloock\IntegerAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
-    public function setNumberAttributes($var)
+    public function setIntegerAttributes($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\NumberAttributeDefinition::class);
-        $this->number_attributes = $arr;
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\IntegerAttributeDefinition::class);
+        $this->integer_attributes = $arr;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinition decimal_attributes = 8;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getDecimalAttributes()
+    {
+        return $this->decimal_attributes;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttributeDefinition decimal_attributes = 8;</code>
+     * @param \Bloock\DecimalAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setDecimalAttributes($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\DecimalAttributeDefinition::class);
+        $this->decimal_attributes = $arr;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinition boolean_attributes = 9;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getBooleanAttributes()
+    {
+        return $this->boolean_attributes;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttributeDefinition boolean_attributes = 9;</code>
+     * @param \Bloock\BooleanAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setBooleanAttributes($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\BooleanAttributeDefinition::class);
+        $this->boolean_attributes = $arr;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinition date_attributes = 10;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getDateAttributes()
+    {
+        return $this->date_attributes;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DateAttributeDefinition date_attributes = 10;</code>
+     * @param \Bloock\DateAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setDateAttributes($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\DateAttributeDefinition::class);
+        $this->date_attributes = $arr;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinition datetime_attributes = 11;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getDatetimeAttributes()
+    {
+        return $this->datetime_attributes;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttributeDefinition datetime_attributes = 11;</code>
+     * @param \Bloock\DateTimeAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setDatetimeAttributes($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\DateTimeAttributeDefinition::class);
+        $this->datetime_attributes = $arr;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinition string_enum_attributes = 12;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getStringEnumAttributes()
+    {
+        return $this->string_enum_attributes;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.StringEnumAttributeDefinition string_enum_attributes = 12;</code>
+     * @param \Bloock\StringEnumAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setStringEnumAttributes($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\StringEnumAttributeDefinition::class);
+        $this->string_enum_attributes = $arr;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinition integer_enum_attributes = 13;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getIntegerEnumAttributes()
+    {
+        return $this->integer_enum_attributes;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.IntegerEnumAttributeDefinition integer_enum_attributes = 13;</code>
+     * @param \Bloock\IntegerEnumAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setIntegerEnumAttributes($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\IntegerEnumAttributeDefinition::class);
+        $this->integer_enum_attributes = $arr;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinition decimal_enum_attributes = 14;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getDecimalEnumAttributes()
+    {
+        return $this->decimal_enum_attributes;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .bloock.DecimalEnumAttributeDefinition decimal_enum_attributes = 14;</code>
+     * @param \Bloock\DecimalEnumAttributeDefinition[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setDecimalEnumAttributes($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Bloock\DecimalEnumAttributeDefinition::class);
+        $this->decimal_enum_attributes = $arr;
 
         return $this;
     }

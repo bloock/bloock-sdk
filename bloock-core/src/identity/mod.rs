@@ -1,13 +1,15 @@
-use crate::config::{self, config_data::ConfigData};
-use crate::error::BloockError;
-use crate::error::ErrorKind;
-use crate::{availability, integrity};
-use bloock_http::BloockHttpClient;
-#[cfg(test)]
-use bloock_http::MockClient;
 use serde::Serialize;
 use std::sync::Arc;
 use thiserror::Error as ThisError;
+
+use bloock_http::BloockHttpClient;
+
+use crate::{
+    availability,
+    config::{self, config_data::ConfigData},
+    error::{BloockError, ErrorKind},
+    integrity,
+};
 
 pub mod entity;
 pub mod service;
@@ -26,6 +28,10 @@ pub enum IdentityError {
     InvalidAttributeError(),
     #[error("Error while creating credential: {0}")]
     CreateCredentialError(String),
+    #[error("Error while updating draft state signature: {0}")]
+    UpdateDraftStateSignatureError(String),
+    #[error("Error getting issuer by key: {0}")]
+    GetIssuerByKeyError(String),
     #[error("Error while getting offer: {0}")]
     GetOfferError(String),
     #[error("Error while redeeming credential: {0}")]
@@ -36,16 +42,32 @@ pub enum IdentityError {
     InvalidKeyProvided(),
     #[error("Invalid proof provided")]
     InvalidProofError(),
-    #[error("Invalid proof type provided")]
-    InvalidProofTypeProvided(),
+    #[error("Empty proof field response")]
+    EmptyProofFieldError(),
     #[error("Invalid signature provided")]
     InvalidSignatureError(),
     #[error("Invalid credential provided")]
     InvalidCredentialError(),
+    #[error("Invalid did metadata provided")]
+    InvalidDidMetadataProvided(),
     #[error("Error while revoking credential: {0}")]
     RevokeCredentialError(String),
     #[error("Wait offer timed out")]
     OfferTimeoutError(),
+    #[error("Error while publishing issuer state: {0}")]
+    PublishIssuerStateError(String),
+    #[error("No unprocessed states for the given issuer")]
+    ErrorUnprocessedState(),
+    #[error("Error while getting credential proof: {0}")]
+    GetCredentialProofError(String),
+    #[error("Error while creating verification: {0}")]
+    CreateVerificationError(String),
+    #[error("Invalid JSON provided")]
+    InvalidJson,
+    #[error("Wait Verification timed out")]
+    VerificationTimeout(),
+    #[error("Empty identity api host provided")]
+    EmptyApiHostError(),
 }
 
 impl From<IdentityError> for BloockError {
@@ -68,15 +90,5 @@ pub fn configure(config_data: ConfigData) -> service::IdentityService<BloockHttp
         config_service: config::configure(config_data),
         availability_service,
         integrity_service,
-    }
-}
-
-#[cfg(test)]
-pub fn configure_test(http: Arc<MockClient>) -> service::IdentityService<MockClient> {
-    service::IdentityService {
-        http: Arc::clone(&http),
-        config_service: config::configure_test(),
-        availability_service: availability::configure_test(Arc::clone(&http)),
-        integrity_service: integrity::configure_test(Arc::clone(&http)),
     }
 }

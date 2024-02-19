@@ -4,7 +4,6 @@ import com.bloock.sdk.client.AuthenticityClient;
 import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.client.RecordClient;
 import com.bloock.sdk.entity.authenticity.*;
-import com.bloock.sdk.entity.identity_v2.PublishIntervalParams;
 import com.bloock.sdk.entity.key.*;
 import com.bloock.sdk.entity.record.Record;
 import java.util.List;

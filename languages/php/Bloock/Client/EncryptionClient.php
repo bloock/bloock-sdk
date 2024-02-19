@@ -8,8 +8,6 @@ use Bloock\ConfigData;
 use Bloock\DecryptRequest;
 use Bloock\EncryptionAlgRequest;
 use Bloock\EncryptRequest;
-use Bloock\Entity\EciesKeyPair;
-use Bloock\Entity\Encryption\Decrypter;
 use Bloock\Entity\Encryption\Encrypter;
 use Bloock\Entity\Encryption\EncryptionAlg;
 use Bloock\Entity\Key\RsaKeyPair;

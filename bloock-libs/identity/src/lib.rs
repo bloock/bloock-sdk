@@ -1,12 +1,11 @@
-use serde::Serialize;
-use thiserror::Error as ThisError;
-
+pub mod claim;
 pub mod did;
+pub mod merklize;
+pub mod rdf;
+pub mod schema;
+pub mod vc;
 
-pub type Result<T> = std::result::Result<T, IdentityError>;
-
-#[derive(ThisError, Debug, PartialEq, Eq, Clone, Serialize)]
-pub enum IdentityError {
-    #[error("Invalid public key provided")]
-    InvalidPublicKey(),
-}
+mod error;
+mod hash;
+mod merkle;
+mod util;

@@ -17,30 +17,44 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\CreateIdentityRequest $argument input argument
+     * @param \Bloock\CreateHolderRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
      * @return mixed
      */
-    public function CreateIdentity(\Bloock\CreateIdentityRequest $argument,
+    public function CreateHolder(\Bloock\CreateHolderRequest $argument,
       $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/CreateIdentity',
+        return $this->_simpleRequest('/bloock.IdentityService/CreateHolder',
         $argument,
-        ['\Bloock\CreateIdentityResponse', 'decode'],
+        ['\Bloock\CreateHolderResponse', 'decode'],
         $metadata, $options);
     }
 
     /**
-     * @param \Bloock\LoadIdentityRequest $argument input argument
+     * @param \Bloock\CreateIssuerRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
      * @return mixed
      */
-    public function LoadIdentity(\Bloock\LoadIdentityRequest $argument,
+    public function CreateIssuer(\Bloock\CreateIssuerRequest $argument,
       $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/LoadIdentity',
+        return $this->_simpleRequest('/bloock.IdentityService/CreateIssuer',
         $argument,
-        ['\Bloock\LoadIdentityResponse', 'decode'],
+        ['\Bloock\CreateIssuerResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\ImportIssuerRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function ImportIssuer(\Bloock\ImportIssuerRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityService/ImportIssuer',
+        $argument,
+        ['\Bloock\ImportIssuerResponse', 'decode'],
         $metadata, $options);
     }
 
@@ -87,72 +101,30 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\GetOfferRequest $argument input argument
+     * @param \Bloock\GetCredentialProofRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
      * @return mixed
      */
-    public function GetOffer(\Bloock\GetOfferRequest $argument,
+    public function GetCredentialProof(\Bloock\GetCredentialProofRequest $argument,
       $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/GetOffer',
+        return $this->_simpleRequest('/bloock.IdentityService/GetCredentialProof',
         $argument,
-        ['\Bloock\GetOfferResponse', 'decode'],
+        ['\Bloock\GetCredentialProofResponse', 'decode'],
         $metadata, $options);
     }
 
     /**
-     * @param \Bloock\WaitOfferRequest $argument input argument
+     * @param \Bloock\RevokeCredentialRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
      * @return mixed
      */
-    public function WaitOffer(\Bloock\WaitOfferRequest $argument,
+    public function RevokeCredential(\Bloock\RevokeCredentialRequest $argument,
       $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/WaitOffer',
+        return $this->_simpleRequest('/bloock.IdentityService/RevokeCredential',
         $argument,
-        ['\Bloock\WaitOfferResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
-     * @param \Bloock\CredentialOfferToJsonRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function CredentialOfferToJson(\Bloock\CredentialOfferToJsonRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/CredentialOfferToJson',
-        $argument,
-        ['\Bloock\CredentialOfferToJsonResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
-     * @param \Bloock\CredentialOfferFromJsonRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function CredentialOfferFromJson(\Bloock\CredentialOfferFromJsonRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/CredentialOfferFromJson',
-        $argument,
-        ['\Bloock\CredentialOfferFromJsonResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
-     * @param \Bloock\CredentialOfferRedeemRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return mixed
-     */
-    public function CredentialOfferRedeem(\Bloock\CredentialOfferRedeemRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/CredentialOfferRedeem',
-        $argument,
-        ['\Bloock\CredentialOfferRedeemResponse', 'decode'],
+        ['\Bloock\RevokeCredentialResponse', 'decode'],
         $metadata, $options);
     }
 
@@ -185,30 +157,58 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
-     * @param \Bloock\VerifyCredentialRequest $argument input argument
+     * @param \Bloock\ForcePublishIssuerStateRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
      * @return mixed
      */
-    public function VerifyCredential(\Bloock\VerifyCredentialRequest $argument,
+    public function ForcePublishIssuerState(\Bloock\ForcePublishIssuerStateRequest $argument,
       $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/VerifyCredential',
+        return $this->_simpleRequest('/bloock.IdentityService/ForcePublishIssuerState',
         $argument,
-        ['\Bloock\VerifyCredentialResponse', 'decode'],
+        ['\Bloock\ForcePublishIssuerStateResponse', 'decode'],
         $metadata, $options);
     }
 
     /**
-     * @param \Bloock\RevokeCredentialRequest $argument input argument
+     * @param \Bloock\CreateVerificationRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
      * @return mixed
      */
-    public function RevokeCredential(\Bloock\RevokeCredentialRequest $argument,
+    public function CreateVerification(\Bloock\CreateVerificationRequest $argument,
       $metadata = [], $options = []) {
-        return $this->_simpleRequest('/bloock.IdentityService/RevokeCredential',
+        return $this->_simpleRequest('/bloock.IdentityService/CreateVerification',
         $argument,
-        ['\Bloock\RevokeCredentialResponse', 'decode'],
+        ['\Bloock\CreateVerificationResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\WaitVerificationRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function WaitVerification(\Bloock\WaitVerificationRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityService/WaitVerification',
+        $argument,
+        ['\Bloock\WaitVerificationResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\GetVerificationStatusRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GetVerificationStatus(\Bloock\GetVerificationStatusRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityService/GetVerificationStatus',
+        $argument,
+        ['\Bloock\GetVerificationStatusResponse', 'decode'],
         $metadata, $options);
     }
 

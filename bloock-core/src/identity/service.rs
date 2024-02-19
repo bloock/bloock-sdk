@@ -1,43 +1,59 @@
-use super::entity::credential::Credential;
-use super::entity::credential_offer::CredentialOffer;
-use super::entity::credential_verification::CredentialVerification;
-use super::entity::dto::create_credential_request::CreateCredentialRequest;
-use super::entity::dto::create_credential_response::CreateCredentialResponse;
-use super::entity::dto::get_credential_revocation_response::GetCredentialRevocationResponse;
-use super::entity::dto::get_offer_response::GetOfferResponse;
-use super::entity::dto::redeem_credential_request::RedeemCredentialRequest;
-use super::entity::dto::redeem_credential_response::RedeemCredentialResponse;
-use super::entity::dto::revoke_credential_request::RevokeCredentialRequest;
-use super::entity::dto::revoke_credential_response::RevokeCredentialResponse;
-use super::entity::revocation_result::RevocationResult;
-use super::entity::schema::Attribute;
 use super::{
     entity::{
+        create_credential_receipt::CreateCredentialReceipt,
+        credential::Credential,
+        did_metadata::DidMetadata,
         dto::{
+            create_credential_request::CreateCredentialRequest,
+            create_credential_response::CreateCredentialResponse,
+            create_identity_request::CreateIdentityRequest,
+            create_identity_response::CreateIdentityResponse,
+            create_issuer_request::{CreateIssuerRequest, DidMetadata as DidMetadataRequest},
+            create_issuer_response::CreateIssuerResponse,
             create_schema_request::CreateSchemaRequest,
             create_schema_response::CreateSchemaResponse,
+            create_verification_response::CreateVerificationResponse,
+            get_credential_proof_response::GetCredentialProofResponse,
+            get_issuer_by_key_response::GetIssuerByKeyResponse,
+            get_issuer_new_state_response::GetIssuerNewStateResponse,
+            get_verification_status_response::GetVerificationStatusResponse,
+            publish_issuer_state_request::PublishIssuerStateRequest,
+            publish_issuer_state_response::PublishIssuerStateResponse,
+            revoke_credential_request::RevokeCredentialRequest,
+            revoke_credential_response::RevokeCredentialResponse,
+            update_draft_state_signature_request::UpdateDraftStateSignatureRequest,
+            update_draft_state_signature_response::UpdateDraftStateSignatureResponse,
         },
-        identity::Identity,
-        schema::Schema,
+        proof::CredentialProof,
+        publish_interval::PublishInterval,
+        revocation_result::RevocationResult,
+        schema::{Attribute, Schema},
+        verification_result::VerificationResult,
     },
     IdentityError,
 };
-use crate::config::entity::network::Network;
-use crate::error::BloockResult;
-use crate::integrity::entity::proof::Proof;
-use crate::integrity::service::IntegrityService;
-use crate::shared::util;
-use crate::{availability::service::AvailabilityService, config::service::ConfigService};
+use crate::{
+    availability::service::AvailabilityService,
+    config::service::ConfigService,
+    error::{BloockResult, InfrastructureError},
+    integrity::service::IntegrityService,
+    shared::util,
+};
 use async_std::task;
+use bloock_hasher::HashAlg;
 use bloock_http::Client;
-use bloock_identity::did::Did;
-use bloock_keys::keys::local::{LocalKey, LocalKeyParams};
-use bloock_signer::entity::signature::Signature;
-use bloock_signer::format::jws::{JwsFormatter, JwsSignature};
-use bloock_signer::SignFormat;
+use bloock_identity_rs::{
+    did::parse_did,
+    schema::{
+        get_json_ld_context_from_json, get_schema_type_from_json, get_type_id_from_context,
+        parse_to_schema_cid,
+    },
+    vc::VC,
+};
+use bloock_keys::entity::key::Key;
 use serde_json::{json, Map, Value};
-use std::sync::Arc;
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
+use url::{form_urlencoded::parse, Url};
 
 pub struct IdentityService<H: Client> {
     pub http: Arc<H>,
@@ -47,117 +63,26 @@ pub struct IdentityService<H: Client> {
 }
 
 impl<H: Client> IdentityService<H> {
-    pub async fn create_identity(&self) -> BloockResult<Identity> {
-        let key = LocalKey::new(&LocalKeyParams {
-            key_type: bloock_keys::KeyType::EcP256k,
-        })
-        .map_err(|_| IdentityError::CreateKeyError())?;
-
-        let private_key = key.private_key.ok_or(IdentityError::CreateKeyError())?;
-        let mnemonic = key.mnemonic.ok_or(IdentityError::CreateKeyError())?;
-
-        Ok(Identity {
-            mnemonic,
-            key: key.key,
-            private_key,
-        })
-    }
-
-    pub async fn load_identity(&self, mnemonic: String) -> BloockResult<Identity> {
-        let key = LocalKey::load_mnemonic(bloock_keys::KeyType::EcP256k, mnemonic)
-            .map_err(|_| IdentityError::LoadKeyError())?;
-
-        let private_key = key.private_key.ok_or(IdentityError::CreateKeyError())?;
-        let mnemonic = key.mnemonic.ok_or(IdentityError::CreateKeyError())?;
-
-        Ok(Identity {
-            mnemonic,
-            key: key.key,
-            private_key,
-        })
-    }
-
-    pub async fn build_schema(
+    pub async fn create_identity(
         &self,
-        display_name: String,
-        technical_name: String,
-        attributes: Vec<Attribute>,
-    ) -> BloockResult<Schema> {
-        let mut attr = Map::new();
-        for a in attributes {
-            let r#type = a.r#type;
-            attr.insert(a.name, json!({ "type": r#type }));
-        }
-
-        let req = CreateSchemaRequest {
-            attributes: serde_json::to_value(attr)
-                .map_err(|e| IdentityError::CreateSchemaError(e.to_string()))?,
-            schema_name: display_name,
-            schema_type: technical_name,
+        public_key: String,
+        did_metadata: DidMetadata,
+    ) -> BloockResult<CreateIdentityResponse> {
+        let req = CreateIdentityRequest {
+            did_metadata: DidMetadataRequest {
+                method: did_metadata.method.get_method_type(),
+                blockchain: did_metadata.blockchain.get_bloockchain_type(),
+                network: did_metadata.network.get_network_id_type(),
+            },
+            bn_128_public_key: public_key,
         };
 
-        let res: CreateSchemaResponse = self
+        let res: CreateIdentityResponse = self
             .http
             .post_json(
                 format!(
-                    "{}/identity/v1/issuers/schemas",
-                    self.config_service.get_api_base_url()
-                ),
-                req,
-                None,
-            )
-            .await
-            .map_err(|e| IdentityError::CreateSchemaError(e.to_string()))?;
-
-        self.get_schema(res.cid).await
-    }
-
-    pub async fn get_schema(&self, id: String) -> BloockResult<Schema> {
-        let res = self
-            .availability_service
-            .retrieve_ipfs(id.clone())
-            .await
-            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
-
-        let json: Value = serde_json::from_slice(&res)
-            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
-
-        Ok(Schema {
-            cid: id,
-            json: json.to_string(),
-        })
-    }
-
-    pub async fn create_credential(
-        &self,
-        schema_id: String,
-        holder_key: String,
-        attributes: Vec<(String, Value)>,
-    ) -> BloockResult<CreateCredentialResponse> {
-        let mut map = Map::new();
-
-        for attribute in attributes.iter() {
-            map.insert(attribute.0.clone(), attribute.1.clone());
-        }
-
-        let credential_subject = Value::Object(map);
-
-        let req = CreateCredentialRequest {
-            schema_cid: schema_id,
-            credential_subject,
-            expiration: 0,
-        };
-
-        let did =
-            Did::from_public_key(holder_key).map_err(|_| IdentityError::InvalidKeyProvided())?;
-
-        let res: CreateCredentialResponse = self
-            .http
-            .post_json(
-                format!(
-                    "{}/identity/v1/claims?id={}",
+                    "{}/identityV2/v1/identities",
                     self.config_service.get_api_base_url(),
-                    did.to_string()
                 ),
                 req,
                 None,
@@ -168,29 +93,510 @@ impl<H: Client> IdentityService<H> {
         Ok(res)
     }
 
-    pub async fn get_offer(&self, id: String) -> BloockResult<CredentialOffer> {
-        let res: GetOfferResponse = self
+    pub async fn create_issuer(
+        &self,
+        public_key: String,
+        did_metadata: DidMetadata,
+        name: Option<String>,
+        description: Option<String>,
+        image: Option<String>,
+        interval: PublishInterval,
+        key_reference: String,
+    ) -> BloockResult<CreateIssuerResponse> {
+        let req = CreateIssuerRequest {
+            did_metadata: DidMetadataRequest {
+                method: did_metadata.method.get_method_type(),
+                blockchain: did_metadata.blockchain.get_bloockchain_type(),
+                network: did_metadata.network.get_network_id_type(),
+            },
+            bn_128_public_key: public_key,
+            name,
+            description,
+            image,
+            publish_interval: interval.get_publish_interval(),
+            key: key_reference,
+        };
+
+        let res: CreateIssuerResponse = self
+            .http
+            .post_json(
+                format!(
+                    "{}/identityV2/v1/issuers",
+                    self.config_service.get_api_base_url(),
+                ),
+                req,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        Ok(res)
+    }
+
+    pub async fn import_issuer(
+        &self,
+        public_key: String,
+        did_metadata: DidMetadata,
+    ) -> BloockResult<String> {
+        let res: GetIssuerByKeyResponse = self
             .http
             .get_json(
                 format!(
-                    "{}/identity/v1/claims/{}/offer",
+                    "{}/identityV2/v1/issuers/key/{}?method={}&blockchain={}&network={}",
                     self.config_service.get_api_base_url(),
-                    id
+                    public_key,
+                    did_metadata.method.get_method_type(),
+                    did_metadata.blockchain.get_bloockchain_type(),
+                    did_metadata.network.get_network_id_type()
                 ),
                 None,
             )
             .await
-            .map_err(|e| IdentityError::GetOfferError(e.to_string()))?;
+            .map_err(|e| IdentityError::GetIssuerByKeyError(e.to_string()))?;
 
-        let offer = res.try_into()?;
-        Ok(offer)
+        Ok(res.did)
     }
 
-    pub async fn wait_offer(
+    pub async fn build_schema(
         &self,
-        offer_id: String,
-        mut timeout: i64,
-    ) -> BloockResult<CredentialOffer> {
+        display_name: String,
+        schema_type: String,
+        version: String,
+        description: String,
+        attributes: Vec<Attribute>,
+    ) -> BloockResult<Schema> {
+        let mut attr = Map::new();
+        for a in attributes {
+            let r#type = a.r#type;
+            let r#enum = a.r#enum.unwrap_or(vec![]);
+            attr.insert(a.name, json!({ "data_type": r#type, "title": a.title, "description": a.description, "required": a.required, "enum": r#enum }));
+        }
+
+        let req = CreateSchemaRequest {
+            attributes: serde_json::to_value(attr)
+                .map_err(|e| IdentityError::CreateSchemaError(e.to_string()))?,
+            schema_type,
+            title: display_name,
+            version,
+            description,
+        };
+
+        let res: CreateSchemaResponse = self
+            .http
+            .post_json(
+                format!(
+                    "{}/identityV2/v1/schemas",
+                    self.config_service.get_api_base_url(),
+                ),
+                req,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::CreateSchemaError(e.to_string()))?;
+
+        self.get_schema(res.cid_json).await
+    }
+
+    pub async fn create_credential(
+        &self,
+        schema_id: String,
+        issuer_did: String,
+        holder_did: String,
+        expiration: i64,
+        version: Option<i32>,
+        mut attributes: Vec<(String, Value)>,
+        key: Key,
+    ) -> BloockResult<CreateCredentialReceipt> {
+        let api_managed_host = match self.config_service.get_identity_api_host() {
+            Some(host) => host,
+            None => Err(IdentityError::EmptyApiHostError())?,
+        };
+        _ = Url::parse(&api_managed_host.clone())
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()));
+
+        let schema_json = self.get_schema(schema_id.clone()).await?;
+
+        let schema_json_ld = self
+            .get_schema_json_ld(schema_json.cid_json_ld.clone())
+            .await?;
+        let credential_type =
+            get_type_id_from_context(schema_json_ld, schema_json.schema_type.clone())
+                .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+
+        let version = match version {
+            Some(v) => v,
+            None => 0,
+        };
+
+        attributes.push(("id".to_string(), Value::String(holder_did.clone())));
+        attributes.push((
+            "type".to_string(),
+            Value::String(schema_json.schema_type.clone()),
+        ));
+
+        let vc = VC::new(
+            schema_json.cid_json_ld.clone(),
+            schema_json.cid.clone(),
+            schema_json.schema_type.clone(),
+            issuer_did.clone(),
+            holder_did,
+            expiration,
+            attributes,
+            credential_type,
+            version,
+            self.config_service.get_api_base_url(),
+            api_managed_host,
+        )
+        .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        vc.validate_schema(schema_json.json.clone())
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        let credential_id = vc
+            .get_credentia_id()
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+        let core_claim = vc
+            .get_core_claim()
+            .await
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+        let core_claim_hex = core_claim
+            .hex()
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        let core_claim_hash = core_claim.hi_hv_hash();
+        let core_claim_hash_decoded = hex::decode(core_claim_hash)
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        let credential_json = vc
+            .to_json()
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        let mut credential: Credential = serde_json::from_str(&credential_json)
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        let signature = bloock_signer::sign(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            self.config_service.get_environment(),
+            &core_claim_hash_decoded,
+            &key,
+            Some(HashAlg::None),
+            None,
+        )
+        .await
+        .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        let req = CreateCredentialRequest {
+            credential_id,
+            core_claim: core_claim_hex,
+            bn_128_signature: signature.signature.clone(),
+        };
+
+        let res: CreateCredentialResponse = self
+            .http
+            .post_json(
+                format!(
+                    "{}/identityV2/v1/{}/claims",
+                    self.config_service.get_api_base_url(),
+                    issuer_did.to_string(),
+                ),
+                req,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        self.update_draft_state_signature(res.new_state, issuer_did.clone(), &key)
+            .await?;
+
+        let proof: GetCredentialProofResponse = self
+            .http
+            .get_json(
+                format!(
+                    "{}/identityV2/v1/{}/claims/{}/proof",
+                    self.config_service.get_api_base_url(),
+                    issuer_did.to_string(),
+                    res.id.clone(),
+                ),
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::GetCredentialProofError(e.to_string()))?;
+
+        let credential_proof: CredentialProof = serde_json::from_value(proof.proof)
+            .map_err(|e| IdentityError::GetCredentialProofError(e.to_string()))?;
+
+        credential.proof = Some(credential_proof);
+
+        Ok(CreateCredentialReceipt {
+            credential,
+            credential_id: res.id,
+            schema_type: schema_json.schema_type,
+        })
+    }
+
+    pub async fn get_schema(&self, id: String) -> BloockResult<Schema> {
+        let schema_cid = parse_to_schema_cid(id.clone())
+            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+        let res = self
+            .availability_service
+            .retrieve_ipfs(schema_cid)
+            .await
+            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+
+        let json: Value = serde_json::from_slice(&res)
+            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+
+        let cid_json_ld = get_json_ld_context_from_json(json.to_string().clone())
+            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+
+        let schema_type = get_schema_type_from_json(json.to_string().clone())
+            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+
+        Ok(Schema {
+            cid: id,
+            cid_json_ld,
+            schema_type,
+            json: json.to_string(),
+        })
+    }
+
+    pub async fn get_schema_json_ld(&self, id: String) -> BloockResult<String> {
+        let schema_cid = parse_to_schema_cid(id.clone())
+            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+        let res = self
+            .availability_service
+            .retrieve_ipfs(schema_cid)
+            .await
+            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+
+        let json: Value = serde_json::from_slice(&res)
+            .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
+
+        Ok(json.to_string())
+    }
+
+    pub async fn force_publish_issuer_state(
+        &self,
+        issuer_did: String,
+        key: Key,
+    ) -> BloockResult<PublishIssuerStateResponse> {
+        parse_did(issuer_did.clone())
+            .map_err(|e| IdentityError::PublishIssuerStateError(e.to_string()))?;
+
+        let res: GetIssuerNewStateResponse = self
+            .http
+            .get_json(
+                format!(
+                    "{}/identityV2/v1/{}/state",
+                    self.config_service.get_api_base_url(),
+                    issuer_did.to_string()
+                ),
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::PublishIssuerStateError(e.to_string()))?;
+        let new_state_hash = res.new_state;
+        if new_state_hash.is_empty() {
+            return Err(IdentityError::ErrorUnprocessedState()).map_err(|e| e.into());
+        }
+        let new_state_hash_decoded = hex::decode(new_state_hash.clone())
+            .map_err(|e| IdentityError::PublishIssuerStateError(e.to_string()))?;
+
+        let signature = bloock_signer::sign(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            self.config_service.get_environment(),
+            &new_state_hash_decoded,
+            &key,
+            Some(HashAlg::None),
+            None,
+        )
+        .await
+        .map_err(|e| IdentityError::PublishIssuerStateError(e.to_string()))?;
+
+        let req = PublishIssuerStateRequest {
+            new_state_hash: new_state_hash.clone(),
+            bn_128_signature: signature.signature,
+        };
+
+        let res: PublishIssuerStateResponse = self
+            .http
+            .post_json(
+                format!(
+                    "{}/identityV2/v1/{}/state/publish",
+                    self.config_service.get_api_base_url(),
+                    issuer_did.to_string(),
+                ),
+                req,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::PublishIssuerStateError(e.to_string()))?;
+
+        Ok(res)
+    }
+
+    pub async fn get_credential_proof(
+        &self,
+        issuer_did: String,
+        credential_id: String,
+    ) -> BloockResult<CredentialProof> {
+        parse_did(issuer_did.clone())
+            .map_err(|e| IdentityError::GetCredentialProofError(e.to_string()))?;
+
+        let proof: GetCredentialProofResponse = self
+            .http
+            .get_json(
+                format!(
+                    "{}/identityV2/v1/{}/claims/{}/proof",
+                    self.config_service.get_api_base_url(),
+                    issuer_did,
+                    credential_id,
+                ),
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::GetCredentialProofError(e.to_string()))?;
+
+        let credential_proof: CredentialProof = serde_json::from_value(proof.proof)
+            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+
+        Ok(credential_proof)
+    }
+
+    pub async fn revoke_credential(
+        &self,
+        credential: Credential,
+        key: Key,
+    ) -> BloockResult<RevocationResult> {
+        parse_did(credential.issuer.clone())
+            .map_err(|e| IdentityError::RevokeCredentialError(e.to_string()))?;
+
+        let req = RevokeCredentialRequest {};
+
+        let res: RevokeCredentialResponse = self
+            .http
+            .post_json(
+                format!(
+                    "{}/identityV2/v1/{}/claims/revoke/{}",
+                    self.config_service.get_api_base_url(),
+                    credential.issuer.clone(),
+                    credential.credential_status.revocation_nonce,
+                ),
+                req,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::RevokeCredentialError(e.to_string()))?;
+
+        if !res.success {
+            return Err(
+                IdentityError::RevokeCredentialError("unsuccess response".to_string()).into(),
+            );
+        }
+
+        self.update_draft_state_signature(res.new_state, credential.issuer.clone(), &key)
+            .await?;
+
+        Ok(RevocationResult { success: true })
+    }
+
+    pub async fn update_draft_state_signature(
+        &self,
+        new_state: String,
+        issuer_did: String,
+        key: &Key,
+    ) -> Result<bool, IdentityError> {
+        let new_state_decoded = hex::decode(new_state.clone())
+            .map_err(|e| IdentityError::UpdateDraftStateSignatureError(e.to_string()))?;
+
+        let state_signature = bloock_signer::sign(
+            self.config_service.get_api_base_url(),
+            self.config_service.get_api_key(),
+            self.config_service.get_environment(),
+            &new_state_decoded,
+            &key,
+            Some(HashAlg::None),
+            None,
+        )
+        .await
+        .map_err(|e| IdentityError::UpdateDraftStateSignatureError(e.to_string()))?;
+
+        let new_state_req = UpdateDraftStateSignatureRequest {
+            new_state_hash: new_state.clone(),
+            bn_128_signature: state_signature.signature,
+        };
+
+        let new_state_res: UpdateDraftStateSignatureResponse = self
+            .http
+            .post_json(
+                format!(
+                    "{}/identityV2/v1/{}/state",
+                    self.config_service.get_api_base_url(),
+                    issuer_did.to_string(),
+                ),
+                new_state_req,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::UpdateDraftStateSignatureError(e.to_string()))?;
+
+        if !new_state_res.success {
+            return Err(IdentityError::UpdateDraftStateSignatureError(
+                "unsuccess response".to_string(),
+            ));
+        }
+
+        return Ok(true);
+    }
+
+    pub async fn create_verification(
+        &self,
+        proof_request: String,
+    ) -> BloockResult<VerificationResult> {
+        let api_managed_host = match self.config_service.get_identity_api_host() {
+            Some(host) => host,
+            None => Err(IdentityError::EmptyApiHostError())?,
+        };
+        _ = Url::parse(&api_managed_host.clone())
+            .map_err(|e| IdentityError::CreateVerificationError(e.to_string()));
+
+        let payload: Value =
+            serde_json::from_str(&proof_request.clone()).map_err(|_| IdentityError::InvalidJson)?;
+
+        let res: CreateVerificationResponse = self
+            .http
+            .post_json(
+                format!("{}/v1/verifications", api_managed_host,),
+                payload,
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::CreateVerificationError(e.to_string()))?;
+
+        let session_id: i64 = match res.body.callback_url.split("=").last() {
+            Some(session_string) => match session_string.parse::<i64>() {
+                Ok(session) => session,
+                Err(_) => Err(IdentityError::CreateVerificationError(
+                    "cannot convert session id to u64".to_string(),
+                ))?,
+            },
+            None => Err(IdentityError::CreateVerificationError(
+                "empty session id".to_string(),
+            ))?,
+        };
+
+        let json = serde_json::to_string(&res)
+            .map_err(|e| IdentityError::CreateVerificationError(e.to_string()))?;
+
+        return Ok(VerificationResult {
+            session_id,
+            verification_request: json,
+        });
+    }
+
+    pub async fn wait_verification(&self, session_id: i64, mut timeout: i64) -> BloockResult<bool> {
         if timeout == 0 {
             timeout = 120000;
         }
@@ -203,13 +609,15 @@ impl<H: Client> IdentityService<H> {
         let timeout_time = start + timeout as u128;
 
         loop {
-            if let Ok(offer) = self.get_offer(offer_id.clone()).await {
-                return Ok(offer);
+            if let Ok(status) = self.get_verification_status(session_id.clone()).await {
+                if status.success {
+                    return Ok(true);
+                }
             }
 
             let mut current_time = util::get_current_timestamp();
             if current_time > timeout_time {
-                return Err(IdentityError::OfferTimeoutError().into());
+                return Err(IdentityError::VerificationTimeout()).map_err(|e| e.into());
             }
 
             task::sleep(Duration::from_millis(1000)).await;
@@ -221,7 +629,7 @@ impl<H: Client> IdentityService<H> {
             }
 
             if current_time >= timeout_time {
-                return Err(IdentityError::OfferTimeoutError().into());
+                return Err(IdentityError::VerificationTimeout()).map_err(|e| e.into());
             }
 
             next_try += attempts * config.wait_message_interval_factor
@@ -230,224 +638,28 @@ impl<H: Client> IdentityService<H> {
         }
     }
 
-    pub async fn redeem_credential(
+    pub async fn get_verification_status(
         &self,
-        id: String,
-        thread_id: String,
-        holder_private_key: String,
-    ) -> BloockResult<Credential> {
-        let key = LocalKey::load(bloock_keys::KeyType::EcP256k, holder_private_key)
-            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
-        let signature = bloock_signer::sign(
-            self.config_service.get_api_base_url(),
-            self.config_service.get_api_key(),
-            self.config_service.get_environment(),
-            id.as_bytes(),
-            &key.into(),
-            None,
-            None,
-        )
-        .await
-        .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
-
-        let singature_serialized = JwsFormatter::serialize([signature].to_vec())
-            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
-        let jws_signatures: Vec<JwsSignature> =
-            serde_json::from_str(&singature_serialized).unwrap();
-
-        let req = RedeemCredentialRequest {
-            thread_id,
-            signature: jws_signatures.get(0).unwrap().to_owned(),
+        session_id: i64,
+    ) -> BloockResult<GetVerificationStatusResponse> {
+        let api_managed_host = match self.config_service.get_identity_api_host() {
+            Some(host) => host,
+            None => Err(IdentityError::EmptyApiHostError())?,
         };
+        _ = Url::parse(&api_managed_host.clone())
+            .map_err(|e| IdentityError::CreateVerificationError(e.to_string()));
 
-        let res: RedeemCredentialResponse = self
+        let url = format!("{api_managed_host}/v1/verifications/status?session_id={session_id}");
+        match self
             .http
-            .post_json(
-                format!(
-                    "{}/identity/v1/claims/{}/redeem",
-                    self.config_service.get_api_base_url(),
-                    id
-                ),
-                req,
-                None,
-            )
+            .get_json::<String, GetVerificationStatusResponse>(url, None)
             .await
-            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
-
-        let credential: Credential = res.try_into()?;
-        Ok(credential)
-    }
-
-    pub async fn get_claim(&self, id: String) -> BloockResult<Value> {
-        let res: Value = self
-            .http
-            .get_json(
-                format!(
-                    "{}/identity/v1/claims/{}",
-                    self.config_service.get_api_base_url(),
-                    id
-                ),
-                None,
-            )
-            .await
-            .map_err(|e| IdentityError::GetCredentialError(e.to_string()))?;
-
-        Ok(res)
-    }
-
-    pub async fn verify_credential(
-        &self,
-        credential: Credential,
-    ) -> BloockResult<CredentialVerification> {
-        let mut credential_payload = credential.clone();
-        credential_payload.proof = None;
-
-        let bloock_proof = credential
-            .proof
-            .clone()
-            .ok_or(IdentityError::InvalidProofError())?
-            .1;
-        let timestamp = self.verify_credential_integrity(bloock_proof).await?;
-
-        let signature_proof = credential
-            .proof
-            .clone()
-            .ok_or(IdentityError::InvalidSignatureError())?
-            .0;
-        let signature_string = serde_json::to_string(&signature_proof).unwrap();
-        let signatures = JwsFormatter::deserialize(signature_string)
-            .map_err(|_| IdentityError::InvalidProofError())?;
-
-        let payload_value = serde_json::to_value(&credential_payload).unwrap();
-        let payload = serde_json::to_vec(&payload_value).unwrap();
-
-        let signature_valid = self
-            .verify_credential_signature(&payload, signatures.get(0).unwrap().to_owned())
-            .await?;
-
-        if !signature_valid {
-            return Err(IdentityError::InvalidSignatureError().into());
+        {
+            Ok(res) => Ok(res),
+            Err(e) => Err(e).map_err(|e| InfrastructureError::Http(e).into()),
         }
-
-        let revocation = self
-            .get_credential_revocation_status(credential.clone())
-            .await?;
-
-        Ok(CredentialVerification {
-            timestamp,
-            issuer: credential.issuer,
-            revocation,
-        })
-    }
-
-    pub async fn verify_credential_integrity(&self, proof: Proof) -> BloockResult<u128> {
-        let network: Network = proof
-            .anchor
-            .networks
-            .get(0)
-            .ok_or(IdentityError::InvalidProofError())?
-            .name
-            .clone()
-            .into();
-
-        let root = self.integrity_service.verify_proof(proof)?;
-        let timestamp = self.integrity_service.validate_root(root, network).await?;
-        Ok(timestamp)
-    }
-
-    pub async fn verify_credential_signature(
-        &self,
-        payload: &[u8],
-        signature: Signature,
-    ) -> BloockResult<bool> {
-        let valid = bloock_signer::verify(
-            self.config_service.get_api_base_url(),
-            self.config_service.get_api_key(),
-            self.config_service.get_environment(),
-            None,
-            payload,
-            &signature,
-        )
-        .await
-        .map_err(|_| IdentityError::InvalidSignatureError())?;
-
-        Ok(valid)
-    }
-
-    pub async fn get_credential_revocation_status(
-        &self,
-        credential: Credential,
-    ) -> BloockResult<u128> {
-        let res: GetCredentialRevocationResponse = self
-            .http
-            .get_json(credential.credential_status.id, None)
-            .await
-            .map_err(|e| IdentityError::RedeemCredentialError(e.to_string()))?;
-
-        Ok(res.timestamp)
-    }
-
-    pub async fn revoke_credential(
-        &self,
-        credential: Credential,
-    ) -> BloockResult<RevocationResult> {
-        let req = RevokeCredentialRequest {};
-
-        let res: RevokeCredentialResponse = self
-            .http
-            .post_json(
-                format!(
-                    "{}/identity/v1/{}/claims/revoke/{}",
-                    self.config_service.get_api_base_url(),
-                    credential.issuer,
-                    credential.credential_status.revocation_nonce
-                ),
-                req,
-                None,
-            )
-            .await
-            .map_err(|e| IdentityError::RevokeCredentialError(e.to_string()))?;
-
-        Ok(RevocationResult {
-            success: res.success,
-        })
     }
 }
 
 #[cfg(test)]
-mod tests {
-    use bloock_http::MockClient;
-    use std::sync::Arc;
-
-    #[tokio::test]
-    async fn test_create_identity() {
-        let http = MockClient::default();
-        let service = crate::identity::configure_test(Arc::new(http));
-
-        let identity = service.create_identity().await.unwrap();
-
-        assert_ne!(identity.key, "".to_string());
-        assert_ne!(identity.private_key, "".to_string());
-        assert_ne!(identity.mnemonic, "".to_string());
-    }
-
-    #[tokio::test]
-    async fn test_load_identity() {
-        let mnemonic = "purse cart ill nothing climb cinnamon example kangaroo forum cause page thunder spend bike grain".to_string();
-
-        let http = MockClient::default();
-        let service = crate::identity::configure_test(Arc::new(http));
-
-        let identity = service.load_identity(mnemonic.clone()).await.unwrap();
-
-        assert_eq!(
-            identity.key,
-            "04e073e1608b3fabfe96d3bdafc80cb13acfbedcc34bf98f9a25c3ef5e5cb6c3d47f2fa6824c7c2b43b401d8a6b1b4be01e195a676cfa284a8002e7e213154a327".to_string()
-        );
-        assert_eq!(
-            identity.private_key,
-            "74b4c109fd4043c4e10e6aca50a1e91146407ccc4dff7c99419e16bf3ab89934".to_string()
-        );
-        assert_eq!(identity.mnemonic, mnemonic);
-    }
-}
+mod tests {}

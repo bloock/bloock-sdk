@@ -42,3 +42,7 @@ func (s ManagedKey) ToProto() *proto.ManagedKey {
 		Key:        s.Key,
 	}
 }
+
+func (s ManagedKey) Type() KeyType {
+	return s.KeyType
+}

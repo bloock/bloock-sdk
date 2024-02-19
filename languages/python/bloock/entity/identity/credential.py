@@ -13,13 +13,31 @@ from bloock.entity.identity.credential_status import CredentialStatus
 
 
 class Credential:
-    def __init__(self, context: List[str], id: str, type: List[str], issuance_date: str, credential_subject: str,
+    """
+    Represents a verifiable credential with its associated information. [Verifiable Credentials Data Model v2.0](https://www.w3.org/TR/vc-data-model-2.0/).
+    """
+    def __init__(self, context: List[str], id: str, type: List[str], issuance_date: str, expiration: str, credential_subject: str,
                  credential_status: CredentialStatus, issuer: str, credential_schema: CredentialSchema,
                  proof: CredentialProof) -> None:
+        """
+        Creates a new Credential instance with the provided details.
+        :type proof: object
+        :type credential_schema: object
+        :type issuer: object
+        :type credential_status: object
+        :type credential_subject: object
+        :type expiration: object
+        :type issuance_date: object
+        :type type: object
+        :type id: object
+        :type context: object
+        :rtype: object
+        """
         self.context = context
         self.id = id
         self.type = type
         self.issuance_date = issuance_date
+        self.expiration = expiration
         self.credential_subject = credential_subject
         self.credential_status = credential_status
         self.issuer = issuer
@@ -33,6 +51,7 @@ class Credential:
             id=c.id,
             type=c.type,
             issuance_date=c.issuance_date,
+            expiration=c.expiration,
             credential_subject=c.credential_subject,
             credential_status=CredentialStatus.from_proto(c.credential_status),
             issuer=c.issuer,
@@ -46,6 +65,7 @@ class Credential:
             id=self.id,
             type=self.type,
             issuance_date=self.issuance_date,
+            expiration=self.expiration,
             credential_subject=self.credential_subject,
             credential_status=self.credential_status.to_proto(),
             issuer=self.issuer,
@@ -55,6 +75,11 @@ class Credential:
 
     @staticmethod
     def from_json(json: str) -> proto.Credential:
+        """
+        Creates a Credential instance from a JSON string representation.
+        :type json: object
+        :rtype: object
+        """
         bridge = BloockBridge()
 
         req = CredentialFromJsonRequest(
@@ -69,6 +94,10 @@ class Credential:
         return Credential.from_proto(res.credential)
 
     def to_json(self) -> str:
+        """
+        Converts the Credential instance to its JSON string representation.
+        :rtype: object
+        """
         bridge = BloockBridge()
 
         req = CredentialToJsonRequest(

@@ -7,7 +7,7 @@ type BloockBridge struct {
 	availability proto.AvailabilityServiceClient
 	encryption   proto.EncryptionServiceClient
 	identity     proto.IdentityServiceClient
-	identityV2   proto.IdentityServiceV2Client
+	identityCore proto.IdentityCoreServiceClient
 	integrity    proto.IntegrityServiceClient
 	key          proto.KeyServiceClient
 	record       proto.RecordServiceClient
@@ -21,7 +21,7 @@ func NewBloockBridge() BloockBridge {
 		availability: proto.NewAvailabilityServiceClient(conn),
 		encryption:   proto.NewEncryptionServiceClient(conn),
 		identity:     proto.NewIdentityServiceClient(conn),
-		identityV2:   proto.NewIdentityServiceV2Client(conn),
+		identityCore: proto.NewIdentityCoreServiceClient(conn),
 		integrity:    proto.NewIntegrityServiceClient(conn),
 		key:          proto.NewKeyServiceClient(conn),
 		record:       proto.NewRecordServiceClient(conn),
@@ -45,8 +45,8 @@ func (b *BloockBridge) Identity() proto.IdentityServiceClient {
 	return b.identity
 }
 
-func (b *BloockBridge) IdentityV2() proto.IdentityServiceV2Client {
-	return b.identityV2
+func (b *BloockBridge) IdentityCore() proto.IdentityCoreServiceClient {
+	return b.identityCore
 }
 
 func (b *BloockBridge) Integrity() proto.IntegrityServiceClient {

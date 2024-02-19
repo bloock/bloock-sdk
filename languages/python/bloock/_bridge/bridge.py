@@ -4,7 +4,7 @@ from .proto import (
     availability_pb2_grpc,
     encryption_pb2_grpc,
     identity_pb2_grpc,
-    identity_v2_pb2_grpc,
+    identity_core_pb2_grpc,
     integrity_pb2_grpc,
     keys_pb2_grpc,
     record_pb2_grpc,
@@ -19,7 +19,7 @@ class BloockBridge:
         self._availability = availability_pb2_grpc.AvailabilityServiceStub(channel)
         self._encryption = encryption_pb2_grpc.EncryptionServiceStub(channel)
         self._identity = identity_pb2_grpc.IdentityServiceStub(channel)
-        self._identity_v2 = identity_v2_pb2_grpc.IdentityServiceV2Stub(channel)
+        self._identity_core = identity_core_pb2_grpc.IdentityCoreServiceStub(channel)
         self._integrity = integrity_pb2_grpc.IntegrityServiceStub(channel)
         self._key = keys_pb2_grpc.KeyServiceStub(channel)
         self._record = record_pb2_grpc.RecordServiceStub(channel)
@@ -37,8 +37,8 @@ class BloockBridge:
     def identity(self) -> identity_pb2_grpc.IdentityServiceStub:
         return self._identity
     
-    def identity_v2(self) -> identity_v2_pb2_grpc.IdentityServiceV2Stub:
-        return self._identity_v2
+    def identity_core(self) -> identity_core_pb2_grpc.IdentityCoreServiceStub:
+        return self._identity_core
 
     def integrity(self) -> integrity_pb2_grpc.IntegrityServiceStub:
         return self._integrity

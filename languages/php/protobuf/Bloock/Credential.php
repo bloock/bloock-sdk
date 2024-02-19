@@ -30,23 +30,27 @@ class Credential extends \Google\Protobuf\Internal\Message
      */
     protected $issuance_date = '';
     /**
-     * Generated from protobuf field <code>string credential_subject = 5;</code>
+     * Generated from protobuf field <code>string expiration = 5;</code>
+     */
+    protected $expiration = '';
+    /**
+     * Generated from protobuf field <code>string credential_subject = 6;</code>
      */
     protected $credential_subject = '';
     /**
-     * Generated from protobuf field <code>.bloock.CredentialStatus credential_status = 6;</code>
+     * Generated from protobuf field <code>.bloock.CredentialStatus credential_status = 7;</code>
      */
     protected $credential_status = null;
     /**
-     * Generated from protobuf field <code>string issuer = 7;</code>
+     * Generated from protobuf field <code>string issuer = 8;</code>
      */
     protected $issuer = '';
     /**
-     * Generated from protobuf field <code>.bloock.CredentialSchema credential_schema = 8;</code>
+     * Generated from protobuf field <code>.bloock.CredentialSchema credential_schema = 9;</code>
      */
     protected $credential_schema = null;
     /**
-     * Generated from protobuf field <code>.bloock.CredentialProof proof = 9;</code>
+     * Generated from protobuf field <code>.bloock.CredentialProof proof = 10;</code>
      */
     protected $proof = null;
 
@@ -60,6 +64,7 @@ class Credential extends \Google\Protobuf\Internal\Message
      *     @type string $id
      *     @type string[]|\Google\Protobuf\Internal\RepeatedField $type
      *     @type string $issuance_date
+     *     @type string $expiration
      *     @type string $credential_subject
      *     @type \Bloock\CredentialStatus $credential_status
      *     @type string $issuer
@@ -161,7 +166,29 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string credential_subject = 5;</code>
+     * Generated from protobuf field <code>string expiration = 5;</code>
+     * @return string
+     */
+    public function getExpiration()
+    {
+        return $this->expiration;
+    }
+
+    /**
+     * Generated from protobuf field <code>string expiration = 5;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setExpiration($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->expiration = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string credential_subject = 6;</code>
      * @return string
      */
     public function getCredentialSubject()
@@ -170,7 +197,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string credential_subject = 5;</code>
+     * Generated from protobuf field <code>string credential_subject = 6;</code>
      * @param string $var
      * @return $this
      */
@@ -183,7 +210,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.CredentialStatus credential_status = 6;</code>
+     * Generated from protobuf field <code>.bloock.CredentialStatus credential_status = 7;</code>
      * @return \Bloock\CredentialStatus|null
      */
     public function getCredentialStatus()
@@ -202,7 +229,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.CredentialStatus credential_status = 6;</code>
+     * Generated from protobuf field <code>.bloock.CredentialStatus credential_status = 7;</code>
      * @param \Bloock\CredentialStatus $var
      * @return $this
      */
@@ -215,7 +242,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string issuer = 7;</code>
+     * Generated from protobuf field <code>string issuer = 8;</code>
      * @return string
      */
     public function getIssuer()
@@ -224,7 +251,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string issuer = 7;</code>
+     * Generated from protobuf field <code>string issuer = 8;</code>
      * @param string $var
      * @return $this
      */
@@ -237,7 +264,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.CredentialSchema credential_schema = 8;</code>
+     * Generated from protobuf field <code>.bloock.CredentialSchema credential_schema = 9;</code>
      * @return \Bloock\CredentialSchema|null
      */
     public function getCredentialSchema()
@@ -256,7 +283,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.CredentialSchema credential_schema = 8;</code>
+     * Generated from protobuf field <code>.bloock.CredentialSchema credential_schema = 9;</code>
      * @param \Bloock\CredentialSchema $var
      * @return $this
      */
@@ -269,7 +296,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.CredentialProof proof = 9;</code>
+     * Generated from protobuf field <code>.bloock.CredentialProof proof = 10;</code>
      * @return \Bloock\CredentialProof|null
      */
     public function getProof()
@@ -288,7 +315,7 @@ class Credential extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.CredentialProof proof = 9;</code>
+     * Generated from protobuf field <code>.bloock.CredentialProof proof = 10;</code>
      * @param \Bloock\CredentialProof $var
      * @return $this
      */

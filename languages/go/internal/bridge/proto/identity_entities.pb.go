@@ -20,948 +20,206 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Identity struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
+type Method int32
 
-	Mnemonic   string `protobuf:"bytes,1,opt,name=mnemonic,proto3" json:"mnemonic,omitempty"`
-	Key        string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	PrivateKey string `protobuf:"bytes,3,opt,name=private_key,json=privateKey,proto3" json:"private_key,omitempty"`
-}
+const (
+	Method_IDEN3      Method = 0
+	Method_POLYGON_ID Method = 1
+)
 
-func (x *Identity) Reset() {
-	*x = Identity{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
+// Enum value maps for Method.
+var (
+	Method_name = map[int32]string{
+		0: "IDEN3",
+		1: "POLYGON_ID",
 	}
-}
-
-func (x *Identity) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Identity) ProtoMessage() {}
-
-func (x *Identity) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
+	Method_value = map[string]int32{
+		"IDEN3":      0,
+		"POLYGON_ID": 1,
 	}
-	return mi.MessageOf(x)
+)
+
+func (x Method) Enum() *Method {
+	p := new(Method)
+	*p = x
+	return p
 }
 
-// Deprecated: Use Identity.ProtoReflect.Descriptor instead.
-func (*Identity) Descriptor() ([]byte, []int) {
+func (x Method) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Method) Descriptor() protoreflect.EnumDescriptor {
+	return file_identity_entities_proto_enumTypes[0].Descriptor()
+}
+
+func (Method) Type() protoreflect.EnumType {
+	return &file_identity_entities_proto_enumTypes[0]
+}
+
+func (x Method) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Method.Descriptor instead.
+func (Method) EnumDescriptor() ([]byte, []int) {
 	return file_identity_entities_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Identity) GetMnemonic() string {
-	if x != nil {
-		return x.Mnemonic
+type Blockchain int32
+
+const (
+	Blockchain_ETHEREUM      Blockchain = 0
+	Blockchain_POLYGON       Blockchain = 1
+	Blockchain_UNKNOWN_CHAIN Blockchain = 2
+	Blockchain_NO_CHAIN      Blockchain = 3
+)
+
+// Enum value maps for Blockchain.
+var (
+	Blockchain_name = map[int32]string{
+		0: "ETHEREUM",
+		1: "POLYGON",
+		2: "UNKNOWN_CHAIN",
+		3: "NO_CHAIN",
 	}
-	return ""
-}
-
-func (x *Identity) GetKey() string {
-	if x != nil {
-		return x.Key
+	Blockchain_value = map[string]int32{
+		"ETHEREUM":      0,
+		"POLYGON":       1,
+		"UNKNOWN_CHAIN": 2,
+		"NO_CHAIN":      3,
 	}
-	return ""
+)
+
+func (x Blockchain) Enum() *Blockchain {
+	p := new(Blockchain)
+	*p = x
+	return p
 }
 
-func (x *Identity) GetPrivateKey() string {
-	if x != nil {
-		return x.PrivateKey
-	}
-	return ""
+func (x Blockchain) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-type BooleanAttributeDefinition struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+func (Blockchain) Descriptor() protoreflect.EnumDescriptor {
+	return file_identity_entities_proto_enumTypes[1].Descriptor()
 }
 
-func (x *BooleanAttributeDefinition) Reset() {
-	*x = BooleanAttributeDefinition{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
+func (Blockchain) Type() protoreflect.EnumType {
+	return &file_identity_entities_proto_enumTypes[1]
 }
 
-func (x *BooleanAttributeDefinition) String() string {
-	return protoimpl.X.MessageStringOf(x)
+func (x Blockchain) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
 }
 
-func (*BooleanAttributeDefinition) ProtoMessage() {}
-
-func (x *BooleanAttributeDefinition) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BooleanAttributeDefinition.ProtoReflect.Descriptor instead.
-func (*BooleanAttributeDefinition) Descriptor() ([]byte, []int) {
+// Deprecated: Use Blockchain.Descriptor instead.
+func (Blockchain) EnumDescriptor() ([]byte, []int) {
 	return file_identity_entities_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *BooleanAttributeDefinition) GetDisplayName() string {
-	if x != nil {
-		return x.DisplayName
+type NetworkId int32
+
+const (
+	NetworkId_MAIN            NetworkId = 0
+	NetworkId_MUMBAI          NetworkId = 1
+	NetworkId_GOERLI          NetworkId = 2
+	NetworkId_UNKNOWN_NETWORK NetworkId = 3
+	NetworkId_NO_NETWORK      NetworkId = 4
+)
+
+// Enum value maps for NetworkId.
+var (
+	NetworkId_name = map[int32]string{
+		0: "MAIN",
+		1: "MUMBAI",
+		2: "GOERLI",
+		3: "UNKNOWN_NETWORK",
+		4: "NO_NETWORK",
 	}
-	return ""
-}
-
-func (x *BooleanAttributeDefinition) GetId() string {
-	if x != nil {
-		return x.Id
+	NetworkId_value = map[string]int32{
+		"MAIN":            0,
+		"MUMBAI":          1,
+		"GOERLI":          2,
+		"UNKNOWN_NETWORK": 3,
+		"NO_NETWORK":      4,
 	}
-	return ""
+)
+
+func (x NetworkId) Enum() *NetworkId {
+	p := new(NetworkId)
+	*p = x
+	return p
 }
 
-func (x *BooleanAttributeDefinition) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
+func (x NetworkId) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-type DateAttributeDefinition struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+func (NetworkId) Descriptor() protoreflect.EnumDescriptor {
+	return file_identity_entities_proto_enumTypes[2].Descriptor()
 }
 
-func (x *DateAttributeDefinition) Reset() {
-	*x = DateAttributeDefinition{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
+func (NetworkId) Type() protoreflect.EnumType {
+	return &file_identity_entities_proto_enumTypes[2]
 }
 
-func (x *DateAttributeDefinition) String() string {
-	return protoimpl.X.MessageStringOf(x)
+func (x NetworkId) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
 }
 
-func (*DateAttributeDefinition) ProtoMessage() {}
-
-func (x *DateAttributeDefinition) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DateAttributeDefinition.ProtoReflect.Descriptor instead.
-func (*DateAttributeDefinition) Descriptor() ([]byte, []int) {
+// Deprecated: Use NetworkId.Descriptor instead.
+func (NetworkId) EnumDescriptor() ([]byte, []int) {
 	return file_identity_entities_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *DateAttributeDefinition) GetDisplayName() string {
-	if x != nil {
-		return x.DisplayName
+type PublishInterval int32
+
+const (
+	PublishInterval_INTERVAL_5  PublishInterval = 0
+	PublishInterval_INTERVAL_15 PublishInterval = 1
+	PublishInterval_INTERVAL_60 PublishInterval = 2
+)
+
+// Enum value maps for PublishInterval.
+var (
+	PublishInterval_name = map[int32]string{
+		0: "INTERVAL_5",
+		1: "INTERVAL_15",
+		2: "INTERVAL_60",
 	}
-	return ""
-}
-
-func (x *DateAttributeDefinition) GetId() string {
-	if x != nil {
-		return x.Id
+	PublishInterval_value = map[string]int32{
+		"INTERVAL_5":  0,
+		"INTERVAL_15": 1,
+		"INTERVAL_60": 2,
 	}
-	return ""
+)
+
+func (x PublishInterval) Enum() *PublishInterval {
+	p := new(PublishInterval)
+	*p = x
+	return p
 }
 
-func (x *DateAttributeDefinition) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
+func (x PublishInterval) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-type DateTimeAttributeDefinition struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+func (PublishInterval) Descriptor() protoreflect.EnumDescriptor {
+	return file_identity_entities_proto_enumTypes[3].Descriptor()
 }
 
-func (x *DateTimeAttributeDefinition) Reset() {
-	*x = DateTimeAttributeDefinition{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
+func (PublishInterval) Type() protoreflect.EnumType {
+	return &file_identity_entities_proto_enumTypes[3]
 }
 
-func (x *DateTimeAttributeDefinition) String() string {
-	return protoimpl.X.MessageStringOf(x)
+func (x PublishInterval) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
 }
 
-func (*DateTimeAttributeDefinition) ProtoMessage() {}
-
-func (x *DateTimeAttributeDefinition) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DateTimeAttributeDefinition.ProtoReflect.Descriptor instead.
-func (*DateTimeAttributeDefinition) Descriptor() ([]byte, []int) {
+// Deprecated: Use PublishInterval.Descriptor instead.
+func (PublishInterval) EnumDescriptor() ([]byte, []int) {
 	return file_identity_entities_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *DateTimeAttributeDefinition) GetDisplayName() string {
-	if x != nil {
-		return x.DisplayName
-	}
-	return ""
-}
-
-func (x *DateTimeAttributeDefinition) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *DateTimeAttributeDefinition) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-type StringAttributeDefinition struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-}
-
-func (x *StringAttributeDefinition) Reset() {
-	*x = StringAttributeDefinition{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *StringAttributeDefinition) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StringAttributeDefinition) ProtoMessage() {}
-
-func (x *StringAttributeDefinition) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StringAttributeDefinition.ProtoReflect.Descriptor instead.
-func (*StringAttributeDefinition) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *StringAttributeDefinition) GetDisplayName() string {
-	if x != nil {
-		return x.DisplayName
-	}
-	return ""
-}
-
-func (x *StringAttributeDefinition) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *StringAttributeDefinition) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-type NumberAttributeDefinition struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-}
-
-func (x *NumberAttributeDefinition) Reset() {
-	*x = NumberAttributeDefinition{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[5]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *NumberAttributeDefinition) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*NumberAttributeDefinition) ProtoMessage() {}
-
-func (x *NumberAttributeDefinition) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[5]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use NumberAttributeDefinition.ProtoReflect.Descriptor instead.
-func (*NumberAttributeDefinition) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *NumberAttributeDefinition) GetDisplayName() string {
-	if x != nil {
-		return x.DisplayName
-	}
-	return ""
-}
-
-func (x *NumberAttributeDefinition) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *NumberAttributeDefinition) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-type BooleanAttribute struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Value bool   `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
-}
-
-func (x *BooleanAttribute) Reset() {
-	*x = BooleanAttribute{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[6]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *BooleanAttribute) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BooleanAttribute) ProtoMessage() {}
-
-func (x *BooleanAttribute) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[6]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BooleanAttribute.ProtoReflect.Descriptor instead.
-func (*BooleanAttribute) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *BooleanAttribute) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *BooleanAttribute) GetValue() bool {
-	if x != nil {
-		return x.Value
-	}
-	return false
-}
-
-type DateAttribute struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Value int64  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
-}
-
-func (x *DateAttribute) Reset() {
-	*x = DateAttribute{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[7]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *DateAttribute) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DateAttribute) ProtoMessage() {}
-
-func (x *DateAttribute) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[7]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DateAttribute.ProtoReflect.Descriptor instead.
-func (*DateAttribute) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *DateAttribute) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *DateAttribute) GetValue() int64 {
-	if x != nil {
-		return x.Value
-	}
-	return 0
-}
-
-type DateTimeAttribute struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Value int64  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
-}
-
-func (x *DateTimeAttribute) Reset() {
-	*x = DateTimeAttribute{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[8]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *DateTimeAttribute) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DateTimeAttribute) ProtoMessage() {}
-
-func (x *DateTimeAttribute) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[8]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DateTimeAttribute.ProtoReflect.Descriptor instead.
-func (*DateTimeAttribute) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *DateTimeAttribute) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *DateTimeAttribute) GetValue() int64 {
-	if x != nil {
-		return x.Value
-	}
-	return 0
-}
-
-type StringAttribute struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-}
-
-func (x *StringAttribute) Reset() {
-	*x = StringAttribute{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[9]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *StringAttribute) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StringAttribute) ProtoMessage() {}
-
-func (x *StringAttribute) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[9]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StringAttribute.ProtoReflect.Descriptor instead.
-func (*StringAttribute) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *StringAttribute) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *StringAttribute) GetValue() string {
-	if x != nil {
-		return x.Value
-	}
-	return ""
-}
-
-type NumberAttribute struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Value int64  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
-}
-
-func (x *NumberAttribute) Reset() {
-	*x = NumberAttribute{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[10]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *NumberAttribute) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*NumberAttribute) ProtoMessage() {}
-
-func (x *NumberAttribute) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[10]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use NumberAttribute.ProtoReflect.Descriptor instead.
-func (*NumberAttribute) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *NumberAttribute) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *NumberAttribute) GetValue() int64 {
-	if x != nil {
-		return x.Value
-	}
-	return 0
-}
-
-type Schema struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id     string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	JsonLd string `protobuf:"bytes,2,opt,name=json_ld,json=jsonLd,proto3" json:"json_ld,omitempty"`
-}
-
-func (x *Schema) Reset() {
-	*x = Schema{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[11]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Schema) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Schema) ProtoMessage() {}
-
-func (x *Schema) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[11]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Schema.ProtoReflect.Descriptor instead.
-func (*Schema) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *Schema) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *Schema) GetJsonLd() string {
-	if x != nil {
-		return x.JsonLd
-	}
-	return ""
-}
-
-type CredentialOffer struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Thid  string               `protobuf:"bytes,1,opt,name=thid,proto3" json:"thid,omitempty"`
-	Body  *CredentialOfferBody `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
-	XFrom string               `protobuf:"bytes,3,opt,name=_from,json=From,proto3" json:"_from,omitempty"`
-	XTo   string               `protobuf:"bytes,4,opt,name=_to,json=To,proto3" json:"_to,omitempty"`
-}
-
-func (x *CredentialOffer) Reset() {
-	*x = CredentialOffer{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[12]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CredentialOffer) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CredentialOffer) ProtoMessage() {}
-
-func (x *CredentialOffer) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[12]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CredentialOffer.ProtoReflect.Descriptor instead.
-func (*CredentialOffer) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *CredentialOffer) GetThid() string {
-	if x != nil {
-		return x.Thid
-	}
-	return ""
-}
-
-func (x *CredentialOffer) GetBody() *CredentialOfferBody {
-	if x != nil {
-		return x.Body
-	}
-	return nil
-}
-
-func (x *CredentialOffer) GetXFrom() string {
-	if x != nil {
-		return x.XFrom
-	}
-	return ""
-}
-
-func (x *CredentialOffer) GetXTo() string {
-	if x != nil {
-		return x.XTo
-	}
-	return ""
-}
-
-type CredentialOfferBody struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Url         string                            `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
-	Credentials []*CredentialOfferBodyCredentials `protobuf:"bytes,2,rep,name=credentials,proto3" json:"credentials,omitempty"`
-}
-
-func (x *CredentialOfferBody) Reset() {
-	*x = CredentialOfferBody{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[13]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CredentialOfferBody) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CredentialOfferBody) ProtoMessage() {}
-
-func (x *CredentialOfferBody) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[13]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CredentialOfferBody.ProtoReflect.Descriptor instead.
-func (*CredentialOfferBody) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *CredentialOfferBody) GetUrl() string {
-	if x != nil {
-		return x.Url
-	}
-	return ""
-}
-
-func (x *CredentialOfferBody) GetCredentials() []*CredentialOfferBodyCredentials {
-	if x != nil {
-		return x.Credentials
-	}
-	return nil
-}
-
-type CredentialOfferBodyCredentials struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-}
-
-func (x *CredentialOfferBodyCredentials) Reset() {
-	*x = CredentialOfferBodyCredentials{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[14]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CredentialOfferBodyCredentials) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CredentialOfferBodyCredentials) ProtoMessage() {}
-
-func (x *CredentialOfferBodyCredentials) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[14]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CredentialOfferBodyCredentials.ProtoReflect.Descriptor instead.
-func (*CredentialOfferBodyCredentials) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *CredentialOfferBodyCredentials) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *CredentialOfferBodyCredentials) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-type CredentialReceipt struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id       string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	AnchorId int64  `protobuf:"varint,2,opt,name=anchor_id,json=anchorId,proto3" json:"anchor_id,omitempty"`
-}
-
-func (x *CredentialReceipt) Reset() {
-	*x = CredentialReceipt{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[15]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CredentialReceipt) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CredentialReceipt) ProtoMessage() {}
-
-func (x *CredentialReceipt) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[15]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CredentialReceipt.ProtoReflect.Descriptor instead.
-func (*CredentialReceipt) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *CredentialReceipt) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *CredentialReceipt) GetAnchorId() int64 {
-	if x != nil {
-		return x.AnchorId
-	}
-	return 0
 }
 
 type Credential struct {
@@ -973,17 +231,18 @@ type Credential struct {
 	Id                string            `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	Type              []string          `protobuf:"bytes,3,rep,name=type,proto3" json:"type,omitempty"`
 	IssuanceDate      string            `protobuf:"bytes,4,opt,name=issuance_date,json=issuanceDate,proto3" json:"issuance_date,omitempty"`
-	CredentialSubject string            `protobuf:"bytes,5,opt,name=credential_subject,json=credentialSubject,proto3" json:"credential_subject,omitempty"`
-	CredentialStatus  *CredentialStatus `protobuf:"bytes,6,opt,name=credential_status,json=credentialStatus,proto3" json:"credential_status,omitempty"`
-	Issuer            string            `protobuf:"bytes,7,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	CredentialSchema  *CredentialSchema `protobuf:"bytes,8,opt,name=credential_schema,json=credentialSchema,proto3" json:"credential_schema,omitempty"`
-	Proof             *CredentialProof  `protobuf:"bytes,9,opt,name=proof,proto3" json:"proof,omitempty"`
+	Expiration        string            `protobuf:"bytes,5,opt,name=expiration,proto3" json:"expiration,omitempty"`
+	CredentialSubject string            `protobuf:"bytes,6,opt,name=credential_subject,json=credentialSubject,proto3" json:"credential_subject,omitempty"`
+	CredentialStatus  *CredentialStatus `protobuf:"bytes,7,opt,name=credential_status,json=credentialStatus,proto3" json:"credential_status,omitempty"`
+	Issuer            string            `protobuf:"bytes,8,opt,name=issuer,proto3" json:"issuer,omitempty"`
+	CredentialSchema  *CredentialSchema `protobuf:"bytes,9,opt,name=credential_schema,json=credentialSchema,proto3" json:"credential_schema,omitempty"`
+	Proof             *CredentialProof  `protobuf:"bytes,10,opt,name=proof,proto3" json:"proof,omitempty"`
 }
 
 func (x *Credential) Reset() {
 	*x = Credential{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[16]
+		mi := &file_identity_entities_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -996,7 +255,7 @@ func (x *Credential) String() string {
 func (*Credential) ProtoMessage() {}
 
 func (x *Credential) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[16]
+	mi := &file_identity_entities_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1009,7 +268,7 @@ func (x *Credential) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Credential.ProtoReflect.Descriptor instead.
 func (*Credential) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{16}
+	return file_identity_entities_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Credential) GetContext() []string {
@@ -1036,6 +295,13 @@ func (x *Credential) GetType() []string {
 func (x *Credential) GetIssuanceDate() string {
 	if x != nil {
 		return x.IssuanceDate
+	}
+	return ""
+}
+
+func (x *Credential) GetExpiration() string {
+	if x != nil {
+		return x.Expiration
 	}
 	return ""
 }
@@ -1075,6 +341,61 @@ func (x *Credential) GetProof() *CredentialProof {
 	return nil
 }
 
+type CredentialProof struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SignatureProof string  `protobuf:"bytes,1,opt,name=signature_proof,json=signatureProof,proto3" json:"signature_proof,omitempty"`
+	SparseMtProof  *string `protobuf:"bytes,2,opt,name=sparse_mt_proof,json=sparseMtProof,proto3,oneof" json:"sparse_mt_proof,omitempty"`
+}
+
+func (x *CredentialProof) Reset() {
+	*x = CredentialProof{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CredentialProof) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CredentialProof) ProtoMessage() {}
+
+func (x *CredentialProof) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CredentialProof.ProtoReflect.Descriptor instead.
+func (*CredentialProof) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *CredentialProof) GetSignatureProof() string {
+	if x != nil {
+		return x.SignatureProof
+	}
+	return ""
+}
+
+func (x *CredentialProof) GetSparseMtProof() string {
+	if x != nil && x.SparseMtProof != nil {
+		return *x.SparseMtProof
+	}
+	return ""
+}
+
 type CredentialStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1088,7 +409,7 @@ type CredentialStatus struct {
 func (x *CredentialStatus) Reset() {
 	*x = CredentialStatus{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[17]
+		mi := &file_identity_entities_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1101,7 +422,7 @@ func (x *CredentialStatus) String() string {
 func (*CredentialStatus) ProtoMessage() {}
 
 func (x *CredentialStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[17]
+	mi := &file_identity_entities_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1114,7 +435,7 @@ func (x *CredentialStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CredentialStatus.ProtoReflect.Descriptor instead.
 func (*CredentialStatus) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{17}
+	return file_identity_entities_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CredentialStatus) GetId() string {
@@ -1150,7 +471,7 @@ type CredentialSchema struct {
 func (x *CredentialSchema) Reset() {
 	*x = CredentialSchema{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[18]
+		mi := &file_identity_entities_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1163,7 +484,7 @@ func (x *CredentialSchema) String() string {
 func (*CredentialSchema) ProtoMessage() {}
 
 func (x *CredentialSchema) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[18]
+	mi := &file_identity_entities_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1176,7 +497,7 @@ func (x *CredentialSchema) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CredentialSchema.ProtoReflect.Descriptor instead.
 func (*CredentialSchema) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{18}
+	return file_identity_entities_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CredentialSchema) GetId() string {
@@ -1193,17 +514,1011 @@ func (x *CredentialSchema) GetType() string {
 	return ""
 }
 
-type CredentialProof struct {
+type StringAttribute struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	BloockProof    *Proof        `protobuf:"bytes,1,opt,name=bloock_proof,json=bloockProof,proto3" json:"bloock_proof,omitempty"`
-	SignatureProof *SignatureJWS `protobuf:"bytes,2,opt,name=signature_proof,json=signatureProof,proto3" json:"signature_proof,omitempty"`
+	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *CredentialProof) Reset() {
-	*x = CredentialProof{}
+func (x *StringAttribute) Reset() {
+	*x = StringAttribute{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *StringAttribute) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StringAttribute) ProtoMessage() {}
+
+func (x *StringAttribute) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StringAttribute.ProtoReflect.Descriptor instead.
+func (*StringAttribute) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *StringAttribute) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *StringAttribute) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type IntegerAttribute struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value int64  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *IntegerAttribute) Reset() {
+	*x = IntegerAttribute{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntegerAttribute) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntegerAttribute) ProtoMessage() {}
+
+func (x *IntegerAttribute) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntegerAttribute.ProtoReflect.Descriptor instead.
+func (*IntegerAttribute) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *IntegerAttribute) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *IntegerAttribute) GetValue() int64 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+type DecimalAttribute struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    string  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value float64 `protobuf:"fixed64,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *DecimalAttribute) Reset() {
+	*x = DecimalAttribute{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DecimalAttribute) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DecimalAttribute) ProtoMessage() {}
+
+func (x *DecimalAttribute) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DecimalAttribute.ProtoReflect.Descriptor instead.
+func (*DecimalAttribute) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *DecimalAttribute) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DecimalAttribute) GetValue() float64 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+type BooleanAttribute struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value bool   `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *BooleanAttribute) Reset() {
+	*x = BooleanAttribute{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BooleanAttribute) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BooleanAttribute) ProtoMessage() {}
+
+func (x *BooleanAttribute) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BooleanAttribute.ProtoReflect.Descriptor instead.
+func (*BooleanAttribute) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *BooleanAttribute) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *BooleanAttribute) GetValue() bool {
+	if x != nil {
+		return x.Value
+	}
+	return false
+}
+
+type DateAttribute struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *DateAttribute) Reset() {
+	*x = DateAttribute{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DateAttribute) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DateAttribute) ProtoMessage() {}
+
+func (x *DateAttribute) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DateAttribute.ProtoReflect.Descriptor instead.
+func (*DateAttribute) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DateAttribute) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DateAttribute) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type DateTimeAttribute struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *DateTimeAttribute) Reset() {
+	*x = DateTimeAttribute{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DateTimeAttribute) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DateTimeAttribute) ProtoMessage() {}
+
+func (x *DateTimeAttribute) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DateTimeAttribute.ProtoReflect.Descriptor instead.
+func (*DateTimeAttribute) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DateTimeAttribute) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DateTimeAttribute) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type StringAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool   `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+}
+
+func (x *StringAttributeDefinition) Reset() {
+	*x = StringAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *StringAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StringAttributeDefinition) ProtoMessage() {}
+
+func (x *StringAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StringAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*StringAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *StringAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *StringAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *StringAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *StringAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+type IntegerAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool   `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+}
+
+func (x *IntegerAttributeDefinition) Reset() {
+	*x = IntegerAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntegerAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntegerAttributeDefinition) ProtoMessage() {}
+
+func (x *IntegerAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntegerAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*IntegerAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *IntegerAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *IntegerAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *IntegerAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *IntegerAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+type DecimalAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool   `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+}
+
+func (x *DecimalAttributeDefinition) Reset() {
+	*x = DecimalAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DecimalAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DecimalAttributeDefinition) ProtoMessage() {}
+
+func (x *DecimalAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DecimalAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*DecimalAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *DecimalAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *DecimalAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DecimalAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *DecimalAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+type BooleanAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool   `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+}
+
+func (x *BooleanAttributeDefinition) Reset() {
+	*x = BooleanAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BooleanAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BooleanAttributeDefinition) ProtoMessage() {}
+
+func (x *BooleanAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BooleanAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*BooleanAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *BooleanAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *BooleanAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *BooleanAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *BooleanAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+type DateAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool   `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+}
+
+func (x *DateAttributeDefinition) Reset() {
+	*x = DateAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DateAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DateAttributeDefinition) ProtoMessage() {}
+
+func (x *DateAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DateAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*DateAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *DateAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *DateAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DateAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *DateAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+type DateTimeAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool   `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+}
+
+func (x *DateTimeAttributeDefinition) Reset() {
+	*x = DateTimeAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DateTimeAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DateTimeAttributeDefinition) ProtoMessage() {}
+
+func (x *DateTimeAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DateTimeAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*DateTimeAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DateTimeAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *DateTimeAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DateTimeAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *DateTimeAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+type StringEnumAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string   `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string   `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool     `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+	Enum        []string `protobuf:"bytes,5,rep,name=enum,proto3" json:"enum,omitempty"`
+}
+
+func (x *StringEnumAttributeDefinition) Reset() {
+	*x = StringEnumAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *StringEnumAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StringEnumAttributeDefinition) ProtoMessage() {}
+
+func (x *StringEnumAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StringEnumAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*StringEnumAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *StringEnumAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *StringEnumAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *StringEnumAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *StringEnumAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+func (x *StringEnumAttributeDefinition) GetEnum() []string {
+	if x != nil {
+		return x.Enum
+	}
+	return nil
+}
+
+type IntegerEnumAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string  `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string  `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string  `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool    `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+	Enum        []int64 `protobuf:"varint,5,rep,packed,name=enum,proto3" json:"enum,omitempty"`
+}
+
+func (x *IntegerEnumAttributeDefinition) Reset() {
+	*x = IntegerEnumAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntegerEnumAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntegerEnumAttributeDefinition) ProtoMessage() {}
+
+func (x *IntegerEnumAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntegerEnumAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*IntegerEnumAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *IntegerEnumAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *IntegerEnumAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *IntegerEnumAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *IntegerEnumAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+func (x *IntegerEnumAttributeDefinition) GetEnum() []int64 {
+	if x != nil {
+		return x.Enum
+	}
+	return nil
+}
+
+type DecimalEnumAttributeDefinition struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string    `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Id          string    `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Description string    `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required    bool      `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+	Enum        []float64 `protobuf:"fixed64,5,rep,packed,name=enum,proto3" json:"enum,omitempty"`
+}
+
+func (x *DecimalEnumAttributeDefinition) Reset() {
+	*x = DecimalEnumAttributeDefinition{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DecimalEnumAttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DecimalEnumAttributeDefinition) ProtoMessage() {}
+
+func (x *DecimalEnumAttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DecimalEnumAttributeDefinition.ProtoReflect.Descriptor instead.
+func (*DecimalEnumAttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *DecimalEnumAttributeDefinition) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *DecimalEnumAttributeDefinition) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DecimalEnumAttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *DecimalEnumAttributeDefinition) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+func (x *DecimalEnumAttributeDefinition) GetEnum() []float64 {
+	if x != nil {
+		return x.Enum
+	}
+	return nil
+}
+
+type CredentialReceipt struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Credential     *Credential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
+	CredentialId   string      `protobuf:"bytes,2,opt,name=credential_id,json=credentialId,proto3" json:"credential_id,omitempty"`
+	CredentialType string      `protobuf:"bytes,3,opt,name=credential_type,json=credentialType,proto3" json:"credential_type,omitempty"`
+}
+
+func (x *CredentialReceipt) Reset() {
+	*x = CredentialReceipt{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_identity_entities_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1211,13 +1526,13 @@ func (x *CredentialProof) Reset() {
 	}
 }
 
-func (x *CredentialProof) String() string {
+func (x *CredentialReceipt) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CredentialProof) ProtoMessage() {}
+func (*CredentialReceipt) ProtoMessage() {}
 
-func (x *CredentialProof) ProtoReflect() protoreflect.Message {
+func (x *CredentialReceipt) ProtoReflect() protoreflect.Message {
 	mi := &file_identity_entities_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1229,37 +1544,42 @@ func (x *CredentialProof) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CredentialProof.ProtoReflect.Descriptor instead.
-func (*CredentialProof) Descriptor() ([]byte, []int) {
+// Deprecated: Use CredentialReceipt.ProtoReflect.Descriptor instead.
+func (*CredentialReceipt) Descriptor() ([]byte, []int) {
 	return file_identity_entities_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *CredentialProof) GetBloockProof() *Proof {
+func (x *CredentialReceipt) GetCredential() *Credential {
 	if x != nil {
-		return x.BloockProof
+		return x.Credential
 	}
 	return nil
 }
 
-func (x *CredentialProof) GetSignatureProof() *SignatureJWS {
+func (x *CredentialReceipt) GetCredentialId() string {
 	if x != nil {
-		return x.SignatureProof
+		return x.CredentialId
 	}
-	return nil
+	return ""
 }
 
-type CredentialVerification struct {
+func (x *CredentialReceipt) GetCredentialType() string {
+	if x != nil {
+		return x.CredentialType
+	}
+	return ""
+}
+
+type IssuerStateReceipt struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Timestamp  uint64 `protobuf:"varint,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
-	Issuer     string `protobuf:"bytes,2,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	Revocation uint64 `protobuf:"varint,3,opt,name=revocation,proto3" json:"revocation,omitempty"`
+	TxHash string `protobuf:"bytes,1,opt,name=tx_hash,json=txHash,proto3" json:"tx_hash,omitempty"`
 }
 
-func (x *CredentialVerification) Reset() {
-	*x = CredentialVerification{}
+func (x *IssuerStateReceipt) Reset() {
+	*x = IssuerStateReceipt{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_identity_entities_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1267,13 +1587,13 @@ func (x *CredentialVerification) Reset() {
 	}
 }
 
-func (x *CredentialVerification) String() string {
+func (x *IssuerStateReceipt) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CredentialVerification) ProtoMessage() {}
+func (*IssuerStateReceipt) ProtoMessage() {}
 
-func (x *CredentialVerification) ProtoReflect() protoreflect.Message {
+func (x *IssuerStateReceipt) ProtoReflect() protoreflect.Message {
 	mi := &file_identity_entities_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1285,30 +1605,87 @@ func (x *CredentialVerification) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CredentialVerification.ProtoReflect.Descriptor instead.
-func (*CredentialVerification) Descriptor() ([]byte, []int) {
+// Deprecated: Use IssuerStateReceipt.ProtoReflect.Descriptor instead.
+func (*IssuerStateReceipt) Descriptor() ([]byte, []int) {
 	return file_identity_entities_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *CredentialVerification) GetTimestamp() uint64 {
+func (x *IssuerStateReceipt) GetTxHash() string {
 	if x != nil {
-		return x.Timestamp
-	}
-	return 0
-}
-
-func (x *CredentialVerification) GetIssuer() string {
-	if x != nil {
-		return x.Issuer
+		return x.TxHash
 	}
 	return ""
 }
 
-func (x *CredentialVerification) GetRevocation() uint64 {
-	if x != nil {
-		return x.Revocation
+type Schema struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Cid        string `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
+	CidJsonLd  string `protobuf:"bytes,2,opt,name=cid_json_ld,json=cidJsonLd,proto3" json:"cid_json_ld,omitempty"`
+	SchemaType string `protobuf:"bytes,3,opt,name=schema_type,json=schemaType,proto3" json:"schema_type,omitempty"`
+	Json       string `protobuf:"bytes,4,opt,name=json,proto3" json:"json,omitempty"`
+}
+
+func (x *Schema) Reset() {
+	*x = Schema{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[21]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
 	}
-	return 0
+}
+
+func (x *Schema) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Schema) ProtoMessage() {}
+
+func (x *Schema) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[21]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Schema.ProtoReflect.Descriptor instead.
+func (*Schema) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *Schema) GetCid() string {
+	if x != nil {
+		return x.Cid
+	}
+	return ""
+}
+
+func (x *Schema) GetCidJsonLd() string {
+	if x != nil {
+		return x.CidJsonLd
+	}
+	return ""
+}
+
+func (x *Schema) GetSchemaType() string {
+	if x != nil {
+		return x.SchemaType
+	}
+	return ""
+}
+
+func (x *Schema) GetJson() string {
+	if x != nil {
+		return x.Json
+	}
+	return ""
 }
 
 type CredentialRevocation struct {
@@ -1322,7 +1699,7 @@ type CredentialRevocation struct {
 func (x *CredentialRevocation) Reset() {
 	*x = CredentialRevocation{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[21]
+		mi := &file_identity_entities_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1335,7 +1712,7 @@ func (x *CredentialRevocation) String() string {
 func (*CredentialRevocation) ProtoMessage() {}
 
 func (x *CredentialRevocation) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[21]
+	mi := &file_identity_entities_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1348,7 +1725,7 @@ func (x *CredentialRevocation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CredentialRevocation.ProtoReflect.Descriptor instead.
 func (*CredentialRevocation) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{21}
+	return file_identity_entities_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *CredentialRevocation) GetSuccess() bool {
@@ -1356,6 +1733,124 @@ func (x *CredentialRevocation) GetSuccess() bool {
 		return x.Success
 	}
 	return false
+}
+
+type VerificationReceipt struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	VerificationRequest string `protobuf:"bytes,1,opt,name=verification_request,json=verificationRequest,proto3" json:"verification_request,omitempty"`
+	SessionId           int64  `protobuf:"varint,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+}
+
+func (x *VerificationReceipt) Reset() {
+	*x = VerificationReceipt{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[23]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *VerificationReceipt) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VerificationReceipt) ProtoMessage() {}
+
+func (x *VerificationReceipt) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[23]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VerificationReceipt.ProtoReflect.Descriptor instead.
+func (*VerificationReceipt) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *VerificationReceipt) GetVerificationRequest() string {
+	if x != nil {
+		return x.VerificationRequest
+	}
+	return ""
+}
+
+func (x *VerificationReceipt) GetSessionId() int64 {
+	if x != nil {
+		return x.SessionId
+	}
+	return 0
+}
+
+type DidType struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Method     Method     `protobuf:"varint,1,opt,name=method,proto3,enum=bloock.Method" json:"method,omitempty"`
+	Blockchain Blockchain `protobuf:"varint,2,opt,name=blockchain,proto3,enum=bloock.Blockchain" json:"blockchain,omitempty"`
+	NetworkId  NetworkId  `protobuf:"varint,3,opt,name=network_id,json=networkId,proto3,enum=bloock.NetworkId" json:"network_id,omitempty"`
+}
+
+func (x *DidType) Reset() {
+	*x = DidType{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_identity_entities_proto_msgTypes[24]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DidType) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DidType) ProtoMessage() {}
+
+func (x *DidType) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_entities_proto_msgTypes[24]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DidType.ProtoReflect.Descriptor instead.
+func (*DidType) Descriptor() ([]byte, []int) {
+	return file_identity_entities_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *DidType) GetMethod() Method {
+	if x != nil {
+		return x.Method
+	}
+	return Method_IDEN3
+}
+
+func (x *DidType) GetBlockchain() Blockchain {
+	if x != nil {
+		return x.Blockchain
+	}
+	return Blockchain_ETHEREUM
+}
+
+func (x *DidType) GetNetworkId() NetworkId {
+	if x != nil {
+		return x.NetworkId
+	}
+	return NetworkId_MAIN
 }
 
 type SignatureJWS struct {
@@ -1372,7 +1867,7 @@ type SignatureJWS struct {
 func (x *SignatureJWS) Reset() {
 	*x = SignatureJWS{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[22]
+		mi := &file_identity_entities_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1385,7 +1880,7 @@ func (x *SignatureJWS) String() string {
 func (*SignatureJWS) ProtoMessage() {}
 
 func (x *SignatureJWS) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[22]
+	mi := &file_identity_entities_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1398,7 +1893,7 @@ func (x *SignatureJWS) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignatureJWS.ProtoReflect.Descriptor instead.
 func (*SignatureJWS) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{22}
+	return file_identity_entities_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *SignatureJWS) GetSignature() string {
@@ -1443,7 +1938,7 @@ type SignatureHeaderJWS struct {
 func (x *SignatureHeaderJWS) Reset() {
 	*x = SignatureHeaderJWS{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_identity_entities_proto_msgTypes[23]
+		mi := &file_identity_entities_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1456,7 +1951,7 @@ func (x *SignatureHeaderJWS) String() string {
 func (*SignatureHeaderJWS) ProtoMessage() {}
 
 func (x *SignatureHeaderJWS) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_entities_proto_msgTypes[23]
+	mi := &file_identity_entities_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1469,7 +1964,7 @@ func (x *SignatureHeaderJWS) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignatureHeaderJWS.ProtoReflect.Descriptor instead.
 func (*SignatureHeaderJWS) Descriptor() ([]byte, []int) {
-	return file_identity_entities_proto_rawDescGZIP(), []int{23}
+	return file_identity_entities_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *SignatureHeaderJWS) GetAlg() string {
@@ -1505,172 +2000,238 @@ var File_identity_entities_proto protoreflect.FileDescriptor
 var file_identity_entities_proto_rawDesc = []byte{
 	0x0a, 0x17, 0x69, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x5f, 0x65, 0x6e, 0x74, 0x69, 0x74,
 	0x69, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x06, 0x62, 0x6c, 0x6f, 0x6f, 0x63,
-	0x6b, 0x1a, 0x18, 0x69, 0x6e, 0x74, 0x65, 0x67, 0x72, 0x69, 0x74, 0x79, 0x5f, 0x65, 0x6e, 0x74,
-	0x69, 0x74, 0x69, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x59, 0x0a, 0x08, 0x49,
-	0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x12, 0x1a, 0x0a, 0x08, 0x6d, 0x6e, 0x65, 0x6d, 0x6f,
-	0x6e, 0x69, 0x63, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x6e, 0x65, 0x6d, 0x6f,
-	0x6e, 0x69, 0x63, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x1f, 0x0a, 0x0b, 0x70, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65,
-	0x5f, 0x6b, 0x65, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x70, 0x72, 0x69, 0x76,
-	0x61, 0x74, 0x65, 0x4b, 0x65, 0x79, 0x22, 0x71, 0x0a, 0x1a, 0x42, 0x6f, 0x6f, 0x6c, 0x65, 0x61,
-	0x6e, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69,
-	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f,
-	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70,
-	0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72,
-	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x6e, 0x0a, 0x17, 0x44, 0x61, 0x74,
-	0x65, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69,
-	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f,
-	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70,
-	0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72,
-	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x72, 0x0a, 0x1b, 0x44, 0x61, 0x74,
-	0x65, 0x54, 0x69, 0x6d, 0x65, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x44, 0x65,
+	0x6b, 0x1a, 0x13, 0x6b, 0x65, 0x79, 0x73, 0x5f, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x69, 0x65, 0x73,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x93, 0x03, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x64, 0x65,
+	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x78, 0x74,
+	0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x78, 0x74, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x74,
+	0x79, 0x70, 0x65, 0x12, 0x23, 0x0a, 0x0d, 0x69, 0x73, 0x73, 0x75, 0x61, 0x6e, 0x63, 0x65, 0x5f,
+	0x64, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x69, 0x73, 0x73, 0x75,
+	0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x65, 0x78, 0x70, 0x69,
+	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x65, 0x78,
+	0x70, 0x69, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2d, 0x0a, 0x12, 0x63, 0x72, 0x65, 0x64,
+	0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x5f, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x18, 0x06,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x11, 0x63, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c,
+	0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x12, 0x45, 0x0a, 0x11, 0x63, 0x72, 0x65, 0x64, 0x65,
+	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x07, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x18, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64,
+	0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x10, 0x63, 0x72,
+	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x16,
+	0x0a, 0x06, 0x69, 0x73, 0x73, 0x75, 0x65, 0x72, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x69, 0x73, 0x73, 0x75, 0x65, 0x72, 0x12, 0x45, 0x0a, 0x11, 0x63, 0x72, 0x65, 0x64, 0x65, 0x6e,
+	0x74, 0x69, 0x61, 0x6c, 0x5f, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x18, 0x09, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x18, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65,
+	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x10, 0x63, 0x72, 0x65,
+	0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x12, 0x2d, 0x0a,
+	0x05, 0x70, 0x72, 0x6f, 0x6f, 0x66, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x62,
+	0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c,
+	0x50, 0x72, 0x6f, 0x6f, 0x66, 0x52, 0x05, 0x70, 0x72, 0x6f, 0x6f, 0x66, 0x22, 0x7b, 0x0a, 0x0f,
+	0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x12,
+	0x27, 0x0a, 0x0f, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x5f, 0x70, 0x72, 0x6f,
+	0x6f, 0x66, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74,
+	0x75, 0x72, 0x65, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x12, 0x2b, 0x0a, 0x0f, 0x73, 0x70, 0x61, 0x72,
+	0x73, 0x65, 0x5f, 0x6d, 0x74, 0x5f, 0x70, 0x72, 0x6f, 0x6f, 0x66, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x48, 0x00, 0x52, 0x0d, 0x73, 0x70, 0x61, 0x72, 0x73, 0x65, 0x4d, 0x74, 0x50, 0x72, 0x6f,
+	0x6f, 0x66, 0x88, 0x01, 0x01, 0x42, 0x12, 0x0a, 0x10, 0x5f, 0x73, 0x70, 0x61, 0x72, 0x73, 0x65,
+	0x5f, 0x6d, 0x74, 0x5f, 0x70, 0x72, 0x6f, 0x6f, 0x66, 0x22, 0x61, 0x0a, 0x10, 0x43, 0x72, 0x65,
+	0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x0e, 0x0a,
+	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x29, 0x0a,
+	0x10, 0x72, 0x65, 0x76, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x6e, 0x6f, 0x6e, 0x63,
+	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0f, 0x72, 0x65, 0x76, 0x6f, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x4e, 0x6f, 0x6e, 0x63, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x22, 0x36, 0x0a, 0x10,
+	0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61,
+	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64,
+	0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
+	0x74, 0x79, 0x70, 0x65, 0x22, 0x37, 0x0a, 0x0f, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x41, 0x74,
+	0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x38, 0x0a,
+	0x10, 0x49, 0x6e, 0x74, 0x65, 0x67, 0x65, 0x72, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69,
+	0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x38, 0x0a, 0x10, 0x44, 0x65, 0x63, 0x69, 0x6d,
+	0x61, 0x6c, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x01, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x22, 0x38, 0x0a, 0x10, 0x42, 0x6f, 0x6f, 0x6c, 0x65, 0x61, 0x6e, 0x41, 0x74, 0x74, 0x72,
+	0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x35, 0x0a, 0x0d, 0x44,
+	0x61, 0x74, 0x65, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05,
+	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x22, 0x39, 0x0a, 0x11, 0x44, 0x61, 0x74, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x41, 0x74,
+	0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x8c, 0x01,
+	0x0a, 0x19, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64,
+	0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20,
+	0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0x8d, 0x01, 0x0a,
+	0x1a, 0x49, 0x6e, 0x74, 0x65, 0x67, 0x65, 0x72, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64,
+	0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20,
+	0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0x8d, 0x01, 0x0a,
+	0x1a, 0x44, 0x65, 0x63, 0x69, 0x6d, 0x61, 0x6c, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64,
+	0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20,
+	0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0x8d, 0x01, 0x0a,
+	0x1a, 0x42, 0x6f, 0x6f, 0x6c, 0x65, 0x61, 0x6e, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64,
+	0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20,
+	0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0x8a, 0x01, 0x0a,
+	0x17, 0x44, 0x61, 0x74, 0x65, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x44, 0x65,
 	0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64, 0x69, 0x73, 0x70,
 	0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b,
 	0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69,
 	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x64,
 	0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x70, 0x0a,
-	0x19, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65,
-	0x44, 0x65, 0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64, 0x69,
-	0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0b, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a,
-	0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20, 0x0a,
-	0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22,
-	0x70, 0x0a, 0x19, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75,
+	0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1a, 0x0a,
+	0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52,
+	0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0x8e, 0x01, 0x0a, 0x1b, 0x44, 0x61,
+	0x74, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x44,
+	0x65, 0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64, 0x69, 0x73,
+	0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0b, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20, 0x0a, 0x0b,
+	0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1a,
+	0x0a, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08,
+	0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0xa4, 0x01, 0x0a, 0x1d, 0x53,
+	0x74, 0x72, 0x69, 0x6e, 0x67, 0x45, 0x6e, 0x75, 0x6d, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75,
 	0x74, 0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c,
 	0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12,
 	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12,
 	0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f,
-	0x6e, 0x22, 0x38, 0x0a, 0x10, 0x42, 0x6f, 0x6f, 0x6c, 0x65, 0x61, 0x6e, 0x41, 0x74, 0x74, 0x72,
-	0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x35, 0x0a, 0x0d, 0x44,
-	0x61, 0x74, 0x65, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05,
-	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x76, 0x61, 0x6c,
-	0x75, 0x65, 0x22, 0x39, 0x0a, 0x11, 0x44, 0x61, 0x74, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x41, 0x74,
-	0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x37, 0x0a,
-	0x0f, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65,
-	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64,
-	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x37, 0x0a, 0x0f, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72,
-	0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c,
-	0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22,
-	0x31, 0x0a, 0x06, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x6a, 0x73, 0x6f,
-	0x6e, 0x5f, 0x6c, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6a, 0x73, 0x6f, 0x6e,
-	0x4c, 0x64, 0x22, 0x7c, 0x0a, 0x0f, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c,
-	0x4f, 0x66, 0x66, 0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x68, 0x69, 0x64, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x68, 0x69, 0x64, 0x12, 0x2f, 0x0a, 0x04, 0x62, 0x6f, 0x64,
-	0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b,
-	0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x4f, 0x66, 0x66, 0x65, 0x72,
-	0x42, 0x6f, 0x64, 0x79, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x13, 0x0a, 0x05, 0x5f, 0x66,
-	0x72, 0x6f, 0x6d, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x46, 0x72, 0x6f, 0x6d, 0x12,
-	0x0f, 0x0a, 0x03, 0x5f, 0x74, 0x6f, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x54, 0x6f,
-	0x22, 0x71, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x4f, 0x66,
-	0x66, 0x65, 0x72, 0x42, 0x6f, 0x64, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x48, 0x0a, 0x0b, 0x63, 0x72, 0x65,
-	0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x26,
-	0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69,
-	0x61, 0x6c, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x42, 0x6f, 0x64, 0x79, 0x43, 0x72, 0x65, 0x64, 0x65,
-	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x73, 0x52, 0x0b, 0x63, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69,
-	0x61, 0x6c, 0x73, 0x22, 0x52, 0x0a, 0x1e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61,
-	0x6c, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x42, 0x6f, 0x64, 0x79, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e,
-	0x74, 0x69, 0x61, 0x6c, 0x73, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70,
-	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63,
-	0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x40, 0x0a, 0x11, 0x43, 0x72, 0x65, 0x64, 0x65,
-	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x63, 0x65, 0x69, 0x70, 0x74, 0x12, 0x0e, 0x0a, 0x02,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a, 0x09,
-	0x61, 0x6e, 0x63, 0x68, 0x6f, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52,
-	0x08, 0x61, 0x6e, 0x63, 0x68, 0x6f, 0x72, 0x49, 0x64, 0x22, 0xf3, 0x02, 0x0a, 0x0a, 0x43, 0x72,
-	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74,
-	0x65, 0x78, 0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65,
-	0x78, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02,
-	0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09,
-	0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x23, 0x0a, 0x0d, 0x69, 0x73, 0x73, 0x75, 0x61, 0x6e,
-	0x63, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x69,
-	0x73, 0x73, 0x75, 0x61, 0x6e, 0x63, 0x65, 0x44, 0x61, 0x74, 0x65, 0x12, 0x2d, 0x0a, 0x12, 0x63,
-	0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x5f, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63,
-	0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x11, 0x63, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74,
-	0x69, 0x61, 0x6c, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x12, 0x45, 0x0a, 0x11, 0x63, 0x72,
-	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18,
-	0x06, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43,
-	0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52,
-	0x10, 0x63, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x12, 0x16, 0x0a, 0x06, 0x69, 0x73, 0x73, 0x75, 0x65, 0x72, 0x18, 0x07, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x06, 0x69, 0x73, 0x73, 0x75, 0x65, 0x72, 0x12, 0x45, 0x0a, 0x11, 0x63, 0x72, 0x65,
-	0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x5f, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x18, 0x08,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72,
-	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x10,
-	0x63, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61,
-	0x12, 0x2d, 0x0a, 0x05, 0x70, 0x72, 0x6f, 0x6f, 0x66, 0x18, 0x09, 0x20, 0x01, 0x28, 0x0b, 0x32,
-	0x17, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74,
-	0x69, 0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x52, 0x05, 0x70, 0x72, 0x6f, 0x6f, 0x66, 0x22,
-	0x61, 0x0a, 0x10, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x53, 0x74, 0x61,
-	0x74, 0x75, 0x73, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x02, 0x69, 0x64, 0x12, 0x29, 0x0a, 0x10, 0x72, 0x65, 0x76, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x5f, 0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0f, 0x72,
-	0x65, 0x76, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4e, 0x6f, 0x6e, 0x63, 0x65, 0x12, 0x12,
-	0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79,
-	0x70, 0x65, 0x22, 0x36, 0x0a, 0x10, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c,
-	0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x22, 0x82, 0x01, 0x0a, 0x0f, 0x43,
-	0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x12, 0x30,
-	0x0a, 0x0c, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x5f, 0x70, 0x72, 0x6f, 0x6f, 0x66, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x50, 0x72,
-	0x6f, 0x6f, 0x66, 0x52, 0x0b, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x50, 0x72, 0x6f, 0x6f, 0x66,
-	0x12, 0x3d, 0x0a, 0x0f, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x5f, 0x70, 0x72,
-	0x6f, 0x6f, 0x66, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x62, 0x6c, 0x6f, 0x6f,
-	0x63, 0x6b, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x4a, 0x57, 0x53, 0x52,
-	0x0e, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x50, 0x72, 0x6f, 0x6f, 0x66, 0x22,
-	0x6e, 0x0a, 0x16, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x56, 0x65, 0x72,
-	0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1c, 0x0a, 0x09, 0x74, 0x69, 0x6d,
-	0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x74, 0x69,
-	0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x12, 0x16, 0x0a, 0x06, 0x69, 0x73, 0x73, 0x75, 0x65,
-	0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x69, 0x73, 0x73, 0x75, 0x65, 0x72, 0x12,
-	0x1e, 0x0a, 0x0a, 0x72, 0x65, 0x76, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20,
-	0x01, 0x28, 0x04, 0x52, 0x0a, 0x72, 0x65, 0x76, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22,
-	0x30, 0x0a, 0x14, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x76,
-	0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65,
-	0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73,
-	0x73, 0x22, 0xa1, 0x01, 0x0a, 0x0c, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x4a,
-	0x57, 0x53, 0x12, 0x1c, 0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65,
-	0x12, 0x1c, 0x0a, 0x09, 0x70, 0x72, 0x6f, 0x74, 0x65, 0x63, 0x74, 0x65, 0x64, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x09, 0x70, 0x72, 0x6f, 0x74, 0x65, 0x63, 0x74, 0x65, 0x64, 0x12, 0x32,
-	0x0a, 0x06, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a,
-	0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72,
-	0x65, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x4a, 0x57, 0x53, 0x52, 0x06, 0x68, 0x65, 0x61, 0x64,
-	0x65, 0x72, 0x12, 0x21, 0x0a, 0x0c, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x5f, 0x68, 0x61,
-	0x73, 0x68, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67,
-	0x65, 0x48, 0x61, 0x73, 0x68, 0x22, 0x90, 0x01, 0x0a, 0x12, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74,
-	0x75, 0x72, 0x65, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x4a, 0x57, 0x53, 0x12, 0x10, 0x0a, 0x03,
-	0x61, 0x6c, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x6c, 0x67, 0x12, 0x10,
-	0x0a, 0x03, 0x6b, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x69, 0x64,
-	0x12, 0x1d, 0x0a, 0x07, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x09, 0x48, 0x00, 0x52, 0x07, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x88, 0x01, 0x01, 0x12,
-	0x1e, 0x0a, 0x08, 0x68, 0x61, 0x73, 0x68, 0x5f, 0x61, 0x6c, 0x67, 0x18, 0x04, 0x20, 0x01, 0x28,
-	0x09, 0x48, 0x01, 0x52, 0x07, 0x68, 0x61, 0x73, 0x68, 0x41, 0x6c, 0x67, 0x88, 0x01, 0x01, 0x42,
-	0x0a, 0x0a, 0x08, 0x5f, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x0b, 0x0a, 0x09, 0x5f,
-	0x68, 0x61, 0x73, 0x68, 0x5f, 0x61, 0x6c, 0x67, 0x42, 0x57, 0x0a, 0x1b, 0x63, 0x6f, 0x6d, 0x2e,
-	0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x62, 0x72, 0x69, 0x64, 0x67,
-	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x5a, 0x38, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
-	0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63,
-	0x6b, 0x2d, 0x73, 0x64, 0x6b, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f, 0x69, 0x6e, 0x74, 0x65,
-	0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6e, 0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x08, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x12, 0x12, 0x0a,
+	0x04, 0x65, 0x6e, 0x75, 0x6d, 0x18, 0x05, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x65, 0x6e, 0x75,
+	0x6d, 0x22, 0xa5, 0x01, 0x0a, 0x1e, 0x49, 0x6e, 0x74, 0x65, 0x67, 0x65, 0x72, 0x45, 0x6e, 0x75,
+	0x6d, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70,
+	0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72,
+	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x71,
+	0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x72, 0x65, 0x71,
+	0x75, 0x69, 0x72, 0x65, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x65, 0x6e, 0x75, 0x6d, 0x18, 0x05, 0x20,
+	0x03, 0x28, 0x03, 0x52, 0x04, 0x65, 0x6e, 0x75, 0x6d, 0x22, 0xa5, 0x01, 0x0a, 0x1e, 0x44, 0x65,
+	0x63, 0x69, 0x6d, 0x61, 0x6c, 0x45, 0x6e, 0x75, 0x6d, 0x41, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75,
+	0x74, 0x65, 0x44, 0x65, 0x66, 0x69, 0x6e, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x0a, 0x0c,
+	0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x08, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x12, 0x12, 0x0a,
+	0x04, 0x65, 0x6e, 0x75, 0x6d, 0x18, 0x05, 0x20, 0x03, 0x28, 0x01, 0x52, 0x04, 0x65, 0x6e, 0x75,
+	0x6d, 0x22, 0x95, 0x01, 0x0a, 0x11, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c,
+	0x52, 0x65, 0x63, 0x65, 0x69, 0x70, 0x74, 0x12, 0x32, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x64, 0x65,
+	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x62, 0x6c,
+	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52,
+	0x0a, 0x63, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x12, 0x23, 0x0a, 0x0d, 0x63,
+	0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0c, 0x63, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x49, 0x64,
+	0x12, 0x27, 0x0a, 0x0f, 0x63, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x5f, 0x74,
+	0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x72, 0x65, 0x64, 0x65,
+	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x54, 0x79, 0x70, 0x65, 0x22, 0x2d, 0x0a, 0x12, 0x49, 0x73, 0x73,
+	0x75, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x65, 0x63, 0x65, 0x69, 0x70, 0x74, 0x12,
+	0x17, 0x0a, 0x07, 0x74, 0x78, 0x5f, 0x68, 0x61, 0x73, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x06, 0x74, 0x78, 0x48, 0x61, 0x73, 0x68, 0x22, 0x6f, 0x0a, 0x06, 0x53, 0x63, 0x68, 0x65,
+	0x6d, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x63, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x03, 0x63, 0x69, 0x64, 0x12, 0x1e, 0x0a, 0x0b, 0x63, 0x69, 0x64, 0x5f, 0x6a, 0x73, 0x6f, 0x6e,
+	0x5f, 0x6c, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x63, 0x69, 0x64, 0x4a, 0x73,
+	0x6f, 0x6e, 0x4c, 0x64, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x5f, 0x74,
+	0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73, 0x63, 0x68, 0x65, 0x6d,
+	0x61, 0x54, 0x79, 0x70, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6a, 0x73, 0x6f, 0x6e, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x6a, 0x73, 0x6f, 0x6e, 0x22, 0x30, 0x0a, 0x14, 0x43, 0x72, 0x65,
+	0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x76, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x67, 0x0a, 0x13, 0x56,
+	0x65, 0x72, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x63, 0x65, 0x69,
+	0x70, 0x74, 0x12, 0x31, 0x0a, 0x14, 0x76, 0x65, 0x72, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x13, 0x76, 0x65, 0x72, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e,
+	0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09, 0x73, 0x65, 0x73, 0x73, 0x69,
+	0x6f, 0x6e, 0x49, 0x64, 0x22, 0x97, 0x01, 0x0a, 0x07, 0x44, 0x69, 0x64, 0x54, 0x79, 0x70, 0x65,
+	0x12, 0x26, 0x0a, 0x06, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e,
+	0x32, 0x0e, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64,
+	0x52, 0x06, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x12, 0x32, 0x0a, 0x0a, 0x62, 0x6c, 0x6f, 0x63,
+	0x6b, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x12, 0x2e, 0x62,
+	0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x63, 0x68, 0x61, 0x69, 0x6e,
+	0x52, 0x0a, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x12, 0x30, 0x0a, 0x0a,
+	0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e,
+	0x32, 0x11, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72,
+	0x6b, 0x49, 0x64, 0x52, 0x09, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x49, 0x64, 0x22, 0xa1,
+	0x01, 0x0a, 0x0c, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x4a, 0x57, 0x53, 0x12,
+	0x1c, 0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x12, 0x1c, 0x0a,
+	0x09, 0x70, 0x72, 0x6f, 0x74, 0x65, 0x63, 0x74, 0x65, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x09, 0x70, 0x72, 0x6f, 0x74, 0x65, 0x63, 0x74, 0x65, 0x64, 0x12, 0x32, 0x0a, 0x06, 0x68,
+	0x65, 0x61, 0x64, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x62, 0x6c,
+	0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x48, 0x65,
+	0x61, 0x64, 0x65, 0x72, 0x4a, 0x57, 0x53, 0x52, 0x06, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x12,
+	0x21, 0x0a, 0x0c, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x5f, 0x68, 0x61, 0x73, 0x68, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x48, 0x61,
+	0x73, 0x68, 0x22, 0x90, 0x01, 0x0a, 0x12, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65,
+	0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x4a, 0x57, 0x53, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x6c, 0x67,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x6c, 0x67, 0x12, 0x10, 0x0a, 0x03, 0x6b,
+	0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x69, 0x64, 0x12, 0x1d, 0x0a,
+	0x07, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x48, 0x00,
+	0x52, 0x07, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x88, 0x01, 0x01, 0x12, 0x1e, 0x0a, 0x08,
+	0x68, 0x61, 0x73, 0x68, 0x5f, 0x61, 0x6c, 0x67, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x48, 0x01,
+	0x52, 0x07, 0x68, 0x61, 0x73, 0x68, 0x41, 0x6c, 0x67, 0x88, 0x01, 0x01, 0x42, 0x0a, 0x0a, 0x08,
+	0x5f, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x0b, 0x0a, 0x09, 0x5f, 0x68, 0x61, 0x73,
+	0x68, 0x5f, 0x61, 0x6c, 0x67, 0x2a, 0x23, 0x0a, 0x06, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x12,
+	0x09, 0x0a, 0x05, 0x49, 0x44, 0x45, 0x4e, 0x33, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x50, 0x4f,
+	0x4c, 0x59, 0x47, 0x4f, 0x4e, 0x5f, 0x49, 0x44, 0x10, 0x01, 0x2a, 0x48, 0x0a, 0x0a, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x12, 0x0c, 0x0a, 0x08, 0x45, 0x54, 0x48, 0x45,
+	0x52, 0x45, 0x55, 0x4d, 0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07, 0x50, 0x4f, 0x4c, 0x59, 0x47, 0x4f,
+	0x4e, 0x10, 0x01, 0x12, 0x11, 0x0a, 0x0d, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x5f, 0x43,
+	0x48, 0x41, 0x49, 0x4e, 0x10, 0x02, 0x12, 0x0c, 0x0a, 0x08, 0x4e, 0x4f, 0x5f, 0x43, 0x48, 0x41,
+	0x49, 0x4e, 0x10, 0x03, 0x2a, 0x52, 0x0a, 0x09, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x49,
+	0x64, 0x12, 0x08, 0x0a, 0x04, 0x4d, 0x41, 0x49, 0x4e, 0x10, 0x00, 0x12, 0x0a, 0x0a, 0x06, 0x4d,
+	0x55, 0x4d, 0x42, 0x41, 0x49, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x47, 0x4f, 0x45, 0x52, 0x4c,
+	0x49, 0x10, 0x02, 0x12, 0x13, 0x0a, 0x0f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x5f, 0x4e,
+	0x45, 0x54, 0x57, 0x4f, 0x52, 0x4b, 0x10, 0x03, 0x12, 0x0e, 0x0a, 0x0a, 0x4e, 0x4f, 0x5f, 0x4e,
+	0x45, 0x54, 0x57, 0x4f, 0x52, 0x4b, 0x10, 0x04, 0x2a, 0x43, 0x0a, 0x0f, 0x50, 0x75, 0x62, 0x6c,
+	0x69, 0x73, 0x68, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x12, 0x0e, 0x0a, 0x0a, 0x49,
+	0x4e, 0x54, 0x45, 0x52, 0x56, 0x41, 0x4c, 0x5f, 0x35, 0x10, 0x00, 0x12, 0x0f, 0x0a, 0x0b, 0x49,
+	0x4e, 0x54, 0x45, 0x52, 0x56, 0x41, 0x4c, 0x5f, 0x31, 0x35, 0x10, 0x01, 0x12, 0x0f, 0x0a, 0x0b,
+	0x49, 0x4e, 0x54, 0x45, 0x52, 0x56, 0x41, 0x4c, 0x5f, 0x36, 0x30, 0x10, 0x02, 0x42, 0x57, 0x0a,
+	0x1b, 0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2e, 0x73, 0x64, 0x6b, 0x2e,
+	0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x5a, 0x38, 0x67, 0x69,
+	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2f,
+	0x62, 0x6c, 0x6f, 0x6f, 0x63, 0x6b, 0x2d, 0x73, 0x64, 0x6b, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32,
+	0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65,
+	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1685,43 +2246,50 @@ func file_identity_entities_proto_rawDescGZIP() []byte {
 	return file_identity_entities_proto_rawDescData
 }
 
-var file_identity_entities_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_identity_entities_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_identity_entities_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_identity_entities_proto_goTypes = []interface{}{
-	(*Identity)(nil),                       // 0: bloock.Identity
-	(*BooleanAttributeDefinition)(nil),     // 1: bloock.BooleanAttributeDefinition
-	(*DateAttributeDefinition)(nil),        // 2: bloock.DateAttributeDefinition
-	(*DateTimeAttributeDefinition)(nil),    // 3: bloock.DateTimeAttributeDefinition
-	(*StringAttributeDefinition)(nil),      // 4: bloock.StringAttributeDefinition
-	(*NumberAttributeDefinition)(nil),      // 5: bloock.NumberAttributeDefinition
-	(*BooleanAttribute)(nil),               // 6: bloock.BooleanAttribute
-	(*DateAttribute)(nil),                  // 7: bloock.DateAttribute
-	(*DateTimeAttribute)(nil),              // 8: bloock.DateTimeAttribute
-	(*StringAttribute)(nil),                // 9: bloock.StringAttribute
-	(*NumberAttribute)(nil),                // 10: bloock.NumberAttribute
-	(*Schema)(nil),                         // 11: bloock.Schema
-	(*CredentialOffer)(nil),                // 12: bloock.CredentialOffer
-	(*CredentialOfferBody)(nil),            // 13: bloock.CredentialOfferBody
-	(*CredentialOfferBodyCredentials)(nil), // 14: bloock.CredentialOfferBodyCredentials
-	(*CredentialReceipt)(nil),              // 15: bloock.CredentialReceipt
-	(*Credential)(nil),                     // 16: bloock.Credential
-	(*CredentialStatus)(nil),               // 17: bloock.CredentialStatus
-	(*CredentialSchema)(nil),               // 18: bloock.CredentialSchema
-	(*CredentialProof)(nil),                // 19: bloock.CredentialProof
-	(*CredentialVerification)(nil),         // 20: bloock.CredentialVerification
-	(*CredentialRevocation)(nil),           // 21: bloock.CredentialRevocation
-	(*SignatureJWS)(nil),                   // 22: bloock.SignatureJWS
-	(*SignatureHeaderJWS)(nil),             // 23: bloock.SignatureHeaderJWS
-	(*Proof)(nil),                          // 24: bloock.Proof
+	(Method)(0),                            // 0: bloock.Method
+	(Blockchain)(0),                        // 1: bloock.Blockchain
+	(NetworkId)(0),                         // 2: bloock.NetworkId
+	(PublishInterval)(0),                   // 3: bloock.PublishInterval
+	(*Credential)(nil),                     // 4: bloock.Credential
+	(*CredentialProof)(nil),                // 5: bloock.CredentialProof
+	(*CredentialStatus)(nil),               // 6: bloock.CredentialStatus
+	(*CredentialSchema)(nil),               // 7: bloock.CredentialSchema
+	(*StringAttribute)(nil),                // 8: bloock.StringAttribute
+	(*IntegerAttribute)(nil),               // 9: bloock.IntegerAttribute
+	(*DecimalAttribute)(nil),               // 10: bloock.DecimalAttribute
+	(*BooleanAttribute)(nil),               // 11: bloock.BooleanAttribute
+	(*DateAttribute)(nil),                  // 12: bloock.DateAttribute
+	(*DateTimeAttribute)(nil),              // 13: bloock.DateTimeAttribute
+	(*StringAttributeDefinition)(nil),      // 14: bloock.StringAttributeDefinition
+	(*IntegerAttributeDefinition)(nil),     // 15: bloock.IntegerAttributeDefinition
+	(*DecimalAttributeDefinition)(nil),     // 16: bloock.DecimalAttributeDefinition
+	(*BooleanAttributeDefinition)(nil),     // 17: bloock.BooleanAttributeDefinition
+	(*DateAttributeDefinition)(nil),        // 18: bloock.DateAttributeDefinition
+	(*DateTimeAttributeDefinition)(nil),    // 19: bloock.DateTimeAttributeDefinition
+	(*StringEnumAttributeDefinition)(nil),  // 20: bloock.StringEnumAttributeDefinition
+	(*IntegerEnumAttributeDefinition)(nil), // 21: bloock.IntegerEnumAttributeDefinition
+	(*DecimalEnumAttributeDefinition)(nil), // 22: bloock.DecimalEnumAttributeDefinition
+	(*CredentialReceipt)(nil),              // 23: bloock.CredentialReceipt
+	(*IssuerStateReceipt)(nil),             // 24: bloock.IssuerStateReceipt
+	(*Schema)(nil),                         // 25: bloock.Schema
+	(*CredentialRevocation)(nil),           // 26: bloock.CredentialRevocation
+	(*VerificationReceipt)(nil),            // 27: bloock.VerificationReceipt
+	(*DidType)(nil),                        // 28: bloock.DidType
+	(*SignatureJWS)(nil),                   // 29: bloock.SignatureJWS
+	(*SignatureHeaderJWS)(nil),             // 30: bloock.SignatureHeaderJWS
 }
 var file_identity_entities_proto_depIdxs = []int32{
-	13, // 0: bloock.CredentialOffer.body:type_name -> bloock.CredentialOfferBody
-	14, // 1: bloock.CredentialOfferBody.credentials:type_name -> bloock.CredentialOfferBodyCredentials
-	17, // 2: bloock.Credential.credential_status:type_name -> bloock.CredentialStatus
-	18, // 3: bloock.Credential.credential_schema:type_name -> bloock.CredentialSchema
-	19, // 4: bloock.Credential.proof:type_name -> bloock.CredentialProof
-	24, // 5: bloock.CredentialProof.bloock_proof:type_name -> bloock.Proof
-	22, // 6: bloock.CredentialProof.signature_proof:type_name -> bloock.SignatureJWS
-	23, // 7: bloock.SignatureJWS.header:type_name -> bloock.SignatureHeaderJWS
+	6,  // 0: bloock.Credential.credential_status:type_name -> bloock.CredentialStatus
+	7,  // 1: bloock.Credential.credential_schema:type_name -> bloock.CredentialSchema
+	5,  // 2: bloock.Credential.proof:type_name -> bloock.CredentialProof
+	4,  // 3: bloock.CredentialReceipt.credential:type_name -> bloock.Credential
+	0,  // 4: bloock.DidType.method:type_name -> bloock.Method
+	1,  // 5: bloock.DidType.blockchain:type_name -> bloock.Blockchain
+	2,  // 6: bloock.DidType.network_id:type_name -> bloock.NetworkId
+	30, // 7: bloock.SignatureJWS.header:type_name -> bloock.SignatureHeaderJWS
 	8,  // [8:8] is the sub-list for method output_type
 	8,  // [8:8] is the sub-list for method input_type
 	8,  // [8:8] is the sub-list for extension type_name
@@ -1734,201 +2302,9 @@ func file_identity_entities_proto_init() {
 	if File_identity_entities_proto != nil {
 		return
 	}
-	file_integrity_entities_proto_init()
+	file_keys_entities_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_identity_entities_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Identity); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BooleanAttributeDefinition); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DateAttributeDefinition); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DateTimeAttributeDefinition); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StringAttributeDefinition); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NumberAttributeDefinition); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BooleanAttribute); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DateAttribute); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DateTimeAttribute); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StringAttribute); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NumberAttribute); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Schema); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialOffer); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialOfferBody); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialOfferBodyCredentials); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialReceipt); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Credential); i {
 			case 0:
 				return &v.state
@@ -1940,31 +2316,7 @@ func file_identity_entities_proto_init() {
 				return nil
 			}
 		}
-		file_identity_entities_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialStatus); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialSchema); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_identity_entities_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+		file_identity_entities_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CredentialProof); i {
 			case 0:
 				return &v.state
@@ -1976,8 +2328,224 @@ func file_identity_entities_proto_init() {
 				return nil
 			}
 		}
+		file_identity_entities_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CredentialStatus); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CredentialSchema); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*StringAttribute); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntegerAttribute); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DecimalAttribute); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BooleanAttribute); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DateAttribute); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DateTimeAttribute); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*StringAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntegerAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DecimalAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BooleanAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DateAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DateTimeAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*StringEnumAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntegerEnumAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DecimalEnumAttributeDefinition); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CredentialReceipt); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 		file_identity_entities_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialVerification); i {
+			switch v := v.(*IssuerStateReceipt); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1989,7 +2557,7 @@ func file_identity_entities_proto_init() {
 			}
 		}
 		file_identity_entities_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CredentialRevocation); i {
+			switch v := v.(*Schema); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2001,7 +2569,7 @@ func file_identity_entities_proto_init() {
 			}
 		}
 		file_identity_entities_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SignatureJWS); i {
+			switch v := v.(*CredentialRevocation); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2013,6 +2581,42 @@ func file_identity_entities_proto_init() {
 			}
 		}
 		file_identity_entities_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*VerificationReceipt); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DidType); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SignatureJWS); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_identity_entities_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SignatureHeaderJWS); i {
 			case 0:
 				return &v.state
@@ -2025,19 +2629,21 @@ func file_identity_entities_proto_init() {
 			}
 		}
 	}
-	file_identity_entities_proto_msgTypes[23].OneofWrappers = []interface{}{}
+	file_identity_entities_proto_msgTypes[1].OneofWrappers = []interface{}{}
+	file_identity_entities_proto_msgTypes[26].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_identity_entities_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   24,
+			NumEnums:      4,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_identity_entities_proto_goTypes,
 		DependencyIndexes: file_identity_entities_proto_depIdxs,
+		EnumInfos:         file_identity_entities_proto_enumTypes,
 		MessageInfos:      file_identity_entities_proto_msgTypes,
 	}.Build()
 	File_identity_entities_proto = out.File

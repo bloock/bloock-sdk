@@ -1,80 +1,99 @@
 use bloock_core::identity::entity::{
-    credential::Credential as CoreCredential, credential::CredentialProof as CoreCredentialProof,
-    credential::CredentialSchema as CoreCredentialSchema,
-    credential::CredentialStatus as CoreCredentialStatus,
-    credential_offer::CredentialOffer as CoreCredentialOffer,
-    credential_offer::CredentialOfferBody as CoreCredentialOfferBody,
-    credential_offer::CredentialOfferBodyCredential as CoreCredentialOfferBodyCredential,
+    credential::{
+        Credential as CoreCredential, CredentialSchema as CoreCredentialSchema,
+        CredentialStatus as CoreCredentialStatus,
+    },
+    did_metadata::DidMetadata,
+    proof::CredentialProof as CoreCredentialProof,
+    publish_interval::PublishInterval as CorePublishInterval,
 };
-use bloock_hasher::HashAlg;
-use bloock_signer::format::jws::{JwsSignature, JwsSignatureHeader};
+use bloock_identity_rs::did::{Blockchain as CoreBlockchain, DIDMethod, Network as CoreNetworkId};
 
 use crate::{
     error::BridgeError,
     items::{
-        Credential, CredentialOffer, CredentialOfferBody, CredentialOfferBodyCredentials,
-        CredentialProof, CredentialSchema, CredentialStatus, SignatureHeaderJws, SignatureJws,
+        Blockchain, Credential, CredentialProof, CredentialSchema, CredentialStatus, DidType,
+        Method, NetworkId, PublishInterval,
     },
 };
 
-impl From<CoreCredentialOffer> for CredentialOffer {
-    fn from(value: CoreCredentialOffer) -> Self {
-        CredentialOffer {
-            thid: value.thid,
-            body: Some(CredentialOfferBody {
-                url: value.body.url,
-                credentials: value
-                    .body
-                    .credentials
-                    .into_iter()
-                    .map(|c| CredentialOfferBodyCredentials {
-                        id: c.id,
-                        description: c.description,
-                    })
-                    .collect(),
-            }),
-            from: value.from,
-            to: value.to,
+impl From<DidType> for DidMetadata {
+    fn from(n: DidType) -> Self {
+        let method = match n.method() {
+            Method::Iden3 => DIDMethod::Iden3,
+            Method::PolygonId => DIDMethod::PolygonID,
+        };
+
+        let blockchain = match n.blockchain() {
+            Blockchain::Ethereum => CoreBlockchain::Ethereum,
+            Blockchain::Polygon => CoreBlockchain::Polygon,
+            Blockchain::UnknownChain => CoreBlockchain::Polygon,
+            Blockchain::NoChain => CoreBlockchain::Polygon,
+        };
+
+        let network_id = match n.network_id() {
+            NetworkId::Main => CoreNetworkId::Main,
+            NetworkId::Mumbai => CoreNetworkId::Mumbai,
+            NetworkId::Goerli => CoreNetworkId::Goerli,
+            NetworkId::UnknownNetwork => CoreNetworkId::Mumbai,
+            NetworkId::NoNetwork => CoreNetworkId::Mumbai,
+        };
+
+        Self {
+            method,
+            blockchain,
+            network: network_id,
         }
     }
 }
 
-impl TryFrom<CredentialOffer> for CoreCredentialOffer {
-    type Error = BridgeError;
-
-    fn try_from(value: CredentialOffer) -> Result<Self, Self::Error> {
-        let body = value.body.ok_or_else(|| {
-            BridgeError::RequestDeserialization(
-                "couldn't deserialize credential offer body".to_string(),
-            )
-        })?;
-
-        Ok(CoreCredentialOffer {
-            thid: value.thid,
-            body: CoreCredentialOfferBody {
-                url: body.url,
-                credentials: body
-                    .credentials
-                    .into_iter()
-                    .map(|c| CoreCredentialOfferBodyCredential {
-                        id: c.id,
-                        description: c.description,
-                    })
-                    .collect(),
-            },
-            from: value.from,
-            to: value.to,
-        })
+impl From<Blockchain> for CoreBlockchain {
+    fn from(n: Blockchain) -> Self {
+        match n {
+            Blockchain::Ethereum => CoreBlockchain::Ethereum,
+            Blockchain::Polygon => CoreBlockchain::Polygon,
+            Blockchain::UnknownChain => CoreBlockchain::Polygon,
+            Blockchain::NoChain => CoreBlockchain::Polygon,
+        }
     }
 }
 
-impl From<CoreCredential> for Credential {
-    fn from(value: CoreCredential) -> Self {
-        Credential {
+impl From<NetworkId> for CoreNetworkId {
+    fn from(n: NetworkId) -> Self {
+        match n {
+            NetworkId::Main => CoreNetworkId::Main,
+            NetworkId::Mumbai => CoreNetworkId::Mumbai,
+            NetworkId::Goerli => CoreNetworkId::Goerli,
+            NetworkId::UnknownNetwork => CoreNetworkId::Mumbai,
+            NetworkId::NoNetwork => CoreNetworkId::Mumbai,
+        }
+    }
+}
+
+impl From<PublishInterval> for CorePublishInterval {
+    fn from(p: PublishInterval) -> Self {
+        match p {
+            PublishInterval::Interval5 => CorePublishInterval::Interval5,
+            PublishInterval::Interval15 => CorePublishInterval::Interval15,
+            PublishInterval::Interval60 => CorePublishInterval::Interval60,
+        }
+    }
+}
+
+impl TryFrom<CoreCredential> for Credential {
+    type Error = BridgeError;
+
+    fn try_from(value: CoreCredential) -> Result<Self, Self::Error> {
+        let credential_proof = value.proof.ok_or_else(|| {
+            BridgeError::RequestDeserialization("couldn't deserialize credential proof".to_string())
+        })?;
+
+        Ok(Credential {
             context: value.context,
             id: value.id,
             r#type: value.r#type,
             issuance_date: value.issuance_date,
+            expiration: value.expiration_date,
             credential_subject: value.credential_subject.to_string(),
             credential_status: Some(CredentialStatus {
                 id: value.credential_status.id,
@@ -87,10 +106,10 @@ impl From<CoreCredential> for Credential {
                 r#type: value.credential_schema.r#type,
             }),
             proof: Some(CredentialProof {
-                bloock_proof: value.proof.clone().map(|p| p.1.into()),
-                signature_proof: value.proof.map(|p| p.0.into()),
+                signature_proof: credential_proof.signature_proof,
+                sparse_mt_proof: credential_proof.sparse_mt_proof,
             }),
-        }
+        })
     }
 }
 
@@ -111,15 +130,7 @@ impl TryFrom<Credential> for CoreCredential {
         })?;
 
         let credential_proof = value.proof.ok_or_else(|| {
-            BridgeError::RequestDeserialization("couldn't deserialize proof".to_string())
-        })?;
-
-        let bloock_proof = credential_proof.bloock_proof.ok_or_else(|| {
-            BridgeError::RequestDeserialization("couldn't deserialize bloock proof".to_string())
-        })?;
-
-        let signature_proof = credential_proof.signature_proof.ok_or_else(|| {
-            BridgeError::RequestDeserialization("couldn't deserialize signature proof".to_string())
+            BridgeError::RequestDeserialization("couldn't deserialize credential proof".to_string())
         })?;
 
         Ok(CoreCredential {
@@ -127,6 +138,7 @@ impl TryFrom<Credential> for CoreCredential {
             id: value.id,
             r#type: value.r#type,
             issuance_date: value.issuance_date,
+            expiration_date: value.expiration,
             credential_subject: serde_json::from_str(&value.credential_subject).map_err(|_| {
                 BridgeError::RequestDeserialization(
                     "couldn't deserialize credential subject".to_string(),
@@ -142,62 +154,11 @@ impl TryFrom<Credential> for CoreCredential {
                 id: credential_schema.id,
                 r#type: credential_schema.r#type,
             },
-            proof: Some(CoreCredentialProof(
-                signature_proof.try_into()?,
-                bloock_proof.try_into()?,
-            )),
+
+            proof: Some(CoreCredentialProof {
+                signature_proof: credential_proof.signature_proof,
+                sparse_mt_proof: credential_proof.sparse_mt_proof,
+            }),
         })
-    }
-}
-
-impl TryFrom<SignatureJws> for JwsSignature {
-    type Error = BridgeError;
-
-    fn try_from(s: SignatureJws) -> Result<Self, Self::Error> {
-        let jws_header = s.header.ok_or_else(|| {
-            BridgeError::RequestDeserialization(
-                "couldn't deserialize signature jws header".to_string(),
-            )
-        })?;
-
-        Ok(Self {
-            protected: s.protected,
-            signature: s.signature,
-            header: jws_header.into(),
-            message_hash: s.message_hash,
-        })
-    }
-}
-
-impl From<SignatureHeaderJws> for JwsSignatureHeader {
-    fn from(h: SignatureHeaderJws) -> Self {
-        Self {
-            alg: h.alg,
-            kid: h.kid,
-            subject: h.subject,
-            hash_alg: h.hash_alg.and_then(|h| HashAlg::try_from(h.as_str()).ok()),
-        }
-    }
-}
-
-impl From<JwsSignature> for SignatureJws {
-    fn from(h: JwsSignature) -> Self {
-        Self {
-            signature: h.signature,
-            protected: h.protected,
-            header: Some(h.header.into()),
-            message_hash: h.message_hash,
-        }
-    }
-}
-
-impl From<JwsSignatureHeader> for SignatureHeaderJws {
-    fn from(h: JwsSignatureHeader) -> Self {
-        Self {
-            alg: h.alg,
-            kid: h.kid,
-            subject: h.subject,
-            hash_alg: h.hash_alg.and_then(|h| Some(h.to_string())),
-        }
     }
 }

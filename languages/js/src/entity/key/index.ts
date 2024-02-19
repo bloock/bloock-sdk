@@ -17,3 +17,4 @@ export * from "./totp_access_control_receipt";
 export * from "./access_control";
 export * from "./access_control_totp";
 export * from "./access_control_secret";
+export * from "./key";

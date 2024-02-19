@@ -1,6 +1,6 @@
 [package]
 name = "bloock-core"
-version = "2.8.0-beta.5"
+version = "2.8.0-beta.6"
 edition = "2021"
 
 [lib]
@@ -24,8 +24,7 @@ bloock-encrypter = { path = "../bloock-libs/encrypter" }
 bloock-metadata = { path = "../bloock-libs/metadata" }
 bloock-http = { path = "../bloock-libs/http" }
 bloock-web3 = { path = "../bloock-libs/web3" }
-bloock-identity = { path = "../bloock-libs/identity" }
-bloock-identity-rs = { path = "../bloock-libs/identity-v2" }
+bloock-identity-rs = { path = "../bloock-libs/identity" }
 
 [dev-dependencies]
 mockall = "0.11.2"

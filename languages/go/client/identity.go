@@ -5,74 +5,114 @@ import (
 	"errors"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/identity"
+	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 	"github.com/bloock/bloock-sdk-go/v2/internal/config"
 )
 
-type IdentityLegacyClient struct {
+// IdentityClient represents a client for interacting with the [Bloock Identity service].
+//
+// [Bloock Identity service]: https://bloock.com
+type IdentityClient struct {
 	bridgeClient bridge.BloockBridge
 	configData   *proto.ConfigData
 }
 
-// Deprecated: Will be deleted in future versions. Use NewIdentityV2Client function instead.
-func NewIdentityLegacyClient() IdentityLegacyClient {
-	return IdentityLegacyClient{
+// NewIdentityClient creates a new instance of the IdentityClient with default configuration.
+func NewIdentityClient() IdentityClient {
+	return IdentityClient{
 		bridgeClient: bridge.NewBloockBridge(),
 		configData:   config.NewConfigDataDefault(),
 	}
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func NewIdentityLegacyClientWithConfig(configData *proto.ConfigData) IdentityLegacyClient {
-	return IdentityLegacyClient{
+// NewIdentityClientWithConfig creates a new instance of the IdentityClient with the provided configuration.
+func NewIdentityClientWithConfig(configData *proto.ConfigData) IdentityClient {
+	return IdentityClient{
 		bridgeClient: bridge.NewBloockBridge(),
 		configData:   configData,
 	}
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) CreateIdentity() (identity.Identity, error) {
-	res, err := c.bridgeClient.Identity().CreateIdentity(context.Background(), &proto.CreateIdentityRequest{
+// CreateHolder creates a new holder identity.
+func (c *IdentityClient) CreateHolder(holderKey key.Key, didType identity.DidType) (identity.Holder, error) {
+	res, err := c.bridgeClient.Identity().CreateHolder(context.Background(), &proto.CreateHolderRequest{
+		Key:        holderKey.ToProto(),
+		DidType:    identity.DidTypeToProto(didType),
 		ConfigData: c.configData,
 	})
 
 	if err != nil {
-		return identity.Identity{}, err
+		return identity.Holder{}, err
 	}
 
 	if res.Error != nil {
-		return identity.Identity{}, errors.New(res.Error.Message)
+		return identity.Holder{}, errors.New(res.Error.Message)
 	}
 
-	return identity.NewIdentityFromProto(res.GetIdentity()), nil
+	return identity.NewHolder(res.Did, didType, holderKey), nil
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) LoadIdentity(mnemonic string) (identity.Identity, error) {
-	res, err := c.bridgeClient.Identity().LoadIdentity(context.Background(), &proto.LoadIdentityRequest{
-		ConfigData: c.configData,
-		Mnemonic:   mnemonic,
+// CreateIssuer creates a new issuer identity on the Bloock Identity service.
+func (c *IdentityClient) CreateIssuer(issuerKey key.Key, publishInterval identity.PublishIntervalParams, didType identity.DidType, name, description, image string) (identity.Issuer, error) {
+	var iName, iDescription, iImage *string
+	if name != "" {
+		iName = &name
+	}
+	if description != "" {
+		iDescription = &description
+	}
+	if image != "" {
+		iImage = &image
+	}
+
+	res, err := c.bridgeClient.Identity().CreateIssuer(context.Background(), &proto.CreateIssuerRequest{
+		Key:             issuerKey.ToProto(),
+		DidType:         identity.DidTypeToProto(didType),
+		Name:            iName,
+		Description:     iDescription,
+		Image:           iImage,
+		PublishInterval: identity.PublishIntervalParamsToProto[publishInterval],
+		ConfigData:      c.configData,
 	})
 
 	if err != nil {
-		return identity.Identity{}, err
+		return identity.Issuer{}, err
 	}
 
 	if res.Error != nil {
-		return identity.Identity{}, errors.New(res.Error.Message)
+		return identity.Issuer{}, errors.New(res.Error.Message)
 	}
 
-	return identity.NewIdentityFromProto(res.GetIdentity()), nil
+	return identity.NewIssuer(res.GetDid(), didType, issuerKey), nil
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) BuildSchema(displayName string, technicalName string) identity.SchemaBuilder {
-	return identity.NewSchemaBuilder(displayName, technicalName, c.configData)
+// ImportIssuer retrieves the issuer based on the issuer key and DID type.
+func (c *IdentityClient) ImportIssuer(issuerKey key.Key, didType identity.DidType) (identity.Issuer, error) {
+	res, err := c.bridgeClient.Identity().ImportIssuer(context.Background(), &proto.ImportIssuerRequest{
+		ConfigData: c.configData,
+		Key:        issuerKey.ToProto(),
+		DidType:    identity.DidTypeToProto(didType),
+	})
+	if err != nil {
+		return identity.Issuer{}, err
+	}
+
+	if res.Error != nil {
+		return identity.Issuer{}, errors.New(res.Error.Message)
+	}
+
+	return identity.NewIssuer(res.GetDid(), didType, issuerKey), nil
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) GetSchema(id string) (identity.Schema, error) {
+// BuildSchema creates a new schema builder for defining a schema on the Bloock Identity service.
+func (c *IdentityClient) BuildSchema(displayName string, schemaType, version, description string) identity.SchemaBuilder {
+	return identity.NewSchemaBuilder(displayName, schemaType, version, description, c.configData)
+}
+
+// GetSchema retrieves a schema from the Bloock Identity service based on the schema ID (ex: Qma1t4uzbnB93E4rasNdu5UWMDh5qg3wMkPm68cnEyfnoM).
+func (c *IdentityClient) GetSchema(id string) (identity.Schema, error) {
 	res, err := c.bridgeClient.Identity().GetSchema(context.Background(), &proto.GetSchemaRequest{
 		ConfigData: c.configData,
 		Id:         id,
@@ -89,89 +129,55 @@ func (c *IdentityLegacyClient) GetSchema(id string) (identity.Schema, error) {
 	return identity.NewSchemaFromProto(res.GetSchema()), nil
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) BuildCredential(schemaId string, holderKey string) identity.CredentialBuilder {
-	return identity.NewCredentialBuilder(schemaId, holderKey, c.configData)
+// BuildCredential creates a new credential builder for defining a credential on the Bloock Identity service.
+func (c *IdentityClient) BuildCredential(issuer identity.Issuer, schemaId, holderDid string, expiration int64, version int32) identity.CredentialBuilder {
+	return identity.NewCredentialBuilder(issuer, schemaId, holderDid, expiration, version, c.configData)
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) GetOffer(id string) (identity.CredentialOffer, error) {
-	res, err := c.bridgeClient.Identity().GetOffer(context.Background(), &proto.GetOfferRequest{
+// ForcePublishIssuerState publishes the state of an issuer on the Bloock Identity service.
+func (c *IdentityClient) ForcePublishIssuerState(issuer identity.Issuer) (identity.IssuerStateReceipt, error) {
+	res, err := c.bridgeClient.Identity().ForcePublishIssuerState(context.Background(), &proto.ForcePublishIssuerStateRequest{
 		ConfigData: c.configData,
-		Id:         id,
+		IssuerDid:  issuer.Did.Did,
+		Key:        issuer.Key.ToProto(),
 	})
 
 	if err != nil {
-		return identity.CredentialOffer{}, err
+		return identity.IssuerStateReceipt{}, err
 	}
 
 	if res.Error != nil {
-		return identity.CredentialOffer{}, errors.New(res.Error.Message)
+		return identity.IssuerStateReceipt{}, errors.New(res.Error.Message)
 	}
 
-	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
+	return identity.NewIssuerStateReceiptFromProto(res.GetStateReceipt()), nil
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) WaitOffer(offerID string) (identity.CredentialOffer, error) {
-	res, err := c.bridgeClient.Identity().WaitOffer(context.Background(), &proto.WaitOfferRequest{
-		ConfigData: c.configData,
-		OfferId:    offerID,
+// GetCredentialProof retrieves the proof of a credential on the Bloock Identity service.
+func (c *IdentityClient) GetCredentialProof(issuerDid string, credentialId string) (identity.CredentialProof, error) {
+	res, err := c.bridgeClient.Identity().GetCredentialProof(context.Background(), &proto.GetCredentialProofRequest{
+		ConfigData:   c.configData,
+		IssuerDid:    issuerDid,
+		CredentialId: credentialId,
 	})
 
 	if err != nil {
-		return identity.CredentialOffer{}, err
+		return identity.CredentialProof{}, err
 	}
 
 	if res.Error != nil {
-		return identity.CredentialOffer{}, errors.New(res.Error.Message)
+		return identity.CredentialProof{}, errors.New(res.Error.Message)
 	}
 
-	return identity.NewCredentialOfferFromProto(res.GetOffer()), nil
+	return identity.NewCredentialProofFromProto(res.GetProof()), nil
 }
 
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) RedeemOffer(credentialOffer identity.CredentialOffer, holderPrivateKey string) (identity.Credential, error) {
-	res, err := c.bridgeClient.Identity().CredentialOfferRedeem(context.Background(), &proto.CredentialOfferRedeemRequest{
-		ConfigData:         c.configData,
-		CredentialOffer:    credentialOffer.ToProto(),
-		IdentityPrivateKey: holderPrivateKey,
-	})
-
-	if err != nil {
-		return identity.Credential{}, err
-	}
-
-	if res.Error != nil {
-		return identity.Credential{}, errors.New(res.Error.Message)
-	}
-
-	return identity.NewCredentialFromProto(res.GetCredential()), nil
-}
-
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) VerifyCredential(credential identity.Credential) (identity.CredentialVerification, error) {
-	res, err := c.bridgeClient.Identity().VerifyCredential(context.Background(), &proto.VerifyCredentialRequest{
-		ConfigData: c.configData,
-		Credential: credential.ToProto(),
-	})
-
-	if err != nil {
-		return identity.CredentialVerification{}, err
-	}
-
-	if res.Error != nil {
-		return identity.CredentialVerification{}, errors.New(res.Error.Message)
-	}
-
-	return identity.NewCredentialVerificationFromProto(res.GetResult()), nil
-}
-
-// Deprecated: Will be deleted in future versions. Use KeyClient.newLocalKey function instead.
-func (c *IdentityLegacyClient) RevokeCredential(credential identity.Credential) (bool, error) {
+// RevokeCredential revokes a credential on the Bloock Identity service.
+func (c *IdentityClient) RevokeCredential(credential identity.Credential, issuer identity.Issuer) (bool, error) {
 	res, err := c.bridgeClient.Identity().RevokeCredential(context.Background(), &proto.RevokeCredentialRequest{
 		ConfigData: c.configData,
 		Credential: credential.ToProto(),
+		Key:        issuer.Key.ToProto(),
 	})
 
 	if err != nil {
@@ -183,4 +189,63 @@ func (c *IdentityLegacyClient) RevokeCredential(credential identity.Credential) 
 	}
 
 	return res.Result.GetSuccess(), nil
+}
+
+// CreateVerification creates a new verification session on the identity managed API provided.
+func (c *IdentityClient) CreateVerification(proofRequest string) (identity.VerificationReceipt, error) {
+	res, err := c.bridgeClient.Identity().CreateVerification(context.Background(), &proto.CreateVerificationRequest{
+		ConfigData:   c.configData,
+		ProofRequest: proofRequest,
+	})
+
+	if err != nil {
+		return identity.VerificationReceipt{}, err
+	}
+
+	if res.Error != nil {
+		return identity.VerificationReceipt{}, errors.New(res.Error.Message)
+	}
+
+	return identity.NewVerificationReceiptFromProto(res.GetResult()), nil
+}
+
+// WaitVerification waits for the completion of a verification session on the identity managed API provided.
+func (c *IdentityClient) WaitVerification(sessionID int64, params identity.VerificationParams) (bool, error) {
+	if params.Timeout == 0 {
+		params.Timeout = int64(120000)
+	}
+
+	res, err := c.bridgeClient.Identity().WaitVerification(context.Background(), &proto.WaitVerificationRequest{
+		ConfigData: c.configData,
+		SessionId:  sessionID,
+		Timeout:    params.Timeout,
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	if res.Error != nil {
+		return false, errors.New(res.Error.Message)
+	}
+
+	return res.GetStatus(), nil
+}
+
+// GetVerificationStatus retrieves the status of a verification session on the identity managed API provided.
+func (c *IdentityClient) GetVerificationStatus(sessionID int64) (bool, error) {
+	res, err := c.bridgeClient.Identity().GetVerificationStatus(context.Background(), &proto.GetVerificationStatusRequest{
+		ConfigData: c.configData,
+		SessionId:  sessionID,
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	if res.Error != nil {
+		return false, errors.New(res.Error.Message)
+	}
+
+	return res.GetStatus(), nil
 }

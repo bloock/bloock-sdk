@@ -1,42 +1,29 @@
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.bloock.sdk.client.IdentityLegacyClient;
+import com.bloock.sdk.client.IdentityClient;
+import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.entity.identity.*;
+import com.bloock.sdk.entity.key.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.FileInputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class IdentityTest {
-
-  String credentialOfferJson =
-      "{\"thid\":\"aff91293-faec-4ffb-b0a0-c9be5e17fcaf\",\"body\":{\"url\":\"https//api.bloock.com/identity/v1/claims/792f62fb-7b26-4dd6-a440-f0e6f4ad402a/redeem\",\"credentials\":[{\"id\":\"792f62fb-7b26-4dd6-a440-f0e6f4ad402a\",\"description\":\"TestSchema\"}]},\"from\":\"did:iden3:eth:main:zxHh4f4NFe6a6D1NhUNEUrMw1nb36YNMHgiboNNz7\",\"to\":\"did:iden3:eth:main:zxJDvyiWDaLXiFEUBCKbPBQBxznbb2LgqwG9vXTp2\"}";
+public class IdentityTest {
   String credentialJson =
-      "{\"id\":\"https://api.bloock.com/identity/v1/claims/0f08f63c-0e31-4bb6-8fc3-28893bdeb7aa\",\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/iden3credential-v2.json-ld\"],\"type\":[\"VerifiableCredential\",\"TestSchema\"],\"issuanceDate\":\"2023-03-22T12:32:33.239583166Z\",\"credentialSubject\":{\"BoolAttr\":0,\"id\":\"did:polygonid:polygon:mumbai:2qHCSnJzmiB9mP5L86h51d6i3FhEgcYg9AmUcUg8jg\",\"type\":\"TestSchema\"},\"credentialStatus\":{\"id\":\"https://api.bloock.com/identity/v1/did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ/claims/revocation/status/1500049182\",\"revocationNonce\":1500049182,\"type\":\"BloockRevocationProof\"},\"issuer\":\"did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ\",\"credentialSchema\":{\"id\":\"https://api.bloock.com/hosting/v1/ipfs/Qmcj962wRkypdbAopKLvcedSkBf33ctJaGJ8PkXiUTMm79\",\"type\":\"JsonSchemaValidator2018\"},\"proof\":[{\"header\":{\"alg\":\"ES256K_M\",\"kid\":\"230303a5-8aef-4e92-bc7c-e06f5c488784\"},\"message_hash\":\"7de2019ac52a160191f748bed783b3582d66cb025b963330c63397aa17503d97\",\"protected\":\"e30\",\"signature\":\"ISAqQwDBMaSSkmAYbifS-uC0UzfAtnA7fzz51G4KQov6JJZwMHOKKZoRblOzvcF2D_W_Bf8ukCZJOBXBMc0_5g==\",\"type\":\"BloockSignatureProof\"},{\"anchor\":{\"anchor_id\":296849,\"networks\":[{\"name\":\"bloock_chain\",\"state\":\"Confirmed\",\"tx_hash\":\"0x5ce3e8e3b4b8735f295dbd8a2e6d98077474177c6f0578f1096dabc60617d6bb\"}],\"root\":\"aa39de63e0fc71aaaa9253086116b24b8a964cd9ba2ab58e33ef2554c0c095c2\",\"status\":\"Success\"},\"bitmap\":\"ffefc0\",\"depth\":\"000100020004000600080009000b000c000d000e001100110010000f000a000700050003\",\"leaves\":[\"b8654cc90adb6ad348287a4017e335c2785be2ef93f16f940b86605fc36d5c97\"],\"nodes\":[\"f566fe90b22641e6c4c89b5a39ea3bd4400303bf7ffa12016325b81cc0984825\",\"408f4da6b4e5b09c26a58f066beb6d81588bc3afddc4b39288e6e80cfe58b45a\",\"79be2e105bfe45b3b91f6749fd66dd920a25dfb0c089a27b98705a012c08e6e6\",\"e270112ede50dfca26404a9a7812df5a777322dedb7421c80abb3061c60a1b35\",\"22eba74324f088f18425cc9e93c2b3a21bced8d5a6cfade4b874abba361ff920\",\"b72dfb3f491e53c4816e83fd607fdaf7c79f64fe563d3f55b16af8241fbe22a6\",\"1688d687f3507abcbf9ebfd286bc2eba0e69f6af585cf2461650d74713c0d670\",\"efc548462843bbb9ddef0965a0c646eeb71c78fd662babb2635722d02a97985b\",\"287a57e146ff9d469ae5b39f11343b3c9e55fdbdc7f4edd9f4ca8fba4bd268c7\",\"94644790f7cd155d3b58c60c3f021f30666e5cfeb683ab12d27fec78aa418397\",\"515ecaf2713b13b8ba615674b4a94694d30d33ce133addd8331af5e56032f4bd\",\"717127712b837d4747d78db3dc55c1e9ded34ff6c124db409c11a72f6c1b2d7d\",\"f6b8d2fdb44c2b0a0e12b5ec232a4097c3bc45db51d89af26e0432b84fe07aca\",\"a00deee4b96eacdd9ff30e4691d805221deb8284e6856c856611766cfa54721f\",\"7b1c1939a58bd75e0dda34d3de7fcaa2143f0b65ffc27645c6a513b819e70601\",\"fc749d3a915ce5429560c8bc4f73d47bcc9cadec8ef3e9779c0462447ae50475\",\"296a21e0117f26be026eb608be5b54f1e305ac241b248ef4e045ec9467f47047\"],\"type\":\"BloockIntegrityProof\"}]}";
+      "{\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://schema.iden3.io/core/jsonld/iden3proofs.jsonld\",\"https://api.bloock.dev/hosting/v1/ipfs/QmYMYpSQsFbqXgSRK8KFDGMopD2CUke5yd4m7XFuVAZTat\"],\"id\":\"https://clientHost.com/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/2ff36890-2fc1-4bba-b489-bdd7685e9555\",\"type\":[\"VerifiableCredential\",\"DrivingLicense\"],\"issuanceDate\":\"2023-08-21T10:21:42.402140Z\",\"expirationDate\":\"2099-08-08T06:02:22Z\",\"credentialSubject\":{\"birth_date\":921950325,\"country\":\"Spain\",\"first_surname\":\"Tomas\",\"id\":\"did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr\",\"license_type\":1,\"name\":\"Eduard\",\"nif\":\"54688188M\",\"second_surname\":\"Escoruela\",\"type\":\"DrivingLicense\"},\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identity/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/3553270275\",\"revocationNonce\":3553270275,\"type\":\"SparseMerkleTreeProof\"},\"issuer\":\"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6\",\"credentialSchema\":{\"id\":\"https://api.bloock.dev/hosting/v1/ipfs/QmWkPu699EF334ixBGEK7rDDurQfu2SYBXU39bSozu1i5h\",\"type\":\"JsonSchema2023\"},\"proof\":[{\"coreClaim\":\"e055485e9b8410b3cd71cb3ba3a0b7652a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b0056d1a9bf4e9d10b44fdd5b0f6b740b21dcd6675e770bf882249b8083471858190000000000000000000000000000000000000000000000000000000000000000039acad300000000ee30c6f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"issuerData\":{\"authCoreClaim\":\"cca3371a6cb1b715004407e325bd993c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fbd3b6b8c8e24e08bb982c7d4990e594747e5c24d98ac4ec969e50e437c1eb08407c9e5acc278a1641c82488f7518432a5937973d4ddfe551e32f9f7ba4c4a2e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identity/v1/did%3Apolygonid%3Apolygon%3Amumbai%3A2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/0\",\"revocationNonce\":0,\"type\":\"SparseMerkleTreeProof\"},\"id\":\"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6\",\"mtp\":{\"existence\":true,\"siblings\":[]},\"state\":{\"claimsTreeRoot\":\"0da5ac49846ae0074b986e5eef7c84011529e9902a0ffc6e9973b5cd0d217709\",\"value\":\"778582fc18b636314cc027a7772c1429028d44cdd17234f06e6d2d59bedee31d\"}},\"signature\":\"7bf882354b7cedd4b7ee74590cd3b091fef7545cb4ae8cd35c72b106ff858a0a3b1272ab7748cf7187d2383acda44bdae4bce1a7f9dccc11921fb0f19a70ee03\",\"type\":\"BJJSignature2021\"}]}";
+  String drivingLicenseSchemaType = "DrivingLicense";
+  String holderDid = "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr";
+  Long expiration = 4089852142L;
 
   @BeforeAll
   static void beforeAll() {
-    Utils.initSdk();
-  }
-
-  @Test
-  void createAndLoadIdentity() throws Exception {
-    IdentityLegacyClient identityClient = new IdentityLegacyClient();
-
-    Identity created = identityClient.createIdentity();
-    Identity loaded = identityClient.loadIdentity(created.getMnemonic());
-
-    assertEquals(created.getKey(), loaded.getKey());
-    assertEquals(created.getPrivateKey(), loaded.getPrivateKey());
-    assertEquals(created.getMnemonic(), loaded.getMnemonic());
-  }
-
-  @Test
-  void credentialOfferToFromJson() throws Exception {
-    CredentialOffer offer = CredentialOffer.fromJson(credentialOfferJson);
-    String json = offer.toJson();
-
-    CredentialOffer newOffer = CredentialOffer.fromJson(json);
-    String newOfferJson = newOffer.toJson();
-    assertEquals(json, newOfferJson);
+    Utils.initDevSdk();
   }
 
   @Test
@@ -49,50 +36,190 @@ class IdentityTest {
     assertEquals(json, newCredentialJson);
   }
 
-  /*
-   * @Test
-   * void endToEnd() throws Exception {
-   * IdentityClient identityClient = new IdentityClient();
-   *
-   * Identity holder = identityClient.createIdentity();
-   *
-   * Schema schema =
-   * identityClient
-   * .buildSchema("Test Schema", "test_schema")
-   * .addBooleanAttribute("Boolean Attribute", "bool_attr", "")
-   * .addStringAttribute("String Attribute", "string_attr", "")
-   * .build();
-   *
-   * CredentialReceipt receipt =
-   * identityClient
-   * .buildCredential(schema.getId(), holder.getKey())
-   * .withBooleanAttribute("bool_attr", true)
-   * .withStringAttribute("string_attr", "string test")
-   * .build();
-   *
-   * identityClient.waitOffer(receipt.getId());
-   *
-   * CredentialOffer offer = identityClient.getOffer(receipt.getId());
-   * String offerJson = offer.toJson();
-   *
-   * CredentialOffer newOffer = CredentialOffer.fromJson(offerJson);
-   * assertEquals(offerJson, newOffer.toJson());
-   *
-   * Credential credential = identityClient.redeemOffer(offer,
-   * holder.getPrivateKey());
-   * String credentialJson = credential.toJson();
-   *
-   * Credential newCredential = Credential.fromJson(credentialJson);
-   * assertEquals(credentialJson, newCredential.toJson());
-   *
-   * CredentialVerification verification =
-   * identityClient.verifyCredential(credential);
-   * assertTrue(verification.getTimestamp() > 0);
-   * assertNotSame("", verification.getIssuer());
-   * assertEquals(verification.getRevocation(), 0);
-   *
-   * boolean revocation = identityClient.revokeCredential(credential);
-   * assertTrue(revocation);
-   * }
-   */
+  @Test
+  void createHolderIdentity() throws Exception {
+    IdentityClient identityClient = new IdentityClient();
+    KeyClient keyClient = new KeyClient();
+
+    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+    KeyType keyType = KeyType.Bjj;
+
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+
+    Key holderKey = new Key(managedKey);
+
+    Holder holder = identityClient.createHolder(holderKey, new DidType());
+    assertTrue(holder.getDid().getDid().contains("polygonid"));
+  }
+
+  @Test
+  void endToEnd() throws Exception {
+    IdentityClient identityClient = new IdentityClient();
+    KeyClient keyClient = new KeyClient();
+
+    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
+    KeyType keyType = KeyType.Bjj;
+
+    ManagedKey managedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+
+    ManagedKey notFoundManagedKey =
+        keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+
+    Key issuerKey = new Key(managedKey);
+    Key notFoundIssuerKey = new Key(notFoundManagedKey);
+
+    String currentDirectory = System.getProperty("user.dir");
+    File imageFile = new File(currentDirectory + "/src/test/test_utils/profile_image.png");
+    int fileSize = (int) imageFile.length();
+    byte[] fileBytes = new byte[fileSize];
+    try (FileInputStream inputStream = new FileInputStream(imageFile)) {
+      inputStream.read(fileBytes);
+    }
+    String encodedFile = Base64.getUrlEncoder().encodeToString(fileBytes);
+
+    DidType didType = new DidType(Method.POLYGONID, Blockchain.POLYGON, Network.MUMBAI);
+    Issuer issuer =
+        identityClient.createIssuer(
+            issuerKey,
+            PublishIntervalParams.Interval15,
+            didType,
+            "Bloock Test",
+            "bloock description test",
+            encodedFile);
+    assertTrue(issuer.getDid().getDid().contains("polygonid"));
+
+    assertThrows(
+        Exception.class,
+        () -> {
+          identityClient.createIssuer(
+               issuerKey, PublishIntervalParams.Interval15, didType, null, null, null);
+          throw new RuntimeException("This is an intentional exception.");
+        });
+
+    Issuer importedIssuer = identityClient.importIssuer(issuerKey, didType);
+    assertEquals(issuer.getDid().getDid(), importedIssuer.getDid().getDid());
+
+    Issuer getNotFoundIssuerDid = identityClient.importIssuer(notFoundIssuerKey, didType);
+    assertTrue(getNotFoundIssuerDid.getDid().getDid().isEmpty());
+
+    DidType newDidType = new DidType(Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI);
+    Issuer newIssuer =
+        identityClient.createIssuer(
+            notFoundIssuerKey, PublishIntervalParams.Interval15, newDidType, null, null, null);
+    assertTrue(newIssuer.getDid().getDid().contains("iden3"));
+
+    List<String> stringList = new ArrayList<>();
+    stringList.add("big");
+    stringList.add("medium");
+    stringList.add("small");
+    List<Long> integerList = new ArrayList<>();
+    integerList.add(1L);
+    integerList.add(5L);
+    integerList.add(10L);
+    List<Double> doubleList = new ArrayList<>();
+    doubleList.add(1.10);
+    doubleList.add(1.20);
+    doubleList.add(1.30);
+
+    Schema schema =
+        identityClient
+            .buildSchema(
+                "Driving License", drivingLicenseSchemaType, "1.0", "driving license schema")
+            .addIntegerAttribute("License Type", "license_type", "license type", false)
+            .addDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true)
+            .addStringAttribute("Nif", "nif", "nif", true)
+            .addBooleanAttribute("Is Spanish", "is_spanish", "is_spanish", true)
+            .addDateAttribute("Birth Date", "birth_date", "birth date", true)
+            .addDatetimeAttribute("Local Hour", "local_hour", "local hour", true)
+            .addStringEnumAttribute("Car Type", "car_type", "car type", true, stringList)
+            .addIntegerEnumAttribute("Car Points", "car_points", "car points", true, integerList)
+            .addDecimalEnumAttribute(
+                "Precision wheels", "precision_wheels", "precision wheels", true, doubleList)
+            .build();
+    assertNotNull(schema.getCid());
+
+    Schema getSchema = identityClient.getSchema(schema.getCid());
+    assertNotNull(getSchema.getCidJsonLD());
+    assertNotNull(getSchema.getJson());
+    assertNotNull(getSchema.getSchemaType());
+
+    CredentialReceipt receipt =
+        identityClient
+            .buildCredential(issuer, schema.getCid(), holderDid, expiration, 0)
+            .withIntegerAttribute("license_type", 1L)
+            .withDecimalAttribute("quantity_oil", 2.25555)
+            .withStringAttribute("nif", "54688188M")
+            .withBooleanAttribute("is_spanish", true)
+            .withDateAttribute("birth_date", LocalDate.of(1999, 3, 20))
+            .withDatetimeAttribute("local_hour", LocalDateTime.now())
+            .withStringAttribute("car_type", "big")
+            .withIntegerAttribute("car_points", 5L)
+            .withDecimalAttribute("precision_wheels", 1.10)
+            .build();
+    assertNotNull(receipt.getCredentialId());
+    assertNotNull(receipt.getCredential());
+    assertEquals(drivingLicenseSchemaType, receipt.getCredentialType());
+
+    Credential credential = receipt.getCredential();
+    assertEquals(issuer.getDid().getDid(), credential.getIssuer());
+    assertEquals("JsonSchema2023", credential.getCredentialSchema().getCredentialType());
+    assertEquals(drivingLicenseSchemaType, credential.getType().get(1));
+
+    boolean ok = identityClient.revokeCredential(credential, issuer);
+    assertTrue(ok);
+
+    IssuerStateReceipt stateReceipt = identityClient.forcePublishIssuerState(issuer);
+    assertNotNull(stateReceipt.getTxHash());
+
+    assertThrows(
+        Exception.class,
+        () -> {
+          identityClient.forcePublishIssuerState(issuer);
+          throw new RuntimeException("This is an intentional exception.");
+        });
+
+    String proofRequest = prepareProofRequest(schema.getCidJsonLD());
+
+    VerificationReceipt verification = identityClient.createVerification(proofRequest);
+    assertNotEquals(0, verification.getSessionID());
+    assertNotNull(verification.getVerificationRequest());
+
+    assertThrows(
+        Exception.class,
+        () -> {
+          identityClient.getVerificationStatus(verification.getSessionID());
+          throw new RuntimeException("This is an intentional exception.");
+        });
+
+    assertThrows(
+        Exception.class,
+        () -> {
+          identityClient.waitVerification(verification.getSessionID(), 5);
+          throw new RuntimeException("This is an intentional exception.");
+        });
+  }
+
+  public static String prepareProofRequest(String schemaId) throws JsonProcessingException {
+    Map<String, Object> proofRequestMap = new HashMap<>();
+    proofRequestMap.put("circuitId", "credentialAtomicQuerySigV2");
+    proofRequestMap.put("id", 1704207344);
+
+    Map<String, Object> queryMap = new HashMap<>();
+    queryMap.put("allowedIssuers", Arrays.asList("*"));
+
+    Map<String, Object> credentialSubjectMap = new HashMap<>();
+    credentialSubjectMap.put("birth_date", new HashMap<>());
+
+    queryMap.put("credentialSubject", credentialSubjectMap);
+    queryMap.put("type", "DrivingLicense");
+
+    queryMap.put("context", "https://api.bloock.dev/hosting/v1/ipfs/" + schemaId);
+
+    proofRequestMap.put("query", queryMap);
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    return objectMapper.writeValueAsString(proofRequestMap);
+  }
 }

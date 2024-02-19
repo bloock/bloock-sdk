@@ -5,12 +5,16 @@ from bloock.entity.identity.attribute_descriptor import AttributeDescriptor
 
 
 class BooleanAttributeDescriptor(AttributeDescriptor):
+    """
+    Represents a descriptor for a boolean attribute.
+    """
     @staticmethod
     def from_proto(a: proto.BooleanAttributeDefinition) -> BooleanAttributeDescriptor:
         return BooleanAttributeDescriptor(
             display_name=a.display_name,
             technical_name=a.id,
             description=a.description,
+            required=a.required,
         )
 
     def to_proto(self) -> proto.BooleanAttributeDefinition:
@@ -18,4 +22,5 @@ class BooleanAttributeDescriptor(AttributeDescriptor):
             display_name=self.display_name,
             id=self.technical_name,
             description=self.description,
+            required=self.required,
         )

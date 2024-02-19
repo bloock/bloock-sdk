@@ -1,13 +1,7 @@
-use bloock_signer::format::jws::JwsSignature;
-use serde::{
-    ser::{Error, SerializeTuple},
-    Deserialize, Serialize,
-};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::{identity::IdentityError, integrity::entity::proof::Proof};
-
-use super::dto::redeem_credential_response::RedeemCredentialResponse;
+use super::proof::CredentialProof;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Credential {
@@ -17,6 +11,8 @@ pub struct Credential {
     pub r#type: Vec<String>,
     #[serde(rename = "issuanceDate")]
     pub issuance_date: String,
+    #[serde(rename = "expirationDate")]
+    pub expiration_date: String,
     #[serde(rename = "credentialSubject")]
     pub credential_subject: Value,
     #[serde(rename = "credentialStatus")]
@@ -24,7 +20,6 @@ pub struct Credential {
     pub issuer: String,
     #[serde(rename = "credentialSchema")]
     pub credential_schema: CredentialSchema,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub proof: Option<CredentialProof>,
 }
 
@@ -42,67 +37,6 @@ pub struct CredentialSchema {
     pub r#type: String,
 }
 
-#[derive(Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct CredentialProof(pub JwsSignature, pub Proof);
-
-impl Serialize for CredentialProof {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut signature = serde_json::to_value(self.0.clone())
-            .map_err(|_| Error::custom("error serializing signature"))?;
-        let signature_map = signature
-            .as_object_mut()
-            .ok_or_else(|| Error::custom("error serializing signature"))?;
-        signature_map.insert(
-            "type".to_string(),
-            Value::String("BloockSignatureProof".to_string()),
-        );
-
-        let mut proof = serde_json::to_value(self.1.clone())
-            .map_err(|_| Error::custom("error serializing bloock proof"))?;
-        let proof_map = proof
-            .as_object_mut()
-            .ok_or_else(|| Error::custom("error serializing bloock proof"))?;
-        proof_map.insert(
-            "type".to_string(),
-            Value::String("BloockIntegrityProof".to_string()),
-        );
-
-        let mut state = serializer.serialize_tuple(2)?;
-        state.serialize_element(&signature_map)?;
-        state.serialize_element(&proof_map)?;
-
-        state.end()
-    }
-}
-
-impl TryFrom<RedeemCredentialResponse> for Credential {
-    type Error = IdentityError;
-
-    fn try_from(value: RedeemCredentialResponse) -> Result<Self, Self::Error> {
-        Ok(Credential {
-            context: value.body.context,
-            id: value.body.id,
-            r#type: value.body.r#type,
-            issuance_date: value.body.issuance_date,
-            credential_subject: value.body.credential_subject,
-            credential_status: CredentialStatus {
-                id: value.body.credential_status.id,
-                revocation_nonce: value.body.credential_status.revocation_nonce,
-                r#type: value.body.credential_status.r#type,
-            },
-            issuer: value.body.issuer,
-            credential_schema: CredentialSchema {
-                id: value.body.credential_schema.id,
-                r#type: value.body.credential_schema.r#type,
-            },
-            proof: Some(CredentialProof(value.body.proof.0, value.body.proof.1)),
-        })
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use serde_json::Value;
@@ -111,7 +45,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_serialization() {
-        let json = "{\"id\":\"https://api.bloock.com//v1/claims/cd9a7e15-b0bd-4c11-a04b-5553b82ff85e\",\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/iden3credential-v2.json-ld\"],\"type\":[\"VerifiableCredential\",\"TestSchema\"],\"issuanceDate\":\"2023-03-09T15:23:48.888937432Z\",\"credentialSubject\":{\"BoolAttr\":0,\"id\":\"did:iden3:eth:main:216KpPWSfV1dZWtoW3yFTG8EjcDs1bEcJxmAw65Erp\",\"type\":\"TestSchema\"},\"credentialStatus\":{\"id\":\"https://api.bloock.com/v1/did%3Aiden3%3Aeth%3Amain%3AzxHh4f4NFe6a6D1NhUNEUrMw1nb36YNMHgiboNNz7/claims/revocation/status/2615659019\",\"revocationNonce\":2615659019,\"type\":\"BloockRevocationProof\"},\"issuer\":\"did:iden3:eth:main:zxHh4f4NFe6a6D1NhUNEUrMw1nb36YNMHgiboNNz7\",\"credentialSchema\":{\"id\":\"https://api.bloock.com/hosting/v1/ipfs/Qmcj962wRkypdbAopKLvcedSkBf33ctJaGJ8PkXiUTMm79\",\"type\":\"JsonSchemaValidator2018\"},\"proof\":[{\"header\":{\"alg\":\"ES256K\",\"kid\":\"034861428fd1764d37d5d1c5883ad6c6727746bc33bb4556047ba000ea9ff47259\"},\"message_hash\":\"72062ae22b7b9e2d58497ba18f35bd8e56924d399bbf9c0e3f52efd922325ad2\",\"protected\":\"e30\",\"signature\":\"19b95d1b2a043a6f568559b84191903d1ec44d8e3d5948c61950d2ea1b24a3666302f6a50fa006a75cd88e9416442a0feb1c213afba2bb207fd90e2338553ebb00\",\"type\":\"BloockSignatureProof\"},{\"anchor\":{\"anchor_id\":278298,\"networks\":[{\"name\":\"bloock_chain\",\"state\":\"Confirmed\",\"tx_hash\":\"0xcf37ac910991d90f483c1a2ba6f518e4c08f66df456dfef6ed5565863406508d\"}],\"root\":\"db13b66a88f5edc4c4b9f2aa4f05d59510176570ea2efce56d8fb3a5c0819136\",\"status\":\"Success\"},\"bitmap\":\"ffdff8\",\"depth\":\"0002000400050007000c000d001000110012001400140013000f000e000b000a00090008000600030001\",\"leaves\":[\"2feeac09c037b2f09f06b871a84a23801da15a727484eadda27dab68fc1c94dc\"],\"nodes\":[\"516176fdc620c8ab71bb60c517fd7809b881b85b393d668b8e25ca682f46a087\",\"8af96651608104afeeeec17f37ff2a53ab0449819d6f41183453c0e409f165ac\",\"b04d2c9d5a731b6141b0d0a5f89d8bb5f8900a728257b1978f083dc913de632e\",\"50c47a9ac87c811e2031c53f99e9a9808bbce2a92fc7625abcc00f5ffa8f9b16\",\"e59e4cec622bde163d80bdaf50a497047af79c1019062445011ecffe12c5a8d4\",\"342749208e85a234017be9cd0ca2e87038fb6976e68ef824f88d1f3f4c94fba1\",\"352129325f49025ec4a0e292719a6cdbf83d5e86e2a854923d20c1b31c048038\",\"55d5b8c56247360a4ffd4c4d217f8e156b7b279542082a68300053f0c6c893cc\",\"5a199da3e0ef0660372b1020aa45854c31ca0b6514c8ffa1baf1a0bdb0c0e14b\",\"2b93948f81be82b18547d106b8c8e2c553d0e4a0b8bc6321ab71b789e7b5c710\",\"5a19be76ff9799de9a1585a3e811377459448cf024a2a235173224ac455b29ce\",\"69b949d1398417b50d64ebb5d5249de1d556dc6718d7d52907c99a5e27580e36\",\"d8cca1db86f60771fb5fe29252f6f05e8cdd3a61a3f51a761421945514b81e76\",\"550635d8c04f0fa3396eeefd80dd9cc2db4aa4c19c6f7b1b6ec61722d4b68a53\",\"15ea15725a070f948eb198636c3c7f7240c00694e65a9e5a5ce0b1222fd5133b\",\"094217b5d82005489d8fbbdc644e7ab8226da2491f550e6c633e5d4fca5a1f7f\",\"86b38affacad14fe3015d38b331f471628bc0d28fdea296b54194da26f93b9c7\",\"fd252542a270246623f06535691f6f41bab75148b94beb8bede97e1d753a50a3\",\"49745954e8ef71f5bb529100f2cb78476dae4b08255b1f1ead4dacb1fb138ddb\",\"dcc37ac76d4012f50e54010a9d97d2421359dab21b02b8919063231c117f1631\"],\"type\":\"BloockIntegrityProof\"}]}";
+        let json = "{\"id\":\"https://identity-managed-api.bloock.dev/v1/credentials/181bfa3a-b125-4436-9ed4-d8ef056f49ea\",\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://schema.iden3.io/core/jsonld/iden3proofs.jsonld\",\"https://api.bloock.dev/hosting/v1/ipfs/QmTHpnDqZmvswy1UT62EbywdXo7CP6NNKPFMTdCzSuFiEu\"],\"type\":[\"VerifiableCredential\",\"Test1\"],\"expirationDate\":\"2024-02-13T00:00:00Z\",\"issuanceDate\":\"2024-02-13T14:08:33.534601532Z\",\"credentialSubject\":{\"id\":\"did:polygonid:polygon:mumbai:2qFh2MNxniqVnoPhmaKwFF3AUH3dkW9hXX4fSEP6eN\",\"nombre\":\"Nombre\",\"type\":\"Test1\"},\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identityV2/v1/did:polygonid:polygon:mumbai:2qNmTmyJtYeU6hEceRnzpnmHn172G5LwxoHvQVEsMN/claims/revocation/status/2096739002\",\"revocationNonce\":2096739002,\"type\":\"SparseMerkleTreeProof\"},\"issuer\":\"did:polygonid:polygon:mumbai:2qNmTmyJtYeU6hEceRnzpnmHn172G5LwxoHvQVEsMN\",\"credentialSchema\":{\"id\":\"https://api.bloock.dev/hosting/v1/ipfs/QmQXC4StapEWTSqTRyS7U9utWma5KiXKBGYeKukSjLRWT1\",\"type\":\"JsonSchema2023\"},\"proof\":[{\"type\":\"BJJSignature2021\",\"issuerData\":{\"id\":\"did:polygonid:polygon:mumbai:2qNmTmyJtYeU6hEceRnzpnmHn172G5LwxoHvQVEsMN\",\"state\":{\"claimsTreeRoot\":\"cb75409fbe15358963d6f01fd65408fdbb623515c02e6ff82a93941e52b3fb09\",\"value\":\"b33a2e030ee2e232163ff57bfe59284aa0be6b7160314e9e72876ff119baa70e\"},\"authCoreClaim\":\"cca3371a6cb1b715004407e325bd993c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007cd09dbfcc727418e5a139ccf1e7cb28eac581d2900f0e8511f7488f7f9929195bbaa9a34ee1dfbf11b713b2dbe5d3e5062b9a243458e7d3c08c21840360161c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"mtp\":{\"existence\":true,\"siblings\":[]},\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identityV2/v1/did%3Apolygonid%3Apolygon%3Amumbai%3A2qNmTmyJtYeU6hEceRnzpnmHn172G5LwxoHvQVEsMN/claims/revocation/status/0\",\"revocationNonce\":0,\"type\":\"SparseMerkleTreeProof\"}},\"coreClaim\":\"936d88e4efdc51734fbd6ac870ac35202a00000000000000000000000000000002124700b54ff925219eaa6df59e29274c59b4887d5a7958225be6080d370b00aa3620133335582bc1351f39349ea431002160a7e92500db7169a92b052c720c0000000000000000000000000000000000000000000000000000000000000000bab2f97c0000000000b1ca650000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"signature\":\"a33a3529cb72af1be86d4e422955bf750693cb5459b7da5e8aeca9564de4c5aec102f7597cd64662c07c8396964572024ddbba71e3708f39d7831f15c60c3f04\"}]}";
         let value: Value = serde_json::from_str(json).unwrap();
 
         let credential: Credential = serde_json::from_value(value.clone()).unwrap();

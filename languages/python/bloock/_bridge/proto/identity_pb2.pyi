@@ -9,6 +9,7 @@ import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
 import identity_entities_pb2
+import keys_entities_pb2
 import shared_pb2
 import sys
 import typing
@@ -19,152 +20,6 @@ else:
     import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
-
-@typing_extensions.final
-class CreateIdentityRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> None: ...
-
-global___CreateIdentityRequest = CreateIdentityRequest
-
-@typing_extensions.final
-class CreateIdentityResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    IDENTITY_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def identity(self) -> identity_entities_pb2.Identity: ...
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        identity: identity_entities_pb2.Identity | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "identity", b"identity"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "identity", b"identity"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___CreateIdentityResponse = CreateIdentityResponse
-
-@typing_extensions.final
-class LoadIdentityRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    MNEMONIC_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    mnemonic: builtins.str
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        mnemonic: builtins.str = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "mnemonic", b"mnemonic"]) -> None: ...
-
-global___LoadIdentityRequest = LoadIdentityRequest
-
-@typing_extensions.final
-class LoadIdentityResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    IDENTITY_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def identity(self) -> identity_entities_pb2.Identity: ...
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        identity: identity_entities_pb2.Identity | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "identity", b"identity"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "identity", b"identity"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___LoadIdentityResponse = LoadIdentityResponse
-
-@typing_extensions.final
-class BuildSchemaRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    DISPLAY_NAME_FIELD_NUMBER: builtins.int
-    TECHNICAL_NAME_FIELD_NUMBER: builtins.int
-    BOOLEAN_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    DATE_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    DATETIME_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    STRING_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    NUMBER_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    display_name: builtins.str
-    technical_name: builtins.str
-    @property
-    def boolean_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.BooleanAttributeDefinition]: ...
-    @property
-    def date_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateAttributeDefinition]: ...
-    @property
-    def datetime_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateTimeAttributeDefinition]: ...
-    @property
-    def string_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.StringAttributeDefinition]: ...
-    @property
-    def number_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.NumberAttributeDefinition]: ...
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        display_name: builtins.str = ...,
-        technical_name: builtins.str = ...,
-        boolean_attributes: collections.abc.Iterable[identity_entities_pb2.BooleanAttributeDefinition] | None = ...,
-        date_attributes: collections.abc.Iterable[identity_entities_pb2.DateAttributeDefinition] | None = ...,
-        datetime_attributes: collections.abc.Iterable[identity_entities_pb2.DateTimeAttributeDefinition] | None = ...,
-        string_attributes: collections.abc.Iterable[identity_entities_pb2.StringAttributeDefinition] | None = ...,
-        number_attributes: collections.abc.Iterable[identity_entities_pb2.NumberAttributeDefinition] | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "display_name", b"display_name", "number_attributes", b"number_attributes", "string_attributes", b"string_attributes", "technical_name", b"technical_name"]) -> None: ...
-
-global___BuildSchemaRequest = BuildSchemaRequest
-
-@typing_extensions.final
-class BuildSchemaResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    SCHEMA_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def schema(self) -> identity_entities_pb2.Schema: ...
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        schema: identity_entities_pb2.Schema | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "schema", b"schema"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "schema", b"schema"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___BuildSchemaResponse = BuildSchemaResponse
 
 @typing_extensions.final
 class GetSchemaRequest(google.protobuf.message.Message):
@@ -209,289 +64,70 @@ class GetSchemaResponse(google.protobuf.message.Message):
 global___GetSchemaResponse = GetSchemaResponse
 
 @typing_extensions.final
-class CreateCredentialRequest(google.protobuf.message.Message):
+class ImportIssuerResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    SCHEMA_ID_FIELD_NUMBER: builtins.int
-    HOLDER_KEY_FIELD_NUMBER: builtins.int
-    BOOLEAN_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    DATE_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    DATETIME_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    STRING_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    NUMBER_ATTRIBUTES_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    schema_id: builtins.str
-    holder_key: builtins.str
-    @property
-    def boolean_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.BooleanAttribute]: ...
-    @property
-    def date_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateAttribute]: ...
-    @property
-    def datetime_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateTimeAttribute]: ...
-    @property
-    def string_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.StringAttribute]: ...
-    @property
-    def number_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.NumberAttribute]: ...
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        schema_id: builtins.str = ...,
-        holder_key: builtins.str = ...,
-        boolean_attributes: collections.abc.Iterable[identity_entities_pb2.BooleanAttribute] | None = ...,
-        date_attributes: collections.abc.Iterable[identity_entities_pb2.DateAttribute] | None = ...,
-        datetime_attributes: collections.abc.Iterable[identity_entities_pb2.DateTimeAttribute] | None = ...,
-        string_attributes: collections.abc.Iterable[identity_entities_pb2.StringAttribute] | None = ...,
-        number_attributes: collections.abc.Iterable[identity_entities_pb2.NumberAttribute] | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "holder_key", b"holder_key", "number_attributes", b"number_attributes", "schema_id", b"schema_id", "string_attributes", b"string_attributes"]) -> None: ...
-
-global___CreateCredentialRequest = CreateCredentialRequest
-
-@typing_extensions.final
-class CreateCredentialResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CREDENTIAL_RECEIPT_FIELD_NUMBER: builtins.int
+    DID_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def credential_receipt(self) -> identity_entities_pb2.CredentialReceipt: ...
+    did: builtins.str
     @property
     def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
-        credential_receipt: identity_entities_pb2.CredentialReceipt | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_receipt", b"credential_receipt", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_receipt", b"credential_receipt", "error", b"error"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___CreateCredentialResponse = CreateCredentialResponse
-
-@typing_extensions.final
-class GetOfferRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    ID_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    id: builtins.str
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        id: builtins.str = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "id", b"id"]) -> None: ...
-
-global___GetOfferRequest = GetOfferRequest
-
-@typing_extensions.final
-class GetOfferResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    OFFER_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def offer(self) -> identity_entities_pb2.CredentialOffer: ...
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        offer: identity_entities_pb2.CredentialOffer | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "offer", b"offer"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "offer", b"offer"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___GetOfferResponse = GetOfferResponse
-
-@typing_extensions.final
-class WaitOfferRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    OFFER_ID_FIELD_NUMBER: builtins.int
-    TIMEOUT_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    offer_id: builtins.str
-    timeout: builtins.int
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        offer_id: builtins.str = ...,
-        timeout: builtins.int = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "offer_id", b"offer_id", "timeout", b"timeout"]) -> None: ...
-
-global___WaitOfferRequest = WaitOfferRequest
-
-@typing_extensions.final
-class WaitOfferResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    OFFER_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def offer(self) -> identity_entities_pb2.CredentialOffer: ...
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        offer: identity_entities_pb2.CredentialOffer | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "_offer", b"_offer", "error", b"error", "offer", b"offer"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "_offer", b"_offer", "error", b"error", "offer", b"offer"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_offer", b"_offer"]) -> typing_extensions.Literal["offer"] | None: ...
-
-global___WaitOfferResponse = WaitOfferResponse
-
-@typing_extensions.final
-class CredentialOfferToJsonRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    CREDENTIAL_OFFER_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def credential_offer(self) -> identity_entities_pb2.CredentialOffer: ...
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        credential_offer: identity_entities_pb2.CredentialOffer | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential_offer", b"credential_offer"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential_offer", b"credential_offer"]) -> None: ...
-
-global___CredentialOfferToJsonRequest = CredentialOfferToJsonRequest
-
-@typing_extensions.final
-class CredentialOfferToJsonResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    JSON_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    json: builtins.str
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        json: builtins.str = ...,
+        did: builtins.str = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "json", b"json"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "did", b"did", "error", b"error"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
-global___CredentialOfferToJsonResponse = CredentialOfferToJsonResponse
+global___ImportIssuerResponse = ImportIssuerResponse
 
 @typing_extensions.final
-class CredentialOfferFromJsonRequest(google.protobuf.message.Message):
+class GetCredentialProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
-    JSON_FIELD_NUMBER: builtins.int
+    ISSUER_DID_FIELD_NUMBER: builtins.int
+    CREDENTIAL_ID_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
-    json: builtins.str
+    issuer_did: builtins.str
+    credential_id: builtins.str
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        json: builtins.str = ...,
+        issuer_did: builtins.str = ...,
+        credential_id: builtins.str = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "json", b"json"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential_id", b"credential_id", "issuer_did", b"issuer_did"]) -> None: ...
 
-global___CredentialOfferFromJsonRequest = CredentialOfferFromJsonRequest
+global___GetCredentialProofRequest = GetCredentialProofRequest
 
 @typing_extensions.final
-class CredentialOfferFromJsonResponse(google.protobuf.message.Message):
+class GetCredentialProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    CREDENTIAL_OFFER_FIELD_NUMBER: builtins.int
+    PROOF_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     @property
-    def credential_offer(self) -> identity_entities_pb2.CredentialOffer: ...
+    def proof(self) -> identity_entities_pb2.CredentialProof: ...
     @property
     def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
-        credential_offer: identity_entities_pb2.CredentialOffer | None = ...,
+        proof: identity_entities_pb2.CredentialProof | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_offer", b"credential_offer", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_offer", b"credential_offer", "error", b"error"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "proof", b"proof"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "proof", b"proof"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
-global___CredentialOfferFromJsonResponse = CredentialOfferFromJsonResponse
-
-@typing_extensions.final
-class CredentialOfferRedeemRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CONFIG_DATA_FIELD_NUMBER: builtins.int
-    CREDENTIAL_OFFER_FIELD_NUMBER: builtins.int
-    IDENTITY_PRIVATE_KEY_FIELD_NUMBER: builtins.int
-    @property
-    def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def credential_offer(self) -> identity_entities_pb2.CredentialOffer: ...
-    identity_private_key: builtins.str
-    def __init__(
-        self,
-        *,
-        config_data: config_pb2.ConfigData | None = ...,
-        credential_offer: identity_entities_pb2.CredentialOffer | None = ...,
-        identity_private_key: builtins.str = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential_offer", b"credential_offer"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential_offer", b"credential_offer", "identity_private_key", b"identity_private_key"]) -> None: ...
-
-global___CredentialOfferRedeemRequest = CredentialOfferRedeemRequest
-
-@typing_extensions.final
-class CredentialOfferRedeemResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    CREDENTIAL_FIELD_NUMBER: builtins.int
-    ERROR_FIELD_NUMBER: builtins.int
-    @property
-    def credential(self) -> identity_entities_pb2.Credential: ...
-    @property
-    def error(self) -> shared_pb2.Error: ...
-    def __init__(
-        self,
-        *,
-        credential: identity_entities_pb2.Credential | None = ...,
-        error: shared_pb2.Error | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential", b"credential", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential", b"credential", "error", b"error"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
-
-global___CredentialOfferRedeemResponse = CredentialOfferRedeemResponse
+global___GetCredentialProofResponse = GetCredentialProofResponse
 
 @typing_extensions.final
 class CredentialToJsonRequest(google.protobuf.message.Message):
@@ -578,47 +214,359 @@ class CredentialFromJsonResponse(google.protobuf.message.Message):
 global___CredentialFromJsonResponse = CredentialFromJsonResponse
 
 @typing_extensions.final
-class VerifyCredentialRequest(google.protobuf.message.Message):
+class CreateCredentialRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
-    CREDENTIAL_FIELD_NUMBER: builtins.int
+    SCHEMA_ID_FIELD_NUMBER: builtins.int
+    ISSUER_DID_FIELD_NUMBER: builtins.int
+    HOLDER_DID_FIELD_NUMBER: builtins.int
+    EXPIRATION_FIELD_NUMBER: builtins.int
+    VERSION_FIELD_NUMBER: builtins.int
+    KEY_FIELD_NUMBER: builtins.int
+    STRING_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    INTEGER_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    DECIMAL_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    BOOLEAN_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    DATE_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    DATETIME_ATTRIBUTES_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
+    schema_id: builtins.str
+    issuer_did: builtins.str
+    holder_did: builtins.str
+    expiration: builtins.int
+    version: builtins.int
     @property
-    def credential(self) -> identity_entities_pb2.Credential: ...
+    def key(self) -> keys_entities_pb2.Key: ...
+    @property
+    def string_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.StringAttribute]: ...
+    @property
+    def integer_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.IntegerAttribute]: ...
+    @property
+    def decimal_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DecimalAttribute]: ...
+    @property
+    def boolean_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.BooleanAttribute]: ...
+    @property
+    def date_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateAttribute]: ...
+    @property
+    def datetime_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateTimeAttribute]: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
-        credential: identity_entities_pb2.Credential | None = ...,
+        schema_id: builtins.str = ...,
+        issuer_did: builtins.str = ...,
+        holder_did: builtins.str = ...,
+        expiration: builtins.int = ...,
+        version: builtins.int | None = ...,
+        key: keys_entities_pb2.Key | None = ...,
+        string_attributes: collections.abc.Iterable[identity_entities_pb2.StringAttribute] | None = ...,
+        integer_attributes: collections.abc.Iterable[identity_entities_pb2.IntegerAttribute] | None = ...,
+        decimal_attributes: collections.abc.Iterable[identity_entities_pb2.DecimalAttribute] | None = ...,
+        boolean_attributes: collections.abc.Iterable[identity_entities_pb2.BooleanAttribute] | None = ...,
+        date_attributes: collections.abc.Iterable[identity_entities_pb2.DateAttribute] | None = ...,
+        datetime_attributes: collections.abc.Iterable[identity_entities_pb2.DateTimeAttribute] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_version", b"_version", "config_data", b"config_data", "key", b"key", "version", b"version"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "issuer_did", b"issuer_did", "key", b"key", "schema_id", b"schema_id", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_version", b"_version"]) -> typing_extensions.Literal["version"] | None: ...
 
-global___VerifyCredentialRequest = VerifyCredentialRequest
+global___CreateCredentialRequest = CreateCredentialRequest
 
 @typing_extensions.final
-class VerifyCredentialResponse(google.protobuf.message.Message):
+class BuildSchemaRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    RESULT_FIELD_NUMBER: builtins.int
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    DISPLAY_NAME_FIELD_NUMBER: builtins.int
+    SCHEMA_TYPE_FIELD_NUMBER: builtins.int
+    VERSION_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    STRING_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    INTEGER_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    DECIMAL_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    BOOLEAN_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    DATE_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    DATETIME_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    STRING_ENUM_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    INTEGER_ENUM_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    DECIMAL_ENUM_ATTRIBUTES_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    display_name: builtins.str
+    schema_type: builtins.str
+    version: builtins.str
+    description: builtins.str
+    @property
+    def string_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.StringAttributeDefinition]: ...
+    @property
+    def integer_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.IntegerAttributeDefinition]: ...
+    @property
+    def decimal_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DecimalAttributeDefinition]: ...
+    @property
+    def boolean_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.BooleanAttributeDefinition]: ...
+    @property
+    def date_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateAttributeDefinition]: ...
+    @property
+    def datetime_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DateTimeAttributeDefinition]: ...
+    @property
+    def string_enum_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.StringEnumAttributeDefinition]: ...
+    @property
+    def integer_enum_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.IntegerEnumAttributeDefinition]: ...
+    @property
+    def decimal_enum_attributes(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[identity_entities_pb2.DecimalEnumAttributeDefinition]: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        display_name: builtins.str = ...,
+        schema_type: builtins.str = ...,
+        version: builtins.str = ...,
+        description: builtins.str = ...,
+        string_attributes: collections.abc.Iterable[identity_entities_pb2.StringAttributeDefinition] | None = ...,
+        integer_attributes: collections.abc.Iterable[identity_entities_pb2.IntegerAttributeDefinition] | None = ...,
+        decimal_attributes: collections.abc.Iterable[identity_entities_pb2.DecimalAttributeDefinition] | None = ...,
+        boolean_attributes: collections.abc.Iterable[identity_entities_pb2.BooleanAttributeDefinition] | None = ...,
+        date_attributes: collections.abc.Iterable[identity_entities_pb2.DateAttributeDefinition] | None = ...,
+        datetime_attributes: collections.abc.Iterable[identity_entities_pb2.DateTimeAttributeDefinition] | None = ...,
+        string_enum_attributes: collections.abc.Iterable[identity_entities_pb2.StringEnumAttributeDefinition] | None = ...,
+        integer_enum_attributes: collections.abc.Iterable[identity_entities_pb2.IntegerEnumAttributeDefinition] | None = ...,
+        decimal_enum_attributes: collections.abc.Iterable[identity_entities_pb2.DecimalEnumAttributeDefinition] | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "decimal_enum_attributes", b"decimal_enum_attributes", "description", b"description", "display_name", b"display_name", "integer_attributes", b"integer_attributes", "integer_enum_attributes", b"integer_enum_attributes", "schema_type", b"schema_type", "string_attributes", b"string_attributes", "string_enum_attributes", b"string_enum_attributes", "version", b"version"]) -> None: ...
+
+global___BuildSchemaRequest = BuildSchemaRequest
+
+@typing_extensions.final
+class CreateHolderRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    KEY_FIELD_NUMBER: builtins.int
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    DID_TYPE_FIELD_NUMBER: builtins.int
+    @property
+    def key(self) -> keys_entities_pb2.Key: ...
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    @property
+    def did_type(self) -> identity_entities_pb2.DidType: ...
+    def __init__(
+        self,
+        *,
+        key: keys_entities_pb2.Key | None = ...,
+        config_data: config_pb2.ConfigData | None = ...,
+        did_type: identity_entities_pb2.DidType | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_did_type", b"_did_type", "config_data", b"config_data", "did_type", b"did_type", "key", b"key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_did_type", b"_did_type", "config_data", b"config_data", "did_type", b"did_type", "key", b"key"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_did_type", b"_did_type"]) -> typing_extensions.Literal["did_type"] | None: ...
+
+global___CreateHolderRequest = CreateHolderRequest
+
+@typing_extensions.final
+class CreateIssuerRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    KEY_FIELD_NUMBER: builtins.int
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    DID_TYPE_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    DESCRIPTION_FIELD_NUMBER: builtins.int
+    IMAGE_FIELD_NUMBER: builtins.int
+    PUBLISH_INTERVAL_FIELD_NUMBER: builtins.int
+    @property
+    def key(self) -> keys_entities_pb2.Key: ...
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    @property
+    def did_type(self) -> identity_entities_pb2.DidType: ...
+    name: builtins.str
+    description: builtins.str
+    image: builtins.str
+    publish_interval: identity_entities_pb2.PublishInterval.ValueType
+    def __init__(
+        self,
+        *,
+        key: keys_entities_pb2.Key | None = ...,
+        config_data: config_pb2.ConfigData | None = ...,
+        did_type: identity_entities_pb2.DidType | None = ...,
+        name: builtins.str | None = ...,
+        description: builtins.str | None = ...,
+        image: builtins.str | None = ...,
+        publish_interval: identity_entities_pb2.PublishInterval.ValueType = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_did_type", b"_did_type", "_image", b"_image", "_name", b"_name", "config_data", b"config_data", "description", b"description", "did_type", b"did_type", "image", b"image", "key", b"key", "name", b"name"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_did_type", b"_did_type", "_image", b"_image", "_name", b"_name", "config_data", b"config_data", "description", b"description", "did_type", b"did_type", "image", b"image", "key", b"key", "name", b"name", "publish_interval", b"publish_interval"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_description", b"_description"]) -> typing_extensions.Literal["description"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_did_type", b"_did_type"]) -> typing_extensions.Literal["did_type"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_image", b"_image"]) -> typing_extensions.Literal["image"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_name", b"_name"]) -> typing_extensions.Literal["name"] | None: ...
+
+global___CreateIssuerRequest = CreateIssuerRequest
+
+@typing_extensions.final
+class ImportIssuerRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    KEY_FIELD_NUMBER: builtins.int
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    DID_TYPE_FIELD_NUMBER: builtins.int
+    @property
+    def key(self) -> keys_entities_pb2.Key: ...
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    @property
+    def did_type(self) -> identity_entities_pb2.DidType: ...
+    def __init__(
+        self,
+        *,
+        key: keys_entities_pb2.Key | None = ...,
+        config_data: config_pb2.ConfigData | None = ...,
+        did_type: identity_entities_pb2.DidType | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_did_type", b"_did_type", "config_data", b"config_data", "did_type", b"did_type", "key", b"key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_did_type", b"_did_type", "config_data", b"config_data", "did_type", b"did_type", "key", b"key"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_did_type", b"_did_type"]) -> typing_extensions.Literal["did_type"] | None: ...
+
+global___ImportIssuerRequest = ImportIssuerRequest
+
+@typing_extensions.final
+class ForcePublishIssuerStateRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    ISSUER_DID_FIELD_NUMBER: builtins.int
+    KEY_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    issuer_did: builtins.str
+    @property
+    def key(self) -> keys_entities_pb2.Key: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        issuer_did: builtins.str = ...,
+        key: keys_entities_pb2.Key | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key", b"key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "issuer_did", b"issuer_did", "key", b"key"]) -> None: ...
+
+global___ForcePublishIssuerStateRequest = ForcePublishIssuerStateRequest
+
+@typing_extensions.final
+class CreateCredentialResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CREDENTIAL_RECEIPT_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     @property
-    def result(self) -> identity_entities_pb2.CredentialVerification: ...
+    def credential_receipt(self) -> identity_entities_pb2.CredentialReceipt: ...
     @property
     def error(self) -> shared_pb2.Error: ...
     def __init__(
         self,
         *,
-        result: identity_entities_pb2.CredentialVerification | None = ...,
+        credential_receipt: identity_entities_pb2.CredentialReceipt | None = ...,
         error: shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "result", b"result"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "result", b"result"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_receipt", b"credential_receipt", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_receipt", b"credential_receipt", "error", b"error"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
-global___VerifyCredentialResponse = VerifyCredentialResponse
+global___CreateCredentialResponse = CreateCredentialResponse
+
+@typing_extensions.final
+class CreateHolderResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DID_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    did: builtins.str
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        did: builtins.str = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "did", b"did", "error", b"error"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___CreateHolderResponse = CreateHolderResponse
+
+@typing_extensions.final
+class CreateIssuerResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DID_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    did: builtins.str
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        did: builtins.str = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "did", b"did", "error", b"error"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___CreateIssuerResponse = CreateIssuerResponse
+
+@typing_extensions.final
+class BuildSchemaResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SCHEMA_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def schema(self) -> identity_entities_pb2.Schema: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        schema: identity_entities_pb2.Schema | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "schema", b"schema"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "schema", b"schema"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___BuildSchemaResponse = BuildSchemaResponse
+
+@typing_extensions.final
+class ForcePublishIssuerStateResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STATE_RECEIPT_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def state_receipt(self) -> identity_entities_pb2.IssuerStateReceipt: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        state_receipt: identity_entities_pb2.IssuerStateReceipt | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "state_receipt", b"state_receipt"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "state_receipt", b"state_receipt"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___ForcePublishIssuerStateResponse = ForcePublishIssuerStateResponse
 
 @typing_extensions.final
 class RevokeCredentialRequest(google.protobuf.message.Message):
@@ -626,18 +574,22 @@ class RevokeCredentialRequest(google.protobuf.message.Message):
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
     CREDENTIAL_FIELD_NUMBER: builtins.int
+    KEY_FIELD_NUMBER: builtins.int
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     @property
     def credential(self) -> identity_entities_pb2.Credential: ...
+    @property
+    def key(self) -> keys_entities_pb2.Key: ...
     def __init__(
         self,
         *,
         config_data: config_pb2.ConfigData | None = ...,
         credential: identity_entities_pb2.Credential | None = ...,
+        key: keys_entities_pb2.Key | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential", "key", b"key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential", b"credential", "key", b"key"]) -> None: ...
 
 global___RevokeCredentialRequest = RevokeCredentialRequest
 
@@ -662,3 +614,130 @@ class RevokeCredentialResponse(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___RevokeCredentialResponse = RevokeCredentialResponse
+
+@typing_extensions.final
+class CreateVerificationRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    PROOF_REQUEST_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    proof_request: builtins.str
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        proof_request: builtins.str = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "proof_request", b"proof_request"]) -> None: ...
+
+global___CreateVerificationRequest = CreateVerificationRequest
+
+@typing_extensions.final
+class CreateVerificationResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    RESULT_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def result(self) -> identity_entities_pb2.VerificationReceipt: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        result: identity_entities_pb2.VerificationReceipt | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "result", b"result"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "result", b"result"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___CreateVerificationResponse = CreateVerificationResponse
+
+@typing_extensions.final
+class WaitVerificationRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    SESSION_ID_FIELD_NUMBER: builtins.int
+    TIMEOUT_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    session_id: builtins.int
+    timeout: builtins.int
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        session_id: builtins.int = ...,
+        timeout: builtins.int = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "session_id", b"session_id", "timeout", b"timeout"]) -> None: ...
+
+global___WaitVerificationRequest = WaitVerificationRequest
+
+@typing_extensions.final
+class WaitVerificationResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STATUS_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    status: builtins.bool
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        status: builtins.bool = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "status", b"status"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___WaitVerificationResponse = WaitVerificationResponse
+
+@typing_extensions.final
+class GetVerificationStatusRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    SESSION_ID_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    session_id: builtins.int
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        session_id: builtins.int = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "session_id", b"session_id"]) -> None: ...
+
+global___GetVerificationStatusRequest = GetVerificationStatusRequest
+
+@typing_extensions.final
+class GetVerificationStatusResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STATUS_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    status: builtins.bool
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        status: builtins.bool = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "status", b"status"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___GetVerificationStatusResponse = GetVerificationStatusResponse

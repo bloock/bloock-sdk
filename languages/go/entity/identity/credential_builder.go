@@ -3,63 +3,103 @@ package identity
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
+// CredentialBuilder helps construct credentials by specifying various attributes.
 type CredentialBuilder struct {
 	schemaId   string
-	holderKey  string
+	issuerDid  string
+	holderDid  string
+	expiration int64
+	version    int32
+	key        *proto.Key
 	configData *proto.ConfigData
 
+	stringAttribute   []StringAttribute
+	integerAttribute  []IntegerAttribute
+	decimalAttribute  []DecimalAttribute
 	booleanAttribute  []BooleanAttribute
 	dateAttribute     []DateAttribute
 	datetimeAttribute []DatetimeAttribute
-	stringAttribute   []StringAttribute
-	numberAttribute   []NumberAttribute
 }
 
-func NewCredentialBuilder(schemaId string, holderKey string, configData *proto.ConfigData) CredentialBuilder {
+// NewCredentialBuilder creates a new CredentialBuilder instance with the specified parameters.
+func NewCredentialBuilder(issuer Issuer, schemaId, holderDid string, expiration int64, version int32, configData *proto.ConfigData) CredentialBuilder {
 	return CredentialBuilder{
 		schemaId:          schemaId,
-		holderKey:         holderKey,
+		issuerDid:         issuer.Did.Did,
+		holderDid:         holderDid,
+		expiration:        expiration,
+		version:           version,
 		configData:        configData,
+		key:               issuer.Key.ToProto(),
+		stringAttribute:   []StringAttribute{},
+		integerAttribute:  []IntegerAttribute{},
+		decimalAttribute:  []DecimalAttribute{},
 		booleanAttribute:  []BooleanAttribute{},
 		dateAttribute:     []DateAttribute{},
 		datetimeAttribute: []DatetimeAttribute{},
-		stringAttribute:   []StringAttribute{},
-		numberAttribute:   []NumberAttribute{},
 	}
 }
 
-func (c CredentialBuilder) WithBooleanAttribute(key string, value bool) CredentialBuilder {
-	c.booleanAttribute = append(c.booleanAttribute, NewBooleanAttribute(key, value))
-	return c
-}
-
-func (c CredentialBuilder) WithDateAttribute(key string, value int64) CredentialBuilder {
-	c.dateAttribute = append(c.dateAttribute, NewDateAttribute(key, value))
-	return c
-}
-
-func (c CredentialBuilder) WithDatetimeAttribute(key string, value int64) CredentialBuilder {
-	c.datetimeAttribute = append(c.datetimeAttribute, NewDatetimeAttribute(key, value))
-	return c
-}
-
+// WithStringAttribute adds a string attribute to the CredentialBuilder.
 func (c CredentialBuilder) WithStringAttribute(key string, value string) CredentialBuilder {
 	c.stringAttribute = append(c.stringAttribute, NewStringAttribute(key, value))
 	return c
 }
 
-func (c CredentialBuilder) WithNumberAttribute(key string, value int64) CredentialBuilder {
-	c.numberAttribute = append(c.numberAttribute, NewNumberAttribute(key, value))
+// WithIntegerAttribute adds an integer attribute to the CredentialBuilder.
+func (c CredentialBuilder) WithIntegerAttribute(key string, value int64) CredentialBuilder {
+	c.integerAttribute = append(c.integerAttribute, NewIntegerAttribute(key, value))
 	return c
 }
 
+// WithDecimalAttribute adds a decimal attribute to the CredentialBuilder.
+func (c CredentialBuilder) WithDecimalAttribute(key string, value float64) CredentialBuilder {
+	c.decimalAttribute = append(c.decimalAttribute, NewDecimalAttribute(key, value))
+	return c
+}
+
+// WithBooleanAttribute adds a boolean attribute to the CredentialBuilder.
+func (c CredentialBuilder) WithBooleanAttribute(key string, value bool) CredentialBuilder {
+	c.booleanAttribute = append(c.booleanAttribute, NewBooleanAttribute(key, value))
+	return c
+}
+
+// WithDateAttribute adds a date attribute to the CredentialBuilder.
+func (c CredentialBuilder) WithDateAttribute(key string, value time.Time) CredentialBuilder {
+	c.dateAttribute = append(c.dateAttribute, NewDateAttribute(key, value))
+	return c
+}
+
+// WithDatetimeAttribute adds a datetime attribute to the CredentialBuilder.
+func (c CredentialBuilder) WithDatetimeAttribute(key string, value time.Time) CredentialBuilder {
+	c.datetimeAttribute = append(c.datetimeAttribute, NewDatetimeAttribute(key, value))
+	return c
+}
+
+// Build creates and returns a Credential using the specified attributes.
 func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 	bridge := bridge.NewBloockBridge()
+
+	stringAttributes := make([]*proto.StringAttribute, len(c.stringAttribute))
+	for i, b := range c.stringAttribute {
+		stringAttributes[i] = b.ToProto()
+	}
+
+	integerAttributes := make([]*proto.IntegerAttribute, len(c.integerAttribute))
+	for i, b := range c.integerAttribute {
+		integerAttributes[i] = b.ToProto()
+	}
+
+	decimalAttributes := make([]*proto.DecimalAttribute, len(c.decimalAttribute))
+	for i, b := range c.decimalAttribute {
+		decimalAttributes[i] = b.ToProto()
+	}
 
 	booleanAttributes := make([]*proto.BooleanAttribute, len(c.booleanAttribute))
 	for i, b := range c.booleanAttribute {
@@ -76,25 +116,20 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 		datetimeAttributes[i] = b.ToProto()
 	}
 
-	stringAttributes := make([]*proto.StringAttribute, len(c.stringAttribute))
-	for i, b := range c.stringAttribute {
-		stringAttributes[i] = b.ToProto()
-	}
-
-	numberAttributes := make([]*proto.NumberAttribute, len(c.numberAttribute))
-	for i, b := range c.numberAttribute {
-		numberAttributes[i] = b.ToProto()
-	}
-
 	req := proto.CreateCredentialRequest{
 		SchemaId:           c.schemaId,
-		HolderKey:          c.holderKey,
+		IssuerDid:          c.issuerDid,
+		HolderDid:          c.holderDid,
+		Expiration:         c.expiration,
+		Version:            &c.version,
+		Key:                c.key,
 		ConfigData:         c.configData,
+		StringAttributes:   stringAttributes,
+		IntegerAttributes:  integerAttributes,
+		DecimalAttributes:  decimalAttributes,
 		BooleanAttributes:  booleanAttributes,
 		DateAttributes:     dateAttributes,
 		DatetimeAttributes: datetimeAttributes,
-		StringAttributes:   stringAttributes,
-		NumberAttributes:   numberAttributes,
 	}
 
 	res, err := bridge.Identity().CreateCredential(context.Background(), &req)

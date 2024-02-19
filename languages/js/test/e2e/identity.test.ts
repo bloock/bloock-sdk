@@ -1,88 +1,265 @@
 import { describe, test, expect } from "@jest/globals";
-import { initSdk } from "./util";
-import { CredentialOffer, IdentityLegacyClient, Credential } from "../../dist";
+import {
+  Key,
+  PublishIntervalParams,
+} from "../../dist/index";
+import {
+  Credential,
+  IdentityClient,
+  KeyClient,
+  KeyProtectionLevel,
+  KeyType,
+  ManagedKeyParams,
+  DidType,
+  Method,
+  Blockchain,
+  NetworkId
+} from "../../dist";
+import { initDevSdk } from "./util";
+import path from "path";
+import { readFileSync } from "fs";
+import base64url from "urlsafe-base64";
 
-describe("Identity Tests", () => {
-  const credentialOfferJson =
-    '{"thid":"aff91293-faec-4ffb-b0a0-c9be5e17fcaf","body":{"url":"https//api.bloock.com/identity/v1/claims/792f62fb-7b26-4dd6-a440-f0e6f4ad402a/redeem","credentials":[{"id":"792f62fb-7b26-4dd6-a440-f0e6f4ad402a","description":"TestSchema"}]},"from":"did:iden3:eth:main:zxHh4f4NFe6a6D1NhUNEUrMw1nb36YNMHgiboNNz7","to":"did:iden3:eth:main:zxJDvyiWDaLXiFEUBCKbPBQBxznbb2LgqwG9vXTp2"}';
+describe("Identity V2 Tests", () => {
   const credentialJson =
-    '{"id":"https://api.bloock.com/identity/v1/claims/0f08f63c-0e31-4bb6-8fc3-28893bdeb7aa","@context":["https://www.w3.org/2018/credentials/v1","https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/iden3credential-v2.json-ld"],"type":["VerifiableCredential","TestSchema"],"issuanceDate":"2023-03-22T12:32:33.239583166Z","credentialSubject":{"BoolAttr":0,"id":"did:polygonid:polygon:mumbai:2qHCSnJzmiB9mP5L86h51d6i3FhEgcYg9AmUcUg8jg","type":"TestSchema"},"credentialStatus":{"id":"https://api.bloock.com/identity/v1/did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ/claims/revocation/status/1500049182","revocationNonce":1500049182,"type":"BloockRevocationProof"},"issuer":"did:iden3:eth:main:zzGodZP2enAnrp5LBcXVCigERQcTWJbCF67wBc7iJ","credentialSchema":{"id":"https://api.bloock.com/hosting/v1/ipfs/Qmcj962wRkypdbAopKLvcedSkBf33ctJaGJ8PkXiUTMm79","type":"JsonSchemaValidator2018"},"proof":[{"header":{"alg":"ES256K_M","kid":"230303a5-8aef-4e92-bc7c-e06f5c488784"},"message_hash":"7de2019ac52a160191f748bed783b3582d66cb025b963330c63397aa17503d97","protected":"e30","signature":"ISAqQwDBMaSSkmAYbifS-uC0UzfAtnA7fzz51G4KQov6JJZwMHOKKZoRblOzvcF2D_W_Bf8ukCZJOBXBMc0_5g==","type":"BloockSignatureProof"},{"anchor":{"anchor_id":296849,"networks":[{"name":"bloock_chain","state":"Confirmed","tx_hash":"0x5ce3e8e3b4b8735f295dbd8a2e6d98077474177c6f0578f1096dabc60617d6bb"}],"root":"aa39de63e0fc71aaaa9253086116b24b8a964cd9ba2ab58e33ef2554c0c095c2","status":"Success"},"bitmap":"ffefc0","depth":"000100020004000600080009000b000c000d000e001100110010000f000a000700050003","leaves":["b8654cc90adb6ad348287a4017e335c2785be2ef93f16f940b86605fc36d5c97"],"nodes":["f566fe90b22641e6c4c89b5a39ea3bd4400303bf7ffa12016325b81cc0984825","408f4da6b4e5b09c26a58f066beb6d81588bc3afddc4b39288e6e80cfe58b45a","79be2e105bfe45b3b91f6749fd66dd920a25dfb0c089a27b98705a012c08e6e6","e270112ede50dfca26404a9a7812df5a777322dedb7421c80abb3061c60a1b35","22eba74324f088f18425cc9e93c2b3a21bced8d5a6cfade4b874abba361ff920","b72dfb3f491e53c4816e83fd607fdaf7c79f64fe563d3f55b16af8241fbe22a6","1688d687f3507abcbf9ebfd286bc2eba0e69f6af585cf2461650d74713c0d670","efc548462843bbb9ddef0965a0c646eeb71c78fd662babb2635722d02a97985b","287a57e146ff9d469ae5b39f11343b3c9e55fdbdc7f4edd9f4ca8fba4bd268c7","94644790f7cd155d3b58c60c3f021f30666e5cfeb683ab12d27fec78aa418397","515ecaf2713b13b8ba615674b4a94694d30d33ce133addd8331af5e56032f4bd","717127712b837d4747d78db3dc55c1e9ded34ff6c124db409c11a72f6c1b2d7d","f6b8d2fdb44c2b0a0e12b5ec232a4097c3bc45db51d89af26e0432b84fe07aca","a00deee4b96eacdd9ff30e4691d805221deb8284e6856c856611766cfa54721f","7b1c1939a58bd75e0dda34d3de7fcaa2143f0b65ffc27645c6a513b819e70601","fc749d3a915ce5429560c8bc4f73d47bcc9cadec8ef3e9779c0462447ae50475","296a21e0117f26be026eb608be5b54f1e305ac241b248ef4e045ec9467f47047"],"type":"BloockIntegrityProof"}]}';
-
-  test("test create and load identity", async () => {
-    initSdk();
-
-    const identityClient = new IdentityLegacyClient();
-
-    let created = await identityClient.createIdentity();
-    let loaded = await identityClient.loadIdentity(created.mnemonic);
-
-    expect(loaded.key).toBe(created.key);
-    expect(loaded.privateKey).toBe(created.privateKey);
-    expect(loaded.mnemonic).toBe(created.mnemonic);
-  });
-
-  test("test credential offer to/from json", async () => {
-    initSdk();
-
-    let offer = await CredentialOffer.fromJson(credentialOfferJson);
-    let offerJson = await offer.toJson();
-
-    let newOffer = await CredentialOffer.fromJson(offerJson);
-    expect(offer).toStrictEqual(newOffer);
-  });
+    '{"@context":["https://www.w3.org/2018/credentials/v1","https://schema.iden3.io/core/jsonld/iden3proofs.jsonld","https://api.bloock.dev/hosting/v1/ipfs/QmYMYpSQsFbqXgSRK8KFDGMopD2CUke5yd4m7XFuVAZTat"],"id":"https://clientHost.com/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/2ff36890-2fc1-4bba-b489-bdd7685e9555","type":["VerifiableCredential","DrivingLicense"],"issuanceDate":"2023-08-21T10:21:42.402140Z","expirationDate":"2099-08-08T06:02:22Z","credentialSubject":{"birth_date":921950325,"country":"Spain","first_surname":"Tomas","id":"did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr","license_type":1,"name":"Eduard","nif":"54688188M","second_surname":"Escoruela","type":"DrivingLicense"},"credentialStatus":{"id":"https://api.bloock.dev/identity/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/3553270275","revocationNonce":3553270275,"type":"SparseMerkleTreeProof"},"issuer":"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6","credentialSchema":{"id":"https://api.bloock.dev/hosting/v1/ipfs/QmWkPu699EF334ixBGEK7rDDurQfu2SYBXU39bSozu1i5h","type":"JsonSchema2023"},"proof":[{"coreClaim":"e055485e9b8410b3cd71cb3ba3a0b7652a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b0056d1a9bf4e9d10b44fdd5b0f6b740b21dcd6675e770bf882249b8083471858190000000000000000000000000000000000000000000000000000000000000000039acad300000000ee30c6f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","issuerData":{"authCoreClaim":"cca3371a6cb1b715004407e325bd993c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fbd3b6b8c8e24e08bb982c7d4990e594747e5c24d98ac4ec969e50e437c1eb08407c9e5acc278a1641c82488f7518432a5937973d4ddfe551e32f9f7ba4c4a2e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","credentialStatus":{"id":"https://api.bloock.dev/identity/v1/did%3Apolygonid%3Apolygon%3Amumbai%3A2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/0","revocationNonce":0,"type":"SparseMerkleTreeProof"},"id":"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6","mtp":{"existence":true,"siblings":[]},"state":{"claimsTreeRoot":"0da5ac49846ae0074b986e5eef7c84011529e9902a0ffc6e9973b5cd0d217709","value":"778582fc18b636314cc027a7772c1429028d44cdd17234f06e6d2d59bedee31d"}},"signature":"7bf882354b7cedd4b7ee74590cd3b091fef7545cb4ae8cd35c72b106ff858a0a3b1272ab7748cf7187d2383acda44bdae4bce1a7f9dccc11921fb0f19a70ee03","type":"BJJSignature2021"}]}';
+  const drivingLicenseSchemaType = "DrivingLicense";
+  const holderDid =
+    "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr";
+  const expiration = 4089852142;
 
   test("test credential to/from json", async () => {
-    initSdk();
+    initDevSdk();
 
     let credential = await Credential.fromJson(credentialJson);
     let json = await credential.toJson();
 
     let newCredential = await Credential.fromJson(json);
-    expect(credential).toStrictEqual(newCredential);
+    let newCredentialJson = await newCredential.toJson();
+    expect(json).toStrictEqual(newCredentialJson);
   });
 
-  /*test("test identity end to end", async () => {
-    initSdk();
+  test("test create holder", async () => {
+    initDevSdk();
 
     const identityClient = new IdentityClient();
+    const keyClient = new KeyClient();
 
-    const holder = await identityClient.createIdentity();
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.Bjj;
+    let managedKey = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType)
+    );
 
-    const schema = await identityClient
-      .buildSchema("Test Schema", "test_schema")
-      .addBooleanAttribute("Boolean Attribute", "bool_attr", "")
-      .addStringAttribute("String Attribute", "string_attr", "")
+    let holderKey = new Key(managedKey);
+
+    let holder = await identityClient.createHolder(holderKey);
+    expect(holder.did.did.includes("polygonid")).toBeTruthy();
+  });
+
+  test("test identity end to end", async () => {
+    initDevSdk();
+
+    const identityClient = new IdentityClient();
+    const keyClient = new KeyClient();
+
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.Bjj;
+    let managedKey = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType)
+    );
+
+    let notFoundManagedKey = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType)
+    );
+
+    let issuerKey = new Key(managedKey);
+    let notFoundIssuerKey = new Key(notFoundManagedKey);
+
+    const dirPath = path.join(__dirname, "/test_utils/profile_image.png");
+    let fileBytes = readFileSync(dirPath);
+    let encodedFile = base64url.encode(fileBytes);
+
+    let didType = new DidType(
+      Method.POLYGON_ID,
+      Blockchain.POLYGON,
+      NetworkId.MUMBAI
+    );
+    let issuer = await identityClient.createIssuer(
+      issuerKey,
+      PublishIntervalParams.Interval15,
+      didType,
+      "Bloock Test",
+      "bloock description test",
+      encodedFile
+    );
+    expect(issuer.did.did.includes("polygonid")).toBeTruthy();
+
+    try {
+      await identityClient.createIssuer(
+        issuerKey,
+        PublishIntervalParams.Interval15,
+        didType
+      );
+    } catch (error) {
+      expect(error).toBeTruthy;
+    }
+
+    let importedIssuer = await identityClient.importIssuer(issuerKey, didType);
+    expect(importedIssuer.did.did).toStrictEqual(issuer.did.did);
+
+    let getNotFoundIssuerDid = await identityClient.importIssuer(
+      notFoundIssuerKey,
+      didType
+    );
+    expect(getNotFoundIssuerDid.did.did).toStrictEqual("");
+
+    let newDidType = new DidType(
+      Method.IDEN3,
+      Blockchain.POLYGON,
+      NetworkId.MUMBAI
+    );
+    let newIssuer = await identityClient.createIssuer(
+      notFoundIssuerKey,
+      PublishIntervalParams.Interval60,
+      newDidType
+    );
+    expect(newIssuer.did.did.includes("iden3")).toBeTruthy();
+
+    let schema = await identityClient
+      .buildSchema(
+        "Driving License",
+        drivingLicenseSchemaType,
+        "1.0",
+        "driving license schema"
+      )
+      .addIntegerAttribute(
+        "License Type",
+        "license_type",
+        "license type",
+        false
+      )
+      .addDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true)
+      .addStringAttribute("Nif", "nif", "nif", true)
+      .addBooleanAttribute("Is Spanish", "is_spanish", "is spanish", true)
+      .addDateAttribute("Birth Date", "birth_date", "birth date", true)
+      .addDateTimeAttribute("Local Hour", "local_hour", "local hour", true)
+      .addStringEnumAttribute("Car Type", "car_type", "car type", true, [
+        "big",
+        "medium",
+        "small"
+      ])
+      .addIntegerEnumAttribute("Car Points", "car_points", "car points", true, [
+        1,
+        5,
+        10
+      ])
+      .addDecimalEnumAttribute(
+        "Precision wheels",
+        "precision_wheels",
+        "precision whels",
+        true,
+        [1.1, 1.2, 1.3]
+      )
       .build();
+    expect(schema.cid).toBeTruthy();
+
+    schema = await identityClient.getSchema(schema.cid);
+    expect(schema.cidJsonLd).toBeTruthy();
+    expect(schema.json).toBeTruthy();
+    expect(schema.schemaType).toBeTruthy();
 
     const receipt = await identityClient
-      .buildCredential(schema.id, holder.key)
-      .withBoleanAttribute("bool_attr", true)
-      .withStringAttribute("string_attr", "string test")
+      .buildCredential(issuer, schema.cid, holderDid, expiration, 0)
+      .withIntegerAttribute("license_type", 1)
+      .withDecimalAttribute("quantity_oil", 2.25555)
+      .withStringAttribute("nif", "54688188M")
+      .withBoleanAttribute("is_spanish", true)
+      .withDateAttribute("birth_date", new Date(1999, 3, 20))
+      .withDateTimeAttribute("local_hour", new Date(Date.now()))
+      .withStringAttribute("car_type", "big")
+      .withIntegerAttribute("car_points", 5)
+      .withDecimalAttribute("precision_wheels", 1.1)
       .build();
+    expect(receipt.credentialId).toBeTruthy();
+    expect(receipt.credential).toBeTruthy();
+    expect(receipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
 
-    await identityClient.waitOffer(receipt.id);
+    let credential = receipt.credential;
+    expect(credential.issuer).toStrictEqual(issuer.did.did);
+    expect(credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
+    expect(credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
-    const offer = await identityClient.getOffer(receipt.id);
-    const offerJson = await offer.toJson();
-
-    const newOffer = await CredentialOffer.fromJson(offerJson);
-    expect(newOffer).toStrictEqual(offer);
-
-    const credential = await identityClient.redeemOffer(
-      offer,
-      holder.privateKey
+    const ok = await identityClient.revokeCredential(
+      credential,
+      issuer
     );
-    const credentialJson = await credential.toJson();
+    expect(ok).toBeTruthy();
 
-    const newCredential = await Credential.fromJson(credentialJson);
-    expect(newCredential).toStrictEqual(credential);
+    const stateReceipt = await identityClient.forcePublishIssuerState(
+      issuer
+    );
+    expect(stateReceipt.txHash).toBeTruthy();
 
-    const verification = await identityClient.verifyCredential(credential);
-    expect(verification.timestamp).toBeGreaterThan(0);
-    expect(verification.issuer).not.toBe("");
-    expect(verification.revocation).toBe(0);
+    try {
+      await identityClient.forcePublishIssuerState(issuer);
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
 
-    const revocation = await identityClient.revokeCredential(credential);
-    expect(revocation).toBeTruthy();
-  }, 120000);*/
+    const proofRequest = prepareProofRequest(schema.cidJsonLd);
+
+    const verification = await identityClient.createVerification(proofRequest);
+    expect(verification.sessionID).toBeTruthy();
+    expect(verification.verificationRequest).toBeTruthy();
+
+    try {
+      await identityClient.waitVerification(verification.sessionID, 5);
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
+
+    try {
+      await identityClient.getVerificationStatus(verification.sessionID);
+    } catch (error) {
+      expect(error).toBeTruthy();
+    }
+  });
 });
+
+interface ProofRequest {
+  circuitId: string;
+  id: number;
+  query: {
+    allowedIssuers: string[];
+    credentialSubject: {
+      birth_date: {};
+    };
+    type: string;
+    context?: string; // Optional context field
+  };
+}
+
+function prepareProofRequest(schemaID: string): string {
+  const jsonString = `{
+      "circuitId": "credentialAtomicQuerySigV2",
+      "id": 1704207344,
+      "query": {
+          "allowedIssuers": [
+              "*"
+          ],
+          "credentialSubject": {
+              "birth_date": {}
+          },
+          "type": "DrivingLicense"
+      }
+  }`;
+
+  const data: ProofRequest = JSON.parse(jsonString);
+
+  data.query.context = `https://api.bloock.dev/hosting/v1/ipfs/${schemaID}`;
+
+  const updatedProof = JSON.stringify(data, null, 2); // The third parameter (2) specifies the number of spaces for indentation
+
+  return updatedProof;
+}
