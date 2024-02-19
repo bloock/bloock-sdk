@@ -26,6 +26,7 @@ jobs:
             } | jq -sc
           )
           echo "include=$MATRIX" >> $GITHUB_OUTPUT
+        working-directory: languages/python
     env:
       CIBW_ARCHS_LINUX: x86_64 aarch64
       CIBW_ARCHS_MACOS: x86_64 arm64
