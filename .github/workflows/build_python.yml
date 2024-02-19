@@ -38,7 +38,7 @@ jobs:
         shell: bash
         run: |
           cp LICENSE languages/python/LICENSE
-          cp README.md langu ages/python/README.md
+          cp README.md languages/python/README.md
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
