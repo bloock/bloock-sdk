@@ -19,11 +19,14 @@ service IdentityService {
     rpc GetSchema(GetSchemaRequest) returns (GetSchemaResponse);
 
     rpc CreateCredential(CreateCredentialRequest) returns (CreateCredentialResponse);
+    rpc GetCredential(GetCredentialRequest) returns (GetCredentialResponse);
     rpc GetCredentialProof(GetCredentialProofRequest) returns (GetCredentialProofResponse);
     rpc RevokeCredential(RevokeCredentialRequest) returns (RevokeCredentialResponse);
 
     rpc CredentialToJson(CredentialToJsonRequest) returns (CredentialToJsonResponse);
     rpc CredentialFromJson(CredentialFromJsonRequest) returns (CredentialFromJsonResponse);
+
+    rpc GetCredentialOffer(GetCredentialOfferRequest) returns (GetCredentialOfferResponse);
 
     rpc ForcePublishIssuerState(ForcePublishIssuerStateRequest) returns (ForcePublishIssuerStateResponse);
 
@@ -81,17 +84,16 @@ message CredentialFromJsonResponse {
 message CreateCredentialRequest {
     ConfigData config_data = 1;
     string schema_id = 2;
-    string issuer_did = 3;
-    string holder_did = 4;
-    int64 expiration = 5;
-    optional int32 version = 6;
-    Key key = 7;
-    repeated StringAttribute string_attributes = 8;
-    repeated IntegerAttribute integer_attributes = 9;
-    repeated DecimalAttribute decimal_attributes = 10;
-    repeated BooleanAttribute boolean_attributes = 11;
-    repeated DateAttribute date_attributes = 12;
-    repeated DateTimeAttribute datetime_attributes = 13;
+    string holder_did = 3;
+    int64 expiration = 4;
+    optional int32 version = 5;
+    Key key = 6;
+    repeated StringAttribute string_attributes = 7;
+    repeated IntegerAttribute integer_attributes = 8;
+    repeated DecimalAttribute decimal_attributes = 9;
+    repeated BooleanAttribute boolean_attributes = 10;
+    repeated DateAttribute date_attributes = 11;
+    repeated DateTimeAttribute datetime_attributes = 12;
 }
 
 message BuildSchemaRequest {
@@ -140,7 +142,7 @@ message ForcePublishIssuerStateRequest {
 }
 
 message CreateCredentialResponse {
-    CredentialReceipt credential_receipt = 1;
+    string credential_id = 1;
     optional Error error = 2;
 }
 
@@ -203,5 +205,26 @@ message GetVerificationStatusRequest {
 
 message GetVerificationStatusResponse {
     bool status = 1;
+    optional Error error = 2;
+}
+
+message GetCredentialRequest {
+    ConfigData config_data = 1;
+    string credential_id = 2;
+}
+
+message GetCredentialResponse {
+    Credential credential = 1;
+    optional Error error = 2;
+}
+
+message GetCredentialOfferRequest {
+    ConfigData config_data = 1;
+    string credential_id = 2;
+    Key key = 3;
+}
+
+message GetCredentialOfferResponse {
+    string credential_offer = 1;
     optional Error error = 2;
 }
