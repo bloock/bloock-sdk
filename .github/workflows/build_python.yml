@@ -70,6 +70,8 @@ jobs:
       - uses: pypa/cibuildwheel@v2.16.5
         with:
           package-dir: languages/python
+          output-dir: languages/python/wheelhouse
+
           only: ${{ matrix.only }}
       - name: Upload artifact
         uses: actions/upload-artifact@v2
