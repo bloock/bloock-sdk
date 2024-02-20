@@ -1,10 +1,10 @@
-name: Build Lib
+name: Build python
 
 on:
   workflow_call:
     inputs:
       os:
-        required: true
+        required: false
         type: string
         default: '[{"platform": "linux", "os": "ubuntu"}, {"platform": "macos", "os": "macos-latest"}, {"platform": "windows", "os": "windows-latest"}]'
 
@@ -35,7 +35,8 @@ jobs:
     name: Build python
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJSON(inputs.os) }}
+      matrix:
+        platforms: ${{ fromJSON(inputs.os) }}
     outputs:
       linux: ${{ steps.set-matrix.outputs.linux }}
       windows: ${{ steps.set-matrix.outputs.windows }}
@@ -46,18 +47,18 @@ jobs:
       - id: set-matrix
         run: |
           MATRIX=$(
-              cibuildwheel --print-build-identifiers --platform ${{ matrix.platform }} \
-              | jq -nRc '{"only": inputs, "os": ${{ matrix.os }}}' \
+              cibuildwheel --print-build-identifiers --platform ${{ matrix.platforms.platform }} \
+              | jq -nRc '{"only": inputs, "os": ${{ matrix.platforms.os }}}' \
               | jq -sc
           )
-          echo "${{ matrix.platform }}=$MATRIX" >> $GITHUB_OUTPUT
+          echo "${{ matrix.platforms.platform }}=$MATRIX" >> $GITHUB_OUTPUT
         working-directory: languages/python
     env:
       CIBW_ARCHS_LINUX: x86_64 aarch64
       CIBW_ARCHS_MACOS: x86_64 arm64
       CIBW_ARCHS_WINDOWS: AMD64
   build-wheels:
-    name: Build ${{ matrix.only }}
+    name: Build wheel ${{ matrix.only }}
     needs: [prepare-wheels]
     strategy:
       fail-fast: false
