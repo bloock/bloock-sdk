@@ -69,9 +69,9 @@ jobs:
         run: |
           MATRIX=$(
             {
-              echo ${{ needs.prepare-wheels.outputs.linux }} \
-              && echo ${{ needs.prepare-wheels.outputs.windows }} \
-              && echo ${{ needs.prepare-wheels.outputs.macos }} \
+              echo '${{ needs.prepare-wheels.outputs.linux }}' \
+              && echo '${{ needs.prepare-wheels.outputs.windows }}' \
+              && echo '${{ needs.prepare-wheels.outputs.macos }}' \
             } | jq -sc
           )
           echo "include=$MATRIX" >> $GITHUB_OUTPUT
