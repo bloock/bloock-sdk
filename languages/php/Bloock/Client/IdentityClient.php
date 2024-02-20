@@ -25,6 +25,8 @@ use Bloock\GetSchemaRequest;
 use Bloock\GetVerificationStatusRequest;
 use Bloock\ImportIssuerRequest;
 use Bloock\ForcePublishIssuerStateRequest;
+use Bloock\GetCredentialOfferRequest;
+use Bloock\GetCredentialRequest;
 use Bloock\RevokeCredentialRequest;
 use Bloock\WaitVerificationRequest;
 use Exception;
@@ -196,6 +198,44 @@ class IdentityClient
     public function buildCredential(Issuer $issuer, string $schemaId, string $holderDid, int $expiration, int $version): CredentialBuilder
     {
         return new CredentialBuilder($issuer, $schemaId, $holderDid, $expiration, $version, $this->config);
+    }
+
+    /**
+     * Retrieves the Verifiable Credential entity based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+     * @param string $credentialId
+     * @return Credential
+     */
+    public function getCredential(string $credentialId): Credential
+    {
+        $req = new GetCredentialRequest();
+        $req->setConfigData($this->config)->setCredentialId($credentialId);
+
+        $res = $this->bridge->identity->GetCredential($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return Credential::fromProto($res->getCredential());
+    }
+
+    /**
+     * Retrieves the json raw offer based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+     * @param Issuer $issuer
+     * @param string $credentialId
+     */
+    public function getCredentialOffer(Issuer $issuer, string $credentialId): string
+    {
+        $req = new GetCredentialOfferRequest();
+        $req->setConfigData($this->config)->setCredentialId($credentialId)->setKey($issuer->getKey()->toProto());
+
+        $res = $this->bridge->identity->GetCredentialOffer($req);
+
+        if ($res->getError() != null) {
+            throw new Exception($res->getError()->getMessage());
+        }
+
+        return $res->getCredentialOffer();
     }
 
     /**

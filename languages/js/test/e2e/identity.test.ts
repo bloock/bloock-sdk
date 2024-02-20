@@ -184,11 +184,17 @@ describe("Identity V2 Tests", () => {
     expect(receipt.credentialId).toBeTruthy();
     expect(receipt.credential).toBeTruthy();
     expect(receipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
+    expect(receipt.credential.issuer).toStrictEqual(issuer.did.did);
+    expect(receipt.credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
+    expect(receipt.credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
-    let credential = receipt.credential;
+    const credential = await identityClient.getCredential(receipt.credentialId)
     expect(credential.issuer).toStrictEqual(issuer.did.did);
     expect(credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
     expect(credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
+
+    const jsonOffer = await identityClient.getCredentialOffer(issuer, receipt.credentialId)
+    expect(jsonOffer).toBeTruthy();
 
     const ok = await identityClient.revokeCredential(
       credential,

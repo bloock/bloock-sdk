@@ -31,8 +31,8 @@ public class IdentityCoreClient {
 
     /**
      * Creates a new credential builder for defining a credential on the Bloock Identity service.
+     * @param issuer
      * @param schemaId
-     * @param issuerDid
      * @param holderDid
      * @param expiration
      * @param version

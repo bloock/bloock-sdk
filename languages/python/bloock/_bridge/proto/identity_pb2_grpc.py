@@ -44,6 +44,11 @@ class IdentityServiceStub(object):
                 request_serializer=identity__pb2.CreateCredentialRequest.SerializeToString,
                 response_deserializer=identity__pb2.CreateCredentialResponse.FromString,
                 )
+        self.GetCredential = channel.unary_unary(
+                '/bloock.IdentityService/GetCredential',
+                request_serializer=identity__pb2.GetCredentialRequest.SerializeToString,
+                response_deserializer=identity__pb2.GetCredentialResponse.FromString,
+                )
         self.GetCredentialProof = channel.unary_unary(
                 '/bloock.IdentityService/GetCredentialProof',
                 request_serializer=identity__pb2.GetCredentialProofRequest.SerializeToString,
@@ -63,6 +68,11 @@ class IdentityServiceStub(object):
                 '/bloock.IdentityService/CredentialFromJson',
                 request_serializer=identity__pb2.CredentialFromJsonRequest.SerializeToString,
                 response_deserializer=identity__pb2.CredentialFromJsonResponse.FromString,
+                )
+        self.GetCredentialOffer = channel.unary_unary(
+                '/bloock.IdentityService/GetCredentialOffer',
+                request_serializer=identity__pb2.GetCredentialOfferRequest.SerializeToString,
+                response_deserializer=identity__pb2.GetCredentialOfferResponse.FromString,
                 )
         self.ForcePublishIssuerState = channel.unary_unary(
                 '/bloock.IdentityService/ForcePublishIssuerState',
@@ -125,6 +135,12 @@ class IdentityServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetCredential(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetCredentialProof(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -144,6 +160,12 @@ class IdentityServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def CredentialFromJson(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCredentialOffer(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -206,6 +228,11 @@ def add_IdentityServiceServicer_to_server(servicer, server):
                     request_deserializer=identity__pb2.CreateCredentialRequest.FromString,
                     response_serializer=identity__pb2.CreateCredentialResponse.SerializeToString,
             ),
+            'GetCredential': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCredential,
+                    request_deserializer=identity__pb2.GetCredentialRequest.FromString,
+                    response_serializer=identity__pb2.GetCredentialResponse.SerializeToString,
+            ),
             'GetCredentialProof': grpc.unary_unary_rpc_method_handler(
                     servicer.GetCredentialProof,
                     request_deserializer=identity__pb2.GetCredentialProofRequest.FromString,
@@ -225,6 +252,11 @@ def add_IdentityServiceServicer_to_server(servicer, server):
                     servicer.CredentialFromJson,
                     request_deserializer=identity__pb2.CredentialFromJsonRequest.FromString,
                     response_serializer=identity__pb2.CredentialFromJsonResponse.SerializeToString,
+            ),
+            'GetCredentialOffer': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCredentialOffer,
+                    request_deserializer=identity__pb2.GetCredentialOfferRequest.FromString,
+                    response_serializer=identity__pb2.GetCredentialOfferResponse.SerializeToString,
             ),
             'ForcePublishIssuerState': grpc.unary_unary_rpc_method_handler(
                     servicer.ForcePublishIssuerState,
@@ -359,6 +391,23 @@ class IdentityService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def GetCredential(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/GetCredential',
+            identity__pb2.GetCredentialRequest.SerializeToString,
+            identity__pb2.GetCredentialResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def GetCredentialProof(request,
             target,
             options=(),
@@ -423,6 +472,23 @@ class IdentityService(object):
         return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/CredentialFromJson',
             identity__pb2.CredentialFromJsonRequest.SerializeToString,
             identity__pb2.CredentialFromJsonResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetCredentialOffer(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/bloock.IdentityService/GetCredentialOffer',
+            identity__pb2.GetCredentialOfferRequest.SerializeToString,
+            identity__pb2.GetCredentialOfferResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

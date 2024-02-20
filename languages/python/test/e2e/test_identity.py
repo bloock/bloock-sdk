@@ -125,11 +125,17 @@ class TestIdentity(unittest.TestCase):
         self.assertIsNotNone(receipt.credential)
         self.assertEqual(self.drivingLicenseSchemaType,
                          receipt.credential_type)
+        self.assertEqual(issuer.did, receipt.credential.issuer)
+        self.assertEqual("JsonSchema2023", receipt.credential.credential_schema.type)
+        self.assertEqual(self.drivingLicenseSchemaType, receipt.credential.type[1])
 
-        credential = receipt.credential
+        credential = identity_client.get_credential(receipt.credential_id)
         self.assertEqual(issuer.did, credential.issuer)
         self.assertEqual("JsonSchema2023", credential.credential_schema.type)
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
+
+        json_offer = identity_client.get_credential_offer(issuer, receipt.credential_id)
+        self.assertIsNotNone(json_offer)
 
         ok = identity_client.revoke_credential(credential, issuer)
         self.assertTrue(ok)

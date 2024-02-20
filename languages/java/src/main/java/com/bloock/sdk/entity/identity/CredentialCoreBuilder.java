@@ -30,8 +30,8 @@ public class CredentialCoreBuilder {
 
   /**
    * Creates a new CredentialCoreBuilder instance with the specified parameters.
+   * @param issuer
    * @param schemaId
-   * @param issuerDid
    * @param holderKey
    * @param expiration
    * @param version
@@ -134,8 +134,8 @@ public class CredentialCoreBuilder {
   public CredentialReceipt build() throws Exception {
     Bridge bridge = new Bridge();
 
-    Identity.CreateCredentialRequest req =
-        Identity.CreateCredentialRequest.newBuilder()
+    IdentityCore.CreateCoreCredentialRequest req =
+        IdentityCore.CreateCoreCredentialRequest.newBuilder()
             .setConfigData(this.configData)
             .setSchemaId(this.schemaId)
             .setIssuerDid(this.issuerDid)
@@ -151,7 +151,7 @@ public class CredentialCoreBuilder {
             .addAllDatetimeAttributes(this.datetimeAttributes)
             .build();
 
-    Identity.CreateCredentialResponse response = bridge.getIdentity().createCredential(req);
+    IdentityCore.CreateCoreCredentialResponse response = bridge.getIdentityCore().createCoreCredential(req);
 
     if (response.getError() != Shared.Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());

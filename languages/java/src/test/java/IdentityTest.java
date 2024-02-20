@@ -161,11 +161,17 @@ public class IdentityTest {
     assertNotNull(receipt.getCredentialId());
     assertNotNull(receipt.getCredential());
     assertEquals(drivingLicenseSchemaType, receipt.getCredentialType());
+    assertEquals(issuer.getDid().getDid(), receipt.getCredential().getIssuer());
+    assertEquals("JsonSchema2023", receipt.getCredential().getCredentialSchema().getCredentialType());
+    assertEquals(drivingLicenseSchemaType, receipt.getCredential().getType().get(1));
 
-    Credential credential = receipt.getCredential();
+    Credential credential = identityClient.getCredential(receipt.getCredentialId());
     assertEquals(issuer.getDid().getDid(), credential.getIssuer());
     assertEquals("JsonSchema2023", credential.getCredentialSchema().getCredentialType());
     assertEquals(drivingLicenseSchemaType, credential.getType().get(1));
+
+    String jsonOffer = identityClient.getCredentialOffer(issuer, receipt.getCredentialId());
+    assertNotNull(jsonOffer);
 
     boolean ok = identityClient.revokeCredential(credential, issuer);
     assertTrue(ok);

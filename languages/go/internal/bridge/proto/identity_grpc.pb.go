@@ -28,10 +28,12 @@ type IdentityServiceClient interface {
 	BuildSchema(ctx context.Context, in *BuildSchemaRequest, opts ...grpc.CallOption) (*BuildSchemaResponse, error)
 	GetSchema(ctx context.Context, in *GetSchemaRequest, opts ...grpc.CallOption) (*GetSchemaResponse, error)
 	CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CreateCredentialResponse, error)
+	GetCredential(ctx context.Context, in *GetCredentialRequest, opts ...grpc.CallOption) (*GetCredentialResponse, error)
 	GetCredentialProof(ctx context.Context, in *GetCredentialProofRequest, opts ...grpc.CallOption) (*GetCredentialProofResponse, error)
 	RevokeCredential(ctx context.Context, in *RevokeCredentialRequest, opts ...grpc.CallOption) (*RevokeCredentialResponse, error)
 	CredentialToJson(ctx context.Context, in *CredentialToJsonRequest, opts ...grpc.CallOption) (*CredentialToJsonResponse, error)
 	CredentialFromJson(ctx context.Context, in *CredentialFromJsonRequest, opts ...grpc.CallOption) (*CredentialFromJsonResponse, error)
+	GetCredentialOffer(ctx context.Context, in *GetCredentialOfferRequest, opts ...grpc.CallOption) (*GetCredentialOfferResponse, error)
 	ForcePublishIssuerState(ctx context.Context, in *ForcePublishIssuerStateRequest, opts ...grpc.CallOption) (*ForcePublishIssuerStateResponse, error)
 	CreateVerification(ctx context.Context, in *CreateVerificationRequest, opts ...grpc.CallOption) (*CreateVerificationResponse, error)
 	WaitVerification(ctx context.Context, in *WaitVerificationRequest, opts ...grpc.CallOption) (*WaitVerificationResponse, error)
@@ -100,6 +102,15 @@ func (c *identityServiceClient) CreateCredential(ctx context.Context, in *Create
 	return out, nil
 }
 
+func (c *identityServiceClient) GetCredential(ctx context.Context, in *GetCredentialRequest, opts ...grpc.CallOption) (*GetCredentialResponse, error) {
+	out := new(GetCredentialResponse)
+	err := c.cc.Invoke(ctx, "/bloock.IdentityService/GetCredential", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *identityServiceClient) GetCredentialProof(ctx context.Context, in *GetCredentialProofRequest, opts ...grpc.CallOption) (*GetCredentialProofResponse, error) {
 	out := new(GetCredentialProofResponse)
 	err := c.cc.Invoke(ctx, "/bloock.IdentityService/GetCredentialProof", in, out, opts...)
@@ -130,6 +141,15 @@ func (c *identityServiceClient) CredentialToJson(ctx context.Context, in *Creden
 func (c *identityServiceClient) CredentialFromJson(ctx context.Context, in *CredentialFromJsonRequest, opts ...grpc.CallOption) (*CredentialFromJsonResponse, error) {
 	out := new(CredentialFromJsonResponse)
 	err := c.cc.Invoke(ctx, "/bloock.IdentityService/CredentialFromJson", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityServiceClient) GetCredentialOffer(ctx context.Context, in *GetCredentialOfferRequest, opts ...grpc.CallOption) (*GetCredentialOfferResponse, error) {
+	out := new(GetCredentialOfferResponse)
+	err := c.cc.Invoke(ctx, "/bloock.IdentityService/GetCredentialOffer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -182,10 +202,12 @@ type IdentityServiceServer interface {
 	BuildSchema(context.Context, *BuildSchemaRequest) (*BuildSchemaResponse, error)
 	GetSchema(context.Context, *GetSchemaRequest) (*GetSchemaResponse, error)
 	CreateCredential(context.Context, *CreateCredentialRequest) (*CreateCredentialResponse, error)
+	GetCredential(context.Context, *GetCredentialRequest) (*GetCredentialResponse, error)
 	GetCredentialProof(context.Context, *GetCredentialProofRequest) (*GetCredentialProofResponse, error)
 	RevokeCredential(context.Context, *RevokeCredentialRequest) (*RevokeCredentialResponse, error)
 	CredentialToJson(context.Context, *CredentialToJsonRequest) (*CredentialToJsonResponse, error)
 	CredentialFromJson(context.Context, *CredentialFromJsonRequest) (*CredentialFromJsonResponse, error)
+	GetCredentialOffer(context.Context, *GetCredentialOfferRequest) (*GetCredentialOfferResponse, error)
 	ForcePublishIssuerState(context.Context, *ForcePublishIssuerStateRequest) (*ForcePublishIssuerStateResponse, error)
 	CreateVerification(context.Context, *CreateVerificationRequest) (*CreateVerificationResponse, error)
 	WaitVerification(context.Context, *WaitVerificationRequest) (*WaitVerificationResponse, error)
@@ -215,6 +237,9 @@ func (UnimplementedIdentityServiceServer) GetSchema(context.Context, *GetSchemaR
 func (UnimplementedIdentityServiceServer) CreateCredential(context.Context, *CreateCredentialRequest) (*CreateCredentialResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCredential not implemented")
 }
+func (UnimplementedIdentityServiceServer) GetCredential(context.Context, *GetCredentialRequest) (*GetCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCredential not implemented")
+}
 func (UnimplementedIdentityServiceServer) GetCredentialProof(context.Context, *GetCredentialProofRequest) (*GetCredentialProofResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCredentialProof not implemented")
 }
@@ -226,6 +251,9 @@ func (UnimplementedIdentityServiceServer) CredentialToJson(context.Context, *Cre
 }
 func (UnimplementedIdentityServiceServer) CredentialFromJson(context.Context, *CredentialFromJsonRequest) (*CredentialFromJsonResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CredentialFromJson not implemented")
+}
+func (UnimplementedIdentityServiceServer) GetCredentialOffer(context.Context, *GetCredentialOfferRequest) (*GetCredentialOfferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCredentialOffer not implemented")
 }
 func (UnimplementedIdentityServiceServer) ForcePublishIssuerState(context.Context, *ForcePublishIssuerStateRequest) (*ForcePublishIssuerStateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForcePublishIssuerState not implemented")
@@ -360,6 +388,24 @@ func _IdentityService_CreateCredential_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IdentityService_GetCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCredentialRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceServer).GetCredential(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.IdentityService/GetCredential",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceServer).GetCredential(ctx, req.(*GetCredentialRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _IdentityService_GetCredentialProof_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCredentialProofRequest)
 	if err := dec(in); err != nil {
@@ -428,6 +474,24 @@ func _IdentityService_CredentialFromJson_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentityServiceServer).CredentialFromJson(ctx, req.(*CredentialFromJsonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityService_GetCredentialOffer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCredentialOfferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceServer).GetCredentialOffer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bloock.IdentityService/GetCredentialOffer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceServer).GetCredentialOffer(ctx, req.(*GetCredentialOfferRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -536,6 +600,10 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IdentityService_CreateCredential_Handler,
 		},
 		{
+			MethodName: "GetCredential",
+			Handler:    _IdentityService_GetCredential_Handler,
+		},
+		{
 			MethodName: "GetCredentialProof",
 			Handler:    _IdentityService_GetCredentialProof_Handler,
 		},
@@ -550,6 +618,10 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CredentialFromJson",
 			Handler:    _IdentityService_CredentialFromJson_Handler,
+		},
+		{
+			MethodName: "GetCredentialOffer",
+			Handler:    _IdentityService_GetCredentialOffer_Handler,
 		},
 		{
 			MethodName: "ForcePublishIssuerState",

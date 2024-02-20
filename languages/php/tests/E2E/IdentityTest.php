@@ -129,11 +129,15 @@ final class IdentityV2Test extends TestCase
         $this->assertNotNull($receipt->getCredentialId());
         $this->assertNotNull($receipt->getCredential());
         $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredentialType());
+        $this->assertEquals("JsonSchema2023", $receipt->getCredential()->getCredentialSchema()->getType());
+        $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredential()->getType()[1]);
 
-        $credential = $receipt->getCredential();
-        $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredentialType());
+        $credential = $identityClient->getCredential($receipt->getCredentialId());
         $this->assertEquals("JsonSchema2023", $credential->getCredentialSchema()->getType());
         $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[1]);
+
+        $jsonOffer = $identityClient->getCredentialOffer($issuer, $receipt->getCredentialId());
+        $this->assertNotNull($jsonOffer);
 
         $ok = $identityClient->revokeCredential($credential, $issuer);
         $this->assertTrue($ok);

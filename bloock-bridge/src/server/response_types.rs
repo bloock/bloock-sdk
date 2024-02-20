@@ -9,26 +9,28 @@ use crate::items::CredentialToJsonResponse;
 use crate::items::DecryptResponse;
 use crate::items::EncryptResponse;
 use crate::items::EncryptionAlgResponse;
+use crate::items::ForcePublishIssuerStateResponse;
 use crate::items::GenerateLocalCertificateResponse;
 use crate::items::GenerateLocalKeyResponse;
 use crate::items::GenerateManagedCertificateResponse;
 use crate::items::GenerateManagedKeyResponse;
 use crate::items::GetAnchorResponse;
+use crate::items::GetCredentialOfferResponse;
 use crate::items::GetCredentialProofResponse;
+use crate::items::GetCredentialResponse;
 use crate::items::GetDetailsResponse;
 use crate::items::GetHashResponse;
-use crate::items::ImportIssuerResponse;
 use crate::items::GetPayloadResponse;
 use crate::items::GetProofResponse;
 use crate::items::GetSchemaResponse;
 use crate::items::GetSignaturesResponse;
 use crate::items::GetVerificationStatusResponse;
+use crate::items::ImportIssuerResponse;
 use crate::items::ImportManagedCertificateResponse;
 use crate::items::LoadLocalCertificateResponse;
 use crate::items::LoadLocalKeyResponse;
 use crate::items::LoadManagedCertificateResponse;
 use crate::items::LoadManagedKeyResponse;
-use crate::items::ForcePublishIssuerStateResponse;
 use crate::items::PublishResponse;
 use crate::items::RecordBuilderResponse;
 use crate::items::RecoverTotpAccessControlResponse;
@@ -83,6 +85,8 @@ pub enum ResponseType {
     VerifyWebhookSignatureResponse(VerifyWebhookSignatureResponse),
     CreateCoreCredentialResponse(CreateCoreCredentialResponse),
     CreateCredentialResponse(CreateCredentialResponse),
+    GetCredentialResponse(GetCredentialResponse),
+    GetCredentialOfferResponse(GetCredentialOfferResponse),
     CreateHolderResponse(CreateHolderResponse),
     CreateIssuerResponse(CreateIssuerResponse),
     BuildSchemaResponse(BuildSchemaResponse),
@@ -139,6 +143,8 @@ impl ResponseType {
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateCoreCredentialResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateCredentialResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetCredentialResponse(r) => r.encode(&mut result_vec),
+            ResponseType::GetCredentialOfferResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateHolderResponse(r) => r.encode(&mut result_vec),
             ResponseType::CreateIssuerResponse(r) => r.encode(&mut result_vec),
             ResponseType::BuildSchemaResponse(r) => r.encode(&mut result_vec),
@@ -195,6 +201,8 @@ impl ResponseType {
             ResponseType::VerifyWebhookSignatureResponse(r) => r.encoded_len(),
             ResponseType::CreateCoreCredentialResponse(r) => r.encoded_len(),
             ResponseType::CreateCredentialResponse(r) => r.encoded_len(),
+            ResponseType::GetCredentialResponse(r) => r.encoded_len(),
+            ResponseType::GetCredentialOfferResponse(r) => r.encoded_len(),
             ResponseType::CreateHolderResponse(r) => r.encoded_len(),
             ResponseType::CreateIssuerResponse(r) => r.encoded_len(),
             ResponseType::BuildSchemaResponse(r) => r.encoded_len(),

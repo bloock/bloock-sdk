@@ -101,6 +101,20 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
     }
 
     /**
+     * @param \Bloock\GetCredentialRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GetCredential(\Bloock\GetCredentialRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityService/GetCredential',
+        $argument,
+        ['\Bloock\GetCredentialResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
      * @param \Bloock\GetCredentialProofRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
@@ -153,6 +167,20 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
         return $this->_simpleRequest('/bloock.IdentityService/CredentialFromJson',
         $argument,
         ['\Bloock\CredentialFromJsonResponse', 'decode'],
+        $metadata, $options);
+    }
+
+    /**
+     * @param \Bloock\GetCredentialOfferRequest $argument input argument
+     * @param array $metadata metadata
+     * @param array $options call options
+     * @return mixed
+     */
+    public function GetCredentialOffer(\Bloock\GetCredentialOfferRequest $argument,
+      $metadata = [], $options = []) {
+        return $this->_simpleRequest('/bloock.IdentityService/GetCredentialOffer',
+        $argument,
+        ['\Bloock\GetCredentialOfferResponse', 'decode'],
         $metadata, $options);
     }
 

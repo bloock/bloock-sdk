@@ -449,6 +449,24 @@ impl Server {
                     .to_response_type(&req)
                     .await)
             }
+            BloockServer::IdentityServiceGetCredential => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .identity
+                    .get_credential(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
+            BloockServer::IdentityServiceGetCredentialOffer => {
+                let req = self.serialize_request(payload)?;
+                Ok(self
+                    .identity
+                    .get_credential_offer(&req)
+                    .await
+                    .to_response_type(&req)
+                    .await)
+            }
             BloockServer::IdentityServiceCreateHolder => {
                 let req: crate::items::CreateHolderRequest = self.serialize_request(payload)?;
                 Ok(self

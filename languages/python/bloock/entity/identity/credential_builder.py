@@ -31,7 +31,6 @@ class CredentialBuilder:
         :rtype: object
         """
         self.schema_id = schema_id
-        self.issuer_did = issuer.did
         self.holder_did = holder_did
         self.expiration = expiration
         self.version = version
@@ -141,7 +140,6 @@ class CredentialBuilder:
         req = CreateCredentialRequest(
             config_data=self.config_data,
             schema_id=self.schema_id,
-            issuer_did=self.issuer_did,
             holder_did=self.holder_did,
             version=self.version,
             expiration=self.expiration,

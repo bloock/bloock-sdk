@@ -4,8 +4,10 @@ use super::{
         credential::Credential,
         did_metadata::DidMetadata,
         dto::{
-            create_credential_request::CreateCredentialRequest,
-            create_credential_response::CreateCredentialResponse,
+            create_credential_api_managed_request::{
+                CreateCredentialApiManagedRequest, CredentialSubjectValue,
+            },
+            create_credential_api_managed_response::CreateCredentialApiManagedResponse,
             create_identity_request::CreateIdentityRequest,
             create_identity_response::CreateIdentityResponse,
             create_issuer_request::{CreateIssuerRequest, DidMetadata as DidMetadataRequest},
@@ -44,16 +46,12 @@ use bloock_hasher::HashAlg;
 use bloock_http::Client;
 use bloock_identity_rs::{
     did::parse_did,
-    schema::{
-        get_json_ld_context_from_json, get_schema_type_from_json, get_type_id_from_context,
-        parse_to_schema_cid,
-    },
-    vc::VC,
+    schema::{get_json_ld_context_from_json, get_schema_type_from_json, parse_to_schema_cid},
 };
 use bloock_keys::entity::key::Key;
 use serde_json::{json, Map, Value};
 use std::{sync::Arc, time::Duration};
-use url::{form_urlencoded::parse, Url};
+use url::Url;
 
 pub struct IdentityService<H: Client> {
     pub http: Arc<H>,
@@ -88,7 +86,7 @@ impl<H: Client> IdentityService<H> {
                 None,
             )
             .await
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+            .map_err(|e| IdentityError::CreateIdentityError(e.to_string()))?;
 
         Ok(res)
     }
@@ -128,7 +126,7 @@ impl<H: Client> IdentityService<H> {
                 None,
             )
             .await
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
+            .map_err(|e| IdentityError::CreateIssuerError(e.to_string()))?;
 
         Ok(res)
     }
@@ -152,7 +150,7 @@ impl<H: Client> IdentityService<H> {
                 None,
             )
             .await
-            .map_err(|e| IdentityError::GetIssuerByKeyError(e.to_string()))?;
+            .map_err(|e| IdentityError::ImportIssuerError(e.to_string()))?;
 
         Ok(res.did)
     }
@@ -200,12 +198,11 @@ impl<H: Client> IdentityService<H> {
     pub async fn create_credential(
         &self,
         schema_id: String,
-        issuer_did: String,
         holder_did: String,
         expiration: i64,
         version: Option<i32>,
-        mut attributes: Vec<(String, Value)>,
-        key: Key,
+        attributes: Vec<(String, Value)>,
+        key_id: String,
     ) -> BloockResult<CreateCredentialReceipt> {
         let api_managed_host = match self.config_service.get_identity_api_host() {
             Some(host) => host,
@@ -214,125 +211,94 @@ impl<H: Client> IdentityService<H> {
         _ = Url::parse(&api_managed_host.clone())
             .map_err(|e| IdentityError::CreateCredentialError(e.to_string()));
 
-        let schema_json = self.get_schema(schema_id.clone()).await?;
-
-        let schema_json_ld = self
-            .get_schema_json_ld(schema_json.cid_json_ld.clone())
-            .await?;
-        let credential_type =
-            get_type_id_from_context(schema_json_ld, schema_json.schema_type.clone())
-                .map_err(|e| IdentityError::SchemaParseError(e.to_string()))?;
-
         let version = match version {
             Some(v) => v,
             None => 0,
         };
 
-        attributes.push(("id".to_string(), Value::String(holder_did.clone())));
-        attributes.push((
-            "type".to_string(),
-            Value::String(schema_json.schema_type.clone()),
-        ));
+        let req_attributes: Vec<CredentialSubjectValue> = attributes
+            .into_iter()
+            .map(|(key, value)| CredentialSubjectValue { key, value })
+            .collect();
 
-        let vc = VC::new(
-            schema_json.cid_json_ld.clone(),
-            schema_json.cid.clone(),
-            schema_json.schema_type.clone(),
-            issuer_did.clone(),
+        let req = CreateCredentialApiManagedRequest {
+            schema_id: schema_id.clone(),
             holder_did,
+            credential_subject: req_attributes,
             expiration,
-            attributes,
-            credential_type,
             version,
-            self.config_service.get_api_base_url(),
-            api_managed_host,
-        )
-        .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-
-        vc.validate_schema(schema_json.json.clone())
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-
-        let credential_id = vc
-            .get_credentia_id()
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-        let core_claim = vc
-            .get_core_claim()
-            .await
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-        let core_claim_hex = core_claim
-            .hex()
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-
-        let core_claim_hash = core_claim.hi_hv_hash();
-        let core_claim_hash_decoded = hex::decode(core_claim_hash)
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-
-        let credential_json = vc
-            .to_json()
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-
-        let mut credential: Credential = serde_json::from_str(&credential_json)
-            .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-
-        let signature = bloock_signer::sign(
-            self.config_service.get_api_base_url(),
-            self.config_service.get_api_key(),
-            self.config_service.get_environment(),
-            &core_claim_hash_decoded,
-            &key,
-            Some(HashAlg::None),
-            None,
-        )
-        .await
-        .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
-
-        let req = CreateCredentialRequest {
-            credential_id,
-            core_claim: core_claim_hex,
-            bn_128_signature: signature.signature.clone(),
         };
 
-        let res: CreateCredentialResponse = self
+        let headers = vec![("Content-Type".to_owned(), "application/json".to_string())];
+
+        let res: CreateCredentialApiManagedResponse = self
             .http
             .post_json(
-                format!(
-                    "{}/identityV2/v1/{}/claims",
-                    self.config_service.get_api_base_url(),
-                    issuer_did.to_string(),
-                ),
+                format!("{}/v1/credentials?issuer_key={}", api_managed_host, key_id),
                 req,
-                None,
+                Some(headers),
             )
             .await
             .map_err(|e| IdentityError::CreateCredentialError(e.to_string()))?;
 
-        self.update_draft_state_signature(res.new_state, issuer_did.clone(), &key)
-            .await?;
+        let credential = self.get_credential(res.id.clone()).await?;
 
-        let proof: GetCredentialProofResponse = self
-            .http
-            .get_json(
-                format!(
-                    "{}/identityV2/v1/{}/claims/{}/proof",
-                    self.config_service.get_api_base_url(),
-                    issuer_did.to_string(),
-                    res.id.clone(),
-                ),
-                None,
-            )
-            .await
-            .map_err(|e| IdentityError::GetCredentialProofError(e.to_string()))?;
-
-        let credential_proof: CredentialProof = serde_json::from_value(proof.proof)
-            .map_err(|e| IdentityError::GetCredentialProofError(e.to_string()))?;
-
-        credential.proof = Some(credential_proof);
+        let schema_json = self.get_schema(schema_id.clone()).await?;
 
         Ok(CreateCredentialReceipt {
             credential,
             credential_id: res.id,
             schema_type: schema_json.schema_type,
         })
+    }
+
+    pub async fn get_credential(&self, credential_id: String) -> BloockResult<Credential> {
+        let api_managed_host = match self.config_service.get_identity_api_host() {
+            Some(host) => host,
+            None => Err(IdentityError::EmptyApiHostError())?,
+        };
+        _ = Url::parse(&api_managed_host.clone())
+            .map_err(|e| IdentityError::GetCredentialError(e.to_string()));
+        let receipt: Value = self
+            .http
+            .get_json(
+                format!("{}/v1/credentials/{}", api_managed_host, credential_id,),
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::GetCredentialError(e.to_string()))?;
+
+        let credential: Credential = serde_json::from_value(receipt)
+            .map_err(|e| IdentityError::GetCredentialError(e.to_string()))?;
+
+        Ok(credential)
+    }
+
+    pub async fn get_credential_offer(
+        &self,
+        credential_id: String,
+        key_id: String,
+    ) -> BloockResult<String> {
+        let api_managed_host = match self.config_service.get_identity_api_host() {
+            Some(host) => host,
+            None => Err(IdentityError::EmptyApiHostError())?,
+        };
+        _ = Url::parse(&api_managed_host.clone())
+            .map_err(|e| IdentityError::GetCredentialOfferError(e.to_string()));
+
+        let receipt: Value = self
+            .http
+            .get_json(
+                format!(
+                    "{}/v1/credentials/{}/offer?issuer_key={}",
+                    api_managed_host, credential_id, key_id
+                ),
+                None,
+            )
+            .await
+            .map_err(|e| IdentityError::GetCredentialOfferError(e.to_string()))?;
+
+        Ok(receipt.to_string())
     }
 
     pub async fn get_schema(&self, id: String) -> BloockResult<Schema> {

@@ -14,9 +14,9 @@ export function initSdk() {
 }
 
 export function initDevSdk() {
-  const apiKey = "no9rLf9dOMjXGvXQX3I96a39qYFoZknGd6YHtY3x1VPelr6M-TmTLpAF-fm1k9Zp"
-  const apiHost = "https://api.bloock.dev"
-  const identityApiHost = "https://identity-managed-api.bloock.dev"
+  const apiKey = process.env["DEV_API_KEY"] || "";
+  const apiHost = process.env["DEV_API_HOST"] || "";
+  const identityApiHost = process.env["DEV_IDENTITY_API_HOST"] || "";
 
   Bloock.setApiKey(apiKey);
   if (apiHost) {

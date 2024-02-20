@@ -1,6 +1,5 @@
 import { BloockBridge } from "../../bridge/bridge";
 import { ConfigData } from "../../bridge/proto/config";
-import { CreateCredentialRequest } from "../../bridge/proto/identity";
 import { BooleanAttribute } from "./boolean_attribute";
 import { CredentialReceipt } from "./credential_receipt";
 import { DateAttribute } from "./date_attribute";
@@ -18,6 +17,7 @@ import { DecimalAttribute } from "./decimal_attribute";
 import { IntegerAttribute } from "./integer_attribute";
 import { StringAttribute } from "./string_attribute";
 import { Issuer } from "./issuer";
+import { CreateCoreCredentialRequest } from "../../bridge/proto/identity_core";
 
 /**
  * Helps construct credentials by specifying various attributes.
@@ -144,7 +144,7 @@ export class CredentialCoreBuilder {
     async build(): Promise<CredentialReceipt> {
         const bridge = new BloockBridge();
 
-        const req = CreateCredentialRequest.fromPartial({
+        const req = CreateCoreCredentialRequest.fromPartial({
             configData: this.configData,
             schemaId: this.schemaId,
             issuerDid: this.issuerDid,

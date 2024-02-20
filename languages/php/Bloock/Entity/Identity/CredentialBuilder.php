@@ -15,7 +15,6 @@ use Exception;
 class CredentialBuilder
 {
     private string $schemaId;
-    private string $issuerDid;
     private string $holderDid;
     private int $expiration;
     private int $version;
@@ -41,7 +40,6 @@ class CredentialBuilder
     public function __construct(Issuer $issuer, string $schemaId, string $holderDid, int $expiration, int $version, ConfigData $configData)
     {
         $this->schemaId = $schemaId;
-        $this->issuerDid = $issuer->getDid()->getDid();
         $this->holderDid = $holderDid;
         $this->expiration = $expiration;
         $this->version = $version;
@@ -148,7 +146,6 @@ class CredentialBuilder
         $req = new CreateCredentialRequest();
         $req->setConfigData($this->configData);
         $req->setSchemaId($this->schemaId);
-        $req->setIssuerDid($this->issuerDid);
         $req->setHolderDid($this->holderDid);
         $req->setExpiration($this->expiration);
         $req->setVersion($this->version);

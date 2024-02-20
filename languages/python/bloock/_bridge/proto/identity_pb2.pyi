@@ -219,7 +219,6 @@ class CreateCredentialRequest(google.protobuf.message.Message):
 
     CONFIG_DATA_FIELD_NUMBER: builtins.int
     SCHEMA_ID_FIELD_NUMBER: builtins.int
-    ISSUER_DID_FIELD_NUMBER: builtins.int
     HOLDER_DID_FIELD_NUMBER: builtins.int
     EXPIRATION_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
@@ -233,7 +232,6 @@ class CreateCredentialRequest(google.protobuf.message.Message):
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
     schema_id: builtins.str
-    issuer_did: builtins.str
     holder_did: builtins.str
     expiration: builtins.int
     version: builtins.int
@@ -256,7 +254,6 @@ class CreateCredentialRequest(google.protobuf.message.Message):
         *,
         config_data: config_pb2.ConfigData | None = ...,
         schema_id: builtins.str = ...,
-        issuer_did: builtins.str = ...,
         holder_did: builtins.str = ...,
         expiration: builtins.int = ...,
         version: builtins.int | None = ...,
@@ -269,7 +266,7 @@ class CreateCredentialRequest(google.protobuf.message.Message):
         datetime_attributes: collections.abc.Iterable[identity_entities_pb2.DateTimeAttribute] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_version", b"_version", "config_data", b"config_data", "key", b"key", "version", b"version"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "issuer_did", b"issuer_did", "key", b"key", "schema_id", b"schema_id", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_version", b"_version", "boolean_attributes", b"boolean_attributes", "config_data", b"config_data", "date_attributes", b"date_attributes", "datetime_attributes", b"datetime_attributes", "decimal_attributes", b"decimal_attributes", "expiration", b"expiration", "holder_did", b"holder_did", "integer_attributes", b"integer_attributes", "key", b"key", "schema_id", b"schema_id", "string_attributes", b"string_attributes", "version", b"version"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_version", b"_version"]) -> typing_extensions.Literal["version"] | None: ...
 
 global___CreateCredentialRequest = CreateCredentialRequest
@@ -741,3 +738,90 @@ class GetVerificationStatusResponse(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
 
 global___GetVerificationStatusResponse = GetVerificationStatusResponse
+
+@typing_extensions.final
+class GetCredentialRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    CREDENTIAL_ID_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    credential_id: builtins.str
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        credential_id: builtins.str = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential_id", b"credential_id"]) -> None: ...
+
+global___GetCredentialRequest = GetCredentialRequest
+
+@typing_extensions.final
+class GetCredentialResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CREDENTIAL_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    @property
+    def credential(self) -> identity_entities_pb2.Credential: ...
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        credential: identity_entities_pb2.Credential | None = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential", b"credential", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential", b"credential", "error", b"error"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___GetCredentialResponse = GetCredentialResponse
+
+@typing_extensions.final
+class GetCredentialOfferRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CONFIG_DATA_FIELD_NUMBER: builtins.int
+    CREDENTIAL_ID_FIELD_NUMBER: builtins.int
+    KEY_FIELD_NUMBER: builtins.int
+    @property
+    def config_data(self) -> config_pb2.ConfigData: ...
+    credential_id: builtins.str
+    @property
+    def key(self) -> keys_entities_pb2.Key: ...
+    def __init__(
+        self,
+        *,
+        config_data: config_pb2.ConfigData | None = ...,
+        credential_id: builtins.str = ...,
+        key: keys_entities_pb2.Key | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key", b"key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "credential_id", b"credential_id", "key", b"key"]) -> None: ...
+
+global___GetCredentialOfferRequest = GetCredentialOfferRequest
+
+@typing_extensions.final
+class GetCredentialOfferResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CREDENTIAL_OFFER_FIELD_NUMBER: builtins.int
+    ERROR_FIELD_NUMBER: builtins.int
+    credential_offer: builtins.str
+    @property
+    def error(self) -> shared_pb2.Error: ...
+    def __init__(
+        self,
+        *,
+        credential_offer: builtins.str = ...,
+        error: shared_pb2.Error | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "credential_offer", b"credential_offer", "error", b"error"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+
+global___GetCredentialOfferResponse = GetCredentialOfferResponse

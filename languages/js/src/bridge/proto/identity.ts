@@ -82,7 +82,6 @@ export interface CredentialFromJsonResponse {
 export interface CreateCredentialRequest {
   configData?: ConfigData | undefined;
   schemaId: string;
-  issuerDid: string;
   holderDid: string;
   expiration: number;
   version?: number | undefined;
@@ -204,6 +203,27 @@ export interface GetVerificationStatusRequest {
 
 export interface GetVerificationStatusResponse {
   status: boolean;
+  error?: Error | undefined;
+}
+
+export interface GetCredentialRequest {
+  configData?: ConfigData | undefined;
+  credentialId: string;
+}
+
+export interface GetCredentialResponse {
+  credential?: Credential | undefined;
+  error?: Error | undefined;
+}
+
+export interface GetCredentialOfferRequest {
+  configData?: ConfigData | undefined;
+  credentialId: string;
+  key?: Key | undefined;
+}
+
+export interface GetCredentialOfferResponse {
+  credentialOffer: string;
   error?: Error | undefined;
 }
 
@@ -908,7 +928,6 @@ function createBaseCreateCredentialRequest(): CreateCredentialRequest {
   return {
     configData: undefined,
     schemaId: "",
-    issuerDid: "",
     holderDid: "",
     expiration: 0,
     version: undefined,
@@ -930,38 +949,35 @@ export const CreateCredentialRequest = {
     if (message.schemaId !== "") {
       writer.uint32(18).string(message.schemaId);
     }
-    if (message.issuerDid !== "") {
-      writer.uint32(26).string(message.issuerDid);
-    }
     if (message.holderDid !== "") {
-      writer.uint32(34).string(message.holderDid);
+      writer.uint32(26).string(message.holderDid);
     }
     if (message.expiration !== 0) {
-      writer.uint32(40).int64(message.expiration);
+      writer.uint32(32).int64(message.expiration);
     }
     if (message.version !== undefined) {
-      writer.uint32(48).int32(message.version);
+      writer.uint32(40).int32(message.version);
     }
     if (message.key !== undefined) {
-      Key.encode(message.key, writer.uint32(58).fork()).ldelim();
+      Key.encode(message.key, writer.uint32(50).fork()).ldelim();
     }
     for (const v of message.stringAttributes) {
-      StringAttribute.encode(v!, writer.uint32(66).fork()).ldelim();
+      StringAttribute.encode(v!, writer.uint32(58).fork()).ldelim();
     }
     for (const v of message.integerAttributes) {
-      IntegerAttribute.encode(v!, writer.uint32(74).fork()).ldelim();
+      IntegerAttribute.encode(v!, writer.uint32(66).fork()).ldelim();
     }
     for (const v of message.decimalAttributes) {
-      DecimalAttribute.encode(v!, writer.uint32(82).fork()).ldelim();
+      DecimalAttribute.encode(v!, writer.uint32(74).fork()).ldelim();
     }
     for (const v of message.booleanAttributes) {
-      BooleanAttribute.encode(v!, writer.uint32(90).fork()).ldelim();
+      BooleanAttribute.encode(v!, writer.uint32(82).fork()).ldelim();
     }
     for (const v of message.dateAttributes) {
-      DateAttribute.encode(v!, writer.uint32(98).fork()).ldelim();
+      DateAttribute.encode(v!, writer.uint32(90).fork()).ldelim();
     }
     for (const v of message.datetimeAttributes) {
-      DateTimeAttribute.encode(v!, writer.uint32(106).fork()).ldelim();
+      DateTimeAttribute.encode(v!, writer.uint32(98).fork()).ldelim();
     }
     return writer;
   },
@@ -992,73 +1008,66 @@ export const CreateCredentialRequest = {
             break;
           }
 
-          message.issuerDid = reader.string();
+          message.holderDid = reader.string();
           continue;
         case 4:
-          if (tag !== 34) {
+          if (tag !== 32) {
             break;
           }
 
-          message.holderDid = reader.string();
+          message.expiration = longToNumber(reader.int64() as Long);
           continue;
         case 5:
           if (tag !== 40) {
             break;
           }
 
-          message.expiration = longToNumber(reader.int64() as Long);
+          message.version = reader.int32();
           continue;
         case 6:
-          if (tag !== 48) {
+          if (tag !== 50) {
             break;
           }
 
-          message.version = reader.int32();
+          message.key = Key.decode(reader, reader.uint32());
           continue;
         case 7:
           if (tag !== 58) {
             break;
           }
 
-          message.key = Key.decode(reader, reader.uint32());
+          message.stringAttributes.push(StringAttribute.decode(reader, reader.uint32()));
           continue;
         case 8:
           if (tag !== 66) {
             break;
           }
 
-          message.stringAttributes.push(StringAttribute.decode(reader, reader.uint32()));
+          message.integerAttributes.push(IntegerAttribute.decode(reader, reader.uint32()));
           continue;
         case 9:
           if (tag !== 74) {
             break;
           }
 
-          message.integerAttributes.push(IntegerAttribute.decode(reader, reader.uint32()));
+          message.decimalAttributes.push(DecimalAttribute.decode(reader, reader.uint32()));
           continue;
         case 10:
           if (tag !== 82) {
             break;
           }
 
-          message.decimalAttributes.push(DecimalAttribute.decode(reader, reader.uint32()));
+          message.booleanAttributes.push(BooleanAttribute.decode(reader, reader.uint32()));
           continue;
         case 11:
           if (tag !== 90) {
             break;
           }
 
-          message.booleanAttributes.push(BooleanAttribute.decode(reader, reader.uint32()));
+          message.dateAttributes.push(DateAttribute.decode(reader, reader.uint32()));
           continue;
         case 12:
           if (tag !== 98) {
-            break;
-          }
-
-          message.dateAttributes.push(DateAttribute.decode(reader, reader.uint32()));
-          continue;
-        case 13:
-          if (tag !== 106) {
             break;
           }
 
@@ -1077,7 +1086,6 @@ export const CreateCredentialRequest = {
     return {
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
       schemaId: isSet(object.schemaId) ? globalThis.String(object.schemaId) : "",
-      issuerDid: isSet(object.issuerDid) ? globalThis.String(object.issuerDid) : "",
       holderDid: isSet(object.holderDid) ? globalThis.String(object.holderDid) : "",
       expiration: isSet(object.expiration) ? globalThis.Number(object.expiration) : 0,
       version: isSet(object.version) ? globalThis.Number(object.version) : undefined,
@@ -1110,9 +1118,6 @@ export const CreateCredentialRequest = {
     }
     if (message.schemaId !== "") {
       obj.schemaId = message.schemaId;
-    }
-    if (message.issuerDid !== "") {
-      obj.issuerDid = message.issuerDid;
     }
     if (message.holderDid !== "") {
       obj.holderDid = message.holderDid;
@@ -1156,7 +1161,6 @@ export const CreateCredentialRequest = {
       ? ConfigData.fromPartial(object.configData)
       : undefined;
     message.schemaId = object.schemaId ?? "";
-    message.issuerDid = object.issuerDid ?? "";
     message.holderDid = object.holderDid ?? "";
     message.expiration = object.expiration ?? 0;
     message.version = object.version ?? undefined;
@@ -2922,6 +2926,323 @@ export const GetVerificationStatusResponse = {
   },
 };
 
+function createBaseGetCredentialRequest(): GetCredentialRequest {
+  return { configData: undefined, credentialId: "" };
+}
+
+export const GetCredentialRequest = {
+  encode(message: GetCredentialRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.credentialId !== "") {
+      writer.uint32(18).string(message.credentialId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetCredentialRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetCredentialRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.credentialId = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetCredentialRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      credentialId: isSet(object.credentialId) ? globalThis.String(object.credentialId) : "",
+    };
+  },
+
+  toJSON(message: GetCredentialRequest): unknown {
+    const obj: any = {};
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credentialId !== "") {
+      obj.credentialId = message.credentialId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetCredentialRequest>, I>>(base?: I): GetCredentialRequest {
+    return GetCredentialRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetCredentialRequest>, I>>(object: I): GetCredentialRequest {
+    const message = createBaseGetCredentialRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.credentialId = object.credentialId ?? "";
+    return message;
+  },
+};
+
+function createBaseGetCredentialResponse(): GetCredentialResponse {
+  return { credential: undefined, error: undefined };
+}
+
+export const GetCredentialResponse = {
+  encode(message: GetCredentialResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.credential !== undefined) {
+      Credential.encode(message.credential, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetCredentialResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetCredentialResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.credential = Credential.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.error = Error.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetCredentialResponse {
+    return {
+      credential: isSet(object.credential) ? Credential.fromJSON(object.credential) : undefined,
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: GetCredentialResponse): unknown {
+    const obj: any = {};
+    if (message.credential !== undefined) {
+      obj.credential = Credential.toJSON(message.credential);
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetCredentialResponse>, I>>(base?: I): GetCredentialResponse {
+    return GetCredentialResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetCredentialResponse>, I>>(object: I): GetCredentialResponse {
+    const message = createBaseGetCredentialResponse();
+    message.credential = (object.credential !== undefined && object.credential !== null)
+      ? Credential.fromPartial(object.credential)
+      : undefined;
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
+function createBaseGetCredentialOfferRequest(): GetCredentialOfferRequest {
+  return { configData: undefined, credentialId: "", key: undefined };
+}
+
+export const GetCredentialOfferRequest = {
+  encode(message: GetCredentialOfferRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.configData !== undefined) {
+      ConfigData.encode(message.configData, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.credentialId !== "") {
+      writer.uint32(18).string(message.credentialId);
+    }
+    if (message.key !== undefined) {
+      Key.encode(message.key, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetCredentialOfferRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetCredentialOfferRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.configData = ConfigData.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.credentialId = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.key = Key.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetCredentialOfferRequest {
+    return {
+      configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
+      credentialId: isSet(object.credentialId) ? globalThis.String(object.credentialId) : "",
+      key: isSet(object.key) ? Key.fromJSON(object.key) : undefined,
+    };
+  },
+
+  toJSON(message: GetCredentialOfferRequest): unknown {
+    const obj: any = {};
+    if (message.configData !== undefined) {
+      obj.configData = ConfigData.toJSON(message.configData);
+    }
+    if (message.credentialId !== "") {
+      obj.credentialId = message.credentialId;
+    }
+    if (message.key !== undefined) {
+      obj.key = Key.toJSON(message.key);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetCredentialOfferRequest>, I>>(base?: I): GetCredentialOfferRequest {
+    return GetCredentialOfferRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetCredentialOfferRequest>, I>>(object: I): GetCredentialOfferRequest {
+    const message = createBaseGetCredentialOfferRequest();
+    message.configData = (object.configData !== undefined && object.configData !== null)
+      ? ConfigData.fromPartial(object.configData)
+      : undefined;
+    message.credentialId = object.credentialId ?? "";
+    message.key = (object.key !== undefined && object.key !== null) ? Key.fromPartial(object.key) : undefined;
+    return message;
+  },
+};
+
+function createBaseGetCredentialOfferResponse(): GetCredentialOfferResponse {
+  return { credentialOffer: "", error: undefined };
+}
+
+export const GetCredentialOfferResponse = {
+  encode(message: GetCredentialOfferResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.credentialOffer !== "") {
+      writer.uint32(10).string(message.credentialOffer);
+    }
+    if (message.error !== undefined) {
+      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GetCredentialOfferResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetCredentialOfferResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.credentialOffer = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.error = Error.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetCredentialOfferResponse {
+    return {
+      credentialOffer: isSet(object.credentialOffer) ? globalThis.String(object.credentialOffer) : "",
+      error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
+    };
+  },
+
+  toJSON(message: GetCredentialOfferResponse): unknown {
+    const obj: any = {};
+    if (message.credentialOffer !== "") {
+      obj.credentialOffer = message.credentialOffer;
+    }
+    if (message.error !== undefined) {
+      obj.error = Error.toJSON(message.error);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetCredentialOfferResponse>, I>>(base?: I): GetCredentialOfferResponse {
+    return GetCredentialOfferResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetCredentialOfferResponse>, I>>(object: I): GetCredentialOfferResponse {
+    const message = createBaseGetCredentialOfferResponse();
+    message.credentialOffer = object.credentialOffer ?? "";
+    message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
+    return message;
+  },
+};
+
 export interface IdentityService {
   CreateHolder(request: CreateHolderRequest): Promise<CreateHolderResponse>;
   CreateIssuer(request: CreateIssuerRequest): Promise<CreateIssuerResponse>;
@@ -2929,10 +3250,12 @@ export interface IdentityService {
   BuildSchema(request: BuildSchemaRequest): Promise<BuildSchemaResponse>;
   GetSchema(request: GetSchemaRequest): Promise<GetSchemaResponse>;
   CreateCredential(request: CreateCredentialRequest): Promise<CreateCredentialResponse>;
+  GetCredential(request: GetCredentialRequest): Promise<GetCredentialResponse>;
   GetCredentialProof(request: GetCredentialProofRequest): Promise<GetCredentialProofResponse>;
   RevokeCredential(request: RevokeCredentialRequest): Promise<RevokeCredentialResponse>;
   CredentialToJson(request: CredentialToJsonRequest): Promise<CredentialToJsonResponse>;
   CredentialFromJson(request: CredentialFromJsonRequest): Promise<CredentialFromJsonResponse>;
+  GetCredentialOffer(request: GetCredentialOfferRequest): Promise<GetCredentialOfferResponse>;
   ForcePublishIssuerState(request: ForcePublishIssuerStateRequest): Promise<ForcePublishIssuerStateResponse>;
   CreateVerification(request: CreateVerificationRequest): Promise<CreateVerificationResponse>;
   WaitVerification(request: WaitVerificationRequest): Promise<WaitVerificationResponse>;
@@ -2952,10 +3275,12 @@ export class IdentityServiceClientImpl implements IdentityService {
     this.BuildSchema = this.BuildSchema.bind(this);
     this.GetSchema = this.GetSchema.bind(this);
     this.CreateCredential = this.CreateCredential.bind(this);
+    this.GetCredential = this.GetCredential.bind(this);
     this.GetCredentialProof = this.GetCredentialProof.bind(this);
     this.RevokeCredential = this.RevokeCredential.bind(this);
     this.CredentialToJson = this.CredentialToJson.bind(this);
     this.CredentialFromJson = this.CredentialFromJson.bind(this);
+    this.GetCredentialOffer = this.GetCredentialOffer.bind(this);
     this.ForcePublishIssuerState = this.ForcePublishIssuerState.bind(this);
     this.CreateVerification = this.CreateVerification.bind(this);
     this.WaitVerification = this.WaitVerification.bind(this);
@@ -2997,6 +3322,12 @@ export class IdentityServiceClientImpl implements IdentityService {
     return promise.then((data) => CreateCredentialResponse.decode(_m0.Reader.create(data)));
   }
 
+  GetCredential(request: GetCredentialRequest): Promise<GetCredentialResponse> {
+    const data = GetCredentialRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "GetCredential", data);
+    return promise.then((data) => GetCredentialResponse.decode(_m0.Reader.create(data)));
+  }
+
   GetCredentialProof(request: GetCredentialProofRequest): Promise<GetCredentialProofResponse> {
     const data = GetCredentialProofRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "GetCredentialProof", data);
@@ -3019,6 +3350,12 @@ export class IdentityServiceClientImpl implements IdentityService {
     const data = CredentialFromJsonRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "CredentialFromJson", data);
     return promise.then((data) => CredentialFromJsonResponse.decode(_m0.Reader.create(data)));
+  }
+
+  GetCredentialOffer(request: GetCredentialOfferRequest): Promise<GetCredentialOfferResponse> {
+    const data = GetCredentialOfferRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "GetCredentialOffer", data);
+    return promise.then((data) => GetCredentialOfferResponse.decode(_m0.Reader.create(data)));
   }
 
   ForcePublishIssuerState(request: ForcePublishIssuerStateRequest): Promise<ForcePublishIssuerStateResponse> {
@@ -3099,6 +3436,14 @@ export const IdentityServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getCredential: {
+      name: "GetCredential",
+      requestType: GetCredentialRequest,
+      requestStream: false,
+      responseType: GetCredentialResponse,
+      responseStream: false,
+      options: {},
+    },
     getCredentialProof: {
       name: "GetCredentialProof",
       requestType: GetCredentialProofRequest,
@@ -3128,6 +3473,14 @@ export const IdentityServiceDefinition = {
       requestType: CredentialFromJsonRequest,
       requestStream: false,
       responseType: CredentialFromJsonResponse,
+      responseStream: false,
+      options: {},
+    },
+    getCredentialOffer: {
+      name: "GetCredentialOffer",
+      requestType: GetCredentialOfferRequest,
+      requestStream: false,
+      responseType: GetCredentialOfferResponse,
       responseStream: false,
       options: {},
     },

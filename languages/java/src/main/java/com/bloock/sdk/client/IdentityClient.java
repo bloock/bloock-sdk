@@ -35,8 +35,8 @@ public class IdentityClient {
 
   /**
    * Creates a new holder identity.
-   * @param issuerKey
-   * @param didParams
+   * @param holderKey
+   * @param didType
    * @return
    * @throws Exception
    */
@@ -82,7 +82,7 @@ public class IdentityClient {
    * Creates a new issuer on the Bloock Identity service.
    * @param issuerKey
    * @param publishInterval
-   * @param issuerParams
+   * @param didType
    * @param name
    * @param description
    * @param image
@@ -140,7 +140,7 @@ public class IdentityClient {
   /**
    * Gets the issuer based on the issuer key and DID type.
    * @param issuerKey
-   * @param issuerParams
+   * @param didType
    * @return
    * @throws Exception
    */
@@ -196,8 +196,8 @@ public class IdentityClient {
 
   /**
    * Creates a new credential builder for defining a credential on the Bloock Identity service.
+   * @param issuer
    * @param schemaId
-   * @param issuerDid
    * @param holderDid
    * @param expiration
    * @param version
@@ -212,9 +212,50 @@ public class IdentityClient {
   }
 
   /**
+   * Retrieves the Verifiable Credential entity based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+   * @param credentialId
+   * @return
+   * @throws Exception
+   */
+  public Credential getCredential(String credentialId) throws Exception {
+    Identity.GetCredentialRequest request =
+            Identity.GetCredentialRequest.newBuilder().setConfigData(this.configData).setCredentialId(credentialId).build();
+
+    Identity.GetCredentialResponse response = bridge.getIdentity().getCredential(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return Credential.fromProto(response.getCredential());
+  }
+
+  /**
+   * Retrieves the json raw offer based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+   * @param issuer
+   * @param credentialId
+   * @return
+   * @throws Exception
+   */
+  public String getCredentialOffer(Issuer issuer, String credentialId) throws Exception {
+    Identity.GetCredentialOfferRequest request =
+            Identity.GetCredentialOfferRequest.newBuilder().setConfigData(this.configData).
+                    setCredentialId(credentialId).
+                    setKey(issuer.getKey().toProto()).
+                    build();
+
+    Identity.GetCredentialOfferResponse response = bridge.getIdentity().getCredentialOffer(request);
+
+    if (response.getError() != Error.getDefaultInstance()) {
+      throw new Exception(response.getError().getMessage());
+    }
+
+    return response.getCredentialOffer();
+  }
+
+  /**
    * Publishes the state of an issuer on the Bloock Identity service.
-   * @param issuerDid
-   * @param signer
+   * @param issuer
    * @return
    * @throws Exception
    */
@@ -264,7 +305,7 @@ public class IdentityClient {
   /**
    * Revokes a credential on the Bloock Identity service.
    * @param credential
-   * @param signer
+   * @param issuer
    * @return
    * @throws Exception
    */

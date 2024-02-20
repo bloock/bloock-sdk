@@ -4,7 +4,8 @@ from typing import Optional
 from bloock._bridge.proto.shared_pb2 import Error
 from bloock.entity.identity.did_type import DidType
 from bloock._bridge.proto.identity_pb2 import CreateHolderRequest, CreateIssuerRequest, GetSchemaRequest, \
-    ForcePublishIssuerStateRequest, CreateVerificationRequest, WaitVerificationRequest, GetVerificationStatusRequest, ImportIssuerRequest
+    ForcePublishIssuerStateRequest, CreateVerificationRequest, WaitVerificationRequest, GetVerificationStatusRequest, \
+    ImportIssuerRequest, GetCredentialRequest, GetCredentialOfferRequest
 from bloock._bridge.proto.identity_pb2 import GetCredentialProofRequest
 from bloock._bridge.proto.identity_pb2 import RevokeCredentialRequest
 from bloock.entity.identity.holder import Holder
@@ -84,7 +85,7 @@ class IdentityClient:
     def import_issuer(self, issuer_key: Key, did_type: Optional[DidType] = None) -> Issuer:
         """
         Retrieves the issuer based on the issuer key and DID type.
-        :type issuer_params: object
+        :type did_type: object
         :type issuer_key: object
         :rtype: object
         """
@@ -139,6 +140,42 @@ class IdentityClient:
         :rtype: object
         """
         return CredentialBuilder(issuer, display_name, holder_did, expiration, version, self.config_data)
+
+    def get_credential(self, credential_id: str) -> Credential:
+        """
+        Retrieves the Verifiable Credential entity based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+        :type credential_id: object
+        :rtype: object
+        """
+        res = self.bridge_client.identity().GetCredential(
+            GetCredentialRequest(
+                config_data=self.config_data,
+                credential_id=credential_id
+            )
+        )
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return Credential.from_proto(res.credential)
+
+    def get_credential_offer(self, issuer: Issuer, credential_id: str) -> str:
+        """
+        Retrieves the json raw offer based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+        :type credential_id: object
+        :type issuer: object
+        :rtype: object
+        """
+        res = (self.bridge_client.identity().GetCredentialOffer(
+            GetCredentialOfferRequest(
+                config_data=self.config_data,
+                credential_id=credential_id,
+                key=issuer.key.to_proto()
+            )
+        ))
+
+        if res.error != Error():
+            raise Exception(res.error.message)
+        return res.credential_offer
 
     def force_publish_issuer_state(self, issuer: Issuer) -> IssuerStateReceipt:
         """

@@ -134,6 +134,43 @@ func (c *IdentityClient) BuildCredential(issuer identity.Issuer, schemaId, holde
 	return identity.NewCredentialBuilder(issuer, schemaId, holderDid, expiration, version, c.configData)
 }
 
+// GetCredential retrieves the Verifiable Credential entity based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+func (c *IdentityClient) GetCredential(credentialId string) (identity.Credential, error) {
+	res, err := c.bridgeClient.Identity().GetCredential(context.Background(), &proto.GetCredentialRequest{
+		ConfigData:   c.configData,
+		CredentialId: credentialId,
+	})
+
+	if err != nil {
+		return identity.Credential{}, err
+	}
+
+	if res.Error != nil {
+		return identity.Credential{}, errors.New(res.Error.Message)
+	}
+
+	return identity.NewCredentialFromProto(res.GetCredential()), nil
+}
+
+// GetCredentialOffer retrieves the json raw offer based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+func (c *IdentityClient) GetCredentialOffer(issuer identity.Issuer, credentialId string) (string, error) {
+	res, err := c.bridgeClient.Identity().GetCredentialOffer(context.Background(), &proto.GetCredentialOfferRequest{
+		ConfigData:   c.configData,
+		CredentialId: credentialId,
+		Key:          issuer.Key.ToProto(),
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if res.Error != nil {
+		return "", errors.New(res.Error.Message)
+	}
+
+	return res.GetCredentialOffer(), nil
+}
+
 // ForcePublishIssuerState publishes the state of an issuer on the Bloock Identity service.
 func (c *IdentityClient) ForcePublishIssuerState(issuer identity.Issuer) (identity.IssuerStateReceipt, error) {
 	res, err := c.bridgeClient.Identity().ForcePublishIssuerState(context.Background(), &proto.ForcePublishIssuerStateRequest{

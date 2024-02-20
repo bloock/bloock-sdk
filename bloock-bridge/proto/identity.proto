@@ -142,7 +142,7 @@ message ForcePublishIssuerStateRequest {
 }
 
 message CreateCredentialResponse {
-    string credential_id = 1;
+    CredentialReceipt credential_receipt = 1;
     optional Error error = 2;
 }
 
