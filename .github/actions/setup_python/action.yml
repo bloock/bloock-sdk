@@ -20,7 +20,7 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        pip install pydoc-markdown
+        pip install pydoc-markdown pyotp
     - name: Download binaries
       uses: actions/download-artifact@v1
       with:
@@ -51,6 +51,12 @@ runs:
       with:
         name: bloock_lib_python
         path: ~/bloock_lib_python
+      if: ${{ inputs.wheel-version }}
+    - name: Download python wheels from package run
+      uses: actions/download-artifact@v3
+      with:
+        name: bloock_lib_python_wheels
+        path: ~/bloock_lib_python/wheelhouse
       if: ${{ inputs.wheel-version }}
     - name: Install wheel
       shell: bash
