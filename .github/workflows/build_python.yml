@@ -58,13 +58,30 @@ jobs:
       CIBW_ARCHS_LINUX: x86_64 aarch64
       CIBW_ARCHS_MACOS: x86_64 arm64
       CIBW_ARCHS_WINDOWS: AMD64
+  concat-wheels:
+    name: Concat wheels
+    runs-on: ubuntu-latest
+    needs: [prepare-wheels]
+    outputs:
+      include: ${{ steps.matrix.outputs.include }}
+    steps:
+      - id: matrix
+        run: |
+          MATRIX=$(
+            {
+              echo ${{ needs.prepare-wheels.outputs.linux }} \
+              && echo ${{ needs.prepare-wheels.outputs.windows }} \
+              && echo ${{ needs.prepare-wheels.outputs.macos }} \
+            } | jq -sc
+          )
+          echo "include=$MATRIX" >> $GITHUB_OUTPUT
   build-wheels:
     name: Build wheel ${{ matrix.only }}
-    needs: [prepare-wheels]
+    needs: [concat-wheels]
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJson(needs.prepare-wheels.outputs.*) }}
+        include: ${{ fromJson(needs.concat-wheels.outputs.include) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
