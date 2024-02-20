@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class CredentialBuilder {
   private final String schemaId;
-  private final String issuerDid;
   private final String holderKey;
   private final Long expiration;
   private final int version;
@@ -30,8 +29,8 @@ public class CredentialBuilder {
 
   /**
    * Creates a new CredentialBuilder instance with the specified parameters.
+   * @param issuer
    * @param schemaId
-   * @param issuerDid
    * @param holderKey
    * @param expiration
    * @param version
@@ -45,7 +44,6 @@ public class CredentialBuilder {
       int version,
       Config.ConfigData configData) {
     this.schemaId = schemaId;
-    this.issuerDid = issuer.getDid().getDid();
     this.holderKey = holderKey;
     this.expiration = expiration;
     this.version = version;
@@ -138,7 +136,6 @@ public class CredentialBuilder {
         Identity.CreateCredentialRequest.newBuilder()
             .setConfigData(this.configData)
             .setSchemaId(this.schemaId)
-            .setIssuerDid(this.issuerDid)
             .setHolderDid(this.holderKey)
             .setExpiration(this.expiration)
             .setVersion(this.version)

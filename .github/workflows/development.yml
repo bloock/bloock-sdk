@@ -7,8 +7,8 @@ jobs:
   version:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./.github/actions/check_version
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check_version
 
   build_binaries:
     needs: [version]
@@ -16,13 +16,13 @@ jobs:
     strategy:
       matrix:
         platform:
-        - os: ubuntu-latest
-          target: x86_64-unknown-linux-gnu
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            cargo_command: cross
 
-        - os: ubuntu-latest
-          target: x86_64-unknown-linux-musl
-          cargo_command: cross
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            cargo_command: cross
     with:
       os: ${{ matrix.platform.os }}
       target: ${{ matrix.platform.target }}
@@ -88,11 +88,9 @@ jobs:
 
   build_python:
     needs: [build_binaries]
-    uses: ./.github/workflows/build_lib.yml
+    uses: ./.github/workflows/build_python.yml
     with:
-      os: ubuntu-latest
-      lang: python
-      lang-version: "3.10"
+      os: '[{"platform": "linux", "os": "ubuntu"}]'
 
   test_python:
     needs: [build_python]

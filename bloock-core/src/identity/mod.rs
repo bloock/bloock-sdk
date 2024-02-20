@@ -28,12 +28,16 @@ pub enum IdentityError {
     InvalidAttributeError(),
     #[error("Error while creating credential: {0}")]
     CreateCredentialError(String),
+    #[error("Error while creating identity: {0}")]
+    CreateIdentityError(String),
+    #[error("Error while creating issuer: {0}")]
+    CreateIssuerError(String),
     #[error("Error while updating draft state signature: {0}")]
     UpdateDraftStateSignatureError(String),
-    #[error("Error getting issuer by key: {0}")]
-    GetIssuerByKeyError(String),
-    #[error("Error while getting offer: {0}")]
-    GetOfferError(String),
+    #[error("Error importing issuer: {0}")]
+    ImportIssuerError(String),
+    #[error("Error while getting credential offer: {0}")]
+    GetCredentialOfferError(String),
     #[error("Error while redeeming credential: {0}")]
     RedeemCredentialError(String),
     #[error("Error while getting credential: {0}")]

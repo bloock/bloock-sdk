@@ -1,5 +1,3 @@
-use std::vec;
-
 use crate::{
     error::BridgeError,
     items::{
@@ -7,8 +5,9 @@ use crate::{
         CreateHolderRequest, CreateHolderResponse, CreateIssuerRequest, CreateIssuerResponse,
         CreateVerificationRequest, CreateVerificationResponse, CredentialFromJsonRequest,
         CredentialFromJsonResponse, CredentialToJsonRequest, CredentialToJsonResponse, Error,
-        ForcePublishIssuerStateRequest, ForcePublishIssuerStateResponse, GetCredentialProofRequest,
-        GetCredentialProofResponse, GetSchemaRequest, GetSchemaResponse,
+        ForcePublishIssuerStateRequest, ForcePublishIssuerStateResponse, GetCredentialOfferRequest,
+        GetCredentialOfferResponse, GetCredentialProofRequest, GetCredentialProofResponse,
+        GetCredentialRequest, GetCredentialResponse, GetSchemaRequest, GetSchemaResponse,
         GetVerificationStatusRequest, GetVerificationStatusResponse, ImportIssuerRequest,
         ImportIssuerResponse, RevokeCredentialRequest, RevokeCredentialResponse,
         WaitVerificationRequest, WaitVerificationResponse,
@@ -20,6 +19,30 @@ impl ResponseTypeError<CreateCredentialRequest> for CreateCredentialResponse {
     fn build_error(err: String) -> Self {
         Self {
             credential_receipt: None,
+            error: Some(Error {
+                kind: BridgeError::IdentityError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<GetCredentialRequest> for GetCredentialResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            credential: None,
+            error: Some(Error {
+                kind: BridgeError::IdentityError.to_string(),
+                message: err,
+            }),
+        }
+    }
+}
+
+impl ResponseTypeError<GetCredentialOfferRequest> for GetCredentialOfferResponse {
+    fn build_error(err: String) -> Self {
+        Self {
+            credential_offer: "".to_string(),
             error: Some(Error {
                 kind: BridgeError::IdentityError.to_string(),
                 message: err,

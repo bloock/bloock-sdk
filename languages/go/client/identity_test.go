@@ -124,7 +124,7 @@ func TestIdentity(t *testing.T) {
 		assert.NotNil(t, schema.Json)
 		assert.NotNil(t, schema.SchemaType)
 
-		res, err := identityClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
+		receipt, err := identityClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
 			WithIntegerAttribute("license_type", 1).
 			WithDecimalAttribute("quantity_oil", 2.25555).
 			WithStringAttribute("nif", "54688188M").
@@ -136,24 +136,31 @@ func TestIdentity(t *testing.T) {
 			WithDecimalAttribute("precision_wheels", 1.10).
 			Build()
 		assert.NoError(t, err)
-		assert.NotNil(t, res.CredentialId)
-		assert.NotNil(t, res.Credential)
-		assert.Equal(t, DrivingLicenseSchemaType, res.CredentialType)
+		assert.NotNil(t, receipt.CredentialId)
+		assert.Equal(t, issuer.Did.Did, receipt.Credential.Issuer)
+		assert.Equal(t, "JsonSchema2023", receipt.Credential.CredentialSchema.Type)
+		assert.Equal(t, DrivingLicenseSchemaType, receipt.Credential.Type[1])
 
-		credential := res.Credential
+		credential, err := identityClient.GetCredential(receipt.CredentialId)
+		assert.NoError(t, err)
+
 		assert.Equal(t, issuer.Did.Did, credential.Issuer)
 		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
 		assert.Equal(t, DrivingLicenseSchemaType, credential.Type[1])
+
+		jsonOffer, err := identityClient.GetCredentialOffer(issuer, receipt.CredentialId)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, jsonOffer)
 
 		ok, err := identityClient.RevokeCredential(credential, issuer)
 		assert.NoError(t, err)
 		assert.True(t, ok)
 
-		receipt, err := identityClient.ForcePublishIssuerState(issuer)
+		receiptState, err := identityClient.ForcePublishIssuerState(issuer)
 		assert.NoError(t, err)
-		assert.NotNil(t, receipt.TxHash)
+		assert.NotNil(t, receiptState.TxHash)
 
-		receipt, err = identityClient.ForcePublishIssuerState(issuer)
+		receiptState, err = identityClient.ForcePublishIssuerState(issuer)
 		assert.Error(t, err)
 
 		proofRequest, err := prepareProofRequest(schema.CidJsonLd)
@@ -177,18 +184,18 @@ func TestIdentity(t *testing.T) {
 		identityClient := NewIdentityClient()
 		keyClient := NewKeyClient()
 
-		localKey, err := keyClient.NewLocalKey(key.Bjj)
+		localKey, err := keyClient.LoadLocalKey(key.Bjj, "671e9ae56f18ffdfc1c98195748628f296a71c6e02e7cbed0d32c3963efdc355")
 		assert.NoError(t, err)
 
 		issuerKey := key.Key{LocalKey: &localKey}
 		didType := identity.NewDidType()
-		didType.Method = identity.ListOfMethods().Iden3
+		didType.Method = identity.ListOfMethods().PolygonId
 		didType.Blockchain = identity.ListOfBlockchains().Polygon
 		didType.NetworkId = identity.ListOfNetworkIds().Mumbai
 
-		issuer, err := identityClient.CreateIssuer(issuerKey, identity.Interval15, didType, "", "", "")
+		issuer, err := identityClient.ImportIssuer(issuerKey, didType)
 		assert.NoError(t, err)
-		assert.True(t, strings.Contains(issuer.Did.Did, "iden3"))
+		assert.True(t, strings.Contains(issuer.Did.Did, "polygonid"))
 
 		schema, err := identityClient.BuildSchema("KYC Age Credential", KYCAgeSchemaType, "1.0", "kyc age schema").
 			AddIntegerAttribute("Birth Date", "birth_date", "your bityh date", true).
@@ -198,22 +205,24 @@ func TestIdentity(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, schema.Cid)
 
-		res, err := identityClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
+		receipt, err := identityClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
 			WithIntegerAttribute("birth_date", 921950325).
 			WithStringAttribute("name", "Eduard").
 			WithIntegerAttribute("document_type", 1).
 			Build()
 		assert.NoError(t, err)
-		assert.NotNil(t, res.CredentialId)
-		assert.NotNil(t, res.Credential)
+		assert.NotNil(t, receipt.CredentialId)
+		assert.Equal(t, issuer.Did.Did, receipt.Credential.Issuer)
+		assert.Equal(t, "JsonSchema2023", receipt.Credential.CredentialSchema.Type)
+		assert.Equal(t, KYCAgeSchemaType, receipt.Credential.Type[1])
 
-		credential := res.Credential
-
+		credential, err := identityClient.GetCredential(receipt.CredentialId)
+		assert.NoError(t, err)
 		assert.Equal(t, issuer.Did.Did, credential.Issuer)
 		assert.Equal(t, "JsonSchema2023", credential.CredentialSchema.Type)
 		assert.Equal(t, KYCAgeSchemaType, credential.Type[1])
 
-		proof, err := identityClient.GetCredentialProof(issuer.Did.Did, res.CredentialId)
+		proof, err := identityClient.GetCredentialProof(issuer.Did.Did, receipt.CredentialId)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, proof.SignatureProof)
 	})

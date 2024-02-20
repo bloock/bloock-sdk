@@ -24,7 +24,6 @@ import { Issuer } from "./issuer";
  */
 export class CredentialBuilder {
   schemaId: string;
-  issuerDid: string;
   holderDid: string;
   expiration: number;
   version: number;
@@ -56,7 +55,6 @@ export class CredentialBuilder {
     configData: ConfigData
   ) {
     this.schemaId = schemaId;
-    this.issuerDid = issuer.did.did,
     this.holderDid = holderDid;
     this.expiration = expiration;
     this.version = version;
@@ -147,7 +145,6 @@ export class CredentialBuilder {
     const req = CreateCredentialRequest.fromPartial({
       configData: this.configData,
       schemaId: this.schemaId,
-      issuerDid: this.issuerDid,
       holderDid: this.holderDid,
       expiration: this.expiration,
       version: this.version,

@@ -29,7 +29,6 @@ use super::{
 };
 
 use bloock_identity_rs::{
-    did::parse_did,
     schema::{
         get_json_ld_context_from_json, get_schema_type_from_json, get_type_id_from_context,
         parse_to_schema_cid,

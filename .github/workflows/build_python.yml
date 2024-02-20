@@ -1,36 +1,23 @@
-name: Build Lib
+name: Build python
 
 on:
   workflow_call:
+    inputs:
+      os:
+        required: false
+        type: string
+        default: '[{"platform": "linux", "os": "ubuntu"}, {"platform": "macos", "os": "macos-latest"}, {"platform": "windows", "os": "windows-latest"}]'
 
 jobs:
-  setup:
-    name: Setup python build
+  build:
+    name: Build python
     runs-on: ubuntu-latest
-    outputs:
-      include: ${{ steps.set-matrix.outputs.include }}
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup_python
         with:
           version: "3.10"
           working-directory: languages/python
-      - name: Install cibuildwheel
-        run: pipx install cibuildwheel==2.11.2
-      - id: set-matrix
-        run: |
-          MATRIX=$(
-            {
-              cibuildwheel --print-build-identifiers --platform linux \
-              | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
-              && cibuildwheel --print-build-identifiers --platform macos \
-              | jq -nRc '{"only": inputs, "os": "macos-latest"}' \
-              && cibuildwheel --print-build-identifiers --platform windows \
-              | jq -nRc '{"only": inputs, "os": "windows-latest"}'
-            } | jq -sc
-          )
-          echo "include=$MATRIX" >> $GITHUB_OUTPUT
-        working-directory: languages/python
       - name: Build docs
         run: make docs
         working-directory: languages/python
@@ -44,17 +31,57 @@ jobs:
         with:
           name: bloock_lib_python
           path: languages/python
+  prepare-wheels:
+    name: Build python
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platforms: ${{ fromJSON(inputs.os) }}
+    outputs:
+      linux: ${{ steps.set-matrix.outputs.linux }}
+      windows: ${{ steps.set-matrix.outputs.windows }}
+      macos: ${{ steps.set-matrix.outputs.macos }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install cibuildwheel
+        run: pipx install cibuildwheel==2.11.2
+      - id: set-matrix
+        run: |
+          MATRIX=$(
+              cibuildwheel --print-build-identifiers --platform ${{ matrix.platforms.platform }} \
+              | jq -nRc '{"only": inputs, "os": "${{ matrix.platforms.os }}"}' \
+              | jq -sc
+          )
+          echo "${{ matrix.platforms.platform }}=$MATRIX" >> $GITHUB_OUTPUT
+        working-directory: languages/python
     env:
       CIBW_ARCHS_LINUX: x86_64 aarch64
       CIBW_ARCHS_MACOS: x86_64 arm64
       CIBW_ARCHS_WINDOWS: AMD64
+  concat-wheels:
+    name: Concat wheels
+    runs-on: ubuntu-latest
+    needs: [prepare-wheels]
+    outputs:
+      include: ${{ steps.matrix.outputs.include }}
+    steps:
+      - id: matrix
+        run: |
+          MATRIX=$(
+            {
+              echo '${{ needs.prepare-wheels.outputs.linux }}' \
+              && echo '${{ needs.prepare-wheels.outputs.windows }}' \
+              && echo '${{ needs.prepare-wheels.outputs.macos }}' \
+            } | jq -sc
+          )
+          echo "include=$MATRIX" >> $GITHUB_OUTPUT
   build-wheels:
-    name: Build ${{ matrix.only }}
-    needs: [setup]
+    name: Build wheel ${{ matrix.only }}
+    needs: [concat-wheels]
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJson(needs.setup.outputs.include) }}
+        include: ${{ fromJson(needs.concat-wheels.outputs.include) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -71,7 +98,6 @@ jobs:
         with:
           package-dir: languages/python
           output-dir: languages/python/wheelhouse
-
           only: ${{ matrix.only }}
       - name: Upload artifact
         uses: actions/upload-artifact@v2

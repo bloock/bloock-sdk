@@ -22,47 +22,43 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
      */
     protected $schema_id = '';
     /**
-     * Generated from protobuf field <code>string issuer_did = 3;</code>
-     */
-    protected $issuer_did = '';
-    /**
-     * Generated from protobuf field <code>string holder_did = 4;</code>
+     * Generated from protobuf field <code>string holder_did = 3;</code>
      */
     protected $holder_did = '';
     /**
-     * Generated from protobuf field <code>int64 expiration = 5;</code>
+     * Generated from protobuf field <code>int64 expiration = 4;</code>
      */
     protected $expiration = 0;
     /**
-     * Generated from protobuf field <code>optional int32 version = 6;</code>
+     * Generated from protobuf field <code>optional int32 version = 5;</code>
      */
     protected $version = null;
     /**
-     * Generated from protobuf field <code>.bloock.Key key = 7;</code>
+     * Generated from protobuf field <code>.bloock.Key key = 6;</code>
      */
     protected $key = null;
     /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttribute string_attributes = 8;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttribute string_attributes = 7;</code>
      */
     private $string_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerAttribute integer_attributes = 9;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttribute integer_attributes = 8;</code>
      */
     private $integer_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalAttribute decimal_attributes = 10;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttribute decimal_attributes = 9;</code>
      */
     private $decimal_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttribute boolean_attributes = 11;</code>
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttribute boolean_attributes = 10;</code>
      */
     private $boolean_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttribute date_attributes = 12;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateAttribute date_attributes = 11;</code>
      */
     private $date_attributes;
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttribute datetime_attributes = 13;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttribute datetime_attributes = 12;</code>
      */
     private $datetime_attributes;
 
@@ -74,7 +70,6 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
      *
      *     @type \Bloock\ConfigData $config_data
      *     @type string $schema_id
-     *     @type string $issuer_did
      *     @type string $holder_did
      *     @type int|string $expiration
      *     @type int $version
@@ -147,29 +142,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string issuer_did = 3;</code>
-     * @return string
-     */
-    public function getIssuerDid()
-    {
-        return $this->issuer_did;
-    }
-
-    /**
-     * Generated from protobuf field <code>string issuer_did = 3;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setIssuerDid($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->issuer_did = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string holder_did = 4;</code>
+     * Generated from protobuf field <code>string holder_did = 3;</code>
      * @return string
      */
     public function getHolderDid()
@@ -178,7 +151,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string holder_did = 4;</code>
+     * Generated from protobuf field <code>string holder_did = 3;</code>
      * @param string $var
      * @return $this
      */
@@ -191,7 +164,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 expiration = 5;</code>
+     * Generated from protobuf field <code>int64 expiration = 4;</code>
      * @return int|string
      */
     public function getExpiration()
@@ -200,7 +173,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 expiration = 5;</code>
+     * Generated from protobuf field <code>int64 expiration = 4;</code>
      * @param int|string $var
      * @return $this
      */
@@ -213,7 +186,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional int32 version = 6;</code>
+     * Generated from protobuf field <code>optional int32 version = 5;</code>
      * @return int
      */
     public function getVersion()
@@ -232,7 +205,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional int32 version = 6;</code>
+     * Generated from protobuf field <code>optional int32 version = 5;</code>
      * @param int $var
      * @return $this
      */
@@ -245,7 +218,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.Key key = 7;</code>
+     * Generated from protobuf field <code>.bloock.Key key = 6;</code>
      * @return \Bloock\Key|null
      */
     public function getKey()
@@ -264,7 +237,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.bloock.Key key = 7;</code>
+     * Generated from protobuf field <code>.bloock.Key key = 6;</code>
      * @param \Bloock\Key $var
      * @return $this
      */
@@ -277,7 +250,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttribute string_attributes = 8;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttribute string_attributes = 7;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getStringAttributes()
@@ -286,7 +259,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.StringAttribute string_attributes = 8;</code>
+     * Generated from protobuf field <code>repeated .bloock.StringAttribute string_attributes = 7;</code>
      * @param \Bloock\StringAttribute[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -299,7 +272,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerAttribute integer_attributes = 9;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttribute integer_attributes = 8;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getIntegerAttributes()
@@ -308,7 +281,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.IntegerAttribute integer_attributes = 9;</code>
+     * Generated from protobuf field <code>repeated .bloock.IntegerAttribute integer_attributes = 8;</code>
      * @param \Bloock\IntegerAttribute[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -321,7 +294,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalAttribute decimal_attributes = 10;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttribute decimal_attributes = 9;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getDecimalAttributes()
@@ -330,7 +303,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DecimalAttribute decimal_attributes = 10;</code>
+     * Generated from protobuf field <code>repeated .bloock.DecimalAttribute decimal_attributes = 9;</code>
      * @param \Bloock\DecimalAttribute[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -343,7 +316,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttribute boolean_attributes = 11;</code>
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttribute boolean_attributes = 10;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getBooleanAttributes()
@@ -352,7 +325,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.BooleanAttribute boolean_attributes = 11;</code>
+     * Generated from protobuf field <code>repeated .bloock.BooleanAttribute boolean_attributes = 10;</code>
      * @param \Bloock\BooleanAttribute[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -365,7 +338,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttribute date_attributes = 12;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateAttribute date_attributes = 11;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getDateAttributes()
@@ -374,7 +347,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateAttribute date_attributes = 12;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateAttribute date_attributes = 11;</code>
      * @param \Bloock\DateAttribute[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
@@ -387,7 +360,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttribute datetime_attributes = 13;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttribute datetime_attributes = 12;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getDatetimeAttributes()
@@ -396,7 +369,7 @@ class CreateCredentialRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated .bloock.DateTimeAttribute datetime_attributes = 13;</code>
+     * Generated from protobuf field <code>repeated .bloock.DateTimeAttribute datetime_attributes = 12;</code>
      * @param \Bloock\DateTimeAttribute[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */

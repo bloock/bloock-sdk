@@ -12,7 +12,6 @@ import (
 // CredentialBuilder helps construct credentials by specifying various attributes.
 type CredentialBuilder struct {
 	schemaId   string
-	issuerDid  string
 	holderDid  string
 	expiration int64
 	version    int32
@@ -31,7 +30,6 @@ type CredentialBuilder struct {
 func NewCredentialBuilder(issuer Issuer, schemaId, holderDid string, expiration int64, version int32, configData *proto.ConfigData) CredentialBuilder {
 	return CredentialBuilder{
 		schemaId:          schemaId,
-		issuerDid:         issuer.Did.Did,
 		holderDid:         holderDid,
 		expiration:        expiration,
 		version:           version,
@@ -118,7 +116,6 @@ func (c CredentialBuilder) Build() (CredentialReceipt, error) {
 
 	req := proto.CreateCredentialRequest{
 		SchemaId:           c.schemaId,
-		IssuerDid:          c.issuerDid,
 		HolderDid:          c.holderDid,
 		Expiration:         c.expiration,
 		Version:            &c.version,

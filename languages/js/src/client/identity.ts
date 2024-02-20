@@ -10,7 +10,9 @@ import {
   CreateVerificationRequest,
   WaitVerificationRequest,
   GetVerificationStatusRequest,
-  CreateHolderRequest
+  CreateHolderRequest,
+  GetCredentialRequest,
+  GetCredentialOfferRequest
 } from "../bridge/proto/identity";
 import { NewConfigData } from "../config/config";
 import {
@@ -75,7 +77,7 @@ export class IdentityClient {
    * Creates a new issuer on the Bloock Identity service.
    * @param issuerKey 
    * @param publishInterval 
-   * @param issuerParams 
+   * @param didType 
    * @param name 
    * @param description 
    * @param image 
@@ -206,6 +208,52 @@ export class IdentityClient {
       version,
       this.configData
     );
+  }
+
+  /**
+   * Retrieves the Verifiable Credential entity based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+   * @param credentialId 
+   * @returns 
+   */
+  public getCredential(credentialId: string): Promise<Credential> {
+    const request = GetCredentialRequest.fromPartial({
+      configData: this.configData,
+      credentialId: credentialId
+    });
+
+    return this.bridge
+      .getIdentity()
+      .GetCredential(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return Credential.fromProto(res.credential!);
+      });
+  }
+
+  /**
+   * Retrieves the json raw offer based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
+   * @param issuer 
+   * @param credentialId 
+   * @returns 
+   */
+  public getCredentialOffer(issuer: Issuer, credentialId: string): Promise<string> {
+    const request = GetCredentialOfferRequest.fromPartial({
+      configData: this.configData,
+      credentialId: credentialId,
+      key: issuer.key.toProto()
+    });
+
+    return this.bridge
+      .getIdentity()
+      .GetCredentialOffer(request)
+      .then(res => {
+        if (res.error) {
+          throw res.error;
+        }
+        return res.credentialOffer!;
+      });
   }
 
   /**

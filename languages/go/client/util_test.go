@@ -63,8 +63,8 @@ func generateTOTPClient(secretKey string, timestamp int64) string {
 	binary.BigEndian.PutUint64(timeBytes, uint64(timestamp)/30)
 
 	hash := hmac.New(sha1.New, secretBytes)
-	hash.Write(timeBytes) 
-	h := hash.Sum(nil) 
+	hash.Write(timeBytes)
+	h := hash.Sum(nil)
 
 	offset := h[len(h)-1] & 0x0F
 

@@ -12,17 +12,7 @@ use serde_json::{Number, Value};
 use crate::{
     error::BridgeError,
     items::{
-        BuildSchemaRequest, BuildSchemaResponse, CreateCredentialRequest, CreateCredentialResponse,
-        CreateHolderRequest, CreateHolderResponse, CreateIssuerRequest, CreateIssuerResponse,
-        CreateVerificationRequest, CreateVerificationResponse, Credential,
-        CredentialFromJsonRequest, CredentialFromJsonResponse, CredentialProof, CredentialReceipt,
-        CredentialRevocation, CredentialToJsonRequest, CredentialToJsonResponse,
-        ForcePublishIssuerStateRequest, ForcePublishIssuerStateResponse, GetCredentialProofRequest,
-        GetCredentialProofResponse, GetSchemaRequest, GetSchemaResponse,
-        GetVerificationStatusRequest, GetVerificationStatusResponse, IdentityServiceHandler,
-        ImportIssuerRequest, ImportIssuerResponse, IssuerStateReceipt, RevokeCredentialRequest,
-        RevokeCredentialResponse, Schema, VerificationReceipt, WaitVerificationRequest,
-        WaitVerificationResponse,
+        BuildSchemaRequest, BuildSchemaResponse, CreateCredentialRequest, CreateCredentialResponse, CreateHolderRequest, CreateHolderResponse, CreateIssuerRequest, CreateIssuerResponse, CreateVerificationRequest, CreateVerificationResponse, Credential, CredentialFromJsonRequest, CredentialFromJsonResponse, CredentialProof, CredentialReceipt, CredentialRevocation, CredentialToJsonRequest, CredentialToJsonResponse, ForcePublishIssuerStateRequest, ForcePublishIssuerStateResponse, GetCredentialOfferRequest, GetCredentialOfferResponse, GetCredentialProofRequest, GetCredentialProofResponse, GetCredentialRequest, GetCredentialResponse, GetSchemaRequest, GetSchemaResponse, GetVerificationStatusRequest, GetVerificationStatusResponse, IdentityServiceHandler, ImportIssuerRequest, ImportIssuerResponse, IssuerStateReceipt, RevokeCredentialRequest, RevokeCredentialResponse, Schema, VerificationReceipt, WaitVerificationRequest, WaitVerificationResponse
     },
     server::response_types::RequestConfigData,
 };
@@ -349,12 +339,11 @@ impl IdentityServiceHandler for IdentityServer {
             .key
             .ok_or_else(|| "no issuer key provided".to_string())?;
 
-        let key: Key = if let Some(managed_key) = issuer_key.managed_key {
+        let key_id: String = if let Some(managed_key) = issuer_key.managed_key {
             let managed_key_core: ManagedKeyCore = managed_key.into();
-            managed_key_core.into()
-        } else if let Some(local_key) = issuer_key.local_key {
-            let local_key_core: LocalKeyCore<String> = local_key.into();
-            local_key_core.into()
+            managed_key_core.id
+        } else if let Some(_local_key) = issuer_key.local_key {
+            "".to_string()
         } else {
             return Err("invalid issuer key provided".to_string());
         };
@@ -403,12 +392,11 @@ impl IdentityServiceHandler for IdentityServer {
         let receipt = client
             .create_credential(
                 req.schema_id.clone(),
-                req.issuer_did.clone(),
                 req.holder_did.clone(),
                 req.expiration.clone(),
                 req.version.clone(),
                 attributes,
-                key,
+                key_id,
             )
             .await
             .map_err(|e| e.to_string())?;
@@ -427,6 +415,31 @@ impl IdentityServiceHandler for IdentityServer {
                 credential_id: receipt.credential_id,
                 credential_type: receipt.schema_type,
             }),
+            error: None,
+        })
+    }
+
+    async fn get_credential(
+        &self,
+        req: &GetCredentialRequest,
+    ) -> Result<GetCredentialResponse, String> {
+        let config_data = req.get_config_data()?;
+        let client = identity::configure(config_data.clone());
+
+        let credential = client
+            .get_credential(req.credential_id.clone())
+            .await
+            .map_err(|e| e.to_string())?;
+
+        let deserialized_credential: Option<Credential> = Some(
+            credential
+                .clone()
+                .try_into()
+                .map_err(|e: BridgeError| e.to_string())?,
+        );
+
+        Ok(GetCredentialResponse {
+            credential: deserialized_credential,
             error: None,
         })
     }
@@ -519,6 +532,38 @@ impl IdentityServiceHandler for IdentityServer {
 
         Ok(CredentialFromJsonResponse {
             credential: deserialized_credential,
+            error: None,
+        })
+    }
+
+    async fn get_credential_offer(
+        &self,
+        req: &GetCredentialOfferRequest,
+    ) -> Result<GetCredentialOfferResponse, String> {
+        let config_data = req.get_config_data()?;
+        let client = identity::configure(config_data.clone());
+
+        let issuer_key = req
+            .clone()
+            .key
+            .ok_or_else(|| "no issuer key provided".to_string())?;
+
+        let key_id: String = if let Some(managed_key) = issuer_key.managed_key {
+            let managed_key_core: ManagedKeyCore = managed_key.into();
+            managed_key_core.id
+        } else if let Some(_local_key) = issuer_key.local_key {
+            "".to_string()
+        } else {
+            return Err("invalid issuer key provided".to_string());
+        };
+
+        let offer = client
+            .get_credential_offer(req.credential_id.clone(), key_id)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(GetCredentialOfferResponse {
+            credential_offer: offer,
             error: None,
         })
     }
