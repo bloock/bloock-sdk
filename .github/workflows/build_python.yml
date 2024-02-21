@@ -48,8 +48,8 @@ jobs:
       - id: set-matrix
         run: |
           MATRIX=$(
-              {cibuildwheel --print-build-identifiers --platform ${{ matrix.platforms.platform }} \
-              | jq -nRc '{"only": inputs, "os": "${{ matrix.platforms.os }}"}'} \
+              cibuildwheel --print-build-identifiers --platform ${{ matrix.platforms.platform }} \
+              | jq -nRc '{"only": inputs, "os": "${{ matrix.platforms.os }}"}' \
               | jq -sc
           )
           echo "${{ matrix.platforms.platform }}=$MATRIX" >> $GITHUB_OUTPUT

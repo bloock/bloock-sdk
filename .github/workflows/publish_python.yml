@@ -24,11 +24,11 @@ jobs:
         with:
           ref: "v${{ github.event.inputs.version }}"
       - run: |
-          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" $(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s https://api.github.com/repos/bloock/bloock-sdk/releases/tags/v${{ github.event.inputs.version }} | jq -r '.assets[] | select(.name == "bloock_lib_python-${{ github.event.inputs.version }}.zip") | .url') --output bloock_lib_python-${{ github.event.inputs.version }}.zip
-      - run: unzip bloock_lib_python-${{ github.event.inputs.version }}.zip -d bloock_lib_python-${{ github.event.inputs.version }}
+          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" $(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s https://api.github.com/repos/bloock/bloock-sdk/releases/tags/v${{ github.event.inputs.version }} | jq -r '.assets[] | select(.name == "bloock_lib_python_wheels-${{ github.event.inputs.version }}.zip") | .url') --output bloock_lib_python_wheels-${{ github.event.inputs.version }}.zip
+      - run: unzip bloock_lib_python_wheels-${{ github.event.inputs.version }}.zip -d bloock_lib_python_wheels-${{ github.event.inputs.version }}
       - uses: actions/setup-python@v2
         name: Install Python
         with:
           python-version: "3.10"
       - run: pip install twine
-      - run: twine upload bloock_lib_python-${{ github.event.inputs.version }}/bloock_lib_python/wheelhouse/*.whl --non-interactive
+      - run: twine upload bloock_lib_python_wheels-${{ github.event.inputs.version }}/bloock_lib_python_wheels/*.whl --non-interactive
