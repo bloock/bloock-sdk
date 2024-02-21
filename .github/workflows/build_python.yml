@@ -67,13 +67,11 @@ jobs:
     steps:
       - id: matrix
         run: |
-          MATRIX=$(
-            {
+          MATRIX=$( {
               echo '${{ needs.prepare-wheels.outputs.linux }}' \
               && echo '${{ needs.prepare-wheels.outputs.windows }}' \
               && echo '${{ needs.prepare-wheels.outputs.macos }}' \
-            } | jq -sc
-          )
+            } | jq -sc )
           echo "include=$MATRIX" >> $GITHUB_OUTPUT
   build-wheels:
     name: Build wheel ${{ matrix.only }}
