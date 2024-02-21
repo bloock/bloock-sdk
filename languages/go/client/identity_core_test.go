@@ -32,11 +32,7 @@ func TestIdentityCore(t *testing.T) {
 
 		issuerKey := key.Key{ManagedKey: &managedKey}
 
-		issuerParams := identity.NewDidType()
-		issuerParams.Method = identity.ListOfMethods().PolygonId
-		issuerParams.Blockchain = identity.ListOfBlockchains().Polygon
-		issuerParams.NetworkId = identity.ListOfNetworkIds().Mumbai
-		issuer, err := identityClient.CreateIssuer(issuerKey, identity.Interval60, issuerParams, "SDK Issuer Test Core Client", "sdk issuer test core client", "")
+		issuer, err := identityClient.CreateIssuer(issuerKey, identity.Interval60, identity.PolygonIDTest, "SDK Issuer Test Core Client", "sdk issuer test core client", "")
 		require.NoError(t, err)
 
 		schema, err := identityClient.BuildSchema("Driving License", DrivingLicenseSchemaType, "1.0", "driving license schema").

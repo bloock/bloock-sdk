@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use bloock_core::identity::{
     self,
     entity::{
-        credential::Credential as CoreCredential, did_metadata::DidMetadata,
+        credential::Credential as CoreCredential, did_method::DidMethod,
         publish_interval::PublishInterval, schema::Attribute,
     },
 };
@@ -12,7 +12,18 @@ use serde_json::{Number, Value};
 use crate::{
     error::BridgeError,
     items::{
-        BuildSchemaRequest, BuildSchemaResponse, CreateCredentialRequest, CreateCredentialResponse, CreateHolderRequest, CreateHolderResponse, CreateIssuerRequest, CreateIssuerResponse, CreateVerificationRequest, CreateVerificationResponse, Credential, CredentialFromJsonRequest, CredentialFromJsonResponse, CredentialProof, CredentialReceipt, CredentialRevocation, CredentialToJsonRequest, CredentialToJsonResponse, ForcePublishIssuerStateRequest, ForcePublishIssuerStateResponse, GetCredentialOfferRequest, GetCredentialOfferResponse, GetCredentialProofRequest, GetCredentialProofResponse, GetCredentialRequest, GetCredentialResponse, GetSchemaRequest, GetSchemaResponse, GetVerificationStatusRequest, GetVerificationStatusResponse, IdentityServiceHandler, ImportIssuerRequest, ImportIssuerResponse, IssuerStateReceipt, RevokeCredentialRequest, RevokeCredentialResponse, Schema, VerificationReceipt, WaitVerificationRequest, WaitVerificationResponse
+        BuildSchemaRequest, BuildSchemaResponse, CreateCredentialRequest, CreateCredentialResponse,
+        CreateHolderRequest, CreateHolderResponse, CreateIssuerRequest, CreateIssuerResponse,
+        CreateVerificationRequest, CreateVerificationResponse, Credential,
+        CredentialFromJsonRequest, CredentialFromJsonResponse, CredentialProof, CredentialReceipt,
+        CredentialRevocation, CredentialToJsonRequest, CredentialToJsonResponse,
+        ForcePublishIssuerStateRequest, ForcePublishIssuerStateResponse, GetCredentialOfferRequest,
+        GetCredentialOfferResponse, GetCredentialProofRequest, GetCredentialProofResponse,
+        GetCredentialRequest, GetCredentialResponse, GetSchemaRequest, GetSchemaResponse,
+        GetVerificationStatusRequest, GetVerificationStatusResponse, IdentityServiceHandler,
+        ImportIssuerRequest, ImportIssuerResponse, IssuerStateReceipt, RevokeCredentialRequest,
+        RevokeCredentialResponse, Schema, VerificationReceipt, WaitVerificationRequest,
+        WaitVerificationResponse,
     },
     server::response_types::RequestConfigData,
 };
@@ -55,14 +66,11 @@ impl IdentityServiceHandler for IdentityServer {
             return Err("invalid key provided".to_string());
         };
 
-        let params: DidMetadata = match req.did_type.clone() {
-            Some(i) => i.into(),
-            None => DidMetadata::default(),
-        };
+        let did_method: DidMethod = req.did_method().into();
 
         let client = identity::configure(config_data.clone());
         let receipt = client
-            .create_identity(public_key, params)
+            .create_identity(public_key, did_method)
             .await
             .map_err(|e| e.to_string())?;
 
@@ -104,10 +112,7 @@ impl IdentityServiceHandler for IdentityServer {
             return Err("invalid key provided".to_string());
         };
 
-        let params: DidMetadata = match req.did_type.clone() {
-            Some(i) => i.into(),
-            None => DidMetadata::default(),
-        };
+        let did_method: DidMethod = req.did_method().into();
 
         let interval: PublishInterval = req.publish_interval().into();
 
@@ -115,7 +120,7 @@ impl IdentityServiceHandler for IdentityServer {
         let receipt = client
             .create_issuer(
                 public_key,
-                params,
+                did_method,
                 req.name.clone(),
                 req.description.clone(),
                 req.image.clone(),
@@ -163,14 +168,11 @@ impl IdentityServiceHandler for IdentityServer {
             return Err("invalid key provided".to_string());
         };
 
-        let params: DidMetadata = match req.did_type.clone() {
-            Some(i) => i.into(),
-            None => DidMetadata::default(),
-        };
+        let did_method: DidMethod = req.did_method().into();
 
         let client = identity::configure(config_data.clone());
         let issuer = client
-            .import_issuer(public_key, params)
+            .import_issuer(public_key, did_method)
             .await
             .map_err(|e| e.to_string())?;
 

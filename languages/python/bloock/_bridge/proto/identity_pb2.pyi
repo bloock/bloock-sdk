@@ -342,23 +342,21 @@ class CreateHolderRequest(google.protobuf.message.Message):
 
     KEY_FIELD_NUMBER: builtins.int
     CONFIG_DATA_FIELD_NUMBER: builtins.int
-    DID_TYPE_FIELD_NUMBER: builtins.int
+    DID_METHOD_FIELD_NUMBER: builtins.int
     @property
     def key(self) -> keys_entities_pb2.Key: ...
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def did_type(self) -> identity_entities_pb2.DidType: ...
+    did_method: identity_entities_pb2.DidMethod.ValueType
     def __init__(
         self,
         *,
         key: keys_entities_pb2.Key | None = ...,
         config_data: config_pb2.ConfigData | None = ...,
-        did_type: identity_entities_pb2.DidType | None = ...,
+        did_method: identity_entities_pb2.DidMethod.ValueType = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_did_type", b"_did_type", "config_data", b"config_data", "did_type", b"did_type", "key", b"key"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_did_type", b"_did_type", "config_data", b"config_data", "did_type", b"did_type", "key", b"key"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_did_type", b"_did_type"]) -> typing_extensions.Literal["did_type"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key", b"key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "did_method", b"did_method", "key", b"key"]) -> None: ...
 
 global___CreateHolderRequest = CreateHolderRequest
 
@@ -368,7 +366,7 @@ class CreateIssuerRequest(google.protobuf.message.Message):
 
     KEY_FIELD_NUMBER: builtins.int
     CONFIG_DATA_FIELD_NUMBER: builtins.int
-    DID_TYPE_FIELD_NUMBER: builtins.int
+    DID_METHOD_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
     IMAGE_FIELD_NUMBER: builtins.int
@@ -377,8 +375,7 @@ class CreateIssuerRequest(google.protobuf.message.Message):
     def key(self) -> keys_entities_pb2.Key: ...
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def did_type(self) -> identity_entities_pb2.DidType: ...
+    did_method: identity_entities_pb2.DidMethod.ValueType
     name: builtins.str
     description: builtins.str
     image: builtins.str
@@ -388,18 +385,16 @@ class CreateIssuerRequest(google.protobuf.message.Message):
         *,
         key: keys_entities_pb2.Key | None = ...,
         config_data: config_pb2.ConfigData | None = ...,
-        did_type: identity_entities_pb2.DidType | None = ...,
+        did_method: identity_entities_pb2.DidMethod.ValueType = ...,
         name: builtins.str | None = ...,
         description: builtins.str | None = ...,
         image: builtins.str | None = ...,
         publish_interval: identity_entities_pb2.PublishInterval.ValueType = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_did_type", b"_did_type", "_image", b"_image", "_name", b"_name", "config_data", b"config_data", "description", b"description", "did_type", b"did_type", "image", b"image", "key", b"key", "name", b"name"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_did_type", b"_did_type", "_image", b"_image", "_name", b"_name", "config_data", b"config_data", "description", b"description", "did_type", b"did_type", "image", b"image", "key", b"key", "name", b"name", "publish_interval", b"publish_interval"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_name", b"_name", "config_data", b"config_data", "description", b"description", "image", b"image", "key", b"key", "name", b"name"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_description", b"_description", "_image", b"_image", "_name", b"_name", "config_data", b"config_data", "description", b"description", "did_method", b"did_method", "image", b"image", "key", b"key", "name", b"name", "publish_interval", b"publish_interval"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_description", b"_description"]) -> typing_extensions.Literal["description"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_did_type", b"_did_type"]) -> typing_extensions.Literal["did_type"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_image", b"_image"]) -> typing_extensions.Literal["image"] | None: ...
     @typing.overload
@@ -413,23 +408,21 @@ class ImportIssuerRequest(google.protobuf.message.Message):
 
     KEY_FIELD_NUMBER: builtins.int
     CONFIG_DATA_FIELD_NUMBER: builtins.int
-    DID_TYPE_FIELD_NUMBER: builtins.int
+    DID_METHOD_FIELD_NUMBER: builtins.int
     @property
     def key(self) -> keys_entities_pb2.Key: ...
     @property
     def config_data(self) -> config_pb2.ConfigData: ...
-    @property
-    def did_type(self) -> identity_entities_pb2.DidType: ...
+    did_method: identity_entities_pb2.DidMethod.ValueType
     def __init__(
         self,
         *,
         key: keys_entities_pb2.Key | None = ...,
         config_data: config_pb2.ConfigData | None = ...,
-        did_type: identity_entities_pb2.DidType | None = ...,
+        did_method: identity_entities_pb2.DidMethod.ValueType = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_did_type", b"_did_type", "config_data", b"config_data", "did_type", b"did_type", "key", b"key"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_did_type", b"_did_type", "config_data", b"config_data", "did_type", b"did_type", "key", b"key"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_did_type", b"_did_type"]) -> typing_extensions.Literal["did_type"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "key", b"key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_data", b"config_data", "did_method", b"did_method", "key", b"key"]) -> None: ...
 
 global___ImportIssuerRequest = ImportIssuerRequest
 

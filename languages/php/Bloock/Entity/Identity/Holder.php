@@ -15,11 +15,11 @@ class Holder
     /**
      * Returns a new instance of Holder identity for the given parameters.
      * @param string $did
-     * @param DidType $didType
+     * @param DidMethod $didMethod
      */
-    public function __construct(string $did, DidType $didType, Key $key)
+    public function __construct(string $did, DidMethod $didMethod, Key $key)
     {
-        $this->did = new Did($did, $didType);
+        $this->did = new Did($did, $didMethod);
         $this->key = $key;
     }
 

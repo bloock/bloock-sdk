@@ -7,7 +7,7 @@ import (
 )
 
 // BloockClient represents a client for interacting with the Bloock SDK.
-type BloockClient struct {
+type BloockClient struct { 
 	configData *proto.ConfigData
 
 	AuthenticityClient AuthenticityClient

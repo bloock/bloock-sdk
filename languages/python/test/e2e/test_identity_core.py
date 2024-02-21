@@ -1,9 +1,6 @@
 import datetime
 import unittest
-from bloock.entity.identity.blockchain import Blockchain
-from bloock.entity.identity.did_type import DidType
-from bloock.entity.identity.method import Method
-from bloock.entity.identity.network import Network
+from bloock.entity.identity.did_method import DidMethod
 from bloock.client.identity import IdentityClient
 from bloock.client.identity_core import IdentityCoreClient
 from bloock.client.key import KeyClient
@@ -36,10 +33,8 @@ class TestIdentityCore(unittest.TestCase):
 
         issuer_key = Key(managed_key)
 
-        did_type = DidType(Method.POLYGON_ID,
-                         Blockchain.POLYGON, Network.MUMBAI)
         issuer = identity_client.create_issuer(
-            issuer_key, PublishIntervalParams.Interval15, did_type, "SDK Issuer Test Core Client", "sdk issuer test core client")
+            issuer_key, PublishIntervalParams.Interval15, DidMethod.PolygonIDTest, "SDK Issuer Test Core Client", "sdk issuer test core client")
 
         schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema") \
             .add_integer_attribute("License Type", "license_type", "license type", False) \

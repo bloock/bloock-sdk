@@ -1,6 +1,6 @@
 import { Key } from "../key/key";
 import { Did } from "./did";
-import { DidType } from "./did_type";
+import { DidMethod } from "./did_method";
 
 /**
  * represents a Issuer identity.
@@ -12,10 +12,10 @@ export class Issuer {
     /**
      * Constructs a Issuer object with the specified parameters.
      * @param did 
-     * @param didType 
+     * @param didMethod 
      */
-    constructor(did: string, key: Key, didType?: DidType) {
-        this.did = new Did(did, didType);
+    constructor(did: string, key: Key, didMethod: DidMethod) {
+        this.did = new Did(did, didMethod);
         this.key = key;
     }
 }

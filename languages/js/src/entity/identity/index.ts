@@ -1,8 +1,5 @@
 export * from "./attribute";
 export * from "./attribute_descriptor";
-export * from "./blockchain";
-export * from "./method";
-export * from "./network";
 export * from "./boolean_attribute_descriptor";
 export * from "./date_attribute_descriptor";
 export * from "./datetime_attribute_descriptor";
@@ -24,7 +21,7 @@ export * from "./credential_receipt";
 export * from "./credential_schema";
 export * from "./credential_status";
 export * from "./credential";
-export * from "./did_type";
+export * from "./did_method";
 export * from "./issuer_state_receipt";
 export * from "./schema_builder";
 export * from "./schema";

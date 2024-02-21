@@ -16,7 +16,9 @@ import {
   DecimalAttribute,
   DecimalAttributeDefinition,
   DecimalEnumAttributeDefinition,
-  DidType,
+  DidMethod,
+  didMethodFromJSON,
+  didMethodToJSON,
   IntegerAttribute,
   IntegerAttributeDefinition,
   IntegerEnumAttributeDefinition,
@@ -114,13 +116,13 @@ export interface BuildSchemaRequest {
 export interface CreateHolderRequest {
   key?: Key | undefined;
   configData?: ConfigData | undefined;
-  didType?: DidType | undefined;
+  didMethod: DidMethod;
 }
 
 export interface CreateIssuerRequest {
   key?: Key | undefined;
   configData?: ConfigData | undefined;
-  didType?: DidType | undefined;
+  didMethod: DidMethod;
   name?: string | undefined;
   description?: string | undefined;
   image?: string | undefined;
@@ -130,7 +132,7 @@ export interface CreateIssuerRequest {
 export interface ImportIssuerRequest {
   key?: Key | undefined;
   configData?: ConfigData | undefined;
-  didType?: DidType | undefined;
+  didMethod: DidMethod;
 }
 
 export interface ForcePublishIssuerStateRequest {
@@ -1469,7 +1471,7 @@ export const BuildSchemaRequest = {
 };
 
 function createBaseCreateHolderRequest(): CreateHolderRequest {
-  return { key: undefined, configData: undefined, didType: undefined };
+  return { key: undefined, configData: undefined, didMethod: 0 };
 }
 
 export const CreateHolderRequest = {
@@ -1480,8 +1482,8 @@ export const CreateHolderRequest = {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(18).fork()).ldelim();
     }
-    if (message.didType !== undefined) {
-      DidType.encode(message.didType, writer.uint32(26).fork()).ldelim();
+    if (message.didMethod !== 0) {
+      writer.uint32(24).int32(message.didMethod);
     }
     return writer;
   },
@@ -1508,11 +1510,11 @@ export const CreateHolderRequest = {
           message.configData = ConfigData.decode(reader, reader.uint32());
           continue;
         case 3:
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.didType = DidType.decode(reader, reader.uint32());
+          message.didMethod = reader.int32() as any;
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -1527,7 +1529,7 @@ export const CreateHolderRequest = {
     return {
       key: isSet(object.key) ? Key.fromJSON(object.key) : undefined,
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      didType: isSet(object.didType) ? DidType.fromJSON(object.didType) : undefined,
+      didMethod: isSet(object.didMethod) ? didMethodFromJSON(object.didMethod) : 0,
     };
   },
 
@@ -1539,8 +1541,8 @@ export const CreateHolderRequest = {
     if (message.configData !== undefined) {
       obj.configData = ConfigData.toJSON(message.configData);
     }
-    if (message.didType !== undefined) {
-      obj.didType = DidType.toJSON(message.didType);
+    if (message.didMethod !== 0) {
+      obj.didMethod = didMethodToJSON(message.didMethod);
     }
     return obj;
   },
@@ -1554,9 +1556,7 @@ export const CreateHolderRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.didType = (object.didType !== undefined && object.didType !== null)
-      ? DidType.fromPartial(object.didType)
-      : undefined;
+    message.didMethod = object.didMethod ?? 0;
     return message;
   },
 };
@@ -1565,7 +1565,7 @@ function createBaseCreateIssuerRequest(): CreateIssuerRequest {
   return {
     key: undefined,
     configData: undefined,
-    didType: undefined,
+    didMethod: 0,
     name: undefined,
     description: undefined,
     image: undefined,
@@ -1581,8 +1581,8 @@ export const CreateIssuerRequest = {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(18).fork()).ldelim();
     }
-    if (message.didType !== undefined) {
-      DidType.encode(message.didType, writer.uint32(26).fork()).ldelim();
+    if (message.didMethod !== 0) {
+      writer.uint32(24).int32(message.didMethod);
     }
     if (message.name !== undefined) {
       writer.uint32(34).string(message.name);
@@ -1621,11 +1621,11 @@ export const CreateIssuerRequest = {
           message.configData = ConfigData.decode(reader, reader.uint32());
           continue;
         case 3:
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.didType = DidType.decode(reader, reader.uint32());
+          message.didMethod = reader.int32() as any;
           continue;
         case 4:
           if (tag !== 34) {
@@ -1668,7 +1668,7 @@ export const CreateIssuerRequest = {
     return {
       key: isSet(object.key) ? Key.fromJSON(object.key) : undefined,
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      didType: isSet(object.didType) ? DidType.fromJSON(object.didType) : undefined,
+      didMethod: isSet(object.didMethod) ? didMethodFromJSON(object.didMethod) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : undefined,
       description: isSet(object.description) ? globalThis.String(object.description) : undefined,
       image: isSet(object.image) ? globalThis.String(object.image) : undefined,
@@ -1684,8 +1684,8 @@ export const CreateIssuerRequest = {
     if (message.configData !== undefined) {
       obj.configData = ConfigData.toJSON(message.configData);
     }
-    if (message.didType !== undefined) {
-      obj.didType = DidType.toJSON(message.didType);
+    if (message.didMethod !== 0) {
+      obj.didMethod = didMethodToJSON(message.didMethod);
     }
     if (message.name !== undefined) {
       obj.name = message.name;
@@ -1711,9 +1711,7 @@ export const CreateIssuerRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.didType = (object.didType !== undefined && object.didType !== null)
-      ? DidType.fromPartial(object.didType)
-      : undefined;
+    message.didMethod = object.didMethod ?? 0;
     message.name = object.name ?? undefined;
     message.description = object.description ?? undefined;
     message.image = object.image ?? undefined;
@@ -1723,7 +1721,7 @@ export const CreateIssuerRequest = {
 };
 
 function createBaseImportIssuerRequest(): ImportIssuerRequest {
-  return { key: undefined, configData: undefined, didType: undefined };
+  return { key: undefined, configData: undefined, didMethod: 0 };
 }
 
 export const ImportIssuerRequest = {
@@ -1734,8 +1732,8 @@ export const ImportIssuerRequest = {
     if (message.configData !== undefined) {
       ConfigData.encode(message.configData, writer.uint32(18).fork()).ldelim();
     }
-    if (message.didType !== undefined) {
-      DidType.encode(message.didType, writer.uint32(26).fork()).ldelim();
+    if (message.didMethod !== 0) {
+      writer.uint32(24).int32(message.didMethod);
     }
     return writer;
   },
@@ -1762,11 +1760,11 @@ export const ImportIssuerRequest = {
           message.configData = ConfigData.decode(reader, reader.uint32());
           continue;
         case 3:
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.didType = DidType.decode(reader, reader.uint32());
+          message.didMethod = reader.int32() as any;
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -1781,7 +1779,7 @@ export const ImportIssuerRequest = {
     return {
       key: isSet(object.key) ? Key.fromJSON(object.key) : undefined,
       configData: isSet(object.configData) ? ConfigData.fromJSON(object.configData) : undefined,
-      didType: isSet(object.didType) ? DidType.fromJSON(object.didType) : undefined,
+      didMethod: isSet(object.didMethod) ? didMethodFromJSON(object.didMethod) : 0,
     };
   },
 
@@ -1793,8 +1791,8 @@ export const ImportIssuerRequest = {
     if (message.configData !== undefined) {
       obj.configData = ConfigData.toJSON(message.configData);
     }
-    if (message.didType !== undefined) {
-      obj.didType = DidType.toJSON(message.didType);
+    if (message.didMethod !== 0) {
+      obj.didMethod = didMethodToJSON(message.didMethod);
     }
     return obj;
   },
@@ -1808,9 +1806,7 @@ export const ImportIssuerRequest = {
     message.configData = (object.configData !== undefined && object.configData !== null)
       ? ConfigData.fromPartial(object.configData)
       : undefined;
-    message.didType = (object.didType !== undefined && object.didType !== null)
-      ? DidType.fromPartial(object.didType)
-      : undefined;
+    message.didMethod = object.didMethod ?? 0;
     return message;
   },
 };

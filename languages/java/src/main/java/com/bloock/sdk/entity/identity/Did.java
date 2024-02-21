@@ -5,16 +5,16 @@ package com.bloock.sdk.entity.identity;
  */
 public class Did {
     private final String did;
-    private final DidType didType;
+    private final DidMethod didMethod;
 
     /**
      * Returns a new instance of Did for the given parameters.
      * @param did
      * @param didType
      */
-    public Did(String did, DidType didType) {
+    public Did(String did, DidMethod didMethod) {
         this.did = did;
-        this.didType = didType;
+        this.didMethod = didMethod;
     }
 
     /**
@@ -29,7 +29,7 @@ public class Did {
      * Gets the did type.
      * @return
      */
-    public DidType getDidType() {
-        return didType;
+    public DidMethod getDidMethod() {
+        return didMethod;
     }
 }

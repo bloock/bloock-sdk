@@ -1,5 +1,6 @@
 import { describe, test, expect } from "@jest/globals";
 import {
+    DidMethod,
     IdentityCoreClient,
     Key,
     PublishIntervalParams,
@@ -10,10 +11,6 @@ import {
     KeyProtectionLevel,
     KeyType,
     ManagedKeyParams,
-    DidType,
-    Method,
-    Blockchain,
-    NetworkId
 } from "../../dist";
 import { initDevSdk } from "./util";
 
@@ -38,15 +35,10 @@ describe("Identity V2 Tests", () => {
 
         let issuerKey = new Key(managedKey);
 
-        let didType = new DidType(
-            Method.POLYGON_ID,
-            Blockchain.POLYGON,
-            NetworkId.MUMBAI
-        );
         let issuer = await identityClient.createIssuer(
             issuerKey,
             PublishIntervalParams.Interval15,
-            didType,
+            DidMethod.PolygonIDTest,
             "Bloock Test",
             "bloock description test",
         );

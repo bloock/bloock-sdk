@@ -1,4 +1,3 @@
-import com.bloock.sdk.bridge.proto.IdentityCore;
 import com.bloock.sdk.client.IdentityClient;
 import com.bloock.sdk.client.IdentityCoreClient;
 import com.bloock.sdk.client.KeyClient;
@@ -39,12 +38,11 @@ public class IdentityCoreTest {
 
         Key issuerKey = new Key(managedKey);
 
-        DidType didType = new DidType(Method.POLYGONID, Blockchain.POLYGON, Network.MUMBAI);
         Issuer issuer =
                 identityClient.createIssuer(
                         issuerKey,
                         PublishIntervalParams.Interval15,
-                        didType,
+                        DidMethod.PolygonIDTest,
                         "SDK Issuer Test Core Client",
                         "sdk issuer test core client",
                         null);

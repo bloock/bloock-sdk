@@ -52,8 +52,6 @@ pub enum IdentityError {
     InvalidSignatureError(),
     #[error("Invalid credential provided")]
     InvalidCredentialError(),
-    #[error("Invalid did metadata provided")]
-    InvalidDidMetadataProvided(),
     #[error("Error while revoking credential: {0}")]
     RevokeCredentialError(String),
     #[error("Wait offer timed out")]
@@ -72,6 +70,8 @@ pub enum IdentityError {
     VerificationTimeout(),
     #[error("Empty identity api host provided")]
     EmptyApiHostError(),
+    #[error("Invalid did method")]
+    InvalidDidMethod(),
 }
 
 impl From<IdentityError> for BloockError {

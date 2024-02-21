@@ -36,15 +36,15 @@ public class IdentityClient {
   /**
    * Creates a new holder identity.
    * @param holderKey
-   * @param didType
+   * @param didMethod
    * @return
    * @throws Exception
    */
-  public Holder createHolder(Key holderKey, DidType didType) throws Exception {
+  public Holder createHolder(Key holderKey, DidMethod didMethod) throws Exception {
     Identity.CreateHolderRequest.Builder builder =
         Identity.CreateHolderRequest.newBuilder()
             .setKey(holderKey.toProto())
-            .setDidType(didType.toProto())
+            .setDidMethod(didMethod.toProto())
             .setConfigData(this.configData);
 
     Identity.CreateHolderRequest request = builder.build();
@@ -55,13 +55,14 @@ public class IdentityClient {
       throw new Exception(response.getError().getMessage());
     }
 
-    return new Holder(response.getDid(), didType, holderKey);
+    return new Holder(response.getDid(), didMethod, holderKey);
   }
 
   /**
    * Creates a new issuer on the Bloock Identity service.
    * @param issuerKey
    * @param publishInterval
+   * @param didMethod
    * @param name
    * @param description
    * @param image
@@ -71,28 +72,7 @@ public class IdentityClient {
   public Issuer createIssuer(
       Key issuerKey,
       PublishIntervalParams publishInterval,
-      String name,
-      String description,
-      String image)
-      throws Exception {
-    return createIssuer(issuerKey, publishInterval, new DidType(), name, description, image);
-  }
-
-  /**
-   * Creates a new issuer on the Bloock Identity service.
-   * @param issuerKey
-   * @param publishInterval
-   * @param didType
-   * @param name
-   * @param description
-   * @param image
-   * @return
-   * @throws Exception
-   */
-  public Issuer createIssuer(
-      Key issuerKey,
-      PublishIntervalParams publishInterval,
-      DidType didType,
+      DidMethod didMethod,
       String name,
       String description,
       String image)
@@ -100,7 +80,7 @@ public class IdentityClient {
     Identity.CreateIssuerRequest.Builder builder =
         Identity.CreateIssuerRequest.newBuilder()
             .setKey(issuerKey.toProto())
-            .setDidType(didType.toProto())
+            .setDidMethod(didMethod.toProto())
             .setPublishInterval(publishInterval.toProto())
             .setConfigData(this.configData);
 
@@ -124,31 +104,21 @@ public class IdentityClient {
       throw new Exception(response.getError().getMessage());
     }
 
-    return new Issuer(response.getDid(), didType, issuerKey);
+    return new Issuer(response.getDid(), didMethod, issuerKey);
   }
 
   /**
-   * Gets the issuer based on the issuer key and DID type.
+   * Gets the issuer based on the issuer key and DID method.
    * @param issuerKey
+   * @param didMethod
    * @return
    * @throws Exception
    */
-  public Issuer importIssuer(Key issuerKey) throws Exception {
-    return importIssuer(issuerKey, new DidType());
-  }
-
-  /**
-   * Gets the issuer based on the issuer key and DID type.
-   * @param issuerKey
-   * @param didType
-   * @return
-   * @throws Exception
-   */
-  public Issuer importIssuer(Key issuerKey, DidType didType) throws Exception {
+  public Issuer importIssuer(Key issuerKey, DidMethod didMethod) throws Exception {
     Identity.ImportIssuerRequest request =
         Identity.ImportIssuerRequest.newBuilder()
             .setKey(issuerKey.toProto())
-            .setDidType(didType.toProto())
+            .setDidMethod(didMethod.toProto())
             .setConfigData(this.configData)
             .build();
 
@@ -158,7 +128,7 @@ public class IdentityClient {
       throw new Exception(response.getError().getMessage());
     }
 
-    return new Issuer(response.getDid(), didType, issuerKey);
+    return new Issuer(response.getDid(), didMethod, issuerKey);
   }
 
   /**

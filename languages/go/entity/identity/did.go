@@ -2,14 +2,14 @@ package identity
 
 // Did represents a DID.
 type Did struct {
-	Did     string
-	DidType DidType
+	Did       string
+	DidMethod DidMethod
 }
 
 // NewDid returns a new instance of Did for the given parameters.
-func NewDid(did string, didType DidType) Did {
+func NewDid(did string, didMethod DidMethod) Did {
 	return Did{
-		Did: did,
-		DidType: didType,
+		Did:       did,
+		DidMethod: didMethod,
 	}
 }

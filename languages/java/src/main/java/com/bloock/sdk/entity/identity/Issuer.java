@@ -15,8 +15,8 @@ public class Issuer {
      * @param didType
      * @param key
      */
-    public Issuer(String did, DidType didType, Key key) {
-        this.did = new Did(did, didType);
+    public Issuer(String did, DidMethod didMethod, Key key) {
+        this.did = new Did(did, didMethod);
         this.key = key;
     }
 

@@ -2,7 +2,7 @@ from bloock._bridge import bridge
 from bloock._config.config import Config
 from typing import Optional
 from bloock._bridge.proto.shared_pb2 import Error
-from bloock.entity.identity.did_type import DidType
+from bloock.entity.identity.did_method import DidMethod
 from bloock._bridge.proto.identity_pb2 import CreateHolderRequest, CreateIssuerRequest, GetSchemaRequest, \
     ForcePublishIssuerStateRequest, CreateVerificationRequest, WaitVerificationRequest, GetVerificationStatusRequest, \
     ImportIssuerRequest, GetCredentialRequest, GetCredentialOfferRequest
@@ -36,10 +36,10 @@ class IdentityClient:
             config_data = Config.default()
         self.config_data = config_data
 
-    def create_holder(self, holder_key: Key, did_type: Optional[DidType] = None) -> Holder:
+    def create_holder(self, holder_key: Key, did_method: DidMethod) -> Holder:
         """
         Creates a new holder identity.
-        :type did_type: object
+        :type did_method: object
         :type holder_key: object
         :rtype: object
         """
@@ -47,21 +47,21 @@ class IdentityClient:
             CreateHolderRequest(
                 config_data=self.config_data,
                 key=holder_key.to_proto(),
-                did_type=did_type.to_proto() if did_type is not None else None,
+                did_method=did_method.to_proto(),
             )
         )
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Holder(res.did, did_type, holder_key)
+        return Holder(res.did, did_method, holder_key)
 
-    def create_issuer(self, issuer_key: Key, publish_interval: PublishIntervalParams, did_type: Optional[DidType] = None, name: str = None, description: str = None, image: str = None) -> Issuer:
+    def create_issuer(self, issuer_key: Key, publish_interval: PublishIntervalParams, did_method: DidMethod, name: str = None, description: str = None, image: str = None) -> Issuer:
         """
         Creates a new issuer on the Bloock Identity service.
         :type image: object
         :type description: object
         :type name: object
-        :type did_type: object
+        :type did_method: object
         :type publish_interval: object
         :type issuer_key: object
         :rtype: object
@@ -70,7 +70,7 @@ class IdentityClient:
             CreateIssuerRequest(
                 config_data=self.config_data,
                 key=issuer_key.to_proto(),
-                did_type=did_type.to_proto() if did_type is not None else None,
+                did_method=did_method.to_proto(),
                 name=name if name is not None else None,
                 description=description if description is not None else None,
                 image=image if image is not None else None,
@@ -80,12 +80,12 @@ class IdentityClient:
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Issuer(res.did, did_type, issuer_key)
+        return Issuer(res.did, did_method, issuer_key)
 
-    def import_issuer(self, issuer_key: Key, did_type: Optional[DidType] = None) -> Issuer:
+    def import_issuer(self, issuer_key: Key, did_method: DidMethod) -> Issuer:
         """
-        Retrieves the issuer based on the issuer key and DID type.
-        :type did_type: object
+        Retrieves the issuer based on the issuer key and DID method.
+        :type did_method: object
         :type issuer_key: object
         :rtype: object
         """
@@ -93,13 +93,13 @@ class IdentityClient:
             ImportIssuerRequest(
                 config_data=self.config_data,
                 key=issuer_key.to_proto(),
-                did_type=did_type.to_proto() if did_type is not None else None,
+                did_method=did_method.to_proto(),
             )
         )
 
         if res.error != Error():
             raise Exception(res.error.message)
-        return Issuer(res.did, did_type, issuer_key)
+        return Issuer(res.did, did_method, issuer_key)
 
     def build_schema(self, display_name: str, schema_type: str, version: str, description: str) -> SchemaBuilder:
         """

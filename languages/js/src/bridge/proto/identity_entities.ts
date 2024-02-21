@@ -2,130 +2,34 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 
-export enum Method {
-  IDEN3 = 0,
-  POLYGON_ID = 1,
+export enum DidMethod {
+  POLYGON_ID = 0,
+  POLYGON_ID_TEST = 1,
   UNRECOGNIZED = -1,
 }
 
-export function methodFromJSON(object: any): Method {
+export function didMethodFromJSON(object: any): DidMethod {
   switch (object) {
     case 0:
-    case "IDEN3":
-      return Method.IDEN3;
-    case 1:
     case "POLYGON_ID":
-      return Method.POLYGON_ID;
+      return DidMethod.POLYGON_ID;
+    case 1:
+    case "POLYGON_ID_TEST":
+      return DidMethod.POLYGON_ID_TEST;
     case -1:
     case "UNRECOGNIZED":
     default:
-      return Method.UNRECOGNIZED;
+      return DidMethod.UNRECOGNIZED;
   }
 }
 
-export function methodToJSON(object: Method): string {
+export function didMethodToJSON(object: DidMethod): string {
   switch (object) {
-    case Method.IDEN3:
-      return "IDEN3";
-    case Method.POLYGON_ID:
+    case DidMethod.POLYGON_ID:
       return "POLYGON_ID";
-    case Method.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
-export enum Blockchain {
-  ETHEREUM = 0,
-  POLYGON = 1,
-  UNKNOWN_CHAIN = 2,
-  NO_CHAIN = 3,
-  UNRECOGNIZED = -1,
-}
-
-export function blockchainFromJSON(object: any): Blockchain {
-  switch (object) {
-    case 0:
-    case "ETHEREUM":
-      return Blockchain.ETHEREUM;
-    case 1:
-    case "POLYGON":
-      return Blockchain.POLYGON;
-    case 2:
-    case "UNKNOWN_CHAIN":
-      return Blockchain.UNKNOWN_CHAIN;
-    case 3:
-    case "NO_CHAIN":
-      return Blockchain.NO_CHAIN;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return Blockchain.UNRECOGNIZED;
-  }
-}
-
-export function blockchainToJSON(object: Blockchain): string {
-  switch (object) {
-    case Blockchain.ETHEREUM:
-      return "ETHEREUM";
-    case Blockchain.POLYGON:
-      return "POLYGON";
-    case Blockchain.UNKNOWN_CHAIN:
-      return "UNKNOWN_CHAIN";
-    case Blockchain.NO_CHAIN:
-      return "NO_CHAIN";
-    case Blockchain.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
-export enum NetworkId {
-  MAIN = 0,
-  MUMBAI = 1,
-  GOERLI = 2,
-  UNKNOWN_NETWORK = 3,
-  NO_NETWORK = 4,
-  UNRECOGNIZED = -1,
-}
-
-export function networkIdFromJSON(object: any): NetworkId {
-  switch (object) {
-    case 0:
-    case "MAIN":
-      return NetworkId.MAIN;
-    case 1:
-    case "MUMBAI":
-      return NetworkId.MUMBAI;
-    case 2:
-    case "GOERLI":
-      return NetworkId.GOERLI;
-    case 3:
-    case "UNKNOWN_NETWORK":
-      return NetworkId.UNKNOWN_NETWORK;
-    case 4:
-    case "NO_NETWORK":
-      return NetworkId.NO_NETWORK;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return NetworkId.UNRECOGNIZED;
-  }
-}
-
-export function networkIdToJSON(object: NetworkId): string {
-  switch (object) {
-    case NetworkId.MAIN:
-      return "MAIN";
-    case NetworkId.MUMBAI:
-      return "MUMBAI";
-    case NetworkId.GOERLI:
-      return "GOERLI";
-    case NetworkId.UNKNOWN_NETWORK:
-      return "UNKNOWN_NETWORK";
-    case NetworkId.NO_NETWORK:
-      return "NO_NETWORK";
-    case NetworkId.UNRECOGNIZED:
+    case DidMethod.POLYGON_ID_TEST:
+      return "POLYGON_ID_TEST";
+    case DidMethod.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
   }
@@ -319,12 +223,6 @@ export interface CredentialRevocation {
 export interface VerificationReceipt {
   verificationRequest: string;
   sessionId: number;
-}
-
-export interface DidType {
-  method: Method;
-  blockchain: Blockchain;
-  networkId: NetworkId;
 }
 
 export interface SignatureJWS {
@@ -2623,95 +2521,6 @@ export const VerificationReceipt = {
     const message = createBaseVerificationReceipt();
     message.verificationRequest = object.verificationRequest ?? "";
     message.sessionId = object.sessionId ?? 0;
-    return message;
-  },
-};
-
-function createBaseDidType(): DidType {
-  return { method: 0, blockchain: 0, networkId: 0 };
-}
-
-export const DidType = {
-  encode(message: DidType, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.method !== 0) {
-      writer.uint32(8).int32(message.method);
-    }
-    if (message.blockchain !== 0) {
-      writer.uint32(16).int32(message.blockchain);
-    }
-    if (message.networkId !== 0) {
-      writer.uint32(24).int32(message.networkId);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): DidType {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDidType();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.method = reader.int32() as any;
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.blockchain = reader.int32() as any;
-          continue;
-        case 3:
-          if (tag !== 24) {
-            break;
-          }
-
-          message.networkId = reader.int32() as any;
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DidType {
-    return {
-      method: isSet(object.method) ? methodFromJSON(object.method) : 0,
-      blockchain: isSet(object.blockchain) ? blockchainFromJSON(object.blockchain) : 0,
-      networkId: isSet(object.networkId) ? networkIdFromJSON(object.networkId) : 0,
-    };
-  },
-
-  toJSON(message: DidType): unknown {
-    const obj: any = {};
-    if (message.method !== 0) {
-      obj.method = methodToJSON(message.method);
-    }
-    if (message.blockchain !== 0) {
-      obj.blockchain = blockchainToJSON(message.blockchain);
-    }
-    if (message.networkId !== 0) {
-      obj.networkId = networkIdToJSON(message.networkId);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DidType>, I>>(base?: I): DidType {
-    return DidType.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DidType>, I>>(object: I): DidType {
-    const message = createBaseDidType();
-    message.method = object.method ?? 0;
-    message.blockchain = object.blockchain ?? 0;
-    message.networkId = object.networkId ?? 0;
     return message;
   },
 };
