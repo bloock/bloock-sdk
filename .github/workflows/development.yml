@@ -90,7 +90,7 @@ jobs:
     needs: [build_binaries]
     uses: ./.github/workflows/build_python.yml
     with:
-      os: '[{"platform": "linux", "os": "ubuntu"}]'
+      os: '[{"platform": "linux", "os": "ubuntu-latest"}]'
 
   test_python:
     needs: [build_python]
