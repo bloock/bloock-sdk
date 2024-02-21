@@ -6,7 +6,7 @@ on:
       os:
         required: false
         type: string
-        default: '[{"platform": "linux", "os": "ubuntu-latest"}, {"platform": "macos", "os": "macos-latest"}, {"platform": "windows", "os": "windows-latest"}]'
+        default: '[{"platform": "linux", "os": "ubuntu-latest", "archs": "x86_64,aarch64"}, {"platform": "macos", "os": "macos-latest", "archs": "x86_64,arm64"}, {"platform": "windows", "os": "windows-latest", "archs": "AMD64"}]'
 
 jobs:
   build:
@@ -48,16 +48,12 @@ jobs:
       - id: set-matrix
         run: |
           MATRIX=$(
-              cibuildwheel --print-build-identifiers --platform ${{ matrix.platforms.platform }} \
+              cibuildwheel --print-build-identifiers --platform ${{ matrix.platforms.platform }} --archs ${{ matrix.platforms.archs }} \
               | jq -nRc '{"only": inputs, "os": "${{ matrix.platforms.os }}"}' \
               | jq -sc
           )
           echo "${{ matrix.platforms.platform }}=$MATRIX" >> $GITHUB_OUTPUT
         working-directory: languages/python
-    env:
-      CIBW_ARCHS_LINUX: x86_64 aarch64
-      CIBW_ARCHS_MACOS: x86_64 arm64
-      CIBW_ARCHS_WINDOWS: AMD64
   concat-wheels:
     name: Concat wheels
     runs-on: ubuntu-latest
