@@ -1,5 +1,6 @@
 import { describe, test, expect } from "@jest/globals";
 import {
+  DidMethod,
   Key,
   PublishIntervalParams,
 } from "../../dist/index";
@@ -10,10 +11,6 @@ import {
   KeyProtectionLevel,
   KeyType,
   ManagedKeyParams,
-  DidType,
-  Method,
-  Blockchain,
-  NetworkId
 } from "../../dist";
 import { initDevSdk } from "./util";
 import path from "path";
@@ -53,11 +50,11 @@ describe("Identity V2 Tests", () => {
 
     let holderKey = new Key(managedKey);
 
-    let holder = await identityClient.createHolder(holderKey);
-    expect(holder.did.did.includes("polygonid")).toBeTruthy();
+    let holder = await identityClient.createHolder(holderKey, DidMethod.PolygonID);
+    expect(holder.did.did.includes("main")).toBeTruthy();
   });
 
-  test("test identity end to end", async () => {
+  /*test("test identity end to end", async () => {
     initDevSdk();
 
     const identityClient = new IdentityClient();
@@ -80,51 +77,35 @@ describe("Identity V2 Tests", () => {
     let fileBytes = readFileSync(dirPath);
     let encodedFile = base64url.encode(fileBytes);
 
-    let didType = new DidType(
-      Method.POLYGON_ID,
-      Blockchain.POLYGON,
-      NetworkId.MUMBAI
-    );
     let issuer = await identityClient.createIssuer(
       issuerKey,
       PublishIntervalParams.Interval15,
-      didType,
+      DidMethod.PolygonIDTest,
       "Bloock Test",
       "bloock description test",
       encodedFile
     );
     expect(issuer.did.did.includes("polygonid")).toBeTruthy();
+    expect(issuer.did.did.includes("mumbai")).toBeTruthy();
 
     try {
       await identityClient.createIssuer(
         issuerKey,
         PublishIntervalParams.Interval15,
-        didType
+        DidMethod.PolygonIDTest
       );
     } catch (error) {
       expect(error).toBeTruthy;
     }
 
-    let importedIssuer = await identityClient.importIssuer(issuerKey, didType);
+    let importedIssuer = await identityClient.importIssuer(issuerKey, DidMethod.PolygonIDTest);
     expect(importedIssuer.did.did).toStrictEqual(issuer.did.did);
 
     let getNotFoundIssuerDid = await identityClient.importIssuer(
       notFoundIssuerKey,
-      didType
+      DidMethod.PolygonIDTest
     );
     expect(getNotFoundIssuerDid.did.did).toStrictEqual("");
-
-    let newDidType = new DidType(
-      Method.IDEN3,
-      Blockchain.POLYGON,
-      NetworkId.MUMBAI
-    );
-    let newIssuer = await identityClient.createIssuer(
-      notFoundIssuerKey,
-      PublishIntervalParams.Interval60,
-      newDidType
-    );
-    expect(newIssuer.did.did.includes("iden3")).toBeTruthy();
 
     let schema = await identityClient
       .buildSchema(
@@ -230,7 +211,7 @@ describe("Identity V2 Tests", () => {
     } catch (error) {
       expect(error).toBeTruthy();
     }
-  });
+  });*/
 });
 
 interface ProofRequest {

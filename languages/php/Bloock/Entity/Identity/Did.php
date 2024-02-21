@@ -8,17 +8,17 @@ namespace Bloock\Entity\Identity;
 class Did
 {
     private string $did;
-    private DidType $didType;
+    private DidMethod $didMethod;
 
     /**
      * Returns a new instance of Did for the given parameters.
      * @param string $did
-     * @param DidType $didType
+     * @param DidMethod $didMethod
      */
-    public function __construct(string $did, DidType $didType)
+    public function __construct(string $did, DidMethod $didMethod)
     {
         $this->did = $did;
-        $this->didType = $didType;
+        $this->didMethod = $didMethod;
     }
 
      /**
@@ -31,11 +31,11 @@ class Did
     }
 
     /**
-     * Gets the did type.
-     * @return DidType
+     * Gets the did method.
+     * @return DidMethod
      */
-    public function getDidType(): DidType
+    public function getDidMethod(): DidMethod
     {
-        return $this->didType;
+        return $this->didMethod;
     }
 }

@@ -11,9 +11,9 @@ type Holder struct {
 }
 
 // NewHolder returns a new instance of Holder identity for the given parameters.
-func NewHolder(did string, didType DidType, key key.Key) Holder {
+func NewHolder(did string, didMethod DidMethod, key key.Key) Holder {
 	return Holder{
-		Did: NewDid(did, didType),
+		Did: NewDid(did, didMethod),
 		Key: key,
 	}
 }

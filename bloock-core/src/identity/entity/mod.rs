@@ -1,5 +1,5 @@
 pub mod credential;
-pub mod did_metadata;
+pub mod did_method;
 pub mod dto;
 pub mod revocation_result;
 pub mod schema;

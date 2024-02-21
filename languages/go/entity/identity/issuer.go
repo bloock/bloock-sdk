@@ -11,9 +11,9 @@ type Issuer struct {
 }
 
 // NewIssuer returns a new instance of Issuer identity for the given parameters.
-func NewIssuer(did string, didType DidType, key key.Key) Issuer {
+func NewIssuer(did string, didMethod DidMethod, key key.Key) Issuer {
 	return Issuer{
-		Did: NewDid(did, didType),
+		Did: NewDid(did, didMethod),
 		Key: key,
 	}
 }

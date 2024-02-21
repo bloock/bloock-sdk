@@ -26,7 +26,7 @@ import {
 import { Credential } from "../entity/identity/credential";
 import { CredentialBuilder } from "../entity/identity/credential_builder";
 import { CredentialProof } from "../entity/identity/credential_proof";
-import { DidType } from "../entity/identity/did_type";
+import { DidMethod } from "../entity/identity/did_method";
 import { SchemaBuilder } from "../entity/identity/schema_builder";
 import { Key } from "../entity";
 
@@ -49,16 +49,16 @@ export class IdentityClient {
   /**
    * Creates a new holder identity.
    * @param holderKey 
-   * @param didType 
+   * @param didMethod 
    * @returns 
    */
   public createHolder(
     holderKey: Key,
-    didType?: DidType
+    didMethod: DidMethod
   ): Promise<Holder> {
     const request = CreateHolderRequest.fromPartial({
       key: holderKey.toProto(),
-      didType: didType?.toProto(),
+      didMethod: DidMethod.toProto(didMethod),
       configData: this.configData
     });
 
@@ -69,7 +69,7 @@ export class IdentityClient {
         if (res.error) {
           throw res.error;
         }
-        return new Holder(res.did, holderKey, didType);
+        return new Holder(res.did, holderKey, didMethod);
       });
   }
 
@@ -77,7 +77,7 @@ export class IdentityClient {
    * Creates a new issuer on the Bloock Identity service.
    * @param issuerKey 
    * @param publishInterval 
-   * @param didType 
+   * @param didMethod 
    * @param name 
    * @param description 
    * @param image 
@@ -86,14 +86,14 @@ export class IdentityClient {
   public createIssuer(
     issuerKey: Key,
     publishInterval: PublishIntervalParams,
-    didType?: DidType,
+    didMethod: DidMethod,
     name?: string,
     description?: string,
     image?: string
   ): Promise<Issuer> {
     const request = CreateIssuerRequest.fromPartial({
       key: issuerKey.toProto(),
-      didType: didType?.toProto(),
+      didMethod: DidMethod.toProto(didMethod),
       name: name,
       description: description,
       image: image,
@@ -108,23 +108,23 @@ export class IdentityClient {
         if (res.error) {
           throw res.error;
         }
-        return new Issuer(res.did, issuerKey, didType);
+        return new Issuer(res.did, issuerKey, didMethod);
       });
   }
 
   /**
-   * Gets the issuer based on the issuer key and DID type.
+   * Gets the issuer based on the issuer key and DID method.
    * @param issuerKey 
-   * @param didType 
+   * @param didMethod 
    * @returns 
    */
   public importIssuer(
     issuerKey: Key,
-    didType?: DidType
+    didMethod: DidMethod
   ): Promise<Issuer> {
     const request = ImportIssuerRequest.fromPartial({
       key: issuerKey.toProto(),
-      didType: didType?.toProto(),
+      didMethod: DidMethod.toProto(didMethod),
       configData: this.configData
     });
 
@@ -135,7 +135,7 @@ export class IdentityClient {
         if (res.error) {
           throw res.error;
         }
-        return new Issuer(res.did, issuerKey, didType);
+        return new Issuer(res.did, issuerKey, didMethod);
       });
   }
 

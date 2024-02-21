@@ -116,13 +116,13 @@ message BuildSchemaRequest {
 message CreateHolderRequest {
     Key key = 1;
     ConfigData config_data = 2;
-    optional DidType did_type = 3;
+    DidMethod did_method = 3;
 }
 
 message CreateIssuerRequest {
     Key key = 1;
     ConfigData config_data = 2;
-    optional DidType did_type = 3;
+    DidMethod did_method = 3;
     optional string name = 4;
     optional string description = 5;
     optional string image = 6;
@@ -132,7 +132,7 @@ message CreateIssuerRequest {
 message ImportIssuerRequest {
     Key key = 1;
     ConfigData config_data = 2;
-    optional DidType did_type = 3;
+    DidMethod did_method = 3;
 }
 
 message ForcePublishIssuerStateRequest {

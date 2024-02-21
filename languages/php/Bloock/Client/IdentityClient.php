@@ -14,6 +14,7 @@ use Bloock\Entity\Identity\Credential;
 use Bloock\Entity\Identity\Schema;
 use Bloock\Entity\Identity\CredentialBuilder;
 use Bloock\Entity\Identity\CredentialProof;
+use Bloock\Entity\Identity\DidMethod;
 use Bloock\Entity\Identity\Issuer;
 use Bloock\Entity\Identity\Holder;
 use Bloock\Entity\Identity\IssuerStateReceipt;
@@ -56,21 +57,16 @@ class IdentityClient
     /**
      * Creates a new holder identity.
      * @param Key $holderKey
-     * @param DidType|null $didType
+     * @param string $didMethod
      * @return Holder
      * @throws Exception
      */
-    public function createHolder(Key $holderKey, DidType $didType = null): Holder
+    public function createHolder(Key $holderKey, string $didMethod): Holder
     {
-        $newDidType = new DidType();
         $req = new CreateHolderRequest();
         $req->setKey($holderKey->toProto());
         $req->setConfigData($this->config);
-
-        if ($didType != null) {
-            $req->setDidType($didType->toProto());
-            $newDidType = $didType;
-        }
+        $req->setDidMethod(DidMethod::toProto($didMethod));
 
         $res = $this->bridge->identity->CreateHolder($req);
 
@@ -78,32 +74,27 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return new Holder($res->getDid(), $newDidType, $holderKey);
+        return new Holder($res->getDid(), new DidMethod($didMethod), $holderKey);
     }
 
     /**
      * Creates a new issuer on the Bloock Identity service.
      * @param Key $issuerKey
      * @param int $publishInterval
-     * @param DidType|null $didType
+     * @param string $didMethod
      * @param string|null $name
      * @param string|null $description
      * @param string|null $image
      * @return Issuer
      * @throws Exception
      */
-    public function createIssuer(Key $issuerKey, int $publishInterval, DidType $didType = null, string $name = null, string $description = null, string $image = null): Issuer
+    public function createIssuer(Key $issuerKey, int $publishInterval, string $didMethod, string $name = null, string $description = null, string $image = null): Issuer
     {
-        $newDidType = new DidType();
         $req = new CreateIssuerRequest();
         $req->setKey($issuerKey->toProto());
         $req->setPublishInterval(PublishIntervalParams::toProto($publishInterval));
         $req->setConfigData($this->config);
-
-        if ($didType != null) {
-            $req->setDidType($didType->toProto());
-            $newDidType = $didType;
-        }
+        $req->setDidMethod(DidMethod::toProto($didMethod));
 
         if ($name != null) {
             $req->setName($name);
@@ -123,26 +114,22 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return new Issuer($res->getDid(), $newDidType, $issuerKey);
+        return new Issuer($res->getDid(), new DidMethod($didMethod), $issuerKey);
     }
 
     /**
-     * Gets the issuer based on the issuer key and DID type.
+     * Gets the issuer based on the issuer key and DID method.
      * @param Key $issuerKey
-     * @param DidType|null $didType
+     * @param string $didMethod
      * @return Issuer
      * @throws Exception
      */
-    public function importIssuer(Key $issuerKey, DidType $didType = null): Issuer
+    public function importIssuer(Key $issuerKey, string $didMethod): Issuer
     {
-        $newDidType = new DidType();
         $req = new ImportIssuerRequest();
         $req->setKey($issuerKey->toProto());
         $req->setConfigData($this->config);
-        if ($didType != null) {
-            $req->setDidType($didType->toProto());
-            $newDidType = $didType;
-        }
+        $req->setDidMethod(DidMethod::toProto($didMethod));
 
         $res = $this->bridge->identity->ImportIssuer($req);
 
@@ -150,7 +137,7 @@ class IdentityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return new Issuer($res->getDid(), $newDidType, $issuerKey);
+        return new Issuer($res->getDid(), new DidMethod($didMethod), $issuerKey);
     }
 
     /**

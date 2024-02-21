@@ -1,19 +1,19 @@
-import { DidType } from "./did_type";
+import { DidMethod } from "./did_method";
 
 /**
  * Represents parameters used for generating DIDs.
  */
 export class Did {
     did: string;
-    didType?: DidType;
+    didMethod: DidMethod;
 
     /**
      * Constructs a Did object with the specified parameters.
      * @param did 
      * @param didType 
      */
-    constructor(did: string, didType?: DidType) {
+    constructor(did: string, didMethod: DidMethod) {
         this.did = did;
-        this.didType = didType;
+        this.didMethod = didMethod;
     }
 }

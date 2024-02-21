@@ -18,60 +18,20 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-class _Method:
+class _DidMethod:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _MethodEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Method.ValueType], builtins.type):
+class _DidMethodEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_DidMethod.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    IDEN3: _Method.ValueType  # 0
-    POLYGON_ID: _Method.ValueType  # 1
+    POLYGON_ID: _DidMethod.ValueType  # 0
+    POLYGON_ID_TEST: _DidMethod.ValueType  # 1
 
-class Method(_Method, metaclass=_MethodEnumTypeWrapper): ...
+class DidMethod(_DidMethod, metaclass=_DidMethodEnumTypeWrapper): ...
 
-IDEN3: Method.ValueType  # 0
-POLYGON_ID: Method.ValueType  # 1
-global___Method = Method
-
-class _Blockchain:
-    ValueType = typing.NewType("ValueType", builtins.int)
-    V: typing_extensions.TypeAlias = ValueType
-
-class _BlockchainEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Blockchain.ValueType], builtins.type):
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    ETHEREUM: _Blockchain.ValueType  # 0
-    POLYGON: _Blockchain.ValueType  # 1
-    UNKNOWN_CHAIN: _Blockchain.ValueType  # 2
-    NO_CHAIN: _Blockchain.ValueType  # 3
-
-class Blockchain(_Blockchain, metaclass=_BlockchainEnumTypeWrapper): ...
-
-ETHEREUM: Blockchain.ValueType  # 0
-POLYGON: Blockchain.ValueType  # 1
-UNKNOWN_CHAIN: Blockchain.ValueType  # 2
-NO_CHAIN: Blockchain.ValueType  # 3
-global___Blockchain = Blockchain
-
-class _NetworkId:
-    ValueType = typing.NewType("ValueType", builtins.int)
-    V: typing_extensions.TypeAlias = ValueType
-
-class _NetworkIdEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_NetworkId.ValueType], builtins.type):
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    MAIN: _NetworkId.ValueType  # 0
-    MUMBAI: _NetworkId.ValueType  # 1
-    GOERLI: _NetworkId.ValueType  # 2
-    UNKNOWN_NETWORK: _NetworkId.ValueType  # 3
-    NO_NETWORK: _NetworkId.ValueType  # 4
-
-class NetworkId(_NetworkId, metaclass=_NetworkIdEnumTypeWrapper): ...
-
-MAIN: NetworkId.ValueType  # 0
-MUMBAI: NetworkId.ValueType  # 1
-GOERLI: NetworkId.ValueType  # 2
-UNKNOWN_NETWORK: NetworkId.ValueType  # 3
-NO_NETWORK: NetworkId.ValueType  # 4
-global___NetworkId = NetworkId
+POLYGON_ID: DidMethod.ValueType  # 0
+POLYGON_ID_TEST: DidMethod.ValueType  # 1
+global___DidMethod = DidMethod
 
 class _PublishInterval:
     ValueType = typing.NewType("ValueType", builtins.int)
@@ -627,27 +587,6 @@ class VerificationReceipt(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["session_id", b"session_id", "verification_request", b"verification_request"]) -> None: ...
 
 global___VerificationReceipt = VerificationReceipt
-
-@typing_extensions.final
-class DidType(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    METHOD_FIELD_NUMBER: builtins.int
-    BLOCKCHAIN_FIELD_NUMBER: builtins.int
-    NETWORK_ID_FIELD_NUMBER: builtins.int
-    method: global___Method.ValueType
-    blockchain: global___Blockchain.ValueType
-    network_id: global___NetworkId.ValueType
-    def __init__(
-        self,
-        *,
-        method: global___Method.ValueType = ...,
-        blockchain: global___Blockchain.ValueType = ...,
-        network_id: global___NetworkId.ValueType = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["blockchain", b"blockchain", "method", b"method", "network_id", b"network_id"]) -> None: ...
-
-global___DidType = DidType
 
 @typing_extensions.final
 class SignatureJWS(google.protobuf.message.Message):

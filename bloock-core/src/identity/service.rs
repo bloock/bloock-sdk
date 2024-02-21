@@ -2,7 +2,7 @@ use super::{
     entity::{
         create_credential_receipt::CreateCredentialReceipt,
         credential::Credential,
-        did_metadata::DidMetadata,
+        did_method::DidMethod,
         dto::{
             create_credential_api_managed_request::{
                 CreateCredentialApiManagedRequest, CredentialSubjectValue,
@@ -10,7 +10,7 @@ use super::{
             create_credential_api_managed_response::CreateCredentialApiManagedResponse,
             create_identity_request::CreateIdentityRequest,
             create_identity_response::CreateIdentityResponse,
-            create_issuer_request::{CreateIssuerRequest, DidMetadata as DidMetadataRequest},
+            create_issuer_request::CreateIssuerRequest,
             create_issuer_response::CreateIssuerResponse,
             create_schema_request::CreateSchemaRequest,
             create_schema_response::CreateSchemaResponse,
@@ -64,14 +64,10 @@ impl<H: Client> IdentityService<H> {
     pub async fn create_identity(
         &self,
         public_key: String,
-        did_metadata: DidMetadata,
+        did_method: DidMethod,
     ) -> BloockResult<CreateIdentityResponse> {
         let req = CreateIdentityRequest {
-            did_metadata: DidMetadataRequest {
-                method: did_metadata.method.get_method_type(),
-                blockchain: did_metadata.blockchain.get_bloockchain_type(),
-                network: did_metadata.network.get_network_id_type(),
-            },
+            did_method: did_method.get_did_method(),
             bn_128_public_key: public_key,
         };
 
@@ -94,7 +90,7 @@ impl<H: Client> IdentityService<H> {
     pub async fn create_issuer(
         &self,
         public_key: String,
-        did_metadata: DidMetadata,
+        did_method: DidMethod,
         name: Option<String>,
         description: Option<String>,
         image: Option<String>,
@@ -102,11 +98,7 @@ impl<H: Client> IdentityService<H> {
         key_reference: String,
     ) -> BloockResult<CreateIssuerResponse> {
         let req = CreateIssuerRequest {
-            did_metadata: DidMetadataRequest {
-                method: did_metadata.method.get_method_type(),
-                blockchain: did_metadata.blockchain.get_bloockchain_type(),
-                network: did_metadata.network.get_network_id_type(),
-            },
+            did_method: did_method.get_did_method(),
             bn_128_public_key: public_key,
             name,
             description,
@@ -134,18 +126,16 @@ impl<H: Client> IdentityService<H> {
     pub async fn import_issuer(
         &self,
         public_key: String,
-        did_metadata: DidMetadata,
+        did_method: DidMethod,
     ) -> BloockResult<String> {
         let res: GetIssuerByKeyResponse = self
             .http
             .get_json(
                 format!(
-                    "{}/identityV2/v1/issuers/key/{}?method={}&blockchain={}&network={}",
+                    "{}/identityV2/v1/issuers/key/{}?did_method={}",
                     self.config_service.get_api_base_url(),
                     public_key,
-                    did_metadata.method.get_method_type(),
-                    did_metadata.blockchain.get_bloockchain_type(),
-                    did_metadata.network.get_network_id_type()
+                    did_method.get_did_method(),
                 ),
                 None,
             )

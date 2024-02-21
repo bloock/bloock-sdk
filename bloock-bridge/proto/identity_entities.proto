@@ -156,30 +156,9 @@ message VerificationReceipt {
     int64 session_id = 2;
 }
 
-message DidType {
-    Method method = 1;
-    Blockchain blockchain = 2;
-    NetworkId network_id = 3;
-}
-
-enum Method {
-    IDEN3 = 0;
-    POLYGON_ID = 1;
-}
-
-enum Blockchain {
-    ETHEREUM = 0;
-    POLYGON = 1;
-    UNKNOWN_CHAIN = 2;
-    NO_CHAIN = 3;
-}
-
-enum NetworkId {
-    MAIN = 0;
-    MUMBAI = 1;
-    GOERLI = 2;
-    UNKNOWN_NETWORK = 3;
-    NO_NETWORK = 4;
+enum DidMethod {
+    POLYGON_ID = 0;
+    POLYGON_ID_TEST = 1;
 }
 
 enum PublishInterval {

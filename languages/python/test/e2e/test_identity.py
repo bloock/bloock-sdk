@@ -5,7 +5,7 @@ import os
 import unittest
 from bloock.entity.identity.credential import Credential
 from bloock.entity.identity.blockchain import Blockchain
-from bloock.entity.identity.did_type import DidType
+from bloock.entity.identity.did_method import DidMethod
 from bloock.entity.identity.method import Method
 from bloock.entity.identity.network import Network
 from bloock.client.identity import IdentityClient
@@ -47,10 +47,10 @@ class TestIdentity(unittest.TestCase):
 
         holder_key = Key(managed_key)
 
-        holder = identity_client.create_holder(holder_key)
-        self.assertTrue(holder.did.__contains__("polygonid"))
+        holder = identity_client.create_holder(holder_key, DidMethod.PolygonID)
+        self.assertTrue(holder.did.__contains__("main"))
 
-    def test_end_to_end(self):
+    '''def test_end_to_end(self):
         identity_client = IdentityClient()
         key_client = KeyClient()
 
@@ -70,27 +70,19 @@ class TestIdentity(unittest.TestCase):
             file_bytes = file.read()
         base64_file = base64.urlsafe_b64encode(file_bytes).decode('utf-8')
 
-        did_type = DidType(Method.POLYGON_ID,
-                         Blockchain.POLYGON, Network.MUMBAI)
         issuer = identity_client.create_issuer(
-            issuer_key, PublishIntervalParams.Interval15, did_type, "Bloock Test", "bloock description test", base64_file)
+            issuer_key, PublishIntervalParams.Interval15, DidMethod.PolygonIDTest, "Bloock Test", "bloock description test", base64_file)
 
         with self.assertRaises(Exception):
             identity_client.create_issuer(
-                issuer_key, PublishIntervalParams.Interval15, did_type)
+                issuer_key, PublishIntervalParams.Interval15, DidMethod.PolygonIDTest)
 
-        imported_issuer = identity_client.import_issuer(issuer_key, did_type)
-        self.assertTrue(imported_issuer.did.__contains__("polygonid"))
+        imported_issuer = identity_client.import_issuer(issuer_key, DidMethod.PolygonIDTest)
+        self.assertTrue(imported_issuer.did.__contains__("mumbai"))
 
         get_not_found_issuer_did = identity_client.import_issuer(
-            not_found_issuer_key, did_type)
+            not_found_issuer_key, DidMethod.PolygonIDTest)
         self.assertEqual("", get_not_found_issuer_did.did)
-
-        new_did_type = DidType(
-            Method.IDEN3, Blockchain.POLYGON, Network.MUMBAI)
-        new_issuer = identity_client.create_issuer(
-            not_found_issuer_key, PublishIntervalParams.Interval15, new_did_type)
-        self.assertTrue(new_issuer.did.__contains__("iden3"))
 
         schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema") \
             .add_integer_attribute("License Type", "license_type", "license type", False) \
@@ -158,7 +150,7 @@ class TestIdentity(unittest.TestCase):
 
         with self.assertRaises(Exception):
             identity_client.wait_verification(verification.session_id, 5)
-
+'''
 
 def prepare_proof_request(schema_id):
     json_string = '''

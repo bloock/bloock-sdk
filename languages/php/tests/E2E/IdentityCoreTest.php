@@ -4,15 +4,12 @@ use Bloock\Bloock;
 use Bloock\Client\IdentityClient;
 use Bloock\Client\IdentityCoreClient;
 use Bloock\Client\KeyClient;
-use Bloock\Entity\Identity\DidType;
-use Bloock\Entity\Identity\Blockchain;
-use Bloock\Entity\Identity\Method;
+use Bloock\Entity\Identity\DidMethod;
 use Bloock\Entity\Identity\PublishIntervalParams;
 use Bloock\Entity\Key\Key;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
 use Bloock\Entity\Key\ManagedKeyParams;
-use Bloock\NetworkId;
 use PHPUnit\Framework\TestCase;
 
 final class IdentityV2Test extends TestCase
@@ -43,8 +40,7 @@ final class IdentityV2Test extends TestCase
 
         $issuerKey = new Key($managedKey);
 
-        $didType = new DidType(Method::POLYGON_ID, Blockchain::POLYGON, NetworkId::MUMBAI);
-        $issuer = $identityClient->createIssuer($issuerKey, PublishIntervalParams::Interval15, $didType, "SDK Issuer Test Core Client", "sdk issuer test core client");
+        $issuer = $identityClient->createIssuer($issuerKey, PublishIntervalParams::Interval15, DidMethod::PolygonIDTest, "SDK Issuer Test Core Client", "sdk issuer test core client");
         $this->assertStringContainsString("polygonid", $issuer->getDid()->getDid());
 
         $schema = $identityClient->buildSchema("Driving License", self::drivingLicenseSchemaType, "1.0", "driving license schema")

@@ -22,9 +22,9 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
      */
     protected $config_data = null;
     /**
-     * Generated from protobuf field <code>optional .bloock.DidType did_type = 3;</code>
+     * Generated from protobuf field <code>.bloock.DidMethod did_method = 3;</code>
      */
-    protected $did_type = null;
+    protected $did_method = 0;
     /**
      * Generated from protobuf field <code>optional string name = 4;</code>
      */
@@ -50,7 +50,7 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
      *
      *     @type \Bloock\Key $key
      *     @type \Bloock\ConfigData $config_data
-     *     @type \Bloock\DidType $did_type
+     *     @type int $did_method
      *     @type string $name
      *     @type string $description
      *     @type string $image
@@ -127,33 +127,23 @@ class CreateIssuerRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.DidType did_type = 3;</code>
-     * @return \Bloock\DidType|null
+     * Generated from protobuf field <code>.bloock.DidMethod did_method = 3;</code>
+     * @return int
      */
-    public function getDidType()
+    public function getDidMethod()
     {
-        return $this->did_type;
-    }
-
-    public function hasDidType()
-    {
-        return isset($this->did_type);
-    }
-
-    public function clearDidType()
-    {
-        unset($this->did_type);
+        return $this->did_method;
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.DidType did_type = 3;</code>
-     * @param \Bloock\DidType $var
+     * Generated from protobuf field <code>.bloock.DidMethod did_method = 3;</code>
+     * @param int $var
      * @return $this
      */
-    public function setDidType($var)
+    public function setDidMethod($var)
     {
-        GPBUtil::checkMessage($var, \Bloock\DidType::class);
-        $this->did_type = $var;
+        GPBUtil::checkEnum($var, \Bloock\DidMethod::class);
+        $this->did_method = $var;
 
         return $this;
     }

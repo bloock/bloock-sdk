@@ -15,8 +15,8 @@ public class Holder {
      * @param didType
      * @param key
      */
-    public Holder(String did, DidType didType, Key key) {
-        this.did = new Did(did, didType);
+    public Holder(String did, DidMethod didMethod, Key key) {
+        this.did = new Did(did, didMethod);
         this.key = key;
     }
 
