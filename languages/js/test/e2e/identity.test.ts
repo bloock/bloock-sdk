@@ -210,7 +210,7 @@ describe("Identity V2 Tests", () => {
   });*/
 });
 
-interface ProofRequest {
+/*interface ProofRequest {
   circuitId: string;
   id: number;
   query: {
@@ -223,7 +223,7 @@ interface ProofRequest {
   };
 }
 
-/*function prepareProofRequest(schemaID: string): string {
+function prepareProofRequest(schemaID: string): string {
   const jsonString = `{
       "circuitId": "credentialAtomicQuerySigV2",
       "id": 1704207344,
