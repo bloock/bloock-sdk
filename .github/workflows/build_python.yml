@@ -67,12 +67,9 @@ jobs:
     steps:
       - id: matrix
         run: |
-          MATRIX=$( {
-              echo '${{ needs.prepare-wheels.outputs.linux }}' \
-              && echo '${{ needs.prepare-wheels.outputs.windows }}' \
-              && echo '${{ needs.prepare-wheels.outputs.macos }}' \
-            } | jq -sc )
-          echo "include=$MATRIX" >> $GITHUB_OUTPUT
+          PLATFORMS=$(echo '${{ needs.prepare-wheels.outputs.linux }}' && echo '${{ needs.prepare-wheels.outputs.windows }}' && echo '${{ needs.prepare-wheels.outputs.macos }}');
+          MATRIX=$(echo $PLATFORMS | jq -sc);
+          echo "include=$MATRIX" >> $GITHUB_OUTPUT;
   build-wheels:
     name: Build wheel ${{ matrix.only }}
     needs: [concat-wheels]
