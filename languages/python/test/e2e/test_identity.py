@@ -4,10 +4,7 @@ import json
 import os
 import unittest
 from bloock.entity.identity.credential import Credential
-from bloock.entity.identity.blockchain import Blockchain
 from bloock.entity.identity.did_method import DidMethod
-from bloock.entity.identity.method import Method
-from bloock.entity.identity.network import Network
 from bloock.client.identity import IdentityClient
 from bloock.client.key import KeyClient
 from bloock.entity.identity.publish_interval_params import PublishIntervalParams
