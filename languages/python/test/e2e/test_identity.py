@@ -47,7 +47,7 @@ class TestIdentity(unittest.TestCase):
         holder = identity_client.create_holder(holder_key, DidMethod.PolygonID)
         self.assertTrue(holder.did.__contains__("main"))
 
-    '''def test_end_to_end(self):
+    def test_end_to_end(self):
         identity_client = IdentityClient()
         key_client = KeyClient()
 
@@ -147,7 +147,6 @@ class TestIdentity(unittest.TestCase):
 
         with self.assertRaises(Exception):
             identity_client.wait_verification(verification.session_id, 5)
-'''
 
 def prepare_proof_request(schema_id):
     json_string = '''
