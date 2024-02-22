@@ -1,6 +1,7 @@
 import { describe, test, expect } from "@jest/globals";
 import {
   DidMethod,
+  IdentityCoreClient,
   Key,
   PublishIntervalParams,
 } from "../../dist/index";
@@ -58,6 +59,7 @@ describe("Identity V2 Tests", () => {
     initDevSdk();
 
     const identityClient = new IdentityClient();
+    const identityCoreClient = new IdentityCoreClient();
     const keyClient = new KeyClient();
 
     let keyProtection = KeyProtectionLevel.SOFTWARE;
@@ -168,6 +170,22 @@ describe("Identity V2 Tests", () => {
     expect(receipt.credential.issuer).toStrictEqual(issuer.did.did);
     expect(receipt.credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
     expect(receipt.credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
+
+    const newReceipt = await identityCoreClient
+            .buildCredential(issuer, schema.cid, holderDid, expiration, 0)
+            .withIntegerAttribute("license_type", 1)
+            .withDecimalAttribute("quantity_oil", 2.25555)
+            .withStringAttribute("nif", "54688188M")
+            .withBoleanAttribute("is_spanish", true)
+            .withDateAttribute("birth_date", new Date(1999, 3, 20))
+            .withDateTimeAttribute("local_hour", new Date(Date.now()))
+            .withStringAttribute("car_type", "big")
+            .withIntegerAttribute("car_points", 5)
+            .withDecimalAttribute("precision_wheels", 1.1)
+            .build();
+        expect(newReceipt.credentialId).toBeTruthy();
+        expect(newReceipt.credential).toBeTruthy();
+        expect(newReceipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
 
     const credential = await identityClient.getCredential(receipt.credentialId)
     expect(credential.issuer).toStrictEqual(issuer.did.did);

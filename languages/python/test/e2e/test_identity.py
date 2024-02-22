@@ -6,6 +6,7 @@ import unittest
 from bloock.entity.identity.credential import Credential
 from bloock.entity.identity.did_method import DidMethod
 from bloock.client.identity import IdentityClient
+from bloock.client.identity_core import IdentityCoreClient
 from bloock.client.key import KeyClient
 from bloock.entity.identity.publish_interval_params import PublishIntervalParams
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
@@ -49,6 +50,7 @@ class TestIdentity(unittest.TestCase):
 
     def test_end_to_end(self):
         identity_client = IdentityClient()
+        identity_core_client = IdentityCoreClient()
         key_client = KeyClient()
 
         protection = KeyProtectionLevel.SOFTWARE
@@ -74,7 +76,8 @@ class TestIdentity(unittest.TestCase):
             identity_client.create_issuer(
                 issuer_key, PublishIntervalParams.Interval15, DidMethod.PolygonIDTest)
 
-        imported_issuer = identity_client.import_issuer(issuer_key, DidMethod.PolygonIDTest)
+        imported_issuer = identity_client.import_issuer(
+            issuer_key, DidMethod.PolygonIDTest)
         self.assertTrue(imported_issuer.did.__contains__("mumbai"))
 
         get_not_found_issuer_did = identity_client.import_issuer(
@@ -115,15 +118,34 @@ class TestIdentity(unittest.TestCase):
         self.assertEqual(self.drivingLicenseSchemaType,
                          receipt.credential_type)
         self.assertEqual(issuer.did, receipt.credential.issuer)
-        self.assertEqual("JsonSchema2023", receipt.credential.credential_schema.type)
-        self.assertEqual(self.drivingLicenseSchemaType, receipt.credential.type[1])
+        self.assertEqual("JsonSchema2023",
+                         receipt.credential.credential_schema.type)
+        self.assertEqual(self.drivingLicenseSchemaType,
+                         receipt.credential.type[1])
+
+        new_receipt = identity_core_client.build_credential(issuer, schema.cid, self.holderDid, self.expiration, 0) \
+            .with_integer_attribute("license_type", 1) \
+            .with_decimal_attribute("quantity_oil", 2.25555) \
+            .with_string_attribute("nif", "54688188M") \
+            .with_boolean_attribute("is_spanish", True) \
+            .with_date_attribute("birth_date", datetime.date(1999, 3, 20)) \
+            .with_datetime_attribute("local_hour", datetime.datetime.now()) \
+            .with_string_attribute("car_type", "big") \
+            .with_integer_attribute("car_points", 5) \
+            .with_decimal_attribute("precision_wheels", 1.10) \
+            .build()
+        self.assertIsNotNone(new_receipt.credential_id)
+        self.assertIsNotNone(new_receipt.credential)
+        self.assertEqual(self.drivingLicenseSchemaType,
+                         new_receipt.credential_type)
 
         credential = identity_client.get_credential(receipt.credential_id)
         self.assertEqual(issuer.did, credential.issuer)
         self.assertEqual("JsonSchema2023", credential.credential_schema.type)
         self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
 
-        json_offer = identity_client.get_credential_offer(issuer, receipt.credential_id)
+        json_offer = identity_client.get_credential_offer(
+            issuer, receipt.credential_id)
         self.assertIsNotNone(json_offer)
 
         ok = identity_client.revoke_credential(credential, issuer)
@@ -147,6 +169,7 @@ class TestIdentity(unittest.TestCase):
 
         with self.assertRaises(Exception):
             identity_client.wait_verification(verification.session_id, 5)
+
 
 def prepare_proof_request(schema_id):
     json_string = '''
