@@ -12,7 +12,7 @@ public class Holder {
     /**
      * Returns a new instance of Holder identity for the given parameters.
      * @param did
-     * @param didType
+     * @param didMethod
      * @param key
      */
     public Holder(String did, DidMethod didMethod, Key key) {

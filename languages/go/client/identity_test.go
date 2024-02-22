@@ -3,22 +3,26 @@
 package client
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/identity"
 	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestIdentity(t *testing.T) {
 	credentialJson := "{\"@context\":[\"https://www.w3.org/2018/credentials/v1\",\"https://schema.iden3.io/core/jsonld/iden3proofs.jsonld\",\"https://api.bloock.dev/hosting/v1/ipfs/QmYMYpSQsFbqXgSRK8KFDGMopD2CUke5yd4m7XFuVAZTat\"],\"id\":\"https://clientHost.com/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/2ff36890-2fc1-4bba-b489-bdd7685e9555\",\"type\":[\"VerifiableCredential\",\"DrivingLicense\"],\"issuanceDate\":\"2023-08-21T10:21:42.402140Z\",\"expirationDate\":\"2099-08-08T06:02:22Z\",\"credentialSubject\":{\"birth_date\":921950325,\"country\":\"Spain\",\"first_surname\":\"Tomas\",\"id\":\"did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr\",\"license_type\":1,\"name\":\"Eduard\",\"nif\":\"54688188M\",\"second_surname\":\"Escoruela\",\"type\":\"DrivingLicense\"},\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identity/v1/did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/3553270275\",\"revocationNonce\":3553270275,\"type\":\"SparseMerkleTreeProof\"},\"issuer\":\"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6\",\"credentialSchema\":{\"id\":\"https://api.bloock.dev/hosting/v1/ipfs/QmWkPu699EF334ixBGEK7rDDurQfu2SYBXU39bSozu1i5h\",\"type\":\"JsonSchema2023\"},\"proof\":[{\"coreClaim\":\"e055485e9b8410b3cd71cb3ba3a0b7652a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b0056d1a9bf4e9d10b44fdd5b0f6b740b21dcd6675e770bf882249b8083471858190000000000000000000000000000000000000000000000000000000000000000039acad300000000ee30c6f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"issuerData\":{\"authCoreClaim\":\"cca3371a6cb1b715004407e325bd993c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fbd3b6b8c8e24e08bb982c7d4990e594747e5c24d98ac4ec969e50e437c1eb08407c9e5acc278a1641c82488f7518432a5937973d4ddfe551e32f9f7ba4c4a2e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"credentialStatus\":{\"id\":\"https://api.bloock.dev/identity/v1/did%3Apolygonid%3Apolygon%3Amumbai%3A2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6/claims/revocation/status/0\",\"revocationNonce\":0,\"type\":\"SparseMerkleTreeProof\"},\"id\":\"did:polygonid:polygon:mumbai:2qLjqgeBQPHf9F6omWx2nrzV5F4PicWAWpGXNkxFp6\",\"mtp\":{\"existence\":true,\"siblings\":[]},\"state\":{\"claimsTreeRoot\":\"0da5ac49846ae0074b986e5eef7c84011529e9902a0ffc6e9973b5cd0d217709\",\"value\":\"778582fc18b636314cc027a7772c1429028d44cdd17234f06e6d2d59bedee31d\"}},\"signature\":\"7bf882354b7cedd4b7ee74590cd3b091fef7545cb4ae8cd35c72b106ff858a0a3b1272ab7748cf7187d2383acda44bdae4bce1a7f9dccc11921fb0f19a70ee03\",\"type\":\"BJJSignature2021\"}]}"
-	/*DrivingLicenseSchemaType := "DrivingLicense"
+	DrivingLicenseSchemaType := "DrivingLicense"
 	KYCAgeSchemaType := "KYCAgeCredential"
 	holderDid := "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr"
-	expiration := int64(4089852142)*/
+	expiration := int64(4089852142)
 
 	InitDevSdk()
 
@@ -59,8 +63,9 @@ func TestIdentity(t *testing.T) {
 		assert.True(t, strings.Contains(holder.Did.Did, "main"))
 	})
 
-	/*t.Run("identity end to end with managed key", func(t *testing.T) {
+	t.Run("identity end to end with managed key", func(t *testing.T) {
 		identityClient := NewIdentityClient()
+		identityCoreClient := NewIdentityCoreClient()
 		keyClient := NewKeyClient()
 
 		managedKey, err := keyClient.NewManagedKey(key.ManagedKeyParams{
@@ -135,6 +140,22 @@ func TestIdentity(t *testing.T) {
 		assert.Equal(t, "JsonSchema2023", receipt.Credential.CredentialSchema.Type)
 		assert.Equal(t, DrivingLicenseSchemaType, receipt.Credential.Type[1])
 
+		res, err := identityCoreClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
+			WithIntegerAttribute("license_type", 1).
+			WithDecimalAttribute("quantity_oil", 2.25555).
+			WithStringAttribute("nif", "54688188M").
+			WithBooleanAttribute("is_spanish", true).
+			WithDateAttribute("birth_date", time.Date(1999, time.March, 20, 0, 0, 0, 0, time.UTC)).
+			WithDatetimeAttribute("local_hour", time.Now()).
+			WithStringAttribute("car_type", "big").
+			WithIntegerAttribute("car_points", 5).
+			WithDecimalAttribute("precision_wheels", 1.10).
+			Build()
+		assert.NoError(t, err)
+		assert.NotNil(t, res.CredentialId)
+		assert.NotNil(t, res.Credential)
+		assert.Equal(t, DrivingLicenseSchemaType, res.CredentialType)
+
 		credential, err := identityClient.GetCredential(receipt.CredentialId)
 		assert.NoError(t, err)
 
@@ -178,7 +199,7 @@ func TestIdentity(t *testing.T) {
 		identityClient := NewIdentityClient()
 		keyClient := NewKeyClient()
 
-		localKey, err := keyClient.LoadLocalKey(key.Bjj, "671e9ae56f18ffdfc1c98195748628f296a71c6e02e7cbed0d32c3963efdc355")
+		localKey, err := keyClient.LoadLocalKey(key.Bjj, "bb73214b067393d96ba3b52831150ba1b4aaf0548fa2e776ea5905be2859bff1")
 		assert.NoError(t, err)
 
 		issuerKey := key.Key{LocalKey: &localKey}
@@ -216,7 +237,7 @@ func TestIdentity(t *testing.T) {
 		proof, err := identityClient.GetCredentialProof(issuer.Did.Did, receipt.CredentialId)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, proof.SignatureProof)
-	})*/
+	})
 }
 
 type Query struct {

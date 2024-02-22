@@ -2,6 +2,7 @@
 
 use Bloock\Bloock;
 use Bloock\Client\IdentityClient;
+use Bloock\Client\IdentityCoreClient;
 use Bloock\Client\KeyClient;
 use Bloock\Entity\Identity\Credential;
 use Bloock\Entity\Identity\DidMethod;
@@ -55,9 +56,10 @@ final class IdentityTest extends TestCase
         $this->assertStringContainsString("main", $holder->getDid()->getDid());
     }
 
-    /* public function testIdentityEndToEnd()
+    public function testIdentityEndToEnd()
     {
         $identityClient = new IdentityClient();
+        $identityCoreClient = new IdentityCoreClient();
         $keyClient = new KeyClient();
 
         $keyProtection = KeyProtectionLevel::SOFTWARE;
@@ -123,6 +125,21 @@ final class IdentityTest extends TestCase
         $this->assertEquals("JsonSchema2023", $receipt->getCredential()->getCredentialSchema()->getType());
         $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredential()->getType()[1]);
 
+        $newReceipt = $identityCoreClient->buildCredential($issuer, $schema->getCid(), self::holderDid, self::expiration, 0)
+            ->withIntegerAttribute("license_type", 1)
+            ->withDecimalAttribute("quantity_oil", 2.25555)
+            ->withStringAttribute("nif", "54688188M")
+            ->withBooleanAttribute("is_spanish", true)
+            ->withDateAttribute("birth_date", $dateTime)
+            ->withDatetimeAttribute("local_hour", new DateTime)
+            ->withStringAttribute("car_type", "big")
+            ->withIntegerAttribute("car_points", 5)
+            ->withDecimalAttribute("precision_wheels", 1.10)
+            ->build();
+        $this->assertNotNull($newReceipt->getCredentialId());
+        $this->assertNotNull($newReceipt->getCredential());
+        $this->assertEquals(self::drivingLicenseSchemaType, $newReceipt->getCredentialType());
+
         $credential = $identityClient->getCredential($receipt->getCredentialId());
         $this->assertEquals("JsonSchema2023", $credential->getCredentialSchema()->getType());
         $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[1]);
@@ -154,7 +171,7 @@ final class IdentityTest extends TestCase
         } catch (Exception $e) {
             $this->assertNotNull($e->getMessage());
         }
-    }*/
+    }
 }
 
 class ProofRequest

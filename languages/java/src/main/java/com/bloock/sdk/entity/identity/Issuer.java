@@ -12,7 +12,7 @@ public class Issuer {
     /**
      * Returns a new instance of Issuer identity for the given parameters.
      * @param did
-     * @param didType
+     * @param didMethod
      * @param key
      */
     public Issuer(String did, DidMethod didMethod, Key key) {
