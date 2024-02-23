@@ -46,6 +46,7 @@ setup(
         "License :: OSI Approved :: Apache Software License",
     ],
     packages=find_namespace_packages(exclude=["test", "test.*"]),
+    package_data={"bloock", ["py.typed"]},
     python_requires=">=3.7",
     setup_requires=["cffi>=1.0.0", "wheel"],
     cffi_modules=["bloock/_ffi/build.py:ffi_builder"],
