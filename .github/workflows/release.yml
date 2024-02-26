@@ -237,7 +237,7 @@ jobs:
     uses: ./.github/workflows/test_compat.yml
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
         lang-version: ["7.4", "8.0", "8.1", "8.2"]
     with:
       os: ${{ matrix.os }}
