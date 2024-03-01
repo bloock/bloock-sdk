@@ -1,22 +1,22 @@
-import { describe, test, expect } from "@jest/globals";
-import {
-  DidMethod,
-  IdentityCoreClient,
-  Key,
-  PublishIntervalParams,
-} from "../../dist/index";
+import { describe, expect, test } from "@jest/globals";
+import { readFileSync } from "fs";
+import path from "path";
+import base64url from "urlsafe-base64";
 import {
   Credential,
   IdentityClient,
   KeyClient,
   KeyProtectionLevel,
   KeyType,
-  ManagedKeyParams,
+  ManagedKeyParams
 } from "../../dist";
+import {
+  DidMethod,
+  IdentityCoreClient,
+  Key,
+  PublishIntervalParams
+} from "../../dist/index";
 import { initDevSdk } from "./util";
-import path from "path";
-import { readFileSync } from "fs";
-import base64url from "urlsafe-base64";
 
 describe("Identity V2 Tests", () => {
   const credentialJson =
@@ -51,7 +51,10 @@ describe("Identity V2 Tests", () => {
 
     let holderKey = new Key(managedKey);
 
-    let holder = await identityClient.createHolder(holderKey, DidMethod.PolygonID);
+    let holder = await identityClient.createHolder(
+      holderKey,
+      DidMethod.PolygonID
+    );
     expect(holder.did.did.includes("main")).toBeTruthy();
   });
 
@@ -100,7 +103,10 @@ describe("Identity V2 Tests", () => {
       expect(error).toBeTruthy;
     }
 
-    let importedIssuer = await identityClient.importIssuer(issuerKey, DidMethod.PolygonIDTest);
+    let importedIssuer = await identityClient.importIssuer(
+      issuerKey,
+      DidMethod.PolygonIDTest
+    );
     expect(importedIssuer.did.did).toStrictEqual(issuer.did.did);
 
     let getNotFoundIssuerDid = await identityClient.importIssuer(
@@ -157,7 +163,7 @@ describe("Identity V2 Tests", () => {
       .withIntegerAttribute("license_type", 1)
       .withDecimalAttribute("quantity_oil", 2.25555)
       .withStringAttribute("nif", "54688188M")
-      .withBoleanAttribute("is_spanish", true)
+      .withBooleanAttribute("is_spanish", true)
       .withDateAttribute("birth_date", new Date(1999, 3, 20))
       .withDateTimeAttribute("local_hour", new Date(Date.now()))
       .withStringAttribute("car_type", "big")
@@ -168,42 +174,42 @@ describe("Identity V2 Tests", () => {
     expect(receipt.credential).toBeTruthy();
     expect(receipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
     expect(receipt.credential.issuer).toStrictEqual(issuer.did.did);
-    expect(receipt.credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
+    expect(receipt.credential.credentialSchema.type).toStrictEqual(
+      "JsonSchema2023"
+    );
     expect(receipt.credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
     const newReceipt = await identityCoreClient
-            .buildCredential(issuer, schema.cid, holderDid, expiration, 0)
-            .withIntegerAttribute("license_type", 1)
-            .withDecimalAttribute("quantity_oil", 2.25555)
-            .withStringAttribute("nif", "54688188M")
-            .withBoleanAttribute("is_spanish", true)
-            .withDateAttribute("birth_date", new Date(1999, 3, 20))
-            .withDateTimeAttribute("local_hour", new Date(Date.now()))
-            .withStringAttribute("car_type", "big")
-            .withIntegerAttribute("car_points", 5)
-            .withDecimalAttribute("precision_wheels", 1.1)
-            .build();
-        expect(newReceipt.credentialId).toBeTruthy();
-        expect(newReceipt.credential).toBeTruthy();
-        expect(newReceipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
+      .buildCredential(issuer, schema.cid, holderDid, expiration, 0)
+      .withIntegerAttribute("license_type", 1)
+      .withDecimalAttribute("quantity_oil", 2.25555)
+      .withStringAttribute("nif", "54688188M")
+      .withBooleanAttribute("is_spanish", true)
+      .withDateAttribute("birth_date", new Date(1999, 3, 20))
+      .withDateTimeAttribute("local_hour", new Date(Date.now()))
+      .withStringAttribute("car_type", "big")
+      .withIntegerAttribute("car_points", 5)
+      .withDecimalAttribute("precision_wheels", 1.1)
+      .build();
+    expect(newReceipt.credentialId).toBeTruthy();
+    expect(newReceipt.credential).toBeTruthy();
+    expect(newReceipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
 
-    const credential = await identityClient.getCredential(receipt.credentialId)
+    const credential = await identityClient.getCredential(receipt.credentialId);
     expect(credential.issuer).toStrictEqual(issuer.did.did);
     expect(credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
     expect(credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
-    const jsonOffer = await identityClient.getCredentialOffer(issuer, receipt.credentialId)
+    const jsonOffer = await identityClient.getCredentialOffer(
+      issuer,
+      receipt.credentialId
+    );
     expect(jsonOffer).toBeTruthy();
 
-    const ok = await identityClient.revokeCredential(
-      credential,
-      issuer
-    );
+    const ok = await identityClient.revokeCredential(credential, issuer);
     expect(ok).toBeTruthy();
 
-    const stateReceipt = await identityClient.forcePublishIssuerState(
-      issuer
-    );
+    const stateReceipt = await identityClient.forcePublishIssuerState(issuer);
     expect(stateReceipt.txHash).toBeTruthy();
 
     try {
@@ -231,7 +237,6 @@ describe("Identity V2 Tests", () => {
     }
   });
 });
-
 
 interface ProofRequest {
   circuitId: string;

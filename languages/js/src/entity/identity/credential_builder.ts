@@ -1,10 +1,6 @@
 import { BloockBridge } from "../../bridge/bridge";
 import { ConfigData } from "../../bridge/proto/config";
 import { CreateCredentialRequest } from "../../bridge/proto/identity";
-import { BooleanAttribute } from "./boolean_attribute";
-import { CredentialReceipt } from "./credential_receipt";
-import { DateAttribute } from "./date_attribute";
-import { DateTimeAttribute } from "./datetime_attribute";
 import {
   BooleanAttribute as BooleanAttributeProto,
   DateAttribute as DateAttributeProto,
@@ -14,10 +10,14 @@ import {
   StringAttribute as StringAttributeProto
 } from "../../bridge/proto/identity_entities";
 import { Key as KeyProto } from "../../bridge/proto/keys_entities";
+import { BooleanAttribute } from "./boolean_attribute";
+import { CredentialReceipt } from "./credential_receipt";
+import { DateAttribute } from "./date_attribute";
+import { DateTimeAttribute } from "./datetime_attribute";
 import { DecimalAttribute } from "./decimal_attribute";
 import { IntegerAttribute } from "./integer_attribute";
-import { StringAttribute } from "./string_attribute";
 import { Issuer } from "./issuer";
+import { StringAttribute } from "./string_attribute";
 
 /**
  * Helps construct credentials by specifying various attributes.
@@ -39,12 +39,12 @@ export class CredentialBuilder {
 
   /**
    * Creates a new CredentialBuilder instance with the specified parameters.
-   * @param schemaId 
-   * @param issuerDid 
-   * @param holderDid 
-   * @param expiration 
-   * @param version 
-   * @param configData 
+   * @param schemaId
+   * @param issuerDid
+   * @param holderDid
+   * @param expiration
+   * @param version
+   * @param configData
    */
   constructor(
     issuer: Issuer,
@@ -71,9 +71,9 @@ export class CredentialBuilder {
 
   /**
    * Adds a string attribute to the CredentialBuilder.
-   * @param key 
-   * @param value 
-   * @returns 
+   * @param key
+   * @param value
+   * @returns
    */
   public withStringAttribute(key: string, value: string): CredentialBuilder {
     this.stringAttributes.push(new StringAttribute(key, value));
@@ -82,9 +82,9 @@ export class CredentialBuilder {
 
   /**
    * Adds an integer attribute to the CredentialBuilder.
-   * @param key 
-   * @param value 
-   * @returns 
+   * @param key
+   * @param value
+   * @returns
    */
   public withIntegerAttribute(key: string, value: number): CredentialBuilder {
     this.integerAttributes.push(new IntegerAttribute(key, value));
@@ -93,9 +93,9 @@ export class CredentialBuilder {
 
   /**
    * Adds a decimal attribute to the CredentialBuilder.
-   * @param key 
-   * @param value 
-   * @returns 
+   * @param key
+   * @param value
+   * @returns
    */
   public withDecimalAttribute(key: string, value: number): CredentialBuilder {
     this.decimalAttributes.push(new DecimalAttribute(key, value));
@@ -104,20 +104,20 @@ export class CredentialBuilder {
 
   /**
    * Adds a boolean attribute to the CredentialBuilder.
-   * @param key 
-   * @param value 
-   * @returns 
+   * @param key
+   * @param value
+   * @returns
    */
-  public withBoleanAttribute(key: string, value: boolean): CredentialBuilder {
+  public withBooleanAttribute(key: string, value: boolean): CredentialBuilder {
     this.booleanAttributes.push(new BooleanAttribute(key, value));
     return this;
   }
 
   /**
    * Adds a date attribute to the CredentialBuilder.
-   * @param key 
-   * @param value 
-   * @returns 
+   * @param key
+   * @param value
+   * @returns
    */
   public withDateAttribute(key: string, value: Date): CredentialBuilder {
     this.dateAttributes.push(new DateAttribute(key, value).toProto());
@@ -126,9 +126,9 @@ export class CredentialBuilder {
 
   /**
    * Adds a datetime attribute to the CredentialBuilder.
-   * @param key 
-   * @param value 
-   * @returns 
+   * @param key
+   * @param value
+   * @returns
    */
   public withDateTimeAttribute(key: string, value: Date): CredentialBuilder {
     this.dateTimeAttributes.push(new DateTimeAttribute(key, value).toProto());
@@ -137,7 +137,7 @@ export class CredentialBuilder {
 
   /**
    * Creates and returns a Credential using the specified attributes.
-   * @returns 
+   * @returns
    */
   async build(): Promise<CredentialReceipt> {
     const bridge = new BloockBridge();

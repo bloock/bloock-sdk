@@ -1,6 +1,6 @@
 // Package bloock provides a centralized configuration for the Bloock SDK library.
 //
-// For information about Bloock SDK in Go, see https://bloock.com. 
+// For information about Bloock SDK in Go, see https://bloock.com.
 package bloock
 
 import (
@@ -43,8 +43,8 @@ func SetProvider(network integrity.Network, provider string) {
 	}
 }
 
-// SetContractAddess sets the contract address for the specified network in the Bloock SDK configuration.
-func SetContractAddess(network integrity.Network, contractAddress string) {
+// SetContractAddress sets the contract address for the specified network in the Bloock SDK configuration.
+func SetContractAddress(network integrity.Network, contractAddress string) {
 	if _, ok := NetworkConfig[int32(network)]; ok {
 		NetworkConfig[int32(network.Number())].ContractAddress = contractAddress
 	} else {
