@@ -1,4 +1,5 @@
 from __future__ import annotations
+from warnings import warn
 
 from enum import Enum
 
@@ -11,8 +12,26 @@ class Network(Enum):
     """
     ETHEREUM_MAINNET = 0
     ETHEREUM_GOERLI = 1
+    """
+    Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
+
+    Will be deleted in future versions.
+    ...deprecated:: 2.9.0
+    """
+    warn('Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.',
+         DeprecationWarning, stacklevel=2
+         )
     GNOSIS_CHAIN = 2
     BLOOCK_CHAIN = 3
+    """
+    Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
+
+    Will be deleted in future versions.
+    ...deprecated:: 2.9.0
+    """
+    warn('Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.',
+         DeprecationWarning, stacklevel=2
+         )
     POLYGON_CHAIN = 4
 
     def __int__(self):

@@ -14,9 +14,11 @@ func NetworkToProto(network Network) *proto.Network {
 
 // networks represents a set of predefined networks.
 type networks struct {
+	// Deprecated: Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
 	BloockChain     Network
 	EthereumGnosis  Network
 	EthereumMainnet Network
+	// Deprecated: Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
 	EthereumGoerli  Network
 	EthereumPolygon Network
 }

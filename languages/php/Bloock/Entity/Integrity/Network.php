@@ -8,8 +8,14 @@ namespace Bloock\Entity\Integrity;
 class Network
 {
     const ETHEREUM_MAINNET = "ETHEREUM_MAINNET";
+    /**
+     * @deprecated Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
+     */
     const ETHEREUM_GOERLI = "ETHEREUM_GOERLI";
     const GNOSIS_CHAIN = "GNOSIS_CHAIN";
+    /**
+     * @deprecated Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
+     */
     const BLOOCK_CHAIN = "BLOOCK_CHAIN";
     const POLYGON_CHAIN = "POLYGON_CHAIN";
 
