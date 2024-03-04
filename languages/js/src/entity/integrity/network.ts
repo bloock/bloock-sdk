@@ -6,8 +6,14 @@ import * as proto from "../../bridge/proto/config";
 export enum Network {
   UNRECOGNIZED = -1,
   ETHEREUM_MAINNET = 0,
+  /**
+   * @deprecated Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
+   */
   ETHEREUM_GOERLI = 1,
   GNOSIS_CHAIN = 2,
+  /**
+   * @deprecated Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
+   */
   BLOOCK_CHAIN = 3,
   POLYGON_CHAIN = 4
 }

@@ -7,8 +7,20 @@ import com.bloock.sdk.bridge.proto.Config;
  */
 public enum Network {
   ETHEREUM_MAINNET,
+  /**
+   *  @deprecated Test networks will be deleted in future versions. If you have been
+   * integrating with an existent test API key and you want to start a free trial
+   * period please contact support@bloock.com.
+   */
+  @Deprecated
   ETHEREUM_GOERLI,
   GNOSIS_CHAIN,
+  /**
+   * @deprecated Test networks will be deleted in future versions. If you have been
+   * integrating with an existent test API key and you want to start a free trial
+   * period please contact support@bloock.com.
+   */
+  @Deprecated
   BLOOCK_CHAIN,
   POLYGON_CHAIN;
 
