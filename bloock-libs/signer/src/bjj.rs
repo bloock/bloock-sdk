@@ -69,8 +69,13 @@ impl Signer for BJJSigner {
         let hash_alg = hash_alg.unwrap_or(KeyType::from(Key::from(local)).default_hash_alg());
         let hash = hash_alg.hash(&[payload]);
 
+        let mut final_hash = hash.as_ref();
+        if hash_alg == HashAlg::None {
+            final_hash = payload;
+        }
+
         let signature = secret_key
-            .sign(BigInt::from_signed_bytes_be(&hash))
+            .sign(BigInt::from_signed_bytes_be(&final_hash))
             .unwrap();
 
         let signature = Signature {
@@ -78,7 +83,7 @@ impl Signer for BJJSigner {
             key: hex::encode(public_key.compress()),
             subject,
             signature: hex::encode(signature.compress()),
-            message_hash: hex::encode(hash),
+            message_hash: hex::encode(final_hash),
             hash_alg: Some(hash_alg),
         };
 
@@ -109,7 +114,12 @@ impl Signer for BJJSigner {
         let hash_alg =
             hash_alg.unwrap_or(KeyType::from(Key::from(managed.clone())).default_hash_alg());
         let hash = hash_alg.hash(&[payload]);
-        let encoded_hash = hex::encode(hash);
+
+        let mut final_hash = hash.as_ref();
+        if hash_alg == HashAlg::None {
+            final_hash = payload;
+        }
+        let encoded_hash = hex::encode(final_hash);
 
         let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
 
@@ -352,7 +362,12 @@ mod tests {
         let signer = BJJSigner::new(api_host, api_key, None);
 
         let signature = signer
-            .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None, None)
+            .sign_managed(
+                string_payload.as_bytes(),
+                &managed_key.clone().into(),
+                None,
+                None,
+            )
             .await
             .unwrap();
 
