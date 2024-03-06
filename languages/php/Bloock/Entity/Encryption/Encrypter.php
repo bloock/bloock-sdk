@@ -21,7 +21,7 @@ class Encrypter
     public ?AccessControl $accessControl = null;
 
     /**
-     * Creates a new Encrypter instance with a local key, managed key, local certificate or managed certifiate.
+     * Creates a new Encrypter instance with a local key, managed key, local certificate or managed certificate.
      * @param $key
      * @param AccessControl|null $accessControl
      * @throws Exception

@@ -14,7 +14,7 @@ class ManagedCertificateParams
     public string $keyType;
     /**
      * Represents the subject details of the certificate.
-     * @var SubjectCertficateParams
+     * @var SubjectCertificateParams
      */
     public SubjectCertificateParams $subjectParams;
     /**
