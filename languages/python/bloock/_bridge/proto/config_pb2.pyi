@@ -90,8 +90,6 @@ class Configuration(google.protobuf.message.Message):
     KEY_TYPE_ALGORITHM_FIELD_NUMBER: builtins.int
     ELLIPTIC_CURVE_KEY_FIELD_NUMBER: builtins.int
     SIGNATURE_ALGORITHM_FIELD_NUMBER: builtins.int
-    DISABLE_ANALYTICS_FIELD_NUMBER: builtins.int
-    ENVIRONMENT_FIELD_NUMBER: builtins.int
     IDENTITYAPIHOST_FIELD_NUMBER: builtins.int
     library_name: builtins.str
     host: builtins.str
@@ -101,8 +99,6 @@ class Configuration(google.protobuf.message.Message):
     key_type_algorithm: builtins.str
     elliptic_curve_key: builtins.str
     signature_algorithm: builtins.str
-    disable_analytics: builtins.bool
-    environment: builtins.str
     identityApiHost: builtins.str
     def __init__(
         self,
@@ -115,15 +111,10 @@ class Configuration(google.protobuf.message.Message):
         key_type_algorithm: builtins.str = ...,
         elliptic_curve_key: builtins.str = ...,
         signature_algorithm: builtins.str = ...,
-        disable_analytics: builtins.bool = ...,
-        environment: builtins.str | None = ...,
         identityApiHost: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_environment", b"_environment", "_identityApiHost", b"_identityApiHost", "environment", b"environment", "identityApiHost", b"identityApiHost"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_environment", b"_environment", "_identityApiHost", b"_identityApiHost", "api_key", b"api_key", "disable_analytics", b"disable_analytics", "elliptic_curve_key", b"elliptic_curve_key", "environment", b"environment", "host", b"host", "identityApiHost", b"identityApiHost", "key_type_algorithm", b"key_type_algorithm", "library_name", b"library_name", "signature_algorithm", b"signature_algorithm", "wait_message_interval_default", b"wait_message_interval_default", "wait_message_interval_factor", b"wait_message_interval_factor"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_environment", b"_environment"]) -> typing_extensions.Literal["environment"] | None: ...
-    @typing.overload
+    def HasField(self, field_name: typing_extensions.Literal["_identityApiHost", b"_identityApiHost", "identityApiHost", b"identityApiHost"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_identityApiHost", b"_identityApiHost", "api_key", b"api_key", "elliptic_curve_key", b"elliptic_curve_key", "host", b"host", "identityApiHost", b"identityApiHost", "key_type_algorithm", b"key_type_algorithm", "library_name", b"library_name", "signature_algorithm", b"signature_algorithm", "wait_message_interval_default", b"wait_message_interval_default", "wait_message_interval_factor", b"wait_message_interval_factor"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_identityApiHost", b"_identityApiHost"]) -> typing_extensions.Literal["identityApiHost"] | None: ...
 
 global___Configuration = Configuration

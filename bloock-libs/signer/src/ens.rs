@@ -7,20 +7,18 @@ use libsecp256k1::PublicKey;
 pub struct EnsSigner {
     api_host: String,
     api_key: String,
-    environment: Option<String>,
 }
 
 impl EnsSigner {
-    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+    pub fn new(api_host: String, api_key: String) -> Self {
         Self {
             api_host,
             api_key,
-            environment,
         }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key, environment))
+    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key))
     }
 }
 
@@ -40,7 +38,6 @@ impl Signer for EnsSigner {
         let ecdsa_signer = EcdsaSigner::new(
             self.api_host.clone(),
             self.api_key.clone(),
-            self.environment.clone(),
             None,
         );
         let mut signature = ecdsa_signer
@@ -65,7 +62,6 @@ impl Signer for EnsSigner {
         let ecdsa_signer = EcdsaSigner::new(
             self.api_host.clone(),
             self.api_key.clone(),
-            self.environment.clone(),
             None,
         );
         let mut signature = ecdsa_signer
@@ -79,7 +75,6 @@ impl Signer for EnsSigner {
         EcdsaSigner::new(
             self.api_host.clone(),
             self.api_key.clone(),
-            self.environment.clone(),
             None,
         )
         .verify_local(payload, signature)
@@ -90,7 +85,6 @@ impl Signer for EnsSigner {
         EcdsaSigner::new(
             self.api_host.clone(),
             self.api_key.clone(),
-            self.environment.clone(),
             None,
         )
         .verify_managed(payload, signature)
@@ -129,7 +123,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = EnsSigner::new(api_host, api_key, None);
+        let signer = EnsSigner::new(api_host, api_key);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_key.clone().into(), None)
@@ -162,7 +156,7 @@ mod tests {
             mnemonic: None,
         };
 
-        let c = EnsSigner::new(api_host, api_key, None);
+        let c = EnsSigner::new(api_host, api_key);
         let result = c
             .sign_local(string_payload.as_bytes(), &local_key.into(), None)
             .await;
@@ -185,7 +179,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EnsSigner::new(api_host, api_key, None);
+        let signer = EnsSigner::new(api_host, api_key);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -211,7 +205,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EnsSigner::new(api_host, api_key, None);
+        let signer = EnsSigner::new(api_host, api_key);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -236,7 +230,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EnsSigner::new(api_host, api_key, None);
+        let signer = EnsSigner::new(api_host, api_key);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -258,13 +252,13 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
         let string_payload = "hello world";
 
-        let signer = EnsSigner::new(api_host, api_key, None);
+        let signer = EnsSigner::new(api_host, api_key);
 
         let signature = signer
             .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None, None)
@@ -296,7 +290,7 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
@@ -309,7 +303,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EnsSigner::new(api_host, api_key, None);
+        let signer = EnsSigner::new(api_host, api_key);
 
         let result: bool = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -335,7 +329,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EnsSigner::new(api_host, api_key, None);
+        let signer = EnsSigner::new(api_host, api_key);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -357,7 +351,7 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
@@ -370,7 +364,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EnsSigner::new(api_host, api_key, None);
+        let signer = EnsSigner::new(api_host, api_key);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)

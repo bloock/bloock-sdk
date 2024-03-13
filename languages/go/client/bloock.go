@@ -22,13 +22,9 @@ type BloockClient struct {
 }
 
 // NewBloockClient creates a new instance of the Bloock SDK client with the specified configuration.
-func NewBloockClient(apiKey string, identityApiHost *string, forceEnv *string) BloockClient {
+func NewBloockClient(apiKey string, identityApiHost *string) BloockClient {
 	configData := config.NewConfigDataDefault()
 	configData.Config.ApiKey = apiKey
-
-	if forceEnv != nil {
-		configData.Config.Environment = forceEnv
-	}
 
 	if identityApiHost != nil {
 		configData.Config.IdentityApiHost = identityApiHost

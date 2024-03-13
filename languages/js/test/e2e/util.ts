@@ -9,8 +9,6 @@ export function initSdk() {
   if (apiHost) {
     Bloock.setApiHost(apiHost);
   }
-
-  Bloock.setDisableAnalytics(true);
 }
 
 export function initDevSdk() {
@@ -25,8 +23,6 @@ export function initDevSdk() {
   if (identityApiHost) {
     Bloock.setIdentityApiHost(identityApiHost);
   }
-
-  Bloock.setDisableAnalytics(true);
 }
 
 export function generateRandomString(length: number) {

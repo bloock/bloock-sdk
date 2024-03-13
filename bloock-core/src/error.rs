@@ -2,7 +2,6 @@ use crate::authenticity::AuthenticityError;
 use crate::availability::AvailabilityError;
 use crate::config::ConfigError;
 use crate::encryption::EncryptionError;
-use crate::event::EventError;
 use crate::identity::IdentityError;
 use crate::identity_core::IdentityCoreError;
 use crate::integrity::IntegrityError;
@@ -39,8 +38,6 @@ pub enum ErrorKind {
     Key(#[from] KeyError),
     #[error("Webhook error: {0}")]
     Webhook(#[from] WebhookError),
-    #[error("Event error: {0}")]
-    Event(#[from] EventError),
     #[error("Identity error: {0}")]
     Identity(#[from] IdentityError),
     #[error("Identity core error: {0}")]

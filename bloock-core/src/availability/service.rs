@@ -117,7 +117,6 @@ mod tests {
                 &payload,
                 service.config_service.get_api_base_url(),
                 service.config_service.get_api_key(),
-                service.config_service.get_environment(),
             )
             .unwrap(),
         );
@@ -181,7 +180,6 @@ mod tests {
                 &payload,
                 service.config_service.get_api_base_url(),
                 service.config_service.get_api_key(),
-                service.config_service.get_environment(),
             )
             .unwrap(),
         );

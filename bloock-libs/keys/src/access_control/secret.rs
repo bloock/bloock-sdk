@@ -7,7 +7,6 @@ use crate::{entity::key::Managed, KeysError, Result};
 pub struct SecretAccessControl {
     api_host: String,
     api_key: String,
-    environment: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -20,11 +19,10 @@ struct SetupSecretAccessControlRequest {
 struct SetupSecretAccessControlResponse {}
 
 impl SecretAccessControl {
-    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+    pub fn new(api_host: String, api_key: String) -> Self {
         Self {
             api_host,
             api_key,
-            environment,
         }
     }
 
@@ -36,7 +34,6 @@ impl SecretAccessControl {
 
         let client = bloock_http::BloockHttpClient::new(
             self.api_key.clone(),
-            self.environment.clone(),
             None,
         );
 

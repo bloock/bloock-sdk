@@ -3,7 +3,6 @@ pub mod availability;
 pub mod config;
 pub mod encryption;
 pub mod error;
-pub mod event;
 pub mod identity;
 pub mod identity_core;
 pub mod integrity;

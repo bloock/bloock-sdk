@@ -10,7 +10,6 @@ final class WebhookTest extends TestCase
     {
         Bloock::$apiKey = getenv("API_KEY");
         Bloock::$apiHost = getenv("API_HOST");
-        Bloock::$disableAnalytics = true;
     }
 
     public function testVerifyWebhookSignatureOk()

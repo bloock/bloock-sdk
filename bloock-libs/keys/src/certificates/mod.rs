@@ -97,7 +97,6 @@ pub trait GetX509Certficate {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Option<Certificate>;
 }
 
@@ -107,11 +106,10 @@ impl GetX509Certficate for Key {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Option<Certificate> {
         match self {
-            Key::Local(l) => l.get_certificate(api_host, api_key, environment).await,
-            Key::Managed(m) => m.get_certificate(api_host, api_key, environment).await,
+            Key::Local(l) => l.get_certificate(api_host, api_key).await,
+            Key::Managed(m) => m.get_certificate(api_host, api_key).await,
         }
     }
 }
@@ -122,7 +120,6 @@ impl GetX509Certficate for Local {
         &self,
         _api_host: String,
         _api_key: String,
-        _environment: Option<String>,
     ) -> Option<Certificate> {
         match self {
             Local::Key(key) => {
@@ -153,7 +150,6 @@ impl GetX509Certficate for Managed {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Option<Certificate> {
         match self {
             Managed::Key(_) => Some(create_self_certificate()),
@@ -161,7 +157,6 @@ impl GetX509Certficate for Managed {
                 managed_certificate.id.clone(),
                 api_host,
                 api_key,
-                environment,
             )
             .await
             .ok(),

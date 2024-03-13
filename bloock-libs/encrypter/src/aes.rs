@@ -35,20 +35,18 @@ fn generate_key(password: &str, salt: &[u8], n_iterations: u32) -> [u8; KEY_LEN]
 pub struct AesEncrypter {
     api_host: String,
     api_key: String,
-    environment: Option<String>,
 }
 
 impl AesEncrypter {
-    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+    pub fn new(api_host: String, api_key: String) -> Self {
         Self {
             api_host,
             api_key,
-            environment,
         }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key, environment))
+    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key))
     }
 }
 
@@ -185,7 +183,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let encrypter = AesEncrypter::new(api_host, api_key, None);
+        let encrypter = AesEncrypter::new(api_host, api_key);
 
         let encryption = encrypter
             .encrypt_local(string_payload.as_bytes(), &local_key.clone().into())
@@ -218,7 +216,7 @@ mod tests {
             key_type: bloock_keys::KeyType::Aes128,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
-        let encrypter = AesEncrypter::new(api_host, api_key, None);
+        let encrypter = AesEncrypter::new(api_host, api_key);
 
         let result = encrypter
             .decrypt_local(invalid_payload.as_bytes(), None, &local_key.into())

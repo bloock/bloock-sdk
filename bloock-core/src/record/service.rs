@@ -23,7 +23,6 @@ impl RecordService {
             payload.to_vec(),
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            self.config_service.get_environment(),
         )
     }
     pub fn from_hex(&self, hex: String) -> BloockResult<Builder> {
@@ -32,7 +31,6 @@ impl RecordService {
             payload.to_vec(),
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            self.config_service.get_environment(),
         )
     }
     pub fn from_json(&self, json: String) -> BloockResult<Builder> {
@@ -43,7 +41,6 @@ impl RecordService {
             bytes,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            self.config_service.get_environment(),
         )
     }
     pub fn from_file(&self, file_bytes: Vec<u8>) -> BloockResult<Builder> {
@@ -51,7 +48,6 @@ impl RecordService {
             file_bytes,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            self.config_service.get_environment(),
         )
     }
     pub fn from_bytes(&self, bytes: Vec<u8>) -> BloockResult<Builder> {
@@ -59,7 +55,6 @@ impl RecordService {
             bytes,
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            self.config_service.get_environment(),
         )
     }
 }
@@ -255,7 +250,6 @@ mod tests {
             &record.clone().serialize().unwrap(),
             service.config_service.get_api_base_url(),
             service.config_service.get_api_key(),
-            service.config_service.get_environment(),
         )
         .unwrap();
 
@@ -301,7 +295,6 @@ mod tests {
             &record.clone().serialize().unwrap(),
             service.config_service.get_api_base_url(),
             service.config_service.get_api_key(),
-            service.config_service.get_environment(),
         )
         .unwrap();
 

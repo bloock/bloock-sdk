@@ -71,8 +71,6 @@ export interface Configuration {
   keyTypeAlgorithm: string;
   ellipticCurveKey: string;
   signatureAlgorithm: string;
-  disableAnalytics: boolean;
-  environment?: string | undefined;
   identityApiHost?: string | undefined;
 }
 
@@ -268,8 +266,6 @@ function createBaseConfiguration(): Configuration {
     keyTypeAlgorithm: "",
     ellipticCurveKey: "",
     signatureAlgorithm: "",
-    disableAnalytics: false,
-    environment: undefined,
     identityApiHost: undefined,
   };
 }
@@ -300,14 +296,8 @@ export const Configuration = {
     if (message.signatureAlgorithm !== "") {
       writer.uint32(66).string(message.signatureAlgorithm);
     }
-    if (message.disableAnalytics === true) {
-      writer.uint32(72).bool(message.disableAnalytics);
-    }
-    if (message.environment !== undefined) {
-      writer.uint32(82).string(message.environment);
-    }
     if (message.identityApiHost !== undefined) {
-      writer.uint32(90).string(message.identityApiHost);
+      writer.uint32(74).string(message.identityApiHost);
     }
     return writer;
   },
@@ -376,21 +366,7 @@ export const Configuration = {
           message.signatureAlgorithm = reader.string();
           continue;
         case 9:
-          if (tag !== 72) {
-            break;
-          }
-
-          message.disableAnalytics = reader.bool();
-          continue;
-        case 10:
-          if (tag !== 82) {
-            break;
-          }
-
-          message.environment = reader.string();
-          continue;
-        case 11:
-          if (tag !== 90) {
+          if (tag !== 74) {
             break;
           }
 
@@ -419,8 +395,6 @@ export const Configuration = {
       keyTypeAlgorithm: isSet(object.keyTypeAlgorithm) ? globalThis.String(object.keyTypeAlgorithm) : "",
       ellipticCurveKey: isSet(object.ellipticCurveKey) ? globalThis.String(object.ellipticCurveKey) : "",
       signatureAlgorithm: isSet(object.signatureAlgorithm) ? globalThis.String(object.signatureAlgorithm) : "",
-      disableAnalytics: isSet(object.disableAnalytics) ? globalThis.Boolean(object.disableAnalytics) : false,
-      environment: isSet(object.environment) ? globalThis.String(object.environment) : undefined,
       identityApiHost: isSet(object.identityApiHost) ? globalThis.String(object.identityApiHost) : undefined,
     };
   },
@@ -451,12 +425,6 @@ export const Configuration = {
     if (message.signatureAlgorithm !== "") {
       obj.signatureAlgorithm = message.signatureAlgorithm;
     }
-    if (message.disableAnalytics === true) {
-      obj.disableAnalytics = message.disableAnalytics;
-    }
-    if (message.environment !== undefined) {
-      obj.environment = message.environment;
-    }
     if (message.identityApiHost !== undefined) {
       obj.identityApiHost = message.identityApiHost;
     }
@@ -476,8 +444,6 @@ export const Configuration = {
     message.keyTypeAlgorithm = object.keyTypeAlgorithm ?? "";
     message.ellipticCurveKey = object.ellipticCurveKey ?? "";
     message.signatureAlgorithm = object.signatureAlgorithm ?? "";
-    message.disableAnalytics = object.disableAnalytics ?? false;
-    message.environment = object.environment ?? undefined;
     message.identityApiHost = object.identityApiHost ?? undefined;
     return message;
   },

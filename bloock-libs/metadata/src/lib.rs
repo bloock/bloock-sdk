@@ -50,11 +50,10 @@ impl MetadataParser for FileParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<Signature> {
         match self {
-            FileParser::Pdf(p) => p.sign(key, hash_alg, access_control, api_host, api_key, environment).await,
-            FileParser::Default(p) => p.sign(key, hash_alg, access_control, api_host, api_key, environment).await,
+            FileParser::Pdf(p) => p.sign(key, hash_alg, access_control, api_host, api_key).await,
+            FileParser::Default(p) => p.sign(key, hash_alg, access_control, api_host, api_key).await,
         }
     }
 
@@ -62,11 +61,10 @@ impl MetadataParser for FileParser {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<bool> {
         match self {
-            FileParser::Pdf(p) => p.verify(api_host, api_key, environment).await,
-            FileParser::Default(p) => p.verify(api_host, api_key, environment).await,
+            FileParser::Pdf(p) => p.verify(api_host, api_key).await,
+            FileParser::Default(p) => p.verify(api_host, api_key).await,
         }
     }
 
@@ -76,16 +74,15 @@ impl MetadataParser for FileParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<Encryption> {
         match self {
             FileParser::Pdf(p) => {
                 //p.encrypt(encrypter).await,
                 let payload = p.build()?;
                 *self = FileParser::Default(DefaultParser::load(&payload)?);
-                self.encrypt(key, access_control, api_host, api_key, environment).await
+                self.encrypt(key, access_control, api_host, api_key).await
             }
-            FileParser::Default(p) => p.encrypt(key, access_control, api_host, api_key, environment).await,
+            FileParser::Default(p) => p.encrypt(key, access_control, api_host, api_key).await,
         }
     }
 
@@ -95,12 +92,11 @@ impl MetadataParser for FileParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<()> {
         match self {
-            FileParser::Pdf(p) => p.decrypt(key, access_control, api_host, api_key, environment).await,
+            FileParser::Pdf(p) => p.decrypt(key, access_control, api_host, api_key).await,
             FileParser::Default(p) => {
-                p.decrypt(key, access_control, api_host, api_key, environment).await?;
+                p.decrypt(key, access_control, api_host, api_key).await?;
                 let payload = &p.build()?;
                 *self = FileParser::load(payload)?;
                 Ok(())
@@ -177,13 +173,11 @@ where
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<Signature>;
     async fn verify(
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<bool>;
     async fn encrypt(
         &mut self,
@@ -191,7 +185,6 @@ where
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<Encryption>;
     async fn decrypt(
         &mut self,
@@ -199,7 +192,6 @@ where
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<()>;
     fn set_proof<T: Serialize>(&mut self, value: &T) -> Result<()>;
     fn is_encrypted(&self) -> bool;

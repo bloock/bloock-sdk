@@ -14,9 +14,7 @@ class Config
         $configuration->setLibraryName("PHP");
         $configuration->setHost(Bloock::$apiHost);
         $configuration->setApiKey(Bloock::$apiKey);
-        $configuration->setEnvironment(Bloock::$forceEnv);
         $configuration->setIdentityApiHost(Bloock::$identityApiHost);
-        $configuration->setDisableAnalytics(Bloock::$disableAnalytics);
 
         $config = new ConfigData();
         $config->setConfig($configuration);
