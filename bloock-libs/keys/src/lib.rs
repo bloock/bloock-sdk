@@ -104,6 +104,6 @@ pub enum KeysError {
     ManagedKeyRequestError(String),
     #[error("Failed to create managed certificate: {0}")]
     ManagedCertificateRequestError(String),
-    #[error("Only the RSA_2048 certificate type is supported for local certificates")]
-    NotSupportedLocalCertificateType(),
+    #[error("Error certificate type is not supported for this operation")]
+    ErrorCertificateTypeNotSupported(),
 }

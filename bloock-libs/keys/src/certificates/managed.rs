@@ -115,14 +115,21 @@ impl ManagedCertificate {
     }
 
     pub async fn load_x509_certificate(
-        id: String,
+        &self,
         api_host: String,
         api_key: String,
     ) -> Result<Certificate> {
+        let certificate_type = self.key.key_type.clone();
+        if certificate_type != KeyType::Rsa2048 && certificate_type != KeyType::Rsa3072 && certificate_type != KeyType::Rsa4096
+        {
+            return Err(KeysError::ErrorCertificateTypeNotSupported());
+        }
+
         let client = bloock_http::BloockHttpClient::new(api_key, None);
 
+        let certificate_id = self.id.clone();
         let res: ManagedCertificateResponse = client
-            .get_json(format!("{}/keys/v1/certificates/{}", api_host, id), None)
+            .get_json(format!("{}/keys/v1/certificates/{}", api_host, certificate_id), None)
             .await
             .map_err(|e| KeysError::ManagedCertificateRequestError(e.to_string()))?;
 
@@ -246,7 +253,7 @@ mod tests {
 
         sleep(Duration::from_secs(5));
 
-        ManagedCertificate::load_x509_certificate(certificate.id, api_host, api_key)
+        certificate.load_x509_certificate(api_host, api_key)
             .await
             .unwrap();
     }

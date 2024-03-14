@@ -54,7 +54,7 @@ impl Encrypter for RsaEncrypter {
                 self.api_key.clone(),
             )
             .await
-            .map(|c| c.tbs_certificate.subject.to_string());
+            .map(|c| c.tbs_certificate.subject.to_string()).ok();
 
         let aes_key = LocalKey::new(&LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
@@ -102,7 +102,7 @@ impl Encrypter for RsaEncrypter {
                 self.api_key.clone(),
             )
             .await
-            .map(|c| c.tbs_certificate.subject.to_string());
+            .map(|c| c.tbs_certificate.subject.to_string()).ok();
 
         let aes_key = LocalKey::new(&LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
@@ -212,7 +212,7 @@ impl RsaEncrypter {
                 self.api_key.clone(),
             )
             .await
-            .map(|c| c.tbs_certificate.subject.to_string());
+            .map(|c| c.tbs_certificate.subject.to_string()).ok();
 
         let mut rng = rand::thread_rng();
 
@@ -253,7 +253,7 @@ impl RsaEncrypter {
                 self.api_key.clone(),
             )
             .await
-            .map(|c| c.tbs_certificate.subject.to_string());
+            .map(|c| c.tbs_certificate.subject.to_string()).ok();
 
         let http = BloockHttpClient::new(self.api_key.clone(), None);
 

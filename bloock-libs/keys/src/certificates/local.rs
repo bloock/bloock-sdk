@@ -117,7 +117,7 @@ fn create_certificate(
 ) -> Result<LocalCertificate<String>> {
     if key_type != KeyType::Rsa2048 && key_type != KeyType::Rsa3072 && key_type != KeyType::Rsa4096
     {
-        return Err(crate::KeysError::NotSupportedLocalCertificateType());
+        return Err(crate::KeysError::ErrorCertificateTypeNotSupported());
     }
 
     let serial_number = SerialNumber::from(42u32);

@@ -51,7 +51,7 @@ impl Signer for BJJSigner {
                 self.api_key.clone(),
             )
             .await
-            .map(|s| s.tbs_certificate.subject.to_string());
+            .map(|s| s.tbs_certificate.subject.to_string()).ok();
 
         let private_key = local
             .private_key
@@ -105,7 +105,7 @@ impl Signer for BJJSigner {
                 self.api_key.clone(),
             )
             .await
-            .map(|s| s.tbs_certificate.subject.to_string());
+            .map(|s| s.tbs_certificate.subject.to_string()).ok();
 
         let hash_alg =
             hash_alg.unwrap_or(KeyType::from(Key::from(managed.clone())).default_hash_alg());
