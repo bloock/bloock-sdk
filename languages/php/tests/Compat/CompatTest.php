@@ -9,7 +9,6 @@ final class CompatTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         Bloock::$apiKey = getenv("API_KEY");
-        Bloock::$disableAnalytics = true;
     }
 
     public function testCompat()
