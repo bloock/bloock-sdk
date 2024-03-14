@@ -269,7 +269,6 @@ impl<H: Client> IntegrityService<H> {
                 config.contract_address,
                 root.get_hash(),
                 self.config_service.get_api_key(),
-                self.config_service.get_environment(),
             )
             .await
         {

@@ -25,7 +25,6 @@ final class IdentityTest extends TestCase
         Bloock::$apiKey = getenv("DEV_API_KEY");
         Bloock::$apiHost =  getenv("DEV_API_HOST");
         Bloock::$identityApiHost = getenv("DEV_IDENTITY_API_HOST");
-        Bloock::$disableAnalytics = true;
     }
 
     public function testCredentialToFromJson()

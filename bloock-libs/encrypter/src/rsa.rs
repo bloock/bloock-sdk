@@ -25,20 +25,18 @@ use rsa::{
 pub struct RsaEncrypter {
     api_host: String,
     api_key: String,
-    environment: Option<String>,
 }
 
 impl RsaEncrypter {
-    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+    pub fn new(api_host: String, api_key: String) -> Self {
         Self {
             api_host,
             api_key,
-            environment,
         }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key, environment))
+    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key))
     }
 }
 
@@ -54,10 +52,9 @@ impl Encrypter for RsaEncrypter {
             .get_certificate(
                 self.api_host.clone(),
                 self.api_key.clone(),
-                self.environment.clone(),
             )
             .await
-            .map(|c| c.tbs_certificate.subject.to_string());
+            .map(|c| c.tbs_certificate.subject.to_string()).ok();
 
         let aes_key = LocalKey::new(&LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
@@ -67,7 +64,6 @@ impl Encrypter for RsaEncrypter {
         let aes_encrypter = AesEncrypter::new(
             self.api_host.clone(),
             self.api_key.clone(),
-            self.environment.clone(),
         );
 
         let ciphertext = aes_encrypter
@@ -104,10 +100,9 @@ impl Encrypter for RsaEncrypter {
             .get_certificate(
                 self.api_host.clone(),
                 self.api_key.clone(),
-                self.environment.clone(),
             )
             .await
-            .map(|c| c.tbs_certificate.subject.to_string());
+            .map(|c| c.tbs_certificate.subject.to_string()).ok();
 
         let aes_key = LocalKey::new(&LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
@@ -117,7 +112,6 @@ impl Encrypter for RsaEncrypter {
         let aes_encrypter = AesEncrypter::new(
             self.api_host.clone(),
             self.api_key.clone(),
-            self.environment.clone(),
         );
 
         let ciphertext = aes_encrypter
@@ -163,7 +157,6 @@ impl Encrypter for RsaEncrypter {
         let aes_encrypter = AesEncrypter::new(
             self.api_host.clone(),
             self.api_key.clone(),
-            self.environment.clone(),
         );
 
         aes_encrypter
@@ -198,7 +191,6 @@ impl Encrypter for RsaEncrypter {
         let aes_encrypter = AesEncrypter::new(
             self.api_host.clone(),
             self.api_key.clone(),
-            self.environment.clone(),
         );
 
         aes_encrypter
@@ -218,10 +210,9 @@ impl RsaEncrypter {
             .get_certificate(
                 self.api_host.clone(),
                 self.api_key.clone(),
-                self.environment.clone(),
             )
             .await
-            .map(|c| c.tbs_certificate.subject.to_string());
+            .map(|c| c.tbs_certificate.subject.to_string()).ok();
 
         let mut rng = rand::thread_rng();
 
@@ -260,12 +251,11 @@ impl RsaEncrypter {
             .get_certificate(
                 self.api_host.clone(),
                 self.api_key.clone(),
-                self.environment.clone(),
             )
             .await
-            .map(|c| c.tbs_certificate.subject.to_string());
+            .map(|c| c.tbs_certificate.subject.to_string()).ok();
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
+        let http = BloockHttpClient::new(self.api_key.clone(), None);
 
         let req = EncryptRequest {
             key_id: managed.id.clone(),
@@ -319,7 +309,7 @@ impl RsaEncrypter {
             Managed::Certificate(c) => c.key.clone(),
         };
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
+        let http = BloockHttpClient::new(self.api_key.clone(), None);
 
         let req = DecryptRequest {
             key_id: managed.id.clone(),
@@ -359,7 +349,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let encrypter = RsaEncrypter::new(api_host, api_key, None);
+        let encrypter = RsaEncrypter::new(api_host, api_key);
 
         let encryption = encrypter
             .encrypt_local(string_payload.as_bytes(), &local_key.clone().into())
@@ -396,7 +386,7 @@ mod tests {
             mnemonic: None,
         };
 
-        let c = RsaEncrypter::new(api_host, api_key, None);
+        let c = RsaEncrypter::new(api_host, api_key);
         let result = c
             .encrypt_local(string_payload.as_bytes(), &local_key.into())
             .await;
@@ -415,7 +405,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let encrypter = RsaEncrypter::new(api_host, api_key, None);
+        let encrypter = RsaEncrypter::new(api_host, api_key);
 
         let encryption = encrypter
             .encrypt_local(string_payload.as_bytes(), &local_key.clone().into())
@@ -451,7 +441,7 @@ mod tests {
             key_type: bloock_keys::KeyType::Rsa2048,
         };
         let local_key = LocalKey::new(&local_key_params).unwrap();
-        let encrypter = RsaEncrypter::new(api_host, api_key, None);
+        let encrypter = RsaEncrypter::new(api_host, api_key);
 
         let result = encrypter
             .decrypt_local(invalid_payload.as_bytes(), None, &local_key.into())
@@ -472,7 +462,7 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
@@ -480,7 +470,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let encrypter = RsaEncrypter::new(api_host, api_key, None);
+        let encrypter = RsaEncrypter::new(api_host, api_key);
 
         let encryption = encrypter
             .encrypt_managed(string_payload.as_bytes(), &managed_key.clone().into(), None)
@@ -519,7 +509,7 @@ mod tests {
             expiration: None,
         };
 
-        let encrypter = RsaEncrypter::new(api_host, api_key, None);
+        let encrypter = RsaEncrypter::new(api_host, api_key);
 
         let result = encrypter
             .decrypt_managed(string_payload.as_bytes(), None, &managed_key.into(), None)
@@ -540,7 +530,7 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
@@ -548,7 +538,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let encrypter = RsaEncrypter::new(api_host, api_key, None);
+        let encrypter = RsaEncrypter::new(api_host, api_key);
 
         let encryption = encrypter
             .encrypt_managed(string_payload.as_bytes(), &managed_key.clone().into(), None)
@@ -588,11 +578,11 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
-        let signer = RsaEncrypter::new(api_host, api_key, None);
+        let signer = RsaEncrypter::new(api_host, api_key);
 
         let result = signer
             .decrypt_managed(invalid_payload.as_bytes(), None, &managed_key.into(), None)

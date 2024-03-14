@@ -11,7 +11,6 @@ pub struct TotpAccessControlResult {
 pub struct TotpAccessControl {
     api_host: String,
     api_key: String,
-    environment: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -30,11 +29,10 @@ struct RecoverTotpAccessControlRequest {
 }
 
 impl TotpAccessControl {
-    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+    pub fn new(api_host: String, api_key: String) -> Self {
         Self {
             api_host,
             api_key,
-            environment,
         }
     }
 
@@ -46,7 +44,6 @@ impl TotpAccessControl {
 
         let client = bloock_http::BloockHttpClient::new(
             self.api_key.clone(),
-            self.environment.clone(),
             None,
         );
 
@@ -74,7 +71,6 @@ impl TotpAccessControl {
 
         let client = bloock_http::BloockHttpClient::new(
             self.api_key.clone(),
-            self.environment.clone(),
             None,
         );
 

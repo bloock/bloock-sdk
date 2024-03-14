@@ -16,17 +16,9 @@ var ApiKey string
 // ApiHost is a string variable representing the host URL used for API communication with the Bloock SDK.
 var ApiHost string
 
-// ForceEnv is a string variable used to force a specific environment configuration.
-// It allows developers to set a predefined environment for the Bloock SDK.
-var ForceEnv string = ""
-
 // IdentityApiHost is a string variable representing the host URL used for Identity Managed API.
 // Required to be set for identity-related features of the Bloock SDK.
 var IdentityApiHost string = ""
-
-// DisableAnalytics is a boolean variable that, when set to true, disables the
-// analytics feature in the Bloock SDK.
-var DisableAnalytics bool = false
 
 // NetworkConfig is a map variable that holds network configurations associated
 // with specific network IDs in the Bloock SDK.

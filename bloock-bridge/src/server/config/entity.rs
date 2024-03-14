@@ -16,10 +16,8 @@ pub fn map_config(config_data: Option<ConfigData>) -> Result<CoreConfigData, Bri
 
     let mut default_config = CoreConfigData::new(
         config.api_key,
-        config.environment,
         config.identity_api_host,
         config.library_name,
-        config.disable_analytics,
     );
 
     for (network, config) in config_data.networks_config {

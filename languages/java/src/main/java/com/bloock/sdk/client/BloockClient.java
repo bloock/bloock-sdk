@@ -22,14 +22,12 @@ public class BloockClient {
    * Creates a new instance of the Bloock SDK client with the specified configuration.
    * @param apiKey
    * @param identityApiHost
-   * @param forceEnv
    */
-  public BloockClient(String apiKey, String identityApiHost, String forceEnv) {
+  public BloockClient(String apiKey, String identityApiHost) {
     ConfigData configData = Config.newConfigDataDefault();
     Configuration configuration =
         Configuration.newBuilder()
             .setApiKey(apiKey)
-            .setEnvironment(forceEnv)
             .setIdentityApiHost(identityApiHost)
             .build();
 

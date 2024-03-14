@@ -24,7 +24,6 @@ final class KeyTest extends TestCase
     {
         Bloock::$apiKey = getenv("DEV_API_KEY");
         Bloock::$apiHost = getenv("DEV_API_HOST");
-        Bloock::$disableAnalytics = true;
     }
 
     public function testGenerateLocalEcdsa()

@@ -8,8 +8,7 @@ use x509_cert::{
 };
 
 use crate::{
-    entity::key::{Key, Local, Managed},
-    KeyType,
+    entity::key::{Key, Local, Managed}, KeyType, KeysError, Result
 };
 
 use self::{
@@ -97,8 +96,7 @@ pub trait GetX509Certficate {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
-    ) -> Option<Certificate>;
+    ) -> Result<Certificate>;
 }
 
 #[async_trait(?Send)]
@@ -107,11 +105,10 @@ impl GetX509Certficate for Key {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
-    ) -> Option<Certificate> {
+    ) -> Result<Certificate> {
         match self {
-            Key::Local(l) => l.get_certificate(api_host, api_key, environment).await,
-            Key::Managed(m) => m.get_certificate(api_host, api_key, environment).await,
+            Key::Local(l) => l.get_certificate(api_host, api_key).await,
+            Key::Managed(m) => m.get_certificate(api_host, api_key).await,
         }
     }
 }
@@ -122,8 +119,7 @@ impl GetX509Certficate for Local {
         &self,
         _api_host: String,
         _api_key: String,
-        _environment: Option<String>,
-    ) -> Option<Certificate> {
+    ) -> Result<Certificate> {
         match self {
             Local::Key(key) => {
                 let params = LocalCertificateWithKeyParams {
@@ -137,12 +133,12 @@ impl GetX509Certficate for Local {
                         state: None,
                         country: None,
                     },
-                    expiration: 1,
+                    expiration: 12,
                 };
-                let certificate = LocalCertificate::new_from_key(&params).ok()?;
-                Some(certificate.certificate)
+                let certificate = LocalCertificate::new_from_key(&params)?;
+                Ok(certificate.certificate)
             }
-            Local::Certificate(local_certificate) => local_certificate.get_certificate_inner().ok(),
+            Local::Certificate(local_certificate) => local_certificate.get_certificate_inner(),
         }
     }
 }
@@ -153,23 +149,19 @@ impl GetX509Certficate for Managed {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
-    ) -> Option<Certificate> {
+    ) -> Result<Certificate> {
         match self {
-            Managed::Key(_) => Some(create_self_certificate()),
-            Managed::Certificate(managed_certificate) => ManagedCertificate::load_x509_certificate(
-                managed_certificate.id.clone(),
+            Managed::Key(_) => Err(KeysError::ErrorCertificateTypeNotSupported()),
+            Managed::Certificate(managed_certificate) => managed_certificate.load_x509_certificate(
                 api_host,
                 api_key,
-                environment,
             )
-            .await
-            .ok(),
+            .await,
         }
     }
 }
 
-fn create_self_certificate() -> Certificate {
+/*fn create_self_certificate() -> Certificate {
     let params = LocalCertificateParams {
         key_type: KeyType::Rsa2048,
         password: "password".to_string(),
@@ -185,7 +177,7 @@ fn create_self_certificate() -> Certificate {
     };
     let certificate = LocalCertificate::new(&params).unwrap();
     certificate.certificate
-}
+}*/
 
 fn normalize_value_with_quotes(input: &str) -> String {
     let special_characters = ",\\+=\"\n<>#;";

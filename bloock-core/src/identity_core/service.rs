@@ -124,7 +124,6 @@ impl<H: Client> IdentityCoreService<H> {
         let signature = bloock_signer::sign(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            self.config_service.get_environment(),
             &core_claim_hash_decoded,
             &key,
             Some(HashAlg::None),
@@ -235,7 +234,6 @@ impl<H: Client> IdentityCoreService<H> {
         let state_signature = bloock_signer::sign(
             self.config_service.get_api_base_url(),
             self.config_service.get_api_key(),
-            self.config_service.get_environment(),
             &new_state_decoded,
             &key,
             Some(HashAlg::None),

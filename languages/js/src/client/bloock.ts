@@ -30,14 +30,12 @@ export class BloockClient {
    * Creates a new instance of the Bloock SDK client with the specified configuration.
    * @param apiKey 
    * @param identityApiHost 
-   * @param forceEnv 
    */
-  constructor(apiKey: string, identityApiHost?: string, forceEnv?: string) {
+  constructor(apiKey: string, identityApiHost?: string) {
     this.configData = NewConfigData(undefined);
 
     if (this.configData.config) {
       this.configData.config.apiKey = apiKey;
-      this.configData.config.environment = forceEnv;
       this.configData.config.identityApiHost = identityApiHost;
     }
 

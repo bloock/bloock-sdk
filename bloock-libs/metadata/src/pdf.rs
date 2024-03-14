@@ -83,7 +83,6 @@ impl MetadataParser for PdfParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> BloockResult<Signature> {
         let old_signatures =  match self.get_signatures() {
             Ok(s) => s,
@@ -164,15 +163,10 @@ impl MetadataParser for PdfParser {
 
         //Get payload to sign
         let effective_payload = self.get_signed_content(byte_range_payload.clone())?;
-        let cert = match key
-            .get_certificate(api_host.clone(), api_key.clone(), environment.clone())
-            .await
-        {
-            Some(c) => c,
-            None => Err(MetadataError::GetSignedDataError(
-                "Error getting certificate".to_string(),
-            ))?,
-        };
+        let cert = key
+            .get_certificate(api_host.clone(), api_key.clone())
+            .await.map_err(|e| MetadataError::GetSignedDataError(e.to_string()))?;
+        
         let signed_attributes = self.get_signed_attributes(effective_payload, cert.clone())?;
         let signed_attributes_encoded =
             self.get_signed_attributes_encoded(signed_attributes.clone())?;
@@ -181,7 +175,6 @@ impl MetadataParser for PdfParser {
         let signature = bloock_signer::sign(
             api_host.clone(),
             api_key.clone(),
-            environment.clone(),
             &signed_attributes_encoded,
             key,
             hash_alg,
@@ -212,7 +205,6 @@ impl MetadataParser for PdfParser {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> BloockResult<bool> {
         let mut verifications = Vec::new();
 
@@ -240,7 +232,6 @@ impl MetadataParser for PdfParser {
             let verified = bloock_signer::verify(
                 api_host.clone(),
                 api_key.clone(),
-                environment.clone(),
                 verification.2.clone(),
                 &verification.1,
                 &verification.0,
@@ -262,7 +253,6 @@ impl MetadataParser for PdfParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> BloockResult<Encryption> {
         todo!()
     }
@@ -273,7 +263,6 @@ impl MetadataParser for PdfParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> BloockResult<()> {
         todo!()
     }

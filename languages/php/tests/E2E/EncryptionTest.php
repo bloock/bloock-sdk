@@ -19,7 +19,6 @@ final class EncryptionTest extends TestCase
     {
         Bloock::$apiKey = getenv("API_KEY");
         Bloock::$apiHost = getenv("API_HOST");
-        Bloock::$disableAnalytics = true;
     }
 
     /**

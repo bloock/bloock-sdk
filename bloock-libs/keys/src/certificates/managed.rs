@@ -59,9 +59,8 @@ impl ManagedCertificate {
         params: &ManagedCertificateParams,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
+        let client = bloock_http::BloockHttpClient::new(api_key, None);
 
         let req = CreateManagedCertificateRequest {
             key_type: params.key_type.get_key_type(),
@@ -92,9 +91,8 @@ impl ManagedCertificate {
         id: String,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
+        let client = bloock_http::BloockHttpClient::new(api_key, None);
 
         let res: ManagedCertificateResponse = client
             .get_json(format!("{}/keys/v1/certificates/{}", api_host, id), None)
@@ -117,15 +115,21 @@ impl ManagedCertificate {
     }
 
     pub async fn load_x509_certificate(
-        id: String,
+        &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<Certificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
+        let certificate_type = self.key.key_type.clone();
+        if certificate_type != KeyType::Rsa2048 && certificate_type != KeyType::Rsa3072 && certificate_type != KeyType::Rsa4096
+        {
+            return Err(KeysError::ErrorCertificateTypeNotSupported());
+        }
 
+        let client = bloock_http::BloockHttpClient::new(api_key, None);
+
+        let certificate_id = self.id.clone();
         let res: ManagedCertificateResponse = client
-            .get_json(format!("{}/keys/v1/certificates/{}", api_host, id), None)
+            .get_json(format!("{}/keys/v1/certificates/{}", api_host, certificate_id), None)
             .await
             .map_err(|e| KeysError::ManagedCertificateRequestError(e.to_string()))?;
 
@@ -142,9 +146,8 @@ impl ManagedCertificate {
         certificate_type: CertificateType,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<ManagedCertificate> {
-        let client = bloock_http::BloockHttpClient::new(api_key, environment, None);
+        let client = bloock_http::BloockHttpClient::new(api_key, None);
 
         let res: CreateManagedCertificateResponse = client
             .post_file(
@@ -211,7 +214,6 @@ mod tests {
             &params,
             "https://api.bloock.com".to_string(),
             option_env!("API_KEY").unwrap().to_string(),
-            None,
         )
         .await
         .unwrap();
@@ -241,7 +243,7 @@ mod tests {
             subject: subject_params,
             expiration: 5,
         };
-        let certificate = ManagedCertificate::new(&params, api_host.clone(), api_key.clone(), None)
+        let certificate = ManagedCertificate::new(&params, api_host.clone(), api_key.clone())
             .await
             .unwrap();
 
@@ -251,7 +253,7 @@ mod tests {
 
         sleep(Duration::from_secs(5));
 
-        ManagedCertificate::load_x509_certificate(certificate.id, api_host, api_key, None)
+        certificate.load_x509_certificate(api_host, api_key)
             .await
             .unwrap();
     }

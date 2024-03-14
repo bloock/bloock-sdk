@@ -11,9 +11,7 @@ func NewConfigDataDefault() *proto.ConfigData {
 			LibraryName:      "Golang",
 			Host:             bloock.ApiHost,
 			ApiKey:           bloock.ApiKey,
-			Environment:      &bloock.ForceEnv,
 			IdentityApiHost:  &bloock.IdentityApiHost,
-			DisableAnalytics: bloock.DisableAnalytics,
 		},
 		NetworksConfig: bloock.NetworkConfig,
 	}

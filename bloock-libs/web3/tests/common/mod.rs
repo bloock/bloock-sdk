@@ -12,7 +12,6 @@ pub async fn get_state() {
             contract_address.to_string(),
             state.to_string(),
             option_env!("API_KEY").unwrap().to_string(),
-            None,
         )
         .await
         .unwrap();
@@ -33,7 +32,6 @@ pub async fn reverse_ens() {
             provider.to_string(),
             address.to_string(),
             option_env!("API_KEY").unwrap().to_string(),
-            None,
         )
         .await
         .unwrap();

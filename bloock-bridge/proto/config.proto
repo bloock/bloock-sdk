@@ -19,9 +19,7 @@ message Configuration {
     string key_type_algorithm = 6;
     string elliptic_curve_key = 7;
     string signature_algorithm = 8;
-    bool disable_analytics = 9;
-    optional string environment = 10;
-    optional string identityApiHost = 11;
+    optional string identityApiHost = 9;
 }
 
 enum Network {

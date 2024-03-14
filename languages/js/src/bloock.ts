@@ -9,10 +9,8 @@ import {
 export class Bloock {
   private static instance: Bloock;
   private apiKey?: string;
-  private forceEnv?: string;
   private identityApiHost?: string;
   private apiHost?: string;
-  private disableAnalytics: boolean = false;
   private networksConfig?: {
     [key: number]: NetworkConfigProto;
   };
@@ -46,28 +44,6 @@ export class Bloock {
       Bloock.instance = new Bloock();
     }
     Bloock.instance.apiKey = apiKey;
-  }
-
-  /**
-   * Is a string variable used to force a specific environment configuration, it allows developers to set a predefined environment for the Bloock SDK.
-   * @returns 
-   */
-  public static getForceEnv(): string | undefined {
-    if (!Bloock.instance) {
-      Bloock.instance = new Bloock();
-    }
-    return Bloock.instance.forceEnv;
-  }
-
-  /**
-   * Sets the environment used for the Bloock SDK.
-   * @param forceEnv 
-   */
-  public static setForceEnv(forceEnv: string) {
-    if (!Bloock.instance) {
-      Bloock.instance = new Bloock();
-    }
-    Bloock.instance.forceEnv = forceEnv;
   }
 
   /**
@@ -112,28 +88,6 @@ export class Bloock {
       Bloock.instance = new Bloock();
     }
     Bloock.instance.apiHost = host;
-  }
-
-  /**
-   * Is a boolean variable that, when set to true, disables the analytics feature in the Bloock SDK.
-   * @returns 
-   */
-  public static getDisableAnalytics(): boolean {
-    if (!Bloock.instance) {
-      Bloock.instance = new Bloock();
-    }
-    return Bloock.instance.disableAnalytics;
-  }
-
-  /**
-   * Sets the boolean variable that disables the analytics feature in the Bloock SDK.
-   * @param disableAnalytics 
-   */
-  public static setDisableAnalytics(disableAnalytics: boolean) {
-    if (!Bloock.instance) {
-      Bloock.instance = new Bloock();
-    }
-    Bloock.instance.disableAnalytics = disableAnalytics;
   }
 
   /**

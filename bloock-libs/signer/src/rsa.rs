@@ -26,20 +26,18 @@ use rsa::{
 pub struct RsaSigner {
     api_host: String,
     api_key: String,
-    environment: Option<String>,
 }
 
 impl RsaSigner {
-    pub fn new(api_host: String, api_key: String, environment: Option<String>) -> Self {
+    pub fn new(api_host: String, api_key: String) -> Self {
         Self {
             api_host,
             api_key,
-            environment,
         }
     }
 
-    pub fn new_boxed(api_host: String, api_key: String, environment: Option<String>) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key, environment))
+    pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
+        Box::new(Self::new(api_host, api_key))
     }
 }
 
@@ -60,10 +58,9 @@ impl BloockSigner for RsaSigner {
             .get_certificate(
                 self.api_host.clone(),
                 self.api_key.clone(),
-                self.environment.clone(),
             )
             .await
-            .map(|s| s.tbs_certificate.subject.to_string());
+            .map(|s| s.tbs_certificate.subject.to_string()).ok();
 
         let private_key = rsa::RsaPrivateKey::from_pkcs8_pem(&local.private_key.clone().unwrap())
             .map_err(|e| SignerError::InvalidSecretKey(e.to_string()))?;
@@ -105,16 +102,15 @@ impl BloockSigner for RsaSigner {
             .get_certificate(
                 self.api_host.clone(),
                 self.api_key.clone(),
-                self.environment.clone(),
             )
             .await
-            .map(|s| s.tbs_certificate.subject.to_string());
+            .map(|s| s.tbs_certificate.subject.to_string()).ok();
 
         let hash_alg =
             hash_alg.unwrap_or(KeyType::from(Key::from(managed.clone())).default_hash_alg());
         let hash = hash_alg.hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
+        let http = BloockHttpClient::new(self.api_key.clone(), None);
 
         let req = SignRequest {
             key_id: managed.id.clone(),
@@ -175,7 +171,7 @@ impl BloockSigner for RsaSigner {
             .unwrap_or_default()
             .hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
+        let http = BloockHttpClient::new(self.api_key.clone(), None);
 
         let req = VerifyRequest {
             public_key: signature.key.clone(),
@@ -220,7 +216,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_key.clone().into(), None)
@@ -260,7 +256,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_cert.clone().into(), None)
@@ -294,7 +290,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_key.clone().into(), None)
@@ -324,7 +320,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_key.clone().into(), None)
@@ -357,7 +353,7 @@ mod tests {
             mnemonic: None,
         };
 
-        let c = RsaSigner::new(api_host, api_key, None);
+        let c = RsaSigner::new(api_host, api_key);
         let result = c
             .sign_local(string_payload.as_bytes(), &local_key.into(), None)
             .await;
@@ -380,7 +376,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -406,7 +402,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -431,7 +427,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -453,13 +449,13 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
         let string_payload = "hello world";
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let signature = signer
             .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None, None)
@@ -496,7 +492,7 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
@@ -509,7 +505,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let result: bool = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -535,7 +531,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -559,7 +555,7 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
@@ -572,7 +568,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = RsaSigner::new(api_host, api_key, None);
+        let signer = RsaSigner::new(api_host, api_key);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)

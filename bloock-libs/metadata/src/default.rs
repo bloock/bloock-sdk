@@ -51,14 +51,12 @@ impl MetadataParser for DefaultParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<Signature> {
         let payload = self.get_data()?;
 
         let signature = bloock_signer::sign(
             api_host,
             api_key,
-            environment,
             &payload,
             key,
             hash_alg,
@@ -88,7 +86,6 @@ impl MetadataParser for DefaultParser {
         &self,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<bool> {
         let vec_sig = self.get_signatures();
         let payload = self.get_data()?;
@@ -98,7 +95,6 @@ impl MetadataParser for DefaultParser {
                     bloock_signer::verify(
                         api_host.clone(),
                         api_key.clone(),
-                        environment.clone(),
                         None,
                         &payload,
                         signature,
@@ -118,14 +114,12 @@ impl MetadataParser for DefaultParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<Encryption> {
         let payload = self.build()?;
 
         let encryption = bloock_encrypter::encrypt(
             api_host,
             api_key,
-            environment,
             &payload,
             key,
             access_control,
@@ -150,14 +144,12 @@ impl MetadataParser for DefaultParser {
         access_control: Option<String>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<()> {
         let ciphertext = self.get_data()?;
 
         let decrypted_payload = bloock_encrypter::decrypt(
             api_host,
             api_key,
-            environment,
             &ciphertext,
             self.get_encryption_key(),
             key,
@@ -432,7 +424,6 @@ mod tests {
                 None,
                 api_host.clone(),
                 api_key.clone(),
-                None,
             )
             .await
             .unwrap();
@@ -441,7 +432,7 @@ mod tests {
         assert_eq!(None, parser.get_signatures());
 
         parser
-            .decrypt(&local_aes_key.into(), None, api_host, api_key, None)
+            .decrypt(&local_aes_key.into(), None, api_host, api_key)
             .await
             .unwrap();
 
@@ -508,14 +499,13 @@ mod tests {
                 None,
                 "".to_string(),
                 "".to_string(),
-                None,
             )
             .await
             .unwrap();
         assert_eq!(2, parser.get_signatures().unwrap().len());
 
         let verified = parser
-            .verify("".to_string(), "".to_string(), None)
+            .verify("".to_string(), "".to_string())
             .await
             .unwrap();
         assert_eq!(true, verified);

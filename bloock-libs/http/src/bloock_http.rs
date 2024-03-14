@@ -17,7 +17,6 @@ const API_VERSION: &str = "2023-11-16";
 pub struct BloockHttpClient {
     api_key: String,
     api_version: Option<String>,
-    environment: Option<String>,
 }
 
 #[async_trait]
@@ -90,11 +89,10 @@ impl Client for BloockHttpClient {
 }
 
 impl BloockHttpClient {
-    pub fn new(api_key: String, environment: Option<String>, api_version: Option<String>) -> Self {
+    pub fn new(api_key: String, api_version: Option<String>) -> Self {
         Self {
             api_key,
             api_version,
-            environment,
         }
     }
 
@@ -104,10 +102,6 @@ impl BloockHttpClient {
 
     pub fn get_api_version(&self) -> Option<String> {
         self.api_version.clone()
-    }
-
-    pub fn get_enviornment(&self) -> Option<String> {
-        self.environment.clone()
     }
 
     pub fn set_headers(&self, headers: Option<Vec<(String, String)>>) -> Vec<(String, String)> {
@@ -121,11 +115,6 @@ impl BloockHttpClient {
                 } else {
                     h.push(("api_version".to_string(), API_VERSION.to_string()));
                 }
-                if let Some(env) = self.get_enviornment() {
-                    if !env.is_empty() {
-                        h.push(("Environment".to_string(), env));
-                    }
-                }
                 h
             }
             None => {
@@ -136,11 +125,6 @@ impl BloockHttpClient {
                     }
                 } else {
                     h.push(("api_version".to_string(), API_VERSION.to_string()));
-                }
-                if let Some(env) = self.get_enviornment() {
-                    if !env.is_empty() {
-                        h.push(("Environment".to_string(), env));
-                    }
                 }
                 h
             }

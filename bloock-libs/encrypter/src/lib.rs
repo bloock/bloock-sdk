@@ -15,7 +15,6 @@ pub type Result<T> = std::result::Result<T, EncrypterError>;
 pub async fn encrypt(
     api_host: String,
     api_key: String,
-    environment: Option<String>,
     payload: &[u8],
     key: &Key,
     access_control: Option<String>,
@@ -34,11 +33,11 @@ pub async fn encrypt(
     let encrypter: Box<dyn Encrypter> = match alg {
         bloock_keys::KeyType::EcP256k => Err(EncrypterError::InvalidAlgorithm())?,
         bloock_keys::KeyType::BJJ => Err(EncrypterError::InvalidAlgorithm())?,
-        bloock_keys::KeyType::Rsa2048 => RsaEncrypter::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Rsa3072 => RsaEncrypter::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Rsa4096 => RsaEncrypter::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Aes128 => AesEncrypter::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Aes256 => AesEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Rsa2048 => RsaEncrypter::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa3072 => RsaEncrypter::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa4096 => RsaEncrypter::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Aes128 => AesEncrypter::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Aes256 => AesEncrypter::new_boxed(api_host, api_key),
     };
 
     match key {
@@ -50,7 +49,6 @@ pub async fn encrypt(
 pub async fn decrypt(
     api_host: String,
     api_key: String,
-    environment: Option<String>,
     payload: &[u8],
     encryption_key: Option<EncryptionKey>,
     key: &Key,
@@ -70,11 +68,11 @@ pub async fn decrypt(
     let encrypter: Box<dyn Encrypter> = match alg {
         bloock_keys::KeyType::EcP256k => Err(EncrypterError::InvalidAlgorithm())?,
         bloock_keys::KeyType::BJJ => Err(EncrypterError::InvalidAlgorithm())?,
-        bloock_keys::KeyType::Rsa2048 => RsaEncrypter::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Rsa3072 => RsaEncrypter::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Rsa4096 => RsaEncrypter::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Aes128 => AesEncrypter::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Aes256 => AesEncrypter::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::Rsa2048 => RsaEncrypter::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa3072 => RsaEncrypter::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa4096 => RsaEncrypter::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Aes128 => AesEncrypter::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Aes256 => AesEncrypter::new_boxed(api_host, api_key),
     };
 
     match key {

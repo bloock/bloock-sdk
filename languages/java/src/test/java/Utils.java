@@ -16,8 +16,6 @@ public class Utils {
     if (apiHost != null) {
       Bloock.apiHost = apiHost;
     }
-
-    Bloock.disableAnalytics = true;
   }
 
   static void initDevSdk() {
@@ -31,8 +29,6 @@ public class Utils {
     if (identityApiHost != null) {
       Bloock.identityApiHost = identityApiHost;
     }
-
-    Bloock.disableAnalytics = true;
   }
 
   public static String generateRandomString(int length) {

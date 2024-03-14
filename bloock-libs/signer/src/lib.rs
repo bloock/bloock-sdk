@@ -20,7 +20,6 @@ pub type Result<T> = std::result::Result<T, SignerError>;
 pub async fn sign(
     api_host: String,
     api_key: String,
-    environment: Option<String>,
     payload: &[u8],
     key: &Key,
     hash_alg: Option<HashAlg>,
@@ -39,12 +38,12 @@ pub async fn sign(
 
     let signer: Box<dyn Signer> = match alg {
         bloock_keys::KeyType::EcP256k => {
-            EcdsaSigner::new_boxed(api_host, api_key, environment, None)
+            EcdsaSigner::new_boxed(api_host, api_key, None)
         }
-        bloock_keys::KeyType::BJJ => BJJSigner::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Rsa2048 => RsaSigner::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Rsa3072 => RsaSigner::new_boxed(api_host, api_key, environment),
-        bloock_keys::KeyType::Rsa4096 => RsaSigner::new_boxed(api_host, api_key, environment),
+        bloock_keys::KeyType::BJJ => BJJSigner::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa2048 => RsaSigner::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa3072 => RsaSigner::new_boxed(api_host, api_key),
+        bloock_keys::KeyType::Rsa4096 => RsaSigner::new_boxed(api_host, api_key),
         bloock_keys::KeyType::Aes128 => Err(SignerError::InvalidSignatureAlg())?,
         bloock_keys::KeyType::Aes256 => Err(SignerError::InvalidSignatureAlg())?,
     };
@@ -58,39 +57,38 @@ pub async fn sign(
 pub async fn verify(
     api_host: String,
     api_key: String,
-    environment: Option<String>,
     api_version: Option<String>,
     payload: &[u8],
     signature: &Signature,
 ) -> Result<bool> {
     match signature.alg {
         entity::alg::SignAlg::Es256k => {
-            EcdsaSigner::new_boxed(api_host, api_key, environment, api_version)
+            EcdsaSigner::new_boxed(api_host, api_key, api_version)
                 .verify_local(payload, signature)
                 .await
         }
         entity::alg::SignAlg::Es256kM => {
-            EcdsaSigner::new_boxed(api_host, api_key, environment, api_version)
+            EcdsaSigner::new_boxed(api_host, api_key, api_version)
                 .verify_managed(payload, signature)
                 .await
         }
         entity::alg::SignAlg::Bjj => {
-            BJJSigner::new_boxed(api_host, api_key, environment)
+            BJJSigner::new_boxed(api_host, api_key)
                 .verify_local(payload, signature)
                 .await
         }
         entity::alg::SignAlg::BjjM => {
-            BJJSigner::new_boxed(api_host, api_key, environment)
+            BJJSigner::new_boxed(api_host, api_key)
                 .verify_managed(payload, signature)
                 .await
         }
         entity::alg::SignAlg::Rsa => {
-            RsaSigner::new_boxed(api_host, api_key, environment)
+            RsaSigner::new_boxed(api_host, api_key)
                 .verify_local(payload, signature)
                 .await
         }
         entity::alg::SignAlg::RsaM => {
-            RsaSigner::new_boxed(api_host, api_key, environment)
+            RsaSigner::new_boxed(api_host, api_key)
                 .verify_managed(payload, signature)
                 .await
         }

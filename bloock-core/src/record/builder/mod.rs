@@ -19,13 +19,11 @@ impl Builder {
         payload: Vec<u8>,
         api_host: String,
         api_key: String,
-        environment: Option<String>,
     ) -> BloockResult<Self> {
         let document = Document::new(
             &payload,
             api_host.clone(),
             api_key.clone(),
-            environment.clone(),
         )?;
         Ok(Self {
             document,

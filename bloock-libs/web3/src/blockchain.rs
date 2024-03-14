@@ -15,11 +15,10 @@ impl Blockchain {
         contract_address: String,
         state: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<u128> {
         let request = Request::new_get_state_request(contract_address, state)?;
 
-        let result = Transport::send_request(provider, request, api_key, environment).await?;
+        let result = Transport::send_request(provider, request, api_key).await?;
 
         let result = ethabi::decode(&[ParamType::Uint(256)], &result)
             .map_err(|_| BlockchainError::Web3Error("Invalid response received".to_string()))?;
@@ -37,11 +36,10 @@ impl Blockchain {
         provider: String,
         address: String,
         api_key: String,
-        environment: Option<String>,
     ) -> Result<String> {
         let request = Request::new_reverse_ens_request(address)?;
 
-        let result = Transport::send_request(provider, request, api_key, environment).await?;
+        let result = Transport::send_request(provider, request, api_key).await?;
 
         let result = ethabi::decode(&[ParamType::Array(Box::new(ParamType::String))], &result)
             .map_err(|_| BlockchainError::Web3Error("Invalid response received".to_string()))?;

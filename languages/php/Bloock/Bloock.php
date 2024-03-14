@@ -13,11 +13,6 @@ class Bloock
      */
     public static string $apiKey = "";
     /**
-     * Is a string variable used to force a specific environment configuration, it allows developers to set a predefined environment for the Bloock SDK.
-     * @var string
-     */
-    public static string $forceEnv = "";
-    /**
      * Is a string variable representing the host URL used for Identity Managed API, required to be set for identity-related features of the Bloock SDK.
      * @var string
      */
@@ -27,11 +22,6 @@ class Bloock
      * @var string
      */
     public static string $apiHost = "";
-    /**
-     * Is a boolean variable that, when set to true, disables the analytics feature in the Bloock SDK.
-     * @var bool
-     */
-    public static bool $disableAnalytics = false;
     /**
      * Is an array variable that holds network configurations associated with specific network IDs in the Bloock SDK.
      * @var array

@@ -16,7 +16,6 @@ use libsecp256k1::{Message, PublicKey, SecretKey};
 pub struct EcdsaSigner {
     api_host: String,
     api_key: String,
-    environment: Option<String>,
     api_version: Option<String>,
 }
 
@@ -24,13 +23,11 @@ impl EcdsaSigner {
     pub fn new(
         api_host: String,
         api_key: String,
-        environment: Option<String>,
         api_version: Option<String>,
     ) -> Self {
         Self {
             api_host,
             api_key,
-            environment,
             api_version,
         }
     }
@@ -38,10 +35,9 @@ impl EcdsaSigner {
     pub fn new_boxed(
         api_host: String,
         api_key: String,
-        environment: Option<String>,
         api_version: Option<String>,
     ) -> Box<Self> {
-        Box::new(Self::new(api_host, api_key, environment, api_version))
+        Box::new(Self::new(api_host, api_key, api_version))
     }
 }
 
@@ -62,10 +58,9 @@ impl Signer for EcdsaSigner {
             .get_certificate(
                 self.api_host.clone(),
                 self.api_key.clone(),
-                self.environment.clone(),
             )
             .await
-            .map(|s| s.tbs_certificate.subject.to_string());
+            .map(|s| s.tbs_certificate.subject.to_string()).ok();
 
         let private_key = local
             .private_key
@@ -117,16 +112,15 @@ impl Signer for EcdsaSigner {
             .get_certificate(
                 self.api_host.clone(),
                 self.api_key.clone(),
-                self.environment.clone(),
             )
             .await
-            .map(|s| s.tbs_certificate.subject.to_string());
+            .map(|s| s.tbs_certificate.subject.to_string()).ok();
 
         let hash_alg =
             hash_alg.unwrap_or(KeyType::from(Key::from(managed.clone())).default_hash_alg());
         let hash = hash_alg.hash(&[payload]);
 
-        let http = BloockHttpClient::new(self.api_key.clone(), self.environment.clone(), None);
+        let http = BloockHttpClient::new(self.api_key.clone(), None);
 
         let req = SignRequest {
             key_id: managed.id.clone(),
@@ -182,7 +176,6 @@ impl Signer for EcdsaSigner {
 
         let http = BloockHttpClient::new(
             self.api_key.clone(),
-            self.environment.clone(),
             self.api_version.clone(),
         );
 
@@ -226,7 +219,7 @@ mod tests {
 
         let string_payload = "hello world";
 
-        let signer = EcdsaSigner::new(api_host, api_key, None, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let signature = signer
             .sign_local(string_payload.as_bytes(), &local_key.clone().into(), None)
@@ -259,7 +252,7 @@ mod tests {
             mnemonic: None,
         };
 
-        let c = EcdsaSigner::new(api_host, api_key, None, None);
+        let c = EcdsaSigner::new(api_host, api_key, None);
         let result = c
             .sign_local(string_payload.as_bytes(), &local_key.into(), None)
             .await;
@@ -282,7 +275,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -308,7 +301,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -333,7 +326,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_local(string_payload.as_bytes(), &signature)
@@ -355,13 +348,13 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
         let string_payload = "hello world";
 
-        let signer = EcdsaSigner::new(api_host, api_key, None, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let signature = signer
             .sign_managed(string_payload.as_bytes(), &managed_key.clone().into(), None, None)
@@ -400,7 +393,7 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
@@ -413,7 +406,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result: bool = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -439,7 +432,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)
@@ -461,7 +454,7 @@ mod tests {
             expiration: None,
         };
         let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone(), None)
+            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
 
@@ -474,7 +467,7 @@ mod tests {
             hash_alg: None
         };
 
-        let signer = EcdsaSigner::new(api_host, api_key, None, None);
+        let signer = EcdsaSigner::new(api_host, api_key, None);
 
         let result = signer
             .verify_managed(string_payload.as_bytes(), &signature)

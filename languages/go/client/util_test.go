@@ -23,8 +23,6 @@ func InitSdk() {
 	if apiHost != "" {
 		bloock.ApiHost = apiHost
 	}
-
-	bloock.DisableAnalytics = true
 }
 
 func InitDevSdk() {
@@ -39,8 +37,6 @@ func InitDevSdk() {
 	if identityApiHost != "" {
 		bloock.IdentityApiHost = identityApiHost
 	}
-
-	bloock.DisableAnalytics = true
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

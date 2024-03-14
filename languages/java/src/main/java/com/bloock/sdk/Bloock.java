@@ -18,17 +18,9 @@ public class Bloock {
    */
   public static String apiHost = "";
   /**
-   * Is a string variable used to force a specific environment configuration, it allows developers to set a predefined environment for the Bloock SDK.
-   */
-  public static String forceEnv = "";
-  /**
    * Is a string variable representing the host URL used for Identity Managed API, required to be set for identity-related features of the Bloock SDK.
    */
   public static String identityApiHost = "";
-  /**
-   * Is a boolean variable that, when set to true, disables the analytics feature in the Bloock SDK.
-   */
-  public static Boolean disableAnalytics = false;
   /**
    * Is a map variable that holds network configurations associated with specific network IDs in the Bloock SDK.
    */
