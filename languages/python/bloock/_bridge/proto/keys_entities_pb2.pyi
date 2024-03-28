@@ -20,7 +20,7 @@ class _KeyType:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _KeyTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_KeyType.ValueType], builtins.type):
+class _KeyTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_KeyType.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     EcP256k: _KeyType.ValueType  # 0
     Rsa2048: _KeyType.ValueType  # 1
@@ -45,7 +45,7 @@ class _KeyProtectionLevel:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _KeyProtectionLevelEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_KeyProtectionLevel.ValueType], builtins.type):
+class _KeyProtectionLevelEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_KeyProtectionLevel.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     SOFTWARE: _KeyProtectionLevel.ValueType  # 0
     HSM: _KeyProtectionLevel.ValueType  # 1
@@ -56,11 +56,28 @@ SOFTWARE: KeyProtectionLevel.ValueType  # 0
 HSM: KeyProtectionLevel.ValueType  # 1
 global___KeyProtectionLevel = KeyProtectionLevel
 
+class _AccessControlType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _AccessControlTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_AccessControlType.ValueType], builtins.type):  # noqa: F821
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    NO_ACCESS_CONTROL: _AccessControlType.ValueType  # 0
+    TOTP: _AccessControlType.ValueType  # 1
+    SECRET: _AccessControlType.ValueType  # 2
+
+class AccessControlType(_AccessControlType, metaclass=_AccessControlTypeEnumTypeWrapper): ...
+
+NO_ACCESS_CONTROL: AccessControlType.ValueType  # 0
+TOTP: AccessControlType.ValueType  # 1
+SECRET: AccessControlType.ValueType  # 2
+global___AccessControlType = AccessControlType
+
 class _CertificateType:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _CertificateTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_CertificateType.ValueType], builtins.type):
+class _CertificateTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_CertificateType.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     PEM: _CertificateType.ValueType  # 0
     PFX: _CertificateType.ValueType  # 1
@@ -71,7 +88,6 @@ PEM: CertificateType.ValueType  # 0
 PFX: CertificateType.ValueType  # 1
 global___CertificateType = CertificateType
 
-@typing_extensions.final
 class LocalKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -94,7 +110,6 @@ class LocalKey(google.protobuf.message.Message):
 
 global___LocalKey = LocalKey
 
-@typing_extensions.final
 class ManagedKeyParams(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -123,7 +138,6 @@ class ManagedKeyParams(google.protobuf.message.Message):
 
 global___ManagedKeyParams = ManagedKeyParams
 
-@typing_extensions.final
 class ManagedKey(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -133,12 +147,14 @@ class ManagedKey(google.protobuf.message.Message):
     KEY_TYPE_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     EXPIRATION_FIELD_NUMBER: builtins.int
+    ACCESS_CONTROL_TYPE_FIELD_NUMBER: builtins.int
     id: builtins.str
     key: builtins.str
     protection: global___KeyProtectionLevel.ValueType
     key_type: global___KeyType.ValueType
     name: builtins.str
     expiration: builtins.int
+    access_control_type: global___AccessControlType.ValueType
     def __init__(
         self,
         *,
@@ -148,12 +164,12 @@ class ManagedKey(google.protobuf.message.Message):
         key_type: global___KeyType.ValueType = ...,
         name: builtins.str = ...,
         expiration: builtins.int = ...,
+        access_control_type: global___AccessControlType.ValueType = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["expiration", b"expiration", "id", b"id", "key", b"key", "key_type", b"key_type", "name", b"name", "protection", b"protection"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["access_control_type", b"access_control_type", "expiration", b"expiration", "id", b"id", "key", b"key", "key_type", b"key_type", "name", b"name", "protection", b"protection"]) -> None: ...
 
 global___ManagedKey = ManagedKey
 
-@typing_extensions.final
 class CertificateSubject(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -194,7 +210,6 @@ class CertificateSubject(google.protobuf.message.Message):
 
 global___CertificateSubject = CertificateSubject
 
-@typing_extensions.final
 class LocalCertificateParams(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -220,7 +235,6 @@ class LocalCertificateParams(google.protobuf.message.Message):
 
 global___LocalCertificateParams = LocalCertificateParams
 
-@typing_extensions.final
 class LocalCertificate(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -238,7 +252,6 @@ class LocalCertificate(google.protobuf.message.Message):
 
 global___LocalCertificate = LocalCertificate
 
-@typing_extensions.final
 class ManagedCertificateParams(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -261,7 +274,6 @@ class ManagedCertificateParams(google.protobuf.message.Message):
 
 global___ManagedCertificateParams = ManagedCertificateParams
 
-@typing_extensions.final
 class ManagedCertificate(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -270,11 +282,13 @@ class ManagedCertificate(google.protobuf.message.Message):
     PROTECTION_FIELD_NUMBER: builtins.int
     KEY_TYPE_FIELD_NUMBER: builtins.int
     EXPIRATION_FIELD_NUMBER: builtins.int
+    ACCESS_CONTROL_TYPE_FIELD_NUMBER: builtins.int
     id: builtins.str
     key: builtins.str
     protection: global___KeyProtectionLevel.ValueType
     key_type: global___KeyType.ValueType
     expiration: builtins.int
+    access_control_type: global___AccessControlType.ValueType
     def __init__(
         self,
         *,
@@ -283,12 +297,12 @@ class ManagedCertificate(google.protobuf.message.Message):
         protection: global___KeyProtectionLevel.ValueType = ...,
         key_type: global___KeyType.ValueType = ...,
         expiration: builtins.int = ...,
+        access_control_type: global___AccessControlType.ValueType = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["expiration", b"expiration", "id", b"id", "key", b"key", "key_type", b"key_type", "protection", b"protection"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["access_control_type", b"access_control_type", "expiration", b"expiration", "id", b"id", "key", b"key", "key_type", b"key_type", "protection", b"protection"]) -> None: ...
 
 global___ManagedCertificate = ManagedCertificate
 
-@typing_extensions.final
 class AccessControl(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -313,7 +327,6 @@ class AccessControl(google.protobuf.message.Message):
 
 global___AccessControl = AccessControl
 
-@typing_extensions.final
 class AccessControlTotp(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -328,7 +341,6 @@ class AccessControlTotp(google.protobuf.message.Message):
 
 global___AccessControlTotp = AccessControlTotp
 
-@typing_extensions.final
 class AccessControlSecret(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -343,7 +355,6 @@ class AccessControlSecret(google.protobuf.message.Message):
 
 global___AccessControlSecret = AccessControlSecret
 
-@typing_extensions.final
 class Key(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

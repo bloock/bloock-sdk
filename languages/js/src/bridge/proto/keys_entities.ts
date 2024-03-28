@@ -98,6 +98,45 @@ export function keyProtectionLevelToJSON(object: KeyProtectionLevel): string {
   }
 }
 
+export enum AccessControlType {
+  NO_ACCESS_CONTROL = 0,
+  TOTP = 1,
+  SECRET = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function accessControlTypeFromJSON(object: any): AccessControlType {
+  switch (object) {
+    case 0:
+    case "NO_ACCESS_CONTROL":
+      return AccessControlType.NO_ACCESS_CONTROL;
+    case 1:
+    case "TOTP":
+      return AccessControlType.TOTP;
+    case 2:
+    case "SECRET":
+      return AccessControlType.SECRET;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return AccessControlType.UNRECOGNIZED;
+  }
+}
+
+export function accessControlTypeToJSON(object: AccessControlType): string {
+  switch (object) {
+    case AccessControlType.NO_ACCESS_CONTROL:
+      return "NO_ACCESS_CONTROL";
+    case AccessControlType.TOTP:
+      return "TOTP";
+    case AccessControlType.SECRET:
+      return "SECRET";
+    case AccessControlType.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export enum CertificateType {
   PEM = 0,
   PFX = 1,
@@ -151,6 +190,7 @@ export interface ManagedKey {
   keyType: KeyType;
   name: string;
   expiration: number;
+  accessControlType: AccessControlType;
 }
 
 export interface CertificateSubject {
@@ -186,6 +226,7 @@ export interface ManagedCertificate {
   protection: KeyProtectionLevel;
   keyType: KeyType;
   expiration: number;
+  accessControlType: AccessControlType;
 }
 
 export interface AccessControl {
@@ -400,7 +441,7 @@ export const ManagedKeyParams = {
 };
 
 function createBaseManagedKey(): ManagedKey {
-  return { id: "", key: "", protection: 0, keyType: 0, name: "", expiration: 0 };
+  return { id: "", key: "", protection: 0, keyType: 0, name: "", expiration: 0, accessControlType: 0 };
 }
 
 export const ManagedKey = {
@@ -422,6 +463,9 @@ export const ManagedKey = {
     }
     if (message.expiration !== 0) {
       writer.uint32(48).int64(message.expiration);
+    }
+    if (message.accessControlType !== 0) {
+      writer.uint32(56).int32(message.accessControlType);
     }
     return writer;
   },
@@ -475,6 +519,13 @@ export const ManagedKey = {
 
           message.expiration = longToNumber(reader.int64() as Long);
           continue;
+        case 7:
+          if (tag !== 56) {
+            break;
+          }
+
+          message.accessControlType = reader.int32() as any;
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -492,6 +543,7 @@ export const ManagedKey = {
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       expiration: isSet(object.expiration) ? globalThis.Number(object.expiration) : 0,
+      accessControlType: isSet(object.accessControlType) ? accessControlTypeFromJSON(object.accessControlType) : 0,
     };
   },
 
@@ -515,6 +567,9 @@ export const ManagedKey = {
     if (message.expiration !== 0) {
       obj.expiration = Math.round(message.expiration);
     }
+    if (message.accessControlType !== 0) {
+      obj.accessControlType = accessControlTypeToJSON(message.accessControlType);
+    }
     return obj;
   },
 
@@ -529,6 +584,7 @@ export const ManagedKey = {
     message.keyType = object.keyType ?? 0;
     message.name = object.name ?? "";
     message.expiration = object.expiration ?? 0;
+    message.accessControlType = object.accessControlType ?? 0;
     return message;
   },
 };
@@ -946,7 +1002,7 @@ export const ManagedCertificateParams = {
 };
 
 function createBaseManagedCertificate(): ManagedCertificate {
-  return { id: "", key: "", protection: 0, keyType: 0, expiration: 0 };
+  return { id: "", key: "", protection: 0, keyType: 0, expiration: 0, accessControlType: 0 };
 }
 
 export const ManagedCertificate = {
@@ -965,6 +1021,9 @@ export const ManagedCertificate = {
     }
     if (message.expiration !== 0) {
       writer.uint32(48).int64(message.expiration);
+    }
+    if (message.accessControlType !== 0) {
+      writer.uint32(56).int32(message.accessControlType);
     }
     return writer;
   },
@@ -1011,6 +1070,13 @@ export const ManagedCertificate = {
 
           message.expiration = longToNumber(reader.int64() as Long);
           continue;
+        case 7:
+          if (tag !== 56) {
+            break;
+          }
+
+          message.accessControlType = reader.int32() as any;
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1027,6 +1093,7 @@ export const ManagedCertificate = {
       protection: isSet(object.protection) ? keyProtectionLevelFromJSON(object.protection) : 0,
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
       expiration: isSet(object.expiration) ? globalThis.Number(object.expiration) : 0,
+      accessControlType: isSet(object.accessControlType) ? accessControlTypeFromJSON(object.accessControlType) : 0,
     };
   },
 
@@ -1047,6 +1114,9 @@ export const ManagedCertificate = {
     if (message.expiration !== 0) {
       obj.expiration = Math.round(message.expiration);
     }
+    if (message.accessControlType !== 0) {
+      obj.accessControlType = accessControlTypeToJSON(message.accessControlType);
+    }
     return obj;
   },
 
@@ -1060,6 +1130,7 @@ export const ManagedCertificate = {
     message.protection = object.protection ?? 0;
     message.keyType = object.keyType ?? 0;
     message.expiration = object.expiration ?? 0;
+    message.accessControlType = object.accessControlType ?? 0;
     return message;
   },
 };

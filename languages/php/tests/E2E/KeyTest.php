@@ -13,6 +13,7 @@ use Bloock\Entity\Key\LocalCertificateArgs;
 use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\SubjectCertificateParams;
 use Bloock\Entity\Authenticity\Signer;
+use Bloock\Entity\Key\AccessControlType;
 use Bloock\Entity\Key\Managed;
 use PHPUnit\Framework\TestCase;
 
@@ -293,6 +294,7 @@ final class KeyTest extends TestCase
 
         $params = new ManagedKeyParams($keyProtection, $keyType);
         $managedKey = $keyClient->newManagedKey($params);
+        $this->assertEquals(AccessControlType::NONE, $managedKey->accessControlType);
 
         $record = $recordClient->fromString("Hello world")->build();
 
@@ -302,6 +304,9 @@ final class KeyTest extends TestCase
         $this->assertNotNull($totp->getSecret());
         $this->assertNotNull($totp->getSecretQr());
         $this->assertNotNull($totp->getRecoveryCodes());
+
+        $loadedKey = $keyClient->loadManagedKey($managedKey->id);
+        $this->assertEquals(AccessControlType::TOTP, $loadedKey->accessControlType);
 
         try {
             $authenticityClient->sign($record, new Signer($managedKey));
@@ -326,6 +331,7 @@ final class KeyTest extends TestCase
 
         $params = new ManagedKeyParams($keyProtection, $keyType);
         $managedKey = $keyClient->newManagedKey($params);
+        $this->assertEquals(AccessControlType::NONE, $managedKey->accessControlType);
 
         $record = $recordClient->fromString("Hello world")->build();
 
@@ -333,6 +339,9 @@ final class KeyTest extends TestCase
 
         $email = $this->generateRandomString(8) . "@bloock.com";
         $keyClient->setupSecretAccessControl(new Managed($managedKey), "password", $email);
+
+        $loadedKey = $keyClient->loadManagedKey($managedKey->id);
+        $this->assertEquals(AccessControlType::SECRET, $loadedKey->accessControlType);
 
         try {
             $authenticityClient->sign($record, new Signer($managedKey));

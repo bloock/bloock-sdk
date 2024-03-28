@@ -2,6 +2,8 @@
 
 namespace Bloock\Entity\Key;
 
+use Bloock\Entity\Key\AccessControlType;
+
 /**
  * Represents a managed key.
  */
@@ -37,6 +39,11 @@ class ManagedKey
      * @var string
      */
     public string $key;
+    /**
+     * Is the access control type for the key.
+     * @var string
+     */
+    public string $accessControlType;
 
     /**
      * Constructs a ManagedKey object with the specified parameters.
@@ -46,8 +53,9 @@ class ManagedKey
      * @param string $keyType
      * @param int|null $expiration
      * @param string $key
+     * @param string $accessControlType
      */
-    public function __construct(string $id, ?string $name, string $protection, string $keyType, ?int $expiration, string $key)
+    public function __construct(string $id, ?string $name, string $protection, string $keyType, ?int $expiration, string $key, string $accessControlType)
     {
         $this->id = $id;
         $this->name = $name;
@@ -55,11 +63,12 @@ class ManagedKey
         $this->keyType = $keyType;
         $this->expiration = $expiration;
         $this->key = $key;
+        $this->accessControlType = $accessControlType;
     }
 
     public static function fromProto(\Bloock\ManagedKey $res): ManagedKey
     {
-        return new ManagedKey($res->getId(), $res->getName(), KeyProtectionLevel::fromProto($res->getProtection()), KeyType::fromProto($res->getKeyType()), $res->getExpiration(), $res->getKey());
+        return new ManagedKey($res->getId(), $res->getName(), KeyProtectionLevel::fromProto($res->getProtection()), KeyType::fromProto($res->getKeyType()), $res->getExpiration(), $res->getKey(), AccessControlType::fromProto($res->getAccessControlType()));
     }
 
     public function toProto(): \Bloock\ManagedKey
@@ -71,6 +80,7 @@ class ManagedKey
         $p->setKeyType(KeyType::toProto($this->keyType));
         $p->setExpiration($this->expiration);
         $p->setKey($this->key);
+        $p->setAccessControlType(AccessControlType::toProto($this->protection));
         return $p;
     }
 }

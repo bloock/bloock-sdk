@@ -37,6 +37,10 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>int64 expiration = 6;</code>
      */
     protected $expiration = 0;
+    /**
+     * Generated from protobuf field <code>.bloock.AccessControlType access_control_type = 7;</code>
+     */
+    protected $access_control_type = 0;
 
     /**
      * Constructor.
@@ -50,6 +54,7 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
      *     @type int $key_type
      *     @type string $name
      *     @type int|string $expiration
+     *     @type int $access_control_type
      * }
      */
     public function __construct($data = NULL) {
@@ -185,6 +190,28 @@ class ManagedKey extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt64($var);
         $this->expiration = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.AccessControlType access_control_type = 7;</code>
+     * @return int
+     */
+    public function getAccessControlType()
+    {
+        return $this->access_control_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>.bloock.AccessControlType access_control_type = 7;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setAccessControlType($var)
+    {
+        GPBUtil::checkEnum($var, \Bloock\AccessControlType::class);
+        $this->access_control_type = $var;
 
         return $this;
     }

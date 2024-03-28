@@ -37,6 +37,7 @@ pub struct CreateManagedCertificateResponse {
     pub key_protection: u8,
     pub pub_key: String,
     pub expiration: i64,
+    pub access_control_type: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -44,6 +45,7 @@ pub struct ManagedCertificateResponse {
     pub certificate_id: String,
     pub key: KeyCertificateResponse,
     pub hex_der: String,
+    pub access_control_type: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -81,6 +83,7 @@ impl ManagedCertificate {
                 public_key: res.pub_key,
                 protection: res.key_protection.into(),
                 expiration: Some(res.expiration),
+                access_control_type: res.access_control_type.into(),
             },
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),
@@ -108,6 +111,7 @@ impl ManagedCertificate {
                 public_key: res.key.pub_key,
                 protection: res.key.key_protection.into(),
                 expiration: Some(res.key.expiration),
+                access_control_type: res.access_control_type.into(),
             },
             protection: res.key.key_protection.into(),
             expiration: Some(res.key.expiration),
@@ -171,6 +175,7 @@ impl ManagedCertificate {
                 public_key: res.pub_key,
                 protection: res.key_protection.into(),
                 expiration: Some(res.expiration),
+                access_control_type: res.access_control_type.into(),
             },
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),

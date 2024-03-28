@@ -16,7 +16,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class VerifyWebhookSignatureRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -45,7 +44,6 @@ class VerifyWebhookSignatureRequest(google.protobuf.message.Message):
 
 global___VerifyWebhookSignatureRequest = VerifyWebhookSignatureRequest
 
-@typing_extensions.final
 class VerifyWebhookSignatureResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

@@ -1,4 +1,7 @@
-use crate::{entity::protection_level::ProtectionLevel, KeyType, KeysError, Result};
+use crate::{
+    entity::{access_control_type::AccessControlType, protection_level::ProtectionLevel},
+    KeyType, KeysError, Result,
+};
 use bloock_http::Client;
 use serde::{Deserialize, Serialize};
 
@@ -17,6 +20,7 @@ pub struct ManagedKey {
     pub public_key: String,
     pub protection: ProtectionLevel,
     pub expiration: Option<i64>,
+    pub access_control_type: AccessControlType,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -35,6 +39,7 @@ pub struct ManagedKeyResponse {
     pub key_protection: u8,
     pub pub_key: String,
     pub expiration: i64,
+    pub access_control_type: Option<String>,
 }
 
 impl ManagedKey {
@@ -63,6 +68,7 @@ impl ManagedKey {
             public_key: res.pub_key,
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),
+            access_control_type: res.access_control_type.into(),
         })
     }
 
@@ -85,6 +91,7 @@ impl ManagedKey {
             public_key: res.pub_key,
             protection: res.key_protection.into(),
             expiration: Some(res.expiration),
+            access_control_type: res.access_control_type.into(),
         })
     }
 }

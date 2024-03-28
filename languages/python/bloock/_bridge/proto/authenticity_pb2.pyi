@@ -20,7 +20,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class SignRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -45,7 +44,6 @@ class SignRequest(google.protobuf.message.Message):
 
 global___SignRequest = SignRequest
 
-@typing_extensions.final
 class SignResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -67,7 +65,6 @@ class SignResponse(google.protobuf.message.Message):
 
 global___SignResponse = SignResponse
 
-@typing_extensions.final
 class VerifyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -88,7 +85,6 @@ class VerifyRequest(google.protobuf.message.Message):
 
 global___VerifyRequest = VerifyRequest
 
-@typing_extensions.final
 class VerifyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -109,7 +105,6 @@ class VerifyResponse(google.protobuf.message.Message):
 
 global___VerifyResponse = VerifyResponse
 
-@typing_extensions.final
 class GetSignaturesRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -130,7 +125,6 @@ class GetSignaturesRequest(google.protobuf.message.Message):
 
 global___GetSignaturesRequest = GetSignaturesRequest
 
-@typing_extensions.final
 class GetSignaturesResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

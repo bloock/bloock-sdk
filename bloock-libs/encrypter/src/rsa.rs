@@ -334,6 +334,7 @@ mod tests {
     use crate::entity::alg::EncryptionAlg;
 
     use super::*;
+    use bloock_keys::entity::access_control_type::AccessControlType;
     use bloock_keys::keys::local::LocalKey;
     use bloock_keys::keys::managed::ManagedKey;
 
@@ -507,6 +508,7 @@ mod tests {
             public_key: "invalid_key".to_string(),
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
+            access_control_type: AccessControlType::NONE,
         };
 
         let encrypter = RsaEncrypter::new(api_host, api_key);
