@@ -40,8 +40,8 @@ class Proof extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type string[]|\Google\Protobuf\Internal\RepeatedField $leaves
-     *     @type string[]|\Google\Protobuf\Internal\RepeatedField $nodes
+     *     @type array<string>|\Google\Protobuf\Internal\RepeatedField $leaves
+     *     @type array<string>|\Google\Protobuf\Internal\RepeatedField $nodes
      *     @type string $depth
      *     @type string $bitmap
      *     @type \Bloock\ProofAnchor $anchor
@@ -63,7 +63,7 @@ class Proof extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated string leaves = 1;</code>
-     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<string>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setLeaves($var)
@@ -85,7 +85,7 @@ class Proof extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated string nodes = 2;</code>
-     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<string>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setNodes($var)

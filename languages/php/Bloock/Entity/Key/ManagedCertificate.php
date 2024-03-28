@@ -32,6 +32,11 @@ class ManagedCertificate
      * @var string
      */
     public string $key;
+    /**
+     * Is the access control type for the key.
+     * @var string
+     */
+    public string $accessControlType;
 
     /**
      * Constructs a ManagedCertificate object with the specified parameters.
@@ -40,19 +45,21 @@ class ManagedCertificate
      * @param string $keyType
      * @param int|null $expiration
      * @param string $key
+     * @param string $accessControlType
      */
-    public function __construct(string $id, string $protection, string $keyType, ?int $expiration, string $key)
+    public function __construct(string $id, string $protection, string $keyType, ?int $expiration, string $key, string $accessControlType)
     {
         $this->id = $id;
         $this->protection = $protection;
         $this->keyType = $keyType;
         $this->expiration = $expiration;
         $this->key = $key;
+        $this->accessControlType = $accessControlType;
     }
 
     public static function fromProto(\Bloock\ManagedCertificate $res): ManagedCertificate
     {
-        return new ManagedCertificate($res->getId(), KeyProtectionLevel::fromProto($res->getProtection()), KeyType::fromProto($res->getKeyType()), $res->getExpiration(), $res->getKey());
+        return new ManagedCertificate($res->getId(), KeyProtectionLevel::fromProto($res->getProtection()), KeyType::fromProto($res->getKeyType()), $res->getExpiration(), $res->getKey(), AccessControlType::fromProto($res->getAccessControlType()));
     }
 
     public function toProto(): \Bloock\ManagedCertificate
@@ -63,6 +70,7 @@ class ManagedCertificate
         $p->setKeyType(KeyType::toProto($this->keyType));
         $p->setExpiration($this->expiration);
         $p->setKey($this->key);
+        $p->setAccessControlType(AccessControlType::toProto($this->accessControlType));
         return $p;
     }
 }

@@ -29,7 +29,7 @@ class GetProofRequest extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type \Bloock\ConfigData $config_data
-     *     @type \Bloock\Record[]|\Google\Protobuf\Internal\RepeatedField $records
+     *     @type array<\Bloock\Record>|\Google\Protobuf\Internal\RepeatedField $records
      * }
      */
     public function __construct($data = NULL) {
@@ -80,7 +80,7 @@ class GetProofRequest extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .bloock.Record records = 2;</code>
-     * @param \Bloock\Record[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<\Bloock\Record>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setRecords($var)

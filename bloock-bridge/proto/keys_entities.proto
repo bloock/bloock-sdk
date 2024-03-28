@@ -6,96 +6,100 @@ option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "com.bloock.sdk.bridge.proto";
 
 enum KeyType {
-    EcP256k = 0;
-    Rsa2048 = 1;
-    Rsa3072 = 2;
-    Rsa4096 = 3;
-    Aes128 = 4;
-    Aes256 = 5;
-    Bjj = 6;
+  EcP256k = 0;
+  Rsa2048 = 1;
+  Rsa3072 = 2;
+  Rsa4096 = 3;
+  Aes128 = 4;
+  Aes256 = 5;
+  Bjj = 6;
 }
 
 enum KeyProtectionLevel {
-    SOFTWARE = 0;
-    HSM = 1;
+  SOFTWARE = 0;
+  HSM = 1;
+}
+
+enum AccessControlType {
+  NO_ACCESS_CONTROL = 0;
+  TOTP = 1;
+  SECRET = 2;
 }
 
 message LocalKey {
-    string key = 1;
-    KeyType key_type = 2;
-    optional string private_key = 3;
+  string key = 1;
+  KeyType key_type = 2;
+  optional string private_key = 3;
 }
 
 message ManagedKeyParams {
-    KeyProtectionLevel protection = 1;
-    KeyType key_type = 2;
-    optional string name = 3;
-    optional int64 expiration = 4;
+  KeyProtectionLevel protection = 1;
+  KeyType key_type = 2;
+  optional string name = 3;
+  optional int64 expiration = 4;
 }
 
 message ManagedKey {
-    string id = 1;
-    string key = 2;
-    KeyProtectionLevel protection = 3;
-    KeyType key_type = 4;
-    string name = 5;
-    int64 expiration = 6;
+  string id = 1;
+  string key = 2;
+  KeyProtectionLevel protection = 3;
+  KeyType key_type = 4;
+  string name = 5;
+  int64 expiration = 6;
+  AccessControlType access_control_type = 7;
 }
 
 message CertificateSubject {
-    string common_name = 1;
-    optional string organizational_unit = 2;
-    optional string organization = 3;
-    optional string location = 4;
-    optional string state = 5;
-    optional string country = 6;
+  string common_name = 1;
+  optional string organizational_unit = 2;
+  optional string organization = 3;
+  optional string location = 4;
+  optional string state = 5;
+  optional string country = 6;
 }
 
 message LocalCertificateParams {
-    KeyType key_type = 1;
-    string password = 2;
-    CertificateSubject subject = 3;
-    int32 expiration = 4;
+  KeyType key_type = 1;
+  string password = 2;
+  CertificateSubject subject = 3;
+  int32 expiration = 4;
 }
 
 message LocalCertificate {
-    bytes pkcs12 = 1;
-    string password = 2;
+  bytes pkcs12 = 1;
+  string password = 2;
 }
 
 message ManagedCertificateParams {
-    KeyType key_type = 1;
-    int32 expiration = 2;
-    CertificateSubject subject = 3;
+  KeyType key_type = 1;
+  int32 expiration = 2;
+  CertificateSubject subject = 3;
 }
 
 message ManagedCertificate {
-    string id = 1;
-    string key = 2;
-    KeyProtectionLevel protection = 3;
-    KeyType key_type = 4;
-    int64 expiration = 6;
+  string id = 1;
+  string key = 2;
+  KeyProtectionLevel protection = 3;
+  KeyType key_type = 4;
+  int64 expiration = 6;
+  AccessControlType access_control_type = 7;
 }
 
 enum CertificateType {
-	PEM = 0;
-	PFX = 1;
+  PEM = 0;
+  PFX = 1;
 }
 
 message AccessControl {
-    optional AccessControlTotp access_control_totp = 1;
-    optional AccessControlSecret access_control_secret = 2;
+  optional AccessControlTotp access_control_totp = 1;
+  optional AccessControlSecret access_control_secret = 2;
 }
 
-message AccessControlTotp {
-    string code = 1;
-}
+message AccessControlTotp { string code = 1; }
 
-message AccessControlSecret {
-    string secret = 1;
-}
+message AccessControlSecret { string secret = 1; }
 
 message Key {
-    optional LocalKey local_key = 1;
-    optional ManagedKey managed_key = 2;
+  optional LocalKey local_key = 1;
+  optional ManagedKey managed_key = 2;
 }

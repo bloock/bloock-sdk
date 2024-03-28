@@ -30,6 +30,10 @@ public class ManagedKey {
    * Is the actual public key.
    */
   String key;
+  /**
+   * Is the access control type for the key.
+   */
+  AccessControlType accessControlType;
 
   /**
    * Constructs a ManagedKey object with the specified parameters.
@@ -46,13 +50,15 @@ public class ManagedKey {
       KeyProtectionLevel protection,
       KeyType keyType,
       long expiration,
-      String key) {
+      String key,
+      AccessControlType accessControlType) {
     this.id = id;
     this.name = name;
     this.protection = protection;
     this.keyType = keyType;
     this.expiration = expiration;
     this.key = key;
+    this.accessControlType = accessControlType;
   }
 
   public static ManagedKey fromProto(KeysEntities.ManagedKey key) {
@@ -62,7 +68,9 @@ public class ManagedKey {
         KeyProtectionLevel.fromProto(key.getProtection()),
         KeyType.fromProto(key.getKeyType()),
         key.getExpiration(),
-        key.getKey());
+        key.getKey(),
+        AccessControlType.fromProto(key.getAccessControlType())
+    );
   }
 
   public KeysEntities.ManagedKey toProto() {
@@ -73,6 +81,7 @@ public class ManagedKey {
         .setKeyType(this.keyType.toProto())
         .setExpiration(this.expiration)
         .setKey(this.key)
+        .setAccessControlType(this.accessControlType.toProto())
         .build();
   }
 
@@ -122,5 +131,13 @@ public class ManagedKey {
    */
   public String getKey() {
     return key;
+  }
+
+  /**
+   * Gets the access control type of the managed key.
+   * @return
+   */
+  public AccessControlType getAccessControlType() {
+    return accessControlType;
   }
 }

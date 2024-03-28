@@ -14,6 +14,7 @@ from bloock.entity.key.local_certificate_params import LocalCertificateParams
 from bloock.entity.key.managed_key_params import ManagedKeyParams
 from bloock.entity.key.subject_certificate_params import SubjectCertificateParams
 from bloock.entity.key.managed import Managed
+from bloock.entity.key.access_control_type import AccessControlType
 from test.e2e.util import init_sdk, init_dev_sdk, generate_random_string
 
 
@@ -278,6 +279,7 @@ class TestKey(unittest.TestCase):
         key_type = KeyType.Rsa2048
         params = ManagedKeyParams(protection, key_type)
         managed_key = key_client.new_managed_key(params)
+        self.assertEqual(managed_key.access_control_type, AccessControlType.NONE)
 
         record = record_client.from_string("Hello world").build()
 
@@ -287,6 +289,9 @@ class TestKey(unittest.TestCase):
         self.assertNotEqual(totp.secret, "")
         self.assertNotEqual(totp.secret_qr, "")
         self.assertNotEqual(totp.recovery_codes, [""])
+
+        loaded_key = key_client.load_managed_key(managed_key.id)
+        self.assertEqual(loaded_key.access_control_type, AccessControlType.TOTP)
 
         with self.assertRaises(Exception):
             authenticity_client.sign(record, Signer(managed_key))
@@ -306,6 +311,7 @@ class TestKey(unittest.TestCase):
         key_type = KeyType.Rsa2048
         params = ManagedKeyParams(protection, key_type)
         managed_key = key_client.new_managed_key(params)
+        self.assertEqual(managed_key.access_control_type, AccessControlType.NONE)
 
         record = record_client.from_string("Hello world").build()
 
@@ -314,6 +320,9 @@ class TestKey(unittest.TestCase):
         email = generate_random_string(8) + "@bloock.com"
         key_client.setup_secret_access_control(
             Managed(managed_key), "password", email)
+        
+        loaded_key = key_client.load_managed_key(managed_key.id)
+        self.assertEqual(loaded_key.access_control_type, AccessControlType.SECRET)
 
         with self.assertRaises(Exception):
             authenticity_client.sign(record, Signer(managed_key))

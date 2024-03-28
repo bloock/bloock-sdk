@@ -1,8 +1,8 @@
 use crate::{
     error::{BridgeError, BridgeResult},
     items::{
-        CertificateSubject, CertificateType, KeyProtectionLevel, KeyType, LocalCertificate,
-        LocalKey, ManagedCertificate, ManagedKey,
+        AccessControlType, CertificateSubject, CertificateType, KeyProtectionLevel, KeyType,
+        LocalCertificate, LocalKey, ManagedCertificate, ManagedKey,
     },
 };
 use bloock_keys::{
@@ -11,11 +11,12 @@ use bloock_keys::{
         managed::ManagedCertificate as CoreManagedCertificate,
         CertificateSubject as CoreCertificateSubject,
     },
-    entity::key::Local as CoreLocal,
-    entity::key::Managed as CoreManaged,
-    entity::protection_level::ProtectionLevel,
-    keys::local::LocalKey as CoreLocalKey,
-    keys::managed::ManagedKey as CoreManagedKey,
+    entity::{
+        access_control_type::AccessControlType as CoreAccessControlType,
+        key::{Local as CoreLocal, Managed as CoreManaged},
+        protection_level::ProtectionLevel,
+    },
+    keys::{local::LocalKey as CoreLocalKey, managed::ManagedKey as CoreManagedKey},
     CertificateType as CoreCertificateType, KeyType as CoreKeyType,
 };
 
@@ -65,6 +66,26 @@ impl From<ProtectionLevel> for KeyProtectionLevel {
     }
 }
 
+impl From<AccessControlType> for CoreAccessControlType {
+    fn from(a: AccessControlType) -> Self {
+        match a {
+            AccessControlType::Totp => CoreAccessControlType::TOTP,
+            AccessControlType::Secret => CoreAccessControlType::SECRET,
+            AccessControlType::NoAccessControl => CoreAccessControlType::NONE,
+        }
+    }
+}
+
+impl From<CoreAccessControlType> for AccessControlType {
+    fn from(a: CoreAccessControlType) -> Self {
+        match a {
+            CoreAccessControlType::TOTP => AccessControlType::Totp,
+            CoreAccessControlType::SECRET => AccessControlType::Secret,
+            CoreAccessControlType::NONE => AccessControlType::NoAccessControl,
+        }
+    }
+}
+
 impl From<ManagedKey> for CoreManaged {
     fn from(key: ManagedKey) -> Self {
         let managed = CoreManagedKey::from(key);
@@ -76,6 +97,7 @@ impl From<ManagedKey> for CoreManagedKey {
     fn from(key: ManagedKey) -> Self {
         let key_protection: ProtectionLevel = key.protection().into();
         let key_type: CoreKeyType = key.key_type().into();
+        let access_control: CoreAccessControlType = key.access_control_type().into();
 
         Self {
             id: key.id,
@@ -90,6 +112,7 @@ impl From<ManagedKey> for CoreManagedKey {
                 0 => None,
                 _ => Some(key.expiration),
             },
+            access_control_type: access_control,
         }
     }
 }
@@ -98,6 +121,7 @@ impl From<CoreManagedKey> for ManagedKey {
     fn from(key: CoreManagedKey) -> Self {
         let key_protection: KeyProtectionLevel = key.protection.into();
         let key_type: KeyType = key.key_type.into();
+        let access_control: AccessControlType = key.access_control_type.into();
 
         Self {
             id: key.id,
@@ -106,6 +130,7 @@ impl From<CoreManagedKey> for ManagedKey {
             key_type: key_type.into(),
             name: key.name.unwrap_or_default(),
             expiration: key.expiration.unwrap_or(0),
+            access_control_type: access_control.into(),
         }
     }
 }
@@ -198,6 +223,7 @@ impl From<ManagedCertificate> for CoreManagedCertificate {
     fn from(key: ManagedCertificate) -> Self {
         let key_protection: ProtectionLevel = key.protection().into();
         let key_type: CoreKeyType = key.key_type().into();
+        let access_control: CoreAccessControlType = key.access_control_type().into();
 
         Self {
             id: key.id.clone(),
@@ -212,6 +238,7 @@ impl From<ManagedCertificate> for CoreManagedCertificate {
                     _ => Some(key.expiration),
                 },
                 name: None,
+                access_control_type: access_control,
             },
             expiration: match key.expiration {
                 0 => None,
@@ -225,6 +252,7 @@ impl From<ManagedCertificate> for CoreManagedKey {
     fn from(key: ManagedCertificate) -> Self {
         let key_protection: ProtectionLevel = key.protection().into();
         let key_type: CoreKeyType = key.key_type().into();
+        let access_control: CoreAccessControlType = key.access_control_type().into();
 
         Self {
             id: key.id,
@@ -236,6 +264,7 @@ impl From<ManagedCertificate> for CoreManagedKey {
                 _ => Some(key.expiration),
             },
             name: None,
+            access_control_type: access_control,
         }
     }
 }
@@ -244,6 +273,7 @@ impl From<CoreManagedCertificate> for ManagedCertificate {
     fn from(key: CoreManagedCertificate) -> Self {
         let key_protection: KeyProtectionLevel = key.protection.into();
         let key_type: KeyType = key.key.key_type.into();
+        let access_control: AccessControlType = key.key.access_control_type.into();
 
         Self {
             id: key.id,
@@ -251,6 +281,7 @@ impl From<CoreManagedCertificate> for ManagedCertificate {
             protection: key_protection.into(),
             key_type: key_type.into(),
             expiration: key.expiration.unwrap_or(0),
+            access_control_type: access_control.into(),
         }
     }
 }

@@ -316,6 +316,7 @@ class KeyTest {
 
     ManagedKey managedKey =
         keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+    assertEquals(managedKey.getAccessControlType(), AccessControlType.NONE);
 
     Record record = recordClient.fromString("Hello world").build();
 
@@ -325,6 +326,9 @@ class KeyTest {
     assertNotNull(totp.getSecret());
     assertNotNull(totp.getSecretQr());
     assertNotNull(totp.getRecoveryCodes());
+
+    ManagedKey loadedKey = keyClient.loadManagedKey(managedKey.getId());
+    assertEquals(loadedKey.getAccessControlType(), AccessControlType.TOTP);
 
     assertThrows(
         Exception.class,
@@ -351,6 +355,7 @@ class KeyTest {
 
     ManagedKey managedKey =
         keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType));
+    assertEquals(managedKey.getAccessControlType(), AccessControlType.NONE);
 
     Record record = recordClient.fromString("Hello world").build();
 
@@ -359,6 +364,9 @@ class KeyTest {
     String email = Utils.generateRandomString(8) + "@bloock.com";
 
     keyClient.setupSecretAccessControl(new Managed(managedKey), "password", email);
+
+    ManagedKey loadedKey = keyClient.loadManagedKey(managedKey.getId());
+    assertEquals(loadedKey.getAccessControlType(), AccessControlType.SECRET);
 
     assertThrows(
         Exception.class,

@@ -1,4 +1,5 @@
 import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import { AccessControlType } from "./access_control_type";
 import { KeyProtectionLevel } from "./key_protection_level";
 import { KeyType } from "./key_type";
 
@@ -30,21 +31,27 @@ export class ManagedKey {
    * Is the actual public key.
    */
   public key: string;
+  /**
+   * Is the access control type for the key.
+   */
+  public accessControlType: AccessControlType;
 
   /**
    * Constructs a ManagedKey object with the specified parameters.
-   * @param id 
-   * @param protection 
-   * @param keyType 
-   * @param key 
-   * @param name 
-   * @param expiration 
+   * @param id
+   * @param protection
+   * @param keyType
+   * @param key
+   * @param accessControlType
+   * @param name
+   * @param expiration
    */
   constructor(
     id: string,
     protection: KeyProtectionLevel,
     keyType: KeyType,
     key: string,
+    accessControlType: AccessControlType,
     name?: string,
     expiration?: number
   ) {
@@ -52,6 +59,7 @@ export class ManagedKey {
     this.protection = protection;
     this.keyType = keyType;
     this.key = key;
+    this.accessControlType = accessControlType;
     this.name = name;
     this.expiration = expiration;
   }
@@ -63,7 +71,8 @@ export class ManagedKey {
       keyType: KeyType.toProto(this.keyType),
       key: this.key,
       name: this.name,
-      expiration: this.expiration
+      expiration: this.expiration,
+      accessControlType: AccessControlType.toProto(this.accessControlType)
     });
   }
 
@@ -73,6 +82,7 @@ export class ManagedKey {
       KeyProtectionLevel.fromProto(r.protection),
       KeyType.fromProto(r.keyType),
       r.key,
+      AccessControlType.fromProto(r.accessControlType),
       r.name,
       r.expiration
     );

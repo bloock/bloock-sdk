@@ -20,7 +20,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class CreateCoreCredentialRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -81,7 +80,6 @@ class CreateCoreCredentialRequest(google.protobuf.message.Message):
 
 global___CreateCoreCredentialRequest = CreateCoreCredentialRequest
 
-@typing_extensions.final
 class CreateCoreCredentialResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

@@ -26,6 +26,10 @@ public class ManagedCertificate {
    * Is the certificate public key.
    */
   String key;
+  /**
+   * Is the access control type for the certificate.
+   */
+  AccessControlType accessControlType;
 
   /**
    * Constructs a ManagedCertificate object with the specified parameters.
@@ -36,12 +40,13 @@ public class ManagedCertificate {
    * @param key
    */
   public ManagedCertificate(
-      String id, KeyProtectionLevel protection, KeyType keyType, long expiration, String key) {
+      String id, KeyProtectionLevel protection, KeyType keyType, long expiration, String key, AccessControlType accessControlType) {
     this.id = id;
     this.protection = protection;
     this.keyType = keyType;
     this.expiration = expiration;
     this.key = key;
+    this.accessControlType = accessControlType;
   }
 
   public static ManagedCertificate fromProto(KeysEntities.ManagedCertificate certificate) {
@@ -50,7 +55,9 @@ public class ManagedCertificate {
         KeyProtectionLevel.fromProto(certificate.getProtection()),
         KeyType.fromProto(certificate.getKeyType()),
         certificate.getExpiration(),
-        certificate.getKey());
+        certificate.getKey(),
+        AccessControlType.fromProto(certificate.getAccessControlType())
+    );
   }
 
   public KeysEntities.ManagedCertificate toProto() {
@@ -60,6 +67,7 @@ public class ManagedCertificate {
         .setKeyType(this.keyType.toProto())
         .setExpiration(this.expiration)
         .setKey(this.key)
+        .setAccessControlType(this.accessControlType.toProto())
         .build();
   }
 
@@ -101,5 +109,13 @@ public class ManagedCertificate {
    */
   public String getKey() {
     return key;
+  }
+
+  /**
+   * Gets the access control type of the managed certificate.
+   * @return
+   */
+  public AccessControlType getAccessControlType() {
+    return accessControlType;
   }
 }

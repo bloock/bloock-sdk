@@ -1,22 +1,23 @@
-import { describe, test, expect } from "@jest/globals";
-import { generateRandomString, initDevSdk, initSdk } from "./util";
+import { describe, expect, test } from "@jest/globals";
+import { readFileSync } from "fs";
+import path from "path";
 import {
+  AccessControlType,
   AuthenticityClient,
   CertificateType,
-  Signer,
   ImportCertificateParams,
   KeyClient,
   KeyProtectionLevel,
   KeyType,
+  LocalCertificateParams,
+  Managed,
   ManagedCertificateParams,
   ManagedKeyParams,
   RecordClient,
-  SubjectCertificateParams,
-  LocalCertificateParams,
-  Managed
+  Signer,
+  SubjectCertificateParams
 } from "../../dist";
-import { readFileSync } from "fs";
-import path from "path";
+import { generateRandomString, initDevSdk, initSdk } from "./util";
 
 describe("Key Tests", () => {
   test("generate local ecdsa", async () => {
@@ -343,6 +344,7 @@ describe("Key Tests", () => {
     let managedKey = await keyClient.newManagedKey(
       new ManagedKeyParams(keyProtection, keyType)
     );
+    expect(managedKey.accessControlType).toEqual(AccessControlType.NONE);
 
     let record = await recordClient.fromString("Hello world").build();
 
@@ -353,6 +355,8 @@ describe("Key Tests", () => {
     expect(totp.secretQr).toBeTruthy();
     expect(totp.recoveryCodes).toBeTruthy();
 
+    let loadedKey = await keyClient.loadManagedKey(managedKey.id);
+    expect(loadedKey.accessControlType).toEqual(AccessControlType.TOTP);
     try {
       await authenticityClient.sign(record, new Signer(managedKey));
     } catch (error) {
@@ -380,6 +384,7 @@ describe("Key Tests", () => {
     let managedKey = await keyClient.newManagedKey(
       new ManagedKeyParams(keyProtection, keyType)
     );
+    expect(managedKey.accessControlType).toEqual(AccessControlType.NONE);
 
     let record = await recordClient.fromString("Hello world").build();
 
@@ -391,6 +396,9 @@ describe("Key Tests", () => {
       "password",
       email
     );
+
+    let loadedKey = await keyClient.loadManagedKey(managedKey.id);
+    expect(loadedKey.accessControlType).toEqual(AccessControlType.SECRET);
 
     try {
       await authenticityClient.sign(record, new Signer(managedKey));

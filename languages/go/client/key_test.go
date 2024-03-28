@@ -356,6 +356,7 @@ func TestKey(t *testing.T) {
 		}
 		managedKey, err := keyClient.NewManagedKey(params)
 		assert.NoError(t, err)
+		assert.Equal(t, managedKey.AccessControlType, key.ACCESS_CONTROL_NONE)
 
 		record, err := recordClient.
 			FromString("Hello world").
@@ -373,6 +374,10 @@ func TestKey(t *testing.T) {
 		assert.NotEmpty(t, totp.Secret)
 		assert.NotEmpty(t, totp.SecretQr)
 		assert.NotEmpty(t, totp.RecoveryCodes)
+
+		managedKey, err = keyClient.LoadManagedKey(managedKey.ID)
+		assert.NoError(t, err)
+		assert.Equal(t, managedKey.AccessControlType, key.ACCESS_CONTROL_TOTP)
 
 		_, err = authenticityClient.
 			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))
@@ -400,6 +405,7 @@ func TestKey(t *testing.T) {
 		}
 		managedKey, err := keyClient.NewManagedKey(params)
 		assert.NoError(t, err)
+		assert.Equal(t, managedKey.AccessControlType, key.ACCESS_CONTROL_NONE)
 
 		record, err := recordClient.
 			FromString("Hello world").
@@ -415,6 +421,10 @@ func TestKey(t *testing.T) {
 			ManagedKey: &managedKey,
 		}, "password", email)
 		assert.NoError(t, err)
+
+		managedKey, err = keyClient.LoadManagedKey(managedKey.ID)
+		assert.NoError(t, err)
+		assert.Equal(t, managedKey.AccessControlType, key.ACCESS_CONTROL_SECRET)
 
 		_, err = authenticityClient.
 			Sign(record, authenticity.NewSignerWithManagedKey(managedKey, nil, nil))

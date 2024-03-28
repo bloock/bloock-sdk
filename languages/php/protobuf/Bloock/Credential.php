@@ -60,9 +60,9 @@ class Credential extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type string[]|\Google\Protobuf\Internal\RepeatedField $context
+     *     @type array<string>|\Google\Protobuf\Internal\RepeatedField $context
      *     @type string $id
-     *     @type string[]|\Google\Protobuf\Internal\RepeatedField $type
+     *     @type array<string>|\Google\Protobuf\Internal\RepeatedField $type
      *     @type string $issuance_date
      *     @type string $expiration
      *     @type string $credential_subject
@@ -88,7 +88,7 @@ class Credential extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated string context = 1;</code>
-     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<string>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setContext($var)
@@ -132,7 +132,7 @@ class Credential extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated string type = 3;</code>
-     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @param array<string>|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setType($var)
