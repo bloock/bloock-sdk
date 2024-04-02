@@ -52,5 +52,6 @@ clean:
 docs:
 	gomarkdoc --exclude-dirs ./vendor/... --exclude-dirs ./internal/... --output 'docs/{{.Dir}}/{{.ImportPath}}.md' ./...
 	@mv ./docs/.md ./docs/Bloock.md
-	@echo "Replacing pattern in .md files..."
 	@find ./docs -name node_modules -prune -o -name "*.md" -exec perl -pi'' -e 's{\[(.*?)\]\(<(.*?)>\)}{[$$1]($$2)}g' {} \;
+	@find ./docs -name node_modules -prune -o -name "*.md" -exec perl -pi'' -e 's/https:\/\/github.com\/bloock\/bloock-sdk\/blob\/master\/languages\/go/https:\/\/github.com\/bloock\/bloock-sdk-go\/blob\/master/g' {} \;
+	@find ./docs -name node_modules -prune -o -name "*.md" -exec perl -pi'' -e 's/<a name="(.*)"><\/a>/###### \1 {#\1}/g' {} \;
