@@ -46,12 +46,5 @@ lint: fmt
 
 docs:
 	docker run --rm -v ".:/data" "phpdoc/phpdoc:3" --directory=/data/Bloock --ignore "**/Bridge" --ignore "**/Ffi" --target=docs --template='vendor/saggre/phpdocumentor-markdown/themes/markdown'
-	cd
-	wget ftp://ftp.gnu.org/gnu/sed/sed-4.9.tar.xz
-	tar xf sed-4.9.tar.xz
-	rm sed-4.9.tar.xz 
-	cd sed-4.9
-	./configure
-	make
-	sudo make install
+	sudo apt-get install sed=4.9
 	find ./docs -type f -name '*.md' -exec sed -i 's~(../../Exception.md)~~g' {} \;
