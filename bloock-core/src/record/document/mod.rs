@@ -372,7 +372,7 @@ mod tests {
             ManagedCertificate::new(&certificate_params, api_host.clone(), api_key.clone())
                 .await
                 .unwrap();
-        sleep(Duration::from_secs(5));
+        sleep(Duration::from_secs(10));
 
         let mut document = Document::new(payload, api_host.clone(), api_key.clone()).unwrap();
         let _signature = document

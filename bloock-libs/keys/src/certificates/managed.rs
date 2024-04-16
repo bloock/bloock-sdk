@@ -231,7 +231,7 @@ mod tests {
     #[tokio::test]
     async fn test_managed_certificate_rsa() {
         let api_host = "https://api.bloock.com".to_string();
-        let api_key = option_env!("API_KEY").unwrap().to_string();
+        let api_key = "dPvO9g5mavUCv2pFepvvjY9bFV7k2HdGO1D9CMDp0uwXJTUKjf5M-Q5QfMr0l5Nk".to_string();
 
         let key_type = KeyType::Rsa2048;
         let subject_params = CertificateSubject {
@@ -256,7 +256,7 @@ mod tests {
         assert_eq!(certificate.protection, ProtectionLevel::SOFTWARE);
         assert_ne!(certificate.key.public_key, "".to_string());
 
-        sleep(Duration::from_secs(5));
+        sleep(Duration::from_secs(10));
 
         certificate.load_x509_certificate(api_host, api_key)
             .await

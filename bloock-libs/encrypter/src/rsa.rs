@@ -536,7 +536,7 @@ mod tests {
                 .await
                 .unwrap();
 
-        sleep(Duration::from_secs(5));
+        sleep(Duration::from_secs(10));
 
         let string_payload = "hello world";
 
