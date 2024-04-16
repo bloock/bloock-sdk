@@ -69,7 +69,7 @@ impl Blockchain {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Network {
     Main,
-    Mumbai,
+    Amoy,
     Goerli,
 }
 
@@ -77,7 +77,7 @@ impl Network {
     pub fn new(method: &str) -> Result<Network, String> {
         match method {
             "main" => Ok(Network::Main),
-            "mumbai" => Ok(Network::Mumbai),
+            "amoy" => Ok(Network::Amoy),
             "goerli" => Ok(Network::Goerli),
             _ => Err("Invalid network type provided".to_string()),
         }
@@ -86,7 +86,7 @@ impl Network {
     pub fn get_network_id_type(&self) -> String {
         match self {
             Network::Main => "main".to_string(),
-            Network::Mumbai => "mumbai".to_string(),
+            Network::Amoy => "amoy".to_string(),
             Network::Goerli => "goerli".to_string(),
         }
     }
@@ -115,7 +115,7 @@ lazy_static! {
         iden3_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Polygon,
-                network_id: Network::Mumbai,
+                network_id: Network::Amoy,
             },
             0b00010000 | 0b00000010,
         );
@@ -146,7 +146,7 @@ lazy_static! {
         polygon_id_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Polygon,
-                network_id: Network::Mumbai,
+                network_id: Network::Amoy,
             },
             0b00010000 | 0b00000010,
         );

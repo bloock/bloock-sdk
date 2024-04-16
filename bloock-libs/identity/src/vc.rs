@@ -278,9 +278,9 @@ mod tests {
         let schema_cid = "QmTvHzXiegijCdhGC4kgjps8hSi3FP1K17ezrYPgdMU6Ek".to_string();
         let schema_type = "DrivingLicense".to_string();
         let issuer =
-            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
         let holder =
-            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
@@ -369,9 +369,9 @@ mod tests {
         let schema_cid = "QmYvtkz2ReofDtvCyGs4Z73d9j55TLXPVueyBTFqfRWvPp".to_string();
         let schema_type = "TestCredentialEnums".to_string();
         let issuer =
-            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
         let holder =
-            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
@@ -541,9 +541,9 @@ mod tests {
         let schema_cid = "QmZjVNVwRQqLiwQ3KZjopcJu12nidPW9BqGWLLw8ooG9oe".to_string();
         let schema_type = "TestStringTypes".to_string();
         let issuer =
-            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
         let holder =
-            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
@@ -709,9 +709,9 @@ mod tests {
         let schema_cid = "QmNzd7J2n3csL6vu4QdqLYSJCg8JkRBgVMtCNsRp6G7ZXR".to_string();
         let schema_type = "TestIntegerTypes".to_string();
         let issuer =
-            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
         let holder =
-            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
@@ -800,9 +800,9 @@ mod tests {
         let schema_cid = "QmYxWprBhUga6NnzzryaPNAtMWi9L9nLhwbkYQi5uqRnuW".to_string();
         let schema_type = "TestBooleanTypes".to_string();
         let issuer =
-            "did:polygonid:polygon:mumbai:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
         let holder =
-            "did:polygonid:polygon:mumbai:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
