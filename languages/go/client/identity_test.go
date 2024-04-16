@@ -123,6 +123,22 @@ func TestIdentity(t *testing.T) {
 		assert.NotNil(t, schema.Json)
 		assert.NotNil(t, schema.SchemaType)
 
+		res, err := identityCoreClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
+			WithIntegerAttribute("license_type", 1).
+			WithDecimalAttribute("quantity_oil", 2.25555).
+			WithStringAttribute("nif", "54688188M").
+			WithBooleanAttribute("is_spanish", true).
+			WithDateAttribute("birth_date", time.Date(1999, time.March, 20, 0, 0, 0, 0, time.UTC)).
+			WithDatetimeAttribute("local_hour", time.Now()).
+			WithStringAttribute("car_type", "big").
+			WithIntegerAttribute("car_points", 5).
+			WithDecimalAttribute("precision_wheels", 1.10).
+			Build()
+		assert.NoError(t, err)
+		assert.NotNil(t, res.CredentialId)
+		assert.NotNil(t, res.Credential)
+		assert.Equal(t, DrivingLicenseSchemaType, res.CredentialType)
+
 		receipt, err := identityClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
 			WithIntegerAttribute("license_type", 1).
 			WithDecimalAttribute("quantity_oil", 2.25555).
@@ -139,22 +155,6 @@ func TestIdentity(t *testing.T) {
 		assert.Equal(t, issuer.Did.Did, receipt.Credential.Issuer)
 		assert.Equal(t, "JsonSchema2023", receipt.Credential.CredentialSchema.Type)
 		assert.Equal(t, DrivingLicenseSchemaType, receipt.Credential.Type[1])
-
-		res, err := identityCoreClient.BuildCredential(issuer, schema.Cid, holderDid, expiration, 0).
-			WithIntegerAttribute("license_type", 1).
-			WithDecimalAttribute("quantity_oil", 2.25555).
-			WithStringAttribute("nif", "54688188M").
-			WithBooleanAttribute("is_spanish", true).
-			WithDateAttribute("birth_date", time.Date(1999, time.March, 20, 0, 0, 0, 0, time.UTC)).
-			WithDatetimeAttribute("local_hour", time.Now()).
-			WithStringAttribute("car_type", "big").
-			WithIntegerAttribute("car_points", 5).
-			WithDecimalAttribute("precision_wheels", 1.10).
-			Build()
-		assert.NoError(t, err)
-		assert.NotNil(t, res.CredentialId)
-		assert.NotNil(t, res.Credential)
-		assert.Equal(t, DrivingLicenseSchemaType, res.CredentialType)
 
 		credential, err := identityClient.GetCredential(receipt.CredentialId)
 		assert.NoError(t, err)
