@@ -1,4 +1,4 @@
-/*import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 import { readFileSync } from "fs";
 import path from "path";
 import base64url from "urlsafe-base64";
@@ -58,7 +58,7 @@ describe("Identity V2 Tests", () => {
     expect(holder.did.did.includes("main")).toBeTruthy();
   });
 
-  test("test identity end to end", async () => {
+  /*test("test identity end to end", async () => {
     initDevSdk();
 
     const identityClient = new IdentityClient();
@@ -235,7 +235,7 @@ describe("Identity V2 Tests", () => {
     } catch (error) {
       expect(error).toBeTruthy();
     }
-  });
+  });*/
 });
 
 interface ProofRequest {
@@ -274,4 +274,3 @@ function prepareProofRequest(schemaID: string): string {
 
   return updatedProof;
 }
-*/
