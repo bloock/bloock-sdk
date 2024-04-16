@@ -1,4 +1,4 @@
-/*import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.bloock.sdk.client.IdentityClient;
 import com.bloock.sdk.client.IdentityCoreClient;
@@ -233,4 +233,4 @@ public class IdentityTest {
     ObjectMapper objectMapper = new ObjectMapper();
     return objectMapper.writeValueAsString(proofRequestMap);
   }
-}*/
+}
