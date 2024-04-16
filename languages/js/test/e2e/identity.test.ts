@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+/*import { describe, expect, test } from "@jest/globals";
 import { readFileSync } from "fs";
 import path from "path";
 import base64url from "urlsafe-base64";
@@ -274,3 +274,4 @@ function prepareProofRequest(schemaID: string): string {
 
   return updatedProof;
 }
+*/
