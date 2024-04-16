@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class WebhookServiceClient extends \Bloock\Bridge\Connection {
+class WebhookServiceClient extends \Grpc\BaseStub {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class WebhookServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\VerifyWebhookSignatureRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function VerifyWebhookSignature(\Bloock\VerifyWebhookSignatureRequest $argument,
       $metadata = [], $options = []) {

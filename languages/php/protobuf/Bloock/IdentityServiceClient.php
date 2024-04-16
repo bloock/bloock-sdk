@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class IdentityServiceClient extends \Bloock\Bridge\Connection {
+class IdentityServiceClient extends \Grpc\BaseStub {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\CreateHolderRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function CreateHolder(\Bloock\CreateHolderRequest $argument,
       $metadata = [], $options = []) {
@@ -34,7 +34,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\CreateIssuerRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function CreateIssuer(\Bloock\CreateIssuerRequest $argument,
       $metadata = [], $options = []) {
@@ -48,7 +48,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\ImportIssuerRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function ImportIssuer(\Bloock\ImportIssuerRequest $argument,
       $metadata = [], $options = []) {
@@ -62,7 +62,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\BuildSchemaRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function BuildSchema(\Bloock\BuildSchemaRequest $argument,
       $metadata = [], $options = []) {
@@ -76,7 +76,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\GetSchemaRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function GetSchema(\Bloock\GetSchemaRequest $argument,
       $metadata = [], $options = []) {
@@ -90,7 +90,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\CreateCredentialRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function CreateCredential(\Bloock\CreateCredentialRequest $argument,
       $metadata = [], $options = []) {
@@ -104,7 +104,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\GetCredentialRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function GetCredential(\Bloock\GetCredentialRequest $argument,
       $metadata = [], $options = []) {
@@ -118,7 +118,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\GetCredentialProofRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function GetCredentialProof(\Bloock\GetCredentialProofRequest $argument,
       $metadata = [], $options = []) {
@@ -132,7 +132,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\RevokeCredentialRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function RevokeCredential(\Bloock\RevokeCredentialRequest $argument,
       $metadata = [], $options = []) {
@@ -146,7 +146,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\CredentialToJsonRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function CredentialToJson(\Bloock\CredentialToJsonRequest $argument,
       $metadata = [], $options = []) {
@@ -160,7 +160,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\CredentialFromJsonRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function CredentialFromJson(\Bloock\CredentialFromJsonRequest $argument,
       $metadata = [], $options = []) {
@@ -174,7 +174,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\GetCredentialOfferRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function GetCredentialOffer(\Bloock\GetCredentialOfferRequest $argument,
       $metadata = [], $options = []) {
@@ -188,7 +188,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\ForcePublishIssuerStateRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function ForcePublishIssuerState(\Bloock\ForcePublishIssuerStateRequest $argument,
       $metadata = [], $options = []) {
@@ -202,7 +202,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\CreateVerificationRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function CreateVerification(\Bloock\CreateVerificationRequest $argument,
       $metadata = [], $options = []) {
@@ -216,7 +216,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\WaitVerificationRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function WaitVerification(\Bloock\WaitVerificationRequest $argument,
       $metadata = [], $options = []) {
@@ -230,7 +230,7 @@ class IdentityServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\GetVerificationStatusRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function GetVerificationStatus(\Bloock\GetVerificationStatusRequest $argument,
       $metadata = [], $options = []) {

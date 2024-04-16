@@ -11,8 +11,8 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from . import shared_pb2 as shared__pb2
-from . import config_pb2 as config__pb2
+import shared_pb2 as shared__pb2
+import config_pb2 as config__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rwebhook.proto\x12\x06\x62loock\x1a\x0cshared.proto\x1a\x0c\x63onfig.proto\"\x96\x01\n\x1dVerifyWebhookSignatureRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12\x0e\n\x06header\x18\x03 \x01(\t\x12\x11\n\tsecretKey\x18\x04 \x01(\t\x12\x18\n\x10\x65nforceTolerance\x18\x05 \x01(\x08\"_\n\x1eVerifyWebhookSignatureResponse\x12\x10\n\x08is_valid\x18\x01 \x01(\x08\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2y\n\x0eWebhookService\x12g\n\x16VerifyWebhookSignature\x12%.bloock.VerifyWebhookSignatureRequest\x1a&.bloock.VerifyWebhookSignatureResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')

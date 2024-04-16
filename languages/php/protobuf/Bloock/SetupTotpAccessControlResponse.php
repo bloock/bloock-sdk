@@ -38,7 +38,7 @@ class SetupTotpAccessControlResponse extends \Google\Protobuf\Internal\Message
      *
      *     @type string $secret
      *     @type string $secret_qr
-     *     @type array<string>|\Google\Protobuf\Internal\RepeatedField $recovery_codes
+     *     @type string[]|\Google\Protobuf\Internal\RepeatedField $recovery_codes
      *     @type \Bloock\Error $error
      * }
      */
@@ -102,7 +102,7 @@ class SetupTotpAccessControlResponse extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated string recovery_codes = 3;</code>
-     * @param array<string>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setRecoveryCodes($var)

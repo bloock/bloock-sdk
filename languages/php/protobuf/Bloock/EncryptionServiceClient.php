@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class EncryptionServiceClient extends \Bloock\Bridge\Connection {
+class EncryptionServiceClient extends \Grpc\BaseStub {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class EncryptionServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\EncryptRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function Encrypt(\Bloock\EncryptRequest $argument,
       $metadata = [], $options = []) {
@@ -34,7 +34,7 @@ class EncryptionServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\DecryptRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function Decrypt(\Bloock\DecryptRequest $argument,
       $metadata = [], $options = []) {
@@ -48,7 +48,7 @@ class EncryptionServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\EncryptionAlgRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function GetEncryptionAlg(\Bloock\EncryptionAlgRequest $argument,
       $metadata = [], $options = []) {

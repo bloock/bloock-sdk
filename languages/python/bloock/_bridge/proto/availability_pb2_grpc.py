@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import availability_pb2 as availability__pb2
+import availability_pb2 as availability__pb2
 
 
 class AvailabilityServiceStub(object):

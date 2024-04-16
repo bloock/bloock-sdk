@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import integrity_pb2 as integrity__pb2
+import integrity_pb2 as integrity__pb2
 
 
 class IntegrityServiceStub(object):

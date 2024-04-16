@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import encryption_pb2 as encryption__pb2
+import encryption_pb2 as encryption__pb2
 
 
 class EncryptionServiceStub(object):

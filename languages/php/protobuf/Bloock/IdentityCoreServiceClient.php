@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class IdentityCoreServiceClient extends \Bloock\Bridge\Connection {
+class IdentityCoreServiceClient extends \Grpc\BaseStub {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class IdentityCoreServiceClient extends \Bloock\Bridge\Connection {
      * @param \Bloock\CreateCoreCredentialRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return mixed
+     * @return \Grpc\UnaryCall
      */
     public function CreateCoreCredential(\Bloock\CreateCoreCredentialRequest $argument,
       $metadata = [], $options = []) {

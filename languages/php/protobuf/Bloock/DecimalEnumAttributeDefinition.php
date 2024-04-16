@@ -44,7 +44,7 @@ class DecimalEnumAttributeDefinition extends \Google\Protobuf\Internal\Message
      *     @type string $id
      *     @type string $description
      *     @type bool $required
-     *     @type array<float>|\Google\Protobuf\Internal\RepeatedField $enum
+     *     @type float[]|\Google\Protobuf\Internal\RepeatedField $enum
      * }
      */
     public function __construct($data = NULL) {
@@ -151,7 +151,7 @@ class DecimalEnumAttributeDefinition extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated double enum = 5;</code>
-     * @param array<float>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param float[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setEnum($var)
