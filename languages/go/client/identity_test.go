@@ -2,7 +2,7 @@
 
 package client
 
-/*import (
+import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -282,4 +282,4 @@ func prepareProofRequest(schemaID string) (string, error) {
 	}
 
 	return string(updatedProof), nil
-}*/
+}

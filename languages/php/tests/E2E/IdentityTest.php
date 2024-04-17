@@ -1,5 +1,5 @@
 <?php
-/*
+
 use Bloock\Bloock;
 use Bloock\Client\IdentityClient;
 use Bloock\Client\IdentityCoreClient;
@@ -211,4 +211,4 @@ function prepareProofRequest($schemaID)
     }
 
     return [$updatedProof, null];
-}*/
+}

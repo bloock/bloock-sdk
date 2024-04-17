@@ -1,5 +1,5 @@
 import json
-'''import base64
+import base64
 import datetime
 import json
 import os
@@ -171,7 +171,6 @@ class TestIdentity(unittest.TestCase):
         with self.assertRaises(Exception):
             identity_client.wait_verification(verification.session_id, 5)
 
-'''
 def prepare_proof_request(schema_id):
     json_string = '''
     {
