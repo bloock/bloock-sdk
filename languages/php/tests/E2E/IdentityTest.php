@@ -1,12 +1,12 @@
 <?php
-/*
+
 use Bloock\Bloock;
 use Bloock\Client\IdentityClient;
-use Bloock\Client\IdentityCoreClient;
+//use Bloock\Client\IdentityCoreClient;
 use Bloock\Client\KeyClient;
 use Bloock\Entity\Identity\Credential;
 use Bloock\Entity\Identity\DidMethod;
-use Bloock\Entity\Identity\PublishIntervalParams;
+//use Bloock\Entity\Identity\PublishIntervalParams;
 use Bloock\Entity\Key\Key;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
@@ -55,7 +55,7 @@ final class IdentityTest extends TestCase
         $this->assertStringContainsString("main", $holder->getDid()->getDid());
     }
 
-    public function testIdentityEndToEnd()
+    /*public function testIdentityEndToEnd()
     {
         $identityClient = new IdentityClient();
         $identityCoreClient = new IdentityCoreClient();
@@ -170,7 +170,7 @@ final class IdentityTest extends TestCase
         } catch (Exception $e) {
             $this->assertNotNull($e->getMessage());
         }
-    }
+    }*/
 }
 
 class ProofRequest
@@ -211,4 +211,4 @@ function prepareProofRequest($schemaID)
     }
 
     return [$updatedProof, null];
-}*/
+}

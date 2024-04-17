@@ -1,14 +1,14 @@
 #import base64
 #import datetime
 import json
-'''import os
+#import os
 import unittest
 from bloock.entity.identity.credential import Credential
 from bloock.entity.identity.did_method import DidMethod
 from bloock.client.identity import IdentityClient
-from bloock.client.identity_core import IdentityCoreClient
+#from bloock.client.identity_core import IdentityCoreClient
 from bloock.client.key import KeyClient
-from bloock.entity.identity.publish_interval_params import PublishIntervalParams
+#from bloock.entity.identity.publish_interval_params import PublishIntervalParams
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.key import Key
@@ -48,7 +48,7 @@ class TestIdentity(unittest.TestCase):
         holder = identity_client.create_holder(holder_key, DidMethod.PolygonID)
         self.assertTrue(holder.did.__contains__("main"))
 
-    def test_end_to_end(self):
+    '''def test_end_to_end(self):
         identity_client = IdentityClient()
         identity_core_client = IdentityCoreClient()
         key_client = KeyClient()
@@ -168,9 +168,8 @@ class TestIdentity(unittest.TestCase):
             identity_client.get_verification_status(verification.session_id)
 
         with self.assertRaises(Exception):
-            identity_client.wait_verification(verification.session_id, 5)
+            identity_client.wait_verification(verification.session_id, 5)'''
 
-'''
 def prepare_proof_request(schema_id):
     json_string = '''
     {
