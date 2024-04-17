@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class KeyServiceClient extends \Grpc\BaseStub {
+class KeyServiceClient extends \Bloock\Bridge\Connection {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GenerateLocalKeyRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GenerateLocalKey(\Bloock\GenerateLocalKeyRequest $argument,
       $metadata = [], $options = []) {
@@ -34,7 +34,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\LoadLocalKeyRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function LoadLocalKey(\Bloock\LoadLocalKeyRequest $argument,
       $metadata = [], $options = []) {
@@ -48,7 +48,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GenerateManagedKeyRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GenerateManagedKey(\Bloock\GenerateManagedKeyRequest $argument,
       $metadata = [], $options = []) {
@@ -62,7 +62,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\LoadManagedKeyRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function LoadManagedKey(\Bloock\LoadManagedKeyRequest $argument,
       $metadata = [], $options = []) {
@@ -76,7 +76,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GenerateLocalCertificateRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GenerateLocalCertificate(\Bloock\GenerateLocalCertificateRequest $argument,
       $metadata = [], $options = []) {
@@ -90,7 +90,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\LoadLocalCertificateRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function LoadLocalCertificate(\Bloock\LoadLocalCertificateRequest $argument,
       $metadata = [], $options = []) {
@@ -104,7 +104,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GenerateManagedCertificateRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GenerateManagedCertificate(\Bloock\GenerateManagedCertificateRequest $argument,
       $metadata = [], $options = []) {
@@ -118,7 +118,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\LoadManagedCertificateRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function LoadManagedCertificate(\Bloock\LoadManagedCertificateRequest $argument,
       $metadata = [], $options = []) {
@@ -132,7 +132,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\ImportManagedCertificateRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function ImportManagedCertificate(\Bloock\ImportManagedCertificateRequest $argument,
       $metadata = [], $options = []) {
@@ -146,7 +146,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\SetupTotpAccessControlRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function SetupTotpAccessControl(\Bloock\SetupTotpAccessControlRequest $argument,
       $metadata = [], $options = []) {
@@ -160,7 +160,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\SetupSecretAccessControlRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function SetupSecretAccessControl(\Bloock\SetupSecretAccessControlRequest $argument,
       $metadata = [], $options = []) {
@@ -174,7 +174,7 @@ class KeyServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RecoverTotpAccessControlRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function RecoverTotpAccessControl(\Bloock\RecoverTotpAccessControlRequest $argument,
       $metadata = [], $options = []) {

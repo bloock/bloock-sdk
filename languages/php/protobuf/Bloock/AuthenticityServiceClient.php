@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class AuthenticityServiceClient extends \Grpc\BaseStub {
+class AuthenticityServiceClient extends \Bloock\Bridge\Connection {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class AuthenticityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\SignRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function Sign(\Bloock\SignRequest $argument,
       $metadata = [], $options = []) {
@@ -34,7 +34,7 @@ class AuthenticityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\VerifyRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function Verify(\Bloock\VerifyRequest $argument,
       $metadata = [], $options = []) {
@@ -48,7 +48,7 @@ class AuthenticityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GetSignaturesRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GetSignatures(\Bloock\GetSignaturesRequest $argument,
       $metadata = [], $options = []) {

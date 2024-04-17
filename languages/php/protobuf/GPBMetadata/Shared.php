@@ -15,13 +15,7 @@ class Shared
           return;
         }
         $pool->internalAddGeneratedFile(
-            '
-Ÿ
-shared.protobloock"&
-Error
-kind (	
-message (	BW
-com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protobproto3'
+            "\x0A\x9F\x01\x0A\x0Cshared.proto\x12\x06bloock\"&\x0A\x05Error\x12\x0C\x0A\x04kind\x18\x01 \x01(\x09\x12\x0F\x0A\x07message\x18\x02 \x01(\x09BW\x0A\x1Bcom.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3"
         , true);
 
         static::$is_initialized = true;

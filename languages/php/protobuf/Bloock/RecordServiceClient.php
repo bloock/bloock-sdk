@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class RecordServiceClient extends \Grpc\BaseStub {
+class RecordServiceClient extends \Bloock\Bridge\Connection {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RecordBuilderFromStringRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function BuildRecordFromString(\Bloock\RecordBuilderFromStringRequest $argument,
       $metadata = [], $options = []) {
@@ -34,7 +34,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RecordBuilderFromHexRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function BuildRecordFromHex(\Bloock\RecordBuilderFromHexRequest $argument,
       $metadata = [], $options = []) {
@@ -48,7 +48,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RecordBuilderFromJSONRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function BuildRecordFromJson(\Bloock\RecordBuilderFromJSONRequest $argument,
       $metadata = [], $options = []) {
@@ -62,7 +62,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RecordBuilderFromFileRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function BuildRecordFromFile(\Bloock\RecordBuilderFromFileRequest $argument,
       $metadata = [], $options = []) {
@@ -76,7 +76,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RecordBuilderFromBytesRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function BuildRecordFromBytes(\Bloock\RecordBuilderFromBytesRequest $argument,
       $metadata = [], $options = []) {
@@ -90,7 +90,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RecordBuilderFromRecordRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function BuildRecordFromRecord(\Bloock\RecordBuilderFromRecordRequest $argument,
       $metadata = [], $options = []) {
@@ -104,7 +104,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RecordBuilderFromLoaderRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function BuildRecordFromLoader(\Bloock\RecordBuilderFromLoaderRequest $argument,
       $metadata = [], $options = []) {
@@ -118,7 +118,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GetDetailsRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GetDetails(\Bloock\GetDetailsRequest $argument,
       $metadata = [], $options = []) {
@@ -132,7 +132,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GetHashRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GetHash(\Bloock\GetHashRequest $argument,
       $metadata = [], $options = []) {
@@ -146,7 +146,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GetPayloadRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GetPayload(\Bloock\GetPayloadRequest $argument,
       $metadata = [], $options = []) {
@@ -160,7 +160,7 @@ class RecordServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\SetProofRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function SetProof(\Bloock\SetProofRequest $argument,
       $metadata = [], $options = []) {

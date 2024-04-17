@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class AvailabilityServiceClient extends \Grpc\BaseStub {
+class AvailabilityServiceClient extends \Bloock\Bridge\Connection {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class AvailabilityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\PublishRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function Publish(\Bloock\PublishRequest $argument,
       $metadata = [], $options = []) {
@@ -34,7 +34,7 @@ class AvailabilityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\RetrieveRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function Retrieve(\Bloock\RetrieveRequest $argument,
       $metadata = [], $options = []) {
