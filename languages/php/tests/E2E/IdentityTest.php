@@ -2,11 +2,11 @@
 
 use Bloock\Bloock;
 use Bloock\Client\IdentityClient;
-//use Bloock\Client\IdentityCoreClient;
+use Bloock\Client\IdentityCoreClient;
 use Bloock\Client\KeyClient;
 use Bloock\Entity\Identity\Credential;
 use Bloock\Entity\Identity\DidMethod;
-//use Bloock\Entity\Identity\PublishIntervalParams;
+use Bloock\Entity\Identity\PublishIntervalParams;
 use Bloock\Entity\Key\Key;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
