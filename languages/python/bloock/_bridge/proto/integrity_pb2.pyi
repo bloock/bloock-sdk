@@ -21,7 +21,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class SendRecordsRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -42,7 +41,6 @@ class SendRecordsRequest(google.protobuf.message.Message):
 
 global___SendRecordsRequest = SendRecordsRequest
 
-@typing_extensions.final
 class SendRecordsResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -64,7 +62,6 @@ class SendRecordsResponse(google.protobuf.message.Message):
 
 global___SendRecordsResponse = SendRecordsResponse
 
-@typing_extensions.final
 class GetAnchorRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -84,7 +81,6 @@ class GetAnchorRequest(google.protobuf.message.Message):
 
 global___GetAnchorRequest = GetAnchorRequest
 
-@typing_extensions.final
 class GetAnchorResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -109,7 +105,6 @@ class GetAnchorResponse(google.protobuf.message.Message):
 
 global___GetAnchorResponse = GetAnchorResponse
 
-@typing_extensions.final
 class WaitAnchorRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -132,7 +127,6 @@ class WaitAnchorRequest(google.protobuf.message.Message):
 
 global___WaitAnchorRequest = WaitAnchorRequest
 
-@typing_extensions.final
 class WaitAnchorResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -157,7 +151,6 @@ class WaitAnchorResponse(google.protobuf.message.Message):
 
 global___WaitAnchorResponse = WaitAnchorResponse
 
-@typing_extensions.final
 class GetProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -178,7 +171,6 @@ class GetProofRequest(google.protobuf.message.Message):
 
 global___GetProofRequest = GetProofRequest
 
-@typing_extensions.final
 class GetProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -200,7 +192,6 @@ class GetProofResponse(google.protobuf.message.Message):
 
 global___GetProofResponse = GetProofResponse
 
-@typing_extensions.final
 class ValidateRootRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -223,7 +214,6 @@ class ValidateRootRequest(google.protobuf.message.Message):
 
 global___ValidateRootRequest = ValidateRootRequest
 
-@typing_extensions.final
 class ValidateRootResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -245,7 +235,6 @@ class ValidateRootResponse(google.protobuf.message.Message):
 
 global___ValidateRootResponse = ValidateRootResponse
 
-@typing_extensions.final
 class VerifyProofRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -266,7 +255,6 @@ class VerifyProofRequest(google.protobuf.message.Message):
 
 global___VerifyProofRequest = VerifyProofRequest
 
-@typing_extensions.final
 class VerifyProofResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -290,7 +278,6 @@ class VerifyProofResponse(google.protobuf.message.Message):
 
 global___VerifyProofResponse = VerifyProofResponse
 
-@typing_extensions.final
 class VerifyRecordsRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -315,7 +302,6 @@ class VerifyRecordsRequest(google.protobuf.message.Message):
 
 global___VerifyRecordsRequest = VerifyRecordsRequest
 
-@typing_extensions.final
 class VerifyRecordsResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import keys_pb2 as keys__pb2
+from . import keys_pb2 as keys__pb2
 
 
 class KeyServiceStub(object):

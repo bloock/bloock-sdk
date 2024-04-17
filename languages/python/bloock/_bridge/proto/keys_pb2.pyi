@@ -20,7 +20,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-@typing_extensions.final
 class GenerateLocalKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -40,7 +39,6 @@ class GenerateLocalKeyRequest(google.protobuf.message.Message):
 
 global___GenerateLocalKeyRequest = GenerateLocalKeyRequest
 
-@typing_extensions.final
 class GenerateLocalKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -62,7 +60,6 @@ class GenerateLocalKeyResponse(google.protobuf.message.Message):
 
 global___GenerateLocalKeyResponse = GenerateLocalKeyResponse
 
-@typing_extensions.final
 class GenerateManagedKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -83,7 +80,6 @@ class GenerateManagedKeyRequest(google.protobuf.message.Message):
 
 global___GenerateManagedKeyRequest = GenerateManagedKeyRequest
 
-@typing_extensions.final
 class GenerateManagedKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -105,7 +101,6 @@ class GenerateManagedKeyResponse(google.protobuf.message.Message):
 
 global___GenerateManagedKeyResponse = GenerateManagedKeyResponse
 
-@typing_extensions.final
 class LoadLocalKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -128,7 +123,6 @@ class LoadLocalKeyRequest(google.protobuf.message.Message):
 
 global___LoadLocalKeyRequest = LoadLocalKeyRequest
 
-@typing_extensions.final
 class LoadLocalKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -150,7 +144,6 @@ class LoadLocalKeyResponse(google.protobuf.message.Message):
 
 global___LoadLocalKeyResponse = LoadLocalKeyResponse
 
-@typing_extensions.final
 class LoadManagedKeyRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -170,7 +163,6 @@ class LoadManagedKeyRequest(google.protobuf.message.Message):
 
 global___LoadManagedKeyRequest = LoadManagedKeyRequest
 
-@typing_extensions.final
 class LoadManagedKeyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -192,7 +184,6 @@ class LoadManagedKeyResponse(google.protobuf.message.Message):
 
 global___LoadManagedKeyResponse = LoadManagedKeyResponse
 
-@typing_extensions.final
 class GenerateLocalCertificateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -213,7 +204,6 @@ class GenerateLocalCertificateRequest(google.protobuf.message.Message):
 
 global___GenerateLocalCertificateRequest = GenerateLocalCertificateRequest
 
-@typing_extensions.final
 class GenerateLocalCertificateResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -235,7 +225,6 @@ class GenerateLocalCertificateResponse(google.protobuf.message.Message):
 
 global___GenerateLocalCertificateResponse = GenerateLocalCertificateResponse
 
-@typing_extensions.final
 class GenerateManagedCertificateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -256,7 +245,6 @@ class GenerateManagedCertificateRequest(google.protobuf.message.Message):
 
 global___GenerateManagedCertificateRequest = GenerateManagedCertificateRequest
 
-@typing_extensions.final
 class GenerateManagedCertificateResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -278,7 +266,6 @@ class GenerateManagedCertificateResponse(google.protobuf.message.Message):
 
 global___GenerateManagedCertificateResponse = GenerateManagedCertificateResponse
 
-@typing_extensions.final
 class LoadLocalCertificateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -301,7 +288,6 @@ class LoadLocalCertificateRequest(google.protobuf.message.Message):
 
 global___LoadLocalCertificateRequest = LoadLocalCertificateRequest
 
-@typing_extensions.final
 class LoadLocalCertificateResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -323,7 +309,6 @@ class LoadLocalCertificateResponse(google.protobuf.message.Message):
 
 global___LoadLocalCertificateResponse = LoadLocalCertificateResponse
 
-@typing_extensions.final
 class LoadManagedCertificateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -343,7 +328,6 @@ class LoadManagedCertificateRequest(google.protobuf.message.Message):
 
 global___LoadManagedCertificateRequest = LoadManagedCertificateRequest
 
-@typing_extensions.final
 class LoadManagedCertificateResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -365,7 +349,6 @@ class LoadManagedCertificateResponse(google.protobuf.message.Message):
 
 global___LoadManagedCertificateResponse = LoadManagedCertificateResponse
 
-@typing_extensions.final
 class ImportManagedCertificateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -392,7 +375,6 @@ class ImportManagedCertificateRequest(google.protobuf.message.Message):
 
 global___ImportManagedCertificateRequest = ImportManagedCertificateRequest
 
-@typing_extensions.final
 class ImportManagedCertificateResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -414,7 +396,6 @@ class ImportManagedCertificateResponse(google.protobuf.message.Message):
 
 global___ImportManagedCertificateResponse = ImportManagedCertificateResponse
 
-@typing_extensions.final
 class SetupTotpAccessControlRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -443,7 +424,6 @@ class SetupTotpAccessControlRequest(google.protobuf.message.Message):
 
 global___SetupTotpAccessControlRequest = SetupTotpAccessControlRequest
 
-@typing_extensions.final
 class SetupTotpAccessControlResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -471,7 +451,6 @@ class SetupTotpAccessControlResponse(google.protobuf.message.Message):
 
 global___SetupTotpAccessControlResponse = SetupTotpAccessControlResponse
 
-@typing_extensions.final
 class SetupSecretAccessControlRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -506,7 +485,6 @@ class SetupSecretAccessControlRequest(google.protobuf.message.Message):
 
 global___SetupSecretAccessControlRequest = SetupSecretAccessControlRequest
 
-@typing_extensions.final
 class SetupSecretAccessControlResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -524,7 +502,6 @@ class SetupSecretAccessControlResponse(google.protobuf.message.Message):
 
 global___SetupSecretAccessControlResponse = SetupSecretAccessControlResponse
 
-@typing_extensions.final
 class RecoverTotpAccessControlRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -556,7 +533,6 @@ class RecoverTotpAccessControlRequest(google.protobuf.message.Message):
 
 global___RecoverTotpAccessControlRequest = RecoverTotpAccessControlRequest
 
-@typing_extensions.final
 class RecoverTotpAccessControlResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
