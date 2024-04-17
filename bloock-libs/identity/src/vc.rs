@@ -278,9 +278,9 @@ mod tests {
         let schema_cid = "QmTvHzXiegijCdhGC4kgjps8hSi3FP1K17ezrYPgdMU6Ek".to_string();
         let schema_type = "DrivingLicense".to_string();
         let issuer =
-            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qRtXd2xSSTTiu7YPjWC1PDkaCShXzVVdLUSRchAjQ".to_string();
         let holder =
-            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qbhbai9AVMJKC4yk38PgyD5ieBuCSH43QBTrkpYGc".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
@@ -347,9 +347,9 @@ mod tests {
 
         vc.validate_schema(schema.to_string()).unwrap();
 
-        let expected_claim_core_hex = "b9064d46baefd34de66fd370f0f3f0f92a00000000000000000000000000000002125caf312e33a0b0c82d57fdd240b7261d58901a346261c5ce5621136c0b00155fec9cab1502edbc913c0f2bf6a59532d065e65227193bf4e95e9f2c10ee110000000000000000000000000000000000000000000000000000000000000000693b03e4000000003b5df36d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
+        let expected_claim_core_hex = "b9064d46baefd34de66fd370f0f3f0f92a0000000000000000000000000000000213ffc729940ef895b8821ae28a6262c723c05445b81eb6568591922cb00d00faa7331c7c517987df6f8e89c85d8415502f1e8f8f0fb648b2a05b556ca590120000000000000000000000000000000000000000000000000000000000000000693b03e4000000003b5df36d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
         let expected_hash_index_value =
-            "13248bbe038563f47c3044d0e157e31dab9274f1c5f4182956d330776504e4f7".to_string();
+            "25341fd06d813ac2d1a27545f7fcdb19053916d96fcadc11ad5e20d00af63612".to_string();
 
         let core_claim = vc.get_core_claim().await.unwrap();
         let core_claim_hex = core_claim.hex().unwrap();
@@ -369,9 +369,9 @@ mod tests {
         let schema_cid = "QmYvtkz2ReofDtvCyGs4Z73d9j55TLXPVueyBTFqfRWvPp".to_string();
         let schema_type = "TestCredentialEnums".to_string();
         let issuer =
-            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qRtXd2xSSTTiu7YPjWC1PDkaCShXzVVdLUSRchAjQ".to_string();
         let holder =
-            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qbhbai9AVMJKC4yk38PgyD5ieBuCSH43QBTrkpYGc".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
@@ -541,9 +541,9 @@ mod tests {
         let schema_cid = "QmZjVNVwRQqLiwQ3KZjopcJu12nidPW9BqGWLLw8ooG9oe".to_string();
         let schema_type = "TestStringTypes".to_string();
         let issuer =
-            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qRtXd2xSSTTiu7YPjWC1PDkaCShXzVVdLUSRchAjQ".to_string();
         let holder =
-            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qbhbai9AVMJKC4yk38PgyD5ieBuCSH43QBTrkpYGc".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
@@ -709,9 +709,9 @@ mod tests {
         let schema_cid = "QmNzd7J2n3csL6vu4QdqLYSJCg8JkRBgVMtCNsRp6G7ZXR".to_string();
         let schema_type = "TestIntegerTypes".to_string();
         let issuer =
-            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qRtXd2xSSTTiu7YPjWC1PDkaCShXzVVdLUSRchAjQ".to_string();
         let holder =
-            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qbhbai9AVMJKC4yk38PgyD5ieBuCSH43QBTrkpYGc".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();
@@ -800,9 +800,9 @@ mod tests {
         let schema_cid = "QmYxWprBhUga6NnzzryaPNAtMWi9L9nLhwbkYQi5uqRnuW".to_string();
         let schema_type = "TestBooleanTypes".to_string();
         let issuer =
-            "did:polygonid:polygon:amoy:2qGUovMWDMyoXKLWiRMBRTyMfKcdrUg958QcCDkC9U".to_string();
+            "did:polygonid:polygon:amoy:2qRtXd2xSSTTiu7YPjWC1PDkaCShXzVVdLUSRchAjQ".to_string();
         let holder =
-            "did:polygonid:polygon:amoy:2qGg7TzmcoU4Jg3E86wXp4WJcyGUTuafPZxVRxpYQr".to_string();
+            "did:polygonid:polygon:amoy:2qbhbai9AVMJKC4yk38PgyD5ieBuCSH43QBTrkpYGc".to_string();
         let expiration_date =
             NaiveDateTime::parse_from_str("2028-06-15T07:07:39Z", DEFAULT_EXPIRATION_DATE_FORMAT)
                 .unwrap();

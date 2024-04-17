@@ -1,4 +1,4 @@
-__version__ = "2.8.7"
+__version__ = "2.8.7-beta.2"
 
 from typing import Dict
 

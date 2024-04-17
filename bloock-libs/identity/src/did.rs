@@ -69,6 +69,7 @@ impl Blockchain {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Network {
     Main,
+    Mumbai,
     Amoy,
     Goerli,
 }
@@ -77,8 +78,9 @@ impl Network {
     pub fn new(method: &str) -> Result<Network, String> {
         match method {
             "main" => Ok(Network::Main),
-            "amoy" => Ok(Network::Amoy),
+            "mumbai" => Ok(Network::Mumbai),
             "goerli" => Ok(Network::Goerli),
+            "amoy" => Ok(Network::Amoy),
             _ => Err("Invalid network type provided".to_string()),
         }
     }
@@ -86,8 +88,9 @@ impl Network {
     pub fn get_network_id_type(&self) -> String {
         match self {
             Network::Main => "main".to_string(),
-            Network::Amoy => "amoy".to_string(),
+            Network::Mumbai => "mumbai".to_string(),
             Network::Goerli => "goerli".to_string(),
+            Network::Amoy => "amoy".to_string(),
         }
     }
 }
@@ -115,9 +118,16 @@ lazy_static! {
         iden3_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Polygon,
-                network_id: Network::Amoy,
+                network_id: Network::Mumbai,
             },
             0b00010000 | 0b00000010,
+        );
+        iden3_map.insert(
+            DIDNetworkFlag {
+                blockchain: Blockchain::Polygon,
+                network_id: Network::Amoy,
+            },
+            0b00010000 | 0b00000011,
         );
         iden3_map.insert(
             DIDNetworkFlag {
@@ -146,9 +156,16 @@ lazy_static! {
         polygon_id_map.insert(
             DIDNetworkFlag {
                 blockchain: Blockchain::Polygon,
-                network_id: Network::Amoy,
+                network_id: Network::Mumbai,
             },
             0b00010000 | 0b00000010,
+        );
+        polygon_id_map.insert(
+            DIDNetworkFlag {
+                blockchain: Blockchain::Polygon,
+                network_id: Network::Amoy,
+            },
+            0b00010000 | 0b00000011, 
         );
         did_method_network.insert(DIDMethod::PolygonID, polygon_id_map);
 
@@ -277,7 +294,7 @@ fn find_blockchain_for_did_method_by_value(
                     return Ok(network_flag.blockchain.clone());
                 }
             }
-            Err("Network is not supported for did".to_string())
+            Err("Blockchain is not supported for did".to_string())
         }
         None => Err("Invalid did method".to_string()),
     }
