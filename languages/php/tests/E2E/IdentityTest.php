@@ -55,7 +55,7 @@ final class IdentityTest extends TestCase
         $this->assertStringContainsString("main", $holder->getDid()->getDid());
     }
 
-    /*public function testIdentityEndToEnd()
+    public function testIdentityEndToEnd()
     {
         $identityClient = new IdentityClient();
         $identityCoreClient = new IdentityCoreClient();
@@ -170,7 +170,7 @@ final class IdentityTest extends TestCase
         } catch (Exception $e) {
             $this->assertNotNull($e->getMessage());
         }
-    }*/
+    }
 }
 
 class ProofRequest
