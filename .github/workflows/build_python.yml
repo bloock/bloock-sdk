@@ -6,7 +6,7 @@ on:
       os:
         required: false
         type: string
-        default: '[{"platform": "linux", "os": "ubuntu-latest", "archs": "x86_64,aarch64"}, {"platform": "macos", "os": "macos-latest", "archs": "x86_64,arm64"}, {"platform": "windows", "os": "windows-latest", "archs": "AMD64"}]'
+        default: '[{"platform": "linux", "os": "ubuntu-latest", "archs": "x86_64,aarch64"}, {"platform": "windows", "os": "windows-latest", "archs": "AMD64"}]'
 
 jobs:
   build:
