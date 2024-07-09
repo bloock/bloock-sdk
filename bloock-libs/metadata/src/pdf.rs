@@ -32,7 +32,7 @@ use cms::{
 use const_oid::db::rfc5911::{ID_AA_SIGNING_CERTIFICATE_V_2, ID_SIGNED_DATA};
 use const_oid::db::rfc5912::{ID_SHA_256, SHA_256_WITH_RSA_ENCRYPTION};
 use const_oid::db::rfc6268::{ID_CONTENT_TYPE, ID_DATA, ID_MESSAGE_DIGEST};
-use lopdf::{Dictionary, Document, Object};
+use lopdf::{Dictionary, IncrementalDocument, Object};
 use rsa::{
     pkcs8::{DecodePublicKey, EncodePublicKey, LineEnding},
     RsaPublicKey,
@@ -56,14 +56,14 @@ use x509_cert::{der::AnyRef, Certificate};
 #[derive(Debug, Clone)]
 pub struct PdfParser {
     modified: bool,
-    document: Document,
+    document: IncrementalDocument,
     original_payload: Vec<u8>,
 }
 
 impl PdfParser {
     pub fn load(payload: &[u8]) -> BloockResult<Self> {
-        let document =
-            Document::load_from(payload).map_err(|e| MetadataError::LoadError(e.to_string()))?;
+        let document = IncrementalDocument::load_from(payload)
+            .map_err(|e| MetadataError::LoadError(e.to_string()))?;
         let parser = PdfParser {
             modified: false,
             document,
@@ -84,25 +84,22 @@ impl MetadataParser for PdfParser {
         api_host: String,
         api_key: String,
     ) -> BloockResult<Signature> {
-        let old_signatures =  match self.get_signatures() {
-            Ok(s) => s,
-            Err(_) => vec![],
-        };
-        if !old_signatures.is_empty() {
-            return Err(MetadataError::UnsupportedMultiSignature())
-        }
-        
         self.modified = true;
 
         // Preparation of the file
-        let page_id = self.document.get_pages().get(&1).unwrap().to_owned();
+        let page_id = self
+            .document
+            .get_prev_documents()
+            .get_pages()
+            .get(&1)
+            .unwrap()
+            .to_owned();
 
         let mut signature_dict = SignatureDictionary::default();
-        let dictionary: Dictionary = signature_dict
-            .clone()
-            .try_into()
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
-        let signature_id = self.document.add_object(dictionary);
+        let dictionary: Dictionary = signature_dict.clone().try_into().map_err(|_| {
+            MetadataError::LoadMetadataError("could not generate signature dictionary".to_string())
+        })?;
+        let signature_id = self.document.new_document.add_object(dictionary);
 
         // Create signature annotation
         let annotation = PdfAnnotationWidget {
@@ -110,22 +107,34 @@ impl MetadataParser for PdfParser {
             p: Some(page_id),
             ap: None,
             v: Some(signature_id),
+            t: format!("{}{}", signature_id.0, signature_id.1),
             ..Default::default()
         };
-        let annotation_dict: Dictionary = annotation
-            .try_into()
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
-        let annotation_id = self.document.add_object(annotation_dict);
+        let annotation_dict: Dictionary = annotation.try_into().map_err(|_| {
+            MetadataError::LoadMetadataError("could not generate annotation widget".to_string())
+        })?;
+        let annotation_id = self.document.new_document.add_object(annotation_dict);
+
+        self.document
+            .opt_clone_object_to_new_document(page_id)
+            .map_err(|_| {
+                MetadataError::LoadMetadataError("could not move page to new document".to_string())
+            })?;
 
         let page_dict = self
             .document
+            .new_document
             .get_dictionary_mut(page_id)
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
+            .map_err(|_| {
+                MetadataError::LoadMetadataError("could not get page dictionary".to_string())
+            })?;
 
         let mut annots = match page_dict.get(b"Annots") {
             Ok(a) => a
                 .as_array()
-                .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?
+                .map_err(|_| {
+                    MetadataError::LoadMetadataError("could not get annotations".to_string())
+                })?
                 .to_owned(),
             Err(_) => vec![],
         };
@@ -133,21 +142,25 @@ impl MetadataParser for PdfParser {
         page_dict.set(b"Annots".to_vec(), annots);
 
         // Create AcroForm dictionary entry
-        let root = utils::get_root_mut(&mut self.document)
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
+        let root = utils::get_root_mut(&mut self.document).map_err(|_| {
+            MetadataError::LoadMetadataError("could not get mutable root dictionary".to_string())
+        })?;
 
         let mut acro_form = match root.get(b"AcroForm") {
-            Ok(a) => AcroFormDictionary::try_from(
-                a.as_dict()
-                    .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?,
-            )
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?,
+            Ok(a) => AcroFormDictionary::try_from(a.as_dict().map_err(|_| {
+                MetadataError::LoadMetadataError("could not get AcroForm dictionary".to_string())
+            })?)
+            .map_err(|_| {
+                MetadataError::LoadMetadataError(
+                    "could not convert dictionary to AcroForm".to_string(),
+                )
+            })?,
             Err(_) => AcroFormDictionary::default(),
         };
         acro_form.fields.push(annotation_id);
-        let acro_form_dict: Dictionary = acro_form
-            .try_into()
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
+        let acro_form_dict: Dictionary = acro_form.try_into().map_err(|_| {
+            MetadataError::LoadMetadataError("could not convert AcroForm to dictionary".to_string())
+        })?;
 
         root.set(b"AcroForm".to_vec(), acro_form_dict);
 
@@ -155,18 +168,22 @@ impl MetadataParser for PdfParser {
         let pdf_payload = self.build()?;
         let byte_range_payload = self.compute_byte_range(pdf_payload)?;
         signature_dict.byte_range = byte_range_payload.clone();
-        let dictionary: Dictionary = signature_dict
-            .clone()
-            .try_into()
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
-        self.document.set_object(signature_id, dictionary);
+        let dictionary: Dictionary = signature_dict.clone().try_into().map_err(|_| {
+            MetadataError::LoadMetadataError(
+                "could not convert signature to dictionary".to_string(),
+            )
+        })?;
+        self.document
+            .new_document
+            .set_object(signature_id, dictionary);
 
         //Get payload to sign
         let effective_payload = self.get_signed_content(byte_range_payload.clone())?;
         let cert = key
             .get_certificate(api_host.clone(), api_key.clone())
-            .await.map_err(|e| MetadataError::GetSignedDataError(e.to_string()))?;
-        
+            .await
+            .map_err(|e| MetadataError::GetSignedDataError(e.to_string()))?;
+
         let signed_attributes = self.get_signed_attributes(effective_payload, cert.clone())?;
         let signed_attributes_encoded =
             self.get_signed_attributes_encoded(signed_attributes.clone())?;
@@ -191,21 +208,22 @@ impl MetadataParser for PdfParser {
         //Add signature
         signature_dict
             .compute_content(signature_payload)
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
-        let dictionary: Dictionary = signature_dict
-            .clone()
-            .try_into()
-            .map_err(|_| MetadataError::LoadMetadataError("".to_string()))?;
-        self.document.set_object(signature_id, dictionary);
+            .map_err(|_| {
+                MetadataError::LoadMetadataError("could not compute signature content".to_string())
+            })?;
+        let dictionary: Dictionary = signature_dict.clone().try_into().map_err(|_| {
+            MetadataError::LoadMetadataError(
+                "could not convert signature to dictionary".to_string(),
+            )
+        })?;
+        self.document
+            .new_document
+            .set_object(signature_id, dictionary);
 
         Ok(signature)
     }
 
-    async fn verify(
-        &self,
-        api_host: String,
-        api_key: String,
-    ) -> BloockResult<bool> {
+    async fn verify(&self, api_host: String, api_key: String) -> BloockResult<bool> {
         let mut verifications = Vec::new();
 
         if let Ok(new_signatures) = self.get_signatures_and_payload() {
@@ -310,7 +328,7 @@ impl MetadataParser for PdfParser {
         if self.modified {
             let mut out: Vec<u8> = Vec::new();
             let mut raw_document = self.document.clone();
-            raw_document.compress();
+            raw_document.new_document.compress();
             raw_document
                 .save_to(&mut out)
                 .map_err(|e| MetadataError::WriteError(e.to_string()))?;
@@ -367,20 +385,22 @@ impl PdfParser {
 
     fn get_metadata_dict(&self) -> BloockResult<&Dictionary> {
         self.document
+            .get_prev_documents()
             .trailer
             .get(b"Info")
             .and_then(Object::as_reference)
-            .and_then(|id| self.document.get_object(id))
+            .and_then(|id| self.document.get_prev_documents().get_object(id))
             .and_then(Object::as_dict)
             .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
     }
 
     fn get_metadata_dict_mut(&mut self) -> BloockResult<&mut Dictionary> {
         self.document
+            .new_document
             .trailer
             .get(b"Info")
             .and_then(Object::as_reference)
-            .and_then(|id| self.document.get_object_mut(id))
+            .and_then(|id| self.document.new_document.get_object_mut(id))
             .and_then(Object::as_dict_mut)
             .map_err(|e| MetadataError::LoadMetadataError(e.to_string()))
     }
@@ -608,7 +628,8 @@ impl PdfParser {
 
     fn get_signatures_and_payload(&self) -> BloockResult<Vec<(Signature, Vec<u8>)>> {
         let document = self.document.clone();
-        let root = utils::get_root(&document).map_err(|_| MetadataError::DeserializeError)?;
+        let root = utils::get_root(&document.get_prev_documents())
+            .map_err(|_| MetadataError::DeserializeError)?;
 
         let acro_form = match root.get(b"AcroForm") {
             Ok(a) => AcroFormDictionary::try_from(
@@ -625,6 +646,7 @@ impl PdfParser {
             .filter_map(|f| {
                 let id = f.to_owned().to_owned();
                 document
+                    .get_prev_documents()
                     .get_object(id)
                     .and_then(|o| o.as_dict())
                     .map_err(Error::LoPdf)
@@ -640,6 +662,7 @@ impl PdfParser {
             .filter_map(|s| {
                 let id = s.to_owned();
                 document
+                    .get_prev_documents()
                     .get_object(id)
                     .and_then(|o| o.as_dict())
                     .map_err(Error::LoPdf)
