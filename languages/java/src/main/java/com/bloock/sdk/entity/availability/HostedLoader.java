@@ -1,7 +1,7 @@
 package com.bloock.sdk.entity.availability;
 
-import com.bloock.sdk.bridge.proto.AvailabilityEntities;
-import com.bloock.sdk.bridge.proto.AvailabilityEntities.DataAvailabilityType;
+import com.bloock.sdk.bridge.proto.BloockAvailabilityEntities;
+import com.bloock.sdk.bridge.proto.BloockAvailabilityEntities.DataAvailabilityType;
 
 /**
  * Represents a loader for hosted data availability.
@@ -12,6 +12,7 @@ public class HostedLoader implements Loader {
 
   /**
    * Constructs a HostedLoader object with the specified parameters.
+   * 
    * @param id
    */
   public HostedLoader(String id) {
@@ -19,8 +20,8 @@ public class HostedLoader implements Loader {
     args = new LoaderArgs(id);
   }
 
-  public AvailabilityEntities.Loader toProto() {
-    return AvailabilityEntities.Loader.newBuilder()
+  public BloockAvailabilityEntities.Loader toProto() {
+    return BloockAvailabilityEntities.Loader.newBuilder()
         .setType(this.type)
         .setArgs(this.args.toProto())
         .build();

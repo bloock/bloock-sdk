@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents the parameters for generating a local certificate.
@@ -13,6 +13,7 @@ public class LocalCertificateParams {
 
   /**
    * Constructs an LocalCertificateParams object with the specified parameters.
+   * 
    * @param keyType
    * @param subject
    * @param password
@@ -26,7 +27,7 @@ public class LocalCertificateParams {
     this.expiration = expirationMonths;
   }
 
-  public static LocalCertificateParams fromProto(KeysEntities.LocalCertificateParams params) {
+  public static LocalCertificateParams fromProto(BloockKeysEntities.LocalCertificateParams params) {
     return new LocalCertificateParams(
         KeyType.fromProto(params.getKeyType()),
         new SubjectCertificateParams(
@@ -40,13 +41,12 @@ public class LocalCertificateParams {
         params.getExpiration());
   }
 
-  public KeysEntities.LocalCertificateParams toProto() {
-    KeysEntities.LocalCertificateParams.Builder params =
-        KeysEntities.LocalCertificateParams.newBuilder()
-            .setKeyType(this.keyType.toProto())
-            .setSubject(this.subject.toProto())
-            .setPassword(this.password)
-            .setExpiration(this.expiration);
+  public BloockKeysEntities.LocalCertificateParams toProto() {
+    BloockKeysEntities.LocalCertificateParams.Builder params = BloockKeysEntities.LocalCertificateParams.newBuilder()
+        .setKeyType(this.keyType.toProto())
+        .setSubject(this.subject.toProto())
+        .setPassword(this.password)
+        .setExpiration(this.expiration);
 
     return params.build();
   }

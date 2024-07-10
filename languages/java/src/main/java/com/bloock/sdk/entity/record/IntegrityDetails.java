@@ -1,10 +1,11 @@
 package com.bloock.sdk.entity.record;
 
-import com.bloock.sdk.bridge.proto.RecordEntities;
+import com.bloock.sdk.bridge.proto.BloockRecordEntities;
 import com.bloock.sdk.entity.integrity.Proof;
 
 /**
- * Represents details related to the integrity of a record, including hash and proof.
+ * Represents details related to the integrity of a record, including hash and
+ * proof.
  */
 public class IntegrityDetails {
   String hash;
@@ -12,6 +13,7 @@ public class IntegrityDetails {
 
   /**
    * Constructs a IntegrityDetails object with the specified parameters.
+   * 
    * @param hash
    * @param proof
    */
@@ -22,6 +24,7 @@ public class IntegrityDetails {
 
   /**
    * Gets the hash of the record.
+   * 
    * @return
    */
   public String getHash() {
@@ -30,13 +33,14 @@ public class IntegrityDetails {
 
   /**
    * Gets the proof of the record.
+   * 
    * @return
    */
   public Proof getProof() {
     return proof;
   }
 
-  public static IntegrityDetails fromProto(RecordEntities.IntegrityDetails details) {
+  public static IntegrityDetails fromProto(BloockRecordEntities.IntegrityDetails details) {
     Proof proof = null;
     if (details.hasProof()) {
       proof = Proof.fromProto(details.getProof());
@@ -44,8 +48,8 @@ public class IntegrityDetails {
     return new IntegrityDetails(details.getHash(), proof);
   }
 
-  public RecordEntities.IntegrityDetails toProto() {
-    return RecordEntities.IntegrityDetails.newBuilder()
+  public BloockRecordEntities.IntegrityDetails toProto() {
+    return BloockRecordEntities.IntegrityDetails.newBuilder()
         .setHash(hash)
         .setProof(proof.toProto())
         .build();

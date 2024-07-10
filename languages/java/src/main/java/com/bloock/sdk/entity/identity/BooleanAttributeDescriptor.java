@@ -1,7 +1,7 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
-import com.bloock.sdk.bridge.proto.IdentityEntities.BooleanAttributeDefinition;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities.BooleanAttributeDefinition;
 
 /**
  * Represents a descriptor for a boolean attribute.
@@ -9,6 +9,7 @@ import com.bloock.sdk.bridge.proto.IdentityEntities.BooleanAttributeDefinition;
 public class BooleanAttributeDescriptor extends AttributeDescriptor {
   /**
    * Creates a new BooleanAttributeDescriptor instance with the provided details.
+   * 
    * @param displayName
    * @param technicalName
    * @param description
@@ -25,7 +26,7 @@ public class BooleanAttributeDescriptor extends AttributeDescriptor {
   }
 
   public BooleanAttributeDefinition toProto() {
-    return IdentityEntities.BooleanAttributeDefinition.newBuilder()
+    return BooleanAttributeDefinition.newBuilder()
         .setDisplayName(this.displayName)
         .setId(this.technicalName)
         .setDescription(this.description)

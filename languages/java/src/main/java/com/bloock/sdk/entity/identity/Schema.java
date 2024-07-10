@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
  * Represents a schema with its attributes.
@@ -13,6 +13,7 @@ public class Schema {
 
   /**
    * Constructs a Schema object with the specified parameters.
+   * 
    * @param cid
    * @param cidJsonLD
    * @param schemaType
@@ -25,12 +26,12 @@ public class Schema {
     this.json = json;
   }
 
-  public static Schema fromProto(IdentityEntities.Schema res) {
+  public static Schema fromProto(BloockIdentityEntities.Schema res) {
     return new Schema(res.getCid(), res.getCidJsonLd(), res.getSchemaType(), res.getJson());
   }
 
-  public IdentityEntities.Schema toProto() {
-    return IdentityEntities.Schema.newBuilder()
+  public BloockIdentityEntities.Schema toProto() {
+    return BloockIdentityEntities.Schema.newBuilder()
         .setCid(this.cid)
         .setCidJsonLd(this.cidJsonLD)
         .setSchemaType(this.schemaType)
@@ -40,6 +41,7 @@ public class Schema {
 
   /**
    * Gets the cid of the schema.
+   * 
    * @return
    */
   public String getCid() {
@@ -48,6 +50,7 @@ public class Schema {
 
   /**
    * Gets de cid json-ld of the schema.
+   * 
    * @return
    */
   public String getCidJsonLD() {
@@ -56,6 +59,7 @@ public class Schema {
 
   /**
    * Gets the schema type of the schema.
+   * 
    * @return
    */
   public String getSchemaType() {
@@ -64,6 +68,7 @@ public class Schema {
 
   /**
    * Gets the json representation of the schema.
+   * 
    * @return
    */
   public String getJson() {

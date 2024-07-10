@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
  * Represents a receipt for a verification session.
@@ -11,6 +11,7 @@ public class VerificationReceipt {
 
   /**
    * Constructs a VerificationReceipt object with the specified parameters.
+   * 
    * @param sessionID
    * @param verificationRequest
    */
@@ -19,12 +20,12 @@ public class VerificationReceipt {
     this.verificationRequest = verificationRequest;
   }
 
-  public static VerificationReceipt fromProto(IdentityEntities.VerificationReceipt res) {
+  public static VerificationReceipt fromProto(BloockIdentityEntities.VerificationReceipt res) {
     return new VerificationReceipt(res.getSessionId(), res.getVerificationRequest());
   }
 
-  public IdentityEntities.VerificationReceipt toProto() {
-    return IdentityEntities.VerificationReceipt.newBuilder()
+  public BloockIdentityEntities.VerificationReceipt toProto() {
+    return BloockIdentityEntities.VerificationReceipt.newBuilder()
         .setSessionId(this.sessionID)
         .setVerificationRequest(this.verificationRequest)
         .build();
@@ -32,6 +33,7 @@ public class VerificationReceipt {
 
   /**
    * Gets the session id of the verification.
+   * 
    * @return
    */
   public long getSessionID() {
@@ -40,6 +42,7 @@ public class VerificationReceipt {
 
   /**
    * Gets the verification request json.
+   * 
    * @return
    */
   public String getVerificationRequest() {

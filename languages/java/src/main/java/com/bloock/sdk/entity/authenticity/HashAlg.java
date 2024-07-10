@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.authenticity;
 
-import com.bloock.sdk.bridge.proto.AuthenticityEntities;
+import com.bloock.sdk.bridge.proto.BloockAuthenticityEntities;
 
 /**
  * Represents different hash algorithms.
@@ -27,7 +27,7 @@ public enum HashAlg {
    */
   UNRECOGNIZED;
 
-  public static HashAlg fromProto(AuthenticityEntities.HashAlg alg) {
+  public static HashAlg fromProto(BloockAuthenticityEntities.HashAlg alg) {
     switch (alg) {
       case SHA_256:
         return HashAlg.Sha256;
@@ -42,18 +42,18 @@ public enum HashAlg {
     }
   }
 
-  public AuthenticityEntities.HashAlg toProto() {
+  public BloockAuthenticityEntities.HashAlg toProto() {
     switch (this) {
       case Sha256:
-        return AuthenticityEntities.HashAlg.SHA_256;
+        return BloockAuthenticityEntities.HashAlg.SHA_256;
       case Keccak256:
-        return AuthenticityEntities.HashAlg.KECCAK_256;
+        return BloockAuthenticityEntities.HashAlg.KECCAK_256;
       case Poseidon:
-        return AuthenticityEntities.HashAlg.POSEIDON;
+        return BloockAuthenticityEntities.HashAlg.POSEIDON;
       case None:
-        return AuthenticityEntities.HashAlg.NONE;
+        return BloockAuthenticityEntities.HashAlg.NONE;
       default:
-        return AuthenticityEntities.HashAlg.UNRECOGNIZED;
+        return BloockAuthenticityEntities.HashAlg.UNRECOGNIZED;
     }
   }
 }

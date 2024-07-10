@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import bloock._bridge.proto.keys_entities_pb2 as proto
+import bloock._bridge.proto.bloock_keys_entities_pb2 as proto
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.access_control_type import AccessControlType

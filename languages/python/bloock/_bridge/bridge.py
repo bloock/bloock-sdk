@@ -1,53 +1,53 @@
 from .channel import Channel
 from .proto import (
-    authenticity_pb2_grpc,
-    availability_pb2_grpc,
-    encryption_pb2_grpc,
-    identity_pb2_grpc,
-    identity_core_pb2_grpc,
-    integrity_pb2_grpc,
-    keys_pb2_grpc,
-    record_pb2_grpc,
-    webhook_pb2_grpc,
+    bloock_authenticity_pb2_grpc,
+    bloock_availability_pb2_grpc,
+    bloock_encryption_pb2_grpc,
+    bloock_identity_pb2_grpc,
+    bloock_identity_core_pb2_grpc,
+    bloock_integrity_pb2_grpc,
+    bloock_keys_pb2_grpc,
+    bloock_record_pb2_grpc,
+    bloock_webhook_pb2_grpc,
 )
 
 
 class BloockBridge:
     def __init__(self):
         channel = Channel()
-        self._authenticity = authenticity_pb2_grpc.AuthenticityServiceStub(channel)
-        self._availability = availability_pb2_grpc.AvailabilityServiceStub(channel)
-        self._encryption = encryption_pb2_grpc.EncryptionServiceStub(channel)
-        self._identity = identity_pb2_grpc.IdentityServiceStub(channel)
-        self._identity_core = identity_core_pb2_grpc.IdentityCoreServiceStub(channel)
-        self._integrity = integrity_pb2_grpc.IntegrityServiceStub(channel)
-        self._key = keys_pb2_grpc.KeyServiceStub(channel)
-        self._record = record_pb2_grpc.RecordServiceStub(channel)
-        self._webhook = webhook_pb2_grpc.WebhookServiceStub(channel)
+        self._authenticity = bloock_authenticity_pb2_grpc.AuthenticityServiceStub(channel)
+        self._availability = bloock_availability_pb2_grpc.AvailabilityServiceStub(channel)
+        self._encryption = bloock_encryption_pb2_grpc.EncryptionServiceStub(channel)
+        self._identity = bloock_identity_pb2_grpc.IdentityServiceStub(channel)
+        self._identity_core = bloock_identity_core_pb2_grpc.IdentityCoreServiceStub(channel)
+        self._integrity = bloock_integrity_pb2_grpc.IntegrityServiceStub(channel)
+        self._key = bloock_keys_pb2_grpc.KeyServiceStub(channel)
+        self._record = bloock_record_pb2_grpc.RecordServiceStub(channel)
+        self._webhook = bloock_webhook_pb2_grpc.WebhookServiceStub(channel)
 
-    def authenticity(self) -> authenticity_pb2_grpc.AuthenticityServiceStub:
+    def authenticity(self) -> bloock_authenticity_pb2_grpc.AuthenticityServiceStub:
         return self._authenticity
 
-    def availability(self) -> availability_pb2_grpc.AvailabilityServiceStub:
+    def availability(self) -> bloock_availability_pb2_grpc.AvailabilityServiceStub:
         return self._availability
 
-    def encryption(self) -> encryption_pb2_grpc.EncryptionServiceStub:
+    def encryption(self) -> bloock_encryption_pb2_grpc.EncryptionServiceStub:
         return self._encryption
 
-    def identity(self) -> identity_pb2_grpc.IdentityServiceStub:
+    def identity(self) -> bloock_identity_pb2_grpc.IdentityServiceStub:
         return self._identity
     
-    def identity_core(self) -> identity_core_pb2_grpc.IdentityCoreServiceStub:
+    def identity_core(self) -> bloock_identity_core_pb2_grpc.IdentityCoreServiceStub:
         return self._identity_core
 
-    def integrity(self) -> integrity_pb2_grpc.IntegrityServiceStub:
+    def integrity(self) -> bloock_integrity_pb2_grpc.IntegrityServiceStub:
         return self._integrity
 
-    def key(self) -> keys_pb2_grpc.KeyServiceStub:
+    def key(self) -> bloock_keys_pb2_grpc.KeyServiceStub:
         return self._key
 
-    def record(self) -> record_pb2_grpc.RecordServiceStub:
+    def record(self) -> bloock_record_pb2_grpc.RecordServiceStub:
         return self._record
 
-    def webhook(self) -> webhook_pb2_grpc.WebhookServiceStub:
+    def webhook(self) -> bloock_webhook_pb2_grpc.WebhookServiceStub:
         return self._webhook

@@ -1,10 +1,11 @@
 package com.bloock.sdk.entity.integrity;
 
-import com.bloock.sdk.bridge.proto.IntegrityEntities;
+import com.bloock.sdk.bridge.proto.BloockIntegrityEntities;
 import java.util.List;
 
 /**
- * Represents a proof, including leaves, nodes, depth, bitmap, and anchor information.
+ * Represents a proof, including leaves, nodes, depth, bitmap, and anchor
+ * information.
  */
 public class Proof {
   List<String> leaves;
@@ -15,6 +16,7 @@ public class Proof {
 
   /**
    * Constructs a Proof object with the specified parameters.
+   * 
    * @param leaves
    * @param nodes
    * @param depth
@@ -30,7 +32,7 @@ public class Proof {
     this.anchor = anchor;
   }
 
-  public static Proof fromProto(IntegrityEntities.Proof proof) {
+  public static Proof fromProto(BloockIntegrityEntities.Proof proof) {
     return new Proof(
         proof.getLeavesList(),
         proof.getNodesList(),
@@ -39,8 +41,8 @@ public class Proof {
         ProofAnchor.fromProto(proof.getAnchor()));
   }
 
-  public IntegrityEntities.Proof toProto() {
-    return IntegrityEntities.Proof.newBuilder()
+  public BloockIntegrityEntities.Proof toProto() {
+    return BloockIntegrityEntities.Proof.newBuilder()
         .addAllLeaves(leaves)
         .addAllNodes(nodes)
         .setDepth(depth)
@@ -51,6 +53,7 @@ public class Proof {
 
   /**
    * Gets the leaves of the proof.
+   * 
    * @return
    */
   public List<String> getLeaves() {
@@ -59,6 +62,7 @@ public class Proof {
 
   /**
    * Gets the nodes of the proof.
+   * 
    * @return
    */
   public List<String> getNodes() {
@@ -67,6 +71,7 @@ public class Proof {
 
   /**
    * Gets the depth of the proof.
+   * 
    * @return
    */
   public String getDepth() {
@@ -75,6 +80,7 @@ public class Proof {
 
   /**
    * Gets the bitmap of the proof.
+   * 
    * @return
    */
   public String getBitmap() {
@@ -83,6 +89,7 @@ public class Proof {
 
   /**
    * Gets the anchor of the proof.
+   * 
    * @return
    */
   public ProofAnchor getAnchor() {

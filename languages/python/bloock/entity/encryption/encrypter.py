@@ -1,4 +1,4 @@
-import bloock._bridge.proto.encryption_entities_pb2 as proto
+import bloock._bridge.proto.bloock_encryption_entities_pb2 as proto
 from bloock.entity.key.local_certificate import LocalCertificate
 from bloock.entity.key.local_key import LocalKey
 from bloock.entity.key.managed_certificate import ManagedCertificate

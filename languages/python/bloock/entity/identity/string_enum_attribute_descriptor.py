@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 
-import bloock._bridge.proto.identity_entities_pb2 as proto
+import bloock._bridge.proto.bloock_identity_entities_pb2 as proto
 from bloock.entity.identity.attribute_descriptor import AttributeDescriptor
 
 

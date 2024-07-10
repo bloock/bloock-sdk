@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.Keys;
+import com.bloock.sdk.bridge.proto.BloockKeys;
 
 /**
  * Represents an ecdsa key pair, with private and public key.
@@ -10,7 +10,7 @@ public class EcdsaKeyPair extends KeyPair {
     super(publicKey, privateKey);
   }
 
-  public static EcdsaKeyPair fromProto(Keys.GenerateLocalKeyResponse keys) {
+  public static EcdsaKeyPair fromProto(BloockKeys.GenerateLocalKeyResponse keys) {
     return new EcdsaKeyPair(keys.getLocalKey().getKey(), keys.getLocalKey().getPrivateKey());
   }
 }

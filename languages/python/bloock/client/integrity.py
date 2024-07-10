@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from bloock._bridge import bridge
-from bloock._bridge.proto.integrity_pb2 import (
+from bloock._bridge.proto.bloock_integrity_pb2 import (
     SendRecordsRequest,
     GetAnchorRequest,
     WaitAnchorRequest,
@@ -10,7 +10,7 @@ from bloock._bridge.proto.integrity_pb2 import (
     VerifyRecordsRequest,
     ValidateRootRequest,
 )
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.integrity.anchor import Anchor
 from bloock.entity.integrity.network import Network

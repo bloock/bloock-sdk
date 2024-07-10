@@ -1,9 +1,10 @@
 package com.bloock.sdk.entity.authenticity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
- * Represents a JSON Web Signature (JWS). <a href="https://datatracker.ietf.org/doc/html/rfc7515">RFC 7515</a>.
+ * Represents a JSON Web Signature (JWS).
+ * <a href="https://datatracker.ietf.org/doc/html/rfc7515">RFC 7515</a>.
  */
 public class SignatureJws {
   String signature;
@@ -13,6 +14,7 @@ public class SignatureJws {
 
   /**
    * Constructs a SignatureJws object with the specified parameters.
+   * 
    * @param signature
    * @param protected_
    * @param header
@@ -25,7 +27,7 @@ public class SignatureJws {
     this.messageHash = messageHash;
   }
 
-  public static SignatureJws fromProto(IdentityEntities.SignatureJWS signature) {
+  public static SignatureJws fromProto(BloockIdentityEntities.SignatureJWS signature) {
     return new SignatureJws(
         signature.getSignature(),
         signature.getProtected(),
@@ -33,8 +35,8 @@ public class SignatureJws {
         signature.getMessageHash());
   }
 
-  public IdentityEntities.SignatureJWS toProto() {
-    return IdentityEntities.SignatureJWS.newBuilder()
+  public BloockIdentityEntities.SignatureJWS toProto() {
+    return BloockIdentityEntities.SignatureJWS.newBuilder()
         .setSignature(this.signature)
         .setProtected(this.protected_)
         .setHeader(this.header.toProto())
@@ -44,6 +46,7 @@ public class SignatureJws {
 
   /**
    * Gets the cryptographic signature.
+   * 
    * @return
    */
   public String getSignature() {
@@ -52,6 +55,7 @@ public class SignatureJws {
 
   /**
    * Sets the cryptographic signature.
+   * 
    * @param signature
    */
   public void setSignature(String signature) {
@@ -60,6 +64,7 @@ public class SignatureJws {
 
   /**
    * Gets the "protected" header parameter of the JWS.
+   * 
    * @return
    */
   public String getProtected_() {
@@ -68,6 +73,7 @@ public class SignatureJws {
 
   /**
    * Gets the header containing algorithm and key identifier metadata for the JWS.
+   * 
    * @return
    */
   public SignatureHeaderJws getHeader() {
@@ -76,6 +82,7 @@ public class SignatureJws {
 
   /**
    * Sets the hash of the message that was signed.
+   * 
    * @param hash
    */
   public void setMessageHash(String hash) {
@@ -84,6 +91,7 @@ public class SignatureJws {
 
   /**
    * Gets the algorithm used for the JWS signature.
+   * 
    * @return
    */
   public SignatureAlg getAlg() {

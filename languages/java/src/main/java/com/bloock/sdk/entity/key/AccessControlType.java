@@ -1,5 +1,6 @@
 package com.bloock.sdk.entity.key;
-import com.bloock.sdk.bridge.proto.KeysEntities;
+
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents the access control type a cryptographic key.
@@ -19,7 +20,7 @@ public enum AccessControlType {
     SECRET,
     UNRECOGNIZED;
 
-    public static AccessControlType fromProto(KeysEntities.AccessControlType type) {
+    public static AccessControlType fromProto(BloockKeysEntities.AccessControlType type) {
         switch (type) {
             case NO_ACCESS_CONTROL:
                 return AccessControlType.NONE;
@@ -32,16 +33,16 @@ public enum AccessControlType {
         }
     }
 
-    public KeysEntities.AccessControlType toProto() {
+    public BloockKeysEntities.AccessControlType toProto() {
         switch (this) {
             case NONE:
-                return KeysEntities.AccessControlType.NO_ACCESS_CONTROL;
+                return BloockKeysEntities.AccessControlType.NO_ACCESS_CONTROL;
             case TOTP:
-                return KeysEntities.AccessControlType.TOTP;
+                return BloockKeysEntities.AccessControlType.TOTP;
             case SECRET:
-                return KeysEntities.AccessControlType.SECRET;
+                return BloockKeysEntities.AccessControlType.SECRET;
             default:
-                return KeysEntities.AccessControlType.UNRECOGNIZED;
+                return BloockKeysEntities.AccessControlType.UNRECOGNIZED;
         }
     }
 }

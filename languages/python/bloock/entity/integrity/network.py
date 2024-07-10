@@ -3,7 +3,7 @@ from warnings import warn
 
 from enum import Enum
 
-from bloock._bridge.proto.config_pb2 import Network as NetworkProto
+from bloock._bridge.proto.bloock_config_pb2 import Network as NetworkProto
 
 
 class Network(Enum):

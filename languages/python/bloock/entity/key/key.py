@@ -1,4 +1,4 @@
-import bloock._bridge.proto.keys_entities_pb2 as proto
+import bloock._bridge.proto.bloock_keys_entities_pb2 as proto
 from bloock.entity.key.local_key import LocalKey
 from bloock.entity.key.managed_key import ManagedKey
 

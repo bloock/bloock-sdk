@@ -1,13 +1,15 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
- * Represents a descriptor for a date attribute, including its display name, ID, description, and required status.
+ * Represents a descriptor for a date attribute, including its display name, ID,
+ * description, and required status.
  */
 public class DateAttributeDescriptor extends AttributeDescriptor {
   /**
    * Constructs an DateAttributeDescriptor object with the specified parameters.
+   * 
    * @param displayName
    * @param technicalName
    * @param description
@@ -19,13 +21,13 @@ public class DateAttributeDescriptor extends AttributeDescriptor {
   }
 
   public static DateAttributeDescriptor fromProto(
-      IdentityEntities.DateAttributeDefinition res) {
+      BloockIdentityEntities.DateAttributeDefinition res) {
     return new DateAttributeDescriptor(
         res.getDisplayName(), res.getId(), res.getDescription(), res.getRequired());
   }
 
-  public IdentityEntities.DateAttributeDefinition toProto() {
-    return IdentityEntities.DateAttributeDefinition.newBuilder()
+  public BloockIdentityEntities.DateAttributeDefinition toProto() {
+    return BloockIdentityEntities.DateAttributeDefinition.newBuilder()
         .setDisplayName(this.displayName)
         .setId(this.technicalName)
         .setDescription(this.description)

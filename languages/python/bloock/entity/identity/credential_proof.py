@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import bloock._bridge.proto.identity_entities_pb2 as proto
+import bloock._bridge.proto.bloock_identity_entities_pb2 as proto
 
 
 class CredentialProof:

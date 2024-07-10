@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents the type of certificate.
@@ -10,7 +10,7 @@ public enum CertificateType {
   PFX,
   UNRECOGNIZED;
 
-  public static CertificateType fromProto(KeysEntities.CertificateType type) {
+  public static CertificateType fromProto(BloockKeysEntities.CertificateType type) {
     switch (type) {
       case PEM:
         return CertificateType.PEM;
@@ -21,14 +21,14 @@ public enum CertificateType {
     }
   }
 
-  public KeysEntities.CertificateType toProto() {
+  public BloockKeysEntities.CertificateType toProto() {
     switch (this) {
       case PEM:
-        return KeysEntities.CertificateType.PEM;
+        return BloockKeysEntities.CertificateType.PEM;
       case PFX:
-        return KeysEntities.CertificateType.PFX;
+        return BloockKeysEntities.CertificateType.PFX;
       default:
-        return KeysEntities.CertificateType.UNRECOGNIZED;
+        return BloockKeysEntities.CertificateType.UNRECOGNIZED;
     }
   }
 }

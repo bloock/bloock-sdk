@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import bloock._bridge.proto.integrity_entities_pb2 as proto
+import bloock._bridge.proto.bloock_integrity_entities_pb2 as proto
 
 
 class RecordReceipt:

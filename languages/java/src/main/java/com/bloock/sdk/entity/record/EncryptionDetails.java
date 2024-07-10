@@ -1,9 +1,10 @@
 package com.bloock.sdk.entity.record;
 
-import com.bloock.sdk.bridge.proto.RecordEntities;
+import com.bloock.sdk.bridge.proto.BloockRecordEntities;
 
 /**
- * Represents details related to the encryption of a record, including algorithm, key, and subject.
+ * Represents details related to the encryption of a record, including
+ * algorithm, key, and subject.
  */
 public class EncryptionDetails {
   String alg;
@@ -12,6 +13,7 @@ public class EncryptionDetails {
 
   /**
    * Constructs a EncryptionDetails object with the specified parameters.
+   * 
    * @param alg
    * @param key
    * @param subject
@@ -24,6 +26,7 @@ public class EncryptionDetails {
 
   /**
    * Gets the algorithm of the encryption.
+   * 
    * @return
    */
   public String getAlg() {
@@ -32,6 +35,7 @@ public class EncryptionDetails {
 
   /**
    * Gets the public key of the encryption.
+   * 
    * @return
    */
   public String getKey() {
@@ -40,13 +44,14 @@ public class EncryptionDetails {
 
   /**
    * Gets the subject of the subject.
+   * 
    * @return
    */
   public String getSubject() {
     return subject;
   }
 
-  public static EncryptionDetails fromProto(RecordEntities.EncryptionDetails details) {
+  public static EncryptionDetails fromProto(BloockRecordEntities.EncryptionDetails details) {
     String alg = null;
     if (details.hasAlg()) {
       alg = details.getAlg();
@@ -65,8 +70,8 @@ public class EncryptionDetails {
     return new EncryptionDetails(alg, key, subject);
   }
 
-  public RecordEntities.EncryptionDetails toProto() {
-    return RecordEntities.EncryptionDetails.newBuilder()
+  public BloockRecordEntities.EncryptionDetails toProto() {
+    return BloockRecordEntities.EncryptionDetails.newBuilder()
         .setAlg(alg)
         .setKey(key)
         .setSubject(subject)

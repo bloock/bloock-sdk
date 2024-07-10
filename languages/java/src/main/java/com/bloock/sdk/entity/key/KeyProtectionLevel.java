@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents the protection level of a cryptographic key.
@@ -16,7 +16,7 @@ public enum KeyProtectionLevel {
   HSM,
   UNRECOGNIZED;
 
-  public static KeyProtectionLevel fromProto(KeysEntities.KeyProtectionLevel protection) {
+  public static KeyProtectionLevel fromProto(BloockKeysEntities.KeyProtectionLevel protection) {
     switch (protection) {
       case SOFTWARE:
         return KeyProtectionLevel.SOFTWARE;
@@ -27,14 +27,14 @@ public enum KeyProtectionLevel {
     }
   }
 
-  public KeysEntities.KeyProtectionLevel toProto() {
+  public BloockKeysEntities.KeyProtectionLevel toProto() {
     switch (this) {
       case SOFTWARE:
-        return KeysEntities.KeyProtectionLevel.SOFTWARE;
+        return BloockKeysEntities.KeyProtectionLevel.SOFTWARE;
       case HSM:
-        return KeysEntities.KeyProtectionLevel.HSM;
+        return BloockKeysEntities.KeyProtectionLevel.HSM;
       default:
-        return KeysEntities.KeyProtectionLevel.UNRECOGNIZED;
+        return BloockKeysEntities.KeyProtectionLevel.UNRECOGNIZED;
     }
   }
 }
