@@ -16,27 +16,22 @@ class Network
      */
     const ETHEREUM_MAINNET = 0;
     /**
-     * Generated from protobuf enum <code>ETHEREUM_GOERLI = 1;</code>
+     * Generated from protobuf enum <code>ETHEREUM_SEPOLIA = 1;</code>
      */
-    const ETHEREUM_GOERLI = 1;
+    const ETHEREUM_SEPOLIA = 1;
     /**
      * Generated from protobuf enum <code>GNOSIS_CHAIN = 2;</code>
      */
     const GNOSIS_CHAIN = 2;
     /**
-     * Generated from protobuf enum <code>BLOOCK_CHAIN = 3;</code>
+     * Generated from protobuf enum <code>POLYGON_CHAIN = 3;</code>
      */
-    const BLOOCK_CHAIN = 3;
-    /**
-     * Generated from protobuf enum <code>POLYGON_CHAIN = 4;</code>
-     */
-    const POLYGON_CHAIN = 4;
+    const POLYGON_CHAIN = 3;
 
     private static $valueToName = [
         self::ETHEREUM_MAINNET => 'ETHEREUM_MAINNET',
-        self::ETHEREUM_GOERLI => 'ETHEREUM_GOERLI',
+        self::ETHEREUM_SEPOLIA => 'ETHEREUM_SEPOLIA',
         self::GNOSIS_CHAIN => 'GNOSIS_CHAIN',
-        self::BLOOCK_CHAIN => 'BLOOCK_CHAIN',
         self::POLYGON_CHAIN => 'POLYGON_CHAIN',
     ];
 

@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x62loock_config.proto\x12\x06\x62loock\"\xc2\x01\n\nConfigData\x12%\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x15.bloock.Configuration\x12?\n\x0fnetworks_config\x18\x02 \x03(\x0b\x32&.bloock.ConfigData.NetworksConfigEntry\x1aL\n\x13NetworksConfigEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12$\n\x05value\x18\x02 \x01(\x0b\x32\x15.bloock.NetworkConfig:\x02\x38\x01\"\x98\x02\n\rConfiguration\x12\x14\n\x0clibrary_name\x18\x01 \x01(\t\x12\x0c\n\x04host\x18\x02 \x01(\t\x12\x0f\n\x07\x61pi_key\x18\x03 \x01(\t\x12$\n\x1cwait_message_interval_factor\x18\x04 \x01(\x05\x12%\n\x1dwait_message_interval_default\x18\x05 \x01(\x05\x12\x1a\n\x12key_type_algorithm\x18\x06 \x01(\t\x12\x1a\n\x12\x65lliptic_curve_key\x18\x07 \x01(\t\x12\x1b\n\x13signature_algorithm\x18\x08 \x01(\t\x12\x1c\n\x0fidentityApiHost\x18\t \x01(\tH\x00\x88\x01\x01\x42\x12\n\x10_identityApiHost\"S\n\rNetworkConfig\x12\x17\n\x0f\x43ontractAddress\x18\x01 \x01(\t\x12\x13\n\x0b\x43ontractAbi\x18\x02 \x01(\t\x12\x14\n\x0cHttpProvider\x18\x03 \x01(\t*k\n\x07Network\x12\x14\n\x10\x45THEREUM_MAINNET\x10\x00\x12\x13\n\x0f\x45THEREUM_GOERLI\x10\x01\x12\x10\n\x0cGNOSIS_CHAIN\x10\x02\x12\x10\n\x0c\x42LOOCK_CHAIN\x10\x03\x12\x11\n\rPOLYGON_CHAIN\x10\x04\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x62loock_config.proto\x12\x06\x62loock\"\xc2\x01\n\nConfigData\x12%\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x15.bloock.Configuration\x12?\n\x0fnetworks_config\x18\x02 \x03(\x0b\x32&.bloock.ConfigData.NetworksConfigEntry\x1aL\n\x13NetworksConfigEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12$\n\x05value\x18\x02 \x01(\x0b\x32\x15.bloock.NetworkConfig:\x02\x38\x01\"\x98\x02\n\rConfiguration\x12\x14\n\x0clibrary_name\x18\x01 \x01(\t\x12\x0c\n\x04host\x18\x02 \x01(\t\x12\x0f\n\x07\x61pi_key\x18\x03 \x01(\t\x12$\n\x1cwait_message_interval_factor\x18\x04 \x01(\x05\x12%\n\x1dwait_message_interval_default\x18\x05 \x01(\x05\x12\x1a\n\x12key_type_algorithm\x18\x06 \x01(\t\x12\x1a\n\x12\x65lliptic_curve_key\x18\x07 \x01(\t\x12\x1b\n\x13signature_algorithm\x18\x08 \x01(\t\x12\x1c\n\x0fidentityApiHost\x18\t \x01(\tH\x00\x88\x01\x01\x42\x12\n\x10_identityApiHost\"S\n\rNetworkConfig\x12\x17\n\x0f\x43ontractAddress\x18\x01 \x01(\t\x12\x13\n\x0b\x43ontractAbi\x18\x02 \x01(\t\x12\x14\n\x0cHttpProvider\x18\x03 \x01(\t*Z\n\x07Network\x12\x14\n\x10\x45THEREUM_MAINNET\x10\x00\x12\x14\n\x10\x45THEREUM_SEPOLIA\x10\x01\x12\x10\n\x0cGNOSIS_CHAIN\x10\x02\x12\x11\n\rPOLYGON_CHAIN\x10\x03\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'bloock_config_pb2', globals())
@@ -24,7 +24,7 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _CONFIGDATA_NETWORKSCONFIGENTRY._options = None
   _CONFIGDATA_NETWORKSCONFIGENTRY._serialized_options = b'8\001'
   _NETWORK._serialized_start=596
-  _NETWORK._serialized_end=703
+  _NETWORK._serialized_end=686
   _CONFIGDATA._serialized_start=32
   _CONFIGDATA._serialized_end=226
   _CONFIGDATA_NETWORKSCONFIGENTRY._serialized_start=150

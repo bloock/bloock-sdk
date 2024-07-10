@@ -1,10 +1,10 @@
+import { describe, expect, test } from "@jest/globals";
 import {
-  Record,
+  IntegrityClient,
   Network,
-  RecordClient,
-  IntegrityClient
+  Record,
+  RecordClient
 } from "../../dist/index";
-import { describe, test, expect } from "@jest/globals";
 import { initSdk } from "./util";
 
 describe("Integrity Tests", () => {
@@ -27,13 +27,13 @@ describe("Integrity Tests", () => {
 
     const timestampValidateRoot = await integrityClient.validateRoot(
       root,
-      Network.BLOOCK_CHAIN
+      Network.ETHEREUM_SEPOLIA
     );
     expect(timestampValidateRoot).toBeGreaterThan(0);
 
     const timestampVerifyRecords = await integrityClient.verifyRecords(
       records,
-      Network.BLOOCK_CHAIN
+      Network.ETHEREUM_SEPOLIA
     );
     expect(timestampVerifyRecords).toBeGreaterThan(0);
 

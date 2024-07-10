@@ -28,12 +28,12 @@ class TestIntegrity(unittest.TestCase):
         root = integrity_client.verify_proof(proof)
 
         timestamp_validate_root = integrity_client.validate_root(
-            root, Network.BLOOCK_CHAIN
+            root, Network.ETHEREUM_SEPOLIA
         )
         self.assertGreater(timestamp_validate_root, 0)
 
         timestamp_verify_records = integrity_client.verify_records(
-            records, Network.BLOOCK_CHAIN
+            records, Network.ETHEREUM_SEPOLIA
         )
         self.assertGreater(timestamp_verify_records, 0)
 

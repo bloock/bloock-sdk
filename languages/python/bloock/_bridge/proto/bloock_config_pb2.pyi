@@ -25,18 +25,16 @@ class _Network:
 class _NetworkEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Network.ValueType], builtins.type):  # noqa: F821
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ETHEREUM_MAINNET: _Network.ValueType  # 0
-    ETHEREUM_GOERLI: _Network.ValueType  # 1
+    ETHEREUM_SEPOLIA: _Network.ValueType  # 1
     GNOSIS_CHAIN: _Network.ValueType  # 2
-    BLOOCK_CHAIN: _Network.ValueType  # 3
-    POLYGON_CHAIN: _Network.ValueType  # 4
+    POLYGON_CHAIN: _Network.ValueType  # 3
 
 class Network(_Network, metaclass=_NetworkEnumTypeWrapper): ...
 
 ETHEREUM_MAINNET: Network.ValueType  # 0
-ETHEREUM_GOERLI: Network.ValueType  # 1
+ETHEREUM_SEPOLIA: Network.ValueType  # 1
 GNOSIS_CHAIN: Network.ValueType  # 2
-BLOOCK_CHAIN: Network.ValueType  # 3
-POLYGON_CHAIN: Network.ValueType  # 4
+POLYGON_CHAIN: Network.ValueType  # 3
 global___Network = Network
 
 class ConfigData(google.protobuf.message.Message):

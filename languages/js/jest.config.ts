@@ -1,5 +1,7 @@
+import type { Config } from '@jest/types';
+
 // Sync object
-const config: BloockConfig.InitialOptions = {
+const config: Config.InitialOptions = {
   globals: {
     "ts-jest": {
       useESM: true

@@ -7,33 +7,14 @@ import com.bloock.sdk.bridge.proto.BloockConfig;
  */
 public enum Network {
   ETHEREUM_MAINNET,
-  /**
-   * @deprecated Test networks will be deleted in future versions. If you have
-   *             been
-   *             integrating with an existent test API key and you want to start a
-   *             free trial
-   *             period please contact support@bloock.com.
-   */
-  @Deprecated
-  ETHEREUM_GOERLI,
+  ETHEREUM_SEPOLIA,
   GNOSIS_CHAIN,
-  /**
-   * @deprecated Test networks will be deleted in future versions. If you have
-   *             been
-   *             integrating with an existent test API key and you want to start a
-   *             free trial
-   *             period please contact support@bloock.com.
-   */
-  @Deprecated
-  BLOOCK_CHAIN,
   POLYGON_CHAIN;
 
   public BloockConfig.Network toProto() {
     switch (this) {
-      case BLOOCK_CHAIN:
-        return BloockConfig.Network.BLOOCK_CHAIN;
-      case ETHEREUM_GOERLI:
-        return BloockConfig.Network.ETHEREUM_GOERLI;
+      case ETHEREUM_SEPOLIA:
+        return BloockConfig.Network.ETHEREUM_SEPOLIA;
       case ETHEREUM_MAINNET:
         return BloockConfig.Network.ETHEREUM_MAINNET;
       case GNOSIS_CHAIN:
