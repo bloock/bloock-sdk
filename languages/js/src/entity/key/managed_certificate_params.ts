@@ -1,4 +1,4 @@
-import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import * as keysEntitiesProto from "../../bridge/proto/bloock_keys_entities";
 import { KeyType } from "./key_type";
 import { SubjectCertificateParams } from "./subject_certificate_params";
 
@@ -21,9 +21,9 @@ export class ManagedCertificateParams {
 
   /**
    * Constructs a ManagedCertificateParams object with the specified parameters.
-   * @param keyType 
-   * @param subject 
-   * @param expiration 
+   * @param keyType
+   * @param subject
+   * @param expiration
    */
   constructor(
     keyType: KeyType,

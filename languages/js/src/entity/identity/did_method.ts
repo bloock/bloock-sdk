@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 
 /**
  * Represents the type of method did.
@@ -11,16 +11,16 @@ export enum DidMethod {
   /**
    * Represents the polygon id test method did.
    */
-  PolygonIDTest,
+  PolygonIDTest
 }
 
 export namespace DidMethod {
   export function toProto(method: DidMethod): identityEntitiesProto.DidMethod {
     switch (method) {
       case DidMethod.PolygonID:
-        return identityEntitiesProto.DidMethod.POLYGON_ID
+        return identityEntitiesProto.DidMethod.POLYGON_ID;
       case DidMethod.PolygonIDTest:
-        return identityEntitiesProto.DidMethod.POLYGON_ID_TEST
+        return identityEntitiesProto.DidMethod.POLYGON_ID_TEST;
     }
   }
 

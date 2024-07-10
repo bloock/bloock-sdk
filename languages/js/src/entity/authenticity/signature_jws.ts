@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/identity_entities";
+import * as proto from "../../bridge/proto/bloock_identity_entities";
 import { SignatureAlg } from "./signature_alg";
 import { SignatureHeaderJws } from "./signature_header_jws";
 
@@ -13,10 +13,10 @@ export class SignatureJws {
 
   /**
    * Constructs a SignatureJws object with the specified parameters.
-   * @param messageHash 
-   * @param signature 
-   * @param prot 
-   * @param header 
+   * @param messageHash
+   * @param signature
+   * @param prot
+   * @param header
    */
   constructor(
     messageHash: string,

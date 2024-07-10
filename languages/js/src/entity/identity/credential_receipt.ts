@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 import { Credential } from "./credential";
 
 /**
@@ -11,9 +11,9 @@ export class CredentialReceipt {
 
   /**
    * Constructs an CredentialReceipt object with the specified parameters.
-   * @param credential 
-   * @param credentialId 
-   * @param credentialType 
+   * @param credential
+   * @param credentialId
+   * @param credentialType
    */
   constructor(
     credential: Credential,

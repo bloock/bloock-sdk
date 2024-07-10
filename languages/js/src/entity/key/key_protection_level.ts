@@ -1,4 +1,4 @@
-import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import * as keysEntitiesProto from "../../bridge/proto/bloock_keys_entities";
 
 /**
  * Represents the protection level of a cryptographic key.

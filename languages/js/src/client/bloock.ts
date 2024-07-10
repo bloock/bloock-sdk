@@ -1,10 +1,10 @@
-import { ConfigData } from "../bridge/proto/config";
+import { ConfigData } from "../bridge/proto/bloock_config";
 import { NewConfigData } from "../config/config";
 import { AuthenticityClient } from "./authenticity";
 import { AvailabilityClient } from "./availability";
 import { EncryptionClient } from "./encryption";
-import { IdentityCoreClient } from "./identity_core";
 import { IdentityClient } from "./identity";
+import { IdentityCoreClient } from "./identity_core";
 import { IntegrityClient } from "./integrity";
 import { KeyClient } from "./key";
 import { RecordClient } from "./record";
@@ -28,8 +28,8 @@ export class BloockClient {
 
   /**
    * Creates a new instance of the Bloock SDK client with the specified configuration.
-   * @param apiKey 
-   * @param identityApiHost 
+   * @param apiKey
+   * @param identityApiHost
    */
   constructor(apiKey: string, identityApiHost?: string) {
     this.configData = NewConfigData(undefined);

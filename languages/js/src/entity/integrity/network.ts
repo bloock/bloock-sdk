@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/config";
+import * as proto from "../../bridge/proto/bloock_config";
 
 /**
  * Represents a network.

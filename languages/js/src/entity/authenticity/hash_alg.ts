@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/authenticity_entities";
+import * as proto from "../../bridge/proto/bloock_authenticity_entities";
 
 /**
  * Represents different hash algorithms.

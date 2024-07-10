@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 
 /**
  * Represents the status information for a credential, including its ID, revocation nonce, and type.
@@ -10,9 +10,9 @@ export class CredentialStatus {
 
   /**
    * Constructs an CredentialStatus object with the specified parameters.
-   * @param id 
-   * @param revocationNonce 
-   * @param type 
+   * @param id
+   * @param revocationNonce
+   * @param type
    */
   constructor(id: string, revocationNonce: number, type: string) {
     this.id = id;

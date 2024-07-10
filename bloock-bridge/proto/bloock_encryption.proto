@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "bloock_record_entities.proto";
+import "bloock_encryption_entities.proto";
+import "bloock_shared.proto";
+import "bloock_config.proto";
+
+service EncryptionService {
+  rpc Encrypt(EncryptRequest) returns (EncryptResponse);
+  rpc Decrypt(DecryptRequest) returns (DecryptResponse);
+
+  rpc GetEncryptionAlg(EncryptionAlgRequest) returns (EncryptionAlgResponse);
+}
+
+message EncryptRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+  Encrypter encrypter = 3;
+}
+
+message EncryptResponse {
+  Record record = 1;
+  optional Error error = 2;
+}
+
+message DecryptRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+  Encrypter decrypter = 3;
+}
+
+message DecryptResponse {
+  Record record = 1;
+  optional Error error = 2;
+}
+
+message EncryptionAlgRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+}
+
+message EncryptionAlgResponse {
+  EncryptionAlg alg = 1;
+  optional Error error = 2;
+}

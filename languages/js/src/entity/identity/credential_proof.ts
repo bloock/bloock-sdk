@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 
 /**
  * Represents the proof associated with a credential, including signature and sparse merkle tree proof.
@@ -9,8 +9,8 @@ export class CredentialProof {
 
   /**
    * Constructs an CredentialProof object with the specified parameters.
-   * @param signatureProof 
-   * @param sparseMtProof 
+   * @param signatureProof
+   * @param sparseMtProof
    */
   constructor(signatureProof: string, sparseMtProof?: string) {
     this.signatureProof = signatureProof;
@@ -24,9 +24,7 @@ export class CredentialProof {
     });
   }
 
-  static fromProto(
-    r: identityEntitiesProto.CredentialProof
-  ): CredentialProof {
+  static fromProto(r: identityEntitiesProto.CredentialProof): CredentialProof {
     return new CredentialProof(r.signatureProof, r.sparseMtProof);
   }
 }

@@ -2,24 +2,33 @@ import { Connection } from "./connection";
 import {
   AuthenticityService,
   AuthenticityServiceClientImpl
-} from "./proto/authenticity";
+} from "./proto/bloock_authenticity";
 import {
   AvailabilityService,
   AvailabilityServiceClientImpl
-} from "./proto/availability";
+} from "./proto/bloock_availability";
 import {
   EncryptionService,
   EncryptionServiceClientImpl
-} from "./proto/encryption";
-import { IdentityService, IdentityServiceClientImpl } from "./proto/identity";
-import { IdentityCoreService, IdentityCoreServiceClientImpl } from "./proto/identity_core";
+} from "./proto/bloock_encryption";
+import {
+  IdentityService,
+  IdentityServiceClientImpl
+} from "./proto/bloock_identity";
+import {
+  IdentityCoreService,
+  IdentityCoreServiceClientImpl
+} from "./proto/bloock_identity_core";
 import {
   IntegrityService,
   IntegrityServiceClientImpl
-} from "./proto/integrity";
-import { KeyService, KeyServiceClientImpl } from "./proto/keys";
-import { RecordService, RecordServiceClientImpl } from "./proto/record";
-import { WebhookService, WebhookServiceClientImpl } from "./proto/webhook";
+} from "./proto/bloock_integrity";
+import { KeyService, KeyServiceClientImpl } from "./proto/bloock_keys";
+import { RecordService, RecordServiceClientImpl } from "./proto/bloock_record";
+import {
+  WebhookService,
+  WebhookServiceClientImpl
+} from "./proto/bloock_webhook";
 
 export class BloockBridge {
   private authenticity: AuthenticityService;

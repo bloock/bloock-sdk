@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/availability_entities";
+import * as proto from "../../bridge/proto/bloock_availability_entities";
 
 /**
  * Represents the arguments for a data loader.
@@ -11,7 +11,7 @@ export class LoaderArgs {
 
   /**
    * Constructs a LoaderArgs object with the specified parameters.
-   * @param id 
+   * @param id
    */
   constructor(id: string) {
     this.id = id;

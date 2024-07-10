@@ -1,7 +1,7 @@
 import {
   Network,
   NetworkConfig as NetworkConfigProto
-} from "./bridge/proto/config";
+} from "./bridge/proto/bloock_config";
 
 /**
  * Provides a centralized configuration for the Bloock SDK library. For information about Bloock SDK in Go, see https://bloock.com.
@@ -26,7 +26,7 @@ export class Bloock {
 
   /**
    * Is a string variable representing the API key used for authentication with the Bloock SDK, create [here](https://dashboard.bloock.com/login).
-   * @returns 
+   * @returns
    */
   public static getApiKey(): string | undefined {
     if (!Bloock.instance) {
@@ -37,7 +37,7 @@ export class Bloock {
 
   /**
    * Sets the API key used for authentication with the Bloock SDK.
-   * @param apiKey 
+   * @param apiKey
    */
   public static setApiKey(apiKey: string) {
     if (!Bloock.instance) {
@@ -48,7 +48,7 @@ export class Bloock {
 
   /**
    * Is a string variable representing the host URL used for Identity Managed API, required to be set for identity-related features of the Bloock SDK.
-   * @returns 
+   * @returns
    */
   public static getIdentityApiHost(): string | undefined {
     if (!Bloock.instance) {
@@ -59,7 +59,7 @@ export class Bloock {
 
   /**
    * Sets the host URL used for Identity Managed API.
-   * @param identityApiHost 
+   * @param identityApiHost
    */
   public static setIdentityApiHost(identityApiHost: string) {
     if (!Bloock.instance) {
@@ -70,7 +70,7 @@ export class Bloock {
 
   /**
    * Is a string variable representing the host URL used for API communication with the Bloock SDK.
-   * @returns 
+   * @returns
    */
   public static getApiHost(): string | undefined {
     if (!Bloock.instance) {
@@ -81,7 +81,7 @@ export class Bloock {
 
   /**
    * Sets the host used for API communication with the Bloock SDK.
-   * @param host 
+   * @param host
    */
   public static setApiHost(host: string) {
     if (!Bloock.instance) {
@@ -92,7 +92,7 @@ export class Bloock {
 
   /**
    * Is a variable that holds network configurations associated with specific network IDs in the Bloock SDK.
-   * @returns 
+   * @returns
    */
   public static getNetworkConfiguration():
     | { [key: number]: NetworkConfigProto }
@@ -105,8 +105,8 @@ export class Bloock {
 
   /**
    * Sets the HTTP provider for the specified network in the Bloock SDK configuration.
-   * @param network 
-   * @param provider 
+   * @param network
+   * @param provider
    */
   public static setProvider(network: Network, provider: string) {
     if (!Bloock.instance) {
@@ -128,8 +128,8 @@ export class Bloock {
 
   /**
    * Sets the contract address for the specified network in the Bloock SDK configuration.
-   * @param network 
-   * @param contractAddress 
+   * @param network
+   * @param contractAddress
    */
   public static setContractAddress(network: Network, contractAddress: string) {
     if (!Bloock.instance) {

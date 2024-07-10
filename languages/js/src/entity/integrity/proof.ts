@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/integrity_entities";
+import * as proto from "../../bridge/proto/bloock_integrity_entities";
 import { ProofAnchor } from "./proof_anchor";
 
 /**
@@ -13,11 +13,11 @@ export class Proof {
 
   /**
    * Constructs a Proof object with the specified parameters.
-   * @param leaves 
-   * @param nodes 
-   * @param depth 
-   * @param bitmap 
-   * @param anchor 
+   * @param leaves
+   * @param nodes
+   * @param depth
+   * @param bitmap
+   * @param anchor
    */
   constructor(
     leaves: string[],

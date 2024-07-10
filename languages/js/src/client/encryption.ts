@@ -1,16 +1,16 @@
 import { BloockBridge } from "../bridge/bridge";
-import { ConfigData } from "../bridge/proto/config";
+import { ConfigData } from "../bridge/proto/bloock_config";
+import {
+  DecryptRequest,
+  EncryptionAlgRequest,
+  EncryptRequest
+} from "../bridge/proto/bloock_encryption";
+import { GenerateLocalKeyRequest } from "../bridge/proto/bloock_keys";
+import { KeyType } from "../bridge/proto/bloock_keys_entities";
+import { NewConfigData } from "../config/config";
+import { Encrypter, EncryptionAlg } from "../entity/encryption";
 import { KeyPair, RsaKeyPair } from "../entity/key";
 import { Record } from "../entity/record/record";
-import { NewConfigData } from "../config/config";
-import {
-  EncryptionAlgRequest,
-  EncryptRequest,
-  DecryptRequest
-} from "../bridge/proto/encryption";
-import { EncryptionAlg, Encrypter } from "../entity/encryption";
-import { GenerateLocalKeyRequest } from "../bridge/proto/keys";
-import { KeyType } from "../bridge/proto/keys_entities";
 
 /**
  * Represents a client for interacting with the [Bloock Encryption service](https://dashboard.bloock.com/login).
@@ -21,7 +21,7 @@ export class EncryptionClient {
 
   /**
    * Creates a new instance of the EncryptionClient with default configuration.
-   * @param configData 
+   * @param configData
    */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
@@ -52,9 +52,9 @@ export class EncryptionClient {
 
   /**
    * Encrypts a Bloock record using the specified encrypter.
-   * @param record 
-   * @param encrypter 
-   * @returns 
+   * @param record
+   * @param encrypter
+   * @returns
    */
   async encrypt(record: Record, encrypter: Encrypter): Promise<Record> {
     return this.bridge
@@ -76,9 +76,9 @@ export class EncryptionClient {
 
   /**
    * Decrypts a Bloock record using the specified decrypter.
-   * @param record 
-   * @param decrypter 
-   * @returns 
+   * @param record
+   * @param decrypter
+   * @returns
    */
   async decrypt(record: Record, decrypter: Encrypter): Promise<Record> {
     return this.bridge
@@ -100,8 +100,8 @@ export class EncryptionClient {
 
   /**
    * Gets the encryption algorithm used for a Bloock record.
-   * @param record 
-   * @returns 
+   * @param record
+   * @returns
    */
   async getEncryptionAlg(record: Record): Promise<EncryptionAlg> {
     return this.bridge

@@ -1,4 +1,4 @@
-import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import * as keysEntitiesProto from "../../bridge/proto/bloock_keys_entities";
 import { KeyType } from "./key_type";
 import { SubjectCertificateParams } from "./subject_certificate_params";
 
@@ -13,10 +13,10 @@ export class LocalCertificateParams {
 
   /**
    * Constructs an LocalCertificateParams object with the specified parameters.
-   * @param keyType 
-   * @param subject 
-   * @param password 
-   * @param expiration 
+   * @param keyType
+   * @param subject
+   * @param password
+   * @param expiration
    */
   constructor(
     keyType: KeyType,

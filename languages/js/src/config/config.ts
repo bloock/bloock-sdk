@@ -1,5 +1,5 @@
 import { Bloock } from "../bloock";
-import { ConfigData, Configuration } from "../bridge/proto/config";
+import { ConfigData, Configuration } from "../bridge/proto/bloock_config";
 
 export function NewConfigData(configData: ConfigData | undefined): ConfigData {
   if (configData) return configData;
@@ -9,7 +9,7 @@ export function NewConfigData(configData: ConfigData | undefined): ConfigData {
       libraryName: "Javascript",
       apiKey: Bloock.getApiKey(),
       identityApiHost: Bloock.getIdentityApiHost(),
-      host: Bloock.getApiHost(),
+      host: Bloock.getApiHost()
     }),
     networksConfig: Bloock.getNetworkConfiguration()
   });
