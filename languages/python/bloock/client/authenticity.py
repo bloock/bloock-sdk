@@ -2,13 +2,13 @@ from typing import List
 from warnings import warn
 
 from bloock._bridge import bridge
-from bloock._bridge.proto.authenticity_pb2 import (
+from bloock._bridge.proto.bloock_authenticity_pb2 import (
     GetSignaturesRequest,
     SignRequest,
     VerifyRequest,
 )
-from bloock._bridge.proto.keys_pb2 import GenerateLocalKeyRequest
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_keys_pb2 import GenerateLocalKeyRequest
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.authenticity.signature import Signature
 from bloock.entity.authenticity.signer import Signer

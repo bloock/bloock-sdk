@@ -1,5 +1,5 @@
-import * as proto from "../../bridge/proto/authenticity_entities";
-import * as protoKey from "../../bridge/proto/keys_entities";
+import * as proto from "../../bridge/proto/bloock_authenticity_entities";
+import * as protoKey from "../../bridge/proto/bloock_keys_entities";
 import {
   AccessControl,
   LocalCertificate,
@@ -23,14 +23,14 @@ export class Signer {
 
   /**
    * Creates a Signer instance with a local key, managed key, local certificate or managed certificate.
-   * @param key 
-   * @param hashAlg 
-   * @param accessControl 
+   * @param key
+   * @param hashAlg
+   * @param accessControl
    */
   constructor(
     key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate | string,
     hashAlg?: HashAlg,
-    accessControl?: AccessControl,
+    accessControl?: AccessControl
   ) {
     if (key instanceof LocalKey) {
       this.localKey = key;
@@ -68,7 +68,7 @@ export class Signer {
       managedCertificate: this.managedCertificate?.toProto(),
       localCertificate: this.localCertificate?.toProto(),
       hashAlg: hashAlg,
-      accessControl: accessControl,
+      accessControl: accessControl
     });
   }
 }

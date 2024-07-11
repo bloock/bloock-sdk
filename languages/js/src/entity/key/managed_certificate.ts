@@ -1,4 +1,4 @@
-import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import * as keysEntitiesProto from "../../bridge/proto/bloock_keys_entities";
 import { AccessControlType } from "./access_control_type";
 import { KeyProtectionLevel } from "./key_protection_level";
 import { KeyType } from "./key_type";

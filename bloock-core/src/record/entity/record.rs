@@ -44,7 +44,12 @@ impl Record {
         }
     }
 
-    pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>, access_control: Option<String>) -> BloockResult<Signature> {
+    pub async fn sign(
+        &mut self,
+        key: &Key,
+        hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
+    ) -> BloockResult<Signature> {
         let doc = match &mut self.document {
             Some(doc) => doc,
             None => return Err(RecordError::DocumentNotFound.into()),

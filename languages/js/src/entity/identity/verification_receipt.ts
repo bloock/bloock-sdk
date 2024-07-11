@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 
 /**
  * Represents a receipt for a verification session.
@@ -9,8 +9,8 @@ export class VerificationReceipt {
 
   /**
    * Constructs a VerificationReceipt object with the specified parameters.
-   * @param sessionID 
-   * @param verificationRequest 
+   * @param sessionID
+   * @param verificationRequest
    */
   constructor(sessionID: number, verificationRequest: string) {
     this.sessionID = sessionID;

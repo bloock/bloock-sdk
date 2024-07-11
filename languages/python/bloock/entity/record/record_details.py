@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import List
 
-import bloock._bridge.proto.record_entities_pb2 as proto
-from bloock._bridge.proto.shared_pb2 import Error
+import bloock._bridge.proto.bloock_record_entities_pb2 as proto
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import ConfigData
 from bloock.entity.integrity.proof import Proof
 from bloock.entity.authenticity.signature import Signature

@@ -1,6 +1,6 @@
 import { BloockBridge } from "../../bridge/bridge";
-import { ConfigData } from "../../bridge/proto/config";
-import { BuildSchemaRequest } from "../../bridge/proto/identity";
+import { ConfigData } from "../../bridge/proto/bloock_config";
+import { BuildSchemaRequest } from "../../bridge/proto/bloock_identity";
 import { BooleanAttributeDescriptor } from "./boolean_attribute_descriptor";
 import { DateAttributeDescriptor } from "./date_attribute_descriptor";
 import { DateTimeAttributeDescriptor } from "./datetime_attribute_descriptor";
@@ -34,11 +34,11 @@ export class SchemaBuilder {
 
   /**
    * Creates a new instance of SchemaBuilder with initial values.
-   * @param displayName 
-   * @param schemaType 
-   * @param version 
-   * @param description 
-   * @param configData 
+   * @param displayName
+   * @param schemaType
+   * @param version
+   * @param description
+   * @param configData
    */
   constructor(
     displayName: string,
@@ -65,11 +65,11 @@ export class SchemaBuilder {
 
   /**
    * Adds a string attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @returns
    */
   public addStringAttribute(
     name: string,
@@ -85,11 +85,11 @@ export class SchemaBuilder {
 
   /**
    * Adds an integer attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @returns
    */
   public addIntegerAttribute(
     name: string,
@@ -105,11 +105,11 @@ export class SchemaBuilder {
 
   /**
    * Adds a decimal attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @returns
    */
   public addDecimalAttribute(
     name: string,
@@ -125,11 +125,11 @@ export class SchemaBuilder {
 
   /**
    * Adds a boolean attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @returns
    */
   public addBooleanAttribute(
     name: string,
@@ -145,11 +145,11 @@ export class SchemaBuilder {
 
   /**
    * Adds a date attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @returns
    */
   public addDateAttribute(
     name: string,
@@ -165,11 +165,11 @@ export class SchemaBuilder {
 
   /**
    * Adds a datetime attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @returns
    */
   public addDateTimeAttribute(
     name: string,
@@ -190,12 +190,12 @@ export class SchemaBuilder {
 
   /**
    * Adds a string enum attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @param enumeration 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @param enumeration
+   * @returns
    */
   public addStringEnumAttribute(
     name: string,
@@ -218,12 +218,12 @@ export class SchemaBuilder {
 
   /**
    * Adds an integer enum attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @param enumeration 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @param enumeration
+   * @returns
    */
   public addIntegerEnumAttribute(
     name: string,
@@ -246,12 +246,12 @@ export class SchemaBuilder {
 
   /**
    * Adds a decimal enum attribute descriptor to the schema builder.
-   * @param name 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @param enumeration 
-   * @returns 
+   * @param name
+   * @param technicalName
+   * @param description
+   * @param required
+   * @param enumeration
+   * @returns
    */
   public addDecimalEnumAttribute(
     name: string,
@@ -274,7 +274,7 @@ export class SchemaBuilder {
 
   /**
    * Creates a schema using the configured attributes.
-   * @returns 
+   * @returns
    */
   async build(): Promise<Schema> {
     const bridge = new BloockBridge();

@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/integrity_entities";
+import * as proto from "../../bridge/proto/bloock_integrity_entities";
 
 /**
  * Represents information about an anchor network.
@@ -11,10 +11,10 @@ export class AnchorNetwork {
 
   /**
    * Constructs an AnchorNetwork object with the specified parameters.
-   * @param name 
-   * @param state 
-   * @param txHash 
-   * @param root 
+   * @param name
+   * @param state
+   * @param txHash
+   * @param root
    */
   constructor(name: string, state: string, txHash: string, root?: string) {
     this.name = name;

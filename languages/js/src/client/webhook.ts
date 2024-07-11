@@ -1,7 +1,7 @@
 import { BloockBridge } from "../bridge/bridge";
-import { ConfigData } from "../bridge/proto/config";
+import { ConfigData } from "../bridge/proto/bloock_config";
+import { VerifyWebhookSignatureRequest } from "../bridge/proto/bloock_webhook";
 import { NewConfigData } from "../config/config";
-import { VerifyWebhookSignatureRequest } from "../bridge/proto/webhook";
 
 /**
  * Provides functionality for interacting with [Bloock Webhook service](https://dashboard.bloock.com/login).
@@ -12,7 +12,7 @@ export class WebhookClient {
 
   /**
    * Creates a new WebhookClient with default configuration.
-   * @param configData 
+   * @param configData
    */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
@@ -21,11 +21,11 @@ export class WebhookClient {
 
   /**
    * Verifies the signature of a webhook payload using the provided parameters.
-   * @param payload 
-   * @param header 
-   * @param secretKey 
-   * @param enforceTolerance 
-   * @returns 
+   * @param payload
+   * @param header
+   * @param secretKey
+   * @param enforceTolerance
+   * @returns
    */
   public async verifyWebhookSignature(
     payload: Uint8Array,

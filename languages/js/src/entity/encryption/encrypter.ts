@@ -1,10 +1,10 @@
-import * as proto from "../../bridge/proto/encryption_entities";
+import * as proto from "../../bridge/proto/bloock_encryption_entities";
 import {
-  LocalKey,
-  ManagedKey,
-  ManagedCertificate,
+  AccessControl,
   LocalCertificate,
-  AccessControl
+  LocalKey,
+  ManagedCertificate,
+  ManagedKey
 } from "../key";
 
 /**
@@ -19,8 +19,8 @@ export class Encrypter {
 
   /**
    * Creates a new Encrypter instance with a local encryption key.
-   * @param key 
-   * @param accessControl 
+   * @param key
+   * @param accessControl
    */
   constructor(
     key: LocalKey | ManagedKey | ManagedCertificate | LocalCertificate,
@@ -49,7 +49,7 @@ export class Encrypter {
       managedKey: this.managedKey?.toProto(),
       managedCertificate: this.managedCertificate?.toProto(),
       localCertificate: this.localCertificate?.toProto(),
-      accessControl: this.accessControl?.toProto(),
+      accessControl: this.accessControl?.toProto()
     });
   }
 }

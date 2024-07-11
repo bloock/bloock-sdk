@@ -1,10 +1,11 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.AuthenticityEntities;
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockAuthenticityEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
- * Represents access control information, including Time-based One-Time Password (TOTP) and secret-based access.
+ * Represents access control information, including Time-based One-Time Password
+ * (TOTP) and secret-based access.
  */
 public class AccessControl {
     AccessControlTotp accessControlTotp;
@@ -12,6 +13,7 @@ public class AccessControl {
 
     /**
      * Constructs AccessControl object from an AccessControlTotp object.
+     * 
      * @param accessControlTotp
      */
     public AccessControl(AccessControlTotp accessControlTotp) {
@@ -20,14 +22,15 @@ public class AccessControl {
 
     /**
      * Constructs AccessControl object from an AccessControlSecret object.
+     * 
      * @param accessControlSecret
      */
     public AccessControl(AccessControlSecret accessControlSecret) {
         this.accessControlSecret = accessControlSecret;
     }
 
-    public KeysEntities.AccessControl toProto() {
-        KeysEntities.AccessControl.Builder builder = KeysEntities.AccessControl.newBuilder();
+    public BloockKeysEntities.AccessControl toProto() {
+        BloockKeysEntities.AccessControl.Builder builder = BloockKeysEntities.AccessControl.newBuilder();
 
         if (this.accessControlTotp != null) {
             builder.setAccessControlTotp(this.accessControlTotp.toProto());

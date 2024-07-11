@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents a local key with its public and private components.
@@ -21,6 +21,7 @@ public class LocalKey {
 
   /**
    * Constructs a LocalKey object with the specified parameters.
+   * 
    * @param key
    * @param privateKey
    * @param keyType
@@ -31,15 +32,17 @@ public class LocalKey {
     this.keyType = keyType;
   }
 
-  public static LocalKey fromProto(KeysEntities.LocalKey key) {
+  public static LocalKey fromProto(BloockKeysEntities.LocalKey key) {
     return new LocalKey(key.getKey(), key.getPrivateKey(), KeyType.fromProto(key.getKeyType()));
   }
 
-  public KeysEntities.LocalKey toProto() {
-    KeysEntities.LocalKey.Builder builder = KeysEntities.LocalKey.newBuilder();
+  public BloockKeysEntities.LocalKey toProto() {
+    BloockKeysEntities.LocalKey.Builder builder = BloockKeysEntities.LocalKey.newBuilder();
 
-    if (this.key != null) builder.setKey(this.key);
-    if (this.privateKey != null) builder.setPrivateKey(this.privateKey);
+    if (this.key != null)
+      builder.setKey(this.key);
+    if (this.privateKey != null)
+      builder.setPrivateKey(this.privateKey);
 
     builder.setKeyType(this.keyType.toProto());
 
@@ -48,6 +51,7 @@ public class LocalKey {
 
   /**
    * Gets the public key of the local key.
+   * 
    * @return
    */
   public String getKey() {
@@ -56,6 +60,7 @@ public class LocalKey {
 
   /**
    * Gets the private key of the local key.
+   * 
    * @return
    */
   public String getPrivateKey() {
@@ -64,6 +69,7 @@ public class LocalKey {
 
   /**
    * Gets the key type of the local key.
+   * 
    * @return
    */
   public KeyType getKeyType() {

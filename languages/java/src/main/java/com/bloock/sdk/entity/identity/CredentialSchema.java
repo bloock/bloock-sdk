@@ -1,9 +1,10 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
- * Represents the schema information for a credential, including its ID and type.
+ * Represents the schema information for a credential, including its ID and
+ * type.
  */
 public class CredentialSchema {
   private final String id;
@@ -11,6 +12,7 @@ public class CredentialSchema {
 
   /**
    * Constructs an CredentialSchema object with the specified parameters.
+   * 
    * @param id
    * @param type
    */
@@ -19,12 +21,12 @@ public class CredentialSchema {
     this.type = type;
   }
 
-  public static CredentialSchema fromProto(IdentityEntities.CredentialSchema res) {
+  public static CredentialSchema fromProto(BloockIdentityEntities.CredentialSchema res) {
     return new CredentialSchema(res.getId(), res.getType());
   }
 
-  public IdentityEntities.CredentialSchema toProto() {
-    return IdentityEntities.CredentialSchema.newBuilder()
+  public BloockIdentityEntities.CredentialSchema toProto() {
+    return BloockIdentityEntities.CredentialSchema.newBuilder()
         .setId(this.id)
         .setType(this.type)
         .build();
@@ -32,6 +34,7 @@ public class CredentialSchema {
 
   /**
    * Gets the id of the credential.
+   * 
    * @return
    */
   public String getCredentialID() {
@@ -40,6 +43,7 @@ public class CredentialSchema {
 
   /**
    * Gets the type of the credential.
+   * 
    * @return
    */
   public String getCredentialType() {

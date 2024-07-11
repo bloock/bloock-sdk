@@ -1,7 +1,7 @@
 package com.bloock.sdk.entity.availability;
 
-import com.bloock.sdk.bridge.proto.AvailabilityEntities;
-import com.bloock.sdk.bridge.proto.AvailabilityEntities.DataAvailabilityType;
+import com.bloock.sdk.bridge.proto.BloockAvailabilityEntities;
+import com.bloock.sdk.bridge.proto.BloockAvailabilityEntities.DataAvailabilityType;
 
 /**
  * Represents a publisher for IPFS data availability.
@@ -19,8 +19,8 @@ public class IpfsPublisher implements Publisher {
   }
 
   @Override
-  public AvailabilityEntities.Publisher toProto() {
-    return AvailabilityEntities.Publisher.newBuilder()
+  public BloockAvailabilityEntities.Publisher toProto() {
+    return BloockAvailabilityEntities.Publisher.newBuilder()
         .setType(this.type)
         .setArgs(this.args.toProto())
         .build();

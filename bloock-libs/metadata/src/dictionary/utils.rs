@@ -1,5 +1,5 @@
 use super::error::Error;
-use lopdf::{Dictionary, Document, Object, ObjectId};
+use lopdf::{Dictionary, Document, IncrementalDocument, Object, ObjectId};
 
 pub(crate) fn get_root(doc: &Document) -> Result<&Dictionary, Error> {
     let root_obj_id = doc.trailer.get(b"Root")?.as_reference()?;
@@ -9,9 +9,14 @@ pub(crate) fn get_root(doc: &Document) -> Result<&Dictionary, Error> {
     Ok(root)
 }
 
-pub(crate) fn get_root_mut(doc: &mut Document) -> Result<&mut Dictionary, Error> {
-    let root_obj_id = doc.trailer.get(b"Root")?.as_reference()?;
-    let root = doc.get_object_mut(root_obj_id)?.as_dict_mut()?;
+pub(crate) fn get_root_mut(doc: &mut IncrementalDocument) -> Result<&mut Dictionary, Error> {
+    let root_obj_id = doc.new_document.trailer.get(b"Root")?.as_reference()?;
+    doc.opt_clone_object_to_new_document(root_obj_id)?;
+    let root = doc
+        .new_document
+        .get_object_mut(root_obj_id)
+        .unwrap()
+        .as_dict_mut()?;
 
     Ok(root)
 }

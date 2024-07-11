@@ -8,12 +8,12 @@ fn test_pdf_load() {
     pdf_load();
 }
 
-#[test]
-fn test_pdf_get() {
-    pdf_get();
+#[tokio::test]
+async fn test_pdf_sign() {
+    pdf_sign().await;
 }
 
-#[test]
-fn test_pdf_set() {
-    pdf_set();
+#[tokio::test]
+async fn test_pdf_multisign() {
+    pdf_multisign().await;
 }

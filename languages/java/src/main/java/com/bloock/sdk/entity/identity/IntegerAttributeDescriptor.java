@@ -1,13 +1,15 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
  * Represents a descriptor for an attribute with an integer value.
  */
 public class IntegerAttributeDescriptor extends AttributeDescriptor {
   /**
-   * Constructs an IntegerAttributeDescriptor object with the specified parameters.
+   * Constructs an IntegerAttributeDescriptor object with the specified
+   * parameters.
+   * 
    * @param displayName
    * @param technicalName
    * @param description
@@ -19,13 +21,13 @@ public class IntegerAttributeDescriptor extends AttributeDescriptor {
   }
 
   public static IntegerAttributeDescriptor fromProto(
-      IdentityEntities.IntegerAttributeDefinition res) {
+      BloockIdentityEntities.IntegerAttributeDefinition res) {
     return new IntegerAttributeDescriptor(
         res.getDisplayName(), res.getId(), res.getDescription(), res.getRequired());
   }
 
-  public IdentityEntities.IntegerAttributeDefinition toProto() {
-    return IdentityEntities.IntegerAttributeDefinition.newBuilder()
+  public BloockIdentityEntities.IntegerAttributeDefinition toProto() {
+    return BloockIdentityEntities.IntegerAttributeDefinition.newBuilder()
         .setDisplayName(this.displayName)
         .setId(this.technicalName)
         .setDescription(this.description)

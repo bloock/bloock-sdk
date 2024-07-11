@@ -1,4 +1,4 @@
-import { CertificateSubject } from "../../bridge/proto/keys_entities";
+import { CertificateSubject } from "../../bridge/proto/bloock_keys_entities";
 
 /**
  * Represents parameters for generating a subject certificate.
@@ -31,12 +31,12 @@ export class SubjectCertificateParams {
 
   /**
    * Constructs a SubjectCertificateParams object with the specified parameters.
-   * @param commonName 
-   * @param organization 
-   * @param organizationUnit 
-   * @param location 
-   * @param state 
-   * @param country 
+   * @param commonName
+   * @param organization
+   * @param organizationUnit
+   * @param location
+   * @param state
+   * @param country
    */
   constructor(
     commonName: string,

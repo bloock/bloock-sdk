@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 import java.util.List;
 
 /**
@@ -10,7 +10,9 @@ public class StringEnumAttributeDescriptor extends AttributeDescriptor {
   private List<String> enumeration;
 
   /**
-   * Constructs an StringEnumAttributeDescriptor object with the specified parameters.
+   * Constructs an StringEnumAttributeDescriptor object with the specified
+   * parameters.
+   * 
    * @param displayName
    * @param technicalName
    * @param description
@@ -28,7 +30,7 @@ public class StringEnumAttributeDescriptor extends AttributeDescriptor {
   }
 
   public static StringEnumAttributeDescriptor fromProto(
-      IdentityEntities.StringEnumAttributeDefinition res) {
+      BloockIdentityEntities.StringEnumAttributeDefinition res) {
     return new StringEnumAttributeDescriptor(
         res.getDisplayName(),
         res.getId(),
@@ -37,8 +39,8 @@ public class StringEnumAttributeDescriptor extends AttributeDescriptor {
         res.getEnumList());
   }
 
-  public IdentityEntities.StringEnumAttributeDefinition toProto() {
-    return IdentityEntities.StringEnumAttributeDefinition.newBuilder()
+  public BloockIdentityEntities.StringEnumAttributeDefinition toProto() {
+    return BloockIdentityEntities.StringEnumAttributeDefinition.newBuilder()
         .setDisplayName(this.displayName)
         .setId(this.technicalName)
         .setDescription(this.description)

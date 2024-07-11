@@ -1,33 +1,40 @@
 package com.bloock.sdk;
 
-import com.bloock.sdk.bridge.proto.Config.NetworkConfig;
+import com.bloock.sdk.bridge.proto.BloockConfig.NetworkConfig;
 import com.bloock.sdk.entity.integrity.Network;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides a centralized configuration for the Bloock SDK library. For information about Bloock SDK in Go, see https://bloock.com.
+ * Provides a centralized configuration for the Bloock SDK library. For
+ * information about Bloock SDK in Go, see https://bloock.com.
  */
 public class Bloock {
   /**
-   * Is a string variable representing the API key used for authentication with the Bloock SDK, create <a href="https://dashboard.bloock.com/login">here</a>.
+   * Is a string variable representing the API key used for authentication with
+   * the Bloock SDK, create <a href="https://dashboard.bloock.com/login">here</a>.
    */
   public static String apiKey = "";
   /**
-   * Is a string variable representing the host URL used for API communication with the Bloock SDK.
+   * Is a string variable representing the host URL used for API communication
+   * with the Bloock SDK.
    */
   public static String apiHost = "";
   /**
-   * Is a string variable representing the host URL used for Identity Managed API, required to be set for identity-related features of the Bloock SDK.
+   * Is a string variable representing the host URL used for Identity Managed API,
+   * required to be set for identity-related features of the Bloock SDK.
    */
   public static String identityApiHost = "";
   /**
-   * Is a map variable that holds network configurations associated with specific network IDs in the Bloock SDK.
+   * Is a map variable that holds network configurations associated with specific
+   * network IDs in the Bloock SDK.
    */
   public static Map<Integer, NetworkConfig> networkConfig = new HashMap<>();
 
   /**
-   * Sets the HTTP provider for the specified network in the Bloock SDK configuration.
+   * Sets the HTTP provider for the specified network in the Bloock SDK
+   * configuration.
+   * 
    * @param network
    * @param provider
    */
@@ -46,7 +53,9 @@ public class Bloock {
   }
 
   /**
-   * Sets the contract address for the specified network in the Bloock SDK configuration.
+   * Sets the contract address for the specified network in the Bloock SDK
+   * configuration.
+   * 
    * @param network
    * @param contractAddress
    */

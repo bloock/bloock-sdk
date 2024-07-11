@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 import { Attribute } from "./attribute";
 
 /**
@@ -12,9 +12,7 @@ export class StringAttribute extends Attribute<string> {
     });
   }
 
-  static fromProto(
-    r: identityEntitiesProto.StringAttribute
-  ): StringAttribute {
+  static fromProto(r: identityEntitiesProto.StringAttribute): StringAttribute {
     return new StringAttribute(r.id, r.value);
   }
 }

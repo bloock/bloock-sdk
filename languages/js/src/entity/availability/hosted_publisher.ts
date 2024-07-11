@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/availability_entities";
+import * as proto from "../../bridge/proto/bloock_availability_entities";
 import { Publisher } from "./publisher";
 import { PublisherArgs } from "./publisher_args";
 

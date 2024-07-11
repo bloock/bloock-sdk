@@ -1,15 +1,15 @@
 package com.bloock.sdk.entity.record;
 
 import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.Config.ConfigData;
-import com.bloock.sdk.bridge.proto.Record.GetHashRequest;
-import com.bloock.sdk.bridge.proto.Record.GetHashResponse;
-import com.bloock.sdk.bridge.proto.Record.GetPayloadRequest;
-import com.bloock.sdk.bridge.proto.Record.GetPayloadResponse;
-import com.bloock.sdk.bridge.proto.Record.SetProofRequest;
-import com.bloock.sdk.bridge.proto.Record.SetProofResponse;
-import com.bloock.sdk.bridge.proto.RecordEntities;
-import com.bloock.sdk.bridge.proto.Shared.Error;
+import com.bloock.sdk.bridge.proto.BloockConfig.ConfigData;
+import com.bloock.sdk.bridge.proto.BloockRecord.GetHashRequest;
+import com.bloock.sdk.bridge.proto.BloockRecord.GetHashResponse;
+import com.bloock.sdk.bridge.proto.BloockRecord.GetPayloadRequest;
+import com.bloock.sdk.bridge.proto.BloockRecord.GetPayloadResponse;
+import com.bloock.sdk.bridge.proto.BloockRecord.SetProofRequest;
+import com.bloock.sdk.bridge.proto.BloockRecord.SetProofResponse;
+import com.bloock.sdk.bridge.proto.BloockRecordEntities;
+import com.bloock.sdk.bridge.proto.BloockShared.Error;
 import com.bloock.sdk.entity.integrity.Proof;
 import com.google.protobuf.ByteString;
 
@@ -23,6 +23,7 @@ public class Record {
 
   /**
    * Constructs a Record object with the specified parameters.
+   * 
    * @param payload
    * @param hash
    * @param configData
@@ -33,12 +34,12 @@ public class Record {
     this.configData = configData;
   }
 
-  public static Record fromProto(RecordEntities.Record record, ConfigData configData) {
+  public static Record fromProto(BloockRecordEntities.Record record, ConfigData configData) {
     return new Record(record.getPayload().toByteArray(), record.getHash(), configData);
   }
 
-  public RecordEntities.Record toProto() {
-    return RecordEntities.Record.newBuilder()
+  public BloockRecordEntities.Record toProto() {
+    return BloockRecordEntities.Record.newBuilder()
         .setConfigData(this.configData)
         .setPayload(ByteString.copyFrom(payload))
         .setHash(hash)
@@ -47,16 +48,16 @@ public class Record {
 
   /**
    * Retrieves the hash of the record.
+   * 
    * @return
    * @throws Exception
    */
   public String getHash() throws Exception {
     Bridge bridge = new Bridge();
-    GetHashRequest request =
-        GetHashRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setRecord(this.toProto())
-            .build();
+    GetHashRequest request = GetHashRequest.newBuilder()
+        .setConfigData(this.configData)
+        .setRecord(this.toProto())
+        .build();
     GetHashResponse recordHash = bridge.getRecord().getHash(request);
 
     if (recordHash.getError() != Error.getDefaultInstance()) {
@@ -68,16 +69,16 @@ public class Record {
 
   /**
    * Retrieves the payload of the record.
+   * 
    * @return
    * @throws Exception
    */
   public byte[] getPayload() throws Exception {
     Bridge bridge = new Bridge();
-    GetPayloadRequest request =
-        com.bloock.sdk.bridge.proto.Record.GetPayloadRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setRecord(this.toProto())
-            .build();
+    GetPayloadRequest request = com.bloock.sdk.bridge.proto.BloockRecord.GetPayloadRequest.newBuilder()
+        .setConfigData(this.configData)
+        .setRecord(this.toProto())
+        .build();
     GetPayloadResponse res = bridge.getRecord().getPayload(request);
 
     if (res.getError() != Error.getDefaultInstance()) {
@@ -89,6 +90,7 @@ public class Record {
 
   /**
    * Returns the payload of the record.
+   * 
    * @return
    */
   public byte[] retrieve() {
@@ -97,17 +99,17 @@ public class Record {
 
   /**
    * Sets the proof for a record.
+   * 
    * @param proof
    * @throws Exception
    */
   public void setProof(Proof proof) throws Exception {
     Bridge bridge = new Bridge();
-    SetProofRequest request =
-        SetProofRequest.newBuilder()
-            .setProof(proof.toProto())
-            .setRecord(this.toProto())
-            .setConfigData(this.configData)
-            .build();
+    SetProofRequest request = SetProofRequest.newBuilder()
+        .setProof(proof.toProto())
+        .setRecord(this.toProto())
+        .setConfigData(this.configData)
+        .build();
 
     SetProofResponse response = bridge.getRecord().setProof(request);
 

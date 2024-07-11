@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "bloock_authenticity_entities.proto";
+import "bloock_record_entities.proto";
+import "bloock_shared.proto";
+import "bloock_config.proto";
+
+service AuthenticityService {
+  rpc Sign(SignRequest) returns (SignResponse);
+  rpc Verify(VerifyRequest) returns (VerifyResponse);
+
+  rpc GetSignatures(GetSignaturesRequest) returns (GetSignaturesResponse);
+}
+
+message SignRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+  Signer signer = 3;
+}
+
+message SignResponse {
+  Signature signature = 1;
+  optional Error error = 2;
+}
+
+message VerifyRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+}
+
+message VerifyResponse {
+  bool valid = 1;
+  optional Error error = 2;
+}
+
+message GetSignaturesRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+}
+
+message GetSignaturesResponse {
+  repeated Signature signatures = 1;
+  optional Error error = 2;
+}

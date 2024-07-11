@@ -1,23 +1,23 @@
 import { BloockBridge } from "../bridge/bridge";
+import { Signer as SignerProto } from "../bridge/proto/bloock_authenticity_entities";
+import { ConfigData } from "../bridge/proto/bloock_config";
+import { Encrypter as EncrypterProto } from "../bridge/proto/bloock_encryption_entities";
 import {
-  RecordBuilderFromStringRequest,
-  RecordBuilderFromJSONRequest,
-  RecordBuilderFromHexRequest,
+  GetDetailsRequest,
   RecordBuilderFromBytesRequest,
   RecordBuilderFromFileRequest,
-  RecordBuilderFromRecordRequest,
+  RecordBuilderFromHexRequest,
+  RecordBuilderFromJSONRequest,
   RecordBuilderFromLoaderRequest,
-  GetDetailsRequest
-} from "../bridge/proto/record";
-import { Record } from "../entity/record";
-import { Signer } from "../entity/authenticity";
-import { Encrypter } from "../entity/encryption";
-import { Loader } from "../entity/availability";
+  RecordBuilderFromRecordRequest,
+  RecordBuilderFromStringRequest
+} from "../bridge/proto/bloock_record";
+import { RecordTypes } from "../bridge/proto/bloock_record_entities";
 import { NewConfigData } from "../config/config";
-import { ConfigData } from "../bridge/proto/config";
-import { RecordTypes } from "../bridge/proto/record_entities";
-import { Signer as SignerProto } from "../bridge/proto/authenticity_entities";
-import { Encrypter as EncrypterProto } from "../bridge/proto/encryption_entities";
+import { Signer } from "../entity/authenticity";
+import { Loader } from "../entity/availability";
+import { Encrypter } from "../entity/encryption";
+import { Record } from "../entity/record";
 import { RecordDetails } from "../entity/record/record-details";
 
 /**
@@ -28,7 +28,7 @@ export class RecordClient {
 
   /**
    * Creates a new RecordClient with default configuration.
-   * @param configData 
+   * @param configData
    */
   constructor(configData?: ConfigData) {
     this.configData = NewConfigData(configData);
@@ -36,8 +36,8 @@ export class RecordClient {
 
   /**
    * Creates a RecordBuilder from a string payload.
-   * @param str 
-   * @returns 
+   * @param str
+   * @returns
    */
   public fromString(str: string): RecordBuilder {
     return new RecordBuilder(str, RecordTypes.STRING, this.configData);
@@ -45,8 +45,8 @@ export class RecordClient {
 
   /**
    * Creates a RecordBuilder from a JSON string payload.
-   * @param json 
-   * @returns 
+   * @param json
+   * @returns
    */
   public fromJson(json: any): RecordBuilder {
     return new RecordBuilder(
@@ -58,8 +58,8 @@ export class RecordClient {
 
   /**
    * Creates a RecordBuilder from a hexadecimal string payload.
-   * @param hex 
-   * @returns 
+   * @param hex
+   * @returns
    */
   public fromHex(hex: string): RecordBuilder {
     return new RecordBuilder(hex, RecordTypes.HEX, this.configData);
@@ -67,8 +67,8 @@ export class RecordClient {
 
   /**
    * Creates a RecordBuilder from a byte slice payload.
-   * @param bytes 
-   * @returns 
+   * @param bytes
+   * @returns
    */
   public fromBytes(bytes: Uint8Array): RecordBuilder {
     return new RecordBuilder(bytes, RecordTypes.BYTES, this.configData);
@@ -76,8 +76,8 @@ export class RecordClient {
 
   /**
    * Creates a RecordBuilder from a byte slice representing a file.
-   * @param bytes 
-   * @returns 
+   * @param bytes
+   * @returns
    */
   public fromFile(bytes: Uint8Array): RecordBuilder {
     return new RecordBuilder(bytes, RecordTypes.FILE, this.configData);
@@ -85,8 +85,8 @@ export class RecordClient {
 
   /**
    * Creates a RecordBuilder from an existing record.
-   * @param bytes 
-   * @returns 
+   * @param bytes
+   * @returns
    */
   public fromRecord(bytes: Record): RecordBuilder {
     return new RecordBuilder(bytes, RecordTypes.RECORD, this.configData);
@@ -94,8 +94,8 @@ export class RecordClient {
 
   /**
    * Creates a RecordBuilder from a data loader.
-   * @param loader 
-   * @returns 
+   * @param loader
+   * @returns
    */
   public fromLoader(loader: Loader): RecordBuilder {
     return new RecordBuilder(loader, RecordTypes.LOADER, this.configData);
@@ -116,9 +116,9 @@ export class RecordBuilder {
 
   /**
    * Creates a new RecordBuilder with default configuration.
-   * @param payload 
-   * @param payloadType 
-   * @param configData 
+   * @param payload
+   * @param payloadType
+   * @param configData
    */
   constructor(payload: any, payloadType: RecordTypes, configData: ConfigData) {
     this.payload = payload;
@@ -128,8 +128,8 @@ export class RecordBuilder {
 
   /**
    * Sets the signer for the RecordBuilder.
-   * @param signer 
-   * @returns 
+   * @param signer
+   * @returns
    */
   public withSigner(signer: Signer): RecordBuilder {
     this.signer = signer.toProto();
@@ -138,8 +138,8 @@ export class RecordBuilder {
 
   /**
    * Sets the encrypter for the RecordBuilder.
-   * @param encrypter 
-   * @returns 
+   * @param encrypter
+   * @returns
    */
   public withEncrypter(encrypter: Encrypter): RecordBuilder {
     this.encrypter = encrypter.toProto();
@@ -148,8 +148,8 @@ export class RecordBuilder {
 
   /**
    * Sets the decrypter for the RecordBuilder.
-   * @param decrypter 
-   * @returns 
+   * @param decrypter
+   * @returns
    */
   public withDecrypter(decrypter: Encrypter): RecordBuilder {
     this.decrypter = decrypter.toProto();
@@ -158,7 +158,7 @@ export class RecordBuilder {
 
   /**
    * Constructs a record based on the RecordBuilder's configuration.
-   * @returns 
+   * @returns
    */
   async build(): Promise<Record> {
     const bridge = new BloockBridge();
@@ -302,7 +302,7 @@ export class RecordBuilder {
 
   /**
    * Gets details about other Bloock services (Integrity, Authenticity, Encryption, Availability) configured in the RecordBuilder.
-   * @returns 
+   * @returns
    */
   async getDetails(): Promise<RecordDetails> {
     const bridge = new BloockBridge();

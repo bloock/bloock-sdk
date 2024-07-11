@@ -1,5 +1,5 @@
 import bloock
-from bloock._bridge.proto.config_pb2 import ConfigData, Configuration
+from bloock._bridge.proto.bloock_config_pb2 import ConfigData, Configuration
 
 
 class Config:

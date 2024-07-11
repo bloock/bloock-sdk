@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
  * Represents an attribute with an integer value.
@@ -8,6 +8,7 @@ import com.bloock.sdk.bridge.proto.IdentityEntities;
 public class IntegerAttribute extends Attribute<Long> {
   /**
    * Creates a new IntegerAttribute instance with the provided key and value.
+   * 
    * @param id
    * @param value
    */
@@ -15,12 +16,12 @@ public class IntegerAttribute extends Attribute<Long> {
     super(id, value);
   }
 
-  public static IntegerAttribute fromProto(IdentityEntities.IntegerAttribute res) {
+  public static IntegerAttribute fromProto(BloockIdentityEntities.IntegerAttribute res) {
     return new IntegerAttribute(res.getId(), res.getValue());
   }
 
-  public IdentityEntities.IntegerAttribute toProto() {
-    return IdentityEntities.IntegerAttribute.newBuilder()
+  public BloockIdentityEntities.IntegerAttribute toProto() {
+    return BloockIdentityEntities.IntegerAttribute.newBuilder()
         .setId(this.id)
         .setValue(this.value)
         .build();

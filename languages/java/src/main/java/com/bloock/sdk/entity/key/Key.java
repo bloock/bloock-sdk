@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents a key entity that can be either a ManagedKey or a LocalKey.
@@ -11,6 +11,7 @@ public class Key {
 
     /**
      * Constructs a Key object for a given local key object.
+     * 
      * @param localKey
      */
     public Key(LocalKey localKey) {
@@ -19,14 +20,15 @@ public class Key {
 
     /**
      * Constructs a Key object for a given managed key object.
+     * 
      * @param managedKey
      */
     public Key(ManagedKey managedKey) {
         this.managedKey = managedKey;
     }
 
-    public KeysEntities.Key toProto() {
-        KeysEntities.Key.Builder builder = KeysEntities.Key.newBuilder();
+    public BloockKeysEntities.Key toProto() {
+        BloockKeysEntities.Key.Builder builder = BloockKeysEntities.Key.newBuilder();
 
         if (this.localKey != null) {
             builder.setLocalKey(this.localKey.toProto());
@@ -41,6 +43,7 @@ public class Key {
 
     /**
      * Gets the local key object.
+     * 
      * @return
      */
     public LocalKey getLocalKey() {
@@ -49,6 +52,7 @@ public class Key {
 
     /**
      * Gets the managed key object.
+     * 
      * @return
      */
     public ManagedKey getManagedKey() {

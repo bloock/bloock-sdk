@@ -1,4 +1,4 @@
-import { PublishInterval } from "../../bridge/proto/identity_entities";
+import { PublishInterval } from "../../bridge/proto/bloock_identity_entities";
 
 /**
  * Represents different publish intervals.

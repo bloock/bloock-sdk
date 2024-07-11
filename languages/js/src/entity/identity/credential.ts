@@ -1,9 +1,9 @@
 import { BloockBridge } from "../../bridge/bridge";
 import {
-  CredentialToJsonRequest,
-  CredentialFromJsonRequest
-} from "../../bridge/proto/identity";
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+  CredentialFromJsonRequest,
+  CredentialToJsonRequest
+} from "../../bridge/proto/bloock_identity";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 import { NewConfigData } from "../../config/config";
 import { CredentialProof } from "./credential_proof";
 import { CredentialSchema } from "./credential_schema";
@@ -26,16 +26,16 @@ export class Credential {
 
   /**
    * Creates a new Credential instance with the provided details.
-   * @param context 
-   * @param id 
-   * @param type 
-   * @param issuanceDate 
-   * @param expiration 
-   * @param credentialSubject 
-   * @param credentialStatus 
-   * @param issuer 
-   * @param credentialSchema 
-   * @param proof 
+   * @param context
+   * @param id
+   * @param type
+   * @param issuanceDate
+   * @param expiration
+   * @param credentialSubject
+   * @param credentialStatus
+   * @param issuer
+   * @param credentialSchema
+   * @param proof
    */
   constructor(
     context: string[],
@@ -93,7 +93,7 @@ export class Credential {
 
   /**
    * Converts the Credential instance to its JSON string representation.
-   * @returns 
+   * @returns
    */
   public toJson(): Promise<string> {
     const bridge = new BloockBridge();
@@ -116,8 +116,8 @@ export class Credential {
 
   /**
    * Creates a Credential instance from a JSON string representation.
-   * @param json 
-   * @returns 
+   * @param json
+   * @returns
    */
   static fromJson(json: string): Promise<Credential> {
     const bridge = new BloockBridge();

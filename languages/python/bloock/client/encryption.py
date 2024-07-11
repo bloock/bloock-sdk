@@ -1,13 +1,13 @@
 from warnings import warn
 
 from bloock._bridge import bridge
-from bloock._bridge.proto.encryption_pb2 import (
+from bloock._bridge.proto.bloock_encryption_pb2 import (
     EncryptRequest,
     DecryptRequest,
     EncryptionAlgRequest,
 )
-from bloock._bridge.proto.keys_pb2 import GenerateLocalKeyRequest
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_keys_pb2 import GenerateLocalKeyRequest
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.encryption.encrypter import Encrypter
 from bloock.entity.encryption.encryption_alg import EncryptionAlg

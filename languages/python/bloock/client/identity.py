@@ -1,13 +1,13 @@
 from bloock._bridge import bridge
 from bloock._config.config import Config
 from typing import Optional
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock.entity.identity.did_method import DidMethod
-from bloock._bridge.proto.identity_pb2 import CreateHolderRequest, CreateIssuerRequest, GetSchemaRequest, \
+from bloock._bridge.proto.bloock_identity_pb2 import CreateHolderRequest, CreateIssuerRequest, GetSchemaRequest, \
     ForcePublishIssuerStateRequest, CreateVerificationRequest, WaitVerificationRequest, GetVerificationStatusRequest, \
     ImportIssuerRequest, GetCredentialRequest, GetCredentialOfferRequest
-from bloock._bridge.proto.identity_pb2 import GetCredentialProofRequest
-from bloock._bridge.proto.identity_pb2 import RevokeCredentialRequest
+from bloock._bridge.proto.bloock_identity_pb2 import GetCredentialProofRequest
+from bloock._bridge.proto.bloock_identity_pb2 import RevokeCredentialRequest
 from bloock.entity.identity.holder import Holder
 from bloock.entity.identity.issuer import Issuer
 from bloock.entity.identity.issuer_state_receipt import IssuerStateReceipt

@@ -14,22 +14,18 @@ func NetworkToProto(network Network) *proto.Network {
 
 // networks represents a set of predefined networks.
 type networks struct {
-	// Deprecated: Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
-	BloockChain     Network
 	EthereumGnosis  Network
 	EthereumMainnet Network
-	// Deprecated: Test networks will be deleted in future versions. If you have been integrating with an existent test API key and you want to start a free trial period please contact support@bloock.com.
-	EthereumGoerli  Network
+	EthereumSepolia Network
 	EthereumPolygon Network
 }
 
 // ListOfNetworks returns a networks instance with predefined network values.
 func ListOfNetworks() networks {
 	return networks{
-		BloockChain:     proto.Network_BLOOCK_CHAIN,
 		EthereumGnosis:  proto.Network_GNOSIS_CHAIN,
 		EthereumMainnet: proto.Network_ETHEREUM_MAINNET,
-		EthereumGoerli:  proto.Network_ETHEREUM_GOERLI,
+		EthereumSepolia: proto.Network_ETHEREUM_SEPOLIA,
 		EthereumPolygon: proto.Network_POLYGON_CHAIN,
 	}
 }

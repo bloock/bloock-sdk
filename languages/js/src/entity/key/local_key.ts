@@ -1,4 +1,4 @@
-import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import * as keysEntitiesProto from "../../bridge/proto/bloock_keys_entities";
 import { KeyType } from "./key_type";
 
 /**
@@ -20,9 +20,9 @@ export class LocalKey {
 
   /**
    * Constructs a LocalKey object with the specified parameters.
-   * @param key 
-   * @param keyType 
-   * @param privateKey 
+   * @param key
+   * @param keyType
+   * @param privateKey
    */
   constructor(key: string, keyType: KeyType, privateKey?: string) {
     this.key = key;

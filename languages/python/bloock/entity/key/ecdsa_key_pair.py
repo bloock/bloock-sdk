@@ -1,4 +1,4 @@
-from bloock._bridge.proto.keys_pb2 import GenerateLocalKeyResponse
+from bloock._bridge.proto.bloock_keys_pb2 import GenerateLocalKeyResponse
 from bloock.entity.key.key_pair import KeyPair
 
 

@@ -40,7 +40,7 @@ func TestIntegrity(t *testing.T) {
 		assert.NotEqual(t, "", proof)
 
 		network := integrity.NewNetworkParams()
-		network.Network = integrity.ListOfNetworks().BloockChain
+		network.Network = integrity.ListOfNetworks().EthereumGnosis
 
 		timestampValidateRoot, err := integrityClient.ValidateRoot(root, network)
 		require.NoError(t, err)

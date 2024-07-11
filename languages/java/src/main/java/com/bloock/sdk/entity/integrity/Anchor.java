@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.integrity;
 
-import com.bloock.sdk.bridge.proto.IntegrityEntities;
+import com.bloock.sdk.bridge.proto.BloockIntegrityEntities;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +16,7 @@ public class Anchor {
 
   /**
    * Constructs an Anchor object with the specified parameters.
+   * 
    * @param id
    * @param blockRoots
    * @param networks
@@ -31,7 +32,7 @@ public class Anchor {
     this.status = status;
   }
 
-  public static Anchor fromProto(IntegrityEntities.Anchor anchor) {
+  public static Anchor fromProto(BloockIntegrityEntities.Anchor anchor) {
     return new Anchor(
         anchor.getId(),
         anchor.getBlockRootsList(),
@@ -42,8 +43,8 @@ public class Anchor {
         anchor.getStatus());
   }
 
-  IntegrityEntities.Anchor toProto() {
-    return IntegrityEntities.Anchor.newBuilder()
+  BloockIntegrityEntities.Anchor toProto() {
+    return BloockIntegrityEntities.Anchor.newBuilder()
         .setId(this.id)
         .addAllBlockRoots(this.blockRoots)
         .addAllNetworks(
@@ -69,6 +70,7 @@ public class Anchor {
 
   /**
    * Gets id from the anchor.
+   * 
    * @return
    */
   public long getId() {
@@ -77,6 +79,7 @@ public class Anchor {
 
   /**
    * Gets block roots from the anchor.
+   * 
    * @return
    */
   public List<String> getBlockRoots() {
@@ -85,6 +88,7 @@ public class Anchor {
 
   /**
    * Gets networks from the anchor.
+   * 
    * @return
    */
   public List<AnchorNetwork> getNetworks() {
@@ -93,6 +97,7 @@ public class Anchor {
 
   /**
    * Gets root from the anchor.
+   * 
    * @return
    */
   public String getRoot() {
@@ -101,6 +106,7 @@ public class Anchor {
 
   /**
    * Get status from the anchor.
+   * 
    * @return
    */
   public String getStatus() {

@@ -2,9 +2,9 @@ from __future__ import annotations
 import datetime
 
 from bloock._bridge import BloockBridge
-from bloock._bridge.proto.config_pb2 import ConfigData
-from bloock._bridge.proto.identity_core_pb2 import CreateCoreCredentialRequest
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_config_pb2 import ConfigData
+from bloock._bridge.proto.bloock_identity_core_pb2 import CreateCoreCredentialRequest
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock.entity.identity.boolean_attribute import BooleanAttribute
 from bloock.entity.identity.date_attribute import DateAttribute
 from bloock.entity.identity.datetime_attribute import DatetimeAttribute

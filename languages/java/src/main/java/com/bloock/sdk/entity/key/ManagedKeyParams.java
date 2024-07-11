@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents the parameters for creating a managed key.
@@ -25,6 +25,7 @@ public class ManagedKeyParams {
 
   /**
    * Constructs a ManagedKeyParams object with the specified parameters.
+   * 
    * @param protection
    * @param keyType
    * @param name
@@ -40,6 +41,7 @@ public class ManagedKeyParams {
 
   /**
    * Constructs a ManagedKeyParams object with the specified parameters.
+   * 
    * @param protection
    * @param keyType
    */
@@ -50,6 +52,7 @@ public class ManagedKeyParams {
 
   /**
    * Constructs a ManagedKeyParams object with the specified parameters.
+   * 
    * @param protection
    * @param keyType
    * @param name
@@ -62,6 +65,7 @@ public class ManagedKeyParams {
 
   /**
    * Constructs a ManagedKeyParams object with the specified parameters.
+   * 
    * @param protection
    * @param keyType
    * @param expiration
@@ -72,7 +76,7 @@ public class ManagedKeyParams {
     this.expiration = expiration;
   }
 
-  public static ManagedKeyParams fromProto(KeysEntities.ManagedKeyParams params) {
+  public static ManagedKeyParams fromProto(BloockKeysEntities.ManagedKeyParams params) {
     return new ManagedKeyParams(
         KeyProtectionLevel.fromProto(params.getProtection()),
         KeyType.fromProto(params.getKeyType()),
@@ -80,20 +84,22 @@ public class ManagedKeyParams {
         params.getExpiration());
   }
 
-  public KeysEntities.ManagedKeyParams toProto() {
-    KeysEntities.ManagedKeyParams.Builder params =
-        KeysEntities.ManagedKeyParams.newBuilder()
-            .setProtection(this.protection.toProto())
-            .setKeyType(this.keyType.toProto());
+  public BloockKeysEntities.ManagedKeyParams toProto() {
+    BloockKeysEntities.ManagedKeyParams.Builder params = BloockKeysEntities.ManagedKeyParams.newBuilder()
+        .setProtection(this.protection.toProto())
+        .setKeyType(this.keyType.toProto());
 
-    if (this.name != null) params.setName(this.name);
-    if (this.expiration != null) params.setExpiration(this.expiration);
+    if (this.name != null)
+      params.setName(this.name);
+    if (this.expiration != null)
+      params.setExpiration(this.expiration);
 
     return params.build();
   }
 
   /**
    * Gets the name of the managed key params.
+   * 
    * @return
    */
   public String getName() {
@@ -102,6 +108,7 @@ public class ManagedKeyParams {
 
   /**
    * Gets the protection level of the managed key params.
+   * 
    * @return
    */
   public KeyProtectionLevel getProtection() {
@@ -110,6 +117,7 @@ public class ManagedKeyParams {
 
   /**
    * Gets the key type of the managed key params.
+   * 
    * @return
    */
   public KeyType getKeyType() {
@@ -118,6 +126,7 @@ public class ManagedKeyParams {
 
   /**
    * Gets the expiration of the managed key params.
+   * 
    * @return
    */
   public long getExpiration() {

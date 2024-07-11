@@ -1,4 +1,4 @@
-import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import * as keysEntitiesProto from "../../bridge/proto/bloock_keys_entities";
 
 /**
  * Represents a local certificate along with its password.
@@ -9,8 +9,8 @@ export class LocalCertificate {
 
   /**
    * Constructs a LocalCertificate object with the specified parameters.
-   * @param pkcs12 
-   * @param password 
+   * @param pkcs12
+   * @param password
    */
   constructor(pkcs12: Uint8Array, password: string) {
     this.pkcs12 = pkcs12;

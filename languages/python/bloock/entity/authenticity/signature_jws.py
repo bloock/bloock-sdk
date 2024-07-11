@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import bloock._bridge.proto.identity_entities_pb2 as proto
+import bloock._bridge.proto.bloock_identity_entities_pb2 as proto
 from bloock.entity.authenticity.signature_alg import SignatureAlg
 from bloock.entity.authenticity.signature_header_jws import SignatureHeaderJws
 

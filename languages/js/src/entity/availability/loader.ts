@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/availability_entities";
+import * as proto from "../../bridge/proto/bloock_availability_entities";
 
 export interface Loader {
   type: proto.DataAvailabilityType;
