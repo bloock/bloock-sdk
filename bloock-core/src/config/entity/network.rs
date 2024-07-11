@@ -3,8 +3,7 @@ use crate::integrity::entity::anchor::AnchorNetwork;
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum Network {
     EthereumMainnet,
-    EthereumGoerli,
-    BloockChain,
+    EthereumSepolia,
     GnosisChain,
     PolygonChain,
 }
@@ -12,9 +11,8 @@ pub enum Network {
 impl From<String> for Network {
     fn from(str: String) -> Self {
         match str.as_ref() {
-            "bloock_chain" => Network::BloockChain,
             "gnosis_chain" => Network::GnosisChain,
-            "ethereum_goerli" => Network::EthereumGoerli,
+            "ethereum_sepolia" => Network::EthereumSepolia,
             "ethereum_mainnet" => Network::EthereumMainnet,
             "polygon_chain" => Network::PolygonChain,
             _ => Network::EthereumMainnet,
@@ -25,8 +23,7 @@ impl From<String> for Network {
 impl From<Network> for String {
     fn from(n: Network) -> Self {
         match n {
-            Network::BloockChain => "bloock_chain".to_string(),
-            Network::EthereumGoerli => "ethereum_goerli".to_string(),
+            Network::EthereumSepolia => "ethereum_sepolia".to_string(),
             Network::EthereumMainnet => "ethereum_mainnet".to_string(),
             Network::GnosisChain => "gnosis_chain".to_string(),
             Network::PolygonChain => "polygon_chain".to_string(),

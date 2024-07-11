@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import List
 
 from bloock._bridge import BloockBridge
-from bloock._bridge.proto.config_pb2 import ConfigData
-from bloock._bridge.proto.identity_pb2 import BuildSchemaRequest
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_config_pb2 import ConfigData
+from bloock._bridge.proto.bloock_identity_pb2 import BuildSchemaRequest
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock.entity.identity.boolean_attribute_descriptor import BooleanAttributeDescriptor
 from bloock.entity.identity.date_attribute_descriptor import DateAttributeDescriptor
 from bloock.entity.identity.datetime_attribute_descriptor import DatetimeAttributeDescriptor

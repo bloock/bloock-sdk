@@ -1,11 +1,11 @@
 import { BloockBridge } from "../../bridge/bridge";
-import * as proto from "../../bridge/proto/record_entities";
+import { ConfigData } from "../../bridge/proto/bloock_config";
 import {
   GetHashRequest,
   GetPayloadRequest,
   SetProofRequest
-} from "../../bridge/proto/record";
-import { ConfigData } from "../../bridge/proto/config";
+} from "../../bridge/proto/bloock_record";
+import * as proto from "../../bridge/proto/bloock_record_entities";
 import { Proof } from "../integrity";
 
 /**
@@ -18,9 +18,9 @@ export class Record {
 
   /**
    * Constructs a Record object with the specified parameters.
-   * @param payload 
-   * @param hash 
-   * @param configData 
+   * @param payload
+   * @param hash
+   * @param configData
    */
   constructor(payload: Uint8Array, hash: string, configData: ConfigData) {
     this.payload = payload;
@@ -42,7 +42,7 @@ export class Record {
 
   /**
    * Retrieves the hash of the record.
-   * @returns 
+   * @returns
    */
   async getHash(): Promise<string> {
     const bridge = new BloockBridge();
@@ -64,7 +64,7 @@ export class Record {
 
   /**
    * Retrieves the payload of the record.
-   * @returns 
+   * @returns
    */
   async getPayload(): Promise<Uint8Array> {
     const bridge = new BloockBridge();
@@ -86,7 +86,7 @@ export class Record {
 
   /**
    * Returns the payload of the record.
-   * @returns 
+   * @returns
    */
   public retrieve(): Uint8Array {
     return this.payload;
@@ -94,8 +94,8 @@ export class Record {
 
   /**
    * Sets the proof for a record.
-   * @param proof 
-   * @returns 
+   * @param proof
+   * @returns
    */
   async setProof(proof: Proof) {
     const bridge = new BloockBridge();

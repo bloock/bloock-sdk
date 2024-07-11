@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "bloock_authenticity_entities.proto";
+import "bloock_availability_entities.proto";
+import "bloock_encryption_entities.proto";
+import "bloock_integrity_entities.proto";
+import "bloock_record_entities.proto";
+import "bloock_shared.proto";
+import "bloock_config.proto";
+
+service RecordService {
+
+  rpc BuildRecordFromString(RecordBuilderFromStringRequest)
+      returns (RecordBuilderResponse);
+  rpc BuildRecordFromHex(RecordBuilderFromHexRequest)
+      returns (RecordBuilderResponse);
+  rpc BuildRecordFromJson(RecordBuilderFromJSONRequest)
+      returns (RecordBuilderResponse);
+  rpc BuildRecordFromFile(RecordBuilderFromFileRequest)
+      returns (RecordBuilderResponse);
+  rpc BuildRecordFromBytes(RecordBuilderFromBytesRequest)
+      returns (RecordBuilderResponse);
+  rpc BuildRecordFromRecord(RecordBuilderFromRecordRequest)
+      returns (RecordBuilderResponse);
+  rpc BuildRecordFromLoader(RecordBuilderFromLoaderRequest)
+      returns (RecordBuilderResponse);
+
+  rpc GetDetails(GetDetailsRequest) returns (GetDetailsResponse);
+  rpc GetHash(GetHashRequest) returns (GetHashResponse);
+  rpc GetPayload(GetPayloadRequest) returns (GetPayloadResponse);
+  rpc SetProof(SetProofRequest) returns (SetProofResponse);
+}
+
+message RecordBuilderFromStringRequest {
+  ConfigData config_data = 1;
+  string payload = 2;
+  optional Signer signer = 3;
+  optional Encrypter encrypter = 4;
+  optional Encrypter decrypter = 5;
+}
+
+message RecordBuilderFromHexRequest {
+  ConfigData config_data = 1;
+  string payload = 2;
+  optional Signer signer = 3;
+  optional Encrypter encrypter = 4;
+  optional Encrypter decrypter = 5;
+}
+
+message RecordBuilderFromJSONRequest {
+  ConfigData config_data = 1;
+  string payload = 2;
+  optional Signer signer = 3;
+  optional Encrypter encrypter = 4;
+  optional Encrypter decrypter = 5;
+}
+
+message RecordBuilderFromBytesRequest {
+  ConfigData config_data = 1;
+  bytes payload = 2;
+  optional Signer signer = 3;
+  optional Encrypter encrypter = 4;
+  optional Encrypter decrypter = 5;
+}
+
+message RecordBuilderFromFileRequest {
+  ConfigData config_data = 1;
+  bytes payload = 2;
+  optional Signer signer = 3;
+  optional Encrypter encrypter = 4;
+  optional Encrypter decrypter = 5;
+}
+
+message RecordBuilderFromRecordRequest {
+  ConfigData config_data = 1;
+  Record payload = 2;
+  optional Signer signer = 3;
+  optional Encrypter encrypter = 4;
+  optional Encrypter decrypter = 5;
+}
+
+message RecordBuilderResponse {
+  Record record = 1;
+  optional Error error = 2;
+}
+
+message RecordBuilderFromLoaderRequest {
+  ConfigData config_data = 1;
+  Loader loader = 2;
+  optional Signer signer = 3;
+  optional Encrypter encrypter = 4;
+  optional Encrypter decrypter = 5;
+}
+
+message GetDetailsRequest {
+  ConfigData config_data = 1;
+  bytes payload = 2;
+}
+
+message GetDetailsResponse {
+  RecordDetails details = 1;
+  optional Error error = 2;
+}
+
+message GetHashRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+}
+
+message GetHashResponse {
+  string hash = 1;
+  optional Error error = 2;
+}
+
+message GetPayloadRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+}
+
+message GetPayloadResponse {
+  bytes payload = 1;
+  optional Error error = 2;
+}
+
+message SetProofRequest {
+  ConfigData config_data = 1;
+  Record record = 2;
+  Proof proof = 3;
+}
+
+message SetProofResponse {
+  optional Error error = 1;
+  optional Record record = 2;
+}

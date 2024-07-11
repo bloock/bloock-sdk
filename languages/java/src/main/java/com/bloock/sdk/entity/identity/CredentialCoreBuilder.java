@@ -2,7 +2,7 @@ package com.bloock.sdk.entity.identity;
 
 import com.bloock.sdk.bridge.Bridge;
 import com.bloock.sdk.bridge.proto.*;
-import com.bloock.sdk.bridge.proto.AuthenticityEntities.Signer;
+import com.bloock.sdk.bridge.proto.BloockAuthenticityEntities.Signer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,18 +18,19 @@ public class CredentialCoreBuilder {
   private final String holderKey;
   private final Long expiration;
   private final int version;
-  private KeysEntities.Key key;
-  private final Config.ConfigData configData;
+  private BloockKeysEntities.Key key;
+  private final BloockConfig.ConfigData configData;
 
-  private final List<IdentityEntities.BooleanAttribute> booleanAttributes;
-  private final List<IdentityEntities.DateAttribute> dateAttributes;
-  private final List<IdentityEntities.DateTimeAttribute> datetimeAttributes;
-  private final List<IdentityEntities.StringAttribute> stringAttributes;
-  private final List<IdentityEntities.IntegerAttribute> integerAttributes;
-  private final List<IdentityEntities.DecimalAttribute> decimalAttributes;
+  private final List<BloockIdentityEntities.BooleanAttribute> booleanAttributes;
+  private final List<BloockIdentityEntities.DateAttribute> dateAttributes;
+  private final List<BloockIdentityEntities.DateTimeAttribute> datetimeAttributes;
+  private final List<BloockIdentityEntities.StringAttribute> stringAttributes;
+  private final List<BloockIdentityEntities.IntegerAttribute> integerAttributes;
+  private final List<BloockIdentityEntities.DecimalAttribute> decimalAttributes;
 
   /**
    * Creates a new CredentialCoreBuilder instance with the specified parameters.
+   * 
    * @param issuer
    * @param schemaId
    * @param holderKey
@@ -43,7 +44,7 @@ public class CredentialCoreBuilder {
       String holderKey,
       Long expiration,
       int version,
-      Config.ConfigData configData) {
+      BloockConfig.ConfigData configData) {
     this.schemaId = schemaId;
     this.issuerDid = issuer.getDid().getDid();
     this.holderKey = holderKey;
@@ -62,6 +63,7 @@ public class CredentialCoreBuilder {
 
   /**
    * Adds a string attribute to the CredentialBuilder.
+   * 
    * @param key
    * @param value
    * @return
@@ -73,6 +75,7 @@ public class CredentialCoreBuilder {
 
   /**
    * Adds an integer attribute to the CredentialBuilder.
+   * 
    * @param key
    * @param value
    * @return
@@ -84,6 +87,7 @@ public class CredentialCoreBuilder {
 
   /**
    * Adds a decimal attribute to the CredentialBuilder.
+   * 
    * @param key
    * @param value
    * @return
@@ -95,6 +99,7 @@ public class CredentialCoreBuilder {
 
   /**
    * Adds a boolean attribute to the CredentialBuilder.
+   * 
    * @param key
    * @param value
    * @return
@@ -106,6 +111,7 @@ public class CredentialCoreBuilder {
 
   /**
    * Adds a date attribute to the CredentialBuilder.
+   * 
    * @param key
    * @param value
    * @return
@@ -117,6 +123,7 @@ public class CredentialCoreBuilder {
 
   /**
    * Adds a datetime attribute to the CredentialBuilder.
+   * 
    * @param key
    * @param value
    * @return
@@ -128,32 +135,32 @@ public class CredentialCoreBuilder {
 
   /**
    * Creates and returns a Credential using the specified attributes.
+   * 
    * @return
    * @throws Exception
    */
   public CredentialReceipt build() throws Exception {
     Bridge bridge = new Bridge();
 
-    IdentityCore.CreateCoreCredentialRequest req =
-        IdentityCore.CreateCoreCredentialRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setSchemaId(this.schemaId)
-            .setIssuerDid(this.issuerDid)
-            .setHolderDid(this.holderKey)
-            .setExpiration(this.expiration)
-            .setVersion(this.version)
-            .setKey(this.key)
-            .addAllStringAttributes(this.stringAttributes)
-            .addAllIntegerAttributes(this.integerAttributes)
-            .addAllDecimalAttributes(this.decimalAttributes)
-            .addAllBooleanAttributes(this.booleanAttributes)
-            .addAllDateAttributes(this.dateAttributes)
-            .addAllDatetimeAttributes(this.datetimeAttributes)
-            .build();
+    BloockIdentityCore.CreateCoreCredentialRequest req = BloockIdentityCore.CreateCoreCredentialRequest.newBuilder()
+        .setConfigData(this.configData)
+        .setSchemaId(this.schemaId)
+        .setIssuerDid(this.issuerDid)
+        .setHolderDid(this.holderKey)
+        .setExpiration(this.expiration)
+        .setVersion(this.version)
+        .setKey(this.key)
+        .addAllStringAttributes(this.stringAttributes)
+        .addAllIntegerAttributes(this.integerAttributes)
+        .addAllDecimalAttributes(this.decimalAttributes)
+        .addAllBooleanAttributes(this.booleanAttributes)
+        .addAllDateAttributes(this.dateAttributes)
+        .addAllDatetimeAttributes(this.datetimeAttributes)
+        .build();
 
-    IdentityCore.CreateCoreCredentialResponse response = bridge.getIdentityCore().createCoreCredential(req);
+    BloockIdentityCore.CreateCoreCredentialResponse response = bridge.getIdentityCore().createCoreCredential(req);
 
-    if (response.getError() != Shared.Error.getDefaultInstance()) {
+    if (response.getError() != BloockShared.Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 

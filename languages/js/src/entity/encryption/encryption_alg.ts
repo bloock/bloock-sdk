@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/encryption_entities";
+import * as proto from "../../bridge/proto/bloock_encryption_entities";
 
 /**
  * Represents encryption algorithm types.

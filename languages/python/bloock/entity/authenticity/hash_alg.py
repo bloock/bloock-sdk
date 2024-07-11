@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-import bloock._bridge.proto.authenticity_entities_pb2 as proto
+import bloock._bridge.proto.bloock_authenticity_entities_pb2 as proto
 
 class HashAlg(Enum):
     """

@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/authenticity_entities";
+import * as proto from "../../bridge/proto/bloock_authenticity_entities";
 import { SignatureAlg } from "./signature_alg";
 
 /**
@@ -28,11 +28,11 @@ export class Signature {
 
   /**
    * Constructs a Signature object with the specified parameters.
-   * @param messageHash 
-   * @param signature 
-   * @param alg 
-   * @param kid 
-   * @param subject 
+   * @param messageHash
+   * @param signature
+   * @param alg
+   * @param kid
+   * @param subject
    */
   constructor(
     messageHash: string,
@@ -64,7 +64,7 @@ export class Signature {
 
   /**
    * Returns the SignatureAlg based on the algorithm specified in the Alg field.
-   * @returns 
+   * @returns
    */
   getAlg(): SignatureAlg {
     return SignatureAlg.fromString(this.alg);

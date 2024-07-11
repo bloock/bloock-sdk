@@ -1,13 +1,15 @@
 package com.bloock.sdk.client;
 
-import com.bloock.sdk.bridge.proto.Config.ConfigData;
-import com.bloock.sdk.bridge.proto.RecordEntities.RecordTypes;
+import com.bloock.sdk.bridge.proto.BloockConfig.ConfigData;
+import com.bloock.sdk.bridge.proto.BloockRecordEntities.RecordTypes;
 import com.bloock.sdk.config.Config;
 import com.bloock.sdk.entity.availability.Loader;
 import com.bloock.sdk.entity.record.Record;
 
 /**
- * Provides functionality for creating records using various data sources and to interact with the <a href="https://dashboard.bloock.com/login">Bloock Record service</a>.
+ * Provides functionality for creating records using various data sources and to
+ * interact with the <a href="https://dashboard.bloock.com/login">Bloock Record
+ * service</a>.
  */
 public class RecordClient {
   private final ConfigData configData;
@@ -21,6 +23,7 @@ public class RecordClient {
 
   /**
    * Creates a new RecordClient with the provided configuration.
+   * 
    * @param configData
    */
   public RecordClient(ConfigData configData) {
@@ -29,6 +32,7 @@ public class RecordClient {
 
   /**
    * Creates a RecordBuilder from an existing record.
+   * 
    * @param record
    * @return
    */
@@ -38,6 +42,7 @@ public class RecordClient {
 
   /**
    * Creates a RecordBuilder from a data loader.
+   * 
    * @param loader
    * @return
    */
@@ -47,6 +52,7 @@ public class RecordClient {
 
   /**
    * Creates a RecordBuilder from a string payload.
+   * 
    * @param str
    * @return
    */
@@ -56,6 +62,7 @@ public class RecordClient {
 
   /**
    * Creates a RecordBuilder from a hexadecimal string payload.
+   * 
    * @param str
    * @return
    */
@@ -65,6 +72,7 @@ public class RecordClient {
 
   /**
    * Creates a RecordBuilder from a JSON string payload.
+   * 
    * @param json
    * @return
    */
@@ -74,6 +82,7 @@ public class RecordClient {
 
   /**
    * Creates a RecordBuilder from a byte slice representing a file.
+   * 
    * @param file
    * @return
    */
@@ -83,6 +92,7 @@ public class RecordClient {
 
   /**
    * Creates a RecordBuilder from a byte slice payload.
+   * 
    * @param bytes
    * @return
    */

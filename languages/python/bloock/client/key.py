@@ -1,9 +1,9 @@
 from bloock._bridge import bridge
-from bloock._bridge.proto.keys_pb2 import GenerateLocalKeyRequest, GenerateManagedKeyRequest, LoadLocalKeyRequest, \
+from bloock._bridge.proto.bloock_keys_pb2 import GenerateLocalKeyRequest, GenerateManagedKeyRequest, LoadLocalKeyRequest, \
     LoadManagedKeyRequest, GenerateManagedCertificateRequest, LoadManagedCertificateRequest, \
     ImportManagedCertificateRequest, GenerateLocalCertificateRequest, LoadLocalCertificateRequest, SetupTotpAccessControlRequest, \
     RecoverTotpAccessControlRequest, SetupSecretAccessControlRequest
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.key.certificate_type import CertificateType
 from bloock.entity.key.import_certificate_params import ImportCertificateParams

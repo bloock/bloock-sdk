@@ -258,7 +258,6 @@ mod tests {
     use super::DefaultParser;
     use crate::{default::Payload, MetadataParser};
     use bloock_encrypter::entity::alg::EncryptionAlg;
-    use bloock_hasher::HashAlg;
     use bloock_keys::keys::local::LocalKey;
     use bloock_signer::{
         entity::{alg::SignAlg, signature::Signature},

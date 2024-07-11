@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/identity_entities";
+import * as proto from "../../bridge/proto/bloock_identity_entities";
 
 /**
  * Represents the header of a JSON Web Signature (JWS). [RFC 7515](https://datatracker.ietf.org/doc/html/rfc7515).
@@ -9,8 +9,8 @@ export class SignatureHeaderJws {
 
   /**
    * Constructs a SignatureHeaderJws object with the specified algorithm and key identifier.
-   * @param alg 
-   * @param kid 
+   * @param alg
+   * @param kid
    */
   constructor(alg: string, kid: string) {
     this.alg = alg;

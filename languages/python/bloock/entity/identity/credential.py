@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import List
 
-import bloock._bridge.proto.identity_entities_pb2 as proto
+import bloock._bridge.proto.bloock_identity_entities_pb2 as proto
 from bloock._bridge import BloockBridge
-from bloock._bridge.proto.identity_pb2 import CredentialFromJsonRequest, CredentialToJsonRequest
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_identity_pb2 import CredentialFromJsonRequest, CredentialToJsonRequest
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.identity.credential_proof import CredentialProof
 from bloock.entity.identity.credential_schema import CredentialSchema

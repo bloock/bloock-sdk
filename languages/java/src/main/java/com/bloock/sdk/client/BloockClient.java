@@ -1,7 +1,7 @@
 package com.bloock.sdk.client;
 
-import com.bloock.sdk.bridge.proto.Config.ConfigData;
-import com.bloock.sdk.bridge.proto.Config.Configuration;
+import com.bloock.sdk.bridge.proto.BloockConfig.ConfigData;
+import com.bloock.sdk.bridge.proto.BloockConfig.Configuration;
 import com.bloock.sdk.config.Config;
 
 /**
@@ -19,23 +19,23 @@ public class BloockClient {
   private final WebhookClient webhookClient;
 
   /**
-   * Creates a new instance of the Bloock SDK client with the specified configuration.
+   * Creates a new instance of the Bloock SDK client with the specified
+   * configuration.
+   * 
    * @param apiKey
    * @param identityApiHost
    */
   public BloockClient(String apiKey, String identityApiHost) {
     ConfigData configData = Config.newConfigDataDefault();
-    Configuration configuration =
-        Configuration.newBuilder()
-            .setApiKey(apiKey)
-            .setIdentityApiHost(identityApiHost)
-            .build();
+    Configuration configuration = Configuration.newBuilder()
+        .setApiKey(apiKey)
+        .setIdentityApiHost(identityApiHost)
+        .build();
 
-    this.configData =
-        ConfigData.newBuilder()
-            .setConfig(configuration)
-            .putAllNetworksConfig(configData.getNetworksConfigMap())
-            .build();
+    this.configData = ConfigData.newBuilder()
+        .setConfig(configuration)
+        .putAllNetworksConfig(configData.getNetworksConfigMap())
+        .build();
 
     this.integrityClient = new IntegrityClient(this.configData);
     this.authenticityClient = new AuthenticityClient(this.configData);
@@ -48,6 +48,7 @@ public class BloockClient {
 
   /**
    * Gets integrity client instance
+   * 
    * @return
    */
   public IntegrityClient getIntegrityClient() {
@@ -56,6 +57,7 @@ public class BloockClient {
 
   /**
    * Gets authenticity client instance
+   * 
    * @return
    */
   public AuthenticityClient getAuthenticityClient() {
@@ -64,6 +66,7 @@ public class BloockClient {
 
   /**
    * Gets encryption client instance
+   * 
    * @return
    */
   public EncryptionClient getEncryptionClient() {
@@ -72,6 +75,7 @@ public class BloockClient {
 
   /**
    * Gets authenticity client instance
+   * 
    * @return
    */
   public RecordClient getRecordClient() {
@@ -80,6 +84,7 @@ public class BloockClient {
 
   /**
    * Gets webhook client instance
+   * 
    * @return
    */
   public WebhookClient getWebhookClient() {
@@ -88,6 +93,7 @@ public class BloockClient {
 
   /**
    * Gets identity core client instance
+   * 
    * @return
    */
   public IdentityCoreClient getIdentityCoreClient() {
@@ -96,6 +102,7 @@ public class BloockClient {
 
   /**
    * Gets identity client instance
+   * 
    * @return
    */
   public IdentityClient getIdentityClient() {

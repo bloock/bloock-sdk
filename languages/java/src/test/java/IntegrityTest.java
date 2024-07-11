@@ -43,11 +43,11 @@ class IntegrityTest {
     assertNotSame("", root);
     assertNotNull(root);
 
-    long timestampValidateRoot = integrityClient.validateRoot(root, Network.BLOOCK_CHAIN);
+    long timestampValidateRoot = integrityClient.validateRoot(root, Network.GNOSIS_CHAIN);
 
     assertTrue(timestampValidateRoot > 0);
 
-    long timestampVerifyRecords = integrityClient.verifyRecords(records, Network.BLOOCK_CHAIN);
+    long timestampVerifyRecords = integrityClient.verifyRecords(records, Network.GNOSIS_CHAIN);
 
     assertTrue(timestampVerifyRecords > 0);
     assertEquals(timestampValidateRoot, timestampVerifyRecords);

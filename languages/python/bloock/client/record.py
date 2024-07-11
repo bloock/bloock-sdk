@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import bloock._bridge.proto.authenticity_entities_pb2 as authenticity_entities
-import bloock._bridge.proto.encryption_entities_pb2 as encryption_entities
-import bloock._bridge.proto.record_pb2 as proto
+import bloock._bridge.proto.bloock_authenticity_entities_pb2 as authenticity_entities
+import bloock._bridge.proto.bloock_encryption_entities_pb2 as encryption_entities
+import bloock._bridge.proto.bloock_record_pb2 as proto
 from bloock._bridge import bridge
-from bloock._bridge.proto.record_entities_pb2 import RecordTypes
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_record_entities_pb2 import RecordTypes
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import Config, ConfigData
 from bloock.entity.authenticity.signer import Signer
 from bloock.entity.availability.loader import Loader

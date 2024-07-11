@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.integrity;
 
-import com.bloock.sdk.bridge.proto.IntegrityEntities;
+import com.bloock.sdk.bridge.proto.BloockIntegrityEntities;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +15,7 @@ public class ProofAnchor {
 
   /**
    * Constructs a ProofAnchor object with the specified parameters.
+   * 
    * @param anchorId
    * @param networks
    * @param root
@@ -27,7 +28,7 @@ public class ProofAnchor {
     this.status = status;
   }
 
-  public static ProofAnchor fromProto(IntegrityEntities.ProofAnchor anchor) {
+  public static ProofAnchor fromProto(BloockIntegrityEntities.ProofAnchor anchor) {
     return new ProofAnchor(
         anchor.getAnchorId(),
         anchor.getNetworksList().stream()
@@ -37,8 +38,8 @@ public class ProofAnchor {
         anchor.getStatus());
   }
 
-  IntegrityEntities.ProofAnchor toProto() {
-    return IntegrityEntities.ProofAnchor.newBuilder()
+  BloockIntegrityEntities.ProofAnchor toProto() {
+    return BloockIntegrityEntities.ProofAnchor.newBuilder()
         .setAnchorId(anchorId)
         .addAllNetworks(networks.stream().map(x -> x.toProto()).collect(Collectors.toList()))
         .setRoot(root)
@@ -48,6 +49,7 @@ public class ProofAnchor {
 
   /**
    * Gets the anchor id of the anchor proof.
+   * 
    * @return
    */
   public long getAnchorId() {
@@ -56,6 +58,7 @@ public class ProofAnchor {
 
   /**
    * Gets the networks of the anchor proof
+   * 
    * @return
    */
   public List<AnchorNetwork> getNetworks() {
@@ -64,6 +67,7 @@ public class ProofAnchor {
 
   /**
    * Gets the root of the anchor proof.
+   * 
    * @return
    */
   public String getRoot() {
@@ -72,6 +76,7 @@ public class ProofAnchor {
 
   /**
    * Gets the status of the anchor proof.
+   * 
    * @return
    */
   public String getStatus() {

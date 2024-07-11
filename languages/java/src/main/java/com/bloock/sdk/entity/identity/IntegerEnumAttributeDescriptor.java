@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 import java.util.List;
 
 /**
@@ -10,7 +10,9 @@ public class IntegerEnumAttributeDescriptor extends AttributeDescriptor {
   private List<Long> enumeration;
 
   /**
-   * Constructs an IntegerEnumAttributeDescriptor object with the specified parameters.
+   * Constructs an IntegerEnumAttributeDescriptor object with the specified
+   * parameters.
+   * 
    * @param displayName
    * @param technicalName
    * @param description
@@ -28,7 +30,7 @@ public class IntegerEnumAttributeDescriptor extends AttributeDescriptor {
   }
 
   public static IntegerEnumAttributeDescriptor fromProto(
-      IdentityEntities.IntegerEnumAttributeDefinition res) {
+      BloockIdentityEntities.IntegerEnumAttributeDefinition res) {
     return new IntegerEnumAttributeDescriptor(
         res.getDisplayName(),
         res.getId(),
@@ -37,8 +39,8 @@ public class IntegerEnumAttributeDescriptor extends AttributeDescriptor {
         res.getEnumList());
   }
 
-  public IdentityEntities.IntegerEnumAttributeDefinition toProto() {
-    return IdentityEntities.IntegerEnumAttributeDefinition.newBuilder()
+  public BloockIdentityEntities.IntegerEnumAttributeDefinition toProto() {
+    return BloockIdentityEntities.IntegerEnumAttributeDefinition.newBuilder()
         .setDisplayName(this.displayName)
         .setId(this.technicalName)
         .setDescription(this.description)

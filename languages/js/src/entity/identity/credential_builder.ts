@@ -1,6 +1,6 @@
 import { BloockBridge } from "../../bridge/bridge";
-import { ConfigData } from "../../bridge/proto/config";
-import { CreateCredentialRequest } from "../../bridge/proto/identity";
+import { ConfigData } from "../../bridge/proto/bloock_config";
+import { CreateCredentialRequest } from "../../bridge/proto/bloock_identity";
 import {
   BooleanAttribute as BooleanAttributeProto,
   DateAttribute as DateAttributeProto,
@@ -8,8 +8,8 @@ import {
   DecimalAttribute as DecimalAttributeProto,
   IntegerAttribute as IntegerAttributeProto,
   StringAttribute as StringAttributeProto
-} from "../../bridge/proto/identity_entities";
-import { Key as KeyProto } from "../../bridge/proto/keys_entities";
+} from "../../bridge/proto/bloock_identity_entities";
+import { Key as KeyProto } from "../../bridge/proto/bloock_keys_entities";
 import { BooleanAttribute } from "./boolean_attribute";
 import { CredentialReceipt } from "./credential_receipt";
 import { DateAttribute } from "./date_attribute";

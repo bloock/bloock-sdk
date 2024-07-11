@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import bloock._bridge.proto.record_entities_pb2 as proto
+import bloock._bridge.proto.bloock_record_entities_pb2 as proto
 from bloock._bridge import bridge
-from bloock._bridge.proto.record_pb2 import GetPayloadRequest, GetPayloadResponse, SetProofRequest, GetHashRequest
-from bloock._bridge.proto.shared_pb2 import Error
+from bloock._bridge.proto.bloock_record_pb2 import GetPayloadRequest, GetPayloadResponse, SetProofRequest, GetHashRequest
+from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import ConfigData
 from bloock.entity.integrity.proof import Proof
 

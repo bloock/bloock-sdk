@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.authenticity;
 
-import com.bloock.sdk.bridge.proto.AuthenticityEntities;
+import com.bloock.sdk.bridge.proto.BloockAuthenticityEntities;
 
 /**
  * Represents a cryptographic signature along with additional metadata.
@@ -29,6 +29,7 @@ public class Signature {
 
   /**
    * Constructs a Signature object with the specified parameters.
+   * 
    * @param signature
    * @param alg
    * @param kid
@@ -43,7 +44,7 @@ public class Signature {
     this.subject = subject;
   }
 
-  public static Signature fromProto(AuthenticityEntities.Signature signature) {
+  public static Signature fromProto(BloockAuthenticityEntities.Signature signature) {
     return new Signature(
         signature.getSignature(),
         signature.getAlg(),
@@ -52,8 +53,8 @@ public class Signature {
         signature.getSubject());
   }
 
-  public AuthenticityEntities.Signature toProto() {
-    return AuthenticityEntities.Signature.newBuilder()
+  public BloockAuthenticityEntities.Signature toProto() {
+    return BloockAuthenticityEntities.Signature.newBuilder()
         .setSignature(this.signature)
         .setAlg(this.alg)
         .setKid(this.kid)
@@ -64,6 +65,7 @@ public class Signature {
 
   /**
    * Gets the cryptographic signature.
+   * 
    * @return
    */
   public String getSignature() {
@@ -72,6 +74,7 @@ public class Signature {
 
   /**
    * Sets the cryptographic signature.
+   * 
    * @param signature
    */
   public void setSignature(String signature) {
@@ -80,6 +83,7 @@ public class Signature {
 
   /**
    * Returns the SignatureAlg based on the algorithm specified in the Alg field.
+   * 
    * @return
    */
   public SignatureAlg getAlg() {
@@ -87,7 +91,9 @@ public class Signature {
   }
 
   /**
-   * Gets the key identifier associated with the signature. (public key or key ID).
+   * Gets the key identifier associated with the signature. (public key or key
+   * ID).
+   * 
    * @return
    */
   public String getKid() {
@@ -96,6 +102,7 @@ public class Signature {
 
   /**
    * Sets the hash of the message that was signed.
+   * 
    * @param hash
    */
   public void setMessageHash(String hash) {
@@ -104,6 +111,7 @@ public class Signature {
 
   /**
    * Gets the subject of the signature.
+   * 
    * @return
    */
   public String getSubject() {
@@ -112,6 +120,7 @@ public class Signature {
 
   /**
    * Sets the subject of the signature.
+   * 
    * @param subject
    */
   public void setSubject(String subject) {

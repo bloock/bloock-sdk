@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.encryption;
 
-import com.bloock.sdk.bridge.proto.EncryptionEntities;
+import com.bloock.sdk.bridge.proto.BloockEncryptionEntities;
 
 /**
  * Represents encryption algorithm types.
@@ -27,7 +27,7 @@ public enum EncryptionAlg {
    */
   UNRECOGNIZED;
 
-  public static EncryptionAlg fromProto(EncryptionEntities.EncryptionAlg alg) {
+  public static EncryptionAlg fromProto(BloockEncryptionEntities.EncryptionAlg alg) {
     switch (alg) {
       case A256GCM:
         return EncryptionAlg.AES256GCM;
@@ -42,18 +42,18 @@ public enum EncryptionAlg {
     }
   }
 
-  public EncryptionEntities.EncryptionAlg toProto() {
+  public BloockEncryptionEntities.EncryptionAlg toProto() {
     switch (this) {
       case AES256GCM:
-        return EncryptionEntities.EncryptionAlg.A256GCM;
+        return BloockEncryptionEntities.EncryptionAlg.A256GCM;
       case AES256GCM_M:
-        return EncryptionEntities.EncryptionAlg.A256GCM_M;
+        return BloockEncryptionEntities.EncryptionAlg.A256GCM_M;
       case RSA:
-        return EncryptionEntities.EncryptionAlg.RSA;
+        return BloockEncryptionEntities.EncryptionAlg.RSA;
       case RSA_M:
-        return EncryptionEntities.EncryptionAlg.RSA_M;
+        return BloockEncryptionEntities.EncryptionAlg.RSA_M;
       default:
-        return EncryptionEntities.EncryptionAlg.UNRECOGNIZED;
+        return BloockEncryptionEntities.EncryptionAlg.UNRECOGNIZED;
     }
   }
 }

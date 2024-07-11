@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents parameters for generating a subject certificate.
@@ -33,6 +33,7 @@ public class SubjectCertificateParams {
 
   /**
    * Constructs a SubjectCertificateParams object with the specified parameters.
+   * 
    * @param commonName
    * @param organization
    * @param organizationUnit
@@ -55,8 +56,8 @@ public class SubjectCertificateParams {
     this.country = country;
   }
 
-  public KeysEntities.CertificateSubject toProto() {
-    KeysEntities.CertificateSubject.Builder params = KeysEntities.CertificateSubject.newBuilder();
+  public BloockKeysEntities.CertificateSubject toProto() {
+    BloockKeysEntities.CertificateSubject.Builder params = BloockKeysEntities.CertificateSubject.newBuilder();
 
     if (!this.commonName.isEmpty()) {
       params.setCommonName(this.commonName);
@@ -87,6 +88,7 @@ public class SubjectCertificateParams {
 
   /**
    * Gets the common name attribute of the subject certificate.
+   * 
    * @return
    */
   public String getCommonName() {
@@ -95,6 +97,7 @@ public class SubjectCertificateParams {
 
   /**
    * Gets the organization attribute of the subject certificate.
+   * 
    * @return
    */
   public String getOrganization() {
@@ -103,6 +106,7 @@ public class SubjectCertificateParams {
 
   /**
    * Gets the organization unit attribute of the subject certificate.
+   * 
    * @return
    */
   public String getOrganizationUnit() {
@@ -111,6 +115,7 @@ public class SubjectCertificateParams {
 
   /**
    * Gets the location attribute of the subject certificate.
+   * 
    * @return
    */
   public String getLocation() {
@@ -119,6 +124,7 @@ public class SubjectCertificateParams {
 
   /**
    * Gets the state attribute of the subject certificate.
+   * 
    * @return
    */
   public String getState() {
@@ -127,6 +133,7 @@ public class SubjectCertificateParams {
 
   /**
    * Gets the country attribute of the subject certificate.
+   * 
    * @return
    */
   public String getCountry() {

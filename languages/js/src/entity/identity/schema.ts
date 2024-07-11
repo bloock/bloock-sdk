@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 
 /**
  * Represents a schema with its attributes.
@@ -11,10 +11,10 @@ export class Schema {
 
   /**
    * Constructs a Schema object with the specified parameters.
-   * @param cid 
-   * @param cidJsonLd 
-   * @param schemaType 
-   * @param json 
+   * @param cid
+   * @param cidJsonLd
+   * @param schemaType
+   * @param json
    */
   constructor(
     cid: string,

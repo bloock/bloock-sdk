@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents a secret used for secret-based access control.
@@ -10,14 +10,15 @@ public class AccessControlSecret {
 
     /**
      * Creates a new AccessControlSecret instance with the provided secret.
+     * 
      * @param secret
      */
     public AccessControlSecret(String secret) {
         this.secret = secret;
     }
 
-    public KeysEntities.AccessControlSecret toProto() {
-        KeysEntities.AccessControlSecret.Builder builder = KeysEntities.AccessControlSecret.newBuilder();
+    public BloockKeysEntities.AccessControlSecret toProto() {
+        BloockKeysEntities.AccessControlSecret.Builder builder = BloockKeysEntities.AccessControlSecret.newBuilder();
 
         builder.setSecret(this.secret);
 

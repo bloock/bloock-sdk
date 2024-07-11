@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.integrity;
 
-import com.bloock.sdk.bridge.proto.IntegrityEntities;
+import com.bloock.sdk.bridge.proto.BloockIntegrityEntities;
 
 /**
  * Represents information about an anchor network.
@@ -13,6 +13,7 @@ public class AnchorNetwork {
 
   /**
    * Constructs an AnchorNetwork object with the specified parameters.
+   * 
    * @param name
    * @param state
    * @param txHash
@@ -25,13 +26,13 @@ public class AnchorNetwork {
     this.root = root;
   }
 
-  static AnchorNetwork fromProto(IntegrityEntities.AnchorNetwork network) {
+  static AnchorNetwork fromProto(BloockIntegrityEntities.AnchorNetwork network) {
     return new AnchorNetwork(
         network.getName(), network.getState(), network.getTxHash(), network.getRoot());
   }
 
-  IntegrityEntities.AnchorNetwork toProto() {
-    return IntegrityEntities.AnchorNetwork.newBuilder()
+  BloockIntegrityEntities.AnchorNetwork toProto() {
+    return BloockIntegrityEntities.AnchorNetwork.newBuilder()
         .setName(this.name)
         .setState(this.state)
         .setTxHash(this.txHash)
@@ -46,6 +47,7 @@ public class AnchorNetwork {
 
   /**
    * Gets name of the anchor network.
+   * 
    * @return
    */
   public String getName() {
@@ -54,6 +56,7 @@ public class AnchorNetwork {
 
   /**
    * Gets state of the anchor network.
+   * 
    * @return
    */
   public String getState() {
@@ -62,6 +65,7 @@ public class AnchorNetwork {
 
   /**
    * Gets transaction hash of the anchor network.
+   * 
    * @return
    */
   public String getTxHash() {
@@ -70,6 +74,7 @@ public class AnchorNetwork {
 
   /**
    * Gets root of the anchor network.
+   * 
    * @return
    */
   public String getRoot() {

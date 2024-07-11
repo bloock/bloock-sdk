@@ -1,19 +1,18 @@
 import { BloockBridge } from "../bridge/bridge";
-import { ConfigData, Network } from "../bridge/proto/config";
-import { Proof } from "../entity/integrity";
-import { Anchor } from "../entity/integrity/anchor";
-import { Record } from "../entity/record";
-import { RecordReceipt } from "../entity/integrity";
-import { NewConfigData } from "../config/config";
+import { ConfigData, Network } from "../bridge/proto/bloock_config";
 import {
-  SendRecordsRequest,
   GetAnchorRequest,
-  WaitAnchorRequest,
   GetProofRequest,
+  SendRecordsRequest,
   ValidateRootRequest,
   VerifyProofRequest,
-  VerifyRecordsRequest
-} from "../bridge/proto/integrity";
+  VerifyRecordsRequest,
+  WaitAnchorRequest
+} from "../bridge/proto/bloock_integrity";
+import { NewConfigData } from "../config/config";
+import { Proof, RecordReceipt } from "../entity/integrity";
+import { Anchor } from "../entity/integrity/anchor";
+import { Record } from "../entity/record";
 
 /**
  * Provides functionality to interact with the [Bloock Integrity service](https://dashboard.bloock.com/login).
@@ -24,7 +23,7 @@ export class IntegrityClient {
 
   /**
    * Creates a new IntegrityClient with default configuration.
-   * @param configData 
+   * @param configData
    */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
@@ -33,8 +32,8 @@ export class IntegrityClient {
 
   /**
    * Sends records to the Bloock Integrity service for certification.
-   * @param records 
-   * @returns 
+   * @param records
+   * @returns
    */
   public async sendRecords(records: Record[]): Promise<RecordReceipt[]> {
     const request = SendRecordsRequest.fromPartial({
@@ -55,8 +54,8 @@ export class IntegrityClient {
 
   /**
    * Gets an anchor by its ID from the Bloock Integrity service.
-   * @param anchorId 
-   * @returns 
+   * @param anchorId
+   * @returns
    */
   public async getAnchor(anchorId: number): Promise<Anchor> {
     const request = GetAnchorRequest.fromPartial({
@@ -77,9 +76,9 @@ export class IntegrityClient {
 
   /**
    * Waits for the completion of an anchor on the Bloock Integrity service.
-   * @param anchorId 
-   * @param timeout 
-   * @returns 
+   * @param anchorId
+   * @param timeout
+   * @returns
    */
   public async waitAnchor(anchorId: number, timeout?: number): Promise<Anchor> {
     const request = WaitAnchorRequest.fromPartial({
@@ -101,8 +100,8 @@ export class IntegrityClient {
 
   /**
    * Gets a proof for a set of records from the Bloock Integrity service.
-   * @param records 
-   * @returns 
+   * @param records
+   * @returns
    */
   public async getProof(records: Record[]): Promise<Proof> {
     const request = GetProofRequest.fromPartial({
@@ -123,9 +122,9 @@ export class IntegrityClient {
 
   /**
    * Validates the integrity of a merkle root proof on blockchain.
-   * @param root 
-   * @param network 
-   * @returns 
+   * @param root
+   * @param network
+   * @returns
    */
   public async validateRoot(root: string, network: Network): Promise<number> {
     const request = ValidateRootRequest.fromPartial({
@@ -147,8 +146,8 @@ export class IntegrityClient {
 
   /**
    * Verifies the integrity of a proof.
-   * @param proof 
-   * @returns 
+   * @param proof
+   * @returns
    */
   public async verifyProof(proof: Proof): Promise<string> {
     const request = VerifyProofRequest.fromPartial({
@@ -169,9 +168,9 @@ export class IntegrityClient {
 
   /**
    * Verifies the integrity of a set of records.
-   * @param records 
-   * @param network 
-   * @returns 
+   * @param records
+   * @param network
+   * @returns
    */
   public async verifyRecords(
     records: Record[],

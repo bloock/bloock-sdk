@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+message ConfigData {
+  Configuration config = 1;
+  map<int32, NetworkConfig> networks_config = 2;
+}
+
+message Configuration {
+  string library_name = 1;
+  string host = 2;
+  string api_key = 3;
+  int32 wait_message_interval_factor = 4;
+  int32 wait_message_interval_default = 5;
+  string key_type_algorithm = 6;
+  string elliptic_curve_key = 7;
+  string signature_algorithm = 8;
+  optional string identityApiHost = 9;
+}
+
+enum Network {
+  ETHEREUM_MAINNET = 0;
+  ETHEREUM_SEPOLIA = 1;
+  GNOSIS_CHAIN = 2;
+  POLYGON_CHAIN = 3;
+}
+
+message NetworkConfig {
+  string ContractAddress = 1;
+  string ContractAbi = 2;
+  string HttpProvider = 3;
+}

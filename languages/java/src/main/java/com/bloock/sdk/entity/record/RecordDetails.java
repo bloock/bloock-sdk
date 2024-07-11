@@ -1,9 +1,10 @@
 package com.bloock.sdk.entity.record;
 
-import com.bloock.sdk.bridge.proto.RecordEntities;
+import com.bloock.sdk.bridge.proto.BloockRecordEntities;
 
 /**
- * Represents all details related to a record, including integrity, authenticity, encryption, and availability details.
+ * Represents all details related to a record, including integrity,
+ * authenticity, encryption, and availability details.
  */
 public class RecordDetails {
   IntegrityDetails integrity;
@@ -13,6 +14,7 @@ public class RecordDetails {
 
   /**
    * Constructs a RecordDetails object with the specified parameters.
+   * 
    * @param integrity
    * @param authenticity
    * @param encryption
@@ -31,6 +33,7 @@ public class RecordDetails {
 
   /**
    * Gets the integrity details of the record.
+   * 
    * @return
    */
   public IntegrityDetails getIntegrity() {
@@ -39,6 +42,7 @@ public class RecordDetails {
 
   /**
    * Gets the authenticity details of the record.
+   * 
    * @return
    */
   public AuthenticityDetails getAuthenticity() {
@@ -47,6 +51,7 @@ public class RecordDetails {
 
   /**
    * Gets the encryption details of the record.
+   * 
    * @return
    */
   public EncryptionDetails getEncryption() {
@@ -55,13 +60,14 @@ public class RecordDetails {
 
   /**
    * Gets the availability details of the record.
+   * 
    * @return
    */
   public AvailabilityDetails getAvailability() {
     return availability;
   }
 
-  public static RecordDetails fromProto(RecordEntities.RecordDetails details) {
+  public static RecordDetails fromProto(BloockRecordEntities.RecordDetails details) {
     IntegrityDetails integrityDetails = null;
     if (details.hasIntegrity()) {
       integrityDetails = IntegrityDetails.fromProto(details.getIntegrity());
@@ -86,8 +92,8 @@ public class RecordDetails {
         integrityDetails, authenticityDetails, encryptionDetails, availabilityDetails);
   }
 
-  public RecordEntities.RecordDetails toProto() {
-    return RecordEntities.RecordDetails.newBuilder()
+  public BloockRecordEntities.RecordDetails toProto() {
+    return BloockRecordEntities.RecordDetails.newBuilder()
         .setIntegrity(integrity.toProto())
         .setAuthenticity(authenticity.toProto())
         .setEncryption(encryption.toProto())

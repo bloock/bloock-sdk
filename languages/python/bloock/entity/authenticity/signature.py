@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import bloock._bridge.proto.authenticity_entities_pb2 as proto
+import bloock._bridge.proto.bloock_authenticity_entities_pb2 as proto
 from bloock.entity.authenticity.signature_alg import SignatureAlg
 
 

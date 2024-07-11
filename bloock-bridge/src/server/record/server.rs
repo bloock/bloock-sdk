@@ -318,7 +318,7 @@ async fn build_record(
     signer: Option<Signer>,
     encrypter: Option<Encrypter>,
     decrypter: Option<Encrypter>,
-    config_data: ConfigData,
+    _config_data: ConfigData,
 ) -> Result<Record, String> {
     if let Some(signer) = signer {
         let hash_alg: Option<HashAlgCore> = signer

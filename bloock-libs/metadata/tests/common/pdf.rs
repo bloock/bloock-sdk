@@ -1,3 +1,9 @@
+use std::fs;
+
+use bloock_keys::certificates::{
+        local::{LocalCertificate, LocalCertificateParams},
+        CertificateSubject,
+    };
 use bloock_metadata::{pdf::PdfParser, MetadataParser};
 
 pub fn pdf_load() {
@@ -5,23 +11,79 @@ pub fn pdf_load() {
     PdfParser::load(payload).unwrap();
 }
 
-pub fn pdf_get() {
-    // let payload = include_bytes!("../assets/dummy-with-metadata.pdf");
-    // let pdf = PdfParser::load(payload).unwrap();
+pub async fn pdf_sign() {
+    let payload = include_bytes!("../assets/dummy.pdf");
+    let mut pdf = PdfParser::load(payload).unwrap();
 
-    // let value: Vec<String> = pdf.get("signature").unwrap();
+    let certificate_params = LocalCertificateParams {
+        key_type: bloock_keys::KeyType::Rsa2048,
+        subject: CertificateSubject {
+            common_name: "Google internet Authority G2".to_string(),
+            organization: Some("Google Inc".to_string()),
+            organizational_unit: Some("IT Department".to_string()),
+            country: Some("US".to_string()),
+            state: None,
+            location: None,
+        },
+        expiration: 1,
+        password: "password".to_string(),
+    };
+    let local_certificate = LocalCertificate::new(&certificate_params).unwrap();
 
-    // assert_eq!(value, vec!["signature1"])
+    pdf.sign(
+        &local_certificate.into(),
+        None,
+        None,
+        "".to_string(),
+        "".to_string(),
+    )
+    .await
+    .unwrap();
+
+    fs::write("./tests/assets/dummy-sign.pdf", pdf.build().unwrap()).unwrap();
 }
 
-pub fn pdf_set() {
-    // let payload = include_bytes!("../assets/dummy.pdf");
-    // let mut pdf = PdfParser::load(payload).unwrap();
-    // assert!(pdf.get::<String>("proof").is_none());
-    // pdf.set("proof", &String::from("proof")).unwrap();
-    // assert_eq!(pdf.get::<String>("proof").unwrap(), "proof".to_owned());
+pub async fn pdf_multisign() {
+    let payload = include_bytes!("../assets/dummy.pdf");
+    let mut pdf = PdfParser::load(payload).unwrap();
 
-    // let out = pdf.build().unwrap();
-    // let pdf = PdfParser::load(&out).unwrap();
-    // assert_eq!(pdf.get::<String>("proof").unwrap(), "proof".to_owned());
+    let certificate_params = LocalCertificateParams {
+        key_type: bloock_keys::KeyType::Rsa2048,
+        subject: CertificateSubject {
+            common_name: "Google internet Authority G2".to_string(),
+            organization: Some("Google Inc".to_string()),
+            organizational_unit: Some("IT Department".to_string()),
+            country: Some("US".to_string()),
+            state: None,
+            location: None,
+        },
+        expiration: 1,
+        password: "password".to_string(),
+    };
+    let local_certificate = LocalCertificate::new(&certificate_params).unwrap();
+
+    pdf.sign(
+        &local_certificate.clone().into(),
+        None,
+        None,
+        "".to_string(),
+        "".to_string(),
+    )
+    .await
+    .unwrap();
+
+    let result = pdf.build().unwrap();
+
+    let mut pdf = PdfParser::load(&result).unwrap();
+    pdf.sign(
+        &local_certificate.clone().into(),
+        None,
+        None,
+        "".to_string(),
+        "".to_string(),
+    )
+    .await
+    .unwrap();
+
+    let _result = pdf.build().unwrap();
 }

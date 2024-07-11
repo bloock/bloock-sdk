@@ -1,15 +1,16 @@
 package com.bloock.sdk.client;
 
 import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.Config.ConfigData;
-import com.bloock.sdk.bridge.proto.Shared.Error;
-import com.bloock.sdk.bridge.proto.Webhook.VerifyWebhookSignatureRequest;
-import com.bloock.sdk.bridge.proto.Webhook.VerifyWebhookSignatureResponse;
+import com.bloock.sdk.bridge.proto.BloockConfig.ConfigData;
+import com.bloock.sdk.bridge.proto.BloockShared.Error;
+import com.bloock.sdk.bridge.proto.BloockWebhook.VerifyWebhookSignatureRequest;
+import com.bloock.sdk.bridge.proto.BloockWebhook.VerifyWebhookSignatureResponse;
 import com.bloock.sdk.config.Config;
 import com.google.protobuf.ByteString;
 
 /**
- * Provides functionality for interacting with <a href="https://dashboard.bloock.com/login">Bloock webhooks</a>.
+ * Provides functionality for interacting with
+ * <a href="https://dashboard.bloock.com/login">Bloock webhooks</a>.
  */
 public class WebhookClient {
   private final Bridge bridge;
@@ -25,6 +26,7 @@ public class WebhookClient {
 
   /**
    * Creates a new WebhookClient with the provided configuration.
+   * 
    * @param configData
    */
   public WebhookClient(ConfigData configData) {
@@ -34,6 +36,7 @@ public class WebhookClient {
 
   /**
    * Verifies the signature of a webhook payload using the provided parameters.
+   * 
    * @param payload
    * @param header
    * @param secretKey
@@ -43,14 +46,13 @@ public class WebhookClient {
    */
   public boolean verifyWebhookSignature(
       byte[] payload, String header, String secretKey, boolean enforceTolerance) throws Exception {
-    VerifyWebhookSignatureRequest request =
-        VerifyWebhookSignatureRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setPayload(ByteString.copyFrom(payload))
-            .setHeader(header)
-            .setSecretKey(secretKey)
-            .setEnforceTolerance(enforceTolerance)
-            .build();
+    VerifyWebhookSignatureRequest request = VerifyWebhookSignatureRequest.newBuilder()
+        .setConfigData(this.configData)
+        .setPayload(ByteString.copyFrom(payload))
+        .setHeader(header)
+        .setSecretKey(secretKey)
+        .setEnforceTolerance(enforceTolerance)
+        .build();
 
     VerifyWebhookSignatureResponse response = bridge.getWebhook().verifyWebhookSignature(request);
 

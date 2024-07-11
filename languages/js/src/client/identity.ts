@@ -1,20 +1,21 @@
 import { BloockBridge } from "../bridge/bridge";
-import { ConfigData } from "../bridge/proto/config";
+import { ConfigData } from "../bridge/proto/bloock_config";
 import {
-  CreateIssuerRequest,
-  ImportIssuerRequest,
-  GetCredentialProofRequest,
-  RevokeCredentialRequest,
-  GetSchemaRequest,
-  ForcePublishIssuerStateRequest,
-  CreateVerificationRequest,
-  WaitVerificationRequest,
-  GetVerificationStatusRequest,
   CreateHolderRequest,
+  CreateIssuerRequest,
+  CreateVerificationRequest,
+  ForcePublishIssuerStateRequest,
+  GetCredentialOfferRequest,
+  GetCredentialProofRequest,
   GetCredentialRequest,
-  GetCredentialOfferRequest
-} from "../bridge/proto/identity";
+  GetSchemaRequest,
+  GetVerificationStatusRequest,
+  ImportIssuerRequest,
+  RevokeCredentialRequest,
+  WaitVerificationRequest
+} from "../bridge/proto/bloock_identity";
 import { NewConfigData } from "../config/config";
+import { Key } from "../entity";
 import {
   Holder,
   Issuer,
@@ -28,7 +29,6 @@ import { CredentialBuilder } from "../entity/identity/credential_builder";
 import { CredentialProof } from "../entity/identity/credential_proof";
 import { DidMethod } from "../entity/identity/did_method";
 import { SchemaBuilder } from "../entity/identity/schema_builder";
-import { Key } from "../entity";
 
 /**
  * Represents a client for interacting with the [Bloock Identity service](https://dashboard.bloock.com/login).
@@ -39,7 +39,7 @@ export class IdentityClient {
 
   /**
    * Creates a new instance of the IdentityClient with default configuration.
-   * @param configData 
+   * @param configData
    */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
@@ -48,14 +48,11 @@ export class IdentityClient {
 
   /**
    * Creates a new holder identity.
-   * @param holderKey 
-   * @param didMethod 
-   * @returns 
+   * @param holderKey
+   * @param didMethod
+   * @returns
    */
-  public createHolder(
-    holderKey: Key,
-    didMethod: DidMethod
-  ): Promise<Holder> {
+  public createHolder(holderKey: Key, didMethod: DidMethod): Promise<Holder> {
     const request = CreateHolderRequest.fromPartial({
       key: holderKey.toProto(),
       didMethod: DidMethod.toProto(didMethod),
@@ -75,13 +72,13 @@ export class IdentityClient {
 
   /**
    * Creates a new issuer on the Bloock Identity service.
-   * @param issuerKey 
-   * @param publishInterval 
-   * @param didMethod 
-   * @param name 
-   * @param description 
-   * @param image 
-   * @returns 
+   * @param issuerKey
+   * @param publishInterval
+   * @param didMethod
+   * @param name
+   * @param description
+   * @param image
+   * @returns
    */
   public createIssuer(
     issuerKey: Key,
@@ -114,14 +111,11 @@ export class IdentityClient {
 
   /**
    * Gets the issuer based on the issuer key and DID method.
-   * @param issuerKey 
-   * @param didMethod 
-   * @returns 
+   * @param issuerKey
+   * @param didMethod
+   * @returns
    */
-  public importIssuer(
-    issuerKey: Key,
-    didMethod: DidMethod
-  ): Promise<Issuer> {
+  public importIssuer(issuerKey: Key, didMethod: DidMethod): Promise<Issuer> {
     const request = ImportIssuerRequest.fromPartial({
       key: issuerKey.toProto(),
       didMethod: DidMethod.toProto(didMethod),
@@ -141,11 +135,11 @@ export class IdentityClient {
 
   /**
    * Creates a new schema builder for defining a schema on the Bloock Identity service.
-   * @param displayName 
-   * @param schemaType 
-   * @param version 
-   * @param description 
-   * @returns 
+   * @param displayName
+   * @param schemaType
+   * @param version
+   * @param description
+   * @returns
    */
   public buildSchema(
     displayName: string,
@@ -164,8 +158,8 @@ export class IdentityClient {
 
   /**
    * Gets a schema from the Bloock Identity service based on the schema ID (ex: Qma1t4uzbnB93E4rasNdu5UWMDh5qg3wMkPm68cnEyfnoM).
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   public getSchema(id: string): Promise<Schema> {
     const request = GetSchemaRequest.fromPartial({
@@ -186,12 +180,12 @@ export class IdentityClient {
 
   /**
    * Creates a new credential builder for defining a credential on the Bloock Identity service.
-   * @param issuer 
-   * @param schemaId 
-   * @param holderDid 
-   * @param expiration 
-   * @param version 
-   * @returns 
+   * @param issuer
+   * @param schemaId
+   * @param holderDid
+   * @param expiration
+   * @param version
+   * @returns
    */
   public buildCredential(
     issuer: Issuer,
@@ -212,8 +206,8 @@ export class IdentityClient {
 
   /**
    * Retrieves the Verifiable Credential entity based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
-   * @param credentialId 
-   * @returns 
+   * @param credentialId
+   * @returns
    */
   public getCredential(credentialId: string): Promise<Credential> {
     const request = GetCredentialRequest.fromPartial({
@@ -234,11 +228,14 @@ export class IdentityClient {
 
   /**
    * Retrieves the json raw offer based on the credential ID (UUID). (ex: 1bf0c79e-55e6-4f14-aa9d-fb55619ba0cf)
-   * @param issuer 
-   * @param credentialId 
-   * @returns 
+   * @param issuer
+   * @param credentialId
+   * @returns
    */
-  public getCredentialOffer(issuer: Issuer, credentialId: string): Promise<string> {
+  public getCredentialOffer(
+    issuer: Issuer,
+    credentialId: string
+  ): Promise<string> {
     const request = GetCredentialOfferRequest.fromPartial({
       configData: this.configData,
       credentialId: credentialId,
@@ -258,17 +255,15 @@ export class IdentityClient {
 
   /**
    * Publishes the state of an issuer on the Bloock Identity service.
-   * @param issuerDid 
-   * @param signer 
-   * @returns 
+   * @param issuerDid
+   * @param signer
+   * @returns
    */
-  public forcePublishIssuerState(
-    issuer: Issuer
-  ): Promise<IssuerStateReceipt> {
+  public forcePublishIssuerState(issuer: Issuer): Promise<IssuerStateReceipt> {
     const req = ForcePublishIssuerStateRequest.fromPartial({
       configData: this.configData,
       issuerDid: issuer.did.did,
-      key: issuer.key.toProto(),
+      key: issuer.key.toProto()
     });
 
     return this.bridge
@@ -284,9 +279,9 @@ export class IdentityClient {
 
   /**
    * Gets the proof of a credential on the Bloock Identity service.
-   * @param issuerDid 
-   * @param credentialId 
-   * @returns 
+   * @param issuerDid
+   * @param credentialId
+   * @returns
    */
   public getCredentialProof(
     issuerDid: string,
@@ -311,9 +306,9 @@ export class IdentityClient {
 
   /**
    * Revokes a credential on the Bloock Identity service.
-   * @param credential 
-   * @param signer 
-   * @returns 
+   * @param credential
+   * @param signer
+   * @returns
    */
   public revokeCredential(
     credential: Credential,
@@ -322,7 +317,7 @@ export class IdentityClient {
     const request = RevokeCredentialRequest.fromPartial({
       configData: this.configData,
       credential: credential.toProto(),
-      key: issuer.key.toProto(),
+      key: issuer.key.toProto()
     });
 
     return this.bridge
@@ -338,8 +333,8 @@ export class IdentityClient {
 
   /**
    * Creates a new verification session on the identity managed API provided.
-   * @param proofRequest 
-   * @returns 
+   * @param proofRequest
+   * @returns
    */
   public createVerification(
     proofRequest: string
@@ -362,9 +357,9 @@ export class IdentityClient {
 
   /**
    * Waits for the completion of a verification session on the identity managed API provided.
-   * @param sessionID 
-   * @param timeout 
-   * @returns 
+   * @param sessionID
+   * @param timeout
+   * @returns
    */
   public waitVerification(
     sessionID: number,
@@ -389,8 +384,8 @@ export class IdentityClient {
 
   /**
    * Gets the status of a verification session on the identity managed API provided.
-   * @param sessionID 
-   * @returns 
+   * @param sessionID
+   * @returns
    */
   public getVerificationStatus(sessionID: number): Promise<boolean> {
     const request = GetVerificationStatusRequest.fromPartial({

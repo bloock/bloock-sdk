@@ -11,11 +11,11 @@ fn test_pdf_load() {
 }
 
 #[wasm_bindgen_test]
-fn test_pdf_get() {
-    pdf_get();
+async fn test_pdf_sign() {
+    pdf_sign().await;
 }
 
 #[wasm_bindgen_test]
-fn test_pdf_set() {
-    pdf_set();
+async fn test_pdf_multisign() {
+    pdf_multisign().await;
 }

@@ -1,8 +1,11 @@
 import { BloockBridge } from "../bridge/bridge";
-import { PublishRequest, RetrieveRequest } from "../bridge/proto/availability";
-import { ConfigData } from "../bridge/proto/config";
+import {
+  PublishRequest,
+  RetrieveRequest
+} from "../bridge/proto/bloock_availability";
+import { ConfigData } from "../bridge/proto/bloock_config";
 import { NewConfigData } from "../config/config";
-import { Publisher, Loader } from "../entity/availability";
+import { Loader, Publisher } from "../entity/availability";
 import { Record } from "../entity/record";
 
 /**
@@ -14,7 +17,7 @@ export class AvailabilityClient {
 
   /**
    * Creates a new instance of the AvailabilityClient with default configuration.
-   * @param configData 
+   * @param configData
    */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
@@ -23,9 +26,9 @@ export class AvailabilityClient {
 
   /**
    * Publishes a Bloock record to the Availability service using the specified publisher.
-   * @param record 
-   * @param publisher 
-   * @returns 
+   * @param record
+   * @param publisher
+   * @returns
    */
   async publish(record: Record, publisher: Publisher): Promise<string> {
     const request = PublishRequest.fromPartial({
@@ -46,8 +49,8 @@ export class AvailabilityClient {
 
   /**
    * Gets a Bloock record from the Availability service using the specified loader.
-   * @param loader 
-   * @returns 
+   * @param loader
+   * @returns
    */
   async retrieve(loader: Loader): Promise<Record> {
     const request = RetrieveRequest.fromPartial({

@@ -1,6 +1,6 @@
-import * as proto from "../../bridge/proto/record_entities";
-import { Proof } from "../integrity";
+import * as proto from "../../bridge/proto/bloock_record_entities";
 import { Signature } from "../authenticity";
+import { Proof } from "../integrity";
 
 /**
  * Represents details related to the integrity of a record, including hash and proof.
@@ -11,8 +11,8 @@ export class IntegrityDetails {
 
   /**
    * Constructs a IntegrityDetails object with the specified parameters.
-   * @param hash 
-   * @param proof 
+   * @param hash
+   * @param proof
    */
   constructor(hash: string, proof?: Proof) {
     this.hash = hash;
@@ -42,7 +42,7 @@ export class AuthenticityDetails {
 
   /**
    * Constructs a AuthenticityDetails object with the specified parameters.
-   * @param signatures 
+   * @param signatures
    */
   constructor(signatures: Signature[]) {
     this.signatures = signatures;
@@ -71,9 +71,9 @@ export class EncryptionDetails {
 
   /**
    * Constructs a EncryptionDetails object with the specified parameters.
-   * @param alg 
-   * @param key 
-   * @param subject 
+   * @param alg
+   * @param key
+   * @param subject
    */
   constructor(alg?: string, key?: string, subject?: string) {
     this.alg = alg;
@@ -103,8 +103,8 @@ export class AvailabilityDetails {
 
   /**
    * Constructs a AvailabilityDetails object with the specified parameters.
-   * @param size 
-   * @param contentType 
+   * @param size
+   * @param contentType
    */
   constructor(size: number, contentType?: string) {
     this.size = size;
@@ -134,10 +134,10 @@ export class RecordDetails {
 
   /**
    * Constructs a RecordDetails object with the specified parameters.
-   * @param integrity 
-   * @param authenticity 
-   * @param encryption 
-   * @param availability 
+   * @param integrity
+   * @param authenticity
+   * @param encryption
+   * @param availability
    */
   constructor(
     integrity?: IntegrityDetails,

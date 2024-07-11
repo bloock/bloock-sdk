@@ -1,14 +1,16 @@
 package com.bloock.sdk.entity.identity;
 
 import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.IdentityEntities;
-import com.bloock.sdk.bridge.proto.Identity;
-import com.bloock.sdk.bridge.proto.Shared;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentity;
+import com.bloock.sdk.bridge.proto.BloockShared;
 import com.bloock.sdk.config.Config;
 import java.util.List;
 
 /**
- * Represents a verifiable credential with its associated information. <a href="https://www.w3.org/TR/vc-data-model-2.0/">Verifiable Credentials Data Model v2.0</a>.
+ * Represents a verifiable credential with its associated information.
+ * <a href="https://www.w3.org/TR/vc-data-model-2.0/">Verifiable Credentials
+ * Data Model v2.0</a>.
  */
 public class Credential {
   private final List<String> context;
@@ -24,6 +26,7 @@ public class Credential {
 
   /**
    * Creates a new Credential instance with the provided details.
+   * 
    * @param context
    * @param id
    * @param type
@@ -58,7 +61,7 @@ public class Credential {
     this.proof = proof;
   }
 
-  public static Credential fromProto(IdentityEntities.Credential res) {
+  public static Credential fromProto(BloockIdentityEntities.Credential res) {
     return new Credential(
         res.getContextList(),
         res.getId(),
@@ -72,8 +75,8 @@ public class Credential {
         CredentialProof.fromProto(res.getProof()));
   }
 
-  public IdentityEntities.Credential toProto() {
-    return IdentityEntities.Credential.newBuilder()
+  public BloockIdentityEntities.Credential toProto() {
+    return BloockIdentityEntities.Credential.newBuilder()
         .addAllContext(this.context)
         .setId(this.id)
         .addAllType(this.type)
@@ -89,6 +92,7 @@ public class Credential {
 
   /**
    * Creates a Credential instance from a JSON string representation.
+   * 
    * @param json
    * @return
    * @throws Exception
@@ -96,16 +100,14 @@ public class Credential {
   public static Credential fromJson(String json) throws Exception {
     Bridge bridge = new Bridge();
 
-    Identity.CredentialFromJsonRequest req =
-        Identity.CredentialFromJsonRequest.newBuilder()
-            .setConfigData(Config.newConfigDataDefault())
-            .setJson(json)
-            .build();
+    BloockIdentity.CredentialFromJsonRequest req = BloockIdentity.CredentialFromJsonRequest.newBuilder()
+        .setConfigData(Config.newConfigDataDefault())
+        .setJson(json)
+        .build();
 
-    Identity.CredentialFromJsonResponse response =
-        bridge.getIdentity().credentialFromJson(req);
+    BloockIdentity.CredentialFromJsonResponse response = bridge.getIdentity().credentialFromJson(req);
 
-    if (response.getError() != Shared.Error.getDefaultInstance()) {
+    if (response.getError() != BloockShared.Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 
@@ -114,21 +116,22 @@ public class Credential {
 
   /**
    * Converts the Credential instance to its JSON string representation.
+   * 
    * @return
    * @throws Exception
    */
   public String toJson() throws Exception {
     Bridge bridge = new Bridge();
 
-    com.bloock.sdk.bridge.proto.Identity.CredentialToJsonRequest req =
-        com.bloock.sdk.bridge.proto.Identity.CredentialToJsonRequest.newBuilder()
-            .setConfigData(Config.newConfigDataDefault())
-            .setCredential(this.toProto())
-            .build();
+    com.bloock.sdk.bridge.proto.BloockIdentity.CredentialToJsonRequest req = com.bloock.sdk.bridge.proto.BloockIdentity.CredentialToJsonRequest
+        .newBuilder()
+        .setConfigData(Config.newConfigDataDefault())
+        .setCredential(this.toProto())
+        .build();
 
-    Identity.CredentialToJsonResponse response = bridge.getIdentity().credentialToJson(req);
+    BloockIdentity.CredentialToJsonResponse response = bridge.getIdentity().credentialToJson(req);
 
-    if (response.getError() != Shared.Error.getDefaultInstance()) {
+    if (response.getError() != BloockShared.Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 
@@ -137,6 +140,7 @@ public class Credential {
 
   /**
    * Gets the context associated with the credential.
+   * 
    * @return
    */
   public List<String> getContext() {
@@ -145,6 +149,7 @@ public class Credential {
 
   /**
    * Gets the ID associated with the credential.
+   * 
    * @return
    */
   public String getId() {
@@ -153,6 +158,7 @@ public class Credential {
 
   /**
    * Gets the types associated with the credential.
+   * 
    * @return
    */
   public List<String> getType() {
@@ -161,6 +167,7 @@ public class Credential {
 
   /**
    * Gets the issuance date of the credential.
+   * 
    * @return
    */
   public String getIssuanceDate() {
@@ -169,6 +176,7 @@ public class Credential {
 
   /**
    * Gets the expiration date of the credential.
+   * 
    * @return
    */
   public String getExpiration() {
@@ -177,6 +185,7 @@ public class Credential {
 
   /**
    * Gets the subject of the credential.
+   * 
    * @return
    */
   public String getCredentialSubject() {
@@ -185,6 +194,7 @@ public class Credential {
 
   /**
    * Gets the status of the credential.
+   * 
    * @return
    */
   public CredentialStatus getCredentialStatus() {
@@ -193,6 +203,7 @@ public class Credential {
 
   /**
    * Gets the issuer of the credential.
+   * 
    * @return
    */
   public String getIssuer() {
@@ -201,6 +212,7 @@ public class Credential {
 
   /**
    * Gets the schema associated with the credential.
+   * 
    * @return
    */
   public CredentialSchema getCredentialSchema() {
@@ -209,6 +221,7 @@ public class Credential {
 
   /**
    * Gets the proof associated with the credential.
+   * 
    * @return
    */
   public CredentialProof getProof() {

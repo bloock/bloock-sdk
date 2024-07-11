@@ -1,4 +1,4 @@
-import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import * as keysEntitiesProto from "../../bridge/proto/bloock_keys_entities";
 import { KeyProtectionLevel } from "./key_protection_level";
 import { KeyType } from "./key_type";
 
@@ -25,10 +25,10 @@ export class ManagedKeyParams {
 
   /**
    * Constructs a ManagedKeyParams object with the specified parameters.
-   * @param protection 
-   * @param keyType 
-   * @param name 
-   * @param expiration 
+   * @param protection
+   * @param keyType
+   * @param name
+   * @param expiration
    */
   constructor(
     protection: KeyProtectionLevel,

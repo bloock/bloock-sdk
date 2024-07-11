@@ -1,4 +1,4 @@
-import * as keyProto from "../../bridge/proto/keys";
+import * as keyProto from "../../bridge/proto/bloock_keys";
 import { KeyPair } from "./key_pair";
 
 /**

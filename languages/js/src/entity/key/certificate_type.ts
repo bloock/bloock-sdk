@@ -1,4 +1,4 @@
-import * as keysEntitiesProto from "../../bridge/proto/keys_entities";
+import * as keysEntitiesProto from "../../bridge/proto/bloock_keys_entities";
 
 /**
  * Represents the type of certificate.

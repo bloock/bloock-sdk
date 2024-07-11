@@ -1,13 +1,14 @@
 package com.bloock.sdk.entity.key;
 
-import com.bloock.sdk.bridge.proto.KeysEntities;
+import com.bloock.sdk.bridge.proto.BloockKeysEntities;
 
 /**
  * Represents a managed key.
  */
 public class ManagedKey {
   /**
-   * Is the unique identifier of the managed key (ex: 46c49ee7-ef44-472c-a873-ce81a2d5d764).
+   * Is the unique identifier of the managed key (ex:
+   * 46c49ee7-ef44-472c-a873-ce81a2d5d764).
    */
   String id;
   /**
@@ -37,6 +38,7 @@ public class ManagedKey {
 
   /**
    * Constructs a ManagedKey object with the specified parameters.
+   * 
    * @param id
    * @param name
    * @param protection
@@ -61,7 +63,7 @@ public class ManagedKey {
     this.accessControlType = accessControlType;
   }
 
-  public static ManagedKey fromProto(KeysEntities.ManagedKey key) {
+  public static ManagedKey fromProto(BloockKeysEntities.ManagedKey key) {
     return new ManagedKey(
         key.getId(),
         key.getName(),
@@ -69,12 +71,11 @@ public class ManagedKey {
         KeyType.fromProto(key.getKeyType()),
         key.getExpiration(),
         key.getKey(),
-        AccessControlType.fromProto(key.getAccessControlType())
-    );
+        AccessControlType.fromProto(key.getAccessControlType()));
   }
 
-  public KeysEntities.ManagedKey toProto() {
-    return KeysEntities.ManagedKey.newBuilder()
+  public BloockKeysEntities.ManagedKey toProto() {
+    return BloockKeysEntities.ManagedKey.newBuilder()
         .setId(this.id)
         .setName(this.key)
         .setProtection(this.protection.toProto())
@@ -87,6 +88,7 @@ public class ManagedKey {
 
   /**
    * Gets the id of the managed key
+   * 
    * @return
    */
   public String getId() {
@@ -95,6 +97,7 @@ public class ManagedKey {
 
   /**
    * Gets the name of the managed key
+   * 
    * @return
    */
   public String getName() {
@@ -103,6 +106,7 @@ public class ManagedKey {
 
   /**
    * Gets the protection level of the managed key.
+   * 
    * @return
    */
   public KeyProtectionLevel getProtection() {
@@ -111,6 +115,7 @@ public class ManagedKey {
 
   /**
    * Gets the key type of the managed key.
+   * 
    * @return
    */
   public KeyType getKeyType() {
@@ -119,6 +124,7 @@ public class ManagedKey {
 
   /**
    * Gets the expiration of the managed key.
+   * 
    * @return
    */
   public long getExpiration() {
@@ -127,6 +133,7 @@ public class ManagedKey {
 
   /**
    * Gets the public key of the managed key.
+   * 
    * @return
    */
   public String getKey() {
@@ -135,6 +142,7 @@ public class ManagedKey {
 
   /**
    * Gets the access control type of the managed key.
+   * 
    * @return
    */
   public AccessControlType getAccessControlType() {

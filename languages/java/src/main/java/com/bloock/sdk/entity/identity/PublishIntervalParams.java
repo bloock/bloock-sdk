@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities.PublishInterval;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities.PublishInterval;
 
 /**
  * Represents different publish intervals.

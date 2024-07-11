@@ -1,6 +1,6 @@
 from bloock._bridge import bridge
-from bloock._bridge.proto.shared_pb2 import Error
-from bloock._bridge.proto.webhook_pb2 import VerifyWebhookSignatureRequest
+from bloock._bridge.proto.bloock_shared_pb2 import Error
+from bloock._bridge.proto.bloock_webhook_pb2 import VerifyWebhookSignatureRequest
 from bloock._config.config import Config
 
 

@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 
 /**
  * Represents the schema information for a credential, including its ID and type.
@@ -9,8 +9,8 @@ export class CredentialSchema {
 
   /**
    * Constructs an CredentialSchema object with the specified parameters.
-   * @param id 
-   * @param type 
+   * @param id
+   * @param type
    */
   constructor(id: string, type: string) {
     this.id = id;

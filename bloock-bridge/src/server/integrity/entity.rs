@@ -58,9 +58,8 @@ impl From<AnchorNetwork> for AnchorNetworkCore {
 impl From<Network> for CoreNetwork {
     fn from(n: Network) -> Self {
         match n {
-            Network::BloockChain => CoreNetwork::BloockChain,
             Network::EthereumMainnet => CoreNetwork::EthereumMainnet,
-            Network::EthereumGoerli => CoreNetwork::EthereumGoerli,
+            Network::EthereumSepolia => CoreNetwork::EthereumSepolia,
             Network::GnosisChain => CoreNetwork::GnosisChain,
             Network::PolygonChain => CoreNetwork::PolygonChain,
         }

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-import bloock._bridge.proto.encryption_entities_pb2 as proto
+import bloock._bridge.proto.bloock_encryption_entities_pb2 as proto
 
 
 class EncryptionAlg(Enum):

@@ -1,10 +1,10 @@
 package com.bloock.sdk.entity.identity;
 
 import com.bloock.sdk.bridge.Bridge;
-import com.bloock.sdk.bridge.proto.Config;
-import com.bloock.sdk.bridge.proto.IdentityEntities;
-import com.bloock.sdk.bridge.proto.Identity;
-import com.bloock.sdk.bridge.proto.Shared;
+import com.bloock.sdk.bridge.proto.BloockConfig;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentity;
+import com.bloock.sdk.bridge.proto.BloockShared;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,20 +16,21 @@ public class SchemaBuilder {
   private final String schemaType;
   private final String version;
   private final String description;
-  private final Config.ConfigData configData;
+  private final BloockConfig.ConfigData configData;
 
-  private final List<IdentityEntities.StringAttributeDefinition> stringAttributes;
-  private final List<IdentityEntities.IntegerAttributeDefinition> integerAttributes;
-  private final List<IdentityEntities.DecimalAttributeDefinition> decimalAttributes;
-  private final List<IdentityEntities.BooleanAttributeDefinition> booleanAttributes;
-  private final List<IdentityEntities.DateAttributeDefinition> dateAttributes;
-  private final List<IdentityEntities.DateTimeAttributeDefinition> datetimeAttributes;
-  private final List<IdentityEntities.StringEnumAttributeDefinition> stringEnumAttributes;
-  private final List<IdentityEntities.IntegerEnumAttributeDefinition> integerEnumAttributes;
-  private final List<IdentityEntities.DecimalEnumAttributeDefinition> decimalEnumAttributes;
+  private final List<BloockIdentityEntities.StringAttributeDefinition> stringAttributes;
+  private final List<BloockIdentityEntities.IntegerAttributeDefinition> integerAttributes;
+  private final List<BloockIdentityEntities.DecimalAttributeDefinition> decimalAttributes;
+  private final List<BloockIdentityEntities.BooleanAttributeDefinition> booleanAttributes;
+  private final List<BloockIdentityEntities.DateAttributeDefinition> dateAttributes;
+  private final List<BloockIdentityEntities.DateTimeAttributeDefinition> datetimeAttributes;
+  private final List<BloockIdentityEntities.StringEnumAttributeDefinition> stringEnumAttributes;
+  private final List<BloockIdentityEntities.IntegerEnumAttributeDefinition> integerEnumAttributes;
+  private final List<BloockIdentityEntities.DecimalEnumAttributeDefinition> decimalEnumAttributes;
 
   /**
    * Creates a new instance of SchemaBuilder with initial values.
+   * 
    * @param displayName
    * @param schemaType
    * @param version
@@ -41,7 +42,7 @@ public class SchemaBuilder {
       String schemaType,
       String version,
       String description,
-      Config.ConfigData configData) {
+      BloockConfig.ConfigData configData) {
     this.displayName = displayName;
     this.schemaType = schemaType;
     this.version = version;
@@ -61,6 +62,7 @@ public class SchemaBuilder {
 
   /**
    * Adds a string attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -76,6 +78,7 @@ public class SchemaBuilder {
 
   /**
    * Adds an integer attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -91,6 +94,7 @@ public class SchemaBuilder {
 
   /**
    * Adds a decimal attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -106,6 +110,7 @@ public class SchemaBuilder {
 
   /**
    * Adds a boolean attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -121,6 +126,7 @@ public class SchemaBuilder {
 
   /**
    * Adds a date attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -136,6 +142,7 @@ public class SchemaBuilder {
 
   /**
    * Adds a datetime attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -151,6 +158,7 @@ public class SchemaBuilder {
 
   /**
    * Adds a string enum attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -172,6 +180,7 @@ public class SchemaBuilder {
 
   /**
    * Adds an integer enum attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -193,6 +202,7 @@ public class SchemaBuilder {
 
   /**
    * Adds a decimal enum attribute descriptor to the schema builder.
+   * 
    * @param name
    * @param technicalName
    * @param description
@@ -214,33 +224,33 @@ public class SchemaBuilder {
 
   /**
    * Creates a schema using the configured attributes.
+   * 
    * @return
    * @throws Exception
    */
   public Schema build() throws Exception {
     Bridge bridge = new Bridge();
 
-    Identity.BuildSchemaRequest req =
-        Identity.BuildSchemaRequest.newBuilder()
-            .setConfigData(this.configData)
-            .setDisplayName(this.displayName)
-            .setSchemaType(this.schemaType)
-            .setVersion(this.version)
-            .setDescription(this.description)
-            .addAllStringAttributes(this.stringAttributes)
-            .addAllIntegerAttributes(this.integerAttributes)
-            .addAllDecimalAttributes(this.decimalAttributes)
-            .addAllBooleanAttributes(this.booleanAttributes)
-            .addAllDateAttributes(this.dateAttributes)
-            .addAllDatetimeAttributes(this.datetimeAttributes)
-            .addAllStringEnumAttributes(this.stringEnumAttributes)
-            .addAllIntegerEnumAttributes(this.integerEnumAttributes)
-            .addAllDecimalEnumAttributes(this.decimalEnumAttributes)
-            .build();
+    BloockIdentity.BuildSchemaRequest req = BloockIdentity.BuildSchemaRequest.newBuilder()
+        .setConfigData(this.configData)
+        .setDisplayName(this.displayName)
+        .setSchemaType(this.schemaType)
+        .setVersion(this.version)
+        .setDescription(this.description)
+        .addAllStringAttributes(this.stringAttributes)
+        .addAllIntegerAttributes(this.integerAttributes)
+        .addAllDecimalAttributes(this.decimalAttributes)
+        .addAllBooleanAttributes(this.booleanAttributes)
+        .addAllDateAttributes(this.dateAttributes)
+        .addAllDatetimeAttributes(this.datetimeAttributes)
+        .addAllStringEnumAttributes(this.stringEnumAttributes)
+        .addAllIntegerEnumAttributes(this.integerEnumAttributes)
+        .addAllDecimalEnumAttributes(this.decimalEnumAttributes)
+        .build();
 
-    Identity.BuildSchemaResponse response = bridge.getIdentity().buildSchema(req);
+    BloockIdentity.BuildSchemaResponse response = bridge.getIdentity().buildSchema(req);
 
-    if (response.getError() != Shared.Error.getDefaultInstance()) {
+    if (response.getError() != BloockShared.Error.getDefaultInstance()) {
       throw new Exception(response.getError().getMessage());
     }
 

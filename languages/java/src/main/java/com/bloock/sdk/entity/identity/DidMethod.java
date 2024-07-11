@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
  * Represents the type of method did.
@@ -15,7 +15,7 @@ public enum DidMethod {
    */
   PolygonIDTest;
 
-  public static DidMethod fromProto(IdentityEntities.DidMethod method) {
+  public static DidMethod fromProto(BloockIdentityEntities.DidMethod method) {
     switch (method) {
       case POLYGON_ID:
         return DidMethod.PolygonID;
@@ -26,14 +26,14 @@ public enum DidMethod {
     }
   }
 
-  public IdentityEntities.DidMethod toProto() {
+  public BloockIdentityEntities.DidMethod toProto() {
     switch (this) {
       case PolygonID:
-        return IdentityEntities.DidMethod.POLYGON_ID;
+        return BloockIdentityEntities.DidMethod.POLYGON_ID;
       case PolygonIDTest:
-        return IdentityEntities.DidMethod.POLYGON_ID_TEST;
+        return BloockIdentityEntities.DidMethod.POLYGON_ID_TEST;
       default:
-        return IdentityEntities.DidMethod.POLYGON_ID;
+        return BloockIdentityEntities.DidMethod.POLYGON_ID;
     }
   }
 }

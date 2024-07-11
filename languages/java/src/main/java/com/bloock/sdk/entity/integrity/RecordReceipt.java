@@ -1,9 +1,10 @@
 package com.bloock.sdk.entity.integrity;
 
-import com.bloock.sdk.bridge.proto.IntegrityEntities;
+import com.bloock.sdk.bridge.proto.BloockIntegrityEntities;
 
 /**
- * Represents a receipt for a record, including anchor ID, client, record, and status information.
+ * Represents a receipt for a record, including anchor ID, client, record, and
+ * status information.
  */
 public class RecordReceipt {
   long anchor;
@@ -13,6 +14,7 @@ public class RecordReceipt {
 
   /**
    * Constructs a RecordReceipt object with the specified parameters.
+   * 
    * @param anchor
    * @param client
    * @param record
@@ -25,13 +27,13 @@ public class RecordReceipt {
     this.status = status;
   }
 
-  public static RecordReceipt fromProto(IntegrityEntities.RecordReceipt receipt) {
+  public static RecordReceipt fromProto(BloockIntegrityEntities.RecordReceipt receipt) {
     return new RecordReceipt(
         receipt.getAnchor(), receipt.getClient(), receipt.getRecord(), receipt.getStatus());
   }
 
-  IntegrityEntities.RecordReceipt toProto() {
-    return IntegrityEntities.RecordReceipt.newBuilder()
+  BloockIntegrityEntities.RecordReceipt toProto() {
+    return BloockIntegrityEntities.RecordReceipt.newBuilder()
         .setAnchor(anchor)
         .setClient(client)
         .setRecord(record)
@@ -41,6 +43,7 @@ public class RecordReceipt {
 
   /**
    * Gets the anchor of the record receipt.
+   * 
    * @return
    */
   public long getAnchor() {
@@ -49,6 +52,7 @@ public class RecordReceipt {
 
   /**
    * Gets the client of the record receipt.
+   * 
    * @return
    */
   public String getClient() {
@@ -57,6 +61,7 @@ public class RecordReceipt {
 
   /**
    * Gets the record of the record receipt.
+   * 
    * @return
    */
   public String getRecord() {
@@ -65,6 +70,7 @@ public class RecordReceipt {
 
   /**
    * Gets the status of the record receipt.
+   * 
    * @return
    */
   public String getStatus() {

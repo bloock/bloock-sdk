@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/integrity_entities";
+import * as proto from "../../bridge/proto/bloock_integrity_entities";
 import { AnchorNetwork } from "./anchor_network";
 
 /**
@@ -13,11 +13,11 @@ export class Anchor {
 
   /**
    * Constructs an Anchor object with the specified parameters.
-   * @param id 
-   * @param blockRoots 
-   * @param networks 
-   * @param root 
-   * @param status 
+   * @param id
+   * @param blockRoots
+   * @param networks
+   * @param root
+   * @param status
    */
   constructor(
     id: number,

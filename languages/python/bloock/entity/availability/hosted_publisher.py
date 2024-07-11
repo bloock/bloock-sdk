@@ -1,4 +1,4 @@
-import bloock._bridge.proto.availability_entities_pb2 as proto
+import bloock._bridge.proto.bloock_availability_entities_pb2 as proto
 from bloock.entity.availability.publisher import Publisher
 from bloock.entity.availability.publisher_args import PublisherArgs
 

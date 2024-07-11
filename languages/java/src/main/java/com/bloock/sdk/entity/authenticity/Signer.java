@@ -1,6 +1,6 @@
 package com.bloock.sdk.entity.authenticity;
 
-import com.bloock.sdk.bridge.proto.AuthenticityEntities;
+import com.bloock.sdk.bridge.proto.BloockAuthenticityEntities;
 import com.bloock.sdk.entity.key.*;
 
 /**
@@ -18,6 +18,7 @@ public class Signer {
 
   /**
    * Creates a Signer instance with a local key.
+   * 
    * @param localKey
    */
   public Signer(LocalKey localKey) {
@@ -26,6 +27,7 @@ public class Signer {
 
   /**
    * Creates a Signer instance with a local key and specified hash algorithm.
+   * 
    * @param localKey
    * @param hashAlg
    */
@@ -36,6 +38,7 @@ public class Signer {
 
   /**
    * Creates a Signer instance with a managed key.
+   * 
    * @param managedKey
    */
   public Signer(ManagedKey managedKey) {
@@ -43,7 +46,9 @@ public class Signer {
   }
 
   /**
-   * Creates a Signer instance with a managed key, specified hash algorithm, and access control configuration.
+   * Creates a Signer instance with a managed key, specified hash algorithm, and
+   * access control configuration.
+   * 
    * @param managedKey
    * @param hashAlg
    * @param accessControl
@@ -56,6 +61,7 @@ public class Signer {
 
   /**
    * Creates a Signer instance with a managed certificate.
+   * 
    * @param managedCertificate
    */
   public Signer(ManagedCertificate managedCertificate) {
@@ -63,7 +69,9 @@ public class Signer {
   }
 
   /**
-   * Creates a Signer instance with a managed certificate, specified hash algorithm, and access control configuration.
+   * Creates a Signer instance with a managed certificate, specified hash
+   * algorithm, and access control configuration.
+   * 
    * @param managedCertificate
    * @param hashAlg
    * @param accessControl
@@ -76,6 +84,7 @@ public class Signer {
 
   /**
    * Creates a Signer instance with a local certificate.
+   * 
    * @param localCertificate
    */
   public Signer(LocalCertificate localCertificate) {
@@ -83,7 +92,9 @@ public class Signer {
   }
 
   /**
-   * Creates a Signer instance with a local certificate and specified hash algorithm.
+   * Creates a Signer instance with a local certificate and specified hash
+   * algorithm.
+   * 
    * @param localCertificate
    * @param hashAlg
    */
@@ -92,8 +103,8 @@ public class Signer {
     this.hashAlg = hashAlg;
   }
 
-  public AuthenticityEntities.Signer toProto() {
-    AuthenticityEntities.Signer.Builder builder = AuthenticityEntities.Signer.newBuilder();
+  public BloockAuthenticityEntities.Signer toProto() {
+    BloockAuthenticityEntities.Signer.Builder builder = BloockAuthenticityEntities.Signer.newBuilder();
 
     if (this.localKey != null) {
       builder.setLocalKey(this.localKey.toProto());

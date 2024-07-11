@@ -1,4 +1,4 @@
-import * as proto from "../../bridge/proto/availability_entities";
+import * as proto from "../../bridge/proto/bloock_availability_entities";
 import { Loader } from "./loader";
 import { LoaderArgs } from "./loader_args";
 
@@ -11,7 +11,7 @@ export class IpfsLoader implements Loader {
 
   /**
    * Constructs a IpfsLoader object with the specified parameters.
-   * @param id 
+   * @param id
    */
   constructor(id: string) {
     this.type = proto.DataAvailabilityType.IPFS;

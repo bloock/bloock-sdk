@@ -1,17 +1,17 @@
 import { BloockBridge } from "../bridge/bridge";
-import { ConfigData } from "../bridge/proto/config";
-import { EcdsaKeyPair, KeyPair } from "../entity/key";
-import { NewConfigData } from "../config/config";
-import { Signature } from "../entity/authenticity";
-import { Record } from "../entity/record";
 import {
   GetSignaturesRequest,
   SignRequest,
   VerifyRequest
-} from "../bridge/proto/authenticity";
+} from "../bridge/proto/bloock_authenticity";
+import { ConfigData } from "../bridge/proto/bloock_config";
+import { GenerateLocalKeyRequest } from "../bridge/proto/bloock_keys";
+import { KeyType } from "../bridge/proto/bloock_keys_entities";
+import { NewConfigData } from "../config/config";
+import { Signature } from "../entity/authenticity";
 import { Signer } from "../entity/authenticity/signer";
-import { GenerateLocalKeyRequest } from "../bridge/proto/keys";
-import { KeyType } from "../bridge/proto/keys_entities";
+import { EcdsaKeyPair, KeyPair } from "../entity/key";
+import { Record } from "../entity/record";
 
 /**
  * Represents a client for interacting with the [Bloock Authenticity service](https://dashboard.bloock.com/login).
@@ -22,7 +22,7 @@ export class AuthenticityClient {
 
   /**
    * Creates a new instance of the AuthenticityClient with default configuration.
-   * @param configData 
+   * @param configData
    */
   constructor(configData?: ConfigData) {
     this.bridge = new BloockBridge();
@@ -53,9 +53,9 @@ export class AuthenticityClient {
 
   /**
    * Signs a Bloock record using the specified signer.
-   * @param record 
-   * @param signer 
-   * @returns 
+   * @param record
+   * @param signer
+   * @returns
    */
   public async sign(record: Record, signer: Signer): Promise<Signature> {
     return this.bridge
@@ -77,8 +77,8 @@ export class AuthenticityClient {
 
   /**
    * Verifies the authenticity of a Bloock record.
-   * @param record 
-   * @returns 
+   * @param record
+   * @returns
    */
   public async verify(record: Record): Promise<boolean> {
     return this.bridge
@@ -99,8 +99,8 @@ export class AuthenticityClient {
 
   /**
    * Gets the signatures associated with a Bloock record.
-   * @param record 
-   * @returns 
+   * @param record
+   * @returns
    */
   async getSignatures(record: Record): Promise<Signature[]> {
     return this.bridge

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-import bloock._bridge.proto.integrity_entities_pb2 as proto
+import bloock._bridge.proto.bloock_integrity_entities_pb2 as proto
 from bloock.entity.integrity.proof_anchor import ProofAnchor
 
 

@@ -1,13 +1,15 @@
 package com.bloock.sdk.entity.identity;
 
-import com.bloock.sdk.bridge.proto.IdentityEntities;
+import com.bloock.sdk.bridge.proto.BloockIdentityEntities;
 
 /**
  * Represents a descriptor for an attribute with a decimal value.
  */
 public class DecimalAttributeDescriptor extends AttributeDescriptor {
   /**
-   * Constructs an DecimalAttributeDescriptor object with the specified parameters.
+   * Constructs an DecimalAttributeDescriptor object with the specified
+   * parameters.
+   * 
    * @param displayName
    * @param technicalName
    * @param description
@@ -19,13 +21,13 @@ public class DecimalAttributeDescriptor extends AttributeDescriptor {
   }
 
   public static DecimalAttributeDescriptor fromProto(
-      IdentityEntities.DecimalAttributeDefinition res) {
+      BloockIdentityEntities.DecimalAttributeDefinition res) {
     return new DecimalAttributeDescriptor(
         res.getDisplayName(), res.getId(), res.getDescription(), res.getRequired());
   }
 
-  public IdentityEntities.DecimalAttributeDefinition toProto() {
-    return IdentityEntities.DecimalAttributeDefinition.newBuilder()
+  public BloockIdentityEntities.DecimalAttributeDefinition toProto() {
+    return BloockIdentityEntities.DecimalAttributeDefinition.newBuilder()
         .setDisplayName(this.displayName)
         .setId(this.technicalName)
         .setDescription(this.description)

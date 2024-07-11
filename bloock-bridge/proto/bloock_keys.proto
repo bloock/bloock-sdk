@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package bloock;
+
+option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
+option java_package = "com.bloock.sdk.bridge.proto";
+
+import "bloock_keys_entities.proto";
+import "bloock_shared.proto";
+import "bloock_config.proto";
+
+service KeyService {
+  rpc GenerateLocalKey(GenerateLocalKeyRequest)
+      returns (GenerateLocalKeyResponse);
+  rpc LoadLocalKey(LoadLocalKeyRequest) returns (LoadLocalKeyResponse);
+
+  rpc GenerateManagedKey(GenerateManagedKeyRequest)
+      returns (GenerateManagedKeyResponse);
+  rpc LoadManagedKey(LoadManagedKeyRequest) returns (LoadManagedKeyResponse);
+
+  rpc GenerateLocalCertificate(GenerateLocalCertificateRequest)
+      returns (GenerateLocalCertificateResponse);
+  rpc LoadLocalCertificate(LoadLocalCertificateRequest)
+      returns (LoadLocalCertificateResponse);
+
+  rpc GenerateManagedCertificate(GenerateManagedCertificateRequest)
+      returns (GenerateManagedCertificateResponse);
+  rpc LoadManagedCertificate(LoadManagedCertificateRequest)
+      returns (LoadManagedCertificateResponse);
+  rpc ImportManagedCertificate(ImportManagedCertificateRequest)
+      returns (ImportManagedCertificateResponse);
+
+  rpc SetupTotpAccessControl(SetupTotpAccessControlRequest)
+      returns (SetupTotpAccessControlResponse);
+  rpc SetupSecretAccessControl(SetupSecretAccessControlRequest)
+      returns (SetupSecretAccessControlResponse);
+
+  rpc RecoverTotpAccessControl(RecoverTotpAccessControlRequest)
+      returns (RecoverTotpAccessControlResponse);
+}
+
+message GenerateLocalKeyRequest {
+  ConfigData config_data = 1;
+  KeyType key_type = 2;
+}
+
+message GenerateLocalKeyResponse {
+  LocalKey local_key = 1;
+  optional Error error = 2;
+}
+
+message GenerateManagedKeyRequest {
+  ConfigData config_data = 1;
+  ManagedKeyParams params = 2;
+}
+
+message GenerateManagedKeyResponse {
+  ManagedKey managed_key = 1;
+  optional Error error = 2;
+}
+
+message LoadLocalKeyRequest {
+  ConfigData config_data = 1;
+  KeyType key_type = 2;
+  string key = 3;
+}
+
+message LoadLocalKeyResponse {
+  LocalKey local_key = 1;
+  optional Error error = 2;
+}
+
+message LoadManagedKeyRequest {
+  ConfigData config_data = 1;
+  string id = 2;
+}
+
+message LoadManagedKeyResponse {
+  ManagedKey managed_key = 1;
+  optional Error error = 2;
+}
+
+message GenerateLocalCertificateRequest {
+  ConfigData config_data = 1;
+  LocalCertificateParams params = 2;
+}
+
+message GenerateLocalCertificateResponse {
+  LocalCertificate local_certificate = 1;
+  optional Error error = 2;
+}
+
+message GenerateManagedCertificateRequest {
+  ConfigData config_data = 1;
+  ManagedCertificateParams params = 2;
+}
+
+message GenerateManagedCertificateResponse {
+  ManagedCertificate managed_certificate = 1;
+  optional Error error = 2;
+}
+
+message LoadLocalCertificateRequest {
+  ConfigData config_data = 1;
+  bytes pkcs12 = 2;
+  string password = 3;
+}
+
+message LoadLocalCertificateResponse {
+  LocalCertificate local_certificate = 1;
+  optional Error error = 2;
+}
+
+message LoadManagedCertificateRequest {
+  ConfigData config_data = 1;
+  string id = 2;
+}
+
+message LoadManagedCertificateResponse {
+  ManagedCertificate managed_certificate = 1;
+  optional Error error = 2;
+}
+
+message ImportManagedCertificateRequest {
+  ConfigData config_data = 1;
+  bytes certificate = 2;
+  optional string password = 3;
+  CertificateType certificate_type = 4;
+}
+
+message ImportManagedCertificateResponse {
+  ManagedCertificate managed_certificate = 1;
+  optional Error error = 2;
+}
+
+message SetupTotpAccessControlRequest {
+  ConfigData config_data = 1;
+  optional ManagedKey managed_key = 2;
+  optional ManagedCertificate managed_certificate = 3;
+}
+
+message SetupTotpAccessControlResponse {
+  string secret = 1;
+  string secret_qr = 2;
+  repeated string recovery_codes = 3;
+  optional Error error = 4;
+}
+
+message SetupSecretAccessControlRequest {
+  ConfigData config_data = 1;
+  string secret = 2;
+  string email = 3;
+  optional ManagedKey managed_key = 4;
+  optional ManagedCertificate managed_certificate = 5;
+}
+
+message SetupSecretAccessControlResponse { optional Error error = 1; }
+
+message RecoverTotpAccessControlRequest {
+  ConfigData config_data = 1;
+  string code = 2;
+  optional ManagedKey managed_key = 3;
+  optional ManagedCertificate managed_certificate = 4;
+}
+
+message RecoverTotpAccessControlResponse {
+  string secret = 1;
+  string secret_qr = 2;
+  repeated string recovery_codes = 3;
+  optional Error error = 4;
+}

@@ -1,4 +1,4 @@
-import * as identityEntitiesProto from "../../bridge/proto/identity_entities";
+import * as identityEntitiesProto from "../../bridge/proto/bloock_identity_entities";
 import { AttributeDescriptor } from "./attribute_descriptor";
 
 /**
@@ -9,11 +9,11 @@ export class StringEnumAttributeDescriptor extends AttributeDescriptor {
 
   /**
    * Constructs an StringEnumAttributeDescriptor object with the specified parameters.
-   * @param displayName 
-   * @param technicalName 
-   * @param description 
-   * @param required 
-   * @param enumeration 
+   * @param displayName
+   * @param technicalName
+   * @param description
+   * @param required
+   * @param enumeration
    */
   constructor(
     displayName: string,
