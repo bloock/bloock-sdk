@@ -27,13 +27,13 @@ describe("Integrity Tests", () => {
 
     const timestampValidateRoot = await integrityClient.validateRoot(
       root,
-      Network.ETHEREUM_SEPOLIA
+      Network.GNOSIS_CHAIN
     );
     expect(timestampValidateRoot).toBeGreaterThan(0);
 
     const timestampVerifyRecords = await integrityClient.verifyRecords(
       records,
-      Network.ETHEREUM_SEPOLIA
+      Network.GNOSIS_CHAIN
     );
     expect(timestampVerifyRecords).toBeGreaterThan(0);
 

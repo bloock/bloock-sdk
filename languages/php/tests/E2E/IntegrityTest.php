@@ -37,11 +37,11 @@ final class IntegrityTest extends TestCase
         $this->assertNotEquals("", $root);
         $this->assertNotNull($root);
 
-        $timestampValidateRoot = $integrityClient->validateRoot($root, Network::ETHEREUM_SEPOLIA);
+        $timestampValidateRoot = $integrityClient->validateRoot($root, Network::GNOSIS_CHAIN);
 
         $this->assertTrue($timestampValidateRoot > 0);
 
-        $timestampVerifyRecords = $integrityClient->verifyRecords($records, Network::ETHEREUM_SEPOLIA);
+        $timestampVerifyRecords = $integrityClient->verifyRecords($records, Network::GNOSIS_CHAIN);
 
         $this->assertTrue($timestampValidateRoot > 0);
         $this->assertEquals($timestampValidateRoot, $timestampVerifyRecords);
