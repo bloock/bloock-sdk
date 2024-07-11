@@ -683,7 +683,7 @@ mod tests {
         let api_key = option_env!("API_KEY").unwrap().to_string();
 
         let payload = include_bytes!("./assets/dummy_pdf_signed_legacy_ES256KM.pdf");
-        let config_service = config::configure_test();
+        let _config_service = config::configure_test();
 
         let document =
             Document::new(payload, api_host, api_key).unwrap();
