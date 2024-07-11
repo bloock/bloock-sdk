@@ -380,10 +380,17 @@ mod tests {
         };
         let payload = include_bytes!("./document/assets/dummy.pdf");
 
-        let default_record = service
+        let signed_record = service
             .from_file(payload.to_vec())
             .unwrap()
             .with_signer(&local_key.clone().into(), None, None)
+            .build()
+            .await
+            .unwrap();
+        let signed_record_built = signed_record.serialize().unwrap();
+        let default_record = service
+            .from_file(signed_record_built)
+            .unwrap()
             .build()
             .await
             .unwrap();

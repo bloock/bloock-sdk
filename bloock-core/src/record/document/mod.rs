@@ -19,11 +19,7 @@ pub struct Document {
 }
 
 impl Document {
-    pub fn new(
-        payload: &[u8],
-        api_host: String,
-        api_key: String,
-    ) -> BloockResult<Self> {
+    pub fn new(payload: &[u8], api_host: String, api_key: String) -> BloockResult<Self> {
         let parser = FileParser::load(payload).map_err(InfrastructureError::MetadataError)?;
 
         Ok(Document {
@@ -33,7 +29,12 @@ impl Document {
         })
     }
 
-    pub async fn sign(&mut self, key: &Key, hash_alg: Option<HashAlg>, access_control: Option<String>) -> BloockResult<Signature> {
+    pub async fn sign(
+        &mut self,
+        key: &Key,
+        hash_alg: Option<HashAlg>,
+        access_control: Option<String>,
+    ) -> BloockResult<Signature> {
         let signature = self
             .parser
             .sign(
@@ -52,10 +53,7 @@ impl Document {
     pub async fn verify(&self) -> BloockResult<bool> {
         let ok = self
             .parser
-            .verify(
-                self.api_host.clone(),
-                self.api_key.clone(),
-            )
+            .verify(self.api_host.clone(), self.api_key.clone())
             .await
             .map_err(|e| InfrastructureError::MetadataError(e))?;
         Ok(ok)
@@ -332,7 +330,11 @@ mod tests {
         )
         .unwrap();
         let signature: Signature = document
-            .sign(&Key::Local(bloock_keys::entity::key::Local::Key(key)), None, None)
+            .sign(
+                &Key::Local(bloock_keys::entity::key::Local::Key(key)),
+                None,
+                None,
+            )
             .await
             .unwrap();
         let built_doc = document.build().unwrap();
@@ -395,7 +397,7 @@ mod tests {
         assert!(result)
     }
 
-    /*#[tokio::test]
+    #[tokio::test]
     async fn test_double_signed_and_verify_pdf() {
         let payload = include_bytes!("./assets/dummy.pdf");
         let certificate_params = LocalCertificateParams {
@@ -408,6 +410,7 @@ mod tests {
                 location: None,
                 state: None,
             },
+            expiration: 1,
             password: "password".to_string(),
         };
         let local_certificate = LocalCertificate::new(&certificate_params).unwrap();
@@ -420,7 +423,13 @@ mod tests {
         )
         .unwrap();
         let signature = document
-            .sign(&LocalCertificateEntity(local_certificate))
+            .sign(
+                &Key::Local(bloock_keys::entity::key::Local::Certificate(
+                    local_certificate,
+                )),
+                None,
+                None,
+            )
             .await
             .unwrap();
 
@@ -434,6 +443,7 @@ mod tests {
                 location: None,
                 state: None,
             },
+            expiration: 1,
             password: "password".to_string(),
         };
         let local_certificate2 = LocalCertificate::new(&certificate_params2).unwrap();
@@ -446,7 +456,13 @@ mod tests {
         )
         .unwrap();
         let signature2 = document2
-            .sign(&LocalCertificateEntity(local_certificate2))
+            .sign(
+                &Key::Local(bloock_keys::entity::key::Local::Certificate(
+                    local_certificate2,
+                )),
+                None,
+                None,
+            )
             .await
             .unwrap();
         let built_doc_second_signature = document2.build().unwrap();
@@ -468,7 +484,7 @@ mod tests {
 
         let result = signed_doc.verify().await.unwrap();
         assert!(result)
-    }*/
+    }
 
     #[tokio::test]
     async fn test_encrypted_pdf() {
@@ -489,7 +505,10 @@ mod tests {
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        document.encrypt(&local_key.clone().into(), None).await.unwrap();
+        document
+            .encrypt(&local_key.clone().into(), None)
+            .await
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let mut encrypted_doc = Document::new(
@@ -499,7 +518,10 @@ mod tests {
         )
         .unwrap();
 
-        encrypted_doc.decrypt(&local_key.into(), None).await.unwrap();
+        encrypted_doc
+            .decrypt(&local_key.into(), None)
+            .await
+            .unwrap();
         let decrypted_payload = encrypted_doc.build().unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
@@ -555,7 +577,10 @@ mod tests {
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        document.encrypt(&local_key.clone().into(), None).await.unwrap();
+        document
+            .encrypt(&local_key.clone().into(), None)
+            .await
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let mut encrypted_doc = Document::new(
@@ -565,7 +590,10 @@ mod tests {
         )
         .unwrap();
 
-        encrypted_doc.decrypt(&local_key.into(), None).await.unwrap();
+        encrypted_doc
+            .decrypt(&local_key.into(), None)
+            .await
+            .unwrap();
         let decrypted_payload = encrypted_doc.build().unwrap();
 
         assert_eq!(decrypted_payload, expected_payload);
@@ -648,7 +676,10 @@ mod tests {
 
         let original_record = Record::new(document.clone()).unwrap();
 
-        document.encrypt(&local_key.clone().into(), None).await.unwrap();
+        document
+            .encrypt(&local_key.clone().into(), None)
+            .await
+            .unwrap();
 
         let built_doc = document.build().unwrap();
         let mut encrypted_doc = Document::new(
@@ -658,7 +689,10 @@ mod tests {
         )
         .unwrap();
 
-        encrypted_doc.decrypt(&local_key.into(), None).await.unwrap();
+        encrypted_doc
+            .decrypt(&local_key.into(), None)
+            .await
+            .unwrap();
 
         let decrypted_payload = encrypted_doc.build().unwrap();
 
@@ -675,20 +709,5 @@ mod tests {
         assert_eq!(original_record.get_hash(), decrypted_record.get_hash());
         assert_eq!(decrypted_record.get_signatures().unwrap(), vec![signature]);
         assert_eq!(decrypted_record.get_proof().unwrap(), proof);
-    }
-
-    #[tokio::test]
-    async fn test_verify_managed_signed_pdf_with_legacy_metadata() {
-        let api_host = "https://api.bloock.com".to_string();
-        let api_key = option_env!("API_KEY").unwrap().to_string();
-
-        let payload = include_bytes!("./assets/dummy_pdf_signed_legacy_ES256KM.pdf");
-        let _config_service = config::configure_test();
-
-        let document =
-            Document::new(payload, api_host, api_key).unwrap();
-
-        let result = document.verify().await.unwrap();
-        assert!(result)
     }
 }

@@ -62,8 +62,17 @@ pub struct PdfParser {
 
 impl PdfParser {
     pub fn load(payload: &[u8]) -> BloockResult<Self> {
-        let document = IncrementalDocument::load_from(payload)
+        let mut document = IncrementalDocument::load_from(payload)
             .map_err(|e| MetadataError::LoadError(e.to_string()))?;
+
+        document
+            .get_prev_documents()
+            .trailer
+            .get(b"Info")
+            .and_then(Object::as_reference)
+            .and_then(|id| document.opt_clone_object_to_new_document(id))
+            .map_err(|e| MetadataError::LoadError(e.to_string()))?;
+
         let parser = PdfParser {
             modified: false,
             document,
@@ -373,14 +382,27 @@ impl PdfParser {
     }
 
     fn get<T: DeserializeOwned>(&self, key: &str) -> Option<T> {
-        let dictionary = self.get_metadata_dict().ok()?;
-
         let object = Object::from(key);
-        dictionary
+
+        let prev_dictionary = self.get_metadata_dict().ok()?;
+        prev_dictionary
             .get(object.as_name().ok()?)
             .ok()
             .and_then(|v| v.as_str().ok())
             .and_then(|v| serde_json::from_slice(v).ok())
+            .or_else(|| {
+                self.document
+                    .new_document
+                    .trailer
+                    .get(b"Info")
+                    .and_then(Object::as_reference)
+                    .and_then(|id| self.document.new_document.get_object(id))
+                    .and_then(Object::as_dict)
+                    .and_then(|d| d.get(object.as_name()?))
+                    .ok()
+                    .and_then(|v| v.as_str().ok())
+                    .and_then(|v| serde_json::from_slice(v).ok())
+            })
     }
 
     fn get_metadata_dict(&self) -> BloockResult<&Dictionary> {
