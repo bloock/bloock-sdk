@@ -98,7 +98,7 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		ipnsCid, err := availabilityClient.Publish(record, availability.NewIpnsPublisher(key.ID))
+		ipnsCid, err := availabilityClient.Publish(record, availability.NewIpnsPublisher(availability.NewIpnsKeyWithManagedKey(key)))
 		require.NoError(t, err)
 		assert.NotEmpty(t, ipnsCid)
 

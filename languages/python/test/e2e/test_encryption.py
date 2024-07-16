@@ -1,4 +1,3 @@
-import time
 import unittest
 
 from bloock.client.encryption import EncryptionClient

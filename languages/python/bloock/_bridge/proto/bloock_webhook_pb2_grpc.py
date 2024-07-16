@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import bloock_webhook_pb2 as bloock__webhook__pb2
+import bloock_webhook_pb2 as bloock__webhook__pb2
 
 
 class WebhookServiceStub(object):

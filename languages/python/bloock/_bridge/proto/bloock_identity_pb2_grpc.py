@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import bloock_identity_pb2 as bloock__identity__pb2
+import bloock_identity_pb2 as bloock__identity__pb2
 
 
 class IdentityServiceStub(object):

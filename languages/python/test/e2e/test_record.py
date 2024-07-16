@@ -6,7 +6,6 @@ from bloock.client.integrity import IntegrityClient
 from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
 from bloock.entity.authenticity.signer import Signer
-from bloock.entity.authenticity.signature_jws import SignatureAlg
 from bloock.entity.availability.hosted_loader import HostedLoader
 from bloock.entity.availability.hosted_publisher import HostedPublisher
 from bloock.entity.availability.ipfs_loader import IpfsLoader

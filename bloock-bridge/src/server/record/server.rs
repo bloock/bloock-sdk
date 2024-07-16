@@ -215,6 +215,7 @@ impl RecordServiceHandler for RecordServer {
         let result = match DataAvailabilityType::from_i32(req_loader.r#type) {
             Some(DataAvailabilityType::Hosted) => service.retrieve_hosted(loader_args.id).await,
             Some(DataAvailabilityType::Ipfs) => service.retrieve_ipfs(loader_args.id).await,
+            Some(DataAvailabilityType::Ipns) => service.retrieve_ipns(loader_args.id).await,
             None => return Err("invalid loader provided".to_string()),
         };
 

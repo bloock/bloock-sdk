@@ -1,19 +1,21 @@
 package availability
 
-import "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+import (
+	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
+)
 
-// IpnsPublisher represents a publisher for IPFS data availability.
+// IpnsPublisher represents a publisher for IPNS data availability.
 type IpnsPublisher struct {
 	Type proto.DataAvailabilityType
 	Args PublisherArgs
 }
 
-// NewIpnsPublisher represents a publisher for IPFS data availability.
-func NewIpnsPublisher(keyID string) IpnsPublisher {
+// NewIpnsPublisher represents a publisher for IPNS data availability.
+func NewIpnsPublisher(ipnsKey IpnsKey) IpnsPublisher {
 	return IpnsPublisher{
 		Type: proto.DataAvailabilityType_IPFS,
 		Args: PublisherArgs{
-			KeyID: keyID,
+			IpnsKey: ipnsKey,
 		},
 	}
 }

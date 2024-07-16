@@ -119,7 +119,6 @@ impl<H: Client> AvailabilityService<H> {
 mod tests {
     use bloock_http::MockClient;
     use mockall::predicate::eq;
-    use std::fmt::format;
     use std::sync::Arc;
 
     use crate::availability::entity::publish_ipfs_response::PublishIpfsResponse;

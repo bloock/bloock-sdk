@@ -1,13 +1,13 @@
 use crate::{
     error::BridgeError,
     items::{
-        AvailabilityServiceHandler, DataAvailabilityType, Loader, LoaderArgs, PublishRequest,
-        PublishResponse, Publisher, Record, RetrieveRequest, RetrieveResponse,
+        AvailabilityServiceHandler, DataAvailabilityType, IpnsKey, Loader, LoaderArgs, PublishRequest, PublishResponse, Publisher, PublisherArgs, Record, RetrieveRequest, RetrieveResponse
     },
     server::response_types::RequestConfigData,
 };
 use async_trait::async_trait;
 use bloock_core::record::entity::record::Record as RecordCore;
+use bloock_keys::keys::managed::ManagedKey as ManagedKeyCore;
 
 pub struct AvailabilityServer {}
 
@@ -35,6 +35,25 @@ impl AvailabilityServiceHandler for AvailabilityServer {
         let result = match DataAvailabilityType::from_i32(req_publisher.r#type) {
             Some(DataAvailabilityType::Hosted) => service.publish_hosted(record).await,
             Some(DataAvailabilityType::Ipfs) => service.publish_ipfs(record).await,
+            Some(DataAvailabilityType::Ipns) => {
+                let publisher_args: PublisherArgs = req_publisher
+                .args
+                .ok_or_else(|| "invalid publisher provided".to_string())?;
+
+                let ipns_key: IpnsKey = publisher_args
+                .ipns_key
+                .ok_or_else(|| "invalid IPNS key provided".to_string())?;
+
+                let key_id: String = if let Some(managed_key) = ipns_key.managed_key.clone() {
+                    let managed_key_core: ManagedKeyCore = managed_key.into();
+                    managed_key_core.id
+                } else if let Some(_) = ipns_key.managed_certificate.clone() {
+                    return Err("managed certificate not enabled".to_string());
+                } else {
+                    return Err("invalid managed key or certificate provided".to_string());
+                };
+                service.publish_ipns(record, key_id).await
+            },
             None => return Err("invalid publisher provided".to_string()),
         };
 
@@ -60,6 +79,7 @@ impl AvailabilityServiceHandler for AvailabilityServer {
         let result = match DataAvailabilityType::from_i32(req_loader.r#type) {
             Some(DataAvailabilityType::Hosted) => service.retrieve_hosted(loader_args.id).await,
             Some(DataAvailabilityType::Ipfs) => service.retrieve_ipfs(loader_args.id).await,
+            Some(DataAvailabilityType::Ipns) => service.retrieve_ipns(loader_args.id).await,
             None => return Err("invalid loader provided".to_string()),
         };
 

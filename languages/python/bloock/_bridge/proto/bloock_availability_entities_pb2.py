@@ -11,9 +11,10 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+import bloock_keys_entities_pb2 as bloock__keys__entities__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"bloock_availability_entities.proto\x12\x06\x62loock\"\\\n\tPublisher\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.PublisherArgs\"\x0f\n\rPublisherArgs\"V\n\x06Loader\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.LoaderArgs\"\x18\n\nLoaderArgs\x12\n\n\x02id\x18\x01 \x01(\t*,\n\x14\x44\x61taAvailabilityType\x12\n\n\x06HOSTED\x10\x00\x12\x08\n\x04IPFS\x10\x01\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"bloock_availability_entities.proto\x12\x06\x62loock\x1a\x1a\x62loock_keys_entities.proto\"\\\n\tPublisher\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.PublisherArgs\"D\n\rPublisherArgs\x12&\n\x08ipns_key\x18\x01 \x01(\x0b\x32\x0f.bloock.IpnsKeyH\x00\x88\x01\x01\x42\x0b\n\t_ipns_key\"V\n\x06Loader\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.LoaderArgs\"\x18\n\nLoaderArgs\x12\n\n\x02id\x18\x01 \x01(\t\"\x9d\x01\n\x07IpnsKey\x12,\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKeyH\x00\x88\x01\x01\x12<\n\x13managed_certificate\x18\x02 \x01(\x0b\x32\x1a.bloock.ManagedCertificateH\x01\x88\x01\x01\x42\x0e\n\x0c_managed_keyB\x16\n\x14_managed_certificate*6\n\x14\x44\x61taAvailabilityType\x12\n\n\x06HOSTED\x10\x00\x12\x08\n\x04IPFS\x10\x01\x12\x08\n\x04IPNS\x10\x02\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'bloock_availability_entities_pb2', globals())
@@ -21,14 +22,16 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\033com.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto'
-  _DATAAVAILABILITYTYPE._serialized_start=271
-  _DATAAVAILABILITYTYPE._serialized_end=315
-  _PUBLISHER._serialized_start=46
-  _PUBLISHER._serialized_end=138
-  _PUBLISHERARGS._serialized_start=140
-  _PUBLISHERARGS._serialized_end=155
-  _LOADER._serialized_start=157
-  _LOADER._serialized_end=243
-  _LOADERARGS._serialized_start=245
-  _LOADERARGS._serialized_end=269
+  _DATAAVAILABILITYTYPE._serialized_start=512
+  _DATAAVAILABILITYTYPE._serialized_end=566
+  _PUBLISHER._serialized_start=74
+  _PUBLISHER._serialized_end=166
+  _PUBLISHERARGS._serialized_start=168
+  _PUBLISHERARGS._serialized_end=236
+  _LOADER._serialized_start=238
+  _LOADER._serialized_end=324
+  _LOADERARGS._serialized_start=326
+  _LOADERARGS._serialized_end=350
+  _IPNSKEY._serialized_start=353
+  _IPNSKEY._serialized_end=510
 # @@protoc_insertion_point(module_scope)

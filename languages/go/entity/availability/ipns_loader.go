@@ -11,7 +11,7 @@ type IpnsLoader struct {
 // NewIpnsLoader creates an IpnsLoader instance with the provided IPNS hash.
 func NewIpnsLoader(hash string) IpfsLoader {
 	return IpfsLoader{
-		Type: proto.DataAvailabilityType_IPFS,
+		Type: proto.DataAvailabilityType_IPNS,
 		Args: LoaderArgs{
 			hash,
 		},
