@@ -19,7 +19,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group = 'com.bloock.sdk'
-version = '2.9.1'
+version = '2.9.2'
 
 repositories {
     maven { url "https://maven-central.storage-download.googleapis.com/maven2/" }
