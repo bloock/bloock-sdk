@@ -13,7 +13,7 @@ class Network(Enum):
     ETHEREUM_MAINNET = 0
     ETHEREUM_SEPOLIA = 1
     GNOSIS_CHAIN = 2
-    POLYGON_CHAIN = 4
+    POLYGON_CHAIN = 3
 
     def __int__(self):
         return self.value

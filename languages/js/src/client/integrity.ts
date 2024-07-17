@@ -1,5 +1,5 @@
 import { BloockBridge } from "../bridge/bridge";
-import { ConfigData, Network } from "../bridge/proto/bloock_config";
+import { ConfigData } from "../bridge/proto/bloock_config";
 import {
   GetAnchorRequest,
   GetProofRequest,
@@ -10,7 +10,7 @@ import {
   WaitAnchorRequest
 } from "../bridge/proto/bloock_integrity";
 import { NewConfigData } from "../config/config";
-import { Proof, RecordReceipt } from "../entity/integrity";
+import { Network, Proof, RecordReceipt } from "../entity/integrity";
 import { Anchor } from "../entity/integrity/anchor";
 import { Record } from "../entity/record";
 
