@@ -6,6 +6,7 @@ from bloock.entity.availability.hosted_publisher import HostedPublisher
 from bloock.entity.availability.ipfs_loader import IpfsLoader
 from bloock.entity.availability.ipfs_publisher import IpfsPublisher
 from bloock.entity.availability.ipns_publisher import IpnsPublisher
+from bloock.entity.availability.ipns_key import IpnsKey
 from bloock.client.key import KeyClient
 from bloock.client.record import RecordClient
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
@@ -83,5 +84,5 @@ class TestAvailability(unittest.TestCase):
         record = record_client.from_string(payload).build()
 
         availability_client = AvailabilityClient()
-        result = availability_client.publish(record, IpnsPublisher(managed_key))
+        result = availability_client.publish(record, IpnsPublisher(IpnsKey(managed_key)))
         self.assertNotEqual(result, "")
