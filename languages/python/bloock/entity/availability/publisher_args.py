@@ -3,7 +3,7 @@ from bloock.entity.availability.ipns_key import IpnsKey
 
 
 class PublisherArgs:
-    def __init__(self, ipns_key) -> None:
+    def __init__(self, ipns_key = None) -> None:
         """
         Constructs a PublisherArgs object with the specified parameters.
         :type ipns_key: object
