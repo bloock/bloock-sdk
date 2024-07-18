@@ -13,7 +13,7 @@ import (
 )
 
 func TestAvailability(t *testing.T) {
-	InitSdk()
+	InitDevSdk()
 
 	t.Run("publish hosted", func(t *testing.T) {
 		payload := "Hello world"
@@ -105,6 +105,7 @@ func TestAvailability(t *testing.T) {
 		time.Sleep(30 * time.Second)
 
 		result, err := availabilityClient.Retrieve(availability.NewIpnsLoader(ipnsCid))
+		require.NoError(t, err)
 
 		resultHash, err := result.GetHash()
 		require.NoError(t, err)

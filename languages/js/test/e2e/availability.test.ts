@@ -1,17 +1,23 @@
 import { describe, test, expect } from "@jest/globals";
-import { initSdk } from "./util";
+import { initDevSdk } from "./util";
 import {
   AvailabilityClient,
   HostedLoader,
   HostedPublisher,
   IpfsLoader,
   IpfsPublisher,
-  RecordClient
+  RecordClient,
+  ManagedKeyParams,
+  KeyClient,
+  KeyProtectionLevel,
+  KeyType,
+  IpnsPublisher,
+  IpnsKey,
 } from "../../dist";
 
 describe("Availability Tests", () => {
   test("publish hosted", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -27,7 +33,7 @@ describe("Availability Tests", () => {
   });
 
   test("retrieve hosted", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -45,7 +51,7 @@ describe("Availability Tests", () => {
   });
 
   test("publish ipfs", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -58,7 +64,7 @@ describe("Availability Tests", () => {
   });
 
   test("retrieve ipfs", async () => {
-    initSdk();
+    initDevSdk();
 
     let payload = "Hello world";
     let recordClient = new RecordClient();
@@ -73,5 +79,26 @@ describe("Availability Tests", () => {
     let resultHash = await result.getHash();
 
     expect(resultHash).toBe(hash);
+  });
+
+  test("publish ipns", async () => {
+    initDevSdk();
+
+    let keyName = "ipns_key_name_test_sdk";
+    let keyProtection = KeyProtectionLevel.SOFTWARE;
+    let keyType = KeyType.Rsa2048;
+    let keyClient = new KeyClient();
+    let managedKey = await keyClient.newManagedKey(
+      new ManagedKeyParams(keyProtection, keyType, keyName)
+    );
+
+    let payload = "Hello world";
+    let recordClient = new RecordClient();
+    let record = await recordClient.fromString(payload).build();
+
+    let availabilityClient = new AvailabilityClient();
+    let result = await availabilityClient.publish(record, new IpnsPublisher(new IpnsKey(managedKey)));
+
+    expect(result).toBeTruthy();
   });
 });

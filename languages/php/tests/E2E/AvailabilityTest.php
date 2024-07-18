@@ -9,7 +9,6 @@ use Bloock\Entity\Availability\IpfsLoader;
 use Bloock\Entity\Availability\IpfsPublisher;
 use PHPUnit\Framework\TestCase;
 use Bloock\Client\KeyClient;
-use Bloock\Entity\Availability\IpnsLoader;
 use Bloock\Entity\Availability\IpnsPublisher;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
@@ -19,8 +18,8 @@ final class AvailabilityTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        Bloock::$apiKey = getenv("API_KEY");
-        Bloock::$apiHost = getenv("API_HOST");
+        Bloock::$apiKey = getenv("DEV_API_KEY");
+        Bloock::$apiHost = getenv("DEV_API_HOST");
     }
 
     public function testPublishHosted()

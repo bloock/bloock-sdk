@@ -13,7 +13,7 @@ type IpnsPublisher struct {
 // NewIpnsPublisher represents a publisher for IPNS data availability.
 func NewIpnsPublisher(ipnsKey IpnsKey) IpnsPublisher {
 	return IpnsPublisher{
-		Type: proto.DataAvailabilityType_IPFS,
+		Type: proto.DataAvailabilityType_IPNS,
 		Args: PublisherArgs{
 			IpnsKey: ipnsKey,
 		},

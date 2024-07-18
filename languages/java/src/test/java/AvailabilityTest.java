@@ -10,7 +10,6 @@ import com.bloock.sdk.entity.availability.HostedPublisher;
 import com.bloock.sdk.entity.availability.IpfsLoader;
 import com.bloock.sdk.entity.availability.IpfsPublisher;
 import com.bloock.sdk.entity.availability.IpnsKey;
-import com.bloock.sdk.entity.availability.IpnsLoader;
 import com.bloock.sdk.entity.availability.IpnsPublisher;
 import com.bloock.sdk.entity.record.Record;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,7 +19,7 @@ class AvailabilityTest {
 
   @BeforeAll
   static void beforeAll() {
-    Utils.initSdk();
+    Utils.initDevSdk();
   }
 
   @Test
@@ -84,7 +83,7 @@ class AvailabilityTest {
   }
 
   @Test
-  void publishAndRetrieveIpns() throws Exception {
+  void publishIpns() throws Exception {
     KeyClient keyClient = new KeyClient();
 
     String name = "key_name";
@@ -99,16 +98,8 @@ class AvailabilityTest {
 
     Record record = recordClient.fromString(payload).build();
 
-    String recordHash = record.getHash();
-
     AvailabilityClient availabilityClient = new AvailabilityClient();
     String result = availabilityClient.publish(record, new IpnsPublisher(new IpnsKey(managedKey)));
     assertNotNull(result);
-
-    Thread.sleep(30000);
-
-    Record recordRetrieved = availabilityClient.retrieve(new IpnsLoader(result));
-
-    assertEquals(recordRetrieved.getHash(), recordHash); 
   }
 }

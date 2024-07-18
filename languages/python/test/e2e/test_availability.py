@@ -11,13 +11,13 @@ from bloock.client.record import RecordClient
 from bloock.entity.key.key_protection_level import KeyProtectionLevel
 from bloock.entity.key.key_type import KeyType
 from bloock.entity.key.managed_key_params import ManagedKeyParams
-from test.e2e.util import init_sdk
+from test.e2e.util import init_dev_sdk
 
 
 class TestAvailability(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        init_sdk()
+        init_dev_sdk()
 
     def test_publish_hosted(self):
         payload = "Hello world"

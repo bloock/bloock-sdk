@@ -7,20 +7,20 @@ import { PublisherArgs } from "./publisher_args";
  */
 export class IpfsPublisher implements Publisher {
   type: proto.DataAvailabilityType;
-  args: PublisherArgs;
+  args: proto.PublisherArgs;
 
   /**
    * Constructs a IpfsPublisher object with the specified parameters.
    */
   constructor() {
     this.type = proto.DataAvailabilityType.IPFS;
-    this.args = new PublisherArgs();
+    this.args = new PublisherArgs().toProto();
   }
 
   public toProto(): proto.Publisher {
     return proto.Publisher.fromPartial({
       type: this.type,
-      args: this.args.toProto()
+      args: this.args
     });
   }
 }

@@ -8,20 +8,20 @@ import { PublisherArgs } from "./publisher_args";
  */
 export class IpnsPublisher implements Publisher {
   type: proto.DataAvailabilityType;
-  args: PublisherArgs;
+  args: proto.PublisherArgs;
 
   /**
    * Constructs a IpnsPublisher object with the specified parameters.
    */
   constructor(ipnsKey: IpnsKey) {
     this.type = proto.DataAvailabilityType.IPNS;
-    this.args = new PublisherArgs(ipnsKey);
+    this.args = new PublisherArgs(ipnsKey).toProto();
   }
 
   public toProto(): proto.Publisher {
     return proto.Publisher.fromPartial({
       type: this.type,
-      args: this.args.toProto()
+      args: this.args
     });
   }
 }
