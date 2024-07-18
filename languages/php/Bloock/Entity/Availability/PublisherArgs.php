@@ -7,7 +7,7 @@ namespace Bloock\Entity\Availability;
  */
 class PublisherArgs
 {
-    public ?IpnsKey $ipnsKey;
+    public ?IpnsKey $ipnsKey = null;
 
     /**
      * Constructs a IpnsKey a publisher for IPFS data availability.
