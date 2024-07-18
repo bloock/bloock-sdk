@@ -7,8 +7,7 @@ namespace Bloock\Entity\Availability;
  */
 class PublisherArgs
 {
-
-    private ?IpnsKey $ipnsKey;
+    public ?IpnsKey $ipnsKey;
 
     /**
      * Constructs a IpnsKey a publisher for IPFS data availability.
@@ -24,7 +23,7 @@ class PublisherArgs
     public function toProto(): \Bloock\PublisherArgs
     {
         $p = new \Bloock\PublisherArgs();
-        
+
         if ($this->ipnsKey != null) {
             $p->setIpnsKey($this->ipnsKey->toProto());
         }
