@@ -102,7 +102,7 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotEmpty(t, ipnsCid)
 
-		time.Sleep(30 * time.Second)
+		time.Sleep(60 * time.Second)
 
 		result, err := availabilityClient.Retrieve(availability.NewIpnsLoader(ipnsCid))
 		require.NoError(t, err)
