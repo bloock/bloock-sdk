@@ -1,20 +1,21 @@
 import * as proto from "../../bridge/proto/bloock_availability_entities";
+import { IpnsKey } from "./ipns_key";
 import { Publisher } from "./publisher";
 import { PublisherArgs } from "./publisher_args";
 
 /**
- * Represents a publisher for IPFS data availability.
+ * Represents a publisher for IPNS data availability.
  */
-export class IpfsPublisher implements Publisher {
+export class IpnsPublisher implements Publisher {
   type: proto.DataAvailabilityType;
   args: proto.PublisherArgs;
 
   /**
-   * Constructs a IpfsPublisher object with the specified parameters.
+   * Constructs a IpnsPublisher object with the specified parameters.
    */
-  constructor() {
-    this.type = proto.DataAvailabilityType.IPFS;
-    this.args = new PublisherArgs().toProto();
+  constructor(ipnsKey: IpnsKey) {
+    this.type = proto.DataAvailabilityType.IPNS;
+    this.args = new PublisherArgs(ipnsKey).toProto();
   }
 
   public toProto(): proto.Publisher {

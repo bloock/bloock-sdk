@@ -1,9 +1,11 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
+import { ManagedCertificate, ManagedKey } from "./bloock_keys_entities";
 
 export enum DataAvailabilityType {
   HOSTED = 0,
   IPFS = 1,
+  IPNS = 2,
   UNRECOGNIZED = -1,
 }
 
@@ -15,6 +17,9 @@ export function dataAvailabilityTypeFromJSON(object: any): DataAvailabilityType 
     case 1:
     case "IPFS":
       return DataAvailabilityType.IPFS;
+    case 2:
+    case "IPNS":
+      return DataAvailabilityType.IPNS;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -28,6 +33,8 @@ export function dataAvailabilityTypeToJSON(object: DataAvailabilityType): string
       return "HOSTED";
     case DataAvailabilityType.IPFS:
       return "IPFS";
+    case DataAvailabilityType.IPNS:
+      return "IPNS";
     case DataAvailabilityType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -40,6 +47,7 @@ export interface Publisher {
 }
 
 export interface PublisherArgs {
+  ipnsKey?: IpnsKey | undefined;
 }
 
 export interface Loader {
@@ -49,6 +57,11 @@ export interface Loader {
 
 export interface LoaderArgs {
   id: string;
+}
+
+export interface IpnsKey {
+  managedKey?: ManagedKey | undefined;
+  managedCertificate?: ManagedCertificate | undefined;
 }
 
 function createBasePublisher(): Publisher {
@@ -128,11 +141,14 @@ export const Publisher = {
 };
 
 function createBasePublisherArgs(): PublisherArgs {
-  return {};
+  return { ipnsKey: undefined };
 }
 
 export const PublisherArgs = {
-  encode(_: PublisherArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: PublisherArgs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.ipnsKey !== undefined) {
+      IpnsKey.encode(message.ipnsKey, writer.uint32(10).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -143,6 +159,13 @@ export const PublisherArgs = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.ipnsKey = IpnsKey.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -152,20 +175,26 @@ export const PublisherArgs = {
     return message;
   },
 
-  fromJSON(_: any): PublisherArgs {
-    return {};
+  fromJSON(object: any): PublisherArgs {
+    return { ipnsKey: isSet(object.ipnsKey) ? IpnsKey.fromJSON(object.ipnsKey) : undefined };
   },
 
-  toJSON(_: PublisherArgs): unknown {
+  toJSON(message: PublisherArgs): unknown {
     const obj: any = {};
+    if (message.ipnsKey !== undefined) {
+      obj.ipnsKey = IpnsKey.toJSON(message.ipnsKey);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<PublisherArgs>, I>>(base?: I): PublisherArgs {
     return PublisherArgs.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PublisherArgs>, I>>(_: I): PublisherArgs {
+  fromPartial<I extends Exact<DeepPartial<PublisherArgs>, I>>(object: I): PublisherArgs {
     const message = createBasePublisherArgs();
+    message.ipnsKey = (object.ipnsKey !== undefined && object.ipnsKey !== null)
+      ? IpnsKey.fromPartial(object.ipnsKey)
+      : undefined;
     return message;
   },
 };
@@ -299,6 +328,86 @@ export const LoaderArgs = {
   fromPartial<I extends Exact<DeepPartial<LoaderArgs>, I>>(object: I): LoaderArgs {
     const message = createBaseLoaderArgs();
     message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBaseIpnsKey(): IpnsKey {
+  return { managedKey: undefined, managedCertificate: undefined };
+}
+
+export const IpnsKey = {
+  encode(message: IpnsKey, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.managedKey !== undefined) {
+      ManagedKey.encode(message.managedKey, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.managedCertificate !== undefined) {
+      ManagedCertificate.encode(message.managedCertificate, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): IpnsKey {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseIpnsKey();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.managedKey = ManagedKey.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): IpnsKey {
+    return {
+      managedKey: isSet(object.managedKey) ? ManagedKey.fromJSON(object.managedKey) : undefined,
+      managedCertificate: isSet(object.managedCertificate)
+        ? ManagedCertificate.fromJSON(object.managedCertificate)
+        : undefined,
+    };
+  },
+
+  toJSON(message: IpnsKey): unknown {
+    const obj: any = {};
+    if (message.managedKey !== undefined) {
+      obj.managedKey = ManagedKey.toJSON(message.managedKey);
+    }
+    if (message.managedCertificate !== undefined) {
+      obj.managedCertificate = ManagedCertificate.toJSON(message.managedCertificate);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<IpnsKey>, I>>(base?: I): IpnsKey {
+    return IpnsKey.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<IpnsKey>, I>>(object: I): IpnsKey {
+    const message = createBaseIpnsKey();
+    message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
+      ? ManagedKey.fromPartial(object.managedKey)
+      : undefined;
+    message.managedCertificate = (object.managedCertificate !== undefined && object.managedCertificate !== null)
+      ? ManagedCertificate.fromPartial(object.managedCertificate)
+      : undefined;
     return message;
   },
 };

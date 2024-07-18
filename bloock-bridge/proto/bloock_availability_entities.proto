@@ -5,9 +5,12 @@ package bloock;
 option go_package = "github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto";
 option java_package = "com.bloock.sdk.bridge.proto";
 
+import "bloock_keys_entities.proto";
+
 enum DataAvailabilityType {
     HOSTED = 0;
     IPFS = 1;
+    IPNS = 2;
 }
 
 message Publisher {
@@ -15,7 +18,9 @@ message Publisher {
     PublisherArgs args = 2;
 }
 
-message PublisherArgs {}
+message PublisherArgs {
+    optional IpnsKey ipns_key = 1;
+}
 
 message Loader {
     DataAvailabilityType type = 1;
@@ -24,4 +29,9 @@ message Loader {
 
 message LoaderArgs {
     string id = 1;
+}
+
+message IpnsKey {
+    optional ManagedKey managed_key = 1;
+    optional ManagedCertificate managed_certificate = 2;
 }

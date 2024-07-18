@@ -19,10 +19,15 @@ class DataAvailabilityType
      * Generated from protobuf enum <code>IPFS = 1;</code>
      */
     const IPFS = 1;
+    /**
+     * Generated from protobuf enum <code>IPNS = 2;</code>
+     */
+    const IPNS = 2;
 
     private static $valueToName = [
         self::HOSTED => 'HOSTED',
         self::IPFS => 'IPFS',
+        self::IPNS => 'IPNS',
     ];
 
     public static function name($value)

@@ -7,20 +7,20 @@ import { PublisherArgs } from "./publisher_args";
  */
 export class HostedPublisher implements Publisher {
   type: proto.DataAvailabilityType;
-  args: PublisherArgs;
+  args: proto.PublisherArgs;
 
   /**
    * Constructs a HostedPublisher object with the specified parameters.
    */
   constructor() {
     this.type = proto.DataAvailabilityType.HOSTED;
-    this.args = new PublisherArgs();
+    this.args = new PublisherArgs().toProto();
   }
 
   public toProto(): proto.Publisher {
     return proto.Publisher.fromPartial({
       type: this.type,
-      args: this.args.toProto()
+      args: this.args
     });
   }
 }

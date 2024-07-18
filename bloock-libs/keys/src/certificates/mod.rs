@@ -161,26 +161,8 @@ impl GetX509Certficate for Managed {
     }
 }
 
-/*fn create_self_certificate() -> Certificate {
-    let params = LocalCertificateParams {
-        key_type: KeyType::Rsa2048,
-        password: "password".to_string(),
-        subject: CertificateSubject {
-            common_name: "Bloock".to_string(),
-            organizational_unit: None,
-            organization: None,
-            location: None,
-            state: None,
-            country: None,
-        },
-        expiration: 2,
-    };
-    let certificate = LocalCertificate::new(&params).unwrap();
-    certificate.certificate
-}*/
-
 fn normalize_value_with_quotes(input: &str) -> String {
-    let special_characters = ",\\+=\"\n<>#;";
+    let special_characters = "ñ,\\+=\"\n<>#;";
 
     let contains_special_character = input.chars().any(|c| special_characters.contains(c));
 
@@ -192,7 +174,7 @@ fn normalize_value_with_quotes(input: &str) -> String {
 }
 
 fn normalize_value_with_back_slash(input: &str) -> String {
-    let special_characters = ",\\+=\"\n<>#;";
+    let special_characters = "ñ,\\+=\"\n<>#;";
 
     let normalized_string: String = input
         .chars()

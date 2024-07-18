@@ -1,4 +1,3 @@
-import time
 import unittest
 
 from bloock.client.authenticity import AuthenticityClient

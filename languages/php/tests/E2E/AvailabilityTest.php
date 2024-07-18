@@ -8,13 +8,19 @@ use Bloock\Entity\Availability\HostedPublisher;
 use Bloock\Entity\Availability\IpfsLoader;
 use Bloock\Entity\Availability\IpfsPublisher;
 use PHPUnit\Framework\TestCase;
+use Bloock\Client\KeyClient;
+use Bloock\Entity\Availability\IpnsKey;
+use Bloock\Entity\Availability\IpnsPublisher;
+use Bloock\Entity\Key\KeyProtectionLevel;
+use Bloock\Entity\Key\KeyType;
+use Bloock\Entity\Key\ManagedKeyParams;
 
 final class AvailabilityTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        Bloock::$apiKey = getenv("API_KEY");
-        Bloock::$apiHost = getenv("API_HOST");
+        Bloock::$apiKey = getenv("DEV_API_KEY");
+        Bloock::$apiHost = getenv("DEV_API_HOST");
     }
 
     public function testPublishHosted()
@@ -75,4 +81,24 @@ final class AvailabilityTest extends TestCase
         $this->assertEquals($recordHash, $result->getHash());
     }
 
+    public function testPublishIpns()
+    {
+        $keyClient = new KeyClient();
+
+        $keyName = "ipns_key_name_test_sdk";
+        $keyProtection = KeyProtectionLevel::SOFTWARE;
+        $keyType = KeyType::Rsa2048;
+
+        $params = new ManagedKeyParams($keyProtection, $keyType, $keyName);
+        $key = $keyClient->newManagedKey($params);
+
+        $payload = "Hello world";
+        $recordClient = new RecordClient();
+
+        $record = $recordClient->fromString($payload)->build();
+
+        $availabilityClient = new AvailabilityClient();
+        $result = $availabilityClient->publish($record, new IpnsPublisher(new IpnsKey($key)));
+        $this->assertNotNull($result);
+    }
 }
