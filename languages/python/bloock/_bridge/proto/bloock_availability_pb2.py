@@ -11,10 +11,10 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import bloock_availability_entities_pb2 as bloock__availability__entities__pb2
-import bloock_record_entities_pb2 as bloock__record__entities__pb2
-import bloock_shared_pb2 as bloock__shared__pb2
-import bloock_config_pb2 as bloock__config__pb2
+from . import bloock_availability_entities_pb2 as bloock__availability__entities__pb2
+from . import bloock_record_entities_pb2 as bloock__record__entities__pb2
+from . import bloock_shared_pb2 as bloock__shared__pb2
+from . import bloock_config_pb2 as bloock__config__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x19\x62loock_availability.proto\x12\x06\x62loock\x1a\"bloock_availability_entities.proto\x1a\x1c\x62loock_record_entities.proto\x1a\x13\x62loock_shared.proto\x1a\x13\x62loock_config.proto\"\x7f\n\x0ePublishRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12$\n\tpublisher\x18\x03 \x01(\x0b\x32\x11.bloock.Publisher\"J\n\x0fPublishResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"Z\n\x0fRetrieveRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06loader\x18\x03 \x01(\x0b\x32\x0e.bloock.Loader\"_\n\x10RetrieveResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\x90\x01\n\x13\x41vailabilityService\x12:\n\x07Publish\x12\x16.bloock.PublishRequest\x1a\x17.bloock.PublishResponse\x12=\n\x08Retrieve\x12\x17.bloock.RetrieveRequest\x1a\x18.bloock.RetrieveResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')

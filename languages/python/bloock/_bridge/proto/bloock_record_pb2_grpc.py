@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import bloock_record_pb2 as bloock__record__pb2
+from . import bloock_record_pb2 as bloock__record__pb2
 
 
 class RecordServiceStub(object):

@@ -11,10 +11,10 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import bloock_config_pb2 as bloock__config__pb2
-import bloock_identity_entities_pb2 as bloock__identity__entities__pb2
-import bloock_shared_pb2 as bloock__shared__pb2
-import bloock_keys_entities_pb2 as bloock__keys__entities__pb2
+from . import bloock_config_pb2 as bloock__config__pb2
+from . import bloock_identity_entities_pb2 as bloock__identity__entities__pb2
+from . import bloock_shared_pb2 as bloock__shared__pb2
+from . import bloock_keys_entities_pb2 as bloock__keys__entities__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1a\x62loock_identity_core.proto\x12\x06\x62loock\x1a\x13\x62loock_config.proto\x1a\x1e\x62loock_identity_entities.proto\x1a\x13\x62loock_shared.proto\x1a\x1a\x62loock_keys_entities.proto\"\x8f\x04\n\x1b\x43reateCoreCredentialRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x11\n\tschema_id\x18\x02 \x01(\t\x12\x12\n\nissuer_did\x18\x03 \x01(\t\x12\x12\n\nholder_did\x18\x04 \x01(\t\x12\x12\n\nexpiration\x18\x05 \x01(\x03\x12\x14\n\x07version\x18\x06 \x01(\x05H\x00\x88\x01\x01\x12\x18\n\x03key\x18\x07 \x01(\x0b\x32\x0b.bloock.Key\x12\x32\n\x11string_attributes\x18\x08 \x03(\x0b\x32\x17.bloock.StringAttribute\x12\x34\n\x12integer_attributes\x18\t \x03(\x0b\x32\x18.bloock.IntegerAttribute\x12\x34\n\x12\x64\x65\x63imal_attributes\x18\n \x03(\x0b\x32\x18.bloock.DecimalAttribute\x12\x34\n\x12\x62oolean_attributes\x18\x0b \x03(\x0b\x32\x18.bloock.BooleanAttribute\x12.\n\x0f\x64\x61te_attributes\x18\x0c \x03(\x0b\x32\x15.bloock.DateAttribute\x12\x36\n\x13\x64\x61tetime_attributes\x18\r \x03(\x0b\x32\x19.bloock.DateTimeAttributeB\n\n\x08_version\"\x82\x01\n\x1c\x43reateCoreCredentialResponse\x12\x35\n\x12\x63redential_receipt\x18\x01 \x01(\x0b\x32\x19.bloock.CredentialReceipt\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2x\n\x13IdentityCoreService\x12\x61\n\x14\x43reateCoreCredential\x12#.bloock.CreateCoreCredentialRequest\x1a$.bloock.CreateCoreCredentialResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')

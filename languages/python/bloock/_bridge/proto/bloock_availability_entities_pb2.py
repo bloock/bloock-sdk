@@ -11,7 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import bloock_keys_entities_pb2 as bloock__keys__entities__pb2
+from . import bloock_keys_entities_pb2 as bloock__keys__entities__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"bloock_availability_entities.proto\x12\x06\x62loock\x1a\x1a\x62loock_keys_entities.proto\"\\\n\tPublisher\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12#\n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x15.bloock.PublisherArgs\"D\n\rPublisherArgs\x12&\n\x08ipns_key\x18\x01 \x01(\x0b\x32\x0f.bloock.IpnsKeyH\x00\x88\x01\x01\x42\x0b\n\t_ipns_key\"V\n\x06Loader\x12*\n\x04type\x18\x01 \x01(\x0e\x32\x1c.bloock.DataAvailabilityType\x12 \n\x04\x61rgs\x18\x02 \x01(\x0b\x32\x12.bloock.LoaderArgs\"\x18\n\nLoaderArgs\x12\n\n\x02id\x18\x01 \x01(\t\"\x9d\x01\n\x07IpnsKey\x12,\n\x0bmanaged_key\x18\x01 \x01(\x0b\x32\x12.bloock.ManagedKeyH\x00\x88\x01\x01\x12<\n\x13managed_certificate\x18\x02 \x01(\x0b\x32\x1a.bloock.ManagedCertificateH\x01\x88\x01\x01\x42\x0e\n\x0c_managed_keyB\x16\n\x14_managed_certificate*6\n\x14\x44\x61taAvailabilityType\x12\n\n\x06HOSTED\x10\x00\x12\x08\n\x04IPFS\x10\x01\x12\x08\n\x04IPNS\x10\x02\x42W\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')

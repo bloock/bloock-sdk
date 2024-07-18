@@ -11,10 +11,10 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import bloock_record_entities_pb2 as bloock__record__entities__pb2
-import bloock_encryption_entities_pb2 as bloock__encryption__entities__pb2
-import bloock_shared_pb2 as bloock__shared__pb2
-import bloock_config_pb2 as bloock__config__pb2
+from . import bloock_record_entities_pb2 as bloock__record__entities__pb2
+from . import bloock_encryption_entities_pb2 as bloock__encryption__entities__pb2
+from . import bloock_shared_pb2 as bloock__shared__pb2
+from . import bloock_config_pb2 as bloock__config__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17\x62loock_encryption.proto\x12\x06\x62loock\x1a\x1c\x62loock_record_entities.proto\x1a bloock_encryption_entities.proto\x1a\x13\x62loock_shared.proto\x1a\x13\x62loock_config.proto\"\x7f\n\x0e\x45ncryptRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12$\n\tencrypter\x18\x03 \x01(\x0b\x32\x11.bloock.Encrypter\"^\n\x0f\x45ncryptResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"\x7f\n\x0e\x44\x65\x63ryptRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\x12$\n\tdecrypter\x18\x03 \x01(\x0b\x32\x11.bloock.Encrypter\"^\n\x0f\x44\x65\x63ryptResponse\x12\x1e\n\x06record\x18\x01 \x01(\x0b\x32\x0e.bloock.Record\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error\"_\n\x14\x45ncryptionAlgRequest\x12\'\n\x0b\x63onfig_data\x18\x01 \x01(\x0b\x32\x12.bloock.ConfigData\x12\x1e\n\x06record\x18\x02 \x01(\x0b\x32\x0e.bloock.Record\"h\n\x15\x45ncryptionAlgResponse\x12\"\n\x03\x61lg\x18\x01 \x01(\x0e\x32\x15.bloock.EncryptionAlg\x12!\n\x05\x65rror\x18\x02 \x01(\x0b\x32\r.bloock.ErrorH\x00\x88\x01\x01\x42\x08\n\x06_error2\xdc\x01\n\x11\x45ncryptionService\x12:\n\x07\x45ncrypt\x12\x16.bloock.EncryptRequest\x1a\x17.bloock.EncryptResponse\x12:\n\x07\x44\x65\x63rypt\x12\x16.bloock.DecryptRequest\x1a\x17.bloock.DecryptResponse\x12O\n\x10GetEncryptionAlg\x12\x1c.bloock.EncryptionAlgRequest\x1a\x1d.bloock.EncryptionAlgResponseBW\n\x1b\x63om.bloock.sdk.bridge.protoZ8github.com/bloock/bloock-sdk-go/v2/internal/bridge/protob\x06proto3')

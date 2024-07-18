@@ -5,7 +5,7 @@ namespace Bloock;
 
 /**
  */
-class IntegrityServiceClient extends \Grpc\BaseStub {
+class IntegrityServiceClient extends \Bloock\Bridge\Connection {
 
     /**
      * @param string $hostname hostname
@@ -20,7 +20,7 @@ class IntegrityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\SendRecordsRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function SendRecords(\Bloock\SendRecordsRequest $argument,
       $metadata = [], $options = []) {
@@ -34,7 +34,7 @@ class IntegrityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GetAnchorRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GetAnchor(\Bloock\GetAnchorRequest $argument,
       $metadata = [], $options = []) {
@@ -48,7 +48,7 @@ class IntegrityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\WaitAnchorRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function WaitAnchor(\Bloock\WaitAnchorRequest $argument,
       $metadata = [], $options = []) {
@@ -62,7 +62,7 @@ class IntegrityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\GetProofRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function GetProof(\Bloock\GetProofRequest $argument,
       $metadata = [], $options = []) {
@@ -76,7 +76,7 @@ class IntegrityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\ValidateRootRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function ValidateRoot(\Bloock\ValidateRootRequest $argument,
       $metadata = [], $options = []) {
@@ -90,7 +90,7 @@ class IntegrityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\VerifyProofRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function VerifyProof(\Bloock\VerifyProofRequest $argument,
       $metadata = [], $options = []) {
@@ -104,7 +104,7 @@ class IntegrityServiceClient extends \Grpc\BaseStub {
      * @param \Bloock\VerifyRecordsRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return mixed
      */
     public function VerifyRecords(\Bloock\VerifyRecordsRequest $argument,
       $metadata = [], $options = []) {
