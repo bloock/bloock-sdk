@@ -9,6 +9,7 @@ use serde::Serialize;
 use std::io::BufReader;
 use std::io::Read;
 use std::str::FromStr;
+use ureq::Error;
 
 pub struct SimpleHttpClient {}
 
@@ -101,9 +102,13 @@ impl SimpleHttpClient {
             Some(b) => req.send_bytes(b),
             None => req.call(),
         }
-        .map(Some)
-        .unwrap_or_else(|e| e.into_response())
-        .ok_or_else(|| HttpError::RequestError("Error while sending request".to_string()))?;
+        .or_else(|e| match e {
+            Error::Status(_, r) => Ok(r),
+            Error::Transport(te) => Err(te),
+        })
+        .map_err(|e| {
+            HttpError::RequestError(format!("Error while sending request ({})", e.to_string()))
+        })?;
 
         let status = res.status();
 
