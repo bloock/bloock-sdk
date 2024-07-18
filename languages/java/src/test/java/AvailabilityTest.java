@@ -88,7 +88,7 @@ class AvailabilityTest {
 
     String name = "key_name";
     KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
-    KeyType keyType = KeyType.EcP256k;
+    KeyType keyType = KeyType.Rsa2048;
 
     ManagedKey managedKey =
         keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType, name));
