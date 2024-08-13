@@ -9,5 +9,38 @@ pre-build = [
     "protoc --version"
 ]
 
-[target.*]
+[target.x86_64-unknown-linux-gnu]
+image = ":main"
+
+[target.x86_64-unknown-linux-musl]
+image = ":main"
+
+[target.aarch64-unknown-linux-gnu]
+image = ":main"
+
+[target.aarch64-unknown-linux-musl]
+image = ":main"
+
+[target.aarch64-linux-android]
+image = ":main"
+
+[target.i686-linux-android]
+image = ":main"
+
+[target.armv7-linux-androideabi]
+image = ":main"
+
+[target.x86_64-linux-android]
+image = ":main"
+
+[target.x86_64-pc-windows-gnu]
+image = ":main"
+
+[target.x86_64-pc-windows-msvc]
+image = ":main"
+
+[target.x86_64-apple-darwin]
+image = ":main"
+
+[target.aarch64-apple-darwin]
 image = ":main"
