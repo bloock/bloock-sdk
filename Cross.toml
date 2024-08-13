@@ -10,37 +10,37 @@ pre-build = [
 ]
 
 [target.x86_64-unknown-linux-gnu]
-image = ":main"
+image = "ghcr.io/cross-rs/x86_64-unknown-linux-gnu:edge"
 
 [target.x86_64-unknown-linux-musl]
-image = ":main"
+image = "ghcr.io/cross-rs/x86_64-unknown-linux-musl:edge"
 
 [target.aarch64-unknown-linux-gnu]
-image = ":main"
+image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:edge"
 
 [target.aarch64-unknown-linux-musl]
-image = ":main"
+image = "ghcr.io/cross-rs/aarch64-unknown-linux-musl:edge"
 
 [target.aarch64-linux-android]
-image = ":main"
+image = "ghcr.io/cross-rs/aarch64-linux-android:edge"
 
 [target.i686-linux-android]
-image = ":main"
+image = "ghcr.io/cross-rs/i686-linux-android:edge"
 
 [target.armv7-linux-androideabi]
-image = ":main"
+image = "ghcr.io/cross-rs/armv7-linux-androideabi:edge"
 
 [target.x86_64-linux-android]
-image = ":main"
+image = "ghcr.io/cross-rs/x86_64-linux-android:edge"
 
 [target.x86_64-pc-windows-gnu]
-image = ":main"
+image = "ghcr.io/cross-rs/x86_64-pc-windows-gnu:edge"
 
 [target.x86_64-pc-windows-msvc]
-image = ":main"
+image = "ghcr.io/cross-rs/x86_64-pc-windows-msvc:edge"
 
 [target.x86_64-apple-darwin]
-image = ":main"
+image = "ghcr.io/cross-rs/x86_64-apple-darwin:edge"
 
 [target.aarch64-apple-darwin]
-image = ":main"
+image = "ghcr.io/cross-rs/aarch64-apple-darwin:edge"
