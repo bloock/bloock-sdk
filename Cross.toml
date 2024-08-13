@@ -8,3 +8,6 @@ pre-build = [
     "rm -f $PROTOC_ZIP",
     "protoc --version"
 ]
+
+[target.*]
+image = ":main"
