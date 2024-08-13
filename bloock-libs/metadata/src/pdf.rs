@@ -32,7 +32,7 @@ use cms::{
 use const_oid::db::rfc5911::{ID_AA_SIGNING_CERTIFICATE_V_2, ID_SIGNED_DATA};
 use const_oid::db::rfc5912::{ID_SHA_256, SHA_256_WITH_RSA_ENCRYPTION};
 use const_oid::db::rfc6268::{ID_CONTENT_TYPE, ID_DATA, ID_MESSAGE_DIGEST};
-use lopdf::{Dictionary, IncrementalDocument, Object};
+use lopdf::{Dictionary, IncrementalDocument, Object, ObjectId};
 use rsa::{
     pkcs8::{DecodePublicKey, EncodePublicKey, LineEnding},
     RsaPublicKey,
@@ -65,13 +65,17 @@ impl PdfParser {
         let mut document = IncrementalDocument::load_from(payload)
             .map_err(|e| MetadataError::LoadError(e.to_string()))?;
 
-        document
-            .get_prev_documents()
-            .trailer
-            .get(b"Info")
-            .and_then(Object::as_reference)
-            .and_then(|id| document.opt_clone_object_to_new_document(id))
-            .map_err(|e| MetadataError::LoadError(e.to_string()))?;
+        match document.get_prev_documents().trailer.get(b"Info") {
+            Ok(d) => {
+                d.as_reference()
+                    .and_then(|id| document.opt_clone_object_to_new_document(id))
+                    .map_err(|e| MetadataError::LoadError(e.to_string()))?;
+            }
+            Err(_) => {
+                let temp_object: Object = lopdf::Dictionary::new().into();
+                document.new_document.add_object(temp_object.clone());
+            }
+        };
 
         let parser = PdfParser {
             modified: false,
