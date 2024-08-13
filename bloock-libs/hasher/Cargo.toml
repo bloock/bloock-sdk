@@ -7,11 +7,11 @@ edition = "2021"
 bench = false
 
 [dependencies]
-serde = { version = "1.0.123", features = ["std", "derive"] }
+serde = { version = "1.0.207", features = ["std", "derive"] }
 hex = "0.4.3"
-thiserror = "1.0.31"
+thiserror = "1.0.63"
 tiny-keccak = { version = "2.0.2", features = ["keccak"] }
-sha2 = "0.10.6"
+sha2 = "0.10.8"
 bloock-poseidon-rs = "0.1.5"
-num-bigint = "0.4.3"
-num-traits = "0.2.15"
+num-bigint = "0.4.6"
+num-traits = "0.2.19"

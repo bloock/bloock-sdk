@@ -19,7 +19,7 @@ use bloock_keys::{
 };
 use rsa::{
     pkcs8::{DecodePrivateKey, DecodePublicKey},
-    PaddingScheme, PublicKey, RsaPrivateKey, RsaPublicKey,
+    Oaep, RsaPrivateKey, RsaPublicKey,
 };
 
 pub struct RsaEncrypter {
@@ -29,10 +29,7 @@ pub struct RsaEncrypter {
 
 impl RsaEncrypter {
     pub fn new(api_host: String, api_key: String) -> Self {
-        Self {
-            api_host,
-            api_key,
-        }
+        Self { api_host, api_key }
     }
 
     pub fn new_boxed(api_host: String, api_key: String) -> Box<Self> {
@@ -49,22 +46,17 @@ impl Encrypter for RsaEncrypter {
         };
 
         let subject = key
-            .get_certificate(
-                self.api_host.clone(),
-                self.api_key.clone(),
-            )
+            .get_certificate(self.api_host.clone(), self.api_key.clone())
             .await
-            .map(|c| c.tbs_certificate.subject.to_string()).ok();
+            .map(|c| c.tbs_certificate.subject.to_string())
+            .ok();
 
         let aes_key = LocalKey::new(&LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
         })
         .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
 
-        let aes_encrypter = AesEncrypter::new(
-            self.api_host.clone(),
-            self.api_key.clone(),
-        );
+        let aes_encrypter = AesEncrypter::new(self.api_host.clone(), self.api_key.clone());
 
         let ciphertext = aes_encrypter
             .encrypt_local(payload, &aes_key.clone().into())
@@ -97,22 +89,17 @@ impl Encrypter for RsaEncrypter {
         };
 
         let subject = key
-            .get_certificate(
-                self.api_host.clone(),
-                self.api_key.clone(),
-            )
+            .get_certificate(self.api_host.clone(), self.api_key.clone())
             .await
-            .map(|c| c.tbs_certificate.subject.to_string()).ok();
+            .map(|c| c.tbs_certificate.subject.to_string())
+            .ok();
 
         let aes_key = LocalKey::new(&LocalKeyParams {
             key_type: bloock_keys::KeyType::Aes256,
         })
         .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
 
-        let aes_encrypter = AesEncrypter::new(
-            self.api_host.clone(),
-            self.api_key.clone(),
-        );
+        let aes_encrypter = AesEncrypter::new(self.api_host.clone(), self.api_key.clone());
 
         let ciphertext = aes_encrypter
             .encrypt_local(payload, &aes_key.clone().into())
@@ -154,10 +141,7 @@ impl Encrypter for RsaEncrypter {
             EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
         })?;
 
-        let aes_encrypter = AesEncrypter::new(
-            self.api_host.clone(),
-            self.api_key.clone(),
-        );
+        let aes_encrypter = AesEncrypter::new(self.api_host.clone(), self.api_key.clone());
 
         aes_encrypter
             .decrypt_local(payload, None, &aes_key.into())
@@ -188,10 +172,7 @@ impl Encrypter for RsaEncrypter {
             EncrypterError::InvalidKey("Invalid encryption metadata provided".to_string())
         })?;
 
-        let aes_encrypter = AesEncrypter::new(
-            self.api_host.clone(),
-            self.api_key.clone(),
-        );
+        let aes_encrypter = AesEncrypter::new(self.api_host.clone(), self.api_key.clone());
 
         aes_encrypter
             .decrypt_local(payload, None, &aes_key.into())
@@ -207,19 +188,17 @@ impl RsaEncrypter {
         };
 
         let subject = key
-            .get_certificate(
-                self.api_host.clone(),
-                self.api_key.clone(),
-            )
+            .get_certificate(self.api_host.clone(), self.api_key.clone())
             .await
-            .map(|c| c.tbs_certificate.subject.to_string()).ok();
+            .map(|c| c.tbs_certificate.subject.to_string())
+            .ok();
 
         let mut rng = rand::thread_rng();
 
         let public_key = RsaPublicKey::from_public_key_pem(&local.key.to_string())
             .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
 
-        let padding = PaddingScheme::new_oaep::<sha2::Sha256>();
+        let padding = Oaep::new::<sha2::Sha256>();
 
         let ciphertext = public_key
             .encrypt(&mut rng, padding, payload)
@@ -248,12 +227,10 @@ impl RsaEncrypter {
         };
 
         let subject = key
-            .get_certificate(
-                self.api_host.clone(),
-                self.api_key.clone(),
-            )
+            .get_certificate(self.api_host.clone(), self.api_key.clone())
             .await
-            .map(|c| c.tbs_certificate.subject.to_string()).ok();
+            .map(|c| c.tbs_certificate.subject.to_string())
+            .ok();
 
         let http = BloockHttpClient::new(self.api_key.clone(), None);
 
@@ -292,7 +269,7 @@ impl RsaEncrypter {
             .ok_or_else(|| EncrypterError::InvalidKey("No private key provided".to_string()))?;
         let private_key = RsaPrivateKey::from_pkcs8_pem(&secret_key.to_string())
             .map_err(|err| EncrypterError::InvalidKey(err.to_string()))?;
-        let padding = PaddingScheme::new_oaep::<sha2::Sha256>();
+        let padding = Oaep::new::<sha2::Sha256>();
         private_key
             .decrypt(padding, payload)
             .map_err(|err| EncrypterError::FailedToDecrypt(err.to_string()))
@@ -462,10 +439,9 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-                .await
-                .unwrap();
+        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
+            .await
+            .unwrap();
 
         sleep(Duration::from_secs(5));
 
@@ -531,10 +507,9 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-                .await
-                .unwrap();
+        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
+            .await
+            .unwrap();
 
         sleep(Duration::from_secs(10));
 
@@ -579,10 +554,9 @@ mod tests {
             protection: bloock_keys::entity::protection_level::ProtectionLevel::SOFTWARE,
             expiration: None,
         };
-        let managed_key =
-            ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
-                .await
-                .unwrap();
+        let managed_key = ManagedKey::new(&managed_key_params, api_host.clone(), api_key.clone())
+            .await
+            .unwrap();
 
         let signer = RsaEncrypter::new(api_host, api_key);
 

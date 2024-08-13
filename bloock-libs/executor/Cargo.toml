@@ -7,9 +7,9 @@ edition = "2021"
 bench = false
 
 [dependencies]
-serde = { version = "1.0.123", features = ["std", "derive"] }
-thiserror = "1.0.31"
-tokio = { version = "1.19.2", features = ["rt-multi-thread"] }
+serde = { version = "1.0.207", features = ["std", "derive"] }
+thiserror = "1.0.63"
+tokio = { version = "1.39.2", features = ["rt-multi-thread"] }
 
 [[test]]
 name = "default"

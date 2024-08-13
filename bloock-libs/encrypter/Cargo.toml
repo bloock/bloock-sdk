@@ -9,17 +9,17 @@ bench = false
 [dependencies]
 bloock-keys = { path = "../keys" }
 bloock-http = { path = "../http" }
-async-trait = "0.1.57"
-serde = { version = "1.0.123", features = ["std", "derive"] }
-thiserror = "1.0.31"
-aes-gcm = "0.10"
-rsa = "0.7.2"
-getrandom = { version = "0.2.7", features = ["js"] }
+async-trait = "0.1.81"
+serde = { version = "1.0.207", features = ["std", "derive"] }
+thiserror = "1.0.63"
+aes-gcm = "0.10.3"
+rsa = "0.9.6"
+getrandom = { version = "0.2.15", features = ["js"] }
 rand = "0.8.5"
-base64-url = "1.4.13"
-pbkdf2 = "0.11.0"
+base64-url = "3.0.0"
+pbkdf2 = "0.12.2"
 hmac = "0.12.1"
-sha2 = "0.10.6"
+sha2 = "0.10.8"
 hex = "0.4.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
