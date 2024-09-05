@@ -4,7 +4,7 @@ use crate::{
     },
     dictionary::{
         acro_form::AcroForm as AcroFormDictionary, annotation::PdfAnnotationWidget, error::Error,
-        signature_dictionary::SignatureDictionary, utils,
+        signature_dictionary::SignatureDictionary, utils::{self},
     },
     MetadataError, MetadataParser, Result as BloockResult,
 };
@@ -32,7 +32,7 @@ use cms::{
 use const_oid::db::rfc5911::{ID_AA_SIGNING_CERTIFICATE_V_2, ID_SIGNED_DATA};
 use const_oid::db::rfc5912::{ID_SHA_256, SHA_256_WITH_RSA_ENCRYPTION};
 use const_oid::db::rfc6268::{ID_CONTENT_TYPE, ID_DATA, ID_MESSAGE_DIGEST};
-use lopdf::{Dictionary, IncrementalDocument, Object, ObjectId};
+use lopdf::{Dictionary, IncrementalDocument, Object};
 use rsa::{
     pkcs8::{DecodePublicKey, EncodePublicKey, LineEnding},
     RsaPublicKey,
@@ -134,6 +134,8 @@ impl MetadataParser for PdfParser {
                 MetadataError::LoadMetadataError("could not move page to new document".to_string())
             })?;
 
+        let document_borrow = self.document.get_prev_documents().clone();
+
         let page_dict = self
             .document
             .new_document
@@ -142,7 +144,7 @@ impl MetadataParser for PdfParser {
                 MetadataError::LoadMetadataError("could not get page dictionary".to_string())
             })?;
 
-        let mut annots = match page_dict.get(b"Annots") {
+        let mut annots = match page_dict.get_deref(b"Annots", &document_borrow) {
             Ok(a) => a
                 .as_array()
                 .map_err(|_| {
@@ -159,7 +161,7 @@ impl MetadataParser for PdfParser {
             MetadataError::LoadMetadataError("could not get mutable root dictionary".to_string())
         })?;
 
-        let mut acro_form = match root.get(b"AcroForm") {
+        let mut acro_form = match root.get_deref(b"AcroForm", &document_borrow) {
             Ok(a) => AcroFormDictionary::try_from(a.as_dict().map_err(|_| {
                 MetadataError::LoadMetadataError("could not get AcroForm dictionary".to_string())
             })?)
@@ -174,7 +176,6 @@ impl MetadataParser for PdfParser {
         let acro_form_dict: Dictionary = acro_form.try_into().map_err(|_| {
             MetadataError::LoadMetadataError("could not convert AcroForm to dictionary".to_string())
         })?;
-
         root.set(b"AcroForm".to_vec(), acro_form_dict);
 
         // Compute ByteRange
