@@ -20,9 +20,9 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		result, _, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
+		result, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
 		require.NoError(t, err)
-		assert.NotEmpty(t, result)
+		assert.NotEmpty(t, result.ID)
 	})
 
 	t.Run("retrieve hosted", func(t *testing.T) {
@@ -35,10 +35,10 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, _, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
+		res, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
 		require.NoError(t, err)
 
-		result, err := availabilityClient.Retrieve(availability.NewHostedLoader(id))
+		result, err := availabilityClient.Retrieve(availability.NewHostedLoader(res.ID))
 		require.NoError(t, err)
 
 		resultHash, err := result.GetHash()
@@ -53,9 +53,9 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		result, _, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
+		result, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
 		require.NoError(t, err)
-		assert.NotEmpty(t, result)
+		assert.NotEmpty(t, result.ID)
 	})
 
 	t.Run("retrieve ipfs", func(t *testing.T) {
@@ -68,10 +68,10 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, _, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
+		res, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 
-		result, err := availabilityClient.Retrieve(availability.NewIpfsLoader(id))
+		result, err := availabilityClient.Retrieve(availability.NewIpfsLoader(res.ID))
 		require.NoError(t, err)
 
 		resultHash, err := result.GetHash()
@@ -89,12 +89,12 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		ipnsCid, ipnsKey, err := availabilityClient.Publish(record, availability.NewIpnsPublisher())
+		response, err := availabilityClient.Publish(record, availability.NewIpnsPublisher())
 		require.NoError(t, err)
-		assert.NotEmpty(t, ipnsCid)
-		assert.NotEmpty(t, ipnsKey.KeyID)
+		assert.NotEmpty(t, response.ID)
+		assert.NotEmpty(t, response.IpnsKey.KeyID)
 
-		result, err := availabilityClient.Retrieve(availability.NewIpnsLoader(ipnsCid))
+		result, err := availabilityClient.Retrieve(availability.NewIpnsLoader(response.ID))
 		require.NoError(t, err)
 
 		resultHash, err := result.GetHash()
@@ -105,9 +105,9 @@ func TestAvailability(t *testing.T) {
 		recordUpdate, err := recordClient.FromString(payloadUpdate).Build()
 		require.NoError(t, err)
 
-		ipnsCidUpdate, ipnsKeyUpdate, err := availabilityClient.Publish(recordUpdate, availability.UpdateIpnsPublisher(ipnsKey))
+		responseUpdated, err := availabilityClient.Publish(recordUpdate, availability.UpdateIpnsPublisher(response.IpnsKey))
 		assert.NoError(t, err)
-		assert.Equal(t, ipnsCid, ipnsCidUpdate)
-		assert.Equal(t, ipnsKey, ipnsKeyUpdate)
+		assert.Equal(t, response.ID, responseUpdated.ID)
+		assert.Equal(t, response.IpnsKey, responseUpdated.IpnsKey)
 	})
 }

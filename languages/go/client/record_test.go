@@ -85,10 +85,10 @@ func TestRecord(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, _, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
+		res, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
 		require.NoError(t, err)
 
-		record, err = recordClient.FromLoader(availability.NewHostedLoader(id)).Build()
+		record, err = recordClient.FromLoader(availability.NewHostedLoader(res.ID)).Build()
 		require.NoError(t, err)
 
 		result := record.Retrieve()
@@ -106,10 +106,10 @@ func TestRecord(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, _, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
+		res, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 
-		record, err = recordClient.FromLoader(availability.NewIpfsLoader(id)).Build()
+		record, err = recordClient.FromLoader(availability.NewIpfsLoader(res.ID)).Build()
 		require.NoError(t, err)
 
 		result := record.Retrieve()
@@ -271,10 +271,10 @@ func TestRecord(t *testing.T) {
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
 		availabilityClient := NewAvailabilityClient()
-		result, _, err := availabilityClient.Publish(encryptedRecord, availability.NewHostedPublisher())
+		result, err := availabilityClient.Publish(encryptedRecord, availability.NewHostedPublisher())
 		require.NoError(t, err)
 
-		loadedRecord, err := recordClient.FromLoader(availability.NewHostedLoader(result)).
+		loadedRecord, err := recordClient.FromLoader(availability.NewHostedLoader(result.ID)).
 			WithDecrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 		require.NoError(t, err)
@@ -301,10 +301,10 @@ func TestRecord(t *testing.T) {
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
 		availabilityClient := NewAvailabilityClient()
-		result, _, err := availabilityClient.Publish(encryptedRecord, availability.NewIpfsPublisher())
+		result, err := availabilityClient.Publish(encryptedRecord, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 
-		loadedRecord, err := recordClient.FromLoader(availability.NewIpfsLoader(result)).
+		loadedRecord, err := recordClient.FromLoader(availability.NewIpfsLoader(result.ID)).
 			WithDecrypter(encryption.NewEncrypterWithLocalKey(localKey)).
 			Build()
 		require.NoError(t, err)
