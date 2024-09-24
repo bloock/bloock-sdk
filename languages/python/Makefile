@@ -10,7 +10,7 @@ proto:
 
 build:
 	pip3 install cibuildwheel==2.12.3
-	python3 -m cibuildwheel --output-dir wheelhouse --platform macos --archs arm64
+	python3 -m cibuildwheel --output-dir wheelhouse
 
 dev: copy_lib proto build
 	python3 main.py
