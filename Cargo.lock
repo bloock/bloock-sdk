@@ -829,7 +829,7 @@ dependencies = [
  "lopdf",
  "pem 3.0.4",
  "reqwest 0.12.5",
- "ring 0.16.20",
+ "ring 0.17.8",
  "rsa 0.9.6",
  "serde",
  "serde_json",
