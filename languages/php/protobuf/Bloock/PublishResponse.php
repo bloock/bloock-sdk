@@ -18,7 +18,11 @@ class PublishResponse extends \Google\Protobuf\Internal\Message
      */
     protected $id = '';
     /**
-     * Generated from protobuf field <code>optional .bloock.Error error = 2;</code>
+     * Generated from protobuf field <code>optional .bloock.IpnsKey ipns_key = 2;</code>
+     */
+    protected $ipns_key = null;
+    /**
+     * Generated from protobuf field <code>optional .bloock.Error error = 3;</code>
      */
     protected $error = null;
 
@@ -29,6 +33,7 @@ class PublishResponse extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type string $id
+     *     @type \Bloock\IpnsKey $ipns_key
      *     @type \Bloock\Error $error
      * }
      */
@@ -60,7 +65,39 @@ class PublishResponse extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.Error error = 2;</code>
+     * Generated from protobuf field <code>optional .bloock.IpnsKey ipns_key = 2;</code>
+     * @return \Bloock\IpnsKey|null
+     */
+    public function getIpnsKey()
+    {
+        return $this->ipns_key;
+    }
+
+    public function hasIpnsKey()
+    {
+        return isset($this->ipns_key);
+    }
+
+    public function clearIpnsKey()
+    {
+        unset($this->ipns_key);
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.IpnsKey ipns_key = 2;</code>
+     * @param \Bloock\IpnsKey $var
+     * @return $this
+     */
+    public function setIpnsKey($var)
+    {
+        GPBUtil::checkMessage($var, \Bloock\IpnsKey::class);
+        $this->ipns_key = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .bloock.Error error = 3;</code>
      * @return \Bloock\Error|null
      */
     public function getError()
@@ -79,7 +116,7 @@ class PublishResponse extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>optional .bloock.Error error = 2;</code>
+     * Generated from protobuf field <code>optional .bloock.Error error = 3;</code>
      * @param \Bloock\Error $var
      * @return $this
      */

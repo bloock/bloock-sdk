@@ -286,7 +286,7 @@ class KeyTest {
             CertificateType.PFX, bytes, new ImportCertificateParams(password));
 
     assertNotNull(managedCertificate.getKey());
-    assertEquals(managedCertificate.getKeyType(), KeyType.EcP256k);
+    assertEquals(managedCertificate.getKeyType(), KeyType.Rsa2048);
     assertEquals(managedCertificate.getProtection(), KeyProtectionLevel.SOFTWARE);
 
     ManagedCertificate loadedCertificate =

@@ -321,7 +321,7 @@ func TestKey(t *testing.T) {
 
 		assert.NotEmpty(t, managedCertificate.Key)
 		assert.Equal(t, key.KEY_PROTECTION_SOFTWARE, managedCertificate.Protection)
-		assert.Equal(t, key.EcP256k, managedCertificate.KeyType)
+		assert.Equal(t, key.Rsa2048, managedCertificate.KeyType)
 
 		loadedCertificate, err := keyClient.LoadManagedCertificate(managedCertificate.ID)
 		assert.NoError(t, err)

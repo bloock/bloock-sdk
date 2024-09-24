@@ -10,8 +10,18 @@ type IpnsPublisher struct {
 	Args PublisherArgs
 }
 
-// NewIpnsPublisher represents a publisher for IPNS data availability.
-func NewIpnsPublisher(ipnsKey IpnsKey) IpnsPublisher {
+// NewIpnsPublisher represents a publisher for IPNS data availability with creation option.
+func NewIpnsPublisher() IpnsPublisher {
+	return IpnsPublisher{
+		Type: proto.DataAvailabilityType_IPNS,
+		Args: PublisherArgs{
+			IpnsKey: nil,
+		},
+	}
+}
+
+// UpdateIpnsPublisher represents a publisher for IPNS data availability with update option.
+func UpdateIpnsPublisher(ipnsKey *IpnsKey) IpnsPublisher {
 	return IpnsPublisher{
 		Type: proto.DataAvailabilityType_IPNS,
 		Args: PublisherArgs{

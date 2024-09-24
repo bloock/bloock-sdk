@@ -7,6 +7,7 @@ use Bloock\Config\Config;
 use Bloock\ConfigData;
 use Bloock\Entity\Availability\Loader;
 use Bloock\Entity\Availability\Publisher;
+use Bloock\Entity\Availability\PublishResponse;
 use Bloock\Entity\Record\Record;
 use Bloock\PublishRequest;
 use Bloock\RetrieveRequest;
@@ -39,10 +40,10 @@ class AvailabilityClient
      * Publishes a Bloock record to the Availability service using the specified publisher.
      * @param Record $record
      * @param Publisher $publisher
-     * @return string
+     * @return PublishResponse
      * @throws Exception
      */
-    public function publish(Record $record, Publisher $publisher): string
+    public function publish(Record $record, Publisher $publisher): PublishResponse
     {
         $req = new PublishRequest();
         $req->setConfigData($this->config)->setRecord($record->toProto())->setPublisher($publisher->toProto());
@@ -53,7 +54,7 @@ class AvailabilityClient
             throw new Exception($res->getError()->getMessage());
         }
 
-        return $res->getId();
+        return PublishResponse::fromProto($res);
     }
 
     /**

@@ -85,7 +85,7 @@ func TestRecord(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
+		id, _, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
 		require.NoError(t, err)
 
 		record, err = recordClient.FromLoader(availability.NewHostedLoader(id)).Build()
@@ -106,7 +106,7 @@ func TestRecord(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
+		id, _, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 
 		record, err = recordClient.FromLoader(availability.NewIpfsLoader(id)).Build()
@@ -271,7 +271,7 @@ func TestRecord(t *testing.T) {
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
 		availabilityClient := NewAvailabilityClient()
-		result, err := availabilityClient.Publish(encryptedRecord, availability.NewHostedPublisher())
+		result, _, err := availabilityClient.Publish(encryptedRecord, availability.NewHostedPublisher())
 		require.NoError(t, err)
 
 		loadedRecord, err := recordClient.FromLoader(availability.NewHostedLoader(result)).
@@ -301,7 +301,7 @@ func TestRecord(t *testing.T) {
 		assert.NotEqual(t, payload, string(encryptedRecord.Retrieve()))
 
 		availabilityClient := NewAvailabilityClient()
-		result, err := availabilityClient.Publish(encryptedRecord, availability.NewIpfsPublisher())
+		result, _, err := availabilityClient.Publish(encryptedRecord, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 
 		loadedRecord, err := recordClient.FromLoader(availability.NewIpfsLoader(result)).

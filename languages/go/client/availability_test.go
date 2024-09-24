@@ -4,10 +4,8 @@ package client
 
 import (
 	"testing"
-	"time"
 
 	"github.com/bloock/bloock-sdk-go/v2/entity/availability"
-	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -22,7 +20,7 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		result, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
+		result, _, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
 		require.NoError(t, err)
 		assert.NotEmpty(t, result)
 	})
@@ -37,7 +35,7 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
+		id, _, err := availabilityClient.Publish(record, availability.NewHostedPublisher())
 		require.NoError(t, err)
 
 		result, err := availabilityClient.Retrieve(availability.NewHostedLoader(id))
@@ -55,7 +53,7 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		result, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
+		result, _, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 		assert.NotEmpty(t, result)
 	})
@@ -70,7 +68,7 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		id, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
+		id, _, err := availabilityClient.Publish(record, availability.NewIpfsPublisher())
 		require.NoError(t, err)
 
 		result, err := availabilityClient.Retrieve(availability.NewIpfsLoader(id))
@@ -82,13 +80,6 @@ func TestAvailability(t *testing.T) {
 	})
 
 	t.Run("publish and retrieve from ipns", func(t *testing.T) {
-		keyClient := NewKeyClient()
-		key, err := keyClient.NewManagedKey(key.ManagedKeyParams{
-			Protection: key.KEY_PROTECTION_SOFTWARE,
-			KeyType:    key.Rsa2048,
-		})
-		assert.NoError(t, err)
-
 		payload := "Hello world"
 		recordClient := NewRecordClient()
 		record, err := recordClient.FromString(payload).Build()
@@ -98,11 +89,10 @@ func TestAvailability(t *testing.T) {
 		require.NoError(t, err)
 
 		availabilityClient := NewAvailabilityClient()
-		ipnsCid, err := availabilityClient.Publish(record, availability.NewIpnsPublisher(availability.NewIpnsKeyWithManagedKey(key)))
+		ipnsCid, ipnsKey, err := availabilityClient.Publish(record, availability.NewIpnsPublisher())
 		require.NoError(t, err)
 		assert.NotEmpty(t, ipnsCid)
-
-		time.Sleep(60 * time.Second)
+		assert.NotEmpty(t, ipnsKey.KeyID)
 
 		result, err := availabilityClient.Retrieve(availability.NewIpnsLoader(ipnsCid))
 		require.NoError(t, err)
@@ -110,5 +100,14 @@ func TestAvailability(t *testing.T) {
 		resultHash, err := result.GetHash()
 		require.NoError(t, err)
 		assert.Equal(t, recordHash, resultHash)
+
+		payloadUpdate := "Bye Bye"
+		recordUpdate, err := recordClient.FromString(payloadUpdate).Build()
+		require.NoError(t, err)
+
+		ipnsCidUpdate, ipnsKeyUpdate, err := availabilityClient.Publish(recordUpdate, availability.UpdateIpnsPublisher(ipnsKey))
+		assert.NoError(t, err)
+		assert.Equal(t, ipnsCid, ipnsCidUpdate)
+		assert.Equal(t, ipnsKey, ipnsKeyUpdate)
 	})
 }

@@ -142,7 +142,7 @@ class TestRecord(unittest.TestCase):
         result = availability_client.publish(record, IpfsPublisher())
 
         record_client = RecordClient()
-        record = record_client.from_loader(IpfsLoader(hash=result)).build()
+        record = record_client.from_loader(IpfsLoader(hash=result.id)).build()
         self.assertEqual(bytes(payload, "utf-8"), record.retrieve())
 
     def test_aes_encryption(self):

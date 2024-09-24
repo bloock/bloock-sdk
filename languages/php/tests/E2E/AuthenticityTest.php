@@ -8,11 +8,14 @@ use Bloock\Entity\Authenticity\Signer;
 use Bloock\Entity\Authenticity\SignatureAlg;
 use Bloock\Entity\Key\AccessControl;
 use Bloock\Entity\Key\AccessControlSecret;
+use Bloock\Entity\Key\AccessControlTotp;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
 use Bloock\Entity\Key\Managed;
 use Bloock\Entity\Key\ManagedKeyParams;
 use PHPUnit\Framework\TestCase;
+use OTPHP\InternalClock;
+use OTPHP\TOTP;
 
 final class AuthenticityTest extends TestCase
 {
@@ -109,7 +112,7 @@ final class AuthenticityTest extends TestCase
     /**
      * @throws Exception
      */
-    /*public function testSignManagedEcdsaWithTotpAccessControl()
+    public function testSignManagedEcdsaWithTotpAccessControl()
     {
         $recordClient = new RecordClient();
         $authenticityClient = new AuthenticityClient();
@@ -121,9 +124,10 @@ final class AuthenticityTest extends TestCase
 
         $totp = $keyClient->setupTotpAccessControl(new Managed($key));
 
-        $code = $this->generateTOTPClient($totp->getSecret());
+        $clock ??= new InternalClock();
+        $totpClient = TOTP::createFromSecret($totp->secret, $clock);
 
-        $totpAccessControl = new AccessControlTotp($code);
+        $totpAccessControl = new AccessControlTotp($totpClient->now());
         $signature = $authenticityClient->sign($record, new Signer($key, null, new AccessControl($totpAccessControl)));
         $this->assertNotNull($signature);
 
@@ -135,7 +139,7 @@ final class AuthenticityTest extends TestCase
         } catch (Exception $e) {
             $this->assertNotNull($e->getMessage());
         }
-    }*/
+    }
 
     /**
      * @throws Exception

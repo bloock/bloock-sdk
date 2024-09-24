@@ -265,7 +265,7 @@ final class KeyTest extends TestCase
         $certificate = $keyClient->importManagedCertificate(CertificateType::PFX, $byteArray, new ImportCertificateParams($password));
 
         $this->assertNotNull($certificate->key);
-        $this->assertEquals($certificate->keyType, KeyType::EcP256k);
+        $this->assertEquals($certificate->keyType, KeyType::Rsa2048);
         $this->assertEquals($certificate->protection, KeyProtectionLevel::SOFTWARE);
 
         $loadedCertificate = $keyClient->loadManagedCertificate($certificate->id);

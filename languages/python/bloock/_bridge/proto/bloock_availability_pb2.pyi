@@ -10,6 +10,7 @@ import builtins
 import google.protobuf.descriptor
 import google.protobuf.message
 import sys
+import typing
 
 if sys.version_info >= (3, 8):
     import typing as typing_extensions
@@ -48,19 +49,26 @@ class PublishResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ID_FIELD_NUMBER: builtins.int
+    IPNS_KEY_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     id: builtins.str
+    @property
+    def ipns_key(self) -> bloock_availability_entities_pb2.IpnsKey: ...
     @property
     def error(self) -> bloock_shared_pb2.Error: ...
     def __init__(
         self,
         *,
         id: builtins.str = ...,
+        ipns_key: bloock_availability_entities_pb2.IpnsKey | None = ...,
         error: bloock_shared_pb2.Error | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "error", b"error", "id", b"id"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_error", b"_error", "_ipns_key", b"_ipns_key", "error", b"error", "ipns_key", b"ipns_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_error", b"_error", "_ipns_key", b"_ipns_key", "error", b"error", "id", b"id", "ipns_key", b"ipns_key"]) -> None: ...
+    @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_error", b"_error"]) -> typing_extensions.Literal["error"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_ipns_key", b"_ipns_key"]) -> typing_extensions.Literal["ipns_key"] | None: ...
 
 global___PublishResponse = PublishResponse
 

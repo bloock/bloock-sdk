@@ -48,7 +48,7 @@ public class AvailabilityClient {
    * @return
    * @throws Exception
    */
-  public String publish(Record record, Publisher publisher) throws Exception {
+  public com.bloock.sdk.entity.availability.PublishResponse publish(Record record, Publisher publisher) throws Exception {
     PublishRequest req = PublishRequest.newBuilder()
         .setConfigData(this.configData)
         .setRecord(record.toProto())
@@ -60,7 +60,7 @@ public class AvailabilityClient {
       throw new Exception(response.getError().getMessage());
     }
 
-    return response.getId();
+    return com.bloock.sdk.entity.availability.PublishResponse.fromProto(response);
   }
 
   /**

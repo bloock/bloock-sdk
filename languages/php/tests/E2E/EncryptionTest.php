@@ -10,6 +10,11 @@ use Bloock\Entity\Encryption\Encrypter;
 use Bloock\Entity\Key\ManagedKeyParams;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Encryption\EncryptionAlg;
+use Bloock\Entity\Key\AccessControl;
+use Bloock\Entity\Key\AccessControlTotp;
+use Bloock\Entity\Key\Managed;
+use OTPHP\InternalClock;
+use OTPHP\TOTP;
 
 final class EncryptionTest extends TestCase
 {
@@ -146,7 +151,7 @@ final class EncryptionTest extends TestCase
     /**
      * @throws Exception
      */
-    /*public function testEncryptManagedRsaWithTotpAccessControl()
+    public function testEncryptManagedRsaWithTotpAccessControl()
     {
         $payload = "Hello world";
 
@@ -161,9 +166,10 @@ final class EncryptionTest extends TestCase
 
         $totp = $keyClient->setupTotpAccessControl(new Managed($key));
 
-        $code = $this->generateTOTPClient($totp->getSecret());
+        $clock ??= new InternalClock();
+        $totpClient = TOTP::createFromSecret($totp->secret, $clock);
 
-        $totpAccessControl = new AccessControlTotp($code);
+        $totpAccessControl = new AccessControlTotp($totpClient->now());
         $encryptedRecord = $encryptionClient->encrypt($record, new Encrypter($key, new AccessControl($totpAccessControl)));
 
         $decryptedRecord = $recordClient->fromRecord($encryptedRecord)
@@ -172,7 +178,7 @@ final class EncryptionTest extends TestCase
 
         $decryptedRecordHash = $decryptedRecord->getHash();
         $this->assertEquals($recordHash, $decryptedRecordHash);
-    }*/
+    }
 
     /**
      * @throws Exception
