@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { generateTOTPClient, initSdk } from "./util";
+import { initSdk } from "./util";
 import {
   AccessControl,
   AccessControlTotp,
@@ -13,6 +13,7 @@ import {
   ManagedKeyParams,
   RecordClient
 } from "../../dist";
+import { TOTP } from "totp-generator";
 
 describe("Encryptions Tests", () => {
   test("encrypt local aes", async () => {
@@ -146,9 +147,9 @@ describe("Encryptions Tests", () => {
 
     let totp = await keyClient.setupTotpAccessControl(new Managed(key))
 
-    let code = generateTOTPClient(totp.secret)
+    let code = TOTP.generate(totp.secret, {timestamp: Date.now()})
 
-    let totpAccessControl = new AccessControlTotp(code)
+    let totpAccessControl = new AccessControlTotp(code.otp)
     let encryptionClient = new EncryptionClient();
     let encryptedRecord = await encryptionClient.encrypt(
       record,

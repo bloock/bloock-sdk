@@ -94,9 +94,9 @@ describe("Record Tests", () => {
     let payload = await record.retrieve();
 
     let availabilityClient = new AvailabilityClient();
-    let id = await availabilityClient.publish(record, new HostedPublisher());
+    let res = await availabilityClient.publish(record, new HostedPublisher());
 
-    record = await recordClient.fromLoader(new HostedLoader(id)).build();
+    record = await recordClient.fromLoader(new HostedLoader(res.id)).build();
     let result = await record.retrieve();
     expect(payload).toEqual(result);
   });
@@ -110,9 +110,9 @@ describe("Record Tests", () => {
     let payload = await record.retrieve();
 
     let availabilityClient = new AvailabilityClient();
-    let id = await availabilityClient.publish(record, new IpfsPublisher());
+    let res = await availabilityClient.publish(record, new IpfsPublisher());
 
-    record = await recordClient.fromLoader(new IpfsLoader(id)).build();
+    record = await recordClient.fromLoader(new IpfsLoader(res.id)).build();
 
     let result = await record.retrieve();
 
@@ -282,7 +282,7 @@ describe("Record Tests", () => {
     );
 
     let loaded_record = await recordClient
-      .fromLoader(new HostedLoader(result))
+      .fromLoader(new HostedLoader(result.id))
       .withDecrypter(new Encrypter(key))
       .build();
 
@@ -320,7 +320,7 @@ describe("Record Tests", () => {
     );
 
     let loaded_record = await recordClient
-      .fromLoader(new IpfsLoader(result))
+      .fromLoader(new IpfsLoader(result.id))
       .withDecrypter(new Encrypter(key))
       .build();
 

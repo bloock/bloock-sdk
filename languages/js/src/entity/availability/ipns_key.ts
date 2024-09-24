@@ -1,36 +1,28 @@
 import * as proto from "../../bridge/proto/bloock_availability_entities";
-import {
-  ManagedCertificate,
-  ManagedKey
-} from "../key";
 
 /**
- * Represents an IpnsKey with various key types.
+ * Represents an object with a key uuid identifier.
  */
 export class IpnsKey {
-  managedKey?: ManagedKey;
-  managedCertificate?: ManagedCertificate;
+  keyID: string;
 
   /**
-   * Creates an IpnsKey instance with a managed key or managed certificate.
-   * @param key
+   * Creates an IpnsKey instance with a key uuid identifier.
+   * @param keyID
    */
   constructor(
-    key: ManagedKey | ManagedCertificate,
+    keyID: string
   ) {
-    if (key instanceof ManagedKey) {
-      this.managedKey = key;
-    } else if (key instanceof ManagedCertificate) {
-      this.managedCertificate = key;
-    } else {
-      throw new Error("invalid key provided");
-    }
+    this.keyID = keyID;
   }
 
   public toProto(): proto.IpnsKey {
     return proto.IpnsKey.fromPartial({
-      managedKey: this.managedKey?.toProto(),
-      managedCertificate: this.managedCertificate?.toProto(),
+      keyId: this.keyID
     });
+  }
+
+  static fromProto(res: proto.IpnsKey): IpnsKey {
+    return new IpnsKey(res.keyId);
   }
 }

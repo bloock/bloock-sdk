@@ -1,6 +1,5 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
-import { ManagedCertificate, ManagedKey } from "./bloock_keys_entities";
 
 export enum DataAvailabilityType {
   HOSTED = 0,
@@ -60,8 +59,7 @@ export interface LoaderArgs {
 }
 
 export interface IpnsKey {
-  managedKey?: ManagedKey | undefined;
-  managedCertificate?: ManagedCertificate | undefined;
+  keyId: string;
 }
 
 function createBasePublisher(): Publisher {
@@ -333,16 +331,13 @@ export const LoaderArgs = {
 };
 
 function createBaseIpnsKey(): IpnsKey {
-  return { managedKey: undefined, managedCertificate: undefined };
+  return { keyId: "" };
 }
 
 export const IpnsKey = {
   encode(message: IpnsKey, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.managedKey !== undefined) {
-      ManagedKey.encode(message.managedKey, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.managedCertificate !== undefined) {
-      ManagedCertificate.encode(message.managedCertificate, writer.uint32(18).fork()).ldelim();
+    if (message.keyId !== "") {
+      writer.uint32(10).string(message.keyId);
     }
     return writer;
   },
@@ -359,14 +354,7 @@ export const IpnsKey = {
             break;
           }
 
-          message.managedKey = ManagedKey.decode(reader, reader.uint32());
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.managedCertificate = ManagedCertificate.decode(reader, reader.uint32());
+          message.keyId = reader.string();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -378,21 +366,13 @@ export const IpnsKey = {
   },
 
   fromJSON(object: any): IpnsKey {
-    return {
-      managedKey: isSet(object.managedKey) ? ManagedKey.fromJSON(object.managedKey) : undefined,
-      managedCertificate: isSet(object.managedCertificate)
-        ? ManagedCertificate.fromJSON(object.managedCertificate)
-        : undefined,
-    };
+    return { keyId: isSet(object.keyId) ? globalThis.String(object.keyId) : "" };
   },
 
   toJSON(message: IpnsKey): unknown {
     const obj: any = {};
-    if (message.managedKey !== undefined) {
-      obj.managedKey = ManagedKey.toJSON(message.managedKey);
-    }
-    if (message.managedCertificate !== undefined) {
-      obj.managedCertificate = ManagedCertificate.toJSON(message.managedCertificate);
+    if (message.keyId !== "") {
+      obj.keyId = message.keyId;
     }
     return obj;
   },
@@ -402,12 +382,7 @@ export const IpnsKey = {
   },
   fromPartial<I extends Exact<DeepPartial<IpnsKey>, I>>(object: I): IpnsKey {
     const message = createBaseIpnsKey();
-    message.managedKey = (object.managedKey !== undefined && object.managedKey !== null)
-      ? ManagedKey.fromPartial(object.managedKey)
-      : undefined;
-    message.managedCertificate = (object.managedCertificate !== undefined && object.managedCertificate !== null)
-      ? ManagedCertificate.fromPartial(object.managedCertificate)
-      : undefined;
+    message.keyId = object.keyId ?? "";
     return message;
   },
 };

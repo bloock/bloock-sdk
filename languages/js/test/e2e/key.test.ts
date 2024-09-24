@@ -308,7 +308,7 @@ describe("Key Tests", () => {
     );
 
     expect(certificate.key).toBeDefined();
-    expect(certificate.keyType).toBe(KeyType.EcP256k);
+    expect(certificate.keyType).toBe(KeyType.Rsa2048);
     expect(certificate.protection).toBe(KeyProtectionLevel.SOFTWARE);
 
     let loadedCertificate = await keyClient.loadManagedCertificate(
