@@ -22,7 +22,7 @@ runs:
       run: |
         pip install pydoc-markdown pyotp
     - name: Download binaries
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v3
       with:
         name: bloock_core_lib_static
     - name: Copy binaries.
