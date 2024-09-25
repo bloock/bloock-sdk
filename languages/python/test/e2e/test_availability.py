@@ -77,7 +77,7 @@ class TestAvailability(unittest.TestCase):
         self.assertNotEqual(result.id, "")
         self.assertNotEqual(result.ipns_key.key_id, "")
 
-        retrieve = availability_client.retrieve(IpnsLoader())
+        retrieve = availability_client.retrieve(IpnsLoader(result.id))
 
         self.assertEqual(record.get_hash(), retrieve.get_hash())
 

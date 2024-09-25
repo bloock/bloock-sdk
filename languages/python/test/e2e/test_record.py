@@ -130,7 +130,7 @@ class TestRecord(unittest.TestCase):
         result = availability_client.publish(record, HostedPublisher())
 
         record_client = RecordClient()
-        record = record_client.from_loader(HostedLoader(hash=result)).build()
+        record = record_client.from_loader(HostedLoader(hash=result.id)).build()
         self.assertEqual(bytes(payload, "utf-8"), record.retrieve())
 
     def test_from_ipfs_loader(self):
