@@ -37,3 +37,4 @@ jobs:
           if-no-files-found: error
           path: |
             bloock-bridge/build/wasm
+          overwrite: true
