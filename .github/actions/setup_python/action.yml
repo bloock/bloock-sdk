@@ -26,6 +26,7 @@ runs:
       with:
         path: bloock_core_lib_static
         pattern: bloock_core_lib_static-*
+        merge-multiple: true
     - name: Copy binaries.
       shell: bash
       run: |

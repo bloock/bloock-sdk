@@ -22,6 +22,7 @@ runs:
       with:
         path: bloock_core_lib_dynamic
         pattern: bloock_core_lib_dynamic-*
+        merge-multiple: true
     - name: Copy binaries.
       shell: bash
       run: |

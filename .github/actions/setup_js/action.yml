@@ -22,7 +22,8 @@ runs:
       uses: actions/download-artifact@v4
       with:
         path: bloock_core_lib_wasm
-        pattern: bloock_core_lib_wasm
+        pattern: bloock_core_lib_wasm*
+        merge-multiple: true
     - name: Copy libraries.
       shell: bash
       run: |
