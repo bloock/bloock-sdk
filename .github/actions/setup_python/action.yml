@@ -24,7 +24,8 @@ runs:
     - name: Download binaries
       uses: actions/download-artifact@v4
       with:
-        name: bloock_core_lib_static
+        path: bloock_core_lib_static
+        pattern: bloock_core_lib_static-*
     - name: Copy binaries.
       shell: bash
       run: |
