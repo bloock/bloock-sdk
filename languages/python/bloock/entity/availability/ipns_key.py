@@ -9,7 +9,7 @@ class IpnsKey:
     """
     key_id = None
 
-    def __init__(self, key_id) -> None:
+    def __init__(self, key_id: str) -> None:
         """
         Creates an IpnsKey instance with a key uuid identifier.
         :type key_id: object
@@ -24,6 +24,6 @@ class IpnsKey:
     
     @staticmethod
     def from_proto(res: proto.IpnsKey = None) -> IpnsKey:
-        if isinstance(res, IpnsKey):
+        if isinstance(res, proto.IpnsKey):
             return IpnsKey(res.key_id)
         return None

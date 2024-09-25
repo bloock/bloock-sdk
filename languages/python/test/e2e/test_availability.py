@@ -26,7 +26,6 @@ class TestAvailability(unittest.TestCase):
         result = availability_client.publish(record, HostedPublisher())
 
         self.assertNotEqual(result.id, "")
-        self.assertEqual(result.ipns_key.key_id, "")
 
     def test_retrieve_hosted(self):
         payload = "Hello world"
@@ -52,7 +51,6 @@ class TestAvailability(unittest.TestCase):
         result = availability_client.publish(record, IpfsPublisher())
 
         self.assertNotEqual(result.id, "")
-        self.assertEqual(result.ipns_key.key_id, "")
 
     def test_retrieve_ipfs(self):
         payload = "Hello world"

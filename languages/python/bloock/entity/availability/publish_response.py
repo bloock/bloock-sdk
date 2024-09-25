@@ -11,7 +11,7 @@ class PublishResponse:
     id = None
     ipns_key = None
 
-    def __init__(self, id, ipns_key) -> None:
+    def __init__(self, id: str, ipns_key: IpnsKey = None) -> None:
         """
         Creates an IpnsKey instance with a key uuid identifier.
         :type id: object
