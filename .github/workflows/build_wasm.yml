@@ -31,7 +31,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build release libraries
         run: make -C bloock-bridge build-wasm
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: bloock_core_lib_wasm
           if-no-files-found: error

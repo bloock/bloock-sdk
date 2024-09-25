@@ -21,7 +21,7 @@ runs:
       with:
         working-directory: ${{ inputs.working-directory }}
     - name: Download binaries
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: bloock_core_lib_dynamic
     - name: Copy binaries.

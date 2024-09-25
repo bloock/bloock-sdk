@@ -22,7 +22,7 @@ runs:
       run: |
         pip install pydoc-markdown pyotp
     - name: Download binaries
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: bloock_core_lib_static
     - name: Copy binaries.
@@ -47,13 +47,13 @@ runs:
         cp bloock_core_lib_static/aarch64-apple-darwin/libbloock_bridge.a ${{ inputs.working-directory }}/bloock/_ffi/native/aarch64-apple-darwin/libbloock_bridge.a || true
 
     - name: Download python wheels from package run
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: bloock_lib_python
         path: ~/bloock_lib_python
       if: ${{ inputs.wheel-version }}
     - name: Download python wheels from package run
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: bloock_lib_python_wheels
         path: ~/bloock_lib_python/wheelhouse
