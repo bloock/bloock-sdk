@@ -10,6 +10,7 @@ import {
   Managed,
   ManagedKeyParams,
   RecordClient,
+  Signature,
   Signer
 } from "../../dist";
 import { generateRandomString, initSdk } from "./util";
@@ -104,13 +105,24 @@ describe("Authenticity Tests", () => {
 
     let totp = await keyClient.setupTotpAccessControl(new Managed(key));
 
-    let code = TOTP.generate(totp.secret, {timestamp: Date.now()})
+    let signature: Signature;
+    try {
+      let code = TOTP.generate(totp.secret, {timestamp: Date.now()})
 
-    let totpAccessControl = new AccessControlTotp(code.otp);
-    let signature = await authenticityClient.sign(
-      record,
-      new Signer(key, undefined, new AccessControl(totpAccessControl))
-    );
+      let totpAccessControl = new AccessControlTotp(code.otp);
+      signature = await authenticityClient.sign(
+        record,
+        new Signer(key, undefined, new AccessControl(totpAccessControl))
+      );
+    } catch (error) {
+      let code = TOTP.generate(totp.secret, {timestamp: Date.now()})
+
+      let totpAccessControl = new AccessControlTotp(code.otp);
+      signature = await authenticityClient.sign(
+        record,
+        new Signer(key, undefined, new AccessControl(totpAccessControl))
+      );
+    }
     expect(signature.signature).toBeTruthy();
 
     const invalidCode = "123456";

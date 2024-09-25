@@ -156,6 +156,12 @@ func TestEncryption(t *testing.T) {
 
 		totpAccessControl := managedKey.NewAccessControlTotp(code)
 		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewEncrypterWithManagedKey(key, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		if err != nil {
+			code, err := totpClient.GenerateCode(totp.Secret, time.Now())
+			require.NoError(t, err)
+			totpAccessControl := managedKey.NewAccessControlTotp(code)
+			encryptedRecord, err = encryptionClient.Encrypt(record, encryption.NewEncrypterWithManagedKey(key, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		}
 		assert.NoError(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).

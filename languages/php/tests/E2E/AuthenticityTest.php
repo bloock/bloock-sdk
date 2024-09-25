@@ -127,8 +127,13 @@ final class AuthenticityTest extends TestCase
         $clock ??= new InternalClock();
         $totpClient = TOTP::createFromSecret($totp->secret, $clock);
 
-        $totpAccessControl = new AccessControlTotp($totpClient->now());
-        $signature = $authenticityClient->sign($record, new Signer($key, null, new AccessControl($totpAccessControl)));
+        try {
+            $totpAccessControl = new AccessControlTotp($totpClient->now());
+            $signature = $authenticityClient->sign($record, new Signer($key, null, new AccessControl($totpAccessControl)));
+        } catch (Exception $e) {
+            $totpAccessControl = new AccessControlTotp($totpClient->now());
+            $signature = $authenticityClient->sign($record, new Signer($key, null, new AccessControl($totpAccessControl)));
+        }
         $this->assertNotNull($signature);
 
         $invalidCode = "123456";

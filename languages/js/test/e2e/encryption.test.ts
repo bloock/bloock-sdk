@@ -11,6 +11,7 @@ import {
   KeyType,
   Managed,
   ManagedKeyParams,
+  Record,
   RecordClient
 } from "../../dist";
 import { TOTP } from "totp-generator";
@@ -145,16 +146,28 @@ describe("Encryptions Tests", () => {
       new ManagedKeyParams(KeyProtectionLevel.SOFTWARE, KeyType.Rsa2048)
     );
 
+    let encryptionClient = new EncryptionClient();
     let totp = await keyClient.setupTotpAccessControl(new Managed(key))
 
-    let code = TOTP.generate(totp.secret, {timestamp: Date.now()})
-
-    let totpAccessControl = new AccessControlTotp(code.otp)
-    let encryptionClient = new EncryptionClient();
-    let encryptedRecord = await encryptionClient.encrypt(
-      record,
-      new Encrypter(key, new AccessControl(totpAccessControl))
-    );
+    let totpAccessControl: AccessControlTotp;
+    let encryptedRecord: Record;
+    try {
+      let code = TOTP.generate(totp.secret, {timestamp: Date.now()})
+      totpAccessControl = new AccessControlTotp(code.otp)
+  
+      encryptedRecord = await encryptionClient.encrypt(
+        record,
+        new Encrypter(key, new AccessControl(totpAccessControl))
+      );
+    } catch (error) {
+      let code = TOTP.generate(totp.secret, {timestamp: Date.now()})
+      totpAccessControl = new AccessControlTotp(code.otp)
+  
+      encryptedRecord = await encryptionClient.encrypt(
+        record,
+        new Encrypter(key, new AccessControl(totpAccessControl))
+      );
+    }
 
     let decryptedRecord = await recordClient
       .fromRecord(encryptedRecord)

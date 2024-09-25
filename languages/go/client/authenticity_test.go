@@ -149,6 +149,13 @@ func TestAuthenticity(t *testing.T) {
 		totpAccessControl := managedKey.NewAccessControlTotp(code)
 		signature, err := authenticityClient.
 			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		if err != nil {
+			code, err := totpClient.GenerateCode(totp.Secret, time.Now())
+			require.NoError(t, err)
+			totpAccessControl := managedKey.NewAccessControlTotp(code)
+			signature, err = authenticityClient.
+				Sign(record, authenticity.NewSignerWithManagedKey(key, nil, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		}
 		assert.NoError(t, err)
 		assert.NotEmpty(t, signature.Signature)
 
