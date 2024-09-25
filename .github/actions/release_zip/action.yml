@@ -17,7 +17,7 @@ runs:
   using: "composite"
   steps:
     - name: Download lib
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v3
       with:
         name: ${{ inputs.artifact }}
     - name: Compress
