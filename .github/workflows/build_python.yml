@@ -31,7 +31,6 @@ jobs:
         with:
           name: bloock_lib_python
           path: languages/python
-          overwrite: true
   prepare-wheels:
     name: Build python
     runs-on: ubuntu-latest
@@ -96,4 +95,3 @@ jobs:
         with:
           name: bloock_lib_python_wheels
           path: languages/python/wheelhouse
-          overwrite: true

@@ -65,4 +65,3 @@ jobs:
         with:
           name: bloock_lib_${{ inputs.lang }}
           path: languages/${{ inputs.lang }}
-          overwrite: true
