@@ -21,6 +21,7 @@ runs:
       with:
         working-directory: ${{ inputs.working-directory }}
         composer-options: "--ignore-platform-req=spomky-labs/otphp"
+        dependency-versions: "lowest"
     - name: Download binaries
       uses: actions/download-artifact@v4
       with:
