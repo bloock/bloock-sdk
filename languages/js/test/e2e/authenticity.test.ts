@@ -136,7 +136,7 @@ describe("Authenticity Tests", () => {
     } catch (error) {
       expect(error).toBeTruthy();
     }
-  }, 70000);
+  });
 
   test("sign managed bjj", async () => {
     initSdk();
