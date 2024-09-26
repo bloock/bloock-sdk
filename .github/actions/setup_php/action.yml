@@ -20,7 +20,8 @@ runs:
       uses: ramsey/composer-install@v2
       with:
         working-directory: ${{ inputs.working-directory }}
-        composer-options: "--ignore-platform-req"
+        composer-options: "--ignore-platform-req=spomky-labs/otphp"
+        dependency-versions: "lowest"
     - name: Download binaries
       uses: actions/download-artifact@v4
       with:
