@@ -19,7 +19,8 @@ runs:
     - name: Download lib
       uses: actions/download-artifact@v4
       with:
-        name: ${{ inputs.artifact }}
+        pattern: ${{ inputs.artifact }}*
+        merge-multiple: true
     - name: Compress
       shell: bash
       run: zip -r ${{ inputs.artifact }}.zip ${{ inputs.artifact }}/
