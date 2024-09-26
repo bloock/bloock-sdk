@@ -5,7 +5,7 @@ import {
 } from "../bridge/proto/bloock_availability";
 import { ConfigData } from "../bridge/proto/bloock_config";
 import { NewConfigData } from "../config/config";
-import { Loader, Publisher } from "../entity/availability";
+import { Loader, Publisher, PublishResponse } from "../entity/availability";
 import { Record } from "../entity/record";
 
 /**
@@ -30,7 +30,7 @@ export class AvailabilityClient {
    * @param publisher
    * @returns
    */
-  async publish(record: Record, publisher: Publisher): Promise<string> {
+  async publish(record: Record, publisher: Publisher): Promise<PublishResponse> {
     const request = PublishRequest.fromPartial({
       configData: this.configData,
       publisher: publisher.toProto(),
@@ -43,7 +43,7 @@ export class AvailabilityClient {
         if (res.error) {
           throw res.error;
         }
-        return res.id;
+        return PublishResponse.fromProto(res);
       });
   }
 

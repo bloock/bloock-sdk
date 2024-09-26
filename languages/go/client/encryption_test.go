@@ -9,7 +9,9 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/entity/encryption"
 	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	managedKey "github.com/bloock/bloock-sdk-go/v2/entity/key"
+	totpClient "github.com/pquerna/otp/totp"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEncryption(t *testing.T) {
@@ -149,10 +151,17 @@ func TestEncryption(t *testing.T) {
 		totp, err := keyClient.SetupTotpAccessControl(managedKey.Managed{ManagedKey: &key})
 		assert.NoError(t, err)
 
-		code := generateTOTPClient(totp.Secret, time.Now().Unix())
+		code, err := totpClient.GenerateCode(totp.Secret, time.Now())
+		require.NoError(t, err)
 
 		totpAccessControl := managedKey.NewAccessControlTotp(code)
 		encryptedRecord, err := encryptionClient.Encrypt(record, encryption.NewEncrypterWithManagedKey(key, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		if err != nil {
+			code, err := totpClient.GenerateCode(totp.Secret, time.Now())
+			require.NoError(t, err)
+			totpAccessControl := managedKey.NewAccessControlTotp(code)
+			encryptedRecord, err = encryptionClient.Encrypt(record, encryption.NewEncrypterWithManagedKey(key, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		}
 		assert.NoError(t, err)
 
 		decryptedRecord, err := recordClient.FromRecord(encryptedRecord).

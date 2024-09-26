@@ -6,6 +6,7 @@ import com.bloock.sdk.entity.availability.HostedLoader;
 import com.bloock.sdk.entity.availability.HostedPublisher;
 import com.bloock.sdk.entity.availability.IpfsLoader;
 import com.bloock.sdk.entity.availability.IpfsPublisher;
+import com.bloock.sdk.entity.availability.PublishResponse;
 import com.bloock.sdk.entity.encryption.*;
 import com.bloock.sdk.entity.integrity.AnchorNetwork;
 import com.bloock.sdk.entity.integrity.Proof;
@@ -71,9 +72,9 @@ class RecordTest {
     byte[] payload = record.retrieve();
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
-    String result = availabilityClient.publish(record, new HostedPublisher());
+    PublishResponse result = availabilityClient.publish(record, new HostedPublisher());
 
-    record = recordClient.fromLoader(new HostedLoader(result)).build();
+    record = recordClient.fromLoader(new HostedLoader(result.getID())).build();
     assertArrayEquals(record.retrieve(), payload);
   }
 
@@ -84,9 +85,9 @@ class RecordTest {
     byte[] payload = record.retrieve();
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
-    String result = availabilityClient.publish(record, new IpfsPublisher());
+    PublishResponse result = availabilityClient.publish(record, new IpfsPublisher());
 
-    record = recordClient.fromLoader(new IpfsLoader(result)).build();
+    record = recordClient.fromLoader(new IpfsLoader(result.getID())).build();
     assertArrayEquals(record.retrieve(), payload);
   }
 

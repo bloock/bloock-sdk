@@ -4,6 +4,7 @@ from bloock._bridge.proto.bloock_shared_pb2 import Error
 from bloock._config.config import Config
 from bloock.entity.availability.loader import Loader
 from bloock.entity.availability.publisher import Publisher
+from bloock.entity.availability.publish_response import PublishResponse
 from bloock.entity.record.record import Record
 
 
@@ -22,7 +23,7 @@ class AvailabilityClient:
             config_data = Config.default()
         self.config_data = config_data
 
-    def publish(self, record: Record, publisher: Publisher) -> str:
+    def publish(self, record: Record, publisher: Publisher) -> PublishResponse:
         """
         Publishes a Bloock record to the Availability service using the specified publisher.
         :type publisher: object
@@ -38,7 +39,7 @@ class AvailabilityClient:
         res = client.availability().Publish(req)
         if res.error != Error():
             raise Exception(res.error.message)
-        return res.id
+        return PublishResponse.from_proto(res)
 
     def retrieve(self, loader: Loader) -> Record:
         """

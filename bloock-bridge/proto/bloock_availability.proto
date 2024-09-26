@@ -23,7 +23,8 @@ message PublishRequest {
 
 message PublishResponse {
   string id = 1;
-  optional Error error = 2;
+  optional IpnsKey ipns_key = 2;
+  optional Error error = 3;
 }
 
 message RetrieveRequest {

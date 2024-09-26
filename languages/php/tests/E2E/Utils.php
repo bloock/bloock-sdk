@@ -2,17 +2,6 @@
 
 trait Utils
 {
-    /*public function generateTOTPClient($secretKey)
-    {
-        $timestamp = time();
-
-        $otp = TOTP::create($secretKey);
-
-        $code = $otp->at($timestamp);
-
-        return $code;
-    }*/
-
     public function generateRandomString($length)
     {
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

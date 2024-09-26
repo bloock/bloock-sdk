@@ -32,6 +32,5 @@ message LoaderArgs {
 }
 
 message IpnsKey {
-    optional ManagedKey managed_key = 1;
-    optional ManagedCertificate managed_certificate = 2;
+    string key_id = 1;
 }

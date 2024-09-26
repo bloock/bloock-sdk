@@ -13,7 +13,7 @@ export class IpnsPublisher implements Publisher {
   /**
    * Constructs a IpnsPublisher object with the specified parameters.
    */
-  constructor(ipnsKey: IpnsKey) {
+  constructor(ipnsKey?: IpnsKey) {
     this.type = proto.DataAvailabilityType.IPNS;
     this.args = new PublisherArgs(ipnsKey).toProto();
   }

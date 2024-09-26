@@ -1,43 +1,33 @@
 package availability
 
 import (
-	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	"github.com/bloock/bloock-sdk-go/v2/internal/bridge/proto"
 )
 
-// IpnsKey represents an object with various key types.
+// IpnsKey represents an object with a key uuid identifier.
 type IpnsKey struct {
-	ManagedKey         *key.ManagedKey
-	ManagedCertificate *key.ManagedCertificate
+	KeyID string
 }
 
-// NewIpnsKeyWithManagedKey creates an IpnsKey instance with a managed key.
-func NewIpnsKeyWithManagedKey(key key.ManagedKey) IpnsKey {
+// NewIpnsKey creates an IpnsKey instance with a key uuid identifier.
+func NewIpnsKey(keyID string) IpnsKey {
 	return IpnsKey{
-		ManagedKey: &key,
+		KeyID: keyID,
 	}
 }
-
-// NewIpnsWithManagedCertificate creates an IpnsKey instance with a managed certificate.
-/*func NewIpnsWithManagedCertificate(key key.ManagedCertificate) IpnsKey {
-	return IpnsKey{
-		ManagedCertificate: &key,
-	}
-}*/
 
 func (s IpnsKey) ToProto() *proto.IpnsKey {
-	var managedKey *proto.ManagedKey
-	if s.ManagedKey != nil {
-		managedKey = s.ManagedKey.ToProto()
-	}
-
-	var managedCertificate *proto.ManagedCertificate
-	if s.ManagedCertificate != nil {
-		managedCertificate = s.ManagedCertificate.ToProto()
-	}
-
 	return &proto.IpnsKey{
-		ManagedKey:         managedKey,
-		ManagedCertificate: managedCertificate,
+		KeyId: s.KeyID,
+	}
+}
+
+func NewIpnsKeyFromProto(ipnsKey *proto.IpnsKey) *IpnsKey {
+	if ipnsKey == nil {
+		return nil
+	} else {
+		return &IpnsKey{
+			KeyID: ipnsKey.KeyId,
+		}
 	}
 }

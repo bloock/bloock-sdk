@@ -36,7 +36,7 @@ func NewAvailabilityClientWithConfig(configData *proto.ConfigData) AvailabilityC
 }
 
 // Publish publishes a Bloock record to the Availability service using the specified publisher.
-func (c *AvailabilityClient) Publish(r record.Record, publisher availability.Publisher) (string, error) {
+func (c *AvailabilityClient) Publish(r record.Record, publisher availability.Publisher) (availability.PublishResponse, error) {
 	res, err := c.bridgeClient.Availability().Publish(context.Background(), &proto.PublishRequest{
 		ConfigData: c.configData,
 		Record:     r.ToProto(),
@@ -44,14 +44,14 @@ func (c *AvailabilityClient) Publish(r record.Record, publisher availability.Pub
 	})
 
 	if err != nil {
-		return "", err
+		return availability.PublishResponse{}, err
 	}
 
 	if res.Error != nil {
-		return "", errors.New(res.Error.Message)
+		return availability.PublishResponse{}, errors.New(res.Error.Message)
 	}
 
-	return res.Id, nil
+	return availability.NewPublishResponseFromProto(res), nil
 }
 
 // Retrieve retrieves a Bloock record from the Availability service using the specified loader.

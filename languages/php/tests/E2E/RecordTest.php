@@ -87,7 +87,7 @@ final class RecordTest extends TestCase
         $availabilityClient = new AvailabilityClient();
         $result = $availabilityClient->publish($record, new HostedPublisher());
 
-        $record = $recordClient->fromLoader(new HostedLoader($result))->build();
+        $record = $recordClient->fromLoader(new HostedLoader($result->id))->build();
         $this->assertEquals($payload, $record->retrieve());
     }
 
@@ -100,7 +100,7 @@ final class RecordTest extends TestCase
         $availabilityClient = new AvailabilityClient();
         $result = $availabilityClient->publish($record, new IpfsPublisher());
 
-        $record = $recordClient->fromLoader(new IpfsLoader($result))->build();
+        $record = $recordClient->fromLoader(new IpfsLoader($result->id))->build();
         $this->assertEquals($payload, $record->retrieve());
     }
 

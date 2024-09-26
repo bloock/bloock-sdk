@@ -15,7 +15,7 @@ class IpnsPublisher implements Publisher
     /**
      * Constructs a IpnsPublisher object with the specified parameters.
      */
-    public function __construct($key)
+    public function __construct($key = null)
     {
         $this->type = DataAvailabilityType::IPNS;
         $this->args = new PublisherArgs($key);

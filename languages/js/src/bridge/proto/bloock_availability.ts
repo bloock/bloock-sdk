@@ -1,6 +1,6 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
-import { Loader, Publisher } from "./bloock_availability_entities";
+import { IpnsKey, Loader, Publisher } from "./bloock_availability_entities";
 import { ConfigData } from "./bloock_config";
 import { Record } from "./bloock_record_entities";
 import { Error } from "./bloock_shared";
@@ -13,6 +13,7 @@ export interface PublishRequest {
 
 export interface PublishResponse {
   id: string;
+  ipnsKey?: IpnsKey | undefined;
   error?: Error | undefined;
 }
 
@@ -122,7 +123,7 @@ export const PublishRequest = {
 };
 
 function createBasePublishResponse(): PublishResponse {
-  return { id: "", error: undefined };
+  return { id: "", ipnsKey: undefined, error: undefined };
 }
 
 export const PublishResponse = {
@@ -130,8 +131,11 @@ export const PublishResponse = {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
+    if (message.ipnsKey !== undefined) {
+      IpnsKey.encode(message.ipnsKey, writer.uint32(18).fork()).ldelim();
+    }
     if (message.error !== undefined) {
-      Error.encode(message.error, writer.uint32(18).fork()).ldelim();
+      Error.encode(message.error, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -155,6 +159,13 @@ export const PublishResponse = {
             break;
           }
 
+          message.ipnsKey = IpnsKey.decode(reader, reader.uint32());
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.error = Error.decode(reader, reader.uint32());
           continue;
       }
@@ -169,6 +180,7 @@ export const PublishResponse = {
   fromJSON(object: any): PublishResponse {
     return {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
+      ipnsKey: isSet(object.ipnsKey) ? IpnsKey.fromJSON(object.ipnsKey) : undefined,
       error: isSet(object.error) ? Error.fromJSON(object.error) : undefined,
     };
   },
@@ -177,6 +189,9 @@ export const PublishResponse = {
     const obj: any = {};
     if (message.id !== "") {
       obj.id = message.id;
+    }
+    if (message.ipnsKey !== undefined) {
+      obj.ipnsKey = IpnsKey.toJSON(message.ipnsKey);
     }
     if (message.error !== undefined) {
       obj.error = Error.toJSON(message.error);
@@ -190,6 +205,9 @@ export const PublishResponse = {
   fromPartial<I extends Exact<DeepPartial<PublishResponse>, I>>(object: I): PublishResponse {
     const message = createBasePublishResponse();
     message.id = object.id ?? "";
+    message.ipnsKey = (object.ipnsKey !== undefined && object.ipnsKey !== null)
+      ? IpnsKey.fromPartial(object.ipnsKey)
+      : undefined;
     message.error = (object.error !== undefined && object.error !== null) ? Error.fromPartial(object.error) : undefined;
     return message;
   },

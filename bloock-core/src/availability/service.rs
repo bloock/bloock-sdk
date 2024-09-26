@@ -80,12 +80,15 @@ impl<H: Client> AvailabilityService<H> {
             .map_err(|e| AvailabilityError::RetrieveError(e.to_string()).into())
     }
 
-    pub async fn publish_ipns(&self, record: Record, key_id: String) -> BloockResult<String> {
-        let url = format!(
-            "{}/hosting/v1/ipns/upload?key={}",
+    pub async fn publish_ipns(&self, record: Record, key_id: Option<String>) -> BloockResult<(String, String)> {
+        let mut url = format!(
+            "{}/hosting/v1/ipns/upload",
             self.config_service.get_api_base_url(),
-            key_id,
         );
+
+        if key_id.is_some() {
+            url.push_str(&format!("?key={}", key_id.unwrap()));
+        }
 
         let response: PublishIpnsResponse = self
             .http
@@ -98,7 +101,7 @@ impl<H: Client> AvailabilityService<H> {
             )
             .await
             .map_err(|e| AvailabilityError::PublishError(e.to_string()))?;
-        Ok(response.id)
+        Ok((response.id, response.key_id))
     }
 
     pub async fn retrieve_ipns(&self, id: String) -> BloockResult<Vec<u8>> {
@@ -256,10 +259,11 @@ mod tests {
     #[tokio::test]
     async fn ipns_publish_file() {
         let payload: Vec<u8> = vec![1, 2, 3, 4, 5];
+        let key_id: String = "b012eaf2-e2ed-4196-8a68-172238852a5f".to_owned();
         let response = PublishIpnsResponse {
             id: "bafzbeigkhrj52va6uud2eeavfnfsr7zgo6sf7wg6bq76iqf37c274q2dy4".to_owned(),
+            key_id: key_id.clone(),
         };
-        let key_id: String = "b012eaf2-e2ed-4196-8a68-172238852a5f".to_owned();
 
         let mut http = MockClient::default();
         let url = format!("https://api.bloock.com/hosting/v1/ipns/upload?key={}", key_id);
@@ -284,11 +288,15 @@ mod tests {
             .unwrap(),
         );
 
-        let result = service.publish_ipns(record.unwrap(), key_id).await.unwrap();
+        let result = service.publish_ipns(record.unwrap(), Some(key_id)).await.unwrap();
 
         assert_eq!(
-            &result, "bafzbeigkhrj52va6uud2eeavfnfsr7zgo6sf7wg6bq76iqf37c274q2dy4",
-            "Should not return an empty result"
+            &result.0, "bafzbeigkhrj52va6uud2eeavfnfsr7zgo6sf7wg6bq76iqf37c274q2dy4",
+            "Retrieved ipns id should match expected"
+        );
+        assert_eq!(
+            &result.1, "b012eaf2-e2ed-4196-8a68-172238852a5f",
+            "Retrieved key id should match expected"
         )
     }
 

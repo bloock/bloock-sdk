@@ -10,6 +10,7 @@ use Bloock\Entity\Availability\IpfsPublisher;
 use PHPUnit\Framework\TestCase;
 use Bloock\Client\KeyClient;
 use Bloock\Entity\Availability\IpnsKey;
+use Bloock\Entity\Availability\IpnsLoader;
 use Bloock\Entity\Availability\IpnsPublisher;
 use Bloock\Entity\Key\KeyProtectionLevel;
 use Bloock\Entity\Key\KeyType;
@@ -33,7 +34,8 @@ final class AvailabilityTest extends TestCase
         $availabilityClient = new AvailabilityClient();
         $result = $availabilityClient->publish($record, new HostedPublisher());
 
-        $this->assertNotNull($result);
+        $this->assertNotNull($result->id);
+        $this->assertNull($result->ipnsKey);
     }
 
     public function testRetrieveHosted()
@@ -47,7 +49,7 @@ final class AvailabilityTest extends TestCase
         $availabilityClient = new AvailabilityClient();
         $result = $availabilityClient->publish($record, new HostedPublisher());
 
-        $result = $availabilityClient->retrieve(new HostedLoader($result));
+        $result = $availabilityClient->retrieve(new HostedLoader($result->id));
 
         $this->assertEquals($recordHash, $result->getHash());
     }
@@ -62,7 +64,8 @@ final class AvailabilityTest extends TestCase
         $availabilityClient = new AvailabilityClient();
         $result = $availabilityClient->publish($record, new IpfsPublisher());
 
-        $this->assertNotNull($result);
+        $this->assertNotNull($result->id);
+        $this->assertNull($result->ipnsKey);
     }
 
     public function testRetrieveIpfs()
@@ -76,29 +79,33 @@ final class AvailabilityTest extends TestCase
         $availabilityClient = new AvailabilityClient();
         $result = $availabilityClient->publish($record, new IpfsPublisher());
 
-        $result = $availabilityClient->retrieve(new IpfsLoader($result));
+        $result = $availabilityClient->retrieve(new IpfsLoader($result->id));
 
         $this->assertEquals($recordHash, $result->getHash());
     }
 
     public function testPublishIpns()
     {
-        $keyClient = new KeyClient();
-
-        $keyName = "ipns_key_name_test_sdk";
-        $keyProtection = KeyProtectionLevel::SOFTWARE;
-        $keyType = KeyType::Rsa2048;
-
-        $params = new ManagedKeyParams($keyProtection, $keyType, $keyName);
-        $key = $keyClient->newManagedKey($params);
-
         $payload = "Hello world";
         $recordClient = new RecordClient();
 
         $record = $recordClient->fromString($payload)->build();
 
         $availabilityClient = new AvailabilityClient();
-        $result = $availabilityClient->publish($record, new IpnsPublisher(new IpnsKey($key)));
+        $response = $availabilityClient->publish($record, new IpnsPublisher());
+        $this->assertNotNull($response->id);
+        $this->assertNotNull($response->ipnsKey);
+        $this->assertNotNull($response->ipnsKey->keyID);
+
+        $result = $availabilityClient->retrieve(new IpnsLoader($response->id));
         $this->assertNotNull($result);
+
+        $this->assertEquals($record->getHash(), $result->getHash());
+
+        $recordUpdated = $recordClient->fromString("Bye Bye")->build();
+
+        $responseUpdated = $availabilityClient->publish($recordUpdated, new IpnsPublisher($response->ipnsKey));
+        $this->assertNotNull($responseUpdated->id);
+        $this->assertNotNull($responseUpdated->ipnsKey);
     }
 }

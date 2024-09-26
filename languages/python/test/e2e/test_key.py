@@ -251,7 +251,7 @@ class TestKey(unittest.TestCase):
         self.assertNotEqual(managed_certificate.key, "")
         self.assertEqual(managed_certificate.protection,
                          KeyProtectionLevel.SOFTWARE)
-        self.assertEqual(managed_certificate.key_type, KeyType.EcP256k)
+        self.assertEqual(managed_certificate.key_type, KeyType.Rsa2048)
 
         loaded_certificate = key_client.load_managed_certificate(
             managed_certificate.id)

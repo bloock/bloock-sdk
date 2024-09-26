@@ -1,16 +1,16 @@
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.bloock.sdk.client.KeyClient;
 import com.bloock.sdk.client.RecordClient;
-import com.bloock.sdk.entity.key.*;
 import com.bloock.sdk.client.AvailabilityClient;
 import com.bloock.sdk.entity.availability.HostedLoader;
 import com.bloock.sdk.entity.availability.HostedPublisher;
 import com.bloock.sdk.entity.availability.IpfsLoader;
 import com.bloock.sdk.entity.availability.IpfsPublisher;
-import com.bloock.sdk.entity.availability.IpnsKey;
+import com.bloock.sdk.entity.availability.IpnsLoader;
 import com.bloock.sdk.entity.availability.IpnsPublisher;
+import com.bloock.sdk.entity.availability.PublishResponse;
 import com.bloock.sdk.entity.record.Record;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,9 +30,10 @@ class AvailabilityTest {
     Record record = recordClient.fromString(payload).build();
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
-    String result = availabilityClient.publish(record, new HostedPublisher());
+    PublishResponse result = availabilityClient.publish(record, new HostedPublisher());
 
-    assertNotNull(result);
+    assertNotNull(result.getID());
+    assertEquals("", result.getIpnsKey().getKeyID());
   }
 
   @Test
@@ -45,9 +46,9 @@ class AvailabilityTest {
     String recordHash = record.getHash();
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
-    String id = availabilityClient.publish(record, new HostedPublisher());
+    PublishResponse response = availabilityClient.publish(record, new HostedPublisher());
 
-    Record result = availabilityClient.retrieve(new HostedLoader(id));
+    Record result = availabilityClient.retrieve(new HostedLoader(response.getID()));
 
     assertEquals(result.getHash(), recordHash);
   }
@@ -60,9 +61,10 @@ class AvailabilityTest {
     Record record = recordClient.fromString(payload).build();
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
-    String result = availabilityClient.publish(record, new IpfsPublisher());
+    PublishResponse result = availabilityClient.publish(record, new IpfsPublisher());
 
-    assertNotNull(result);
+    assertNotNull(result.getID());
+    assertEquals("", result.getIpnsKey().getKeyID());
   }
 
   @Test
@@ -75,31 +77,35 @@ class AvailabilityTest {
     String recordHash = record.getHash();
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
-    String id = availabilityClient.publish(record, new IpfsPublisher());
+    PublishResponse response = availabilityClient.publish(record, new IpfsPublisher());
 
-    Record result = availabilityClient.retrieve(new IpfsLoader(id));
+    Record result = availabilityClient.retrieve(new IpfsLoader(response.getID()));
 
     assertEquals(result.getHash(), recordHash);
   }
 
   @Test
-  void publishIpns() throws Exception {
-    KeyClient keyClient = new KeyClient();
-
-    String name = "key_name";
-    KeyProtectionLevel keyProtectionLevel = KeyProtectionLevel.SOFTWARE;
-    KeyType keyType = KeyType.Rsa2048;
-
-    ManagedKey managedKey =
-        keyClient.newManagedKey(new ManagedKeyParams(keyProtectionLevel, keyType, name));
-        
+  void publishIpns() throws Exception {    
     String payload = "Hello world";
     RecordClient recordClient = new RecordClient();
 
     Record record = recordClient.fromString(payload).build();
 
     AvailabilityClient availabilityClient = new AvailabilityClient();
-    String result = availabilityClient.publish(record, new IpnsPublisher(new IpnsKey(managedKey)));
-    assertNotNull(result);
+    PublishResponse response = availabilityClient.publish(record, new IpnsPublisher());
+    assertNotNull(response.getID());
+    assertNotNull(response.getIpnsKey().getKeyID());
+
+    Record result = availabilityClient.retrieve(new IpnsLoader(response.getID()));
+		assertNotNull(result);
+
+    String resultHash = result.getHash();
+		assertEquals(record.getHash(), resultHash);
+
+    Record recordUpdated = recordClient.fromString("Bye Bye").build();
+
+    PublishResponse responseUpdated = availabilityClient.publish(recordUpdated, new IpnsPublisher(response.getIpnsKey()));
+    assertNotNull(responseUpdated.getID());
+    assertNotNull(responseUpdated.getIpnsKey().getKeyID());
   }
 }

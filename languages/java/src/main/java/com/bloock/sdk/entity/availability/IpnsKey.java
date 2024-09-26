@@ -1,45 +1,43 @@
 package com.bloock.sdk.entity.availability;
 
 import com.bloock.sdk.bridge.proto.BloockAvailabilityEntities;
-import com.bloock.sdk.entity.key.*;
 
 /**
- * Represents an IpnsKey with various key types.
+ * Represents an object with a key uuid identifier.
  */
 public class IpnsKey {
 
-  ManagedKey managedKey;
-  ManagedCertificate managedCertificate;
+  String keyID;
 
   /**
-   * Creates a IpnsKey instance with a managed key.
+   * Creates an IpnsKey instance with a key uuid identifier.
    * 
-   * @param managedKey
+   * @param keyID
    */
-  public IpnsKey(ManagedKey managedKey) {
-    this.managedKey = managedKey;
-  }
-
-  /**
-   * Creates a IpnsKey instance with a managed certificate.
-   * 
-   * @param managedCertificate
-   */
-  public IpnsKey(ManagedCertificate managedCertificate) {
-    this.managedCertificate = managedCertificate;
+  public IpnsKey(String keyID) {
+    this.keyID = keyID;
   }
 
   public BloockAvailabilityEntities.IpnsKey toProto() {
-    BloockAvailabilityEntities.IpnsKey.Builder builder = BloockAvailabilityEntities.IpnsKey.newBuilder();
+    return BloockAvailabilityEntities.IpnsKey.newBuilder()
+      .setKeyId(this.keyID)
+      .build();
+  }
 
-    if (this.managedKey != null) {
-      builder.setManagedKey(this.managedKey.toProto());
-    }
+  public static IpnsKey fromProto(BloockAvailabilityEntities.IpnsKey ipnsKey) {
+    if (ipnsKey != null) {
+      return new IpnsKey(ipnsKey.getKeyId());
+    } else {
+      return null;
+    }    
+  }
 
-    if (this.managedCertificate != null) {
-      builder.setManagedCertificate(this.managedCertificate.toProto());
-    }
-
-    return builder.build();
+  /**
+   * Gets the key uuid identifier of the Ipns key object.
+   * 
+   * @return
+   */
+  public String getKeyID() {
+    return keyID;
   }
 }

@@ -11,7 +11,15 @@ public class IpnsPublisher implements Publisher {
   PublisherArgs args;
 
   /**
-   * Constructs a IpnsPublisher object with the specified parameters.
+   * Constructs a publisher for IPNS data availability with creation option.
+   */
+  public IpnsPublisher() {
+    this.type = DataAvailabilityType.IPNS;
+    this.args = new PublisherArgs();
+  }
+
+  /**
+   * Constructs a publisher for IPNS data availability with update option.
    */
   public IpnsPublisher(IpnsKey ipnsKey) {
     this.type = DataAvailabilityType.IPNS;

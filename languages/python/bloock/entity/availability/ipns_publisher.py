@@ -7,7 +7,7 @@ class IpnsPublisher(Publisher):
     """
     Represents a publisher for IPNS data availability.
     """
-    def __init__(self, ipns_key) -> None:
+    def __init__(self, ipns_key = None) -> None:
         """
         Constructs a IpnsPublisher object with the specified parameters.
         :rtype: object

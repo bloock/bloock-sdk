@@ -9,6 +9,7 @@ impl ResponseTypeError<PublishRequest> for PublishResponse {
     fn build_error(err: String) -> Self {
         Self {
             id: "".to_string(),
+            ipns_key: None,
             error: Some(Error {
                 kind: BridgeError::AvailabilityError.to_string(),
                 message: err,

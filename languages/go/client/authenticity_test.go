@@ -10,7 +10,9 @@ import (
 	"github.com/bloock/bloock-sdk-go/v2/entity/authenticity"
 	"github.com/bloock/bloock-sdk-go/v2/entity/key"
 	managedKey "github.com/bloock/bloock-sdk-go/v2/entity/key"
+	totpClient "github.com/pquerna/otp/totp"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAuthenticity(t *testing.T) {
@@ -141,11 +143,19 @@ func TestAuthenticity(t *testing.T) {
 		totp, err := keyClient.SetupTotpAccessControl(managedKey.Managed{ManagedKey: &key})
 		assert.NoError(t, err)
 
-		code := generateTOTPClient(totp.Secret, time.Now().Unix())
+		code, err := totpClient.GenerateCode(totp.Secret, time.Now())
+		require.NoError(t, err)
 
 		totpAccessControl := managedKey.NewAccessControlTotp(code)
 		signature, err := authenticityClient.
 			Sign(record, authenticity.NewSignerWithManagedKey(key, nil, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		if err != nil {
+			code, err := totpClient.GenerateCode(totp.Secret, time.Now())
+			require.NoError(t, err)
+			totpAccessControl := managedKey.NewAccessControlTotp(code)
+			signature, err = authenticityClient.
+				Sign(record, authenticity.NewSignerWithManagedKey(key, nil, &managedKey.AccessControl{AccessControlTotp: totpAccessControl}))
+		}
 		assert.NoError(t, err)
 		assert.NotEmpty(t, signature.Signature)
 

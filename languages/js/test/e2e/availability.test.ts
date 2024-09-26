@@ -7,12 +7,9 @@ import {
   IpfsLoader,
   IpfsPublisher,
   RecordClient,
-  ManagedKeyParams,
-  KeyClient,
-  KeyProtectionLevel,
-  KeyType,
   IpnsPublisher,
   IpnsKey,
+  IpnsLoader,
 } from "../../dist";
 
 describe("Availability Tests", () => {
@@ -29,7 +26,8 @@ describe("Availability Tests", () => {
       new HostedPublisher()
     );
 
-    expect(result).toBeTruthy();
+    expect(result.id).toBeTruthy();
+    expect(result.ipnsKey).toBeUndefined();
   });
 
   test("retrieve hosted", async () => {
@@ -42,9 +40,9 @@ describe("Availability Tests", () => {
     let hash = await record.getHash();
 
     let availabilityClient = new AvailabilityClient();
-    let id = await availabilityClient.publish(record, new HostedPublisher());
+    let res = await availabilityClient.publish(record, new HostedPublisher());
 
-    let result = await availabilityClient.retrieve(new HostedLoader(id));
+    let result = await availabilityClient.retrieve(new HostedLoader(res.id));
     let resultHash = await result.getHash();
 
     expect(resultHash).toBe(hash);
@@ -60,7 +58,8 @@ describe("Availability Tests", () => {
     let availabilityClient = new AvailabilityClient();
     let result = await availabilityClient.publish(record, new IpfsPublisher());
 
-    expect(result).toBeTruthy();
+    expect(result.id).toBeTruthy();
+    expect(result.ipnsKey).toBeUndefined();
   });
 
   test("retrieve ipfs", async () => {
@@ -73,9 +72,9 @@ describe("Availability Tests", () => {
     let hash = await record.getHash();
 
     let availabilityClient = new AvailabilityClient();
-    let id = await availabilityClient.publish(record, new IpfsPublisher());
+    let res = await availabilityClient.publish(record, new IpfsPublisher());
 
-    let result = await availabilityClient.retrieve(new IpfsLoader(id));
+    let result = await availabilityClient.retrieve(new IpfsLoader(res.id));
     let resultHash = await result.getHash();
 
     expect(resultHash).toBe(hash);
@@ -84,21 +83,28 @@ describe("Availability Tests", () => {
   test("publish ipns", async () => {
     initDevSdk();
 
-    let keyName = "ipns_key_name_test_sdk";
-    let keyProtection = KeyProtectionLevel.SOFTWARE;
-    let keyType = KeyType.Rsa2048;
-    let keyClient = new KeyClient();
-    let managedKey = await keyClient.newManagedKey(
-      new ManagedKeyParams(keyProtection, keyType, keyName)
-    );
-
     let payload = "Hello world";
     let recordClient = new RecordClient();
     let record = await recordClient.fromString(payload).build();
+    let recordHash = await record.getHash()
 
     let availabilityClient = new AvailabilityClient();
-    let result = await availabilityClient.publish(record, new IpnsPublisher(new IpnsKey(managedKey)));
+    let result = await availabilityClient.publish(record, new IpnsPublisher());
 
-    expect(result).toBeTruthy();
+    expect(result.id).toBeTruthy();
+    expect(result.ipnsKey).toBeTruthy();
+
+    let resultRetrieved = await availabilityClient.retrieve(new IpnsLoader(result.id));
+    let resultHash = await resultRetrieved.getHash();
+
+    expect(resultHash).toBe(recordHash);
+
+    let recordUpdated = await recordClient.fromString("Bye Bye").build();
+    if (result.ipnsKey) {
+      let resultUpdated = await availabilityClient.publish(recordUpdated, new IpnsPublisher(new IpnsKey(result.ipnsKey.keyID)));
+
+      expect(resultUpdated.id).toBeTruthy();
+      expect(resultUpdated.ipnsKey).toBeTruthy();
+    }
   });
 });
