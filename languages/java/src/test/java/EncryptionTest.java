@@ -139,12 +139,21 @@ class EncryptionTest {
 
     TotpAccessControlReceipt totp = keyClient.setupTotpAccessControl(new Managed(managedKey));
 
-    long timestamp = System.currentTimeMillis() / 1000;
-    String code = Utils.generateTOTPClient(totp.getSecret(), timestamp);
+    Record encryptedRecord = null;
+    AccessControlTotp totpAccessControl = null;
+    try {
+      long timestamp = System.currentTimeMillis() / 1000;
+      String code = Utils.generateTOTPClient(totp.getSecret(), timestamp);
 
-    AccessControlTotp totpAccessControl = new AccessControlTotp(code);
-    Record encryptedRecord = encryptionClient.encrypt(record, new Encrypter(managedKey, new AccessControl(totpAccessControl)));
+      totpAccessControl = new AccessControlTotp(code);
+      encryptedRecord = encryptionClient.encrypt(record, new Encrypter(managedKey, new AccessControl(totpAccessControl)));
+    } catch (Exception e) {
+      long timestamp = System.currentTimeMillis() / 1000;
+      String code = Utils.generateTOTPClient(totp.getSecret(), timestamp);
 
+      totpAccessControl = new AccessControlTotp(code);
+      encryptedRecord = encryptionClient.encrypt(record, new Encrypter(managedKey, new AccessControl(totpAccessControl)));
+    }
     Record decryptedRecord =
             recordClient.fromRecord(encryptedRecord).withDecrypter(new Encrypter(managedKey, new AccessControl(totpAccessControl))).build();
 

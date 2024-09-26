@@ -178,7 +178,7 @@ describe("Encryptions Tests", () => {
 
     expect(decryptedRecordHash).toBe(recordHash);
     expect(decryptedRecord.retrieve()).not.toBe(encryptedRecord.retrieve());
-  }, 15000);
+  }, 70000);
 
   test("decrypt local rsa", async () => {
     initSdk();

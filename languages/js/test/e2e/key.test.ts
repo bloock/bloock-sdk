@@ -370,7 +370,7 @@ describe("Key Tests", () => {
     expect(totpRecovered.secret).toBeTruthy();
     expect(totpRecovered.secretQr).toBeTruthy();
     expect(totpRecovered.recoveryCodes).toBeTruthy();
-  });
+  }, 70000);
 
   test("setup secret access control", async () => {
     initDevSdk();

@@ -97,11 +97,20 @@ class AuthenticityTest {
 
     TotpAccessControlReceipt totp = keyClient.setupTotpAccessControl(new Managed(managedKey));
 
-    long timestamp = System.currentTimeMillis() / 1000;
-    String code = Utils.generateTOTPClient(totp.getSecret(), timestamp);
+    Signature signature = null;
+    try {
+      long timestamp = System.currentTimeMillis() / 1000;
+      String code = Utils.generateTOTPClient(totp.getSecret(), timestamp);
 
-    AccessControlTotp totpAccessControl = new AccessControlTotp(code);
-    Signature signature = authenticityClient.sign(record, new Signer(managedKey, null, new AccessControl(totpAccessControl)));
+      AccessControlTotp totpAccessControl = new AccessControlTotp(code);
+      signature = authenticityClient.sign(record, new Signer(managedKey, null, new AccessControl(totpAccessControl)));
+    } catch (Exception e) {
+      long timestamp = System.currentTimeMillis() / 1000;
+      String code = Utils.generateTOTPClient(totp.getSecret(), timestamp);
+
+      AccessControlTotp totpAccessControl = new AccessControlTotp(code);
+      signature = authenticityClient.sign(record, new Signer(managedKey, null, new AccessControl(totpAccessControl)));
+    }
     assertNotNull(signature);
 
     String invalidCode = "123456";

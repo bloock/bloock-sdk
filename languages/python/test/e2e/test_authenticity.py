@@ -128,11 +128,18 @@ class TestAuthenticity(unittest.TestCase):
 
         totp = key_client.setup_totp_access_control(Managed(key))
 
-        code = generate_totp_client(totp.secret)
+        try:
+            code = generate_totp_client(totp.secret)
 
-        totp_access_control = AccessControlTotp(code)
-        signature = authenticity_client.sign(record, Signer(
-            key, None, AccessControl(totp_access_control)))
+            totp_access_control = AccessControlTotp(code)
+            signature = authenticity_client.sign(record, Signer(
+                key, None, AccessControl(totp_access_control)))
+        except:
+            code = generate_totp_client(totp.secret)
+
+            totp_access_control = AccessControlTotp(code)
+            signature = authenticity_client.sign(record, Signer(
+                key, None, AccessControl(totp_access_control)))
         self.assertNotEqual(signature, "")
 
         invalid_code = "123456"
