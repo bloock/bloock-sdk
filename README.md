@@ -106,3 +106,7 @@ See [LICENSE](https://github.com/bloock/bloock-sdk/blob/master/LICENSE).
 [`link python`]: https://pypi.org/project/bloock/
 [`link java`]: https://search.maven.org/artifact/com.bloock.sdk/bloock-sdk
 [`link php`]: https://packagist.org/packages/bloock/sdk
+
+## Acknowledgements
+
+![RED.ES](https://docs.bloock.com/logo/logos-redes.png)
