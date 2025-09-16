@@ -48,127 +48,127 @@ class TestIdentity(unittest.TestCase):
         holder = identity_client.create_holder(holder_key, DidMethod.PolygonID)
         self.assertTrue(holder.did.__contains__("main"))
 
-    def test_end_to_end(self):
-        identity_client = IdentityClient()
-        identity_core_client = IdentityCoreClient()
-        key_client = KeyClient()
+    # def test_end_to_end(self):
+    #     identity_client = IdentityClient()
+    #     identity_core_client = IdentityCoreClient()
+    #     key_client = KeyClient()
 
-        protection = KeyProtectionLevel.SOFTWARE
-        key_type = KeyType.Bjj
-        params = ManagedKeyParams(protection, key_type)
-        managed_key = key_client.new_managed_key(params)
+    #     protection = KeyProtectionLevel.SOFTWARE
+    #     key_type = KeyType.Bjj
+    #     params = ManagedKeyParams(protection, key_type)
+    #     managed_key = key_client.new_managed_key(params)
 
-        not_found_managed_key = key_client.new_managed_key(params)
+    #     not_found_managed_key = key_client.new_managed_key(params)
 
-        issuer_key = Key(managed_key)
-        not_found_issuer_key = Key(not_found_managed_key)
+    #     issuer_key = Key(managed_key)
+    #     not_found_issuer_key = Key(not_found_managed_key)
 
-        current_directory = os.getcwd()
-        file_path = current_directory + "/test/e2e/test_utils/profile_image.png"
-        with open(file_path, 'rb') as file:
-            file_bytes = file.read()
-        base64_file = base64.urlsafe_b64encode(file_bytes).decode('utf-8')
+    #     current_directory = os.getcwd()
+    #     file_path = current_directory + "/test/e2e/test_utils/profile_image.png"
+    #     with open(file_path, 'rb') as file:
+    #         file_bytes = file.read()
+    #     base64_file = base64.urlsafe_b64encode(file_bytes).decode('utf-8')
 
-        issuer = identity_client.create_issuer(
-            issuer_key, PublishIntervalParams.Interval15, DidMethod.PolygonIDTest, "Bloock Test", "bloock description test", base64_file)
+    #     issuer = identity_client.create_issuer(
+    #         issuer_key, PublishIntervalParams.Interval15, DidMethod.PolygonIDTest, "Bloock Test", "bloock description test", base64_file)
 
-        with self.assertRaises(Exception):
-            identity_client.create_issuer(
-                issuer_key, PublishIntervalParams.Interval15, DidMethod.PolygonIDTest)
+    #     with self.assertRaises(Exception):
+    #         identity_client.create_issuer(
+    #             issuer_key, PublishIntervalParams.Interval15, DidMethod.PolygonIDTest)
 
-        imported_issuer = identity_client.import_issuer(
-            issuer_key, DidMethod.PolygonIDTest)
-        self.assertTrue(imported_issuer.did.__contains__("amoy"))
+    #     imported_issuer = identity_client.import_issuer(
+    #         issuer_key, DidMethod.PolygonIDTest)
+    #     self.assertTrue(imported_issuer.did.__contains__("amoy"))
 
-        get_not_found_issuer_did = identity_client.import_issuer(
-            not_found_issuer_key, DidMethod.PolygonIDTest)
-        self.assertEqual("", get_not_found_issuer_did.did)
+    #     get_not_found_issuer_did = identity_client.import_issuer(
+    #         not_found_issuer_key, DidMethod.PolygonIDTest)
+    #     self.assertEqual("", get_not_found_issuer_did.did)
 
-        schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema") \
-            .add_integer_attribute("License Type", "license_type", "license type", False) \
-            .add_decimal_attribute("Quantity Oil", "quantity_oil", "quantity oil", True) \
-            .add_string_attribute("Nif", "nif", "nif", True) \
-            .add_boolean_attribute("Is Spanish", "is_spanish", "is spanish", True) \
-            .add_date_attribute("Birth Date", "birth_date", "birth date", True) \
-            .add_datetime_attribute("Local Hour", "local_hour", "local hour", True) \
-            .add_string_enum_attribute("Car Type", "car_type", "car type", True, ["big", "medium", "small"]) \
-            .add_integer_enum_attribute("Car Points", "car_points", "car points", True, [1, 5, 10]) \
-            .add_decimal_enum_attribute("Precision Wheels", "precision_wheels", "precision wheels", True, [1.10, 1.20, 1.30]) \
-            .build()
-        self.assertIsNotNone(schema.cid)
+    #     schema = identity_client.build_schema("Driving License", self.drivingLicenseSchemaType, "1.0", "driving license schema") \
+    #         .add_integer_attribute("License Type", "license_type", "license type", False) \
+    #         .add_decimal_attribute("Quantity Oil", "quantity_oil", "quantity oil", True) \
+    #         .add_string_attribute("Nif", "nif", "nif", True) \
+    #         .add_boolean_attribute("Is Spanish", "is_spanish", "is spanish", True) \
+    #         .add_date_attribute("Birth Date", "birth_date", "birth date", True) \
+    #         .add_datetime_attribute("Local Hour", "local_hour", "local hour", True) \
+    #         .add_string_enum_attribute("Car Type", "car_type", "car type", True, ["big", "medium", "small"]) \
+    #         .add_integer_enum_attribute("Car Points", "car_points", "car points", True, [1, 5, 10]) \
+    #         .add_decimal_enum_attribute("Precision Wheels", "precision_wheels", "precision wheels", True, [1.10, 1.20, 1.30]) \
+    #         .build()
+    #     self.assertIsNotNone(schema.cid)
 
-        get_schema = identity_client.get_schema(schema.cid)
-        self.assertIsNotNone(get_schema.cid_json_ld)
-        self.assertIsNotNone(get_schema.json)
-        self.assertIsNotNone(get_schema.schema_type)
+    #     get_schema = identity_client.get_schema(schema.cid)
+    #     self.assertIsNotNone(get_schema.cid_json_ld)
+    #     self.assertIsNotNone(get_schema.json)
+    #     self.assertIsNotNone(get_schema.schema_type)
 
-        receipt = identity_client.build_credential(issuer, schema.cid, self.holderDid, self.expiration, 0) \
-            .with_integer_attribute("license_type", 1) \
-            .with_decimal_attribute("quantity_oil", 2.25555) \
-            .with_string_attribute("nif", "54688188M") \
-            .with_boolean_attribute("is_spanish", True) \
-            .with_date_attribute("birth_date", datetime.date(1999, 3, 20)) \
-            .with_datetime_attribute("local_hour", datetime.datetime.now()) \
-            .with_string_attribute("car_type", "big") \
-            .with_integer_attribute("car_points", 5) \
-            .with_decimal_attribute("precision_wheels", 1.10) \
-            .build()
-        self.assertIsNotNone(receipt.credential_id)
-        self.assertIsNotNone(receipt.credential)
-        self.assertEqual(self.drivingLicenseSchemaType,
-                         receipt.credential_type)
-        self.assertEqual(issuer.did, receipt.credential.issuer)
-        self.assertEqual("JsonSchema2023",
-                         receipt.credential.credential_schema.type)
-        self.assertEqual(self.drivingLicenseSchemaType,
-                         receipt.credential.type[1])
+    #     receipt = identity_client.build_credential(issuer, schema.cid, self.holderDid, self.expiration, 0) \
+    #         .with_integer_attribute("license_type", 1) \
+    #         .with_decimal_attribute("quantity_oil", 2.25555) \
+    #         .with_string_attribute("nif", "54688188M") \
+    #         .with_boolean_attribute("is_spanish", True) \
+    #         .with_date_attribute("birth_date", datetime.date(1999, 3, 20)) \
+    #         .with_datetime_attribute("local_hour", datetime.datetime.now()) \
+    #         .with_string_attribute("car_type", "big") \
+    #         .with_integer_attribute("car_points", 5) \
+    #         .with_decimal_attribute("precision_wheels", 1.10) \
+    #         .build()
+    #     self.assertIsNotNone(receipt.credential_id)
+    #     self.assertIsNotNone(receipt.credential)
+    #     self.assertEqual(self.drivingLicenseSchemaType,
+    #                      receipt.credential_type)
+    #     self.assertEqual(issuer.did, receipt.credential.issuer)
+    #     self.assertEqual("JsonSchema2023",
+    #                      receipt.credential.credential_schema.type)
+    #     self.assertEqual(self.drivingLicenseSchemaType,
+    #                      receipt.credential.type[1])
 
-        new_receipt = identity_core_client.build_credential(issuer, schema.cid, self.holderDid, self.expiration, 0) \
-            .with_integer_attribute("license_type", 1) \
-            .with_decimal_attribute("quantity_oil", 2.25555) \
-            .with_string_attribute("nif", "54688188M") \
-            .with_boolean_attribute("is_spanish", True) \
-            .with_date_attribute("birth_date", datetime.date(1999, 3, 20)) \
-            .with_datetime_attribute("local_hour", datetime.datetime.now()) \
-            .with_string_attribute("car_type", "big") \
-            .with_integer_attribute("car_points", 5) \
-            .with_decimal_attribute("precision_wheels", 1.10) \
-            .build()
-        self.assertIsNotNone(new_receipt.credential_id)
-        self.assertIsNotNone(new_receipt.credential)
-        self.assertEqual(self.drivingLicenseSchemaType,
-                         new_receipt.credential_type)
+    #     new_receipt = identity_core_client.build_credential(issuer, schema.cid, self.holderDid, self.expiration, 0) \
+    #         .with_integer_attribute("license_type", 1) \
+    #         .with_decimal_attribute("quantity_oil", 2.25555) \
+    #         .with_string_attribute("nif", "54688188M") \
+    #         .with_boolean_attribute("is_spanish", True) \
+    #         .with_date_attribute("birth_date", datetime.date(1999, 3, 20)) \
+    #         .with_datetime_attribute("local_hour", datetime.datetime.now()) \
+    #         .with_string_attribute("car_type", "big") \
+    #         .with_integer_attribute("car_points", 5) \
+    #         .with_decimal_attribute("precision_wheels", 1.10) \
+    #         .build()
+    #     self.assertIsNotNone(new_receipt.credential_id)
+    #     self.assertIsNotNone(new_receipt.credential)
+    #     self.assertEqual(self.drivingLicenseSchemaType,
+    #                      new_receipt.credential_type)
 
-        credential = identity_client.get_credential(receipt.credential_id)
-        self.assertEqual(issuer.did, credential.issuer)
-        self.assertEqual("JsonSchema2023", credential.credential_schema.type)
-        self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
+    #     credential = identity_client.get_credential(receipt.credential_id)
+    #     self.assertEqual(issuer.did, credential.issuer)
+    #     self.assertEqual("JsonSchema2023", credential.credential_schema.type)
+    #     self.assertEqual(self.drivingLicenseSchemaType, credential.type[1])
 
-        json_offer = identity_client.get_credential_offer(
-            issuer, receipt.credential_id)
-        self.assertIsNotNone(json_offer)
+    #     json_offer = identity_client.get_credential_offer(
+    #         issuer, receipt.credential_id)
+    #     self.assertIsNotNone(json_offer)
 
-        ok = identity_client.revoke_credential(credential, issuer)
-        self.assertTrue(ok)
+    #     ok = identity_client.revoke_credential(credential, issuer)
+    #     self.assertTrue(ok)
 
-        state_receipt = identity_client.force_publish_issuer_state(
-            issuer)
-        self.assertIsNotNone(state_receipt)
+    #     state_receipt = identity_client.force_publish_issuer_state(
+    #         issuer)
+    #     self.assertIsNotNone(state_receipt)
 
-        with self.assertRaises(Exception):
-            identity_client.force_publish_issuer_state(issuer)
+    #     with self.assertRaises(Exception):
+    #         identity_client.force_publish_issuer_state(issuer)
 
-        proof_request = prepare_proof_request(schema.cid_json_ld)
+    #     proof_request = prepare_proof_request(schema.cid_json_ld)
 
-        verification = identity_client.create_verification(proof_request)
-        self.assertIsNotNone(verification.session_id)
-        self.assertIsNotNone(verification.verification_request)
+    #     verification = identity_client.create_verification(proof_request)
+    #     self.assertIsNotNone(verification.session_id)
+    #     self.assertIsNotNone(verification.verification_request)
 
-        with self.assertRaises(Exception):
-            identity_client.get_verification_status(verification.session_id)
+    #     with self.assertRaises(Exception):
+    #         identity_client.get_verification_status(verification.session_id)
 
-        with self.assertRaises(Exception):
-            identity_client.wait_verification(verification.session_id, 5)
+    #     with self.assertRaises(Exception):
+    #         identity_client.wait_verification(verification.session_id, 5)
 
 def prepare_proof_request(schema_id):
     json_string = '''

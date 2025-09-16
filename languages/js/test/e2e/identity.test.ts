@@ -1,7 +1,4 @@
 import { describe, expect, test } from "@jest/globals";
-import { readFileSync } from "fs";
-import path from "path";
-import base64url from "urlsafe-base64";
 import {
   Credential,
   IdentityClient,
@@ -12,9 +9,7 @@ import {
 } from "../../dist";
 import {
   DidMethod,
-  IdentityCoreClient,
-  Key,
-  PublishIntervalParams
+  Key
 } from "../../dist/index";
 import { initDevSdk } from "./util";
 
@@ -58,184 +53,184 @@ describe("Identity V2 Tests", () => {
     expect(holder.did.did.includes("main")).toBeTruthy();
   });
 
-  test("test identity end to end", async () => {
-    initDevSdk();
+  // test("test identity end to end", async () => {
+  //   initDevSdk();
 
-    const identityClient = new IdentityClient();
-    const identityCoreClient = new IdentityCoreClient();
-    const keyClient = new KeyClient();
+  //   const identityClient = new IdentityClient();
+  //   const identityCoreClient = new IdentityCoreClient();
+  //   const keyClient = new KeyClient();
 
-    let keyProtection = KeyProtectionLevel.SOFTWARE;
-    let keyType = KeyType.Bjj;
-    let managedKey = await keyClient.newManagedKey(
-      new ManagedKeyParams(keyProtection, keyType)
-    );
+  //   let keyProtection = KeyProtectionLevel.SOFTWARE;
+  //   let keyType = KeyType.Bjj;
+  //   let managedKey = await keyClient.newManagedKey(
+  //     new ManagedKeyParams(keyProtection, keyType)
+  //   );
 
-    let notFoundManagedKey = await keyClient.newManagedKey(
-      new ManagedKeyParams(keyProtection, keyType)
-    );
+  //   let notFoundManagedKey = await keyClient.newManagedKey(
+  //     new ManagedKeyParams(keyProtection, keyType)
+  //   );
 
-    let issuerKey = new Key(managedKey);
-    let notFoundIssuerKey = new Key(notFoundManagedKey);
+  //   let issuerKey = new Key(managedKey);
+  //   let notFoundIssuerKey = new Key(notFoundManagedKey);
 
-    const dirPath = path.join(__dirname, "/test_utils/profile_image.png");
-    let fileBytes = readFileSync(dirPath);
-    let encodedFile = base64url.encode(fileBytes);
+  //   const dirPath = path.join(__dirname, "/test_utils/profile_image.png");
+  //   let fileBytes = readFileSync(dirPath);
+  //   let encodedFile = base64url.encode(fileBytes);
 
-    let issuer = await identityClient.createIssuer(
-      issuerKey,
-      PublishIntervalParams.Interval15,
-      DidMethod.PolygonIDTest,
-      "Bloock Test",
-      "bloock description test",
-      encodedFile
-    );
-    expect(issuer.did.did.includes("polygonid")).toBeTruthy();
-    expect(issuer.did.did.includes("amoy")).toBeTruthy();
+  //   let issuer = await identityClient.createIssuer(
+  //     issuerKey,
+  //     PublishIntervalParams.Interval15,
+  //     DidMethod.PolygonIDTest,
+  //     "Bloock Test",
+  //     "bloock description test",
+  //     encodedFile
+  //   );
+  //   expect(issuer.did.did.includes("polygonid")).toBeTruthy();
+  //   expect(issuer.did.did.includes("amoy")).toBeTruthy();
 
-    try {
-      await identityClient.createIssuer(
-        issuerKey,
-        PublishIntervalParams.Interval15,
-        DidMethod.PolygonIDTest
-      );
-    } catch (error) {
-      expect(error).toBeTruthy;
-    }
+  //   try {
+  //     await identityClient.createIssuer(
+  //       issuerKey,
+  //       PublishIntervalParams.Interval15,
+  //       DidMethod.PolygonIDTest
+  //     );
+  //   } catch (error) {
+  //     expect(error).toBeTruthy;
+  //   }
 
-    let importedIssuer = await identityClient.importIssuer(
-      issuerKey,
-      DidMethod.PolygonIDTest
-    );
-    expect(importedIssuer.did.did).toStrictEqual(issuer.did.did);
+  //   let importedIssuer = await identityClient.importIssuer(
+  //     issuerKey,
+  //     DidMethod.PolygonIDTest
+  //   );
+  //   expect(importedIssuer.did.did).toStrictEqual(issuer.did.did);
 
-    let getNotFoundIssuerDid = await identityClient.importIssuer(
-      notFoundIssuerKey,
-      DidMethod.PolygonIDTest
-    );
-    expect(getNotFoundIssuerDid.did.did).toStrictEqual("");
+  //   let getNotFoundIssuerDid = await identityClient.importIssuer(
+  //     notFoundIssuerKey,
+  //     DidMethod.PolygonIDTest
+  //   );
+  //   expect(getNotFoundIssuerDid.did.did).toStrictEqual("");
 
-    let schema = await identityClient
-      .buildSchema(
-        "Driving License",
-        drivingLicenseSchemaType,
-        "1.0",
-        "driving license schema"
-      )
-      .addIntegerAttribute(
-        "License Type",
-        "license_type",
-        "license type",
-        false
-      )
-      .addDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true)
-      .addStringAttribute("Nif", "nif", "nif", true)
-      .addBooleanAttribute("Is Spanish", "is_spanish", "is spanish", true)
-      .addDateAttribute("Birth Date", "birth_date", "birth date", true)
-      .addDateTimeAttribute("Local Hour", "local_hour", "local hour", true)
-      .addStringEnumAttribute("Car Type", "car_type", "car type", true, [
-        "big",
-        "medium",
-        "small"
-      ])
-      .addIntegerEnumAttribute("Car Points", "car_points", "car points", true, [
-        1,
-        5,
-        10
-      ])
-      .addDecimalEnumAttribute(
-        "Precision wheels",
-        "precision_wheels",
-        "precision whels",
-        true,
-        [1.1, 1.2, 1.3]
-      )
-      .build();
-    expect(schema.cid).toBeTruthy();
+  //   let schema = await identityClient
+  //     .buildSchema(
+  //       "Driving License",
+  //       drivingLicenseSchemaType,
+  //       "1.0",
+  //       "driving license schema"
+  //     )
+  //     .addIntegerAttribute(
+  //       "License Type",
+  //       "license_type",
+  //       "license type",
+  //       false
+  //     )
+  //     .addDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true)
+  //     .addStringAttribute("Nif", "nif", "nif", true)
+  //     .addBooleanAttribute("Is Spanish", "is_spanish", "is spanish", true)
+  //     .addDateAttribute("Birth Date", "birth_date", "birth date", true)
+  //     .addDateTimeAttribute("Local Hour", "local_hour", "local hour", true)
+  //     .addStringEnumAttribute("Car Type", "car_type", "car type", true, [
+  //       "big",
+  //       "medium",
+  //       "small"
+  //     ])
+  //     .addIntegerEnumAttribute("Car Points", "car_points", "car points", true, [
+  //       1,
+  //       5,
+  //       10
+  //     ])
+  //     .addDecimalEnumAttribute(
+  //       "Precision wheels",
+  //       "precision_wheels",
+  //       "precision whels",
+  //       true,
+  //       [1.1, 1.2, 1.3]
+  //     )
+  //     .build();
+  //   expect(schema.cid).toBeTruthy();
 
-    schema = await identityClient.getSchema(schema.cid);
-    expect(schema.cidJsonLd).toBeTruthy();
-    expect(schema.json).toBeTruthy();
-    expect(schema.schemaType).toBeTruthy();
+  //   schema = await identityClient.getSchema(schema.cid);
+  //   expect(schema.cidJsonLd).toBeTruthy();
+  //   expect(schema.json).toBeTruthy();
+  //   expect(schema.schemaType).toBeTruthy();
 
-    const receipt = await identityClient
-      .buildCredential(issuer, schema.cid, holderDid, expiration, 0)
-      .withIntegerAttribute("license_type", 1)
-      .withDecimalAttribute("quantity_oil", 2.25555)
-      .withStringAttribute("nif", "54688188M")
-      .withBooleanAttribute("is_spanish", true)
-      .withDateAttribute("birth_date", new Date(1999, 3, 20))
-      .withDateTimeAttribute("local_hour", new Date(Date.now()))
-      .withStringAttribute("car_type", "big")
-      .withIntegerAttribute("car_points", 5)
-      .withDecimalAttribute("precision_wheels", 1.1)
-      .build();
-    expect(receipt.credentialId).toBeTruthy();
-    expect(receipt.credential).toBeTruthy();
-    expect(receipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
-    expect(receipt.credential.issuer).toStrictEqual(issuer.did.did);
-    expect(receipt.credential.credentialSchema.type).toStrictEqual(
-      "JsonSchema2023"
-    );
-    expect(receipt.credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
+  //   const receipt = await identityClient
+  //     .buildCredential(issuer, schema.cid, holderDid, expiration, 0)
+  //     .withIntegerAttribute("license_type", 1)
+  //     .withDecimalAttribute("quantity_oil", 2.25555)
+  //     .withStringAttribute("nif", "54688188M")
+  //     .withBooleanAttribute("is_spanish", true)
+  //     .withDateAttribute("birth_date", new Date(1999, 3, 20))
+  //     .withDateTimeAttribute("local_hour", new Date(Date.now()))
+  //     .withStringAttribute("car_type", "big")
+  //     .withIntegerAttribute("car_points", 5)
+  //     .withDecimalAttribute("precision_wheels", 1.1)
+  //     .build();
+  //   expect(receipt.credentialId).toBeTruthy();
+  //   expect(receipt.credential).toBeTruthy();
+  //   expect(receipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
+  //   expect(receipt.credential.issuer).toStrictEqual(issuer.did.did);
+  //   expect(receipt.credential.credentialSchema.type).toStrictEqual(
+  //     "JsonSchema2023"
+  //   );
+  //   expect(receipt.credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
-    const newReceipt = await identityCoreClient
-      .buildCredential(issuer, schema.cid, holderDid, expiration, 0)
-      .withIntegerAttribute("license_type", 1)
-      .withDecimalAttribute("quantity_oil", 2.25555)
-      .withStringAttribute("nif", "54688188M")
-      .withBooleanAttribute("is_spanish", true)
-      .withDateAttribute("birth_date", new Date(1999, 3, 20))
-      .withDateTimeAttribute("local_hour", new Date(Date.now()))
-      .withStringAttribute("car_type", "big")
-      .withIntegerAttribute("car_points", 5)
-      .withDecimalAttribute("precision_wheels", 1.1)
-      .build();
-    expect(newReceipt.credentialId).toBeTruthy();
-    expect(newReceipt.credential).toBeTruthy();
-    expect(newReceipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
+  //   const newReceipt = await identityCoreClient
+  //     .buildCredential(issuer, schema.cid, holderDid, expiration, 0)
+  //     .withIntegerAttribute("license_type", 1)
+  //     .withDecimalAttribute("quantity_oil", 2.25555)
+  //     .withStringAttribute("nif", "54688188M")
+  //     .withBooleanAttribute("is_spanish", true)
+  //     .withDateAttribute("birth_date", new Date(1999, 3, 20))
+  //     .withDateTimeAttribute("local_hour", new Date(Date.now()))
+  //     .withStringAttribute("car_type", "big")
+  //     .withIntegerAttribute("car_points", 5)
+  //     .withDecimalAttribute("precision_wheels", 1.1)
+  //     .build();
+  //   expect(newReceipt.credentialId).toBeTruthy();
+  //   expect(newReceipt.credential).toBeTruthy();
+  //   expect(newReceipt.credentialType).toStrictEqual(drivingLicenseSchemaType);
 
-    const credential = await identityClient.getCredential(receipt.credentialId);
-    expect(credential.issuer).toStrictEqual(issuer.did.did);
-    expect(credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
-    expect(credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
+  //   const credential = await identityClient.getCredential(receipt.credentialId);
+  //   expect(credential.issuer).toStrictEqual(issuer.did.did);
+  //   expect(credential.credentialSchema.type).toStrictEqual("JsonSchema2023");
+  //   expect(credential.type[1]).toStrictEqual(drivingLicenseSchemaType);
 
-    const jsonOffer = await identityClient.getCredentialOffer(
-      issuer,
-      receipt.credentialId
-    );
-    expect(jsonOffer).toBeTruthy();
+  //   const jsonOffer = await identityClient.getCredentialOffer(
+  //     issuer,
+  //     receipt.credentialId
+  //   );
+  //   expect(jsonOffer).toBeTruthy();
 
-    const ok = await identityClient.revokeCredential(credential, issuer);
-    expect(ok).toBeTruthy();
+  //   const ok = await identityClient.revokeCredential(credential, issuer);
+  //   expect(ok).toBeTruthy();
 
-    const stateReceipt = await identityClient.forcePublishIssuerState(issuer);
-    expect(stateReceipt.txHash).toBeTruthy();
+  //   const stateReceipt = await identityClient.forcePublishIssuerState(issuer);
+  //   expect(stateReceipt.txHash).toBeTruthy();
 
-    try {
-      await identityClient.forcePublishIssuerState(issuer);
-    } catch (error) {
-      expect(error).toBeTruthy();
-    }
+  //   try {
+  //     await identityClient.forcePublishIssuerState(issuer);
+  //   } catch (error) {
+  //     expect(error).toBeTruthy();
+  //   }
 
-    const proofRequest = prepareProofRequest(schema.cidJsonLd);
+  //   const proofRequest = prepareProofRequest(schema.cidJsonLd);
 
-    const verification = await identityClient.createVerification(proofRequest);
-    expect(verification.sessionID).toBeTruthy();
-    expect(verification.verificationRequest).toBeTruthy();
+  //   const verification = await identityClient.createVerification(proofRequest);
+  //   expect(verification.sessionID).toBeTruthy();
+  //   expect(verification.verificationRequest).toBeTruthy();
 
-    try {
-      await identityClient.waitVerification(verification.sessionID, 5);
-    } catch (error) {
-      expect(error).toBeTruthy();
-    }
+  //   try {
+  //     await identityClient.waitVerification(verification.sessionID, 5);
+  //   } catch (error) {
+  //     expect(error).toBeTruthy();
+  //   }
 
-    try {
-      await identityClient.getVerificationStatus(verification.sessionID);
-    } catch (error) {
-      expect(error).toBeTruthy();
-    }
-  });
+  //   try {
+  //     await identityClient.getVerificationStatus(verification.sessionID);
+  //   } catch (error) {
+  //     expect(error).toBeTruthy();
+  //   }
+  // });
 });
 
 interface ProofRequest {

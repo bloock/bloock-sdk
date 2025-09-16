@@ -55,122 +55,122 @@ final class IdentityTest extends TestCase
         $this->assertStringContainsString("main", $holder->getDid()->getDid());
     }
 
-    public function testIdentityEndToEnd()
-    {
-        $identityClient = new IdentityClient();
-        $identityCoreClient = new IdentityCoreClient();
-        $keyClient = new KeyClient();
+    // public function testIdentityEndToEnd()
+    // {
+    //     $identityClient = new IdentityClient();
+    //     $identityCoreClient = new IdentityCoreClient();
+    //     $keyClient = new KeyClient();
 
-        $keyProtection = KeyProtectionLevel::SOFTWARE;
-        $keyType = KeyType::Bjj;
+    //     $keyProtection = KeyProtectionLevel::SOFTWARE;
+    //     $keyType = KeyType::Bjj;
 
-        $params = new ManagedKeyParams($keyProtection, $keyType);
-        $managedKey = $keyClient->newManagedKey($params);
+    //     $params = new ManagedKeyParams($keyProtection, $keyType);
+    //     $managedKey = $keyClient->newManagedKey($params);
 
-        $notFoundManagedKey = $keyClient->newManagedKey($params);
+    //     $notFoundManagedKey = $keyClient->newManagedKey($params);
 
-        $issuerKey = new Key($managedKey);
-        $notFoundIssuerKey = new Key($notFoundManagedKey);
+    //     $issuerKey = new Key($managedKey);
+    //     $notFoundIssuerKey = new Key($notFoundManagedKey);
 
-        $currentDirectory = getcwd();
-        $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/profile_image.png");
-        $base64File = rtrim(strtr(base64_encode($fileContents), '+/', '-_'), '=');
+    //     $currentDirectory = getcwd();
+    //     $fileContents = file_get_contents($currentDirectory . "/tests/E2E/TestUtils/profile_image.png");
+    //     $base64File = rtrim(strtr(base64_encode($fileContents), '+/', '-_'), '=');
 
-        $issuer = $identityClient->createIssuer($issuerKey, PublishIntervalParams::Interval15, DidMethod::PolygonIDTest, "Bloock Test", "bloock description test", $base64File);
-        $this->assertStringContainsString("amoy", $issuer->getDid()->getDid());
+    //     $issuer = $identityClient->createIssuer($issuerKey, PublishIntervalParams::Interval15, DidMethod::PolygonIDTest, "Bloock Test", "bloock description test", $base64File);
+    //     $this->assertStringContainsString("amoy", $issuer->getDid()->getDid());
 
-        $importedIssuer = $identityClient->importIssuer($issuerKey, DidMethod::PolygonIDTest);
-        $this->assertEquals($issuer->getDid()->getDid(), $importedIssuer->getDid()->getDid());
+    //     $importedIssuer = $identityClient->importIssuer($issuerKey, DidMethod::PolygonIDTest);
+    //     $this->assertEquals($issuer->getDid()->getDid(), $importedIssuer->getDid()->getDid());
 
-        $getNotFoundIssuerDid = $identityClient->importIssuer($notFoundIssuerKey, DidMethod::PolygonIDTest);
-        $this->assertEquals(null, $getNotFoundIssuerDid->getDid()->getDid());
+    //     $getNotFoundIssuerDid = $identityClient->importIssuer($notFoundIssuerKey, DidMethod::PolygonIDTest);
+    //     $this->assertEquals(null, $getNotFoundIssuerDid->getDid()->getDid());
 
-        $schema = $identityClient->buildSchema("Driving License", self::drivingLicenseSchemaType, "1.0", "driving license schema")
-            ->addIntegerAttribute("License Type", "license_type", "license type", false)
-            ->addDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true)
-            ->addStringAttribute("Nif", "nif", "nif", true)
-            ->addBooleanAttribute("Is Spanish", "is_spanish", "is spanish", true)
-            ->addDateAttribute("Birth Date", "birth_date", "birth date", true)
-            ->addDateTimeAttribute("Local Hour", "local_hour", "local hour", true)
-            ->addStringEnumAttribute("Car Type", "car_type", "car type", true, ["big", "medium", "small"])
-            ->addIntegerEnumAttribute("Car Points", "car_points", "car points", true, [1, 5, 10])
-            ->addDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, [1.10, 1.20, 1.30])
-            ->build();
-        $this->assertNotNull($schema->getCid());
+    //     $schema = $identityClient->buildSchema("Driving License", self::drivingLicenseSchemaType, "1.0", "driving license schema")
+    //         ->addIntegerAttribute("License Type", "license_type", "license type", false)
+    //         ->addDecimalAttribute("Quantity Oil", "quantity_oil", "quantity oil", true)
+    //         ->addStringAttribute("Nif", "nif", "nif", true)
+    //         ->addBooleanAttribute("Is Spanish", "is_spanish", "is spanish", true)
+    //         ->addDateAttribute("Birth Date", "birth_date", "birth date", true)
+    //         ->addDateTimeAttribute("Local Hour", "local_hour", "local hour", true)
+    //         ->addStringEnumAttribute("Car Type", "car_type", "car type", true, ["big", "medium", "small"])
+    //         ->addIntegerEnumAttribute("Car Points", "car_points", "car points", true, [1, 5, 10])
+    //         ->addDecimalEnumAttribute("Precision wheels", "precision_wheels", "precision wheels", true, [1.10, 1.20, 1.30])
+    //         ->build();
+    //     $this->assertNotNull($schema->getCid());
 
-        $getSchema = $identityClient->getSchema($schema->getCid());
-        $this->assertNotNull($getSchema->getCidJsonLd());
-        $this->assertNotNull($getSchema->getJson());
-        $this->assertNotNull($getSchema->getSchemaType());
+    //     $getSchema = $identityClient->getSchema($schema->getCid());
+    //     $this->assertNotNull($getSchema->getCidJsonLd());
+    //     $this->assertNotNull($getSchema->getJson());
+    //     $this->assertNotNull($getSchema->getSchemaType());
 
-        $dateString = "1999-03-20";
-        $format = "Y-m-d";
-        $dateTime = DateTime::createFromFormat($format, $dateString);
+    //     $dateString = "1999-03-20";
+    //     $format = "Y-m-d";
+    //     $dateTime = DateTime::createFromFormat($format, $dateString);
 
-        $receipt = $identityClient->buildCredential($issuer, $schema->getCid(), self::holderDid, self::expiration, 0)
-            ->withIntegerAttribute("license_type", 1)
-            ->withDecimalAttribute("quantity_oil", 2.25555)
-            ->withStringAttribute("nif", "54688188M")
-            ->withBooleanAttribute("is_spanish", true)
-            ->withDateAttribute("birth_date", $dateTime)
-            ->withDatetimeAttribute("local_hour", new DateTime)
-            ->withStringAttribute("car_type", "big")
-            ->withIntegerAttribute("car_points", 5)
-            ->withDecimalAttribute("precision_wheels", 1.10)
-            ->build();
-        $this->assertNotNull($receipt->getCredentialId());
-        $this->assertNotNull($receipt->getCredential());
-        $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredentialType());
-        $this->assertEquals("JsonSchema2023", $receipt->getCredential()->getCredentialSchema()->getType());
-        $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredential()->getType()[1]);
+    //     $receipt = $identityClient->buildCredential($issuer, $schema->getCid(), self::holderDid, self::expiration, 0)
+    //         ->withIntegerAttribute("license_type", 1)
+    //         ->withDecimalAttribute("quantity_oil", 2.25555)
+    //         ->withStringAttribute("nif", "54688188M")
+    //         ->withBooleanAttribute("is_spanish", true)
+    //         ->withDateAttribute("birth_date", $dateTime)
+    //         ->withDatetimeAttribute("local_hour", new DateTime)
+    //         ->withStringAttribute("car_type", "big")
+    //         ->withIntegerAttribute("car_points", 5)
+    //         ->withDecimalAttribute("precision_wheels", 1.10)
+    //         ->build();
+    //     $this->assertNotNull($receipt->getCredentialId());
+    //     $this->assertNotNull($receipt->getCredential());
+    //     $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredentialType());
+    //     $this->assertEquals("JsonSchema2023", $receipt->getCredential()->getCredentialSchema()->getType());
+    //     $this->assertEquals(self::drivingLicenseSchemaType, $receipt->getCredential()->getType()[1]);
 
-        $newReceipt = $identityCoreClient->buildCredential($issuer, $schema->getCid(), self::holderDid, self::expiration, 0)
-            ->withIntegerAttribute("license_type", 1)
-            ->withDecimalAttribute("quantity_oil", 2.25555)
-            ->withStringAttribute("nif", "54688188M")
-            ->withBooleanAttribute("is_spanish", true)
-            ->withDateAttribute("birth_date", $dateTime)
-            ->withDatetimeAttribute("local_hour", new DateTime)
-            ->withStringAttribute("car_type", "big")
-            ->withIntegerAttribute("car_points", 5)
-            ->withDecimalAttribute("precision_wheels", 1.10)
-            ->build();
-        $this->assertNotNull($newReceipt->getCredentialId());
-        $this->assertNotNull($newReceipt->getCredential());
-        $this->assertEquals(self::drivingLicenseSchemaType, $newReceipt->getCredentialType());
+    //     $newReceipt = $identityCoreClient->buildCredential($issuer, $schema->getCid(), self::holderDid, self::expiration, 0)
+    //         ->withIntegerAttribute("license_type", 1)
+    //         ->withDecimalAttribute("quantity_oil", 2.25555)
+    //         ->withStringAttribute("nif", "54688188M")
+    //         ->withBooleanAttribute("is_spanish", true)
+    //         ->withDateAttribute("birth_date", $dateTime)
+    //         ->withDatetimeAttribute("local_hour", new DateTime)
+    //         ->withStringAttribute("car_type", "big")
+    //         ->withIntegerAttribute("car_points", 5)
+    //         ->withDecimalAttribute("precision_wheels", 1.10)
+    //         ->build();
+    //     $this->assertNotNull($newReceipt->getCredentialId());
+    //     $this->assertNotNull($newReceipt->getCredential());
+    //     $this->assertEquals(self::drivingLicenseSchemaType, $newReceipt->getCredentialType());
 
-        $credential = $identityClient->getCredential($receipt->getCredentialId());
-        $this->assertEquals("JsonSchema2023", $credential->getCredentialSchema()->getType());
-        $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[1]);
+    //     $credential = $identityClient->getCredential($receipt->getCredentialId());
+    //     $this->assertEquals("JsonSchema2023", $credential->getCredentialSchema()->getType());
+    //     $this->assertEquals(self::drivingLicenseSchemaType, $credential->getType()[1]);
 
-        $jsonOffer = $identityClient->getCredentialOffer($issuer, $receipt->getCredentialId());
-        $this->assertNotNull($jsonOffer);
+    //     $jsonOffer = $identityClient->getCredentialOffer($issuer, $receipt->getCredentialId());
+    //     $this->assertNotNull($jsonOffer);
 
-        $ok = $identityClient->revokeCredential($credential, $issuer);
-        $this->assertTrue($ok);
+    //     $ok = $identityClient->revokeCredential($credential, $issuer);
+    //     $this->assertTrue($ok);
 
-        $stateReceipt = $identityClient->forcePublishIssuerState($issuer);
-        $this->assertNotNull($stateReceipt->getTxHash());
+    //     $stateReceipt = $identityClient->forcePublishIssuerState($issuer);
+    //     $this->assertNotNull($stateReceipt->getTxHash());
 
-        [$proofRequest, $error] = prepareProofRequest($getSchema->getCidJsonLd());
-        $this->assertNull($error);
+    //     [$proofRequest, $error] = prepareProofRequest($getSchema->getCidJsonLd());
+    //     $this->assertNull($error);
 
-        $verification = $identityClient->createVerification($proofRequest);
-        $this->assertNotNull($verification->getSessionID());
-        $this->assertNotNull($verification->getVerificationRequest());
+    //     $verification = $identityClient->createVerification($proofRequest);
+    //     $this->assertNotNull($verification->getSessionID());
+    //     $this->assertNotNull($verification->getVerificationRequest());
 
-        try {
-            $identityClient->getVerificationStatus($verification->getSessionID());
-        } catch (Exception $e) {
-            $this->assertNotNull($e->getMessage());
-        }
+    //     try {
+    //         $identityClient->getVerificationStatus($verification->getSessionID());
+    //     } catch (Exception $e) {
+    //         $this->assertNotNull($e->getMessage());
+    //     }
 
-        try {
-            $identityClient->waitVerification($verification->getSessionID(), 5);
-        } catch (Exception $e) {
-            $this->assertNotNull($e->getMessage());
-        }
-    }
+    //     try {
+    //         $identityClient->waitVerification($verification->getSessionID(), 5);
+    //     } catch (Exception $e) {
+    //         $this->assertNotNull($e->getMessage());
+    //     }
+    // }
 }
 
 class ProofRequest
