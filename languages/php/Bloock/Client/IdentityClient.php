@@ -44,7 +44,7 @@ class IdentityClient
      * Creates a new instance of the IdentityClient with the provided configuration.
      * @param ConfigData|null $config
      */
-    public function __construct(ConfigData $config = null)
+    public function __construct(?ConfigData $config = null)
     {
         $this->bridge = new Bridge();
         if ($config != null) {
@@ -88,7 +88,7 @@ class IdentityClient
      * @return Issuer
      * @throws Exception
      */
-    public function createIssuer(Key $issuerKey, int $publishInterval, string $didMethod, string $name = null, string $description = null, string $image = null): Issuer
+    public function createIssuer(Key $issuerKey, int $publishInterval, string $didMethod, ?string $name = null, ?string $description = null, ?string $image = null): Issuer
     {
         $req = new CreateIssuerRequest();
         $req->setKey($issuerKey->toProto());

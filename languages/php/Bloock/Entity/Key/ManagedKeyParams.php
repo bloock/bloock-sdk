@@ -36,7 +36,7 @@ class ManagedKeyParams
      * @param string|null $name
      * @param int|null $expiration
      */
-    public function __construct(string $protection, string $keyType, string $name = null, int $expiration = null)
+    public function __construct(string $protection, string $keyType, ?string $name = null, ?int $expiration = null)
     {
         $this->name = $name;
         $this->protection = $protection;

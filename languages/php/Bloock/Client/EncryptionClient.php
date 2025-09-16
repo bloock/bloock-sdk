@@ -28,7 +28,7 @@ class EncryptionClient
      * Creates a new instance of the EncryptionClient with the provided configuration.
      * @param ConfigData|null $config
      */
-    public function __construct(ConfigData $config = null)
+    public function __construct(?ConfigData $config = null)
     {
         $this->bridge = new Bridge();
         if ($config != null) {

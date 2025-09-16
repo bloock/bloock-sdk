@@ -30,7 +30,7 @@ class IntegrityClient
      * Creates a new IntegrityClient with the given configuration.
      * @param ConfigData|null $config
      */
-    public function __construct(ConfigData $config = null)
+    public function __construct(?ConfigData $config = null)
     {
         $this->bridge = new Bridge();
         if ($config != null) {
@@ -159,7 +159,7 @@ class IntegrityClient
      * @return int
      * @throws Exception
      */
-    public function verifyRecords(array $records, string $network = null): int
+    public function verifyRecords(array $records, ?string $network = null): int
     {
         $req = new VerifyRecordsRequest();
         $r = [];

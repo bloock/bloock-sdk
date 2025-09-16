@@ -67,7 +67,7 @@ class ImportCertificateParams
      * Constructs a new ImportCertificateParams object with the specified or not password.
      * @param ?string $keyType
      */
-    public function __construct(string $password = null)
+    public function __construct(?string $password = null)
     {
         $this->password = $password;
     }

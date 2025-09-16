@@ -28,7 +28,7 @@ class IpnsKey
         return $s;
     }
 
-    public static function fromProto(\Bloock\IpnsKey $ipnsKey = null): ?IpnsKey
+    public static function fromProto(?\Bloock\IpnsKey $ipnsKey = null): ?IpnsKey
     {
         if ($ipnsKey != null) {
             return new IpnsKey($ipnsKey->getKeyId());

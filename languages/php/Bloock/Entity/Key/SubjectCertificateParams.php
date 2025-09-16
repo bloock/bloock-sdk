@@ -47,7 +47,7 @@ class SubjectCertificateParams
      * @param string|null $state
      * @param string|null $country
      */
-    public function __construct(string $commonName, string $organization = null, string $organizationUnit = null, string $location = null, string $state = null, string $country = null)
+    public function __construct(string $commonName, ?string $organization = null, ?string $organizationUnit = null, ?string $location = null, ?string $state = null, ?string $country = null)
     {
         $this->commonName = $commonName;
         $this->organization = $organization;

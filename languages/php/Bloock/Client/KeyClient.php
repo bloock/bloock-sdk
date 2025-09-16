@@ -43,7 +43,7 @@ class KeyClient
      * Creates a new KeyClient with the given configuration.
      * @param ConfigData|null $config
      */
-    public function __construct(ConfigData $config = null)
+    public function __construct(?ConfigData $config = null)
     {
         $this->bridge = new Bridge();
         if ($config != null) {

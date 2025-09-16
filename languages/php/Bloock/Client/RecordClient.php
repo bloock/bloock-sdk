@@ -21,7 +21,7 @@ class RecordClient
      * Creates a new RecordClient with the provided configuration.
      * @param ConfigData|null $config
      */
-    public function __construct(ConfigData $config = null)
+    public function __construct(?ConfigData $config = null)
     {
         $this->bridge = new Bridge();
         if ($config != null) {
