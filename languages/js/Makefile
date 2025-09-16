@@ -11,7 +11,7 @@ proto:
 build:
 	yarn build
 
-dev: build
+dev: copy_lib build
 	yarn start
 
 test: build
