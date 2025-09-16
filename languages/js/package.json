@@ -36,6 +36,7 @@
   ],
   "dependencies": {
     "base64-url": "^2.3.3",
+    "js-base64": "^3.7.8",
     "node-fetch": "^2.6.1",
     "protobufjs": "^7.2.2",
     "totp-generator": "^1.0.0",
