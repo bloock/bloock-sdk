@@ -628,7 +628,7 @@ dependencies = [
 
 [[package]]
 name = "bloock-core"
-version = "2.9.6"
+version = "2.9.7"
 dependencies = [
  "async-std",
  "base64 0.22.1",
@@ -895,7 +895,7 @@ dependencies = [
 
 [[package]]
 name = "bloock_bridge"
-version = "2.9.6"
+version = "2.9.7"
 dependencies = [
  "async-trait",
  "base64 0.13.1",
